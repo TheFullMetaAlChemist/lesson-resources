@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Understanding Speed</title>
+  <style>
+    /* Import Google Font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #01579b;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0277bd;
+      margin-top: 30px;
+      border-bottom: 2px solid #81d4fa;
+      padding-bottom: 5px;
+    }
+    h3 {
+      text-align: center;
+      color: #0288d1;
+      margin-top: 20px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #b3e5fc;
+      border-radius: 8px;
+      background-color: #e1f5fe;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #0277bd;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button:disabled {
+      background-color: #90caf9;
+      color: #e3f2fd;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="number"], input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid #81d4fa;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    .equation-help {
+      background-color: #e0f2f1;
+      border: 1px solid #80cbc4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      font-style: italic;
+    }
+    .toggle-btn {
+      background-color: #039be5;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    /* Calculator styling */
+    #calculator {
+      display: none;
+      position: absolute;
+      top: 120px;
+      left: 120px;
+      z-index: 1000;
+      border: 2px solid #01579b;
+      background-color: #e1f5fe;
+      padding: 10px;
+      width: 300px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    #calculator-header {
+      cursor: move;
+      background-color: #0277bd;
+      color: #fff;
+      padding: 8px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 4px;
+    }
+    #calc-display {
+      width: 100%;
+      height: 40px;
+      font-size: 1.4em;
+      margin: 10px 0;
+      text-align: right;
+      padding-right: 10px;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    #calc-buttons button {
+      width: 60px;
+      height: 60px;
+      margin: 4px;
+      font-size: 1.2em;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #0277bd;
+      color: #fff;
+    }
+    /* Performance Descriptor screen */
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Understanding Speed</h1>
+  <!-- Persistent Navigation -->
+  <div style="text-align:right;">
+    <!-- Practical Data is Screen 12, Performance Descriptor is Screen 13 -->
+    <button class="nav-btn" onclick="showScreen(12)">Practical Data</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
+  </div>
+  
+  <!-- Screen 1: Introducing Speed -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introducing Speed</h2>
+    <p><strong>Concept:</strong> Speed tells you how far you move in a given amount of time. For example, if you run 100 meters in 20 seconds, you cover 5 meters every second (5 m/s). Similarly, if you drive at 60 miles per hour, you travel 60 miles in one hour.</p>
+    <p>This means that if you cover only a little distance every second, your speed is slow, and if you cover a lot in a short time, your speed is high.</p>
+    <button onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: Check Understanding of Speed Concept -->
+  <div id="screen2" class="screen">
+    <h2>2. Check Understanding of Speed Concept</h2>
+    <div class="question">
+      <p>What does speed measure?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="How fast something moves">How fast something moves</option>
+        <option value="Total distance traveled">Total distance traveled</option>
+        <option value="Time taken">Time taken</option>
+        <option value="Acceleration">Acceleration</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p>Which statement best describes speed?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="It is the distance covered per unit time (e.g., metres per second or miles per hour).">It is the distance covered per unit time (e.g., metres per second or miles per hour).</option>
+        <option value="It is the total distance you travel.">It is the total distance you travel.</option>
+        <option value="It is the time you take to complete a journey.">It is the time you take to complete a journey.</option>
+        <option value="It is the energy used while moving.">It is the energy used while moving.</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: Calculating Speed – Worked Examples -->
+  <div id="screen3" class="screen">
+    <h2>3. Calculating Speed – Worked Examples</h2>
+    <p>To calculate speed, use the formula:</p>
+    <p><em>Speed = Distance ÷ Time</em></p>
+    <p><strong>Example 1:</strong> Running 100 meters in 20 seconds gives: 100 ÷ 20 = 5 m/s.</p>
+    <p><strong>Example 2:</strong> Cycling 150 meters in 30 seconds gives: 150 ÷ 30 = 5 m/s.</p>
+    <button onclick="showScreen(4)">Next</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+  </div>
+  
+  <!-- Screen 4: Calculating Speed – Practice Questions -->
+  <div id="screen4" class="screen">
+    <h2>4. Calculating Speed – Practice Questions</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help4')">Toggle Equation Help</button>
+    <div id="help4" class="equation-help hidden">
+      <p><strong>Reminder:</strong> Speed = Distance ÷ Time<br>
+      Divide the distance (in metres) by the time (in seconds) to get speed in m/s.</p>
+    </div>
+    <div id="s4q1" class="practice-question">
+      <p><strong>Question 1:</strong> If you run 50 meters in 10 seconds, what is your speed (m/s)?</p>
+      <input type="number" id="s4q1-answer" placeholder="Enter speed">
+      <button onclick="checkS4Q1()">Check Answer</button>
+      <span id="s4q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If you travel 120 meters in 30 seconds, what is your speed (m/s)?</p>
+      <input type="number" id="s4q2-answer" placeholder="Enter speed">
+      <button onclick="checkS4Q2()">Check Answer</button>
+      <span id="s4q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> If you cycle 150 meters in 25 seconds, what is your speed (m/s)?</p>
+      <input type="number" id="s4q3-answer" placeholder="Enter speed">
+      <button onclick="checkS4Q3()">Check Answer</button>
+      <span id="s4q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> If you swim 60 meters in 20 seconds, what is your speed (m/s)?</p>
+      <input type="number" id="s4q4-answer" placeholder="Enter speed">
+      <button onclick="checkS4Q4()">Check Answer</button>
+      <span id="s4q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> If you cover 200 meters in 40 seconds, what is your speed (m/s)?</p>
+      <input type="number" id="s4q5-answer" placeholder="Enter speed">
+      <button onclick="checkS4Q5()">Check Answer</button>
+      <span id="s4q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next4" disabled onclick="markSpeedCalcCompleted(); showScreen(5)">Next</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+  </div>
+  
+  <!-- Screen 5: Average Speed – Introduction and Examples -->
+  <div id="screen5" class="screen">
+    <h2>5. Average Speed – Introduction and Examples</h2>
+    <p>Average speed is calculated as the total distance divided by the total time:</p>
+    <p><em>Average Speed = Total Distance ÷ Total Time</em></p>
+    <p><strong>Example:</strong> If a runner covers 30 m in 6 s and 50 m in 8 s:</p>
+    <ul>
+      <li>Total distance = 30 + 50 = 80 m</li>
+      <li>Total time = 6 + 8 = 14 s</li>
+      <li>Average speed = 80 ÷ 14 ≈ 5.71 m/s</li>
+    </ul>
+    <button onclick="showScreen(6)">Next</button>
+    <br><br>
+    <button onclick="showScreen(4)">Back</button>
+  </div>
+  
+  <!-- Screen 6: Calculating Average Speed – Practice Questions -->
+  <div id="screen6" class="screen">
+    <h2>6. Calculating Average Speed – Practice Questions</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help6')">Toggle Equation Help</button>
+    <div id="help6" class="equation-help hidden">
+      <p><strong>Reminder:</strong> Average Speed = Total Distance ÷ Total Time<br>
+      Sum all distances and divide by the total time taken.</p>
+    </div>
+    <div id="s6q1" class="practice-question">
+      <p><strong>Question 1:</strong> A runner covers 30 m in 6 s and 50 m in 8 s. What is the average speed (m/s)?</p>
+      <input type="number" id="s6q1-answer" placeholder="Enter average speed">
+      <button onclick="checkS6Q1()">Check Answer</button>
+      <span id="s6q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A cyclist rides 60 m in 10 s and 80 m in 20 s. What is the average speed (m/s)?</p>
+      <input type="number" id="s6q2-answer" placeholder="Enter average speed">
+      <button onclick="checkS6Q2()">Check Answer</button>
+      <span id="s6q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A car travels 100 m in 15 s and then 150 m in 30 s. What is the average speed (m/s)?</p>
+      <input type="number" id="s6q3-answer" placeholder="Enter average speed">
+      <button onclick="checkS6Q3()">Check Answer</button>
+      <span id="s6q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> A walker covers 40 m in 8 s and 60 m in 9 s. What is the average speed (m/s)?</p>
+      <input type="number" id="s6q4-answer" placeholder="Enter average speed">
+      <button onclick="checkS6Q4()">Check Answer</button>
+      <span id="s6q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> A runner covers 80 m in 12 s and 120 m in 20 s. What is the average speed (m/s)?</p>
+      <input type="number" id="s6q5-answer" placeholder="Enter average speed">
+      <button onclick="checkS6Q5()">Check Answer</button>
+      <span id="s6q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next6" disabled onclick="markAvgSpeedCompleted(); showScreen(7)">Next</button>
+    <br><br>
+    <button onclick="showScreen(5)">Back</button>
+  </div>
+  
+  <!-- Screen 7: Distance and Time – Worked Examples -->
+  <div id="screen7" class="screen">
+    <h2>7. Distance and Time – Worked Examples</h2>
+    <p><strong>Key Equations:</strong></p>
+    <ul>
+      <li>Distance = Speed × Time</li>
+      <li>Time = Distance ÷ Speed</li>
+    </ul>
+    <p><strong>Example 1 (Distance):</strong> If speed is 5 m/s and time is 12 s, then distance = 5 × 12 = 60 m.</p>
+    <p><strong>Example 2 (Time):</strong> If distance is 100 m and speed is 4 m/s, then time = 100 ÷ 4 = 25 s.</p>
+    <button onclick="showScreen(8)">Next</button>
+    <br><br>
+    <button onclick="showScreen(6)">Back</button>
+  </div>
+  
+  <!-- Screen 8: Distance and Time – Practice -->
+  <div id="screen8" class="screen">
+    <h2>8. Distance and Time – Practice</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help8')">Toggle Equation Help</button>
+    <div id="help8" class="equation-help hidden">
+      <p><strong>For Distance:</strong> Distance = Speed × Time<br>
+      <strong>For Time:</strong> Time = Distance ÷ Speed</p>
+    </div>
+    <h3>Distance Questions</h3>
+    <div id="s8dq1" class="practice-question">
+      <p><strong>Distance Q1:</strong> Calculate the distance if speed is 3 m/s and time is 10 s.</p>
+      <input type="number" id="s8dq1-answer" placeholder="Enter distance">
+      <button onclick="checkS8DQ1()">Check Answer</button>
+      <span id="s8dq1-feedback" class="feedback"></span>
+    </div>
+    <div id="s8dq2" class="practice-question hidden">
+      <p><strong>Distance Q2:</strong> Calculate the distance if speed is 6 m/s and time is 8 s.</p>
+      <input type="number" id="s8dq2-answer" placeholder="Enter distance">
+      <button onclick="checkS8DQ2()">Check Answer</button>
+      <span id="s8dq2-feedback" class="feedback"></span>
+    </div>
+    <div id="s8dq3" class="practice-question hidden">
+      <p><strong>Distance Q3:</strong> Calculate the distance if speed is 7 m/s and time is 9 s.</p>
+      <input type="number" id="s8dq3-answer" placeholder="Enter distance">
+      <button onclick="checkS8DQ3()">Check Answer</button>
+      <span id="s8dq3-feedback" class="feedback"></span>
+    </div>
+    
+    <h3>Time Questions</h3>
+    <div id="s8tq1" class="practice-question hidden">
+      <p><strong>Time Q1:</strong> Calculate the time if distance is 90 m and speed is 5 m/s.</p>
+      <input type="number" id="s8tq1-answer" placeholder="Enter time">
+      <button onclick="checkS8TQ1()">Check Answer</button>
+      <span id="s8tq1-feedback" class="feedback"></span>
+    </div>
+    <div id="s8tq2" class="practice-question hidden">
+      <p><strong>Time Q2:</strong> Calculate the time if distance is 120 m and speed is 6 m/s.</p>
+      <input type="number" id="s8tq2-answer" placeholder="Enter time">
+      <button onclick="checkS8TQ2()">Check Answer</button>
+      <span id="s8tq2-feedback" class="feedback"></span>
+    </div>
+    <div id="s8tq3" class="practice-question hidden">
+      <p><strong>Time Q3:</strong> Calculate the time if distance is 100 m and speed is 4 m/s.</p>
+      <input type="number" id="s8tq3-answer" placeholder="Enter time">
+      <button onclick="checkS8TQ3()">Check Answer</button>
+      <span id="s8tq3-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next8" disabled onclick="markDistanceTimeCompleted(); showScreen(9)">Next</button>
+    <br><br>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+  
+  <!-- Screen 9: Relative Motion – Introduction -->
+  <div id="screen9" class="screen">
+    <h2>9. Relative Motion – Introduction</h2>
+    <p>Relative motion shows how one object’s movement is measured in relation to another. Consider these scenarios:</p>
+    <ul>
+      <li><strong>Moving Towards Each Other:</strong> Two trains at 50 km/h each move toward each other. Their relative speed is 50 + 50 = 100 km/h.</li>
+      <li><strong>Catching Up:</strong> A car at 60 km/h chasing a car at 50 km/h has a relative speed of 60 − 50 = 10 km/h.</li>
+      <li><strong>Moving Away:</strong> When objects move in opposite directions, add their speeds.</li>
+    </ul>
+    <p>These examples help you see how the speed of one object appears compared to another.</p>
+    <button onclick="showScreen(10)">Next</button>
+    <br><br>
+    <button onclick="showScreen(8)">Back</button>
+  </div>
+  
+  <!-- Screen 10: Relative Motion – Practice Questions -->
+  <div id="screen10" class="screen">
+    <h2>10. Relative Motion – Practice Questions</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help10')">Toggle Equation Help</button>
+    <div id="help10" class="equation-help hidden">
+      <p><strong>Reminder:</strong><br>
+      - For objects moving towards/away from each other: Relative Speed = Speed₁ + Speed₂<br>
+      - For objects moving in the same direction: Relative Speed = Difference between speeds</p>
+    </div>
+    <div id="s10q1" class="practice-question">
+      <p><strong>Question 1:</strong> Two trains move towards each other at 50 km/h each. What is their relative speed (km/h)?</p>
+      <input type="number" id="s10q1-answer" placeholder="Enter relative speed">
+      <button onclick="checkS10Q1()">Check Answer</button>
+      <span id="s10q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s10q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A car travels at 60 km/h and a truck at 40 km/h in opposite directions. What is their relative speed (km/h)?</p>
+      <input type="number" id="s10q2-answer" placeholder="Enter relative speed">
+      <button onclick="checkS10Q2()">Check Answer</button>
+      <span id="s10q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s10q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> Two cyclists move in the same direction: one at 20 km/h and the other at 15 km/h. What is their relative speed (km/h)?</p>
+      <input type="number" id="s10q3-answer" placeholder="Enter relative speed">
+      <button onclick="checkS10Q3()">Check Answer</button>
+      <span id="s10q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s10q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> Two boats move in opposite directions: one at 30 km/h and the other at 20 km/h. What is their relative speed (km/h)?</p>
+      <input type="number" id="s10q4-answer" placeholder="Enter relative speed">
+      <button onclick="checkS10Q4()">Check Answer</button>
+      <span id="s10q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s10q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> Two runners in the same direction: one at 12 km/h and the other at 10 km/h. What is their relative speed (km/h)?</p>
+      <input type="number" id="s10q5-answer" placeholder="Enter relative speed">
+      <button onclick="checkS10Q5()">Check Answer</button>
+      <span id="s10q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="finishButton" disabled onclick="markRelativeMotionCompleted(); showScreen(11)">Next</button>
+    <br><br>
+    <button onclick="showScreen(9)">Back</button>
+  </div>
+  
+  <!-- Screen 11: Application – Speed Camera Explanation -->
+  <div id="screen11" class="screen">
+    <h2>11. Application: Speed Camera Explanation</h2>
+    <p><strong>Question:</strong> Use the speed formula to explain how a speed camera calculates a car's speed. <em>Hint: it takes 2 photos.</em></p>
+    <textarea id="speedCameraAnswer" rows="4" style="width:100%;" placeholder="Type your explanation here..."></textarea>
+    <br>
+    <button onclick="checkSpeedCameraAnswer()">Check Answer</button>
+    <span id="speedCameraFeedback" class="feedback"></span>
+    <br><br>
+    <button onclick="showScreen(10)">Back</button>
+    <button id="next11" disabled onclick="showScreen(12)">Next</button>
+  </div>
+  
+  <!-- Screen 12: Practical Data and Conclusion -->
+  <div id="screen12" class="screen">
+    <h2>12. Practical Data and Conclusion</h2>
+    <p>Enter your practical data for different methods of movement:</p>
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>Distance (m)</th>
+        <th>Time (s)</th>
+        <th>Speed (m/s)</th>
+        <th>Check</th>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd1-method" placeholder="e.g., Walking"></td>
+        <td><input type="number" id="pd1-distance" placeholder="Distance"></td>
+        <td><input type="number" id="pd1-time" placeholder="Time"></td>
+        <td><input type="number" id="pd1-speed" placeholder="Speed"></td>
+        <td><button onclick="checkPD(1)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd2-method" placeholder="e.g., Running"></td>
+        <td><input type="number" id="pd2-distance" placeholder="Distance"></td>
+        <td><input type="number" id="pd2-time" placeholder="Time"></td>
+        <td><input type="number" id="pd2-speed" placeholder="Speed"></td>
+        <td><button onclick="checkPD(2)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd3-method" placeholder="e.g., Cycling"></td>
+        <td><input type="number" id="pd3-distance" placeholder="Distance"></td>
+        <td><input type="number" id="pd3-time" placeholder="Time"></td>
+        <td><input type="number" id="pd3-speed" placeholder="Speed"></td>
+        <td><button onclick="checkPD(3)">Check</button></td>
+      </tr>
+    </table>
+    <h3>Conclusion</h3>
+    <p>Based on your practical data, explain which method of movement was the fastest and why.</p>
+    <textarea id="conclusion" rows="4" style="width:100%;" placeholder="Type your conclusion here..."></textarea>
+    <br>
+    <button onclick="showSentenceStarter()">Show Sentence Starter</button>
+    <br><br>
+    <button onclick="showScreen(11)">Back</button>
+  </div>
+  
+  <!-- Screen 13: Performance Descriptor -->
+  <div id="screen13" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
+  </div>
+</div>
+
+<!-- Calculator -->
+<div id="calculator">
+  <div id="calculator-header">Calculator</div>
+  <input type="text" id="calc-display" readonly>
+  <div id="calc-buttons">
+    <button onclick="calcAppend('7')">7</button>
+    <button onclick="calcAppend('8')">8</button>
+    <button onclick="calcAppend('9')">9</button>
+    <button onclick="calcAppend('/')">/</button>
+    <br>
+    <button onclick="calcAppend('4')">4</button>
+    <button onclick="calcAppend('5')">5</button>
+    <button onclick="calcAppend('6')">6</button>
+    <button onclick="calcAppend('*')">*</button>
+    <br>
+    <button onclick="calcAppend('1')">1</button>
+    <button onclick="calcAppend('2')">2</button>
+    <button onclick="calcAppend('3')">3</button>
+    <button onclick="calcAppend('-')">-</button>
+    <br>
+    <button onclick="calcAppend('0')">0</button>
+    <button onclick="calcAppend('.')">.</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcAppend('+')">+</button>
+    <br>
+    <button onclick="calcEquals()" style="width:248px;">=</button>
+  </div>
+</div>
+
+<script>
+  // Global variables for performance tracking
+  var conceptCompleted = false;
+  var speedCalculationsCompleted = false;
+  var avgSpeedCompleted = false;
+  var distanceTimeCompleted = false;
+  var relativeMotionCompleted = false;
+  
+  var currentScreen = 1;
+  var prevScreen = 1;
+  
+  // Toggle help by toggling the "hidden" class
+  function toggleHelp(divId) {
+    var div = document.getElementById(divId);
+    div.classList.toggle("hidden");
+  }
+  
+  // Navigation: show a specific screen and update currentScreen
+  function showScreen(n) {
+    if(n !== 13) { // Do not update prevScreen when going to Performance Descriptor
+      prevScreen = n;
+    }
+    currentScreen = n;
+    for (let i = 1; i <= 13; i++) {
+      let scr = document.getElementById("screen" + i);
+      if(scr) { scr.classList.remove("active"); }
+    }
+    document.getElementById("screen" + n).classList.add("active");
+  }
+  
+  /* --- Screen 2 Checks --- */
+  function checkScreen2() {
+    let correct = true;
+    let q2a = document.getElementById("q2a").value;
+    if(q2a === "How fast something moves") {
+      document.getElementById("feedback2a").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2a").innerText = "Try again.";
+      alert("Remember: Speed tells you how far you move per unit time.");
+      correct = false;
+    }
+    let q2b = document.getElementById("q2b").value;
+    if(q2b === "It is the distance covered per unit time (e.g., metres per second or miles per hour).") {
+      document.getElementById("feedback2b").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2b").innerText = "Try again.";
+      alert("Remember: Speed is the distance you cover in a certain amount of time.");
+      correct = false;
+    }
+    if(correct) {
+      document.getElementById("next2").disabled = false;
+      conceptCompleted = true;
+    }
+  }
+  
+  /* --- Screen 4: Calculating Speed Practice --- */
+  function checkS4Q1() {
+    let ans = parseFloat(document.getElementById("s4q1-answer").value);
+    if(ans === 5) {
+      document.getElementById("s4q1-feedback").innerText = "Correct!";
+      document.getElementById("s4q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q1-feedback").innerText = "Try again.";
+      alert("Reminder: Speed = Distance ÷ Time");
+    }
+  }
+  function checkS4Q2() {
+    let ans = parseFloat(document.getElementById("s4q2-answer").value);
+    if(ans === 4) {
+      document.getElementById("s4q2-feedback").innerText = "Correct!";
+      document.getElementById("s4q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q2-feedback").innerText = "Try again.";
+      alert("Reminder: Speed = Distance ÷ Time");
+    }
+  }
+  function checkS4Q3() {
+    let ans = parseFloat(document.getElementById("s4q3-answer").value);
+    if(ans === 6) {
+      document.getElementById("s4q3-feedback").innerText = "Correct!";
+      document.getElementById("s4q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q3-feedback").innerText = "Try again.";
+      alert("Reminder: Speed = Distance ÷ Time");
+    }
+  }
+  function checkS4Q4() {
+    let ans = parseFloat(document.getElementById("s4q4-answer").value);
+    if(ans === 3) {
+      document.getElementById("s4q4-feedback").innerText = "Correct!";
+      document.getElementById("s4q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q4-feedback").innerText = "Try again.";
+      alert("Reminder: Speed = Distance ÷ Time");
+    }
+  }
+  function checkS4Q5() {
+    let ans = parseFloat(document.getElementById("s4q5-answer").value);
+    if(ans === 5) {
+      document.getElementById("s4q5-feedback").innerText = "Correct!";
+      document.getElementById("next4").disabled = false;
+      speedCalculationsCompleted = true;
+    } else {
+      document.getElementById("s4q5-feedback").innerText = "Try again.";
+      alert("Reminder: Speed = Distance ÷ Time");
+    }
+  }
+  
+  /* --- Screen 6: Average Speed Practice --- */
+  function checkS6Q1() {
+    let ans = parseFloat(document.getElementById("s6q1-answer").value);
+    if(Math.abs(ans - 5.71) < 0.1) {
+      document.getElementById("s6q1-feedback").innerText = "Correct!";
+      document.getElementById("s6q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q1-feedback").innerText = "Try again.";
+      alert("Reminder: Average Speed = Total Distance ÷ Total Time");
+    }
+  }
+  function checkS6Q2() {
+    let ans = parseFloat(document.getElementById("s6q2-answer").value);
+    if(Math.abs(ans - 4.67) < 0.1) {
+      document.getElementById("s6q2-feedback").innerText = "Correct!";
+      document.getElementById("s6q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q2-feedback").innerText = "Try again.";
+      alert("Reminder: Average Speed = Total Distance ÷ Total Time");
+    }
+  }
+  function checkS6Q3() {
+    let ans = parseFloat(document.getElementById("s6q3-answer").value);
+    if(Math.abs(ans - 5.56) < 0.1) {
+      document.getElementById("s6q3-feedback").innerText = "Correct!";
+      document.getElementById("s6q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q3-feedback").innerText = "Try again.";
+      alert("Reminder: Average Speed = Total Distance ÷ Total Time");
+    }
+  }
+  function checkS6Q4() {
+    let ans = parseFloat(document.getElementById("s6q4-answer").value);
+    if(Math.abs(ans - 5.88) < 0.1) {
+      document.getElementById("s6q4-feedback").innerText = "Correct!";
+      document.getElementById("s6q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q4-feedback").innerText = "Try again.";
+      alert("Reminder: Average Speed = Total Distance ÷ Total Time");
+    }
+  }
+  function checkS6Q5() {
+    let ans = parseFloat(document.getElementById("s6q5-answer").value);
+    if(Math.abs(ans - 6.25) < 0.1) {
+      document.getElementById("s6q5-feedback").innerText = "Correct!";
+      document.getElementById("next6").disabled = false;
+      avgSpeedCompleted = true;
+    } else {
+      document.getElementById("s6q5-feedback").innerText = "Try again.";
+      alert("Reminder: Average Speed = Total Distance ÷ Total Time");
+    }
+  }
+  
+  /* --- Screen 8: Distance and Time Practice --- */
+  function checkS8DQ1() {
+    let ans = parseFloat(document.getElementById("s8dq1-answer").value);
+    if(ans === 30) {
+      document.getElementById("s8dq1-feedback").innerText = "Correct!";
+      document.getElementById("s8dq2").classList.remove("hidden");
+    } else {
+      document.getElementById("s8dq1-feedback").innerText = "Try again.";
+      alert("Reminder: Distance = Speed × Time");
+    }
+  }
+  function checkS8DQ2() {
+    let ans = parseFloat(document.getElementById("s8dq2-answer").value);
+    if(ans === 48) {
+      document.getElementById("s8dq2-feedback").innerText = "Correct!";
+      document.getElementById("s8dq3").classList.remove("hidden");
+    } else {
+      document.getElementById("s8dq2-feedback").innerText = "Try again.";
+      alert("Reminder: Distance = Speed × Time");
+    }
+  }
+  function checkS8DQ3() {
+    let ans = parseFloat(document.getElementById("s8dq3-answer").value);
+    if(ans === 63) {
+      document.getElementById("s8dq3-feedback").innerText = "Correct!";
+      document.getElementById("s8tq1").classList.remove("hidden");
+    } else {
+      document.getElementById("s8dq3-feedback").innerText = "Try again.";
+      alert("Reminder: Distance = Speed × Time");
+    }
+  }
+  function checkS8TQ1() {
+    let ans = parseFloat(document.getElementById("s8tq1-answer").value);
+    if(ans === 18) {
+      document.getElementById("s8tq1-feedback").innerText = "Correct!";
+      document.getElementById("s8tq2").classList.remove("hidden");
+    } else {
+      document.getElementById("s8tq1-feedback").innerText = "Try again.";
+      alert("Reminder: Time = Distance ÷ Speed");
+    }
+  }
+  function checkS8TQ2() {
+    let ans = parseFloat(document.getElementById("s8tq2-answer").value);
+    if(ans === 20) {
+      document.getElementById("s8tq2-feedback").innerText = "Correct!";
+      document.getElementById("s8tq3").classList.remove("hidden");
+    } else {
+      document.getElementById("s8tq2-feedback").innerText = "Try again.";
+      alert("Reminder: Time = Distance ÷ Speed");
+    }
+  }
+  function checkS8TQ3() {
+    let ans = parseFloat(document.getElementById("s8tq3-answer").value);
+    if(ans === 25) {
+      document.getElementById("s8tq3-feedback").innerText = "Correct!";
+      document.getElementById("next8").disabled = false;
+      distanceTimeCompleted = true;
+    } else {
+      document.getElementById("s8tq3-feedback").innerText = "Try again.";
+      alert("Reminder: Time = Distance ÷ Speed");
+    }
+  }
+  
+  /* --- Screen 10: Relative Motion Practice --- */
+  function checkS10Q1() {
+    let ans = parseFloat(document.getElementById("s10q1-answer").value);
+    if(ans === 100) {
+      document.getElementById("s10q1-feedback").innerText = "Correct!";
+      document.getElementById("s10q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q1-feedback").innerText = "Try again.";
+      alert("Reminder: Relative Speed (towards each other) = Speed₁ + Speed₂");
+    }
+  }
+  function checkS10Q2() {
+    let ans = parseFloat(document.getElementById("s10q2-answer").value);
+    if(ans === 100) {
+      document.getElementById("s10q2-feedback").innerText = "Correct!";
+      document.getElementById("s10q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q2-feedback").innerText = "Try again.";
+      alert("Reminder: Relative Speed (opposite directions) = Speed₁ + Speed₂");
+    }
+  }
+  function checkS10Q3() {
+    let ans = parseFloat(document.getElementById("s10q3-answer").value);
+    if(ans === 5) {
+      document.getElementById("s10q3-feedback").innerText = "Correct!";
+      document.getElementById("s10q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q3-feedback").innerText = "Try again.";
+      alert("Reminder: Relative Speed (same direction) = Difference between speeds");
+    }
+  }
+  function checkS10Q4() {
+    let ans = parseFloat(document.getElementById("s10q4-answer").value);
+    if(ans === 50) {
+      document.getElementById("s10q4-feedback").innerText = "Correct!";
+      document.getElementById("s10q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q4-feedback").innerText = "Try again.";
+      alert("Reminder: Relative Speed (opposite directions) = Speed₁ + Speed₂");
+    }
+  }
+  function checkS10Q5() {
+    let ans = parseFloat(document.getElementById("s10q5-answer").value);
+    if(ans === 2) {
+      document.getElementById("s10q5-feedback").innerText = "Correct!";
+      document.getElementById("finishButton").disabled = false;
+      relativeMotionCompleted = true;
+    } else {
+      document.getElementById("s10q5-feedback").innerText = "Try again.";
+      alert("Reminder: Relative Speed (same direction) = Difference between speeds");
+    }
+  }
+  
+  /* --- Screen 11: Application – Speed Camera Explanation --- */
+  function checkSpeedCameraAnswer() {
+    var answer = document.getElementById("speedCameraAnswer").value.toLowerCase();
+    var keyPoints = ["photo", "distance", "time", "divide"];
+    var missingPoints = [];
+    keyPoints.forEach(function(point) {
+      if(answer.indexOf(point) === -1) {
+        missingPoints.push(point);
+      }
+    });
+    var feedback = "";
+    if(missingPoints.length === 0) {
+      feedback = "Correct! Your answer includes all the key points.";
+      document.getElementById("next11").disabled = false;
+    } else {
+      feedback = "Your answer is missing: " + missingPoints.join(", ") + ". Remember, the camera takes two photos, measures the distance between them, notes the time interval, and divides the distance by the time to calculate speed.";
+    }
+    document.getElementById("speedCameraFeedback").innerText = feedback;
+  }
+  
+  /* --- Practical Data Check --- */
+  function checkPD(row) {
+    let distance = parseFloat(document.getElementById("pd" + row + "-distance").value);
+    let time = parseFloat(document.getElementById("pd" + row + "-time").value);
+    let userSpeed = parseFloat(document.getElementById("pd" + row + "-speed").value);
+    if(time > 0) {
+      let computedSpeed = distance / time;
+      if(Math.abs(userSpeed - computedSpeed) < 0.1) {
+        alert("Row " + row + ": Correct! (" + computedSpeed.toFixed(2) + " m/s)");
+      } else {
+        alert("Row " + row + ": Incorrect. Remember: Speed = Distance ÷ Time. Try again.");
+      }
+    } else {
+      alert("Please enter a valid time greater than 0.");
+    }
+  }
+  
+  /* --- Sentence Starter for Conclusion --- */
+  function showSentenceStarter() {
+    document.getElementById("conclusion").value = "The fastest method of movement was ... I know this because ...";
+  }
+  
+  function finishModule() {
+    alert("Congratulations! You have completed the module.");
+  }
+  
+  /* --- Mark Completion Flags --- */
+  function markSpeedCalcCompleted() { speedCalculationsCompleted = true; }
+  function markAvgSpeedCompleted() { avgSpeedCompleted = true; }
+  function markDistanceTimeCompleted() { distanceTimeCompleted = true; }
+  function markRelativeMotionCompleted() { relativeMotionCompleted = true; }
+  
+  /* --- Performance Descriptor --- */
+  function showPerformanceDescriptor() {
+    var descriptor = "";
+    if (relativeMotionCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You have mastered advanced relative motion concepts!";
+    } else if (distanceTimeCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You accurately calculated distance and time.";
+    } else if (avgSpeedCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You calculated average speed correctly.";
+    } else if (speedCalculationsCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: Keep practicing your speed calculations!";
+    } else if (conceptCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Beginning</span>: You understand the basic concept of speed.";
+    } else {
+      descriptor = "No level achieved yet. Complete the lesson questions to see your performance.";
+    }
+    document.getElementById("descriptorMessage").innerHTML = descriptor;
+    showScreen(13);
+  }
+  
+  /* --- Calculator Functions --- */
+  function toggleCalculator() {
+    var calc = document.getElementById("calculator");
+    if (calc.style.display === "none" || calc.style.display === "") {
+      calc.style.display = "block";
+    } else {
+      calc.style.display = "none";
+    }
+  }
+  function calcAppend(val) {
+    document.getElementById("calc-display").value += val;
+  }
+  function calcClear() {
+    document.getElementById("calc-display").value = "";
+  }
+  function calcEquals() {
+    try {
+      var result = eval(document.getElementById("calc-display").value);
+      document.getElementById("calc-display").value = result;
+    } catch(e) {
+      document.getElementById("calc-display").value = "Error";
+    }
+  }
+  
+  // Draggable Calculator
+  dragElement(document.getElementById("calculator"));
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var header = document.getElementById(elmnt.id + "-header");
+    if (header) {
+      header.onmousedown = dragMouseDown;
+    } else {
+      elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+</body>
+</html>
