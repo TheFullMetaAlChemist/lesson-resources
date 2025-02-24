@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Balanced and Unbalanced Forces</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #01579b;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0277bd;
+      margin-top: 30px;
+      border-bottom: 2px solid #81d4fa;
+      padding-bottom: 5px;
+    }
+    h3 {
+      text-align: center;
+      color: #0288d1;
+      margin-top: 20px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #b3e5fc;
+      border-radius: 8px;
+      background-color: #e1f5fe;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #0277bd;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button:disabled {
+      background-color: #90caf9;
+      color: #e3f2fd;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="number"], input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid #81d4fa;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    .equation-help {
+      background-color: #e0f2f1;
+      border: 1px solid #80cbc4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      font-style: italic;
+    }
+    .toggle-btn {
+      background-color: #039be5;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    /* Calculator styling */
+    #calculator {
+      display: none;
+      position: absolute;
+      top: 120px;
+      left: 120px;
+      z-index: 1000;
+      border: 2px solid #01579b;
+      background-color: #e1f5fe;
+      padding: 10px;
+      width: 300px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    #calculator-header {
+      cursor: move;
+      background-color: #0277bd;
+      color: #fff;
+      padding: 8px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 4px;
+    }
+    #calc-display {
+      width: 100%;
+      height: 40px;
+      font-size: 1.4em;
+      margin: 10px 0;
+      text-align: right;
+      padding-right: 10px;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    #calc-buttons button {
+      width: 60px;
+      height: 60px;
+      margin: 4px;
+      font-size: 1.2em;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #0277bd;
+      color: #fff;
+    }
+    /* Performance Descriptor screen */
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Balanced and Unbalanced Forces</h1>
+  <!-- Persistent Navigation -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(11)">Practical Data</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
+  </div>
+  
+  <!-- Screen 1: Introducing Forces -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introducing Forces</h2>
+    <p><strong>Concept:</strong> A force is a push or a pull on an object, and it can come from direct contact (like pushing a door) or from a distance (like gravity pulling you down). Forces can make objects start moving, stop moving, speed up, slow down, or change direction.</p>
+    <p>In this lesson, we'll learn how forces can balance each other out or become unbalanced and cause changes in an object's motion.</p>
+    <button onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: Check Understanding of a Force -->
+  <div id="screen2" class="screen">
+    <h2>2. Check Understanding: What Is a Force?</h2>
+    <div class="question">
+      <p>Which of the following best describes a force?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="A push or pull on an object">A push or pull on an object</option>
+        <option value="An object's size">An object's size</option>
+        <option value="An object's speed">An object's speed</option>
+        <option value="A measure of time">A measure of time</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p>Which statement is <em>most</em> accurate?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="A force always makes things move.">A force always makes things move.</option>
+        <option value="A force can cause a change in motion or shape.">A force can cause a change in motion or shape.</option>
+        <option value="A force has no effect on objects.">A force has no effect on objects.</option>
+        <option value="Forces only act when objects touch.">Forces only act when objects touch.</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: What Is a Resultant Force? -->
+  <div id="screen3" class="screen">
+    <h2>3. What Is a Resultant Force?</h2>
+    <p>The <strong>resultant force</strong> (or net force) is the overall effect of all forces acting on an object. If you have multiple forces in different directions, you can add or subtract them to find one single, overall force.</p>
+    <p>For example, if two people push on opposite sides of a box with the same strength, the forces can cancel out. If one person pushes harder, the box moves in that direction. The resultant force tells us which way (and how strongly) an object will move or accelerate.</p>
+    <button onclick="showScreen(4)">Next</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+  </div>
+  
+  <!-- Screen 4: Practice – Identifying Resultant Forces -->
+  <div id="screen4" class="screen">
+    <h2>4. Practice: Identifying Resultant Forces</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help4')">Toggle Resultant Force Help</button>
+    <div id="help4" class="equation-help hidden">
+      <p><strong>Reminder:</strong> If two forces act in opposite directions, the resultant force is the difference between them. If they act in the same direction, the resultant is their sum.</p>
+    </div>
+    <!-- Question 1 -->
+    <div id="s4q1" class="practice-question">
+      <p><strong>Question 1:</strong> Two people pull on a rope in opposite directions. Person A pulls with 50 N, and Person B pulls with 30 N. What is the resultant force?</p>
+      <input type="number" id="s4q1-answer" placeholder="Enter resultant force (N)">
+      <button onclick="checkS4Q1()">Check Answer</button>
+      <span id="s4q1-feedback" class="feedback"></span>
+    </div>
+    <!-- Question 2 -->
+    <div id="s4q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A rocket engine pushes upwards with 5000 N, while gravity pulls it down with 4000 N. What is the resultant force acting on the rocket?</p>
+      <input type="number" id="s4q2-answer" placeholder="Enter resultant force (N)">
+      <button onclick="checkS4Q2()">Check Answer</button>
+      <span id="s4q2-feedback" class="feedback"></span>
+    </div>
+    <!-- Question 3 -->
+    <div id="s4q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A car is pushed forward by an engine force of 2000 N while air resistance and friction total 800 N in the opposite direction. What is the resultant force?</p>
+      <input type="number" id="s4q3-answer" placeholder="Enter resultant force (N)">
+      <button onclick="checkS4Q3()">Check Answer</button>
+      <span id="s4q3-feedback" class="feedback"></span>
+    </div>
+    <!-- Question 4 -->
+    <div id="s4q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> Two people push a box in the same direction, each with 25 N. No other forces act horizontally. What is the resultant force on the box (in that horizontal direction)?</p>
+      <input type="number" id="s4q4-answer" placeholder="Enter resultant force (N)">
+      <button onclick="checkS4Q4()">Check Answer</button>
+      <span id="s4q4-feedback" class="feedback"></span>
+    </div>
+    <!-- Question 5 -->
+    <div id="s4q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> A block is pushed left by 10 N and pushed right by 6 N at the same time. What is the resultant force?</p>
+      <input type="number" id="s4q5-answer" placeholder="Enter resultant force (N)">
+      <button onclick="checkS4Q5()">Check Answer</button>
+      <span id="s4q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next4" disabled onclick="showScreen(5)">Next</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+  </div>
+  
+  <!-- Screen 5: Balanced Forces -->
+  <div id="screen5" class="screen">
+    <h2>5. Balanced Forces</h2>
+    <p><strong>Balanced forces</strong> occur when all the forces acting on an object cancel each other out, giving a resultant force of zero.</p>
+    <p>Examples:</p>
+    <ul>
+      <li>A book resting on a table: Gravity pulls down, the table pushes up equally.</li>
+      <li>A person standing still on the floor: Weight (down) is balanced by the floor’s push (up).</li>
+    </ul>
+    <p>When forces are balanced, the object will either stay still (if it was already still) or keep moving at a constant speed (if it was already moving). There is no change in motion.</p>
+    <button onclick="showScreen(6)">Next</button>
+    <br><br>
+    <button onclick="showScreen(4)">Back</button>
+  </div>
+  
+  <!-- Screen 6: Practice – Balanced Forces -->
+  <div id="screen6" class="screen">
+    <h2>6. Practice: Balanced Forces</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help6')">Why No Motion Change?</button>
+    <div id="help6" class="equation-help hidden">
+      <p><strong>Key Idea:</strong> If the resultant force is zero, there's no acceleration. The object remains at rest or continues at constant velocity.</p>
+    </div>
+    <!-- Q1 -->
+    <div id="s6q1" class="practice-question">
+      <p><strong>Question 1:</strong> A book lying on a table is not moving. Which statement explains why?</p>
+      <select id="s6q1-answer">
+        <option value="">--Select--</option>
+        <option value="No forces act on the book at all.">No forces act on the book at all.</option>
+        <option value="The forces on the book are balanced.">The forces on the book are balanced.</option>
+        <option value="Gravity doesn't affect the book.">Gravity doesn't affect the book.</option>
+        <option value="The book is heavier than the table.">The book is heavier than the table.</option>
+      </select>
+      <button onclick="checkS6Q1()">Check Answer</button>
+      <span id="s6q1-feedback" class="feedback"></span>
+    </div>
+    <!-- Q2 -->
+    <div id="s6q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If an object moves at a constant speed in a straight line, what can we say about the forces on it?</p>
+      <select id="s6q2-answer">
+        <option value="">--Select--</option>
+        <option value="They must be unbalanced.">They must be unbalanced.</option>
+        <option value="They must be balanced.">They must be balanced.</option>
+        <option value="No forces act at all.">No forces act at all.</option>
+        <option value="Forces only act if the object is speeding up.">Forces only act if the object is speeding up.</option>
+      </select>
+      <button onclick="checkS6Q2()">Check Answer</button>
+      <span id="s6q2-feedback" class="feedback"></span>
+    </div>
+    <!-- Q3 -->
+    <div id="s6q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A ball is floating in water, neither sinking nor rising. What does this tell you about the forces on the ball?</p>
+      <select id="s6q3-answer">
+        <option value="">--Select--</option>
+        <option value="They must be balanced (upthrust = weight).">They must be balanced (upthrust = weight).</option>
+        <option value="They must be unbalanced.">They must be unbalanced.</option>
+        <option value="No forces act on the ball.">No forces act on the ball.</option>
+        <option value="Only weight acts on the ball.">Only weight acts on the ball.</option>
+      </select>
+      <button onclick="checkS6Q3()">Check Answer</button>
+      <span id="s6q3-feedback" class="feedback"></span>
+    </div>
+    <!-- Q4 -->
+    <div id="s6q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> A car travels along a straight road at a steady 60 km/h. Which statement is correct?</p>
+      <select id="s6q4-answer">
+        <option value="">--Select--</option>
+        <option value="Forces are balanced because speed is constant.">Forces are balanced because speed is constant.</option>
+        <option value="Forces are unbalanced because it's moving.">Forces are unbalanced because it's moving.</option>
+        <option value="No forces act on the car.">No forces act on the car.</option>
+        <option value="Forces can't be measured while the car is moving.">Forces can't be measured while the car is moving.</option>
+      </select>
+      <button onclick="checkS6Q4()">Check Answer</button>
+      <span id="s6q4-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next6" disabled onclick="showScreen(7)">Next</button>
+    <br><br>
+    <button onclick="showScreen(5)">Back</button>
+  </div>
+  
+  <!-- Screen 7: Unbalanced Forces -->
+  <div id="screen7" class="screen">
+    <h2>7. Unbalanced Forces</h2>
+    <p><strong>Unbalanced forces</strong> occur when the resultant force is not zero. In other words, one or more forces acting on the object are stronger in one direction than in another.</p>
+    <p>This causes a change in the object's motion: it may start moving, stop moving, speed up, slow down, or change direction.</p>
+    <button onclick="showScreen(8)">Next</button>
+    <br><br>
+    <button onclick="showScreen(6)">Back</button>
+  </div>
+  
+  <!-- Screen 8: Practice – Unbalanced Forces -->
+  <div id="screen8" class="screen">
+    <h2>8. Practice: Unbalanced Forces</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help8')">Toggle Unbalanced Forces Help</button>
+    <div id="help8" class="equation-help hidden">
+      <p><strong>Key Idea:</strong> If the forces do not cancel out, the object accelerates or decelerates depending on the direction of the net force.</p>
+    </div>
+    <!-- Q1 -->
+    <div id="s8q1" class="practice-question">
+      <p><strong>Question 1:</strong> If the forward force on a car is greater than friction, what happens to the car?</p>
+      <select id="s8q1-answer">
+        <option value="">--Select--</option>
+        <option value="It moves at a constant speed.">It moves at a constant speed.</option>
+        <option value="It slows down.">It slows down.</option>
+        <option value="It speeds up.">It speeds up.</option>
+        <option value="It remains stationary.">It remains stationary.</option>
+      </select>
+      <button onclick="checkS8Q1()">Check Answer</button>
+      <span id="s8q1-feedback" class="feedback"></span>
+    </div>
+    <!-- Q2 -->
+    <div id="s8q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If friction is suddenly greater than the forward push, what happens to the car’s motion?</p>
+      <select id="s8q2-answer">
+        <option value="">--Select--</option>
+        <option value="It keeps speeding up.">It keeps speeding up.</option>
+        <option value="It moves at constant speed.">It moves at constant speed.</option>
+        <option value="It slows down.">It slows down.</option>
+        <option value="It flies upwards.">It flies upwards.</option>
+      </select>
+      <button onclick="checkS8Q2()">Check Answer</button>
+      <span id="s8q2-feedback" class="feedback"></span>
+    </div>
+    <!-- Q3 -->
+    <div id="s8q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A cyclist is riding east. A strong wind blows from the north. What will happen to the cyclist’s direction of travel?</p>
+      <select id="s8q3-answer">
+        <option value="">--Select--</option>
+        <option value="They'll continue perfectly east.">They'll continue perfectly east.</option>
+        <option value="They'll slow down but still go east.">They'll slow down but still go east.</option>
+        <option value="They'll veer southeast.">They'll veer southeast.</option>
+        <option value="They'll move only north.">They'll move only north.</option>
+      </select>
+      <button onclick="checkS8Q3()">Check Answer</button>
+      <span id="s8q3-feedback" class="feedback"></span>
+    </div>
+    <!-- Q4 -->
+    <div id="s8q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> An object is already moving west. If an unbalanced force acts east, how does the object's motion change?</p>
+      <select id="s8q4-answer">
+        <option value="">--Select--</option>
+        <option value="It speeds up westward.">It speeds up westward.</option>
+        <option value="It slows down or may reverse direction.">It slows down or may reverse direction.</option>
+        <option value="It continues at constant speed westward.">It continues at constant speed westward.</option>
+        <option value="No change occurs because it's already moving.">No change occurs because it's already moving.</option>
+      </select>
+      <button onclick="checkS8Q4()">Check Answer</button>
+      <span id="s8q4-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next8" disabled onclick="showScreen(9)">Next</button>
+    <br><br>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+  
+  <!-- Screen 9: How Unbalanced Forces Change Speed or Direction -->
+  <div id="screen9" class="screen">
+    <h2>9. How Unbalanced Forces Change Speed or Direction</h2>
+    <p>When forces are unbalanced, the object accelerates (speeding up, slowing down, or turning). The direction of the resultant force determines which way the object accelerates.</p>
+    <ul>
+      <li><strong>Speeding Up:</strong> Net force in the same direction as motion.</li>
+      <li><strong>Slowing Down:</strong> Net force opposite to the direction of motion.</li>
+      <li><strong>Changing Direction:</strong> Net force acts at an angle to the direction of motion.</li>
+    </ul>
+    <p>In more advanced physics, this is explained by Newton’s Second Law: \( F = ma \), where force causes acceleration proportional to the mass of the object.</p>
+    <button onclick="showScreen(10)">Next</button>
+    <br><br>
+    <button onclick="showScreen(8)">Back</button>
+  </div>
+  
+  <!-- Screen 10: Practice – Effects of Unbalanced Forces -->
+  <div id="screen10" class="screen">
+    <h2>10. Practice: Effects of Unbalanced Forces</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help10')">Toggle Tips</button>
+    <div id="help10" class="equation-help hidden">
+      <p><strong>Tip:</strong> Think about which direction the net force acts compared to the object's motion.</p>
+    </div>
+    <!-- Q1 -->
+    <div id="s10q1" class="practice-question">
+      <p><strong>Question 1:</strong> A cyclist is moving north at a steady speed. A strong gust of wind blows from the west. What happens to the cyclist’s motion?</p>
+      <select id="s10q1-answer">
+        <option value="">--Select--</option>
+        <option value="They continue straight north, same speed.">They continue straight north, same speed.</option>
+        <option value="They slow down and eventually stop.">They slow down and eventually stop.</option>
+        <option value="They speed up, going even faster north.">They speed up, going even faster north.</option>
+        <option value="They veer off towards the east/northeast.">They veer off towards the east/northeast.</option>
+      </select>
+      <button onclick="checkS10Q1()">Check Answer</button>
+      <span id="s10q1-feedback" class="feedback"></span>
+    </div>
+    <!-- Q2 -->
+    <div id="s10q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A car travels east. Suddenly the driver brakes. Which statement describes the forces?</p>
+      <select id="s10q2-answer">
+        <option value="">--Select--</option>
+        <option value="Balanced forces now act, so it keeps speed.">Balanced forces now act, so it keeps speed.</option>
+        <option value="Unbalanced forces act backward, slowing it down.">Unbalanced forces act backward, slowing it down.</option>
+        <option value="Unbalanced forces act forward, speeding it up.">Unbalanced forces act forward, speeding it up.</option>
+        <option value="No net force acts, so it stops immediately.">No net force acts, so it stops immediately.</option>
+      </select>
+      <button onclick="checkS10Q2()">Check Answer</button>
+      <span id="s10q2-feedback" class="feedback"></span>
+    </div>
+    <!-- Q3 -->
+    <div id="s10q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A runner moving south suddenly experiences a net force pushing them west. How does their path change?</p>
+      <select id="s10q3-answer">
+        <option value="">--Select--</option>
+        <option value="They continue only south.">They continue only south.</option>
+        <option value="They turn or veer southwest.">They turn or veer southwest.</option>
+        <option value="They immediately stop.">They immediately stop.</option>
+        <option value="They move only west.">They move only west.</option>
+      </select>
+      <button onclick="checkS10Q3()">Check Answer</button>
+      <span id="s10q3-feedback" class="feedback"></span>
+    </div>
+    <!-- Q4 -->
+    <div id="s10q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> An object moves west. You apply a larger force to the east than any other forces. What will happen?</p>
+      <select id="s10q4-answer">
+        <option value="">--Select--</option>
+        <option value="It keeps moving west at the same speed.">It keeps moving west at the same speed.</option>
+        <option value="It accelerates eastward (slowing, then reversing).">It accelerates eastward (slowing, then reversing).</option>
+        <option value="It stops instantly.">It stops instantly.</option>
+        <option value="No change in its motion.">No change in its motion.</option>
+      </select>
+      <button onclick="checkS10Q4()">Check Answer</button>
+      <span id="s10q4-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="finishButton" disabled onclick="markSpeedDirectionChangeCompleted(); finishModule()">Finish Module</button>
+    <br><br>
+    <button onclick="showScreen(9)">Back</button>
+  </div>
+  
+  <!-- Screen 11: Practical Data and Conclusion -->
+  <div id="screen11" class="screen">
+    <h2>Practical Data: Observing Forces</h2>
+    <p>Record any practical data you have from demonstrations or experiments with forces (e.g., measuring pull forces with a Newton meter, or friction on different surfaces). Enter your data below:</p>
+    <table>
+      <tr>
+        <th>Scenario / Object</th>
+        <th>Force 1 (N)</th>
+        <th>Force 2 (N)</th>
+        <th>Resultant? (N)</th>
+        <th>Check</th>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd1-method" placeholder="e.g., Pull on a block"></td>
+        <td><input type="number" id="pd1-f1" placeholder="Force 1"></td>
+        <td><input type="number" id="pd1-f2" placeholder="Force 2"></td>
+        <td><input type="number" id="pd1-resultant" placeholder="Resultant"></td>
+        <td><button onclick="checkPD(1)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd2-method" placeholder="e.g., Two students pulling"></td>
+        <td><input type="number" id="pd2-f1" placeholder="Force 1"></td>
+        <td><input type="number" id="pd2-f2" placeholder="Force 2"></td>
+        <td><input type="number" id="pd2-resultant" placeholder="Resultant"></td>
+        <td><button onclick="checkPD(2)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="text" id="pd3-method" placeholder="e.g., Tug of war"></td>
+        <td><input type="number" id="pd3-f1" placeholder="Force 1"></td>
+        <td><input type="number" id="pd3-f2" placeholder="Force 2"></td>
+        <td><input type="number" id="pd3-resultant" placeholder="Resultant"></td>
+        <td><button onclick="checkPD(3)">Check</button></td>
+      </tr>
+    </table>
+    <h3>Conclusion</h3>
+    <p>Based on your practical observations, describe when forces were balanced and when they were unbalanced. How did you know?</p>
+    <textarea id="conclusion" rows="4" style="width:100%;" placeholder="Type your conclusion here..."></textarea>
+    <br>
+    <button onclick="showSentenceStarter()">Show Sentence Starter</button>
+    <br><br>
+    <button onclick="showScreen(10)">Back</button>
+  </div>
+  
+  <!-- Screen 12: Performance Descriptor -->
+  <div id="screen12" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
+  </div>
+</div>
+
+<!-- Calculator (Draggable) -->
+<div id="calculator">
+  <div id="calculator-header">Calculator</div>
+  <input type="text" id="calc-display" readonly>
+  <div id="calc-buttons">
+    <button onclick="calcAppend('7')">7</button>
+    <button onclick="calcAppend('8')">8</button>
+    <button onclick="calcAppend('9')">9</button>
+    <button onclick="calcAppend('/')">/</button>
+    <br>
+    <button onclick="calcAppend('4')">4</button>
+    <button onclick="calcAppend('5')">5</button>
+    <button onclick="calcAppend('6')">6</button>
+    <button onclick="calcAppend('*')">*</button>
+    <br>
+    <button onclick="calcAppend('1')">1</button>
+    <button onclick="calcAppend('2')">2</button>
+    <button onclick="calcAppend('3')">3</button>
+    <button onclick="calcAppend('-')">-</button>
+    <br>
+    <button onclick="calcAppend('0')">0</button>
+    <button onclick="calcAppend('.')">.</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcAppend('+')">+</button>
+    <br>
+    <button onclick="calcEquals()" style="width:248px;">=</button>
+  </div>
+</div>
+
+<script>
+  // Track completion of different lesson milestones
+  var forceDefinitionCompleted = false;
+  var resultantForceCompleted = false;
+  var balancedForcesCompleted = false;
+  var unbalancedForcesCompleted = false;
+  var speedDirectionChangeCompleted = false;
+  
+  var currentScreen = 1;
+  var prevScreen = 1;  // For returning from descriptor screen
+  
+  // Function to show a given screen
+  function showScreen(n) {
+    if(n !== 12) {
+      prevScreen = n;
+    }
+    currentScreen = n;
+    for (let i = 1; i <= 12; i++) {
+      document.getElementById("screen" + i).classList.remove("active");
+    }
+    document.getElementById("screen" + n).classList.add("active");
+  }
+
+  // Toggle Help function (fixes the help button issue)
+  function toggleHelp(helpId) {
+    const helpDiv = document.getElementById(helpId);
+    helpDiv.classList.toggle("hidden");
+  }
+  
+  /* --- Screen 2 Checks (What is a Force) --- */
+  function checkScreen2() {
+    let correct = true;
+    
+    let q2a = document.getElementById("q2a").value;
+    if(q2a === "A push or pull on an object") {
+      document.getElementById("feedback2a").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2a").innerText = "Try again.";
+      alert("Hint: A force is defined as a push or a pull.");
+      correct = false;
+    }
+    
+    let q2b = document.getElementById("q2b").value;
+    if(q2b === "A force can cause a change in motion or shape.") {
+      document.getElementById("feedback2b").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2b").innerText = "Try again.";
+      alert("Hint: Forces can change how something moves or even how it is shaped.");
+      correct = false;
+    }
+    
+    if(correct) {
+      document.getElementById("next2").disabled = false;
+      forceDefinitionCompleted = true;
+    }
+  }
+  
+  /* --- Screen 4: Practice – Identifying Resultant Forces --- */
+  function checkS4Q1() {
+    let ans = parseFloat(document.getElementById("s4q1-answer").value);
+    // Person A 50 N, Person B 30 N, opposite directions => 20 N
+    if(ans === 20) {
+      document.getElementById("s4q1-feedback").innerText = "Correct!";
+      document.getElementById("s4q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q1-feedback").innerText = "Try again.";
+      alert("Remember: Resultant force = difference when forces are opposite.");
+    }
+  }
+  function checkS4Q2() {
+    let ans = parseFloat(document.getElementById("s4q2-answer").value);
+    // Up 5000 N, down 4000 N => 1000 N upward
+    if(ans === 1000) {
+      document.getElementById("s4q2-feedback").innerText = "Correct!";
+      document.getElementById("s4q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q2-feedback").innerText = "Try again.";
+      alert("Upward force - downward force = resultant upward force.");
+    }
+  }
+  function checkS4Q3() {
+    let ans = parseFloat(document.getElementById("s4q3-answer").value);
+    // Forward 2000 N, backward 800 N => 1200 N forward
+    if(ans === 1200) {
+      document.getElementById("s4q3-feedback").innerText = "Correct!";
+      document.getElementById("s4q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q3-feedback").innerText = "Try again.";
+      alert("Forward force - friction = net forward force.");
+    }
+  }
+  function checkS4Q4() {
+    let ans = parseFloat(document.getElementById("s4q4-answer").value);
+    // 25 N + 25 N = 50 N if same direction
+    if(ans === 50) {
+      document.getElementById("s4q4-feedback").innerText = "Correct!";
+      document.getElementById("s4q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q4-feedback").innerText = "Try again.";
+      alert("For same direction, add the forces.");
+    }
+  }
+  function checkS4Q5() {
+    let ans = parseFloat(document.getElementById("s4q5-answer").value);
+    // Left 10 N, Right 6 N => 4 N to the left
+    if(ans === 4) {
+      document.getElementById("s4q5-feedback").innerText = "Correct!";
+      document.getElementById("next4").disabled = false;
+      resultantForceCompleted = true;
+    } else {
+      document.getElementById("s4q5-feedback").innerText = "Try again.";
+      alert("The net force is the difference, in the direction of the larger force.");
+    }
+  }
+  
+  /* --- Screen 6: Practice – Balanced Forces --- */
+  function checkS6Q1() {
+    let ans = document.getElementById("s6q1-answer").value;
+    if(ans === "The forces on the book are balanced.") {
+      document.getElementById("s6q1-feedback").innerText = "Correct!";
+      document.getElementById("s6q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q1-feedback").innerText = "Try again.";
+      alert("Hint: The weight is balanced by the table's support force.");
+    }
+  }
+  function checkS6Q2() {
+    let ans = document.getElementById("s6q2-answer").value;
+    if(ans === "They must be balanced.") {
+      document.getElementById("s6q2-feedback").innerText = "Correct!";
+      document.getElementById("s6q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q2-feedback").innerText = "Try again.";
+      alert("Hint: Constant speed in a straight line means no net force.");
+    }
+  }
+  function checkS6Q3() {
+    let ans = document.getElementById("s6q3-answer").value;
+    if(ans === "They must be balanced (upthrust = weight).") {
+      document.getElementById("s6q3-feedback").innerText = "Correct!";
+      document.getElementById("s6q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q3-feedback").innerText = "Try again.";
+      alert("The ball doesn't sink or rise, so upthrust must balance weight.");
+    }
+  }
+  function checkS6Q4() {
+    let ans = document.getElementById("s6q4-answer").value;
+    if(ans === "Forces are balanced because speed is constant.") {
+      document.getElementById("s6q4-feedback").innerText = "Correct!";
+      document.getElementById("next6").disabled = false;
+      balancedForcesCompleted = true;
+    } else {
+      document.getElementById("s6q4-feedback").innerText = "Try again.";
+      alert("Hint: No net force if speed is constant and direction is unchanged.");
+    }
+  }
+  
+  /* --- Screen 8: Practice – Unbalanced Forces --- */
+  function checkS8Q1() {
+    let ans = document.getElementById("s8q1-answer").value;
+    if(ans === "It speeds up.") {
+      document.getElementById("s8q1-feedback").innerText = "Correct!";
+      document.getElementById("s8q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s8q1-feedback").innerText = "Try again.";
+      alert("Forward force > friction => net forward force => acceleration.");
+    }
+  }
+  function checkS8Q2() {
+    let ans = document.getElementById("s8q2-answer").value;
+    if(ans === "It slows down.") {
+      document.getElementById("s8q2-feedback").innerText = "Correct!";
+      document.getElementById("s8q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s8q2-feedback").innerText = "Try again.";
+      alert("If friction is bigger, the net force is backward => deceleration.");
+    }
+  }
+  function checkS8Q3() {
+    let ans = document.getElementById("s8q3-answer").value;
+    if(ans === "They'll veer southeast.") {
+      document.getElementById("s8q3-feedback").innerText = "Correct!";
+      document.getElementById("s8q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s8q3-feedback").innerText = "Try again.";
+      alert("A wind from the north pushes them sideways, so they deviate from purely eastward.");
+    }
+  }
+  function checkS8Q4() {
+    let ans = document.getElementById("s8q4-answer").value;
+    if(ans === "It slows down or may reverse direction.") {
+      document.getElementById("s8q4-feedback").innerText = "Correct!";
+      document.getElementById("next8").disabled = false;
+      unbalancedForcesCompleted = true;
+    } else {
+      document.getElementById("s8q4-feedback").innerText = "Try again.";
+      alert("A force opposite the motion will decelerate the object; it can eventually reverse direction if the force persists.");
+    }
+  }
+  
+  /* --- Screen 10: Practice – Effects of Unbalanced Forces --- */
+  function checkS10Q1() {
+    let ans = document.getElementById("s10q1-answer").value;
+    if(ans === "They veer off towards the east/northeast.") {
+      document.getElementById("s10q1-feedback").innerText = "Correct!";
+      document.getElementById("s10q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q1-feedback").innerText = "Try again.";
+      alert("The force from the west pushes the cyclist sideways, changing direction.");
+    }
+  }
+  function checkS10Q2() {
+    let ans = document.getElementById("s10q2-answer").value;
+    if(ans === "Unbalanced forces act backward, slowing it down.") {
+      document.getElementById("s10q2-feedback").innerText = "Correct!";
+      document.getElementById("s10q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q2-feedback").innerText = "Try again.";
+      alert("Braking applies a net force opposite to the motion, causing deceleration.");
+    }
+  }
+  function checkS10Q3() {
+    let ans = document.getElementById("s10q3-answer").value;
+    if(ans === "They turn or veer southwest.") {
+      document.getElementById("s10q3-feedback").innerText = "Correct!";
+      document.getElementById("s10q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s10q3-feedback").innerText = "Try again.";
+      alert("The net force from the west changes the runner’s path toward the southwest.");
+    }
+  }
+  function checkS10Q4() {
+    let ans = document.getElementById("s10q4-answer").value;
+    if(ans === "It accelerates eastward (slowing, then reversing).") {
+      document.getElementById("s10q4-feedback").innerText = "Correct!";
+      document.getElementById("finishButton").disabled = false;
+    } else {
+      document.getElementById("s10q4-feedback").innerText = "Try again.";
+      alert("A stronger eastward force will decelerate the westward motion, then reverse it.");
+    }
+  }
+  
+  function markSpeedDirectionChangeCompleted() {
+    speedDirectionChangeCompleted = true;
+  }
+  
+  // Finish Module
+  function finishModule() {
+    alert("Great job! You've completed the Balanced and Unbalanced Forces module.");
+  }
+  
+  /* --- Practical Data Check --- */
+  function checkPD(row) {
+    let f1 = parseFloat(document.getElementById("pd" + row + "-f1").value);
+    let f2 = parseFloat(document.getElementById("pd" + row + "-f2").value);
+    let userResultant = parseFloat(document.getElementById("pd" + row + "-resultant").value);
+    
+    // Simple approach: If the scenario is "opposite directions," we might guess the difference.
+    // If it's "same direction," we might guess the sum.
+    // We'll just check if userResultant is near either possible value.
+    if(!isNaN(f1) && !isNaN(f2) && !isNaN(userResultant)) {
+      let possibleResultant1 = Math.abs(f1 - f2); // Opposite direction scenario
+      let possibleResultant2 = f1 + f2;           // Same direction scenario
+      if(Math.abs(userResultant - possibleResultant1) < 1 || Math.abs(userResultant - possibleResultant2) < 1) {
+        alert("Row " + row + ": That seems reasonable! Forces can combine or oppose each other.");
+      } else {
+        alert("Row " + row + ": Re-check your resultant force calculation.");
+      }
+    } else {
+      alert("Row " + row + ": Please enter valid numbers for forces and resultant.");
+    }
+  }
+  
+  /* --- Sentence Starter for Conclusion --- */
+  function showSentenceStarter() {
+    document.getElementById("conclusion").value = 
+      "In my observations, the forces were balanced when... and unbalanced when...";
+  }
+  
+  /* --- Performance Descriptor --- */
+  function showPerformanceDescriptor() {
+    let descriptor = "";
+    if (speedDirectionChangeCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You understand how unbalanced forces change speed or direction, and can apply this to complex scenarios!";
+    } else if (unbalancedForcesCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You can identify unbalanced forces and predict the motion changes well.";
+    } else if (balancedForcesCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You can identify balanced forces and understand objects in equilibrium.";
+    } else if (resultantForceCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: You can calculate resultant forces but keep practicing how they affect motion.";
+    } else if (forceDefinitionCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Beginning</span>: You know what a force is and how it can affect objects.";
+    } else {
+      descriptor = "No level achieved yet. Please complete the lesson questions to see your performance.";
+    }
+    
+    document.getElementById("descriptorMessage").innerHTML = descriptor;
+    showScreen(12);
+  }
+  
+  /* --- Calculator Functions --- */
+  function toggleCalculator() {
+    var calc = document.getElementById("calculator");
+    if (calc.style.display === "none" || calc.style.display === "") {
+      calc.style.display = "block";
+    } else {
+      calc.style.display = "none";
+    }
+  }
+  function calcAppend(val) {
+    document.getElementById("calc-display").value += val;
+  }
+  function calcClear() {
+    document.getElementById("calc-display").value = "";
+  }
+  function calcEquals() {
+    try {
+      var result = eval(document.getElementById("calc-display").value);
+      document.getElementById("calc-display").value = result;
+    } catch(e) {
+      document.getElementById("calc-display").value = "Error";
+    }
+  }
+  
+  // Make calculator draggable
+  dragElement(document.getElementById("calculator"));
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var header = document.getElementById(elmnt.id + "-header");
+    if (header) {
+      header.onmousedown = dragMouseDown;
+    } else {
+      elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+</body>
+</html>
