@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Stress on Solids (N/m²)</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #01579b;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0277bd;
+      margin-top: 30px;
+      border-bottom: 2px solid #81d4fa;
+      padding-bottom: 5px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #b3e5fc;
+      border-radius: 8px;
+      background-color: #e1f5fe;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #0277bd;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button:disabled {
+      background-color: #90caf9;
+      color: #e3f2fd;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="number"], input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+      width: 100%;
+    }
+    table, th, td {
+      border: 1px solid #81d4fa;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    .equation-help {
+      background-color: #e0f2f1;
+      border: 1px solid #80cbc4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      font-style: italic;
+    }
+    .toggle-btn {
+      background-color: #039be5;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    /* Improved Calculator Styles */
+#calculator {
+  display: none;                /* Hidden by default; toggled by JS */
+  position: absolute;
+  top: 120px; 
+  left: 120px; 
+  z-index: 1000;
+  border: 2px solid #01579b;
+  background-color: #e1f5fe;
+  padding: 10px;
+  width: 240px;                 /* Narrower width for a compact layout */
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+  border-radius: 8px;
+}
+
+#calculator-header {
+  cursor: move;
+  background-color: #0277bd;
+  color: #fff;
+  padding: 8px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+}
+
+#calc-display {
+  width: 100%;
+  height: 40px;
+  font-size: 1.4em;
+  margin: 10px 0;
+  text-align: right;
+  padding-right: 10px;
+  border: 1px solid #81d4fa;
+  border-radius: 4px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+#calc-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 5px;
+}
+
+#calc-buttons button {
+  font-size: 1.2em;
+  border: 1px solid #81d4fa;
+  border-radius: 4px;
+  background-color: #0277bd;
+  color: #fff;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+/* Make the equals button span all 4 columns */
+.equals-btn {
+  grid-column: 1 / -1;
+  font-size: 1.2em;
+  background-color: #0288d1;
+}
+
+#calc-buttons button:hover {
+  background-color: #01579b;
+}
+    /* Performance Descriptor screen */
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Stress on Solids (N/m²)</h1>
+  <!-- Persistent Navigation -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(9)">Practical Activity</button>
+    <button class="nav-btn" onclick="showScreen(10)">10-Mark Quiz</button>
+    <button class="nav-btn" onclick="showScreen(11)">Extended Question</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
+  </div>
+  
+  <!-- Screen 1: Introduction to Stress -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introduction to Stress on Solids</h2>
+    <p><strong>Key Idea:</strong> When a force acts on an area of a solid surface, we say the object experiences <em>stress</em>. Stress tells us how concentrated the force is over that area.</p>
+    <p>Real-world examples include:</p>
+    <ul>
+      <li><strong>Standing on soft ground:</strong> Your weight spreads over the area of your feet. Standing on tiptoes means a smaller area, leading to higher stress.</li>
+      <li><strong>Snowshoes:</strong> They increase the area so the stress on the snow is lower, preventing you from sinking.</li>
+      <li><strong>Nails and screws:</strong> A sharp tip has a tiny area, so stress is very high, helping them pierce materials.</li>
+    </ul>
+    <button onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: What is Stress? -->
+  <div id="screen2" class="screen">
+    <h2>2. What is Stress?</h2>
+    <p><strong>Definition:</strong> Stress is the force applied per unit area.</p>
+    <p>Symbolically: <em>Stress = Force / Area</em></p>
+    <p>Units of stress: N/m<sup>2</sup></p>
+    <div class="question">
+      <p>Which of the following best describes stress on a solid?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="Force per unit area">Force per unit area</option>
+        <option value="Mass per unit volume">Mass per unit volume</option>
+        <option value="Distance per unit time">Distance per unit time</option>
+        <option value="Energy per unit charge">Energy per unit charge</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p>Which statement about stress is <strong>false</strong>?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="It depends on how large the force is.">It depends on how large the force is.</option>
+        <option value="It depends on the area the force acts upon.">It depends on the area the force acts upon.</option>
+        <option value="It is measured in N.">It is measured in N.</option>
+        <option value="It can be reduced by increasing the contact area.">It can be reduced by increasing the contact area.</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: How Stress is Calculated -->
+  <div id="screen3" class="screen">
+    <h2>3. How Stress is Calculated</h2>
+    <p>The equation for stress is:</p>
+    <p><em>Stress (N/m<sup>2</sup>) = Force (N) ÷ Area (m<sup>2</sup>)</em></p>
+    <p><strong>Example 1:</strong> If a 600 N person stands on one foot of area 0.03 m<sup>2</sup>, the stress is 600 ÷ 0.03 = 20,000 N/m<sup>2</sup>.</p>
+    <button onclick="showScreen(4)">Next</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+  </div>
+  
+  <!-- Screen 4: Practice – Calculating Stress -->
+  <div id="screen4" class="screen">
+    <h2>4. Practice – Calculating Stress</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help4')">Toggle Equation Help</button>
+    <div id="help4" class="equation-help hidden">
+      <p><strong>Equation:</strong> Stress = Force ÷ Area</p>
+      <p><strong>Worked Example:</strong> If a 500 N force acts over 0.02 m<sup>2</sup>, the stress is 500 ÷ 0.02 = 25,000 N/m<sup>2</sup>.</p>
+      <p>Make sure area is in square meters (m<sup>2</sup>).</p>
+    </div>
+    <div id="s4q1" class="practice-question">
+      <p><strong>Question 1:</strong> A 400 N force acts over an area of 0.02 m<sup>2</sup>. Calculate the stress (N/m<sup>2</sup>).</p>
+      <input type="number" id="s4q1-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS4Q1()">Check Answer</button>
+      <span id="s4q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A 600 N force acts over an area of 0.05 m<sup>2</sup>. Calculate the stress (N/m<sup>2</sup>).</p>
+      <input type="number" id="s4q2-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS4Q2()">Check Answer</button>
+      <span id="s4q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A 50 N force acts over an area of 0.001 m<sup>2</sup> (a small nail tip). Calculate the stress (N/m<sup>2</sup>).</p>
+      <input type="number" id="s4q3-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS4Q3()">Check Answer</button>
+      <span id="s4q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> A 1000 N load acts on an area of 0.1 m<sup>2</sup>. Calculate the stress (N/m<sup>2</sup>).</p>
+      <input type="number" id="s4q4-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS4Q4()">Check Answer</button>
+      <span id="s4q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> A 2000 N elephant foot covers an area of 0.2 m<sup>2</sup>. Calculate the stress (N/m<sup>2</sup>).</p>
+      <input type="number" id="s4q5-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS4Q5()">Check Answer</button>
+      <span id="s4q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next4" disabled onclick="showScreen(5)">Next</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+  </div>
+  
+  <!-- Screen 5: How Area Affects Stress -->
+  <div id="screen5" class="screen">
+    <h2>5. How Area Affects Stress</h2>
+    <p><strong>Key Concept:</strong> For the same force, reducing the contact area increases stress; increasing the contact area decreases stress.</p>
+    <p>Examples:</p>
+    <ul>
+      <li><strong>High heels vs. flat shoes:</strong> High heels have a small area in contact with the ground, creating a very high stress.</li>
+      <li><strong>Tank tracks:</strong> Tanks have wide tracks to spread their massive weight over a large area, reducing stress on the ground.</li>
+    </ul>
+    <button onclick="showScreen(6)">Next</button>
+    <br><br>
+    <button onclick="showScreen(4)">Back</button>
+  </div>
+  
+  <!-- Screen 6: Practice – Area and Stress -->
+  <div id="screen6" class="screen">
+    <h2>6. Practice – The Effect of Area</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help6')">Toggle Help</button>
+    <div id="help6" class="equation-help hidden">
+      <p><strong>Remember:</strong> Stress = Force ÷ Area.</p>
+      <p>If the force stays the same, a smaller area means a larger stress.</p>
+    </div>
+    <div id="s6q1" class="practice-question">
+      <p><strong>Question 1:</strong> You have a 500 N force. Which area gives the higher stress, 0.01 m<sup>2</sup> or 0.05 m<sup>2</sup>?</p>
+      <select id="s6q1-answer">
+        <option value="">--Select--</option>
+        <option value="0.01 m^2">0.01 m^2</option>
+        <option value="0.05 m^2">0.05 m^2</option>
+      </select>
+      <button onclick="checkS6Q1()">Check Answer</button>
+      <span id="s6q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If you double the area and keep the same force, what happens to the stress?</p>
+      <select id="s6q2-answer">
+        <option value="">--Select--</option>
+        <option value="It doubles">It doubles</option>
+        <option value="It halves">It halves</option>
+        <option value="No change">No change</option>
+        <option value="It increases 4 times">It increases 4 times</option>
+      </select>
+      <button onclick="checkS6Q2()">Check Answer</button>
+      <span id="s6q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A 600 N load on 0.03 m<sup>2</sup> gives 20,000 N/m<sup>2</sup>. If the same 600 N acts on 0.06 m<sup>2</sup>, what is the new stress?</p>
+      <input type="number" id="s6q3-answer" placeholder="Enter stress (N/m^2)">
+      <button onclick="checkS6Q3()">Check Answer</button>
+      <span id="s6q3-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next6" disabled onclick="showScreen(7)">Next</button>
+    <br><br>
+    <button onclick="showScreen(5)">Back</button>
+  </div>
+  
+  <!-- Screen 7: Rearranging the Equation -->
+  <div id="screen7" class="screen">
+    <h2>7. Rearranging the Equation to Find Force</h2>
+    <p>You can also rearrange <em>Stress = Force ÷ Area</em> to find Force or Area:</p>
+    <ul>
+      <li><strong>Force</strong> = Stress × Area</li>
+      <li><strong>Area</strong> = Force ÷ Stress</li>
+    </ul>
+    <p><strong>Example:</strong> If the stress on a metal beam is 15,000 N/m<sup>2</sup> and the cross-sectional area is 0.2 m<sup>2</sup>, the force is 15,000 × 0.2 = 3,000 N.</p>
+    <button onclick="showScreen(8)">Next</button>
+    <br><br>
+    <button onclick="showScreen(6)">Back</button>
+  </div>
+  
+  <!-- Screen 8: Practice – Rearranging Stress Equation -->
+  <div id="screen8" class="screen">
+    <h2>8. Practice: Rearranging Stress Equation</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help8')">Toggle Help</button>
+    <div id="help8" class="equation-help hidden">
+      <p><strong>Equations:</strong></p>
+      <p>Stress = Force ÷ Area</p>
+      <p>Force = Stress × Area</p>
+      <p>Area = Force ÷ Stress</p>
+    </div>
+    <div class="practice-question">
+      <p><strong>Question 1:</strong> A stress of 10,000 N/m<sup>2</sup> acts on an area of 0.03 m<sup>2</sup>. What is the force?</p>
+      <input type="number" id="s8q1-answer" placeholder="Enter force (N)">
+      <button onclick="checkS8Q1()">Check Answer</button>
+      <span id="s8q1-feedback" class="feedback"></span>
+    </div>
+    <div class="practice-question hidden" id="s8q2">
+      <p><strong>Question 2:</strong> A force of 200 N acts, producing a stress of 5,000 N/m<sup>2</sup>. What is the contact area (m<sup>2</sup>)?</p>
+      <input type="number" id="s8q2-answer" placeholder="Enter area (m^2)">
+      <button onclick="checkS8Q2()">Check Answer</button>
+      <span id="s8q2-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button onclick="showScreen(9)">Next</button>
+    <br><br>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+  
+  <!-- Screen 9: Practical Activity – Calculating Stress from Your Footprint -->
+  <div id="screen9" class="screen">
+    <h2>9. Practical Activity: Stress from Your Footprint</h2>
+    <p><strong>Objective:</strong> Measure the area of your foot (or shoe) and use your weight to calculate the stress you exert on the floor.</p>
+    <ol>
+      <li>Trace around your shoe (or foot) on graph paper.</li>
+      <li>Count the squares to estimate the area in cm<sup>2</sup>. Convert to m<sup>2</sup> (1 m<sup>2</sup> = 10,000 cm<sup>2</sup>).</li>
+      <li>Use your weight in newtons (weight in kg × 9.8 to approximate in N).</li>
+      <li>Calculate the stress when standing on one foot, then on two feet.</li>
+      <li>Repeat for standing on tiptoes to see how the smaller contact area changes the stress.</li>
+    </ol>
+    <p>Record your results in a table like this:</p>
+    <table>
+      <tr>
+        <th>Stance</th>
+        <th>Area (m<sup>2</sup>)</th>
+        <th>Force (N)</th>
+        <th>Calculated Stress (N/m<sup>2</sup>)</th>
+      </tr>
+      <tr>
+        <td>One foot</td>
+        <td><input type="number" id="footAreaOne" placeholder="m^2"></td>
+        <td><input type="number" id="weightOne" placeholder="N"></td>
+        <td><input type="number" id="stressOne" placeholder="N/m^2"></td>
+      </tr>
+      <tr>
+        <td>Two feet</td>
+        <td><input type="number" id="footAreaTwo" placeholder="m^2"></td>
+        <td><input type="number" id="weightTwo" placeholder="N"></td>
+        <td><input type="number" id="stressTwo" placeholder="N/m^2"></td>
+      </tr>
+      <tr>
+        <td>Tiptoe (one foot)</td>
+        <td><input type="number" id="tiptoeAreaOne" placeholder="m^2"></td>
+        <td><input type="number" id="tiptoeWeightOne" placeholder="N"></td>
+        <td><input type="number" id="tiptoeStressOne" placeholder="N/m^2"></td>
+      </tr>
+      <tr>
+        <td>Tiptoe (two feet)</td>
+        <td><input type="number" id="tiptoeAreaTwo" placeholder="m^2"></td>
+        <td><input type="number" id="tiptoeWeightTwo" placeholder="N"></td>
+        <td><input type="number" id="tiptoeStressTwo" placeholder="N/m^2"></td>
+      </tr>
+    </table>
+    <p><strong>Write a conclusion:</strong> How does changing the area affect the stress on the floor? Which stance creates the highest stress and why?</p>
+    <textarea id="practicalConclusion" rows="4" style="width:100%;" placeholder="Write your conclusion here..."></textarea>
+    <br><br>
+    <button onclick="showScreen(8)">Back</button>
+  </div>
+  
+  <!-- Screen 10: 10-Mark Multiple Choice Quiz -->
+  <div id="screen10" class="screen">
+    <h2>10. Quick Quiz (10 marks)</h2>
+    <p>Answer each question and then click "Check Quiz" at the bottom. Your score will be displayed, along with correct/incorrect answers.</p>
+    <ol>
+      <li class="question">
+        <p>1) Stress is measured in:</p>
+        <select id="quiz1">
+          <option value="">--Select--</option>
+          <option value="A">A) Newtons (N)</option>
+          <option value="B">B) N/m<sup>2</sup></option>
+          <option value="C">C) Joules (J)</option>
+          <option value="D">D) Kelvin (K)</option>
+        </select>
+        <span id="quiz1Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>2) The equation for stress is:</p>
+        <select id="quiz2">
+          <option value="">--Select--</option>
+          <option value="A">A) Stress = Force × Distance</option>
+          <option value="B">B) Stress = Mass ÷ Volume</option>
+          <option value="C">C) Stress = Force ÷ Area</option>
+          <option value="D">D) Stress = Energy ÷ Time</option>
+        </select>
+        <span id="quiz2Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>3) Which of these would increase stress (with the same force)?</p>
+        <select id="quiz3">
+          <option value="">--Select--</option>
+          <option value="A">A) Increasing the area</option>
+          <option value="B">B) Reducing the force</option>
+          <option value="C">C) Decreasing the area</option>
+          <option value="D">D) None of the above</option>
+        </select>
+        <span id="quiz3Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>4) 1 N/m<sup>2</sup> means:</p>
+        <select id="quiz4">
+          <option value="">--Select--</option>
+          <option value="A">A) 1 N spread over 1 m</option>
+          <option value="B">B) 1 N per second</option>
+          <option value="C">C) 1 N per square meter</option>
+          <option value="D">D) 1 J of energy</option>
+        </select>
+        <span id="quiz4Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>5) A smaller area with the same force leads to:</p>
+        <select id="quiz5">
+          <option value="">--Select--</option>
+          <option value="A">A) Lower stress</option>
+          <option value="B">B) Higher stress</option>
+          <option value="C">C) No change in stress</option>
+          <option value="D">D) Zero force</option>
+        </select>
+        <span id="quiz5Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>6) If you know the stress and the area, you can find the force by:</p>
+        <select id="quiz6">
+          <option value="">--Select--</option>
+          <option value="A">A) Multiplying them</option>
+          <option value="B">B) Dividing them</option>
+          <option value="C">C) Adding them</option>
+          <option value="D">D) Subtracting them</option>
+        </select>
+        <span id="quiz6Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>7) If a 500 N force acts on 0.1 m<sup>2</sup>, the stress is:</p>
+        <select id="quiz7">
+          <option value="">--Select--</option>
+          <option value="A">A) 50 N/m<sup>2</sup></option>
+          <option value="B">B) 5,000 N/m<sup>2</sup></option>
+          <option value="C">C) 500 N</option>
+          <option value="D">D) 0.2 N/m<sup>2</sup></option>
+        </select>
+        <span id="quiz7Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>8) Snowshoes help by:</p>
+        <select id="quiz8">
+          <option value="">--Select--</option>
+          <option value="A">A) Reducing the force</option>
+          <option value="B">B) Reducing the area</option>
+          <option value="C">C) Increasing the area</option>
+          <option value="D">D) Making you weigh more</option>
+        </select>
+        <span id="quiz8Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>9) A sharp knife cuts better because:</p>
+        <select id="quiz9">
+          <option value="">--Select--</option>
+          <option value="A">A) It has a larger surface area</option>
+          <option value="B">B) It reduces the force needed</option>
+          <option value="C">C) It increases stress by having a smaller contact area</option>
+          <option value="D">D) It’s always heavier</option>
+        </select>
+        <span id="quiz9Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>10) Stress in solids is all about:</p>
+        <select id="quiz10">
+          <option value="">--Select--</option>
+          <option value="A">A) How fast something moves</option>
+          <option value="B">B) How far something travels</option>
+          <option value="C">C) Force distribution over an area (N/m<sup>2</sup>)</option>
+          <option value="D">D) Temperature differences</option>
+        </select>
+        <span id="quiz10Feedback" class="feedback"></span>
+      </li>
+    </ol>
+    <button onclick="checkQuiz()">Check Quiz</button>
+    <p id="quizResult"></p>
+    <br>
+    <button onclick="showScreen(1)">Back to Start</button>
+  </div>
+  
+  <!-- Screen 11: Extended Question -->
+  <div id="screen11" class="screen">
+    <h2>11. Extended Question</h2>
+    <p><strong>Question:</strong> Using the idea of stress (force per unit area), explain how it is possible to lie on a bed of nails without injury.</p>
+    <textarea id="extendedAnswer" rows="6" style="width:100%;" placeholder="Type your answer here..."></textarea>
+    <br>
+    <button onclick="showSentenceStarter()">Sentence Starter</button>
+    <button onclick="revealAnswer()">Answer</button>
+    <br><br>
+    <p id="sampleAnswer" class="hidden" style="background-color:#e1f5fe; padding:10px; border-radius:6px;"></p>
+    <br>
+    <button onclick="showScreen(10)">Back to Quiz</button>
+  </div>
+  
+  <!-- Screen 12: Performance Descriptor -->
+  <div id="screen12" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
+  </div>
+</div>
+
+<!-- Calculator (Draggable) -->
+<div id="calculator">
+  <div id="calculator-header">Calculator</div>
+  <input type="text" id="calc-display" readonly>
+
+  <div id="calc-buttons">
+    <!-- Row 1 -->
+    <button onclick="calcAppend('7')">7</button>
+    <button onclick="calcAppend('8')">8</button>
+    <button onclick="calcAppend('9')">9</button>
+    <button onclick="calcAppend('/')">÷</button>
+    
+    <!-- Row 2 -->
+    <button onclick="calcAppend('4')">4</button>
+    <button onclick="calcAppend('5')">5</button>
+    <button onclick="calcAppend('6')">6</button>
+    <button onclick="calcAppend('*')">×</button>
+    
+    <!-- Row 3 -->
+    <button onclick="calcAppend('1')">1</button>
+    <button onclick="calcAppend('2')">2</button>
+    <button onclick="calcAppend('3')">3</button>
+    <button onclick="calcAppend('-')">−</button>
+    
+    <!-- Row 4 -->
+    <button onclick="calcAppend('0')">0</button>
+    <button onclick="calcAppend('.')">.</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcAppend('+')">+</button>
+    
+    <!-- Row 5 (equals spans all columns) -->
+    <button onclick="calcEquals()" class="equals-btn">=</button>
+  </div>
+</div>
+
+<script>
+  // Track progress to determine performance descriptor
+  var whatIsStressCompleted = false;
+  var stressCalculationCompleted = false;
+  var areaEffectCompleted = false;
+  var rearrangingCompleted = false;
+  var quizCompleted = false;
+
+  var currentScreen = 1;
+  var prevScreen = 1;  // For returning from descriptor screen
+
+  // Navigation
+  function showScreen(n) {
+    if(n !== 12) {
+      prevScreen = n;
+    }
+    currentScreen = n;
+    for (let i = 1; i <= 12; i++) {
+      const screenElem = document.getElementById("screen" + i);
+      if(screenElem) {
+        screenElem.classList.remove("active");
+      }
+    }
+    document.getElementById("screen" + n).classList.add("active");
+  }
+
+  /* --- Toggle Help --- */
+  function toggleHelp(id) {
+    const helpElem = document.getElementById(id);
+    helpElem.classList.toggle('hidden');
+  }
+
+  /* --- Screen 2 Checks --- */
+  function checkScreen2() {
+    let correct = true;
+    let q2a = document.getElementById("q2a").value;
+    if(q2a === "Force per unit area") {
+      document.getElementById("feedback2a").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2a").innerText = "Try again.";
+      correct = false;
+    }
+    let q2b = document.getElementById("q2b").value;
+    // The false statement is "It is measured in N."
+    // We measure stress in N/m^2, not just N.
+    if(q2b === "It is measured in N.") {
+      document.getElementById("feedback2b").innerText = "Correct! Stress is measured in N/m^2, not just N.";
+    } else {
+      document.getElementById("feedback2b").innerText = "Try again.";
+      correct = false;
+    }
+    if(correct) {
+      document.getElementById("next2").disabled = false;
+      whatIsStressCompleted = true;
+    }
+  }
+
+  /* --- Screen 4: Practice – Calculating Stress --- */
+  function checkS4Q1() {
+    let ans = parseFloat(document.getElementById("s4q1-answer").value);
+    // 400 N / 0.02 m^2 = 20,000 N/m^2
+    if(ans === 20000) {
+      document.getElementById("s4q1-feedback").innerText = "Correct!";
+      document.getElementById("s4q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q1-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q2() {
+    let ans = parseFloat(document.getElementById("s4q2-answer").value);
+    // 600 N / 0.05 m^2 = 12,000 N/m^2
+    if(ans === 12000) {
+      document.getElementById("s4q2-feedback").innerText = "Correct!";
+      document.getElementById("s4q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q2-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q3() {
+    let ans = parseFloat(document.getElementById("s4q3-answer").value);
+    // 50 N / 0.001 m^2 = 50,000 N/m^2
+    if(ans === 50000) {
+      document.getElementById("s4q3-feedback").innerText = "Correct!";
+      document.getElementById("s4q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q3-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q4() {
+    let ans = parseFloat(document.getElementById("s4q4-answer").value);
+    // 1000 N / 0.1 m^2 = 10,000 N/m^2
+    if(ans === 10000) {
+      document.getElementById("s4q4-feedback").innerText = "Correct!";
+      document.getElementById("s4q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q4-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q5() {
+    let ans = parseFloat(document.getElementById("s4q5-answer").value);
+    // 2000 N / 0.2 m^2 = 10,000 N/m^2
+    if(ans === 10000) {
+      document.getElementById("s4q5-feedback").innerText = "Correct!";
+      document.getElementById("next4").disabled = false;
+      stressCalculationCompleted = true;
+    } else {
+      document.getElementById("s4q5-feedback").innerText = "Try again.";
+    }
+  }
+
+  /* --- Screen 6: Area and Stress Practice --- */
+  function checkS6Q1() {
+    let ans = document.getElementById("s6q1-answer").value;
+    // 0.01 m^2 creates higher stress
+    if(ans === "0.01 m^2") {
+      document.getElementById("s6q1-feedback").innerText = "Correct! Smaller area = higher stress.";
+      document.getElementById("s6q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q1-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q2() {
+    let ans = document.getElementById("s6q2-answer").value;
+    // Doubling area => stress halves
+    if(ans === "It halves") {
+      document.getElementById("s6q2-feedback").innerText = "Correct!";
+      document.getElementById("s6q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q2-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q3() {
+    let ans = parseFloat(document.getElementById("s6q3-answer").value);
+    // 600 N on 0.03 m^2 => 20,000 N/m^2
+    // Doubling area to 0.06 => 600 / 0.06 = 10,000 N/m^2
+    if(ans === 10000) {
+      document.getElementById("s6q3-feedback").innerText = "Correct! Doubling area halves the stress.";
+      document.getElementById("next6").disabled = false;
+      areaEffectCompleted = true;
+    } else {
+      document.getElementById("s6q3-feedback").innerText = "Try again.";
+    }
+  }
+
+  /* --- Screen 8: Rearranging Equation Practice --- */
+  function checkS8Q1() {
+    let ans = parseFloat(document.getElementById("s8q1-answer").value);
+    // Force = Stress × Area = 10,000 × 0.03 = 300
+    if(ans === 300) {
+      document.getElementById("s8q1-feedback").innerText = "Correct!";
+      document.getElementById("s8q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s8q1-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS8Q2() {
+    let ans = parseFloat(document.getElementById("s8q2-answer").value);
+    // Area = Force ÷ Stress = 200 / 5000 = 0.04 m^2
+    if(Math.abs(ans - 0.04) < 0.0001) {
+      document.getElementById("s8q2-feedback").innerText = "Correct!";
+      rearrangingCompleted = true;
+    } else {
+      document.getElementById("s8q2-feedback").innerText = "Try again.";
+    }
+  }
+
+  /* --- 10-Mark Quiz Check --- */
+  function checkQuiz() {
+    let score = 0;
+    // Updated answers with only N/m^2 references
+    let answers = [
+      "B", // Q1: N/m^2
+      "C", // Q2: Stress = Force/Area
+      "C", // Q3: Decreasing the area
+      "C", // Q4: 1 N per square meter
+      "B", // Q5: Higher stress
+      "A", // Q6: Multiply stress by area
+      "B", // Q7: 500 N / 0.1 m^2 = 5000 N/m^2
+      "C", // Q8: Increasing the area
+      "C", // Q9: Smaller contact area => bigger stress
+      "C"  // Q10: Force distribution over an area
+    ];
+    let userAnswers = [
+      document.getElementById("quiz1").value,
+      document.getElementById("quiz2").value,
+      document.getElementById("quiz3").value,
+      document.getElementById("quiz4").value,
+      document.getElementById("quiz5").value,
+      document.getElementById("quiz6").value,
+      document.getElementById("quiz7").value,
+      document.getElementById("quiz8").value,
+      document.getElementById("quiz9").value,
+      document.getElementById("quiz10").value
+    ];
+
+    for(let i = 0; i < 10; i++) {
+      let questionId = "quiz" + (i+1) + "Feedback";
+      if(userAnswers[i] === answers[i]) {
+        score++;
+        document.getElementById(questionId).innerText = "Correct!";
+      } else {
+        document.getElementById(questionId).innerText = "Incorrect. Correct answer is " + answers[i];
+      }
+    }
+    document.getElementById("quizResult").innerText = "You scored " + score + " out of 10.";
+    quizCompleted = true;
+  }
+
+  /* --- Extended Question: Sentence Starter & Reveal Answer --- */
+  function showSentenceStarter() {
+    document.getElementById("extendedAnswer").value = "When lying on a bed of nails, the overall area of contact is increased...";
+  }
+  function revealAnswer() {
+    let sample = "When lying on a bed of nails, your body’s weight is distributed over many nails. This increases the total contact area. Because stress = force ÷ area, a large total area keeps the stress low, preventing injury.";
+    document.getElementById("sampleAnswer").innerText = sample;
+    document.getElementById("sampleAnswer").classList.remove("hidden");
+  }
+
+  /* --- Performance Descriptor --- */
+  function showPerformanceDescriptor() {
+    let descriptor = "No level achieved yet. Please explore the lesson and attempt the quiz.";
+
+    // Logic to determine descriptor
+    if(quizCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You've completed all sections, including the quiz, demonstrating a thorough understanding of stress on solids!";
+    } else if(rearrangingCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You can calculate stress, understand area effects, and rearrange equations. Try the quiz to finalize your knowledge!";
+    } else if(areaEffectCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You understand what stress is, how to calculate it, and how area affects it. Move on to rearranging the equation!";
+    } else if(stressCalculationCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: You can calculate stress from force and area. Next, learn about how area changes stress!";
+    } else if(whatIsStressCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Beginning</span>: You know the definition of stress. Continue to practice calculations to deepen your understanding.";
+    }
+
+    document.getElementById("descriptorMessage").innerHTML = descriptor;
+    showScreen(12);
+  }
+
+  /* --- Calculator Functions --- */
+  function toggleCalculator() {
+    var calc = document.getElementById("calculator");
+    if (calc.style.display === "none" || calc.style.display === "") {
+      calc.style.display = "block";
+    } else {
+      calc.style.display = "none";
+    }
+  }
+  function calcAppend(val) {
+    document.getElementById("calc-display").value += val;
+  }
+  function calcClear() {
+    document.getElementById("calc-display").value = "";
+  }
+  function calcEquals() {
+    try {
+      var result = eval(document.getElementById("calc-display").value);
+      document.getElementById("calc-display").value = result;
+    } catch(e) {
+      document.getElementById("calc-display").value = "Error";
+    }
+  }
+
+  // Make calculator draggable
+  dragElement(document.getElementById("calculator"));
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var header = document.getElementById(elmnt.id + "-header");
+    if (header) {
+      header.onmousedown = dragMouseDown;
+    } else {
+      elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+</body>
+</html>
