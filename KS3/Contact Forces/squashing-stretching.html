@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Squashing and Stretching</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #01579b;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0277bd;
+      margin-top: 30px;
+      border-bottom: 2px solid #81d4fa;
+      padding-bottom: 5px;
+    }
+    h3 {
+      text-align: center;
+      color: #0288d1;
+      margin-top: 20px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #b3e5fc;
+      border-radius: 8px;
+      background-color: #e1f5fe;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #0277bd;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button:disabled {
+      background-color: #90caf9;
+      color: #e3f2fd;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="number"], input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+      width: 100%;
+    }
+    table, th, td {
+      border: 1px solid #81d4fa;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    .equation-help {
+      background-color: #e0f2f1;
+      border: 1px solid #80cbc4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      font-style: italic;
+    }
+    .toggle-btn {
+      background-color: #039be5;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    /* Calculator styling */
+    #calculator {
+      display: none;
+      position: absolute;
+      top: 120px;
+      left: 120px;
+      z-index: 1000;
+      border: 2px solid #01579b;
+      background-color: #e1f5fe;
+      padding: 10px;
+      width: 300px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    #calculator-header {
+      cursor: move;
+      background-color: #0277bd;
+      color: #fff;
+      padding: 8px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 4px;
+    }
+    #calc-display {
+      width: 100%;
+      height: 40px;
+      font-size: 1.4em;
+      margin: 10px 0;
+      text-align: right;
+      padding-right: 10px;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    #calc-buttons button {
+      width: 60px;
+      height: 60px;
+      margin: 4px;
+      font-size: 1.2em;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #0277bd;
+      color: #fff;
+    }
+    /* Performance Descriptor screen */
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+    /* Table for practical activity */
+    table.practical-table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .practical-table input[type="number"] {
+      width: 70px; /* narrower input boxes */
+    }
+    /* Graph canvas styling */
+    #graphCanvas {
+      border: 1px solid #81d4fa;
+      display: block;
+      margin: 20px auto;
+      background-color: #fafafa;
+    }
+    /* Conclusion box styling */
+    #conclusionBox {
+      width: 100%;
+      height: 80px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Squashing and Stretching</h1>
+
+  <!-- Persistent Navigation -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(9)">Practical Activity</button>
+    <button class="nav-btn" onclick="showScreen(10)">10-Mark Quiz</button>
+    <button class="nav-btn" onclick="showScreen(11)">Extended Question</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
+  </div>
+
+  <!-- Screen 1: Introduction -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introduction to Squashing and Stretching</h2>
+    <p><strong>Key Idea:</strong> When forces act on an object, they can cause it to deform — to change shape. If the object returns to its original shape when the force is removed, we say the deformation is <em>elastic</em>. If it doesn’t, the deformation is <em>plastic</em>.</p>
+    <p>In this lesson, we’ll explore:
+      <ul>
+        <li>Deformation, compression, and tension.</li>
+        <li>Reaction forces in solids.</li>
+        <li>Extension of springs.</li>
+        <li>Elastic limit and proportional extension.</li>
+      </ul>
+    </p>
+    <p>We’ll also look at real-world examples like seat cushions, tennis balls, car suspension springs, and more.</p>
+    <button onclick="showScreen(2)">Next</button>
+  </div>
+
+  <!-- Screen 2: Deformation, Compression, Tension -->
+  <div id="screen2" class="screen">
+    <h2>2. Deformation, Compression, and Tension</h2>
+    <p><strong>Deformation</strong> means a change in shape. It can happen in two main ways:</p>
+    <ul>
+      <li><strong>Compression:</strong> Squashing an object (like pressing a sponge).</li>
+      <li><strong>Tension:</strong> Stretching an object (like pulling a rubber band).</li>
+    </ul>
+    <p>When you sit on a sofa, you compress the cushions. When you pull on a bungee cord, you place it under tension.</p>
+    <div class="question">
+      <p>Which of the following is an example of compression?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="Squeezing a stress ball.">Squeezing a stress ball.</option>
+        <option value="Pulling on a rope.">Pulling on a rope.</option>
+        <option value="Spinning a wheel.">Spinning a wheel.</option>
+        <option value="Dropping a stone.">Dropping a stone.</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p>Which of the following is an example of tension?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="Standing on a plank.">Standing on a plank.</option>
+        <option value="Pressing a car brake.">Pressing a car brake.</option>
+        <option value="Stretching a rubber band.">Stretching a rubber band.</option>
+        <option value="Sitting on a cushion.">Sitting on a cushion.</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+
+  <!-- Screen 3: Reaction Force & Compression of Bonds -->
+  <div id="screen3" class="screen">
+    <h2>3. Reaction Force and Compression of Bonds in a Solid</h2>
+    <p>When you push down on a solid surface (like the floor or a chair), the particles in the solid compress slightly, creating a <strong>reaction force</strong> pushing back up. This is why you don’t fall through the floor!</p>
+    <p>In solids, particles are held together by strong bonds. Even a small compression changes the distance between particles, generating a restoring force that acts against the deformation.</p>
+    <button onclick="showScreen(4)">Next</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+  </div>
+
+  <!-- Screen 4: Extension of a Spring -->
+  <div id="screen4" class="screen">
+    <h2>4. Extension of a Spring</h2>
+    <p>When you apply a force to a spring, it stretches. The increase in length is called the <strong>extension</strong>.</p>
+    <p>If the force is small enough, removing it allows the spring to return to its original length — this is elastic behavior. But if you exceed a certain limit, the spring may not return to its original length.</p>
+    <div class="question">
+      <p>A spring is 10 cm long without any load. A 2 N force stretches it to 12 cm. What is the extension?</p>
+      <input type="number" id="springQ1" placeholder="Extension in cm">
+      <button onclick="checkSpringQ1()">Check Answer</button>
+      <span id="springQ1Feedback" class="feedback"></span>
+    </div>
+    <button onclick="showScreen(5)">Next</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+  </div>
+
+  <!-- Screen 5: Elastic Limit and Proportional Extension -->
+  <div id="screen5" class="screen">
+    <h2>5. Elastic Limit and Proportional Extension</h2>
+    <p>When you apply a force to a spring within its elastic limit, the extension increases in direct proportion to the force applied. For example, if a 2 N force produces a 4 cm extension, then a 4 N force would produce an 8 cm extension.</p>
+    <p>The <strong>elastic limit</strong> is the point beyond which permanent deformation occurs. Stay within this limit, and the spring returns to its original length when the force is removed.</p>
+    <button onclick="showScreen(6)">Next</button>
+    <br><br>
+    <button onclick="showScreen(4)">Back</button>
+  </div>
+
+  <!-- Screen 6: Real-World Examples -->
+  <div id="screen6" class="screen">
+    <h2>6. Real-World Examples</h2>
+    <p>Squashing and stretching occur in many everyday situations:</p>
+    <ul>
+      <li><strong>Car suspension:</strong> Springs compress to absorb bumps.</li>
+      <li><strong>Trampoline:</strong> The fabric and springs stretch under your weight, then rebound.</li>
+      <li><strong>Tennis ball:</strong> It deforms when it hits the ground, then bounces back.</li>
+      <li><strong>Shoe soles:</strong> Compress to cushion your steps.</li>
+    </ul>
+    <p>Next, we’ll try some practice questions before the big practical activity.</p>
+    <button onclick="showScreen(7)">Next</button>
+    <br><br>
+    <button onclick="showScreen(5)">Back</button>
+  </div>
+
+  <!-- Screen 7: Practice Questions (Basics) -->
+  <div id="screen7" class="screen">
+    <h2>7. Practice Questions – Basics</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help7')">Toggle Help/Examples</button>
+    <div id="help7" class="equation-help hidden">
+      <p><strong>Remember:</strong> Extension = Stretched length – Original length.</p>
+      <p><strong>Example:</strong> If a spring extends by 4 cm when a 2 N force is applied, then doubling the force would double the extension.</p>
+    </div>
+
+    <div id="p7q1" class="practice-question">
+      <p><strong>Question 1:</strong> A spring extends by 3 cm when a 1 N force is applied. Its natural length is 10 cm. How long is it under that 1 N force?</p>
+      <input type="number" id="p7q1-answer" placeholder="Length in cm">
+      <button onclick="checkP7Q1()">Check Answer</button>
+      <span id="p7q1-feedback" class="feedback"></span>
+    </div>
+    <div id="p7q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If a spring extends by 5 cm under a 2 N force, how many newtons are needed to extend it by 10 cm?</p>
+      <input type="number" id="p7q2-answer" placeholder="Force in N">
+      <button onclick="checkP7Q2()">Check Answer</button>
+      <span id="p7q2-feedback" class="feedback"></span>
+    </div>
+    <div id="p7q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> True or False: Once a spring goes past its elastic limit, it will never return to its original length.</p>
+      <select id="p7q3-answer">
+        <option value="">--Select--</option>
+        <option value="True">True</option>
+        <option value="False">False</option>
+      </select>
+      <button onclick="checkP7Q3()">Check Answer</button>
+      <span id="p7q3-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next7" disabled onclick="showScreen(8)">Next</button>
+    <br><br>
+    <button onclick="showScreen(6)">Back</button>
+  </div>
+
+  <!-- Screen 8: Practice Questions (Intermediate) -->
+  <div id="screen8" class="screen">
+    <h2>8. Practice Questions – Intermediate</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help8')">Toggle Help/Examples</button>
+    <div id="help8" class="equation-help hidden">
+      <p><strong>Remember:</strong> The extension is directly proportional to the force, as long as you remain within the elastic limit.</p>
+      <p><strong>Example:</strong> If a 2 N force produces a 4 cm extension, then a 6 N force will produce a 12 cm extension.</p>
+    </div>
+
+    <div id="p8q1" class="practice-question">
+      <p><strong>Question 1:</strong> A spring extends from 10 cm to 15 cm when a 2 N force is applied. What is the extension in metres?</p>
+      <input type="number" id="p8q1-answer" placeholder="Extension in m">
+      <button onclick="checkP8Q1()">Check Answer</button>
+      <span id="p8q1-feedback" class="feedback"></span>
+    </div>
+    <div id="p8q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> If a 5 cm extension requires 2 N, how many newtons would produce a 10 cm extension (assuming the same spring and staying within the elastic limit)?</p>
+      <input type="number" id="p8q2-answer" placeholder="Force in N">
+      <button onclick="checkP8Q2()">Check Answer</button>
+      <span id="p8q2-feedback" class="feedback"></span>
+    </div>
+    <div id="p8q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A bungee cord stretches more easily than a metal spring. Does this mean that for the same extension, a bungee cord requires more force or less force compared to a metal spring?</p>
+      <select id="p8q3-answer">
+        <option value="">--Select--</option>
+        <option value="More force">More force</option>
+        <option value="Less force">Less force</option>
+      </select>
+      <button onclick="checkP8Q3()">Check Answer</button>
+      <span id="p8q3-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next8" disabled onclick="showScreen(9)">Next</button>
+    <br><br>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+
+  <!-- Screen 9: Practical Activity – Investigating Proportional Extension -->
+  <div id="screen9" class="screen">
+    <h2>9. Practical Activity: Investigating Proportional Extension</h2>
+    <p>We’re going to hang different weights on a spring, measure its total length, then calculate the extension.</p>
+    <p><strong>Instructions:</strong></p>
+    <ul>
+      <li>Start with 0 N (no weight) and measure the spring’s length. (This is its natural length.)</li>
+      <li>Add 1 N at a time, up to 5 N, recording the total length each time.</li>
+      <li>Calculate the extension = (current length – natural length).</li>
+      <li>Then click “Draw Graph” to plot Force vs. Extension and see if it’s a straight line.</li>
+    </ul>
+
+    <table class="practical-table">
+      <colgroup>
+        <col style="width: 80px;">
+        <col style="width: 100px;">
+        <col style="width: 100px;">
+      </colgroup>
+      <tr>
+        <th>Force (N)</th>
+        <th>Length of Spring (cm)</th>
+        <th>Extension (cm)</th>
+      </tr>
+      <tbody id="springDataRows">
+        <!-- We'll auto-generate 6 rows: 0N to 5N -->
+      </tbody>
+    </table>
+
+    <button onclick="drawGraph()">Draw Graph</button>
+    <br><br>
+    <canvas id="graphCanvas" width="500" height="300" class="hidden"></canvas>
+    
+    <h3>Conclusion</h3>
+    <p>Write a conclusion about the relationship between force and extension:</p>
+    <button onclick="showConclusionStarter()">Sentence Starter</button>
+    <br>
+    <textarea id="conclusionBox"></textarea>
+
+    <button onclick="showScreen(8)">Back</button>
+  </div>
+
+  <!-- Screen 10: 10-Mark Multiple Choice Quiz -->
+  <div id="screen10" class="screen">
+    <h2>10. Quick Quiz (10 marks)</h2>
+    <p>Answer each question, then click “Check Quiz” at the bottom to see your score and correct/incorrect answers.</p>
+    <ol>
+      <li class="question">
+        <p>1) Deformation that returns to original shape once the force is removed is called:</p>
+        <select id="quiz1">
+          <option value="">--Select--</option>
+          <option value="A">A) Plastic deformation</option>
+          <option value="B">B) Elastic deformation</option>
+          <option value="C">C) Permanent deformation</option>
+          <option value="D">D) Hooke’s deformation</option>
+        </select>
+        <span id="quiz1Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>2) Which of these is an example of tension?</p>
+        <select id="quiz2">
+          <option value="">--Select--</option>
+          <option value="A">A) A cushion squashed by someone sitting</option>
+          <option value="B">B) A car tyre on the road</option>
+          <option value="C">C) A rope being pulled from both ends</option>
+          <option value="D">D) Water in a bucket</option>
+        </select>
+        <span id="quiz2Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>3) In a spring, if the force is doubled, the extension is:</p>
+        <select id="quiz3">
+          <option value="">--Select--</option>
+          <option value="A">A) Doubled</option>
+          <option value="B">B) Halved</option>
+          <option value="C">C) Unchanged</option>
+          <option value="D">D) Quadrupled</option>
+        </select>
+        <span id="quiz3Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>4) If a spring extends 4 cm under a 2 N force, what extension would you expect under a 6 N force?</p>
+        <select id="quiz4">
+          <option value="">--Select--</option>
+          <option value="A">A) 6 cm</option>
+          <option value="B">B) 8 cm</option>
+          <option value="C">C) 12 cm</option>
+          <option value="D">D) 2 cm</option>
+        </select>
+        <span id="quiz4Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>5) Once a spring passes its elastic limit:</p>
+        <select id="quiz5">
+          <option value="">--Select--</option>
+          <option value="A">A) It can still obey the proportional relationship perfectly</option>
+          <option value="B">B) It will never extend again</option>
+          <option value="C">C) It won’t return to its original length</option>
+          <option value="D">D) It becomes more stiff</option>
+        </select>
+        <span id="quiz5Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>6) Which of these is a real-world example of compression?</p>
+        <select id="quiz6">
+          <option value="">--Select--</option>
+          <option value="A">A) Squeezing a foam pillow</option>
+          <option value="B">B) Pulling on a bungee cord</option>
+          <option value="C">C) Twisting a screwdriver</option>
+          <option value="D">D) Running water in a pipe</option>
+        </select>
+        <span id="quiz6Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>7) The force that balances the weight of a person standing on the floor is:</p>
+        <select id="quiz7">
+          <option value="">--Select--</option>
+          <option value="A">A) Tension</option>
+          <option value="B">B) Reaction force from floor</option>
+          <option value="C">C) Friction</option>
+          <option value="D">D) No force is needed</option>
+        </select>
+        <span id="quiz7Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>8) If a spring extends by 3 cm when a 1 N force is applied, how much force is needed to extend it by 6 cm?</p>
+        <select id="quiz8">
+          <option value="">--Select--</option>
+          <option value="A">A) 1 N</option>
+          <option value="B">B) 2 N</option>
+          <option value="C">C) 3 N</option>
+          <option value="D">D) 6 N</option>
+        </select>
+        <span id="quiz8Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>9) Which statement is correct about elastic deformation?</p>
+        <select id="quiz9">
+          <option value="">--Select--</option>
+          <option value="A">A) The object remains deformed after force is removed</option>
+          <option value="B">B) The object returns to its original shape after force is removed</option>
+          <option value="C">C) It only happens at extremely high forces</option>
+          <option value="D">D) It’s the same as plastic deformation</option>
+        </select>
+        <span id="quiz9Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>10) The extension of a spring is 5 cm at 2 N. If the extension is directly proportional to the force, how many centimetres would it extend at 4 N?</p>
+        <select id="quiz10">
+          <option value="">--Select--</option>
+          <option value="A">A) 2.5 cm</option>
+          <option value="B">B) 5 cm</option>
+          <option value="C">C) 10 cm</option>
+          <option value="D">D) 20 cm</option>
+        </select>
+        <span id="quiz10Feedback" class="feedback"></span>
+      </li>
+    </ol>
+    <button onclick="checkQuiz()">Check Quiz</button>
+    <p id="quizResult"></p>
+    <br>
+    <button onclick="showScreen(1)">Back to Start</button>
+  </div>
+
+  <!-- Screen 11: Extended Question -->
+  <div id="screen11" class="screen">
+    <h2>11. Extended Question</h2>
+    <p><strong>Question:</strong> Explain how a spring can return to its original length when the force is removed, referring to the tension or compression of bonds and the idea of an elastic limit (without going into potential energy).</p>
+    <textarea id="extendedAnswer" rows="6" style="width:100%;" placeholder="Type your answer here..."></textarea>
+    <br>
+    <button onclick="showSentenceStarter()">Sentence Starter</button>
+    <button onclick="revealAnswer()">Reveal Sample Answer</button>
+    <br><br>
+    <p id="sampleAnswer" class="hidden" style="background-color:#e1f5fe; padding:10px; border-radius:6px;"></p>
+    <br>
+    <button onclick="showScreen(10)">Back to Quiz</button>
+  </div>
+
+  <!-- Screen 12: Performance Descriptor -->
+  <div id="screen12" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
+  </div>
+</div>
+
+<!-- Calculator (Draggable) -->
+<div id="calculator">
+  <div id="calculator-header">Calculator</div>
+  <input type="text" id="calc-display" readonly>
+  <div id="calc-buttons">
+    <button onclick="calcAppend('7')">7</button>
+    <button onclick="calcAppend('8')">8</button>
+    <button onclick="calcAppend('9')">9</button>
+    <button onclick="calcAppend('/')">/</button>
+    <br>
+    <button onclick="calcAppend('4')">4</button>
+    <button onclick="calcAppend('5')">5</button>
+    <button onclick="calcAppend('6')">6</button>
+    <button onclick="calcAppend('*')">*</button>
+    <br>
+    <button onclick="calcAppend('1')">1</button>
+    <button onclick="calcAppend('2')">2</button>
+    <button onclick="calcAppend('3')">3</button>
+    <button onclick="calcAppend('-')">-</button>
+    <br>
+    <button onclick="calcAppend('0')">0</button>
+    <button onclick="calcAppend('.')">.</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcAppend('+')">+</button>
+    <br>
+    <button onclick="calcEquals()" style="width:248px;">=</button>
+  </div>
+</div>
+
+<script>
+  // ------------------------
+  // TRACKING PROGRESS
+  // ------------------------
+  let basicsCompleted = false;       
+  let reactionForceCompleted = false;
+  let springExtensionCompleted = false; 
+  let proportionalExtensionCompleted = false; 
+  let quizCompleted = false;
+
+  let currentScreen = 1;
+  let prevScreen = 1; // For returning from descriptor screen
+
+  // ------------------------
+  // NAVIGATION
+  // ------------------------
+  function showScreen(n) {
+    if(n !== 12) {
+      prevScreen = n;
+    }
+    currentScreen = n;
+    for (let i = 1; i <= 12; i++) {
+      const screenElem = document.getElementById("screen" + i);
+      if(screenElem) {
+        screenElem.classList.remove("active");
+      }
+    }
+    document.getElementById("screen" + n).classList.add("active");
+  }
+
+  // ------------------------
+  // TOGGLE HELP
+  // ------------------------
+  function toggleHelp(id) {
+    const helpElem = document.getElementById(id);
+    if(helpElem.classList.contains('hidden')) {
+      helpElem.classList.remove('hidden');
+    } else {
+      helpElem.classList.add('hidden');
+    }
+  }
+
+  // ------------------------
+  // SCREEN 2 CHECK
+  // ------------------------
+  function checkScreen2() {
+    let correct = true;
+    let q2a = document.getElementById("q2a").value;
+    if(q2a === "Squeezing a stress ball.") {
+      document.getElementById("feedback2a").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2a").innerText = "Try again.";
+      correct = false;
+    }
+    let q2b = document.getElementById("q2b").value;
+    if(q2b === "Stretching a rubber band.") {
+      document.getElementById("feedback2b").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2b").innerText = "Try again.";
+      correct = false;
+    }
+    if(correct) {
+      document.getElementById("next2").disabled = false;
+      basicsCompleted = true;
+    }
+  }
+
+  // ------------------------
+  // SCREEN 4: Check extension question
+  // ------------------------
+  function checkSpringQ1() {
+    const ans = parseFloat(document.getElementById("springQ1").value);
+    // Original length = 10 cm, new length = 12 cm => extension = 2 cm
+    if(ans === 2) {
+      document.getElementById("springQ1Feedback").innerText = "Correct! The extension is 2 cm.";
+      reactionForceCompleted = true; 
+    } else {
+      document.getElementById("springQ1Feedback").innerText = "Try again. Remember: 12 - 10 = 2 cm.";
+    }
+  }
+
+  // ------------------------
+  // SCREEN 7: Practice Q checks
+  // ------------------------
+  function checkP7Q1() {
+    const ans = parseFloat(document.getElementById("p7q1-answer").value);
+    // If it extends by 3 cm from a 10 cm natural length => new length is 13 cm
+    if(ans === 13) {
+      document.getElementById("p7q1-feedback").innerText = "Correct!";
+      document.getElementById("p7q2").classList.remove("hidden");
+    } else {
+      document.getElementById("p7q1-feedback").innerText = "Try again.";
+    }
+  }
+  function checkP7Q2() {
+    const ans = parseFloat(document.getElementById("p7q2-answer").value);
+    // For a spring that extends 5 cm at 2 N, doubling the extension (to 10 cm) requires double the force: 4 N.
+    if(Math.abs(ans - 4) < 0.0001) {
+      document.getElementById("p7q2-feedback").innerText = "Correct!";
+      document.getElementById("p7q3").classList.remove("hidden");
+    } else {
+      document.getElementById("p7q2-feedback").innerText = "Try again. Use proportional reasoning.";
+    }
+  }
+  function checkP7Q3() {
+    const ans = document.getElementById("p7q3-answer").value;
+    // True: Once a spring goes past its elastic limit, it won't return fully
+    if(ans === "True") {
+      document.getElementById("p7q3-feedback").innerText = "Correct!";
+      document.getElementById("next7").disabled = false;
+      springExtensionCompleted = true;
+    } else {
+      document.getElementById("p7q3-feedback").innerText = "Try again.";
+    }
+  }
+
+  // ------------------------
+  // SCREEN 8: Practice Q checks
+  // ------------------------
+  function checkP8Q1() {
+    const ans = parseFloat(document.getElementById("p8q1-answer").value);
+    // The spring extends from 10 cm to 15 cm => extension = 5 cm = 0.05 m
+    if(Math.abs(ans - 0.05) < 0.00001) {
+      document.getElementById("p8q1-feedback").innerText = "Correct! The extension is 5 cm = 0.05 m.";
+      document.getElementById("p8q2").classList.remove("hidden");
+    } else {
+      document.getElementById("p8q1-feedback").innerText = "Try again. Remember to convert cm to m.";
+    }
+  }
+  function checkP8Q2() {
+    const ans = parseFloat(document.getElementById("p8q2-answer").value);
+    // If a 5 cm extension requires 2 N, then 10 cm extension requires 4 N.
+    if(Math.abs(ans - 4) < 0.1) {
+      document.getElementById("p8q2-feedback").innerText = "Correct! 4 N.";
+      document.getElementById("p8q3").classList.remove("hidden");
+    } else {
+      document.getElementById("p8q2-feedback").innerText = "Try again. Use proportional reasoning.";
+    }
+  }
+  function checkP8Q3() {
+    const ans = document.getElementById("p8q3-answer").value;
+    // A bungee cord stretches more easily so it requires less force for the same extension.
+    if(ans === "Less force") {
+      document.getElementById("p8q3-feedback").innerText = "Correct! A bungee cord requires less force.";
+      document.getElementById("next8").disabled = false;
+      proportionalExtensionCompleted = true;
+    } else {
+      document.getElementById("p8q3-feedback").innerText = "Try again.";
+    }
+  }
+
+  // ------------------------
+  // SCREEN 9: PRACTICAL ACTIVITY
+  // Generate table rows for 0 to 5 N
+  // ------------------------
+  const springDataRows = document.getElementById("springDataRows");
+  for(let i=0; i<=5; i++){
+    let row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${i}</td>
+      <td><input type="number" id="length_${i}" placeholder="Length (cm)"></td>
+      <td><input type="number" id="extension_${i}" placeholder="Extension (cm)" readonly></td>
+    `;
+    springDataRows.appendChild(row);
+  }
+
+  function drawGraph(){
+    // Read the data
+    let forceArr = [];
+    let extArr = [];
+    let naturalLength = parseFloat(document.getElementById("length_0").value);
+
+    if(isNaN(naturalLength)){
+      alert("Please enter the spring's natural length (0 N) first!");
+      return;
+    }
+
+    for(let i=0; i<=5; i++){
+      let force = i; // i in N
+      let lengthVal = parseFloat(document.getElementById(`length_${i}`).value);
+      if(isNaN(lengthVal)){
+        alert(`Please fill in the length for ${i} N.`);
+        return;
+      }
+      let extensionVal = lengthVal - naturalLength;
+      document.getElementById(`extension_${i}`).value = extensionVal.toFixed(2);
+      forceArr.push(force);
+      extArr.push(extensionVal);
+    }
+
+    // Show the canvas
+    const canvas = document.getElementById("graphCanvas");
+    canvas.classList.remove("hidden");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Prepare data for plotting
+    let minX = 0;
+    let maxX = 5;
+    let minY = 0;
+    let maxY = Math.max(...extArr);
+    if(maxY < 0) maxY = 1; // fallback
+
+    // Add a small margin
+    let marginX = 0.5;
+    let marginY = maxY * 0.1;
+    if(marginY === 0) marginY = 1;
+
+    let plotMinX = minX - marginX;
+    let plotMaxX = maxX + marginX;
+    let plotMinY = minY - marginY;
+    let plotMaxY = maxY + marginY;
+
+    // Utility to transform data coords to canvas coords
+    function toCanvasX(x) {
+      return ((x - plotMinX)/(plotMaxX - plotMinX)) * (canvas.width - 40) + 40;
+    }
+    function toCanvasY(y) {
+      // invert y so bigger y is higher on canvas
+      return canvas.height - 40 - ((y - plotMinY)/(plotMaxY - plotMinY)) * (canvas.height - 80);
+    }
+
+    // Draw axes
+    ctx.strokeStyle = "#000";
+    ctx.beginPath();
+    // X-axis from (plotMinX,0) to (plotMaxX,0)
+    ctx.moveTo(toCanvasX(plotMinX), toCanvasY(0));
+    ctx.lineTo(toCanvasX(plotMaxX), toCanvasY(0));
+    // Y-axis from (0,plotMinY) to (0,plotMaxY)
+    ctx.moveTo(toCanvasX(0), toCanvasY(plotMinY));
+    ctx.lineTo(toCanvasX(0), toCanvasY(plotMaxY));
+    ctx.stroke();
+
+    // Draw X-axis ticks (0 to 5)
+    for(let iTick=0; iTick<=5; iTick++){
+      let xPos = toCanvasX(iTick);
+      let yZero = toCanvasY(0);
+      ctx.beginPath();
+      ctx.moveTo(xPos, yZero - 5);
+      ctx.lineTo(xPos, yZero + 5);
+      ctx.stroke();
+      // Label
+      ctx.font = "14px Roboto";
+      ctx.fillStyle = "#000";
+      ctx.fillText(iTick.toString(), xPos - 3, yZero + 20);
+    }
+
+    // Draw Y-axis ticks (we'll do 5 steps)
+    let stepY = (maxY/5);
+    for(let iTick=0; iTick<=5; iTick++){
+      let yVal = iTick * stepY;
+      let xZero = toCanvasX(0);
+      let yPos = toCanvasY(yVal);
+      ctx.beginPath();
+      ctx.moveTo(xZero - 5, yPos);
+      ctx.lineTo(xZero + 5, yPos);
+      ctx.stroke();
+      ctx.font = "14px Roboto";
+      ctx.fillStyle = "#000";
+      ctx.fillText(yVal.toFixed(2), xZero - 35, yPos + 4);
+    }
+
+    // Axis labels
+    // X-axis label
+    ctx.save();
+    ctx.font = "16px Roboto";
+    ctx.fillStyle = "#000";
+    ctx.textAlign = "center";
+    ctx.fillText("Force (N)", canvas.width / 2, canvas.height - 10);
+    ctx.restore();
+
+    // Y-axis label
+    ctx.save();
+    ctx.translate(20, canvas.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.font = "16px Roboto";
+    ctx.fillStyle = "#000";
+    ctx.fillText("Extension (cm)", 0, 0);
+    ctx.restore();
+
+    // Plot the data points
+    ctx.fillStyle = "red";
+    for(let i=0; i<forceArr.length; i++){
+      let cx = toCanvasX(forceArr[i]);
+      let cy = toCanvasY(extArr[i]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4, 0, 2*Math.PI);
+      ctx.fill();
+    }
+
+    // Compute a simple linear regression for a trend line
+    let {slope, intercept} = linearRegression(forceArr, extArr);
+    // We'll draw from minX to maxX
+    let lineStartY = slope*plotMinX + intercept;
+    let lineEndY = slope*plotMaxX + intercept;
+
+    ctx.strokeStyle = "blue";
+    ctx.beginPath();
+    ctx.moveTo(toCanvasX(plotMinX), toCanvasY(lineStartY));
+    ctx.lineTo(toCanvasX(plotMaxX), toCanvasY(lineEndY));
+    ctx.stroke();
+
+    alert("Graph drawn! Notice if it’s roughly a straight line, the extension is directly proportional to the force up to the elastic limit.");
+  }
+
+  function linearRegression(xArr, yArr){
+    // Simple linear regression: slope & intercept
+    let n = xArr.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    for(let i=0; i<n; i++){
+      sumX += xArr[i];
+      sumY += yArr[i];
+      sumXY += xArr[i]*yArr[i];
+      sumX2 += xArr[i]*xArr[i];
+    }
+    let slope = (n*sumXY - sumX*sumY)/(n*sumX2 - sumX*sumX);
+    let intercept = (sumY - slope*sumX)/n;
+    return {slope, intercept};
+  }
+
+  function showConclusionStarter(){
+    document.getElementById("conclusionBox").value = "As the force on the spring increased, the extension ...";
+  }
+
+  // ------------------------
+  // 10-MARK QUIZ
+  // ------------------------
+  function checkQuiz() {
+    let score = 0;
+    let answers = [
+      "B", // Q1
+      "C", // Q2
+      "A", // Q3
+      "C", // Q4
+      "C", // Q5
+      "A", // Q6
+      "B", // Q7
+      "B", // Q8
+      "B", // Q9
+      "C"  // Q10
+    ];
+    let userAnswers = [
+      document.getElementById("quiz1").value,
+      document.getElementById("quiz2").value,
+      document.getElementById("quiz3").value,
+      document.getElementById("quiz4").value,
+      document.getElementById("quiz5").value,
+      document.getElementById("quiz6").value,
+      document.getElementById("quiz7").value,
+      document.getElementById("quiz8").value,
+      document.getElementById("quiz9").value,
+      document.getElementById("quiz10").value
+    ];
+
+    for(let i = 0; i < 10; i++) {
+      let questionId = "quiz" + (i+1) + "Feedback";
+      if(userAnswers[i] === answers[i]) {
+        score++;
+        document.getElementById(questionId).innerText = "Correct!";
+      } else {
+        document.getElementById(questionId).innerText = "Incorrect. Correct answer is " + answers[i];
+      }
+    }
+    document.getElementById("quizResult").innerText = "You scored " + score + " out of 10.";
+    quizCompleted = true;
+  }
+
+  // ------------------------
+  // EXTENDED QUESTION (Simplified)
+  // ------------------------
+  function showSentenceStarter() {
+    document.getElementById("extendedAnswer").value = "A spring returns to its original length when the force is removed because...";
+  }
+  function revealAnswer() {
+    let sample = "If the spring is within its elastic limit, the bonds between its particles can restore the spring to its original shape once the force is no longer applied. The deformation is elastic, so the spring isn’t permanently stretched.";
+    document.getElementById("sampleAnswer").innerText = sample;
+    document.getElementById("sampleAnswer").classList.remove("hidden");
+  }
+
+  // ------------------------
+  // PERFORMANCE DESCRIPTOR
+  // ------------------------
+  function showPerformanceDescriptor() {
+    let descriptor = "No level achieved yet. Please complete some sections to see your performance.";
+
+    if(quizCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You’ve completed the quiz and all lesson sections, demonstrating a strong understanding of squashing and stretching forces!";
+    } else if(proportionalExtensionCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You’ve covered deformation, reaction forces, and the proportional extension concept. Great job! Try the quiz to finalize your learning.";
+    } else if(springExtensionCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You’re confident with basic spring extension calculations. Keep going to learn more!";
+    } else if(reactionForceCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: You understand deformation and reaction forces. Next, practice more spring extension questions!";
+    } else if(basicsCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Beginning</span>: You know the basics of compression and tension. Continue to explore reaction forces and springs!";
+    }
+
+    document.getElementById("descriptorMessage").innerHTML = descriptor;
+    showScreen(12);
+  }
+
+  // ------------------------
+  // CALCULATOR FUNCTIONS
+  // ------------------------
+  function toggleCalculator() {
+    var calc = document.getElementById("calculator");
+    if (calc.style.display === "none" || calc.style.display === "") {
+      calc.style.display = "block";
+    } else {
+      calc.style.display = "none";
+    }
+  }
+  function calcAppend(val) {
+    document.getElementById("calc-display").value += val;
+  }
+  function calcClear() {
+    document.getElementById("calc-display").value = "";
+  }
+  function calcEquals() {
+    try {
+      var result = eval(document.getElementById("calc-display").value);
+      document.getElementById("calc-display").value = result;
+    } catch(e) {
+      document.getElementById("calc-display").value = "Error";
+    }
+  }
+
+  // Make calculator draggable
+  dragElement(document.getElementById("calculator"));
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var header = document.getElementById(elmnt.id + "-header");
+    if (header) {
+      header.onmousedown = dragMouseDown;
+    } else {
+      elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+</body>
+</html>
