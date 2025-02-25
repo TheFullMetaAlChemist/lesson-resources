@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Turning Forces</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #01579b;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #0277bd;
+      margin-top: 30px;
+      border-bottom: 2px solid #81d4fa;
+      padding-bottom: 5px;
+    }
+    h3 {
+      text-align: center;
+      color: #0288d1;
+      margin-top: 20px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #b3e5fc;
+      border-radius: 8px;
+      background-color: #e1f5fe;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #0277bd;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #01579b;
+    }
+    button:disabled {
+      background-color: #90caf9;
+      color: #e3f2fd;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="number"], input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 20px 0;
+      width: 100%;
+    }
+    table, th, td {
+      border: 1px solid #81d4fa;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    .equation-help {
+      background-color: #e0f2f1;
+      border: 1px solid #80cbc4;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      font-style: italic;
+    }
+    .toggle-btn {
+      background-color: #039be5;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    /* Calculator styling */
+    #calculator {
+      display: none;
+      position: absolute;
+      top: 120px;
+      left: 120px;
+      z-index: 1000;
+      border: 2px solid #01579b;
+      background-color: #e1f5fe;
+      padding: 10px;
+      width: 300px;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
+      border-radius: 8px;
+    }
+    #calculator-header {
+      cursor: move;
+      background-color: #0277bd;
+      color: #fff;
+      padding: 8px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 4px;
+    }
+    #calc-display {
+      width: 100%;
+      height: 40px;
+      font-size: 1.4em;
+      margin: 10px 0;
+      text-align: right;
+      padding-right: 10px;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    #calc-buttons button {
+      width: 60px;
+      height: 60px;
+      margin: 4px;
+      font-size: 1.2em;
+      border: 1px solid #81d4fa;
+      border-radius: 4px;
+      background-color: #0277bd;
+      color: #fff;
+    }
+    /* Performance Descriptor screen */
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+
+    /* 
+      NEW STYLES for the practical table:
+      1) table-layout: fixed
+      2) narrower column widths via <colgroup>
+      3) narrower input boxes 
+    */
+    table.practical-table {
+      table-layout: fixed; /* crucial for respecting colgroup widths */
+      width: 100%;
+    }
+    .practical-table input[type="number"] {
+      width: 50px; /* keep inputs narrow */
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Turning Forces</h1>
+  <!-- Persistent Navigation -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(9)">Practical Activity</button>
+    <button class="nav-btn" onclick="showScreen(10)">10-Mark Quiz</button>
+    <button class="nav-btn" onclick="showScreen(11)">Extended Question</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
+  </div>
+  
+  <!-- Screen 1: Introduction to Turning Forces -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introduction to Turning Forces</h2>
+    <p><strong>Key Idea:</strong> A turning force, or moment, occurs when a force acts at a distance from a pivot (also called a fulcrum). Think of a seesaw or a door hinge: the pivot is where it rotates, and the force acts at some distance away.</p>
+    <p>Real-world examples include:</p>
+    <ul>
+      <li><strong>Seesaw:</strong> Children on opposite ends applying forces around the pivot in the center.</li>
+      <li><strong>Door handle:</strong> You push or pull the handle at the edge, turning the door on its hinges.</li>
+      <li><strong>Spanner/wrench:</strong> You apply force at the end to turn a nut or bolt.</li>
+    </ul>
+    <button onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: Understanding Pivot and Moment -->
+  <div id="screen2" class="screen">
+    <h2>2. Understanding the Pivot and the Moment</h2>
+    <p>The <strong>pivot</strong> is the point about which something turns. The <strong>moment</strong> (turning effect) depends on:</p>
+    <ul>
+      <li>The size of the force.</li>
+      <li>The perpendicular distance from the pivot to where the force is applied.</li>
+    </ul>
+    <p>Mathematically: <em>Moment = Force × Distance from Pivot</em></p>
+    <div class="question">
+      <p>Which statement best describes a pivot?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="The point or support about which something rotates.">The point or support about which something rotates.</option>
+        <option value="The force acting on an object.">The force acting on an object.</option>
+        <option value="The mass of an object.">The mass of an object.</option>
+        <option value="The distance from the force to the mass.">The distance from the force to the mass.</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p>What two factors affect the size of the moment?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="Force and speed.">Force and speed.</option>
+        <option value="Force and distance from the pivot.">Force and distance from the pivot.</option>
+        <option value="Mass and speed.">Mass and speed.</option>
+        <option value="Time and distance.">Time and distance.</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: The Moment Equation – Explanation & Examples -->
+  <div id="screen3" class="screen">
+    <h2>3. The Moment Equation – Explanation & Examples</h2>
+    <p>The equation for a moment is:</p>
+    <p><em>Moment (Nm) = Force (N) × Perpendicular distance from pivot (m)</em></p>
+    <p><strong>Example 1:</strong> If you apply a 10 N force at a distance of 0.5 m from the pivot, the moment is: 10 N × 0.5 m = 5 Nm.</p>
+    <p><strong>Example 2:</strong> Using a spanner with a 20 N force applied 0.25 m from the nut: 20 N × 0.25 m = 5 Nm.</p>
+    <button onclick="showScreen(4)">Next</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+  </div>
+  
+  <!-- Screen 4: Practice – Calculating Moments -->
+  <div id="screen4" class="screen">
+    <h2>4. Practice – Calculating Moments</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help4')">Toggle Equation Help</button>
+    <div id="help4" class="equation-help hidden">
+      <p><strong>Equation:</strong> Moment = Force × Distance</p>
+      <p><strong>Worked Example:</strong> If a 10 N force acts 0.5 m from the pivot, the moment is 10 × 0.5 = 5 Nm.</p>
+      <p>Make sure distance is in meters (m) and force in newtons (N).</p>
+    </div>
+    <div id="s4q1" class="practice-question">
+      <p><strong>Question 1:</strong> A 5 N force acts 0.2 m from the pivot. Calculate the moment (Nm).</p>
+      <input type="number" id="s4q1-answer" placeholder="Enter moment (Nm)">
+      <button onclick="checkS4Q1()">Check Answer</button>
+      <span id="s4q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A 12 N force acts 0.5 m from the pivot. Calculate the moment (Nm).</p>
+      <input type="number" id="s4q2-answer" placeholder="Enter moment (Nm)">
+      <button onclick="checkS4Q2()">Check Answer</button>
+      <span id="s4q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A 20 N force acts 0.1 m from the pivot. Calculate the moment (Nm).</p>
+      <input type="number" id="s4q3-answer" placeholder="Enter moment (Nm)">
+      <button onclick="checkS4Q3()">Check Answer</button>
+      <span id="s4q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> A 15 N force acts 0.4 m from the pivot. Calculate the moment (Nm).</p>
+      <input type="number" id="s4q4-answer" placeholder="Enter moment (Nm)">
+      <button onclick="checkS4Q4()">Check Answer</button>
+      <span id="s4q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s4q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> A 50 N force acts 0.02 m from the pivot (near the hinge of a door). Calculate the moment (Nm).</p>
+      <input type="number" id="s4q5-answer" placeholder="Enter moment (Nm)">
+      <button onclick="checkS4Q5()">Check Answer</button>
+      <span id="s4q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next4" disabled onclick="showScreen(5)">Next</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+  </div>
+  
+  <!-- Screen 5: The Law of Moments -->
+  <div id="screen5" class="screen">
+    <h2>5. The Law of Moments</h2>
+    <p>The law of moments states that for an object in equilibrium (not turning):</p>
+    <p><strong>Sum of clockwise moments = Sum of anticlockwise moments</strong></p>
+    <p>This means if you have a seesaw balanced, the total turning effect on one side (clockwise) is equal to the total turning effect on the other side (anticlockwise).</p>
+    <p><strong>Example:</strong> If a 30 N child sits 2 m from the pivot on one side (moment = 60 Nm), you can balance them by placing a 20 N child on the other side at 3 m from the pivot (moment = 60 Nm). Both sides are 60 Nm, so the seesaw is balanced.</p>
+    <button onclick="showScreen(6)">Next</button>
+    <br><br>
+    <button onclick="showScreen(4)">Back</button>
+  </div>
+  
+  <!-- Screen 6: Practice – The Law of Moments -->
+  <div id="screen6" class="screen">
+    <h2>6. Practice – Applying the Law of Moments</h2>
+    <button class="toggle-btn" onclick="toggleHelp('help6')">Toggle Equation Help</button>
+    <div id="help6" class="equation-help hidden">
+      <p><strong>Law of Moments (Equilibrium):</strong> Clockwise Moment = Anticlockwise Moment</p>
+      <p><strong>Worked Example:</strong><br>
+      A 10 N weight is 3 m to the left of the pivot (30 Nm clockwise). To balance, you need 30 Nm anticlockwise on the right. If the distance on the right is 2 m, the force needed is 30 ÷ 2 = 15 N.</p>
+    </div>
+    <div id="s6q1" class="practice-question">
+      <p><strong>Question 1:</strong> A 10 N weight is 3 m to the left of the pivot. What force at 2 m on the right side is needed to balance?</p>
+      <input type="number" id="s6q1-answer" placeholder="Enter force (N)">
+      <button onclick="checkS6Q1()">Check Answer</button>
+      <span id="s6q1-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q2" class="practice-question hidden">
+      <p><strong>Question 2:</strong> A 20 N weight is 0.5 m to the left of the pivot. What force at 1 m on the right side is needed to balance?</p>
+      <input type="number" id="s6q2-answer" placeholder="Enter force (N)">
+      <button onclick="checkS6Q2()">Check Answer</button>
+      <span id="s6q2-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q3" class="practice-question hidden">
+      <p><strong>Question 3:</strong> A seesaw is balanced with a 25 N child at 1.2 m from the pivot on one side and a 15 N child on the other side. How far (m) is the 15 N child from the pivot?</p>
+      <input type="number" id="s6q3-answer" placeholder="Enter distance (m)">
+      <button onclick="checkS6Q3()">Check Answer</button>
+      <span id="s6q3-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q4" class="practice-question hidden">
+      <p><strong>Question 4:</strong> A 50 N weight at 0.2 m on the left is balanced by a force F at 0.5 m on the right. Calculate F.</p>
+      <input type="number" id="s6q4-answer" placeholder="Enter force (N)">
+      <button onclick="checkS6Q4()">Check Answer</button>
+      <span id="s6q4-feedback" class="feedback"></span>
+    </div>
+    <div id="s6q5" class="practice-question hidden">
+      <p><strong>Question 5:</strong> A 100 N object at 0.3 m from the pivot is balanced by a 75 N object. How far is the 75 N object from the pivot (m)?</p>
+      <input type="number" id="s6q5-answer" placeholder="Enter distance (m)">
+      <button onclick="checkS6Q5()">Check Answer</button>
+      <span id="s6q5-feedback" class="feedback"></span>
+    </div>
+    <br>
+    <button id="next6" disabled onclick="showScreen(7)">Next</button>
+    <br><br>
+    <button onclick="showScreen(5)">Back</button>
+  </div>
+  
+  <!-- Screen 7: Centre of Gravity / Centre of Mass -->
+  <div id="screen7" class="screen">
+    <h2>7. Centre of Gravity / Centre of Mass</h2>
+    <p>The <strong>centre of gravity</strong> (or centre of mass) of an object is the point where we can consider the whole weight of the object to act. For a uniform object (like a regular shape with mass evenly distributed), this is at its geometric center.</p>
+    <p>Real-world example: If you balance a ruler on your finger at its midpoint, it is because the centre of gravity is at the midpoint, so moments on each side are equal.</p>
+    <button onclick="showScreen(8)">Next</button>
+    <br><br>
+    <button onclick="showScreen(6)">Back</button>
+  </div>
+  
+  <!-- Screen 8: Gap-Fill Practice: Centre of Gravity -->
+  <div id="screen8" class="screen">
+    <h2>8. Practice: Centre of Gravity</h2>
+    <p>Select the correct words from the dropdowns to complete the sentence:</p>
+    <div class="question">
+      <p>A <select id="gap1">
+          <option value="">--Select--</option>
+          <option value="short, wide">short, wide</option>
+          <option value="tall, narrow">tall, narrow</option>
+        </select> cabinet is generally more stable because its centre of gravity is more likely to remain 
+        <select id="gap2">
+          <option value="">--Select--</option>
+          <option value="inside">inside</option>
+          <option value="outside">outside</option>
+        </select> the base.</p>
+      <button onclick="checkCoGGapFill()">Check Answer</button>
+      <span id="cogFeedback" class="feedback"></span>
+    </div>
+    <button onclick="showScreen(9)">Next</button>
+    <br><br>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+  
+  <!-- Screen 9: Practical Activity – Balancing Moments on a Metre Stick -->
+  <div id="screen9" class="screen">
+    <h2>9. Practical Activity: Balancing a Metre Stick</h2>
+    <p>Enter values for the <strong>left side</strong> and <strong>right side</strong> of the pivot. Remember:</p>
+    <ul>
+      <li>100 g = 1 N (approx.)</li>
+      <li>Distance must be in meters (e.g., 50 cm = 0.50 m)</li>
+    </ul>
+
+    <!-- NEW: class="practical-table" for table-layout: fixed and narrower columns -->
+    <table class="practical-table">
+      <!-- colgroup with narrower widths -->
+      <colgroup>
+        <col style="width: 60px;">
+        <col style="width: 60px;">
+        <col style="width: 70px;">
+        <col style="width: 60px;">
+        <col style="width: 60px;">
+        <col style="width: 70px;">
+        <col style="width: 80px;"> <!-- Slightly wider for the Check button column -->
+      </colgroup>
+      <tr>
+        <th colspan="3">Left of Pivot (Anticlockise moment)</th>
+        <th colspan="3">Right of Pivot (Clockwise moment)</th>
+        <th>Check</th>
+      </tr>
+      <tr>
+        <th>Weight (N)</th>
+        <th>Distance (m)</th>
+        <th>Moment (Nm)</th>
+        <th>Weight (N)</th>
+        <th>Distance (m)</th>
+        <th>Moment (Nm)</th>
+        <th></th>
+      </tr>
+      <tr>
+        <td><input type="number" id="weightLeft1"></td>
+        <td><input type="number" id="distLeft1"></td>
+        <td><input type="number" id="momentLeft1"></td>
+        <td><input type="number" id="weightRight1"></td>
+        <td><input type="number" id="distRight1"></td>
+        <td><input type="number" id="momentRight1"></td>
+        <td><button onclick="checkPractical(1)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="number" id="weightLeft2"></td>
+        <td><input type="number" id="distLeft2"></td>
+        <td><input type="number" id="momentLeft2"></td>
+        <td><input type="number" id="weightRight2"></td>
+        <td><input type="number" id="distRight2"></td>
+        <td><input type="number" id="momentRight2"></td>
+        <td><button onclick="checkPractical(2)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="number" id="weightLeft3"></td>
+        <td><input type="number" id="distLeft3"></td>
+        <td><input type="number" id="momentLeft3"></td>
+        <td><input type="number" id="weightRight3"></td>
+        <td><input type="number" id="distRight3"></td>
+        <td><input type="number" id="momentRight3"></td>
+        <td><button onclick="checkPractical(3)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="number" id="weightLeft4"></td>
+        <td><input type="number" id="distLeft4"></td>
+        <td><input type="number" id="momentLeft4"></td>
+        <td><input type="number" id="weightRight4"></td>
+        <td><input type="number" id="distRight4"></td>
+        <td><input type="number" id="momentRight4"></td>
+        <td><button onclick="checkPractical(4)">Check</button></td>
+      </tr>
+      <tr>
+        <td><input type="number" id="weightLeft5"></td>
+        <td><input type="number" id="distLeft5"></td>
+        <td><input type="number" id="momentLeft5"></td>
+        <td><input type="number" id="weightRight5"></td>
+        <td><input type="number" id="distRight5"></td>
+        <td><input type="number" id="momentRight5"></td>
+        <td><button onclick="checkPractical(5)">Check</button></td>
+      </tr>
+    </table>
+    <button onclick="showScreen(8)">Back</button>
+  </div>
+  
+  <!-- Screen 10: 10-Mark Multiple Choice Quiz -->
+  <div id="screen10" class="screen">
+    <h2>10. Quick Quiz (10 marks)</h2>
+    <p>Answer each question and then click "Check Quiz" at the bottom. Your score will be displayed, and you'll see which are correct or incorrect.</p>
+    <ol>
+      <li class="question">
+        <p>1) The pivot is:</p>
+        <select id="quiz1">
+          <option value="">--Select--</option>
+          <option value="A">A) The point about which something rotates</option>
+          <option value="B">B) The total mass of an object</option>
+          <option value="C">C) The speed at which the object moves</option>
+          <option value="D">D) Another name for force</option>
+        </select>
+        <span id="quiz1Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>2) The equation for a moment is:</p>
+        <select id="quiz2">
+          <option value="">--Select--</option>
+          <option value="A">A) Moment = Mass × Distance</option>
+          <option value="B">B) Moment = Force ÷ Distance</option>
+          <option value="C">C) Moment = Force × Distance</option>
+          <option value="D">D) Moment = Speed ÷ Time</option>
+        </select>
+        <span id="quiz2Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>3) Units for moment are:</p>
+        <select id="quiz3">
+          <option value="">--Select--</option>
+          <option value="A">A) Newtons (N)</option>
+          <option value="B">B) Newton-metres (Nm)</option>
+          <option value="C">C) Metres/second (m/s)</option>
+          <option value="D">D) Joules (J)</option>
+        </select>
+        <span id="quiz3Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>4) The law of moments states:</p>
+        <select id="quiz4">
+          <option value="">--Select--</option>
+          <option value="A">A) Force = mass × acceleration</option>
+          <option value="B">B) Speed = distance ÷ time</option>
+          <option value="C">C) Total clockwise moments = total anticlockwise moments (in equilibrium)</option>
+          <option value="D">D) Distance = speed × time</option>
+        </select>
+        <span id="quiz4Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>5) If a 10 N force is applied at 0.2 m from the pivot, the moment is:</p>
+        <select id="quiz5">
+          <option value="">--Select--</option>
+          <option value="A">A) 2 Nm</option>
+          <option value="B">B) 5 Nm</option>
+          <option value="C">C) 10 Nm</option>
+          <option value="D">D) 2 N</option>
+        </select>
+        <span id="quiz5Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>6) To increase the turning effect, you can:</p>
+        <select id="quiz6">
+          <option value="">--Select--</option>
+          <option value="A">A) Decrease the distance from pivot</option>
+          <option value="B">B) Use a smaller force</option>
+          <option value="C">C) Increase the distance from pivot or increase the force</option>
+          <option value="D">D) Use no force at all</option>
+        </select>
+        <span id="quiz6Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>7) The centre of gravity is:</p>
+        <select id="quiz7">
+          <option value="">--Select--</option>
+          <option value="A">A) The point where the entire mass of an object can be considered to act</option>
+          <option value="B">B) Always at the bottom of an object</option>
+          <option value="C">C) The pivot point</option>
+          <option value="D">D) The point of contact with the ground</option>
+        </select>
+        <span id="quiz7Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>8) An object will topple if its centre of gravity:</p>
+        <select id="quiz8">
+          <option value="">--Select--</option>
+          <option value="A">A) Is above the pivot</option>
+          <option value="B">B) Is directly over its base</option>
+          <option value="C">C) Lies outside its base</option>
+          <option value="D">D) Is at the geometric center</option>
+        </select>
+        <span id="quiz8Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>9) Which is an example of using moments in daily life?</p>
+        <select id="quiz9">
+          <option value="">--Select--</option>
+          <option value="A">A) Reading a book</option>
+          <option value="B">B) Pulling a door handle</option>
+          <option value="C">C) Listening to music</option>
+          <option value="D">D) Checking temperature</option>
+        </select>
+        <span id="quiz9Feedback" class="feedback"></span>
+      </li>
+      <li class="question">
+        <p>10) When balancing a seesaw, you want:</p>
+        <select id="quiz10">
+          <option value="">--Select--</option>
+          <option value="A">A) The bigger child as close to the pivot as possible</option>
+          <option value="B">B) The smaller child far away from the pivot to match the bigger child's moment</option>
+          <option value="C">C) No children on it</option>
+          <option value="D">D) To stand in the middle and jump</option>
+        </select>
+        <span id="quiz10Feedback" class="feedback"></span>
+      </li>
+    </ol>
+    <button onclick="checkQuiz()">Check Quiz</button>
+    <p id="quizResult"></p>
+    <br>
+    <button onclick="showScreen(1)">Back to Start</button>
+  </div>
+  
+  <!-- Screen 11: Extended Question -->
+  <div id="screen11" class="screen">
+    <h2>11. Extended Question</h2>
+    <p><strong>Question:</strong> Explain how a spanner (wrench) makes it easier to loosen a tight bolt, referring to the concept of moments, pivot, and how force is applied.</p>
+    <textarea id="extendedAnswer" rows="6" style="width:100%;" placeholder="Type your answer here..."></textarea>
+    <br>
+    <button onclick="showSentenceStarter()">Sentence Starter</button>
+    <button onclick="revealAnswer()">Reveal Sample Answer</button>
+    <br><br>
+    <p id="sampleAnswer" class="hidden" style="background-color:#e1f5fe; padding:10px; border-radius:6px;"></p>
+    <br>
+    <button onclick="showScreen(10)">Back to Quiz</button>
+  </div>
+  
+  <!-- Screen 12: Performance Descriptor -->
+  <div id="screen12" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
+  </div>
+</div>
+
+<!-- Calculator (Draggable) -->
+<div id="calculator">
+  <div id="calculator-header">Calculator</div>
+  <input type="text" id="calc-display" readonly>
+  <div id="calc-buttons">
+    <button onclick="calcAppend('7')">7</button>
+    <button onclick="calcAppend('8')">8</button>
+    <button onclick="calcAppend('9')">9</button>
+    <button onclick="calcAppend('/')">/</button>
+    <br>
+    <button onclick="calcAppend('4')">4</button>
+    <button onclick="calcAppend('5')">5</button>
+    <button onclick="calcAppend('6')">6</button>
+    <button onclick="calcAppend('*')">*</button>
+    <br>
+    <button onclick="calcAppend('1')">1</button>
+    <button onclick="calcAppend('2')">2</button>
+    <button onclick="calcAppend('3')">3</button>
+    <button onclick="calcAppend('-')">-</button>
+    <br>
+    <button onclick="calcAppend('0')">0</button>
+    <button onclick="calcAppend('.')">.</button>
+    <button onclick="calcClear()">C</button>
+    <button onclick="calcAppend('+')">+</button>
+    <br>
+    <button onclick="calcEquals()" style="width:248px;">=</button>
+  </div>
+</div>
+
+<script>
+  // Tracking progress
+  var pivotAndMomentCompleted = false;
+  var momentCalculationsCompleted = false;
+  var lawOfMomentsCompleted = false;
+  var centerOfGravityCompleted = false;
+  var quizCompleted = false;
+  
+  var currentScreen = 1;
+  var prevScreen = 1;  // For returning from descriptor screen
+
+  // Navigation
+  function showScreen(n) {
+    if(n !== 12) {
+      prevScreen = n;
+    }
+    currentScreen = n;
+    for (let i = 1; i <= 12; i++) {
+      const screenElem = document.getElementById("screen" + i);
+      if(screenElem) {
+        screenElem.classList.remove("active");
+      }
+    }
+    document.getElementById("screen" + n).classList.add("active");
+  }
+
+  /* --- Toggle Equation Help --- */
+  function toggleHelp(id) {
+    const helpElem = document.getElementById(id);
+    if(helpElem.classList.contains('hidden')) {
+      helpElem.classList.remove('hidden');
+    } else {
+      helpElem.classList.add('hidden');
+    }
+  }
+
+  /* --- Screen 2 Checks --- */
+  function checkScreen2() {
+    let correct = true;
+    let q2a = document.getElementById("q2a").value;
+    if(q2a === "The point or support about which something rotates.") {
+      document.getElementById("feedback2a").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2a").innerText = "Try again.";
+      alert("Pivot is where rotation happens.");
+      correct = false;
+    }
+    let q2b = document.getElementById("q2b").value;
+    if(q2b === "Force and distance from the pivot.") {
+      document.getElementById("feedback2b").innerText = "Correct!";
+    } else {
+      document.getElementById("feedback2b").innerText = "Try again.";
+      alert("Moment depends on the force and the perpendicular distance.");
+      correct = false;
+    }
+    if(correct) {
+      document.getElementById("next2").disabled = false;
+      pivotAndMomentCompleted = true;
+    }
+  }
+
+  /* --- Screen 4: Calculating Moments Practice --- */
+  function checkS4Q1() {
+    let ans = parseFloat(document.getElementById("s4q1-answer").value);
+    // 5 N * 0.2 m = 1 Nm
+    if(ans === 1) {
+      document.getElementById("s4q1-feedback").innerText = "Correct!";
+      document.getElementById("s4q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q1-feedback").innerText = "Try again.";
+      alert("Moment = Force × distance. 5 × 0.2 = 1 Nm");
+    }
+  }
+  function checkS4Q2() {
+    let ans = parseFloat(document.getElementById("s4q2-answer").value);
+    // 12 N * 0.5 m = 6 Nm
+    if(ans === 6) {
+      document.getElementById("s4q2-feedback").innerText = "Correct!";
+      document.getElementById("s4q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q2-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q3() {
+    let ans = parseFloat(document.getElementById("s4q3-answer").value);
+    // 20 N * 0.1 m = 2 Nm
+    if(ans === 2) {
+      document.getElementById("s4q3-feedback").innerText = "Correct!";
+      document.getElementById("s4q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q3-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q4() {
+    let ans = parseFloat(document.getElementById("s4q4-answer").value);
+    // 15 N * 0.4 m = 6 Nm
+    if(ans === 6) {
+      document.getElementById("s4q4-feedback").innerText = "Correct!";
+      document.getElementById("s4q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s4q4-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS4Q5() {
+    let ans = parseFloat(document.getElementById("s4q5-answer").value);
+    // 50 N * 0.02 m = 1 Nm
+    if(ans === 1) {
+      document.getElementById("s4q5-feedback").innerText = "Correct!";
+      document.getElementById("next4").disabled = false;
+      momentCalculationsCompleted = true;
+    } else {
+      document.getElementById("s4q5-feedback").innerText = "Try again.";
+    }
+  }
+
+  /* --- Screen 6: Law of Moments Practice --- */
+  function checkS6Q1() {
+    let ans = parseFloat(document.getElementById("s6q1-answer").value);
+    // Clockwise moment = 10 N * 3 m = 30 Nm
+    // Force on right * 2 m = 30 => Force = 15 N
+    if(ans === 15) {
+      document.getElementById("s6q1-feedback").innerText = "Correct!";
+      document.getElementById("s6q2").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q1-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q2() {
+    let ans = parseFloat(document.getElementById("s6q2-answer").value);
+    // Clockwise = 20 N * 0.5 m = 10 Nm
+    // Force on right * 1 m = 10 => Force = 10 N
+    if(ans === 10) {
+      document.getElementById("s6q2-feedback").innerText = "Correct!";
+      document.getElementById("s6q3").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q2-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q3() {
+    let ans = parseFloat(document.getElementById("s6q3-answer").value);
+    // 25 N * 1.2 m = 30 Nm => 15 N * x = 30 => x = 2 m
+    if(ans === 2) {
+      document.getElementById("s6q3-feedback").innerText = "Correct!";
+      document.getElementById("s6q4").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q3-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q4() {
+    let ans = parseFloat(document.getElementById("s6q4-answer").value);
+    // 50 N * 0.2 m = 10 Nm => F * 0.5 = 10 => F = 20 N
+    if(ans === 20) {
+      document.getElementById("s6q4-feedback").innerText = "Correct!";
+      document.getElementById("s6q5").classList.remove("hidden");
+    } else {
+      document.getElementById("s6q4-feedback").innerText = "Try again.";
+    }
+  }
+  function checkS6Q5() {
+    let ans = parseFloat(document.getElementById("s6q5-answer").value);
+    // 100 N * 0.3 m = 30 Nm => 75 N * x = 30 => x = 0.4 m
+    if(Math.abs(ans - 0.4) < 0.0001) {
+      document.getElementById("s6q5-feedback").innerText = "Correct!";
+      document.getElementById("next6").disabled = false;
+      lawOfMomentsCompleted = true;
+    } else {
+      document.getElementById("s6q5-feedback").innerText = "Try again.";
+    }
+  }
+
+  /* --- Screen 8: Gap-Fill for Centre of Gravity --- */
+  function checkCoGGapFill() {
+    let choice1 = document.getElementById("gap1").value;
+    let choice2 = document.getElementById("gap2").value;
+    
+    if(choice1 === "short, wide" && choice2 === "inside") {
+      document.getElementById("cogFeedback").innerText = "Correct! A short, wide cabinet is more stable because its centre of gravity stays inside the base.";
+      centerOfGravityCompleted = true;
+    } else {
+      document.getElementById("cogFeedback").innerText = "Try again. Think about which shape is more stable and where the centre of gravity lies.";
+    }
+  }
+
+  /* --- Practical Activity Check (5 rows) --- */
+  function checkPractical(row) {
+    // For row i, get left side
+    let wL = parseFloat(document.getElementById("weightLeft" + row).value);
+    let dL = parseFloat(document.getElementById("distLeft" + row).value);
+    let mL = parseFloat(document.getElementById("momentLeft" + row).value);
+    // For row i, get right side
+    let wR = parseFloat(document.getElementById("weightRight" + row).value);
+    let dR = parseFloat(document.getElementById("distRight" + row).value);
+    let mR = parseFloat(document.getElementById("momentRight" + row).value);
+
+    // Basic checks: momentLeft ~ wL * dL, momentRight ~ wR * dR
+    let calcLeft = wL * dL;
+    let calcRight = wR * dR;
+
+    if(isNaN(wL) || isNaN(dL) || isNaN(mL) || isNaN(wR) || isNaN(dR) || isNaN(mR)) {
+      alert("Row " + row + ": Please fill in all fields correctly.");
+      return;
+    }
+
+    // Tolerance
+    let tol = 0.1;
+    let leftCheck = Math.abs(mL - calcLeft) <= tol;
+    let rightCheck = Math.abs(mR - calcRight) <= tol;
+
+    if(leftCheck && rightCheck) {
+      alert("Row " + row + ": Good job! Your moments match the expected calculations on both sides.");
+    } else {
+      alert("Row " + row + ": Double-check your calculations. Remember: Moment = Weight (N) × Distance (m).");
+    }
+  }
+
+  /* --- 10-Mark Quiz Check (show correct/incorrect for each) --- */
+  function checkQuiz() {
+    let score = 0;
+    let answers = [
+      "A", // Q1
+      "C", // Q2
+      "B", // Q3
+      "C", // Q4
+      "A", // Q5
+      "C", // Q6
+      "A", // Q7
+      "C", // Q8
+      "B", // Q9
+      "B"  // Q10
+    ];
+    let userAnswers = [
+      document.getElementById("quiz1").value,
+      document.getElementById("quiz2").value,
+      document.getElementById("quiz3").value,
+      document.getElementById("quiz4").value,
+      document.getElementById("quiz5").value,
+      document.getElementById("quiz6").value,
+      document.getElementById("quiz7").value,
+      document.getElementById("quiz8").value,
+      document.getElementById("quiz9").value,
+      document.getElementById("quiz10").value
+    ];
+
+    for(let i = 0; i < 10; i++) {
+      let questionId = "quiz" + (i+1) + "Feedback";
+      if(userAnswers[i] === answers[i]) {
+        score++;
+        document.getElementById(questionId).innerText = "Correct!";
+      } else {
+        document.getElementById(questionId).innerText = "Incorrect. Correct answer is " + answers[i];
+      }
+    }
+    document.getElementById("quizResult").innerText = "You scored " + score + " out of 10.";
+    quizCompleted = true;
+  }
+
+  /* --- Extended Question: Sentence Starter & Reveal Answer --- */
+  function showSentenceStarter() {
+    document.getElementById("extendedAnswer").value = "A spanner increases the turning effect by ...";
+  }
+  function revealAnswer() {
+    let sample = "A spanner allows you to apply force farther from the pivot (the bolt), increasing the moment. Because Moment = Force × distance, a longer handle means a bigger turning effect for the same force, making it easier to loosen a tight bolt.";
+    document.getElementById("sampleAnswer").innerText = sample;
+    document.getElementById("sampleAnswer").classList.remove("hidden");
+  }
+
+  /* --- Performance Descriptor --- */
+  function showPerformanceDescriptor() {
+    let descriptor = "No level achieved yet. Please complete some sections to see your performance.";
+    
+    if(quizCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You have completed the quiz and all lesson sections, demonstrating a strong understanding of turning forces!";
+    } else if(centerOfGravityCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You've mastered pivot, moments, law of moments, and centre of gravity concepts. Great work!";
+    } else if(lawOfMomentsCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You're applying the law of moments accurately. Keep going to learn about centre of gravity!";
+    } else if(momentCalculationsCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: You can calculate moments. Next, tackle the law of moments!";
+    } else if(pivotAndMomentCompleted) {
+      descriptor = "<span style='font-size:2.2em;'>Beginning</span>: You understand pivots and the basics of moments. Proceed to calculations for more practice.";
+    }
+    
+    document.getElementById("descriptorMessage").innerHTML = descriptor;
+    showScreen(12);
+  }
+
+  /* --- Calculator Functions --- */
+  function toggleCalculator() {
+    var calc = document.getElementById("calculator");
+    if (calc.style.display === "none" || calc.style.display === "") {
+      calc.style.display = "block";
+    } else {
+      calc.style.display = "none";
+    }
+  }
+  function calcAppend(val) {
+    document.getElementById("calc-display").value += val;
+  }
+  function calcClear() {
+    document.getElementById("calc-display").value = "";
+  }
+  function calcEquals() {
+    try {
+      var result = eval(document.getElementById("calc-display").value);
+      document.getElementById("calc-display").value = result;
+    } catch(e) {
+      document.getElementById("calc-display").value = "Error";
+    }
+  }
+
+  // Make calculator draggable
+  dragElement(document.getElementById("calculator"));
+  function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    var header = document.getElementById(elmnt.id + "-header");
+    if (header) {
+      header.onmousedown = dragMouseDown;
+    } else {
+      elmnt.onmousedown = dragMouseDown;
+    }
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+</script>
+</body>
+</html>
