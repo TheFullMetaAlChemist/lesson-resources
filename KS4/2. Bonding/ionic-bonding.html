@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ionic Bonding Simulator</title>
+  <!-- Google Font for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Overall page styling */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #f0f2f5, #d9e2ec);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      overflow: auto;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px 30px;
+      max-width: 1200px;
+      width: 100%;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+    /* Start Screen Overlay */
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(240,242,245,0.95);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      text-align: center;
+    }
+    #start-screen h2 {
+      font-size: 20px;
+      color: #2c3e50;
+    }
+    #start-screen button {
+      padding: 8px 16px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    #start-screen button:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+    /* Compact Control Panel */
+    .control-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .control-panel select,
+    .control-panel button {
+      padding: 6px 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background: #f9f9f9;
+    }
+    .control-panel button {
+      border: none;
+      cursor: pointer;
+      background-color: #3498db;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .control-panel button:hover {
+      background-color: #2980b9;
+      transform: translateY(-1px);
+    }
+    .control-panel .reset-btn {
+      background-color: #e74c3c;
+    }
+    .control-panel .reset-btn:hover {
+      background-color: #c0392b;
+    }
+    .formula {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 500;
+      color: #2c3e50;
+      margin: 0;
+    }
+    /* Simulation area full-width */
+    .simulation-area {
+      background: #eef3f7;
+      border: 1px solid #d0dce0;
+      border-radius: 12px;
+      position: relative;
+      height: 300px;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      overflow: hidden;
+    }
+    .multi-atom-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 120px;
+      height: 100%;
+    }
+    .atom {
+      position: relative;
+      text-align: center;
+      transform: scale(0.75);
+      min-width: 250px;
+      min-height: 250px;
+    }
+    .atom.central {
+      transform: scale(0.85);
+    }
+    .nucleus {
+      width: 60px;
+      height: 60px;
+      line-height: 60px;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: 700;
+      color: #fff;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .shell {
+      border: 2px solid #7f8c8d;
+      border-radius: 50%;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+    /* Mark inner shells for toggling */
+    .inner-shell { }
+    .electron {
+      width: 12px;
+      height: 12px;
+      background-color: #3498db;
+      border-radius: 50%;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      transition: all 1.5s ease;
+      z-index: 3;
+    }
+    .metal-electrons .electron {
+      background-color: #e74c3c;
+    }
+    /* Mark inner electrons for toggling */
+    .inner-electron { }
+    /* Ion brackets (square brackets) */
+    .ion-bracket {
+      position: absolute;
+      border: 3px solid #333;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+    .ion-bracket.left {
+      border-right: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .ion-bracket.right {
+      border-left: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .ion-charge {
+      position: absolute;
+      font-size: 20px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 4;
+    }
+    /* Reaction info / Tutorial Instructions */
+    .explanation {
+      margin-top: 10px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 5px solid #3498db;
+      border-radius: 4px;
+      line-height: 1.6;
+      color: #333;
+      font-size: 14px;
+    }
+    /* Pre-Reaction Quiz for Check Mode */
+    #quiz {
+      margin-top: 10px;
+      padding: 15px;
+      background: #e7f3ff;
+      border: 1px solid #a6c8ff;
+      border-radius: 4px;
+      display: none;
+      font-size: 14px;
+    }
+    #quiz select {
+      padding: 4px 6px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 6px;
+      background: #f9f9f9;
+    }
+    #quiz button {
+      padding: 4px 8px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #quiz button:hover {
+      background-color: #2980b9;
+    }
+    /* Follow-up Quiz for Check Mode (after reaction) */
+    #followupQuiz {
+      margin-top: 10px;
+      padding: 15px;
+      background: #e7f3ff;
+      border: 1px solid #a6c8ff;
+      border-radius: 4px;
+      display: none;
+      font-size: 14px;
+    }
+    #followupQuiz select, #followupQuiz input[type="text"] {
+      padding: 4px 6px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 6px;
+      background: #f9f9f9;
+    }
+    #followupQuiz button {
+      padding: 4px 8px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #followupQuiz button:hover {
+      background-color: #2980b9;
+    }
+    @media (max-width: 768px) {
+      .multi-atom-container {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ionic Bonding Simulator</h1>
+    <!-- Start Screen -->
+    <div id="start-screen">
+      <h2>Welcome! Please select a mode:</h2>
+      <button id="start-tutorial">Tutorial Mode</button>
+      <button id="start-check">Check Understanding Mode</button>
+    </div>
+    <!-- Compact Control Panel -->
+    <div class="control-panel">
+      <select id="metal-select">
+        <option value="">Metal...</option>
+        <option value="Li">Li</option>
+        <option value="Na">Na</option>
+        <option value="K">K</option>
+        <option value="Mg">Mg</option>
+        <option value="Ca">Ca</option>
+      </select>
+      <select id="nonmetal-select">
+        <option value="">Non-metal...</option>
+        <option value="F">F</option>
+        <option value="Cl">Cl</option>
+        <option value="O">O</option>
+        <option value="S">S</option>
+      </select>
+      <button id="display-btn">Display</button>
+      <button id="react-btn">React</button>
+      <button id="reset-btn" class="reset-btn">Reset</button>
+      <button id="toggle-inner-btn">Hide Inner Shells</button>
+      <div class="formula" id="formula"></div>
+    </div>
+    <!-- Simulation Area -->
+    <div class="simulation-area" id="simulation-area">
+      <!-- Atoms will be inserted dynamically -->
+    </div>
+    <!-- Pre-Reaction Quiz (for Check Mode) -->
+    <div id="quiz"></div>
+    <!-- Follow-up Quiz (for Check Mode, will be inserted above the explanation) -->
+    <!-- Reaction Explanation / Tutorial Instructions -->
+    <div class="explanation" id="explanation"></div>
+  </div>
+  <script>
+    // Helper function to pluralize electron text.
+    function pluralizeElectron(count) {
+      return count === 1 ? "one electron" : count + " electrons";
+    }
+
+    // Helper function to convert digits to Unicode subscripts.
+    function formatFormula(formula) {
+      return formula.replace(/\d/g, d => {
+        const subscripts = { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉" };
+        return subscripts[d] || d;
+      });
+    }
+
+    // Generates formula options in the fixed order: MX, MX2, then M2X.
+    function generateFormulaOptions(metalSymbol, nonmetalSymbol) {
+      return [
+        metalSymbol + nonmetalSymbol,
+        metalSymbol + nonmetalSymbol + "2",
+        metalSymbol + "2" + nonmetalSymbol
+      ];
+    }
+
+    // Element data
+    const elements = {
+      Li: { name: "Lithium", outerElectrons: 1, valence: 1, color: "#ff5252", shells: [2, 1], type: "metal", group: 1 },
+      Na: { name: "Sodium", outerElectrons: 1, valence: 1, color: "#ff5252", shells: [2, 8, 1], type: "metal", group: 1 },
+      K:  { name: "Potassium", outerElectrons: 1, valence: 1, color: "#ff5252", shells: [2, 8, 8, 1], type: "metal", group: 1 },
+      Mg: { name: "Magnesium", outerElectrons: 2, valence: 2, color: "#ff9800", shells: [2, 8, 2], type: "metal", group: 2 },
+      Ca: { name: "Calcium", outerElectrons: 2, valence: 2, color: "#ff9800", shells: [2, 8, 8, 2], type: "metal", group: 2 },
+      F:  { name: "Fluorine", outerElectrons: 7, valence: -1, color: "#4caf50", shells: [2, 7], type: "nonmetal", group: 7 },
+      Cl: { name: "Chlorine", outerElectrons: 7, valence: -1, color: "#4caf50", shells: [2, 8, 7], type: "nonmetal", group: 7 },
+      O:  { name: "Oxygen", outerElectrons: 6, valence: -2, color: "#2196f3", shells: [2, 6], type: "nonmetal", group: 6 },
+      S:  { name: "Sulfur", outerElectrons: 6, valence: -2, color: "#2196f3", shells: [2, 8, 6], type: "nonmetal", group: 6 }
+    };
+
+    // Preset examples for Check Mode
+    const checkExamples = [
+      { metal: "Li", nonmetal: "F" },
+      { metal: "Na", nonmetal: "Cl" },
+      { metal: "Mg", nonmetal: "O" },
+      { metal: "Mg", nonmetal: "Cl" },
+      { metal: "Na", nonmetal: "O" }
+    ];
+    let currentExampleIndex = 0;
+
+    // Compound name mapping
+    const compoundNames = {
+      F: "fluoride",
+      Cl: "chloride",
+      O: "oxide",
+      S: "sulfide"
+    };
+
+    // DOM elements
+    const startScreen = document.getElementById('start-screen');
+    const startTutorialBtn = document.getElementById('start-tutorial');
+    const startCheckBtn = document.getElementById('start-check');
+    const metalSelect = document.getElementById('metal-select');
+    const nonmetalSelect = document.getElementById('nonmetal-select');
+    const displayBtn = document.getElementById('display-btn');
+    const reactBtn = document.getElementById('react-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const toggleInnerBtn = document.getElementById('toggle-inner-btn');
+    const simulationArea = document.getElementById('simulation-area');
+    const formula = document.getElementById('formula');
+    const explanation = document.getElementById('explanation');
+    const quizDiv = document.getElementById('quiz');
+    // followupQuiz will be created dynamically
+
+    // Global state
+    let currentMode = null; // "tutorial" or "check"
+    let selectedMetal = null;
+    let selectedNonmetal = null;
+    let metalAtoms = [];
+    let nonmetalAtoms = [];
+    let metalElectrons = {};
+    let availableSpots = {};
+    let reacted = false;
+    let showInnerShell = true;
+
+    // Start screen handlers
+    startTutorialBtn.addEventListener('click', () => {
+      currentMode = "tutorial";
+      metalSelect.disabled = false;
+      nonmetalSelect.disabled = false;
+      metalSelect.value = "";
+      nonmetalSelect.value = "";
+      selectedMetal = null;
+      selectedNonmetal = null;
+      explanation.innerHTML = `
+        <h3>Tutorial Mode: Instructions</h3>
+        <p>Please select a metal and a non-metal atom from the dropdown menus above.</p>
+        <p>After clicking "Display", pre-reaction information for your chosen combination will appear.</p>
+        <p>Then click "React" to view the electron transfer and ionic bond formation.</p>
+        <p>Suggested sequence of combinations (once you’re comfortable):</p>
+        <ol>
+          <li>Lithium (Li) + Fluorine (F)</li>
+          <li>Sodium (Na) + Chlorine (Cl)</li>
+          <li>Magnesium (Mg) + Oxygen (O)</li>
+          <li>Magnesium (Mg) + Chlorine (Cl)</li>
+          <li>Sodium (Na) + Oxygen (O)</li>
+        </ol>
+        <p>You can also toggle the display of inner shells and their electrons using the "Hide Inner Shells" button.</p>
+      `;
+      startScreen.style.display = "none";
+    });
+
+    startCheckBtn.addEventListener('click', () => {
+      currentMode = "check";
+      currentExampleIndex = 0;
+      let example = checkExamples[currentExampleIndex];
+      metalSelect.value = example.metal;
+      nonmetalSelect.value = example.nonmetal;
+      metalSelect.disabled = true;
+      nonmetalSelect.disabled = true;
+      selectedMetal = { ...elements[example.metal], symbol: example.metal };
+      selectedNonmetal = { ...elements[example.nonmetal], symbol: example.nonmetal };
+      explanation.innerHTML = `
+        <h3>Check Understanding Mode</h3>
+        <p>For this exercise, react ${selectedMetal.name} (${selectedMetal.symbol}) and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) to form a neutral compound.</p>
+        <p>Please click "Display" to see the reaction setup and then answer the pre-reaction questions below:</p>
+      `;
+      startScreen.style.display = "none";
+    });
+
+    // Returns electron positions for a given shell.
+    function getElectronPositions(shellIndex, electronCount) {
+      let positions = [];
+      const shellRadius = 40 + (shellIndex + 1) * 30;
+      if (shellIndex === 0) {
+        if (electronCount >= 1) positions.push({ x: 0, y: -shellRadius });
+        if (electronCount >= 2) positions.push({ x: 0, y: shellRadius });
+      } else if (shellIndex === 1 || shellIndex === 2) {
+        const electronSpacing = 18;
+        if (electronCount >= 1) positions.push({ x: -electronSpacing/2, y: -shellRadius });
+        if (electronCount >= 2) positions.push({ x: electronSpacing/2, y: -shellRadius });
+        if (electronCount >= 3) positions.push({ x: shellRadius, y: -electronSpacing/2 });
+        if (electronCount >= 4) positions.push({ x: shellRadius, y: electronSpacing/2 });
+        if (electronCount >= 5) positions.push({ x: electronSpacing/2, y: shellRadius });
+        if (electronCount >= 6) positions.push({ x: -electronSpacing/2, y: shellRadius });
+        if (electronCount >= 7) positions.push({ x: -shellRadius, y: electronSpacing/2 });
+        if (electronCount >= 8) positions.push({ x: -shellRadius, y: -electronSpacing/2 });
+      } else if (shellIndex === 3) {
+        if (electronCount >= 1) positions.push({ x: 0, y: -shellRadius });
+        if (electronCount >= 2) positions.push({ x: 0, y: shellRadius });
+      }
+      return positions;
+    }
+
+    // Finds available spots in a nonmetal's outer shell.
+    function findAvailableSpots(nonmetalShells, nonmetalOuterElectrons) {
+      const shellIndex = nonmetalShells.length - 1;
+      const maxElectrons = 8;
+      const spots = [];
+      const filledPositions = getElectronPositions(shellIndex, nonmetalOuterElectrons);
+      const allPositions = getElectronPositions(shellIndex, maxElectrons);
+      for (let i = filledPositions.length; i < allPositions.length; i++) {
+        spots.push(allPositions[i]);
+      }
+      return spots;
+    }
+
+    // Draws an atom.
+    function drawAtom(element, container, id) {
+      const chargesDiv = document.createElement('div');
+      chargesDiv.className = 'charges';
+      chargesDiv.id = `charge-${id}`;
+      chargesDiv.style.opacity = '0';
+      container.appendChild(chargesDiv);
+      
+      const leftBracket = document.createElement('div');
+      leftBracket.className = 'ion-bracket left';
+      leftBracket.id = `left-bracket-${id}`;
+      container.appendChild(leftBracket);
+      
+      const rightBracket = document.createElement('div');
+      rightBracket.className = 'ion-bracket right';
+      rightBracket.id = `right-bracket-${id}`;
+      container.appendChild(rightBracket);
+      
+      const ionCharge = document.createElement('div');
+      ionCharge.className = 'ion-charge';
+      ionCharge.id = `ion-charge-${id}`;
+      container.appendChild(ionCharge);
+
+      const nucleus = document.createElement('div');
+      nucleus.className = 'nucleus';
+      nucleus.style.backgroundColor = element.color;
+      nucleus.textContent = element.symbol;
+      container.appendChild(nucleus);
+      
+      let shellElectrons = [];
+      
+      element.shells.forEach((electronCount, shellIndex) => {
+        const shellRadius = 40 + (shellIndex + 1) * 30;
+        const shell = document.createElement('div');
+        shell.className = 'shell';
+        if (shellIndex < element.shells.length - 1) {
+          shell.classList.add('inner-shell');
+        }
+        shell.style.width = `${shellRadius * 2}px`;
+        shell.style.height = `${shellRadius * 2}px`;
+        container.appendChild(shell);
+        
+        const positions = getElectronPositions(shellIndex, electronCount);
+        for (let i = 0; i < positions.length; i++) {
+          const isOuterShell = shellIndex === element.shells.length - 1;
+          const position = positions[i];
+          const electron = document.createElement('div');
+          electron.className = 'electron';
+          if (!isOuterShell) {
+            electron.classList.add('inner-electron');
+          }
+          electron.style.left = `calc(50% + ${position.x}px)`;
+          electron.style.top = `calc(50% + ${position.y}px)`;
+          electron.dataset.shellIndex = shellIndex;
+          electron.dataset.positionIndex = i;
+          electron.id = `electron-${id}-${shellIndex}-${i}`;
+          if (isOuterShell) {
+            electron.dataset.isValenceElectron = true;
+            if (element.type === 'metal') {
+              shellElectrons.push(electron);
+            }
+          }
+          container.appendChild(electron);
+        }
+      });
+      
+      if (element.type === 'nonmetal') {
+        availableSpots[id] = findAvailableSpots(element.shells, element.outerElectrons);
+      }
+      
+      return shellElectrons;
+    }
+
+    // Computes the simplest ratio for a neutral compound.
+    function getAtomCounts(metal, nonmetal) {
+      const metalValence = Math.abs(metal.valence);
+      const nonmetalValence = Math.abs(nonmetal.valence);
+      const gcd = findGCD(metalValence, nonmetalValence);
+      const metalCount = nonmetalValence / gcd;
+      const nonmetalCount = metalValence / gcd;
+      return { metal: metalCount, nonmetal: nonmetalCount };
+    }
+
+    // Helper: Greatest Common Divisor.
+    function findGCD(a, b) {
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    // Creates the atom layout.
+    function createAtomLayout() {
+      simulationArea.innerHTML = '';
+      const atomsContainer = document.createElement('div');
+      atomsContainer.className = 'multi-atom-container';
+      simulationArea.appendChild(atomsContainer);
+      
+      metalAtoms = [];
+      nonmetalAtoms = [];
+      metalElectrons = {};
+      availableSpots = {};
+      
+      if (selectedMetal && selectedMetal.group === 2 && selectedNonmetal && selectedNonmetal.group === 7) {
+        const nonmetal1 = document.createElement('div');
+        nonmetal1.className = 'atom nonmetal-electrons';
+        nonmetal1.id = 'nonmetal-1';
+        atomsContainer.appendChild(nonmetal1);
+        nonmetalAtoms.push(nonmetal1);
+        
+        const metal = document.createElement('div');
+        metal.className = 'atom metal-electrons central';
+        metal.id = 'metal-1';
+        atomsContainer.appendChild(metal);
+        metalAtoms.push(metal);
+        
+        const nonmetal2 = document.createElement('div');
+        nonmetal2.className = 'atom nonmetal-electrons';
+        nonmetal2.id = 'nonmetal-2';
+        atomsContainer.appendChild(nonmetal2);
+        nonmetalAtoms.push(nonmetal2);
+      } else if (selectedMetal && selectedMetal.group === 1 && selectedNonmetal && selectedNonmetal.group === 6) {
+        const metal1 = document.createElement('div');
+        metal1.className = 'atom metal-electrons';
+        metal1.id = 'metal-1';
+        atomsContainer.appendChild(metal1);
+        metalAtoms.push(metal1);
+        
+        const nonmetal = document.createElement('div');
+        nonmetal.className = 'atom nonmetal-electrons central';
+        nonmetal.id = 'nonmetal-1';
+        atomsContainer.appendChild(nonmetal);
+        nonmetalAtoms.push(nonmetal);
+        
+        const metal2 = document.createElement('div');
+        metal2.className = 'atom metal-electrons';
+        metal2.id = 'metal-2';
+        atomsContainer.appendChild(metal2);
+        metalAtoms.push(metal2);
+      } else if (selectedMetal && selectedNonmetal) {
+        const metal = document.createElement('div');
+        metal.className = 'atom metal-electrons';
+        metal.id = 'metal-1';
+        atomsContainer.appendChild(metal);
+        metalAtoms.push(metal);
+        
+        const nonmetal = document.createElement('div');
+        nonmetal.className = 'atom nonmetal-electrons';
+        nonmetal.id = 'nonmetal-1';
+        atomsContainer.appendChild(nonmetal);
+        nonmetalAtoms.push(nonmetal);
+      }
+      
+      return atomsContainer;
+    }
+
+    // Displays atoms.
+    function displayAtoms() {
+      if (currentMode === "check") {
+        let example = checkExamples[currentExampleIndex];
+        metalSelect.value = example.metal;
+        nonmetalSelect.value = example.nonmetal;
+        selectedMetal = { ...elements[example.metal], symbol: example.metal };
+        selectedNonmetal = { ...elements[example.nonmetal], symbol: example.nonmetal };
+      } else {
+        const metalSymbol = metalSelect.value;
+        const nonmetalSymbol = nonmetalSelect.value;
+        if (!metalSymbol || !nonmetalSymbol) {
+          alert('Please select both a metal and a non-metal');
+          return;
+        }
+        selectedMetal = { ...elements[metalSymbol], symbol: metalSymbol };
+        selectedNonmetal = { ...elements[nonmetalSymbol], symbol: nonmetalSymbol };
+      }
+      try {
+        createAtomLayout();
+        metalAtoms.forEach(container => {
+          metalElectrons[container.id] = drawAtom(selectedMetal, container, container.id);
+        });
+        nonmetalAtoms.forEach(container => {
+          drawAtom(selectedNonmetal, container, container.id);
+        });
+        updateFormula();
+        if (currentMode === "check") {
+          explanation.innerHTML = `
+            <h3>Check Understanding Mode</h3>
+            <p>For this exercise, react ${selectedMetal.name} (${selectedMetal.symbol}) and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) to form a neutral compound.</p>
+            <p>Please click "Display" to see the reaction setup and then answer the pre-reaction questions below:</p>
+          `;
+          showQuiz();
+        } else {
+          const counts = getAtomCounts(selectedMetal, selectedNonmetal);
+          let ratioInfo = "";
+          if (counts.metal > 1 || counts.nonmetal > 1) {
+            ratioInfo = `<p>Since ${selectedMetal.name} loses ${Math.abs(selectedMetal.valence)} electron(s) and ${selectedNonmetal.name} gains ${Math.abs(selectedNonmetal.valence)} electron(s), the simplest ratio is ${counts.metal} : ${counts.nonmetal}. This means you need ${counts.metal} ${selectedMetal.symbol} atom(s) for every ${counts.nonmetal} ${selectedNonmetal.symbol} atom(s) to form a neutral compound.</p>`;
+          }
+          explanation.innerHTML = `
+            <h3>Pre-Reaction Information</h3>
+            <p>You have selected ${selectedMetal.name} (${selectedMetal.symbol}) which has ${selectedMetal.outerElectrons} electron(s) in its outer shell, and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) which has ${selectedNonmetal.outerElectrons} electron(s) in its outer shell.</p>
+            <p>When "React" is clicked, ${selectedMetal.name} will lose ${Math.abs(selectedMetal.valence)} electron(s) and ${selectedNonmetal.name} will gain ${Math.abs(selectedNonmetal.valence)} electron(s) to form ions.</p>
+            ${ratioInfo}
+          `;
+        }
+      } catch (error) {
+        console.error("Error displaying atoms:", error);
+      }
+    }
+
+    // Pre-reaction quiz for Check Mode.
+    function showQuiz() {
+      quizDiv.style.display = "block";
+      quizDiv.innerHTML = `
+        <p>Answer the following about the reaction:</p>
+        <p>The <strong>${selectedMetal.name}</strong> atom will 
+          <select id="quiz-metal-action">
+            <option value="">Select action</option>
+            <option value="lose">lose</option>
+            <option value="gain">gain</option>
+          </select>
+          <select id="quiz-metal-electrons">
+            <option value="">Select electron count</option>
+            <option value="one">one</option>
+            <option value="two">two</option>
+          </select>.
+        </p>
+        <p>The <strong>${selectedNonmetal.name}</strong> atom will 
+          <select id="quiz-nonmetal-action">
+            <option value="">Select action</option>
+            <option value="lose">lose</option>
+            <option value="gain">gain</option>
+          </select>
+          <select id="quiz-nonmetal-electrons">
+            <option value="">Select electron count</option>
+            <option value="one">one</option>
+            <option value="two">two</option>
+          </select>.
+        </p>
+        <button id="quiz-submit">Submit Answers</button>
+        <span id="quiz-feedback" style="margin-left:10px;"></span>
+      `;
+      document.getElementById("quiz-submit").addEventListener('click', function() {
+        let expectedMetalAction = (selectedMetal.valence > 0 ? "lose" : "gain");
+        let expectedMetalCount = (Math.abs(selectedMetal.valence) === 1 ? "one electron" : "two electrons");
+        let expectedNonmetalAction = (selectedNonmetal.valence < 0 ? "gain" : "lose");
+        let expectedNonmetalCount = (Math.abs(selectedNonmetal.valence) === 1 ? "one electron" : "two electrons");
+        const metalAction = document.getElementById("quiz-metal-action").value;
+        const metalCount = document.getElementById("quiz-metal-electrons").value;
+        const nonmetalAction = document.getElementById("quiz-nonmetal-action").value;
+        const nonmetalCount = document.getElementById("quiz-nonmetal-electrons").value;
+        const feedback = document.getElementById("quiz-feedback");
+        if (metalAction === expectedMetalAction && metalCount === expectedMetalCount &&
+            nonmetalAction === expectedNonmetalAction && nonmetalCount === expectedNonmetalCount) {
+          feedback.textContent = "Correct! Please click 'React' to continue.";
+          reactBtn.disabled = false;
+          quizDiv.style.display = "none";
+        } else {
+          feedback.textContent = "Incorrect, please try again.";
+          reactBtn.disabled = true;
+        }
+      });
+    }
+
+    // Follow-up quiz for Check Mode after reaction.
+    function showFollowupQuiz() {
+      let followupDiv = document.createElement('div');
+      followupDiv.id = "followupQuiz";
+      followupDiv.style.display = "block";
+      
+      // Determine the simplest ratio for the compound.
+      const counts = getAtomCounts(selectedMetal, selectedNonmetal);
+      const metalCount = counts.metal;
+      const nonmetalCount = counts.nonmetal;
+      
+      // Build follow-up quiz text dynamically.
+      followupDiv.innerHTML = `
+        <p>The <strong>${selectedMetal.name}</strong> atom is now a 
+          <select id="fu-metal-ion">
+            <option value="">Select ion charge</option>
+            <option value="positive">positive</option>
+            <option value="negative">negative</option>
+          </select> ion because it 
+          <select id="fu-metal-action">
+            <option value="">Select action</option>
+            <option value="lost">lost</option>
+            <option value="gained">gained</option>
+          </select> 
+          <select id="fu-metal-electron-count">
+            <option value="">Select electron count</option>
+            <option value="one">one</option>
+            <option value="two">two</option>
+          </select> 
+          <select id="fu-metal-electron-charge">
+            <option value="">Select electron charge</option>
+            <option value="positive">positive</option>
+            <option value="negative">negative</option>
+          </select> electron(s).
+        </p>
+        <p>The <strong>${selectedNonmetal.name}</strong> atom is now a 
+          <select id="fu-nonmetal-ion">
+            <option value="">Select ion charge</option>
+            <option value="positive">positive</option>
+            <option value="negative">negative</option>
+          </select> ion because it 
+          <select id="fu-nonmetal-action">
+            <option value="">Select action</option>
+            <option value="lost">lost</option>
+            <option value="gained">gained</option>
+          </select> 
+          <select id="fu-nonmetal-electron-count">
+            <option value="">Select electron count</option>
+            <option value="one">one</option>
+            <option value="two">two</option>
+          </select> 
+          <select id="fu-nonmetal-electron-charge">
+            <option value="">Select electron charge</option>
+            <option value="positive">positive</option>
+            <option value="negative">negative</option>
+          </select> electron(s).
+        </p>
+        <p>The ions attract each other 
+          <select id="fu-attraction-strength">
+            <option value="">Select attraction</option>
+            <option value="strongly">strongly</option>
+            <option value="weakly">weakly</option>
+          </select>
+          because they are 
+          <select id="fu-charge-type">
+            <option value="">Select charge type</option>
+            <option value="the same">the same</option>
+            <option value="oppositely">oppositely</option>
+          </select> charged.
+        </p>
+        <p>They now each have a full outer shell so are 
+          <select id="fu-stability">
+            <option value="">Select stability</option>
+            <option value="more stable">more stable</option>
+            <option value="less stable">less stable</option>
+          </select>.
+        </p>
+        <p>The compound formed is called 
+          <input type="text" id="fu-compound-name" placeholder="Type compound name" />
+          and the formula is 
+          <select id="fu-formula"></select>.
+        </p>
+        <button id="fu-submit">Submit Answers</button>
+        <span id="fu-feedback" style="margin-left:10px;"></span>
+      `;
+      
+      // Insert follow-up quiz above the explanation.
+      explanation.parentNode.insertBefore(followupDiv, explanation);
+      
+      // Set expected answers.
+      let expectedMetalIon = (selectedMetal.valence > 0 ? "positive" : "negative");
+      let expectedMetalAction = (selectedMetal.valence > 0 ? "lost" : "gained");
+      let expectedMetalElectron = Math.abs(selectedMetal.valence) === 1 ? "one" : "two";
+      let expectedNonmetalIon = (selectedNonmetal.valence < 0 ? "negative" : "positive");
+      let expectedNonmetalAction = (selectedNonmetal.valence < 0 ? "gained" : "lost");
+      let expectedNonmetalElectron = Math.abs(selectedNonmetal.valence) === 1 ? "one" : "two";
+      let expectedAttraction = "strongly";
+      let expectedChargeType = "oppositely";
+      let expectedStability = "more stable";
+      
+      // Expected compound name (all lowercase).
+      let expectedCompoundName = selectedMetal.name.toLowerCase() + " " + (compoundNames[selectedNonmetal.symbol] || selectedNonmetal.name.toLowerCase());
+      
+      // Compute the correct formula from the simplest ratio and format it.
+      let computed = selectedMetal.symbol + (counts.metal > 1 ? counts.metal : "") + selectedNonmetal.symbol + (counts.nonmetal > 1 ? counts.nonmetal : "");
+      let correctFormula = formatFormula(computed);
+      
+      // Generate formula options in fixed order: MX, MX2, then M2X.
+      let formulaOptions = generateFormulaOptions(selectedMetal.symbol, selectedNonmetal.symbol);
+      formulaOptions = formulaOptions.map(opt => formatFormula(opt));
+      
+      let fuFormulaSelect = document.getElementById("fu-formula");
+      fuFormulaSelect.innerHTML = '<option value="">Select formula</option>';
+      formulaOptions.forEach(opt => {
+        let optionElem = document.createElement('option');
+        optionElem.value = opt;
+        optionElem.textContent = opt;
+        fuFormulaSelect.appendChild(optionElem);
+      });
+      
+      document.getElementById("fu-submit").addEventListener('click', function() {
+        const metalIon = document.getElementById("fu-metal-ion").value;
+        const metalAction = document.getElementById("fu-metal-action").value;
+        const metalElectron = document.getElementById("fu-metal-electron-count").value;
+        const metalElecCharge = document.getElementById("fu-metal-electron-charge").value;
+        const nonmetalIon = document.getElementById("fu-nonmetal-ion").value;
+        const nonmetalAction = document.getElementById("fu-nonmetal-action").value;
+        const nonmetalElectron = document.getElementById("fu-nonmetal-electron-count").value;
+        const nonmetalElecCharge = document.getElementById("fu-nonmetal-electron-charge").value;
+        const attraction = document.getElementById("fu-attraction-strength").value;
+        const chargeType = document.getElementById("fu-charge-type").value;
+        const stability = document.getElementById("fu-stability").value;
+        const compoundNameInput = document.getElementById("fu-compound-name").value.trim().toLowerCase();
+        const formulaAnswer = document.getElementById("fu-formula").value;
+        const feedback = document.getElementById("fu-feedback");
+        if (
+          metalIon === expectedMetalIon &&
+          metalAction === expectedMetalAction &&
+          metalElectron === expectedMetalElectron &&
+          metalElecCharge === "negative" &&
+          nonmetalIon === expectedNonmetalIon &&
+          nonmetalAction === expectedNonmetalAction &&
+          nonmetalElectron === expectedNonmetalElectron &&
+          nonmetalElecCharge === "negative" &&
+          attraction === expectedAttraction &&
+          chargeType === expectedChargeType &&
+          stability === expectedStability &&
+          compoundNameInput === expectedCompoundName &&
+          formulaAnswer === correctFormula
+        ) {
+          feedback.textContent = "Correct! Click 'Next Reaction' to continue.";
+          let nextBtn = document.createElement('button');
+          nextBtn.textContent = "Next Reaction";
+          nextBtn.addEventListener('click', () => {
+            currentExampleIndex++;
+            if (currentExampleIndex < checkExamples.length) {
+              resetSimulation();
+              displayAtoms();
+              let fuQuiz = document.getElementById("followupQuiz");
+              if(fuQuiz) fuQuiz.remove();
+            } else {
+              feedback.textContent = "Well done, you've completed all examples in Check Understanding Mode!";
+              nextBtn.disabled = true;
+            }
+          });
+          followupDiv.appendChild(nextBtn);
+        } else {
+          feedback.textContent = "Some answers are incorrect, please try again.";
+        }
+      });
+    }
+
+    // Updates ion brackets.
+    function updateIonBrackets(container, charge, isPositive, id) {
+      const leftBracket = document.getElementById(`left-bracket-${id}`);
+      const rightBracket = document.getElementById(`right-bracket-${id}`);
+      const ionCharge = document.getElementById(`ion-charge-${id}`);
+      const shells = container.querySelectorAll('.shell');
+      const largestShell = shells[shells.length - 1];
+      const shellSize = parseInt(largestShell.style.width);
+      const height = shellSize + 40;
+      const offset = 25;
+      leftBracket.style.height = `${height}px`;
+      leftBracket.style.width = `15px`;
+      leftBracket.style.left = `calc(50% - ${shellSize/2 + offset}px)`;
+      leftBracket.style.top = `calc(50% - ${height/2}px)`;
+      leftBracket.style.opacity = '1';
+      rightBracket.style.height = `${height}px`;
+      rightBracket.style.width = `15px`;
+      rightBracket.style.left = `calc(50% + ${shellSize/2 + offset - 15}px)`;
+      rightBracket.style.top = `calc(50% - ${height/2}px)`;
+      rightBracket.style.opacity = '1';
+      ionCharge.style.top = `calc(50% - ${height/2 - 5}px)`;
+      ionCharge.style.left = `calc(50% + ${shellSize/2 + offset + 5}px)`;
+      ionCharge.textContent = isPositive ? `${charge}+` : `${charge}-`;
+      ionCharge.style.opacity = '1';
+    }
+
+    // Updates the displayed chemical formula.
+    function updateFormula() {
+      if (!selectedMetal || !selectedNonmetal) return;
+      const counts = getAtomCounts(selectedMetal, selectedNonmetal);
+      let metalPart = selectedMetal.symbol;
+      if (counts.metal > 1) {
+        metalPart += `<sub>${counts.metal}</sub>`;
+      }
+      let nonmetalPart = selectedNonmetal.symbol;
+      if (counts.nonmetal > 1) {
+        nonmetalPart += `<sub>${counts.nonmetal}</sub>`;
+      }
+      formula.innerHTML = metalPart + nonmetalPart;
+    }
+
+    // Updates instructions.
+    function updateExplanation(hasReacted) {
+      if (currentMode === "tutorial") {
+        if (!selectedMetal || !selectedNonmetal) {
+          explanation.innerHTML = `
+            <h3>Tutorial Mode: Instructions</h3>
+            <p>Please select a metal and a non-metal atom from the dropdown menus above.</p>
+            <p>After clicking "Display", pre-reaction information for your chosen combination will appear.</p>
+            <p>Then click "React" to view the electron transfer and ionic bond formation.</p>
+            <p>Suggested sequence of combinations (once you’re comfortable):</p>
+            <ol>
+              <li>Lithium (Li) + Fluorine (F)</li>
+              <li>Sodium (Na) + Chlorine (Cl)</li>
+              <li>Magnesium (Mg) + Oxygen (O)</li>
+              <li>Magnesium (Mg) + Chlorine (Cl)</li>
+              <li>Sodium (Na) + Oxygen (O)</li>
+            </ol>
+            <p>You can also toggle the display of inner shells and their electrons using the "Hide Inner Shells" button.</p>
+          `;
+        } else {
+          if (!hasReacted) {
+            const counts = getAtomCounts(selectedMetal, selectedNonmetal);
+            let ratioInfo = "";
+            if (counts.metal > 1 || counts.nonmetal > 1) {
+              ratioInfo = `<p>Since ${selectedMetal.name} loses ${Math.abs(selectedMetal.valence)} electron(s) and ${selectedNonmetal.name} gains ${Math.abs(selectedNonmetal.valence)} electron(s), the simplest ratio is ${counts.metal} : ${counts.nonmetal}. This means you need ${counts.metal} ${selectedMetal.symbol} atom(s) for every ${counts.nonmetal} ${selectedNonmetal.symbol} atom(s) to form a neutral compound.</p>`;
+            }
+            explanation.innerHTML = `
+              <h3>Pre-Reaction Information</h3>
+              <p>You have selected ${selectedMetal.name} (${selectedMetal.symbol}) which has ${selectedMetal.outerElectrons} electron(s) in its outer shell, and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) which has ${selectedNonmetal.outerElectrons} electron(s) in its outer shell.</p>
+              <p>When "React" is clicked, ${selectedMetal.name} will lose ${Math.abs(selectedMetal.valence)} electron(s) and ${selectedNonmetal.name} will gain ${Math.abs(selectedNonmetal.valence)} electron(s) to form ions.</p>
+              ${ratioInfo}
+            `;
+          } else {
+            // In Check Mode, do not show detailed post-reaction info.
+            explanation.innerHTML = `<h3>Ionic Bond Formed!</h3>`;
+            showFollowupQuiz();
+          }
+        }
+      } else if (currentMode === "check") {
+        if (!hasReacted) {
+          explanation.innerHTML = `
+            <h3>Check Understanding Mode</h3>
+            <p>For this exercise, react ${selectedMetal.name} (${selectedMetal.symbol}) and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) to form a neutral compound.</p>
+            <p>Please click "Display" to see the reaction setup and then answer the pre-reaction questions below:</p>
+          `;
+        } else {
+          explanation.innerHTML = `<h3>Ionic Bond Formed!</h3>`;
+          showFollowupQuiz();
+        }
+      }
+    }
+
+    // Animates electron transfer.
+    function reactAtoms() {
+      if (reacted) return;
+      const metalValence = Math.abs(selectedMetal.valence);
+      const nonmetalValence = Math.abs(selectedNonmetal.valence);
+      let electronTransfers = [];
+      let nonmetalTransferCount = {};
+      let globalElectronIndex = 0;
+      
+      nonmetalAtoms.forEach(container => {
+        nonmetalTransferCount[container.id] = 0;
+      });
+      
+      metalAtoms.forEach(metalContainer => {
+        const metalElectronsArray = metalElectrons[metalContainer.id] || [];
+        metalElectronsArray.forEach(electron => {
+          const targetContainer = nonmetalAtoms[globalElectronIndex % nonmetalAtoms.length];
+          const nonmetalId = targetContainer.id;
+          const spotsArray = availableSpots[nonmetalId] || [];
+          if (spotsArray.length > 0) {
+            const spotIndex = nonmetalTransferCount[nonmetalId] % spotsArray.length;
+            nonmetalTransferCount[nonmetalId]++;
+            globalElectronIndex++;
+            electronTransfers.push({
+              electron: electron,
+              sourceContainer: metalContainer,
+              targetContainer: targetContainer,
+              targetSpot: spotsArray[spotIndex]
+            });
+          }
+        });
+      });
+      
+      electronTransfers.forEach(transfer => {
+        const sourceElectronRect = transfer.electron.getBoundingClientRect();
+        const sourceElectronX = sourceElectronRect.left + sourceElectronRect.width / 2;
+        const sourceElectronY = sourceElectronRect.top + sourceElectronRect.height / 2;
+        
+        const targetRect = transfer.targetContainer.getBoundingClientRect();
+        const targetCenterX = targetRect.left + targetRect.width / 2;
+        const targetCenterY = targetRect.top + targetRect.height / 2;
+        const targetPositionX = targetCenterX + transfer.targetSpot.x - 6;
+        const targetPositionY = targetCenterY + transfer.targetSpot.y - 6;
+        
+        // Hide original electron immediately.
+        transfer.electron.style.transition = 'none';
+        transfer.electron.style.opacity = '0';
+        
+        const animatedElectron = transfer.electron.cloneNode(true);
+        animatedElectron.style.position = 'fixed';
+        animatedElectron.style.zIndex = '1000';
+        animatedElectron.style.left = (sourceElectronX - 6) + 'px';
+        animatedElectron.style.top = (sourceElectronY - 6) + 'px';
+        animatedElectron.style.backgroundColor = '#e74c3c';
+        animatedElectron.style.opacity = '1';
+        document.body.appendChild(animatedElectron);
+        
+        setTimeout(() => {
+          animatedElectron.style.transition = 'all 1.5s ease';
+          animatedElectron.style.left = targetPositionX + 'px';
+          animatedElectron.style.top = targetPositionY + 'px';
+          
+          setTimeout(() => {
+            document.body.removeChild(animatedElectron);
+            const newElectron = document.createElement('div');
+            newElectron.className = 'electron';
+            newElectron.style.backgroundColor = '#e74c3c';
+            newElectron.style.left = `calc(50% + ${transfer.targetSpot.x}px)`;
+            newElectron.style.top = `calc(50% + ${transfer.targetSpot.y}px)`;
+            transfer.targetContainer.appendChild(newElectron);
+          }, 1500);
+        }, 50);
+      });
+      
+      setTimeout(() => {
+        metalAtoms.forEach(container => {
+          updateIonBrackets(container, metalValence, true, container.id);
+        });
+        nonmetalAtoms.forEach(container => {
+          updateIonBrackets(container, nonmetalValence, false, container.id);
+        });
+        updateExplanation(true);
+      }, 1500);
+      
+      reacted = true;
+    }
+
+    // Resets the simulation.
+    function resetSimulation() {
+      simulationArea.innerHTML = '';
+      formula.innerHTML = '';
+      reacted = false;
+      metalAtoms = [];
+      nonmetalAtoms = [];
+      metalElectrons = {};
+      availableSpots = {};
+      quizDiv.style.display = "none";
+      let followupQuiz = document.getElementById("followupQuiz");
+      if (followupQuiz) followupQuiz.remove();
+      reactBtn.disabled = false;
+      if (currentMode === "check") {
+        let example = checkExamples[currentExampleIndex];
+        metalSelect.value = example.metal;
+        nonmetalSelect.value = example.nonmetal;
+        metalSelect.disabled = true;
+        nonmetalSelect.disabled = true;
+        selectedMetal = { ...elements[example.metal], symbol: example.metal };
+        selectedNonmetal = { ...elements[example.nonmetal], symbol: example.nonmetal };
+      } else {
+        metalSelect.value = "";
+        nonmetalSelect.value = "";
+        selectedMetal = null;
+        selectedNonmetal = null;
+      }
+      updateExplanation(false);
+    }
+
+    // Attach event listeners.
+    displayBtn.addEventListener('click', displayAtoms);
+    reactBtn.addEventListener('click', reactAtoms);
+    resetBtn.addEventListener('click', resetSimulation);
+    toggleInnerBtn.addEventListener('click', () => {
+      showInnerShell = !showInnerShell;
+      document.querySelectorAll('.inner-electron, .inner-shell').forEach(e => {
+        e.style.display = showInnerShell ? 'block' : 'none';
+      });
+      toggleInnerBtn.textContent = showInnerShell ? 'Hide Inner Shells' : 'Show Inner Shells';
+    });
+  </script>
+</body>
+</html>
