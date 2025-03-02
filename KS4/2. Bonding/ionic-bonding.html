@@ -80,22 +80,37 @@
       gap: 10px;
       margin-bottom: 10px;
     }
+    /* Mode button is now placed first */
+    #mode-btn {
+      padding: 6px 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background-color: #8e44ad;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    #mode-btn:hover {
+      background-color: #732d91;
+      transform: translateY(-1px);
+    }
     .control-panel select,
-    .control-panel button {
+    .control-panel button:not(#mode-btn) {
       padding: 6px 8px;
       font-size: 14px;
       border-radius: 4px;
       border: 1px solid #ddd;
       background: #f9f9f9;
     }
-    .control-panel button {
+    .control-panel button:not(#mode-btn) {
       border: none;
       cursor: pointer;
       background-color: #3498db;
       color: white;
       transition: background-color 0.3s ease, transform 0.3s ease;
     }
-    .control-panel button:hover {
+    .control-panel button:not(#mode-btn):hover {
       background-color: #2980b9;
       transform: translateY(-1px);
     }
@@ -112,15 +127,15 @@
       color: #2c3e50;
       margin: 0;
     }
-    /* Simulation area full-width */
+    /* Simulation area (reaction container) */
     .simulation-area {
       background: #eef3f7;
       border: 1px solid #d0dce0;
       border-radius: 12px;
       position: relative;
       height: 300px;
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
+      width: 95vw;
+      margin-left: calc(-47.5vw + 50%);
       overflow: hidden;
     }
     .multi-atom-container {
@@ -302,6 +317,7 @@
     </div>
     <!-- Compact Control Panel -->
     <div class="control-panel">
+      <button id="mode-btn">Mode</button>
       <select id="metal-select">
         <option value="">Metal...</option>
         <option value="Li">Li</option>
@@ -336,7 +352,7 @@
   <script>
     // Helper function to pluralize electron text.
     function pluralizeElectron(count) {
-      return count === 1 ? "one electron" : count + " electrons";
+      return count === 1 ? "one" : count + " ";
     }
 
     // Helper function to convert digits to Unicode subscripts.
@@ -396,6 +412,7 @@
     const displayBtn = document.getElementById('display-btn');
     const reactBtn = document.getElementById('react-btn');
     const resetBtn = document.getElementById('reset-btn');
+    const modeBtn = document.getElementById('mode-btn');
     const toggleInnerBtn = document.getElementById('toggle-inner-btn');
     const simulationArea = document.getElementById('simulation-area');
     const formula = document.getElementById('formula');
@@ -413,6 +430,16 @@
     let availableSpots = {};
     let reacted = false;
     let showInnerShell = true;
+
+    // Function to switch mode: resets simulation and shows the start screen.
+    function switchMode() {
+      resetSimulation();
+      currentMode = null;
+      startScreen.style.display = "flex";
+    }
+
+    // Attach event listener for Mode button.
+    modeBtn.addEventListener('click', switchMode);
 
     // Start screen handlers
     startTutorialBtn.addEventListener('click', () => {
@@ -740,9 +767,9 @@
       `;
       document.getElementById("quiz-submit").addEventListener('click', function() {
         let expectedMetalAction = (selectedMetal.valence > 0 ? "lose" : "gain");
-        let expectedMetalCount = (Math.abs(selectedMetal.valence) === 1 ? "one electron" : "two electrons");
+        let expectedMetalCount = (Math.abs(selectedMetal.valence) === 1 ? "one" : "two");
         let expectedNonmetalAction = (selectedNonmetal.valence < 0 ? "gain" : "lose");
-        let expectedNonmetalCount = (Math.abs(selectedNonmetal.valence) === 1 ? "one electron" : "two electrons");
+        let expectedNonmetalCount = (Math.abs(selectedNonmetal.valence) === 1 ? "one" : "two");
         const metalAction = document.getElementById("quiz-metal-action").value;
         const metalCount = document.getElementById("quiz-metal-electrons").value;
         const nonmetalAction = document.getElementById("quiz-nonmetal-action").value;
@@ -771,7 +798,7 @@
       const metalCount = counts.metal;
       const nonmetalCount = counts.nonmetal;
       
-      // Build follow-up quiz text dynamically.
+      // Build follow-up quiz text dynamically with extra dropdowns for electron charge.
       followupDiv.innerHTML = `
         <p>The <strong>${selectedMetal.name}</strong> atom is now a 
           <select id="fu-metal-ion">
@@ -1006,7 +1033,6 @@
               ${ratioInfo}
             `;
           } else {
-            // In Check Mode, do not show detailed post-reaction info.
             explanation.innerHTML = `<h3>Ionic Bond Formed!</h3>`;
             showFollowupQuiz();
           }
