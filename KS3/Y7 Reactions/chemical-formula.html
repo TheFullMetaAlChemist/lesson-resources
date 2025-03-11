@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Chemical Formulae</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e6f7ff, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #f57c00;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff9800;
+      margin-top: 30px;
+      border-bottom: 2px solid #ffcc80;
+      padding-bottom: 5px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #ffcc80;
+      border-radius: 8px;
+      background-color: #fff8e1;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #f57c00;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e65100;
+    }
+    button:disabled {
+      background-color: #ffcc80;
+      color: #fff8e1;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #ffcc80;
+      border-radius: 4px;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+
+    /* The new matching game */
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .match-tile {
+      background-color: #ffcc80;
+      border-radius: 8px;
+      border: 2px solid #ff9800;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      padding: 5px;
+    }
+    .match-tile.won {
+      background-color: #c8e6c9;
+      border-color: #2e7d32;
+      color: #2e7d32;
+      cursor: default;
+    }
+    .round-header {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #f57c00;
+    }
+    .clue-area {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 1.3em;
+      color: #333;
+      background-color: #fff8e1;
+      padding: 10px;
+      border: 1px solid #ffcc80;
+      border-radius: 6px;
+      max-width: 400px;
+      margin: 15px auto;
+    }
+    .timer-area {
+      text-align: center;
+      font-size: 1.1em;
+      margin: 10px;
+      color: #666;
+    }
+    .game-complete {
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2e7d32;
+      margin: 20px 0;
+    }
+    .quiz-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #ffcc80;
+      border-radius: 8px;
+      background-color: #fff8e1;
+    }
+    .quiz-question h4 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    .quiz-feedback {
+      color: #d32f2f;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+    .quiz-score {
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Chemical Formulae: An Interactive Lesson</h1>
+  <!-- Updated Navigation -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(6)">Compound Matching Game</button>
+    <button class="nav-btn" onclick="showScreen(7)">10-Mark Quiz</button>
+    <button class="nav-btn" onclick="showScreen(8)">Extended Question</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+  </div>
+  
+  <!-- Screen 1: Introduction to Chemical Formulae -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introduction to Chemical Formulae</h2>
+    <p>
+      A <strong>chemical formula</strong> is a shorthand way of describing which elements are in a compound and how many atoms of each element are present.
+    </p>
+    <p>
+      For example, <strong>water</strong> is written as <strong>H<sub>2</sub>O</strong>. This tells us there are 2 hydrogen (H) atoms and 1 oxygen (O) atom in each water molecule.
+    </p>
+    <p>
+      Key rules for writing formulae correctly:
+      <ul>
+        <li>Use the element’s chemical symbol (capital first letter, lowercase second letter if present).</li>
+        <li>Numbers as subscripts (e.g. H<sub>2</sub>) show how many atoms of that element. If no number is shown, it means 1 atom.</li>
+      </ul>
+    </p>
+    <div class="question">
+      <p><strong>Q1:</strong> Which of the following is the correct formula for methane?</p>
+      <select id="q1a">
+        <option value="">--Select--</option>
+        <option value="CH4">CH<sub>4</sub></option>
+        <option value="Ch4">Ch<sub>4</sub></option>
+        <option value="C4H">C<sub>4</sub>H</option>
+        <option value="CmH4">CmH<sub>4</sub></option>
+      </select>
+      <span id="feedback1a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> Which is the correct formula for carbon dioxide?</p>
+      <select id="q1b">
+        <option value="">--Select--</option>
+        <option value="CO2">CO<sub>2</sub></option>
+        <option value="Co2">Co<sub>2</sub></option>
+        <option value="C2O">C<sub>2</sub>O</option>
+        <option value="CO1">CO<sub>1</sub></option>
+      </select>
+      <span id="feedback1b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> Which is the correct formula for water?</p>
+      <select id="q1c">
+        <option value="">--Select--</option>
+        <option value="H2O">H<sub>2</sub>O</option>
+        <option value="HO2">HO<sub>2</sub></option>
+        <option value="h2O">h<sub>2</sub>O</option>
+        <option value="H2o">H<sub>2</sub>o</option>
+      </select>
+      <span id="feedback1c" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen1()">Check Answers</button>
+    <br><br>
+    <button id="next1" disabled onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: Naming Oxide Compounds -->
+  <div id="screen2" class="screen">
+    <h2>2. Naming Oxide Compounds</h2>
+    <p>
+      When a compound is formed with oxygen, we often see <em>-oxide</em> in its name.  
+      Examples:
+      <ul>
+        <li>CO is <strong>carbon monoxide</strong> (mono = 1 oxygen).</li>
+        <li>CO<sub>2</sub> is <strong>carbon dioxide</strong> (di = 2 oxygens).</li>
+        <li>MgO is <strong>magnesium oxide</strong>.</li>
+        <li>FeO is <strong>iron oxide</strong>.</li>
+      </ul>
+    </p>
+    <p>
+      Let's practice naming a few:
+    </p>
+    <div class="question">
+      <p><strong>Q1:</strong> What is the name of FeO?</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="Iron oxide">Iron oxide</option>
+        <option value="Ferric oxide">Ferric oxide</option>
+        <option value="Carbon monoxide">Carbon monoxide</option>
+        <option value="Calcium oxide">Calcium oxide</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> What is the name of SO<sub>2</sub>?</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="Sodium oxide">Sodium oxide</option>
+        <option value="Sulfur dioxide">Sulfur dioxide</option>
+        <option value="Sulfur monoxide">Sulfur monoxide</option>
+        <option value="Silicon oxide">Silicon oxide</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> What is the name of CO?</p>
+      <select id="q2c">
+        <option value="">--Select--</option>
+        <option value="Carbon monoxide">Carbon monoxide</option>
+        <option value="Carbon dioxide">Carbon dioxide</option>
+        <option value="Calcium oxide">Calcium oxide</option>
+        <option value="Copper oxide">Copper oxide</option>
+      </select>
+      <span id="feedback2c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> What is the name of N<sub>2</sub>O (for Year 7, we’ll just call it “nitrogen oxide”)?</p>
+      <select id="q2d">
+        <option value="">--Select--</option>
+        <option value="Nitrogen oxide">Nitrogen oxide</option>
+        <option value="Nickel oxide">Nickel oxide</option>
+        <option value="Nitrogen dioxide">Nitrogen dioxide</option>
+        <option value="Sodium oxide">Sodium oxide</option>
+      </select>
+      <span id="feedback2d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: Naming Halide Compounds -->
+  <div id="screen3" class="screen">
+    <h2>3. Naming Halide Compounds</h2>
+    <p>
+      The Group 7 elements (e.g. chlorine, bromine, iodine) form “halide” compounds when they bond to metals or hydrogen. 
+      The element name typically ends with <em>-ide</em>:
+      <ul>
+        <li>NaCl: <strong>sodium chloride</strong></li>
+        <li>KBr: <strong>potassium bromide</strong></li>
+        <li>LiI: <strong>lithium iodide</strong></li>
+        <li>HCl: <strong>hydrogen chloride</strong> (gas)</li>
+      </ul>
+    </p>
+    <p>
+      Let’s practice with a variety of halides:
+    </p>
+    <div class="question">
+      <p><strong>Q1:</strong> What is the name of KBr?</p>
+      <select id="q3a">
+        <option value="">--Select--</option>
+        <option value="Potassium chloride">Potassium chloride</option>
+        <option value="Potassium bromide">Potassium bromide</option>
+        <option value="Potassium iodide">Potassium iodide</option>
+        <option value="Sodium bromide">Sodium bromide</option>
+      </select>
+      <span id="feedback3a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> What is the name of CaI<sub>2</sub>?</p>
+      <select id="q3b">
+        <option value="">--Select--</option>
+        <option value="Calcium iodide">Calcium iodide</option>
+        <option value="Calcium bromide">Calcium bromide</option>
+        <option value="Carbon iodide">Carbon iodide</option>
+        <option value="Copper iodide">Copper iodide</option>
+      </select>
+      <span id="feedback3b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> Which formula corresponds to magnesium bromide?</p>
+      <select id="q3c">
+        <option value="">--Select--</option>
+        <option value="MgBr2">MgBr<sub>2</sub></option>
+        <option value="MgI2">MgI<sub>2</sub></option>
+        <option value="MBr">MBr</option>
+        <option value="MnBr2">MnBr<sub>2</sub></option>
+      </select>
+      <span id="feedback3c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> Which formula corresponds to lithium iodide?</p>
+      <select id="q3d">
+        <option value="">--Select--</option>
+        <option value="LiI">LiI</option>
+        <option value="LiBr">LiBr</option>
+        <option value="LiCl">LiCl</option>
+        <option value="LiO2">LiO<sub>2</sub></option>
+      </select>
+      <span id="feedback3d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen3()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+    <button id="next3" disabled onclick="showScreen(4)">Next</button>
+  </div>
+  
+  <!-- Screen 4: Counting Atoms in a Formula -->
+  <div id="screen4" class="screen">
+    <h2>4. Counting Atoms in a Formula</h2>
+    <p>
+      A chemical formula shows how many atoms of each element are in one “unit” (molecule or formula unit). 
+      For instance, H<sub>2</sub>SO<sub>4</sub> (sulfuric acid) has:
+      <ul>
+        <li>2 hydrogen atoms</li>
+        <li>1 sulfur atom</li>
+        <li>4 oxygen atoms</li>
+      </ul>
+    </p>
+    <p>
+      Let’s try counting atoms in some other formulae:
+    </p>
+    <div class="question">
+      <p><strong>Q1:</strong> In AlCl<sub>3</sub>, how many chlorine atoms are there?</p>
+      <select id="q4a">
+        <option value="">--Select--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+      <span id="feedback4a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> In Ca(OH)<sub>2</sub>, how many hydrogen atoms are there?</p>
+      <select id="q4b">
+        <option value="">--Select--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="4">4</option>
+        <option value="6">6</option>
+      </select>
+      <span id="feedback4b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> In Na<sub>2</sub>CO<sub>3</sub>, how many sodium atoms are there?</p>
+      <select id="q4c">
+        <option value="">--Select--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <span id="feedback4c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> In H<sub>2</sub>O, how many hydrogen atoms are there?</p>
+      <select id="q4d">
+        <option value="">--Select--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <span id="feedback4d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen4()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+    <button id="next4" disabled onclick="showScreen(5)">Next</button>
+  </div>
+  
+  <!-- Screen 5: Hydroxides, Nitrates, Sulfates, Carbonates -->
+  <div id="screen5" class="screen">
+    <h2>5. Common Groups in Formulae</h2>
+    <p>
+      Some compounds contain “groups” of atoms that act together:
+      <ul>
+        <li><strong>Hydroxide</strong> (OH) — e.g. NaOH is sodium hydroxide</li>
+        <li><strong>Nitrate</strong> (NO<sub>3</sub>) — e.g. KNO<sub>3</sub> is potassium nitrate</li>
+        <li><strong>Sulfate</strong> (SO<sub>4</sub>) — e.g. Na<sub>2</sub>SO<sub>4</sub> is sodium sulfate</li>
+        <li><strong>Carbonate</strong> (CO<sub>3</sub>) — e.g. CaCO<sub>3</sub> is calcium carbonate</li>
+      </ul>
+      The subscript after the group shows how many of that entire group are present.
+    </p>
+    <div class="practice-question">
+      <p><strong>Q1:</strong> Name the following:</p>
+      <ul>
+        <li>1) LiOH: <input type="text" id="s5q1" size="20" placeholder="e.g. lithium hydroxide"></li>
+        <li>2) Mg(OH)<sub>2</sub>: <input type="text" id="s5q2" size="20"></li>
+        <li>3) BaSO<sub>4</sub>: <input type="text" id="s5q3" size="20"></li>
+        <li>4) Na<sub>2</sub>CO<sub>3</sub>: <input type="text" id="s5q4" size="20"></li>
+      </ul>
+      <button onclick="checkS5Matching()">Check Answers</button>
+      <p id="s5feedback" class="feedback"></p>
+    </div>
+    <button onclick="showScreen(4)">Back</button>
+    <button onclick="showScreen(6)">Next</button>
+  </div>
+
+  <!-- Screen 6: New Matching Game (4x4) -->
+  <div id="screen6" class="screen">
+    <h2>Compound Matching Game</h2>
+    <p>
+      Welcome to our new game! You’ll play **two rounds**:
+    </p>
+    <ul>
+      <li><strong>Round 1:</strong> 4×4 grid of <em>formulae</em>. A <em>name</em> appears below. Tap the correct formula to win it.</li>
+      <li><strong>Round 2:</strong> 4×4 grid of <em>names</em>. A <em>formula</em> (with subscripts) appears below. Tap the correct name to win it.</li>
+    </ul>
+    <p>
+      If you guess correctly, the card is removed. If you guess incorrectly, you lose that turn (but that clue will appear again later). Try to win all cards as fast as you can!
+    </p>
+    <div class="timer-area">
+      <span id="timerLabel">Time: 0s</span>
+    </div>
+    <div class="round-header" id="roundHeader">Round 1: Tap the correct formula!</div>
+    <div class="match-grid" id="matchGrid"></div>
+    <div class="clue-area">
+      <p id="clueText"></p>
+    </div>
+    <div class="game-complete" id="gameCompleteMsg" style="display:none;"></div>
+    <button onclick="startRound()" id="startRoundBtn">Start Round</button>
+  </div>
+
+  <!-- Screen 7: 10-Mark Quiz -->
+  <div id="screen7" class="screen">
+    <h2>7. 10-Mark Quiz</h2>
+    <p>
+      Try these 10 questions on chemical formulae and naming. The questions get progressively more challenging!
+    </p>
+    <div id="quizContainer">
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <h4>Q1: Which of the following is the correct formula for magnesium oxide?</h4>
+        <select id="quizQ1">
+          <option value="">--Select--</option>
+          <option value="MgO">MgO</option>
+          <option value="MgOH">MgOH</option>
+          <option value="MnO">MnO</option>
+          <option value="MgO2">MgO<sub>2</sub></option>
+        </select>
+        <span id="quizF1" class="quiz-feedback"></span>
+      </div>
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <h4>Q2: Which name correctly describes CaO?</h4>
+        <select id="quizQ2">
+          <option value="">--Select--</option>
+          <option value="Calcium oxide">Calcium oxide</option>
+          <option value="Calcium dioxide">Calcium dioxide</option>
+          <option value="Calcium hydroxide">Calcium hydroxide</option>
+          <option value="Carbon oxide">Carbon oxide</option>
+        </select>
+        <span id="quizF2" class="quiz-feedback"></span>
+      </div>
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <h4>Q3: In KCl, how many different elements are present?</h4>
+        <select id="quizQ3">
+          <option value="">--Select--</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+        <span id="quizF3" class="quiz-feedback"></span>
+      </div>
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <h4>Q4: Which formula corresponds to <em>sodium carbonate</em>?</h4>
+        <select id="quizQ4">
+          <option value="">--Select--</option>
+          <option value="Na2CO3">Na<sub>2</sub>CO<sub>3</sub></option>
+          <option value="Na2CO2">Na<sub>2</sub>CO<sub>2</sub></option>
+          <option value="NaCO3">NaCO<sub>3</sub></option>
+          <option value="NaOH">NaOH</option>
+        </select>
+        <span id="quizF4" class="quiz-feedback"></span>
+      </div>
+      <!-- Q5 -->
+      <div class="quiz-question">
+        <h4>Q5: Which name is correct for Mg(OH)<sub>2</sub>?</h4>
+        <select id="quizQ5">
+          <option value="">--Select--</option>
+          <option value="Magnesium hydroxide">Magnesium hydroxide</option>
+          <option value="Magnesium oxide">Magnesium oxide</option>
+          <option value="Manganese hydroxide">Manganese hydroxide</option>
+          <option value="Magnesium hydride">Magnesium hydride</option>
+        </select>
+        <span id="quizF5" class="quiz-feedback"></span>
+      </div>
+      <!-- Q6 -->
+      <div class="quiz-question">
+        <h4>Q6: In Al<sub>2</sub>O<sub>3</sub> (aluminium oxide), how many total atoms are present in one formula unit?</h4>
+        <select id="quizQ6">
+          <option value="">--Select--</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+        <span id="quizF6" class="quiz-feedback"></span>
+      </div>
+      <!-- Q7 -->
+      <div class="quiz-question">
+        <h4>Q7: Which of the following best describes KNO<sub>3</sub>?</h4>
+        <select id="quizQ7">
+          <option value="">--Select--</option>
+          <option value="Potassium nitride">Potassium nitride</option>
+          <option value="Potassium nitrate">Potassium nitrate</option>
+          <option value="Potassium nitrogen oxide">Potassium nitrogen oxide</option>
+          <option value="Potassium nitric oxide">Potassium nitric oxide</option>
+        </select>
+        <span id="quizF7" class="quiz-feedback"></span>
+      </div>
+      <!-- Q8 -->
+      <div class="quiz-question">
+        <h4>Q8: A student sees Ca(OH)<sub>2</sub>. Which statement is true about its composition?</h4>
+        <select id="quizQ8">
+          <option value="">--Select--</option>
+          <option value="1 Ca, 1 O, 1 H">1 Ca, 1 O, 1 H</option>
+          <option value="1 Ca, 2 O, 2 H">1 Ca, 2 O, 2 H</option>
+          <option value="1 Ca, 1 O, 2 H">1 Ca, 1 O, 2 H</option>
+          <option value="2 Ca, 2 O, 2 H">2 Ca, 2 O, 2 H</option>
+        </select>
+        <span id="quizF8" class="quiz-feedback"></span>
+      </div>
+      <!-- Q9 -->
+      <div class="quiz-question">
+        <h4>Q9: Which formula is correct for <em>aluminium oxide</em>?</h4>
+        <select id="quizQ9">
+          <option value="">--Select--</option>
+          <option value="AlO">AlO</option>
+          <option value="Al2O3">Al<sub>2</sub>O<sub>3</sub></option>
+          <option value="AlO2">AlO<sub>2</sub></option>
+          <option value="Al2O">Al<sub>2</sub>O</option>
+        </select>
+        <span id="quizF9" class="quiz-feedback"></span>
+      </div>
+      <!-- Q10 -->
+      <div class="quiz-question">
+        <h4>Q10: Which of the following compounds contains a total of 5 atoms per formula unit?</h4>
+        <select id="quizQ10">
+          <option value="">--Select--</option>
+          <option value="Na2SO4">Na<sub>2</sub>SO<sub>4</sub></option>
+          <option value="CaCO3">CaCO<sub>3</sub></option>
+          <option value="CO2">CO<sub>2</sub></option>
+          <option value="H2O">H<sub>2</sub>O</option>
+        </select>
+        <span id="quizF10" class="quiz-feedback"></span>
+      </div>
+    </div>
+    <button onclick="checkQuiz()">Check Answers</button>
+    <div id="quizScore" class="quiz-score"></div>
+    <br>
+    <button onclick="showScreen(6)">Back</button>
+    <button onclick="showScreen(8)">Next</button>
+  </div>
+
+  <!-- Screen 8: Extended Question (Placeholder) -->
+  <div id="screen8" class="screen">
+    <h2>8. Extended Question</h2>
+    <p>Placeholder for an extended question or writing task. Insert your prompt here.</p>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+
+  <!-- Screen 10: Performance Descriptor -->
+  <div id="screen10" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(1)">Back to Start</button>
+  </div>
+</div>
+
+<script>
+  /* ---------------------------
+     NAVIGATION + LESSON LOGIC
+     --------------------------- */
+  let currentScreen = 1;
+
+  function showScreen(n) {
+    const allScreens = document.getElementsByClassName("screen");
+    for (let i = 0; i < allScreens.length; i++) {
+      allScreens[i].classList.remove("active");
+    }
+    const target = document.getElementById("screen" + n);
+    if (target) {
+      target.classList.add("active");
+      currentScreen = n;
+    } else {
+      console.error("Screen " + n + " does not exist!");
+    }
+  }
+
+  function showPerformanceDescriptor() {
+    let descriptor = "Complete all sections, quizzes, and the new matching game. Great job so far!";
+    document.getElementById("descriptorMessage").innerText = descriptor;
+    showScreen(10);
+  }
+
+  /* ----------
+   SCREEN 1 CHECKS
+   ---------- */
+  function checkScreen1() {
+    let q1a = document.getElementById("q1a").value; // correct = "CH4"
+    let q1b = document.getElementById("q1b").value; // correct = "CO2"
+    let q1c = document.getElementById("q1c").value; // correct = "H2O"
+
+    let feedback1a = document.getElementById("feedback1a");
+    let feedback1b = document.getElementById("feedback1b");
+    let feedback1c = document.getElementById("feedback1c");
+    let nextBtn = document.getElementById("next1");
+
+    let allCorrect = true;
+
+    if (q1a === "CH4") {
+      feedback1a.innerText = "Correct!";
+    } else {
+      feedback1a.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (q1b === "CO2") {
+      feedback1b.innerText = "Correct!";
+    } else {
+      feedback1b.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (q1c === "H2O") {
+      feedback1c.innerText = "Correct!";
+    } else {
+      feedback1c.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (allCorrect) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+   SCREEN 2 CHECKS (Naming Oxides)
+   ---------- */
+  function checkScreen2() {
+    let q2a = document.getElementById("q2a").value; // FeO -> "Iron oxide"
+    let q2b = document.getElementById("q2b").value; // SO2 -> "Sulfur dioxide"
+    let q2c = document.getElementById("q2c").value; // CO -> "Carbon monoxide"
+    let q2d = document.getElementById("q2d").value; // N2O -> "Nitrogen oxide"
+
+    let f2a = document.getElementById("feedback2a");
+    let f2b = document.getElementById("feedback2b");
+    let f2c = document.getElementById("feedback2c");
+    let f2d = document.getElementById("feedback2d");
+    let nextBtn = document.getElementById("next2");
+
+    let correct = true;
+
+    if (q2a === "Iron oxide") {
+      f2a.innerText = "Correct!";
+    } else {
+      f2a.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2b === "Sulfur dioxide") {
+      f2b.innerText = "Correct!";
+    } else {
+      f2b.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2c === "Carbon monoxide") {
+      f2c.innerText = "Correct!";
+    } else {
+      f2c.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2d === "Nitrogen oxide") {
+      f2d.innerText = "Correct!";
+    } else {
+      f2d.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (correct) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+   SCREEN 3 CHECKS (Naming Halides)
+   ---------- */
+  function checkScreen3() {
+    // Q1: KBr -> "Potassium bromide"
+    // Q2: CaI2 -> "Calcium iodide"
+    // Q3: MgBr2
+    // Q4: LiI
+    let q3a = document.getElementById("q3a").value;
+    let q3b = document.getElementById("q3b").value;
+    let q3c = document.getElementById("q3c").value;
+    let q3d = document.getElementById("q3d").value;
+
+    let f3a = document.getElementById("feedback3a");
+    let f3b = document.getElementById("feedback3b");
+    let f3c = document.getElementById("feedback3c");
+    let f3d = document.getElementById("feedback3d");
+    let nextBtn = document.getElementById("next3");
+
+    let correct = true;
+
+    if (q3a === "Potassium bromide") {
+      f3a.innerText = "Correct!";
+    } else {
+      f3a.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3b === "Calcium iodide") {
+      f3b.innerText = "Correct!";
+    } else {
+      f3b.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3c === "MgBr2") {
+      f3c.innerText = "Correct!";
+    } else {
+      f3c.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3d === "LiI") {
+      f3d.innerText = "Correct!";
+    } else {
+      f3d.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (correct) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+   SCREEN 4 CHECKS (Counting atoms)
+   ---------- */
+  function checkScreen4() {
+    // Q1: AlCl3 -> 3 chlorine
+    // Q2: Ca(OH)2 -> 2 hydrogen
+    // Q3: Na2CO3 -> 2 sodium
+    // Q4: H2O -> 2 hydrogen
+    let q4a = document.getElementById("q4a").value; // correct = "3"
+    let q4b = document.getElementById("q4b").value; // correct = "2"
+    let q4c = document.getElementById("q4c").value; // correct = "2"
+    let q4d = document.getElementById("q4d").value; // correct = "2"
+
+    let f4a = document.getElementById("feedback4a");
+    let f4b = document.getElementById("feedback4b");
+    let f4c = document.getElementById("feedback4c");
+    let f4d = document.getElementById("feedback4d");
+    let nextBtn = document.getElementById("next4");
+
+    let correctAll = true;
+
+    if (q4a === "3") {
+      f4a.innerText = "Correct!";
+    } else {
+      f4a.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4b === "2") {
+      f4b.innerText = "Correct!";
+    } else {
+      f4b.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4c === "2") {
+      f4c.innerText = "Correct!";
+    } else {
+      f4c.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4d === "2") {
+      f4d.innerText = "Correct!";
+    } else {
+      f4d.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (correctAll) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+   SCREEN 5 CHECKS (Groups)
+   ---------- */
+  function checkS5Matching() {
+    // 1) LiOH -> lithium hydroxide
+    // 2) Mg(OH)2 -> magnesium hydroxide
+    // 3) BaSO4 -> barium sulfate
+    // 4) Na2CO3 -> sodium carbonate
+    let s5q1 = document.getElementById("s5q1").value.trim().toLowerCase();
+    let s5q2 = document.getElementById("s5q2").value.trim().toLowerCase();
+    let s5q3 = document.getElementById("s5q3").value.trim().toLowerCase();
+    let s5q4 = document.getElementById("s5q4").value.trim().toLowerCase();
+
+    let feedback = document.getElementById("s5feedback");
+
+    let correctCount = 0;
+    if (s5q1 === "lithium hydroxide") correctCount++;
+    if (s5q2 === "magnesium hydroxide") correctCount++;
+    if (s5q3 === "barium sulfate") correctCount++;
+    if (s5q4 === "sodium carbonate") correctCount++;
+
+    if (correctCount === 4) {
+      feedback.innerText = "All correct!";
+    } else {
+      feedback.innerText = "Check your answers again.";
+    }
+  }
+
+  /* ===============================
+     NEW MATCHING GAME (SCREEN 6)
+     =============================== */
+
+  const gameData = [
+    { formulaHTML: "CO<sub>2</sub>",   name: "carbon dioxide" },
+    { formulaHTML: "CO",              name: "carbon monoxide" },
+    { formulaHTML: "NaCl",            name: "sodium chloride" },
+    { formulaHTML: "KBr",             name: "potassium bromide" },
+    { formulaHTML: "MgO",             name: "magnesium oxide" },
+    { formulaHTML: "CaO",             name: "calcium oxide" },
+    { formulaHTML: "NaOH",            name: "sodium hydroxide" },
+    { formulaHTML: "KNO<sub>3</sub>", name: "potassium nitrate" },
+    { formulaHTML: "CaCO<sub>3</sub>",name: "calcium carbonate" },
+    { formulaHTML: "Na<sub>2</sub>SO<sub>4</sub>", name: "sodium sulfate" },
+    { formulaHTML: "HCl",             name: "hydrogen chloride" },
+    { formulaHTML: "FeO",             name: "iron oxide" },
+    { formulaHTML: "LiI",             name: "lithium iodide" },
+    { formulaHTML: "MgBr<sub>2</sub>",name: "magnesium bromide" },
+    { formulaHTML: "CaI<sub>2</sub>", name: "calcium iodide" },
+    { formulaHTML: "Al<sub>2</sub>O<sub>3</sub>", name: "aluminium oxide" }
+  ];
+
+  let roundNumber = 1;      
+  let tileData = [];        
+  let clueQueue = [];       
+  let currentClue = null;   
+  let cardsLeft = 0;        
+  let roundTimer = null;    
+  let timeElapsed = 0;      
+
+  function startRound() {
+    // If we’re beyond round 2, reset to round 1
+    if (roundNumber > 2) {
+      roundNumber = 1;
+    }
+    setupBoardForRound(roundNumber);
+    startTimer();
+    document.getElementById("gameCompleteMsg").style.display = "none";
+    document.getElementById("startRoundBtn").disabled = true;
+    showNextClue();
+  }
+
+  function setupBoardForRound(rnd) {
+    const grid = document.getElementById("matchGrid");
+    grid.innerHTML = "";
+    timeElapsed = 0;
+    updateTimerLabel(0);
+
+    if (rnd === 1) {
+      document.getElementById("roundHeader").innerText = "Round 1: Tap the correct formula!";
+      tileData = gameData.map(item => ({
+        display: item.formulaHTML,       
+        answer: item.name.toLowerCase()  
+      }));
+      clueQueue = gameData.map(item => item.name.toLowerCase());
+    } else {
+      document.getElementById("roundHeader").innerText = "Round 2: Tap the correct name!";
+      tileData = gameData.map(item => ({
+        display: item.name,
+        answer: item.formulaHTML
+      }));
+      clueQueue = gameData.map(item => item.formulaHTML);
+    }
+
+    shuffleArray(tileData);
+    shuffleArray(clueQueue);
+
+    tileData.forEach((tile, idx) => {
+      const tileDiv = document.createElement("div");
+      tileDiv.classList.add("match-tile");
+      tileDiv.innerHTML = tile.display;
+      tileDiv.setAttribute("data-answer", tile.answer);
+      tileDiv.setAttribute("data-index", idx.toString());
+      tileDiv.addEventListener("click", () => tileClicked(tileDiv));
+      grid.appendChild(tileDiv);
+    });
+
+    cardsLeft = 16;
+  }
+
+  function tileClicked(tileDiv) {
+    if (!currentClue) return;
+    if (tileDiv.classList.contains("won")) return;
+
+    const tileIndex = parseInt(tileDiv.getAttribute("data-index"));
+    const tileInfo = tileData[tileIndex];
+    const tileAnswer = tileInfo.answer; 
+
+    if (tileAnswer === currentClue) {
+      tileDiv.classList.add("won");
+      cardsLeft--;
+      removeClueFromQueue(currentClue);
+      if (cardsLeft === 0) {
+        stopTimer();
+        document.getElementById("gameCompleteMsg").style.display = "block";
+        if (roundNumber === 1) {
+          document.getElementById("gameCompleteMsg").innerText = 
+            `Round 1 Complete! Time: ${timeElapsed}s. Next is Round 2!`;
+          roundNumber = 2;
+        } else {
+          document.getElementById("gameCompleteMsg").innerText = 
+            `Round 2 Complete! Time: ${timeElapsed}s. You’ve won all cards!`;
+          roundNumber = 3; 
+        }
+        currentClue = null;
+        document.getElementById("startRoundBtn").disabled = false;
+        return;
+      }
+    } 
+    // If incorrect, do nothing except move on
+    showNextClue();
+  }
+
+  function showNextClue() {
+    if (clueQueue.length === 0) {
+      if (cardsLeft > 0) {
+        clueQueue = tileData
+          .filter((t, i) => {
+            const tileElem = document.getElementsByClassName("match-tile")[i];
+            return !tileElem.classList.contains("won");
+          })
+          .map(t => t.answer);
+        shuffleArray(clueQueue);
+      }
+    }
+    if (clueQueue.length === 0) {
+      document.getElementById("clueText").innerText = "";
+      return;
+    }
+    currentClue = clueQueue.shift();
+    if (roundNumber === 1) {
+      document.getElementById("clueText").innerText = "Name: " + capitalize(currentClue);
+    } else {
+      document.getElementById("clueText").innerHTML = "Formula: " + currentClue;
+    }
+  }
+
+  function removeClueFromQueue(clue) {
+    clueQueue = clueQueue.filter(c => c !== clue);
+  }
+
+  function startTimer() {
+    stopTimer();
+    timeElapsed = 0;
+    updateTimerLabel(timeElapsed);
+    roundTimer = setInterval(() => {
+      timeElapsed++;
+      updateTimerLabel(timeElapsed);
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (roundTimer) {
+      clearInterval(roundTimer);
+      roundTimer = null;
+    }
+  }
+
+  function updateTimerLabel(seconds) {
+    document.getElementById("timerLabel").innerText = `Time: ${seconds}s`;
+  }
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  /* ---------------------------
+     10-QUESTION QUIZ (SCREEN 7)
+     --------------------------- */
+  function checkQuiz() {
+    let score = 0;
+
+    // The correct answers object
+    const correctAnswers = {
+      quizQ1: "MgO",
+      quizQ2: "Calcium oxide",
+      quizQ3: "2",
+      quizQ4: "Na2CO3",
+      quizQ5: "Magnesium hydroxide",
+      quizQ6: "5",   // Al2O3 => total 5 atoms
+      quizQ7: "Potassium nitrate",
+      quizQ8: "1 Ca, 2 O, 2 H",
+      quizQ9: "Al2O3",
+      quizQ10: "CaCO3" // CaCO3 => total 5 atoms
+    };
+
+    for (let q in correctAnswers) {
+      let selectElem = document.getElementById(q);
+      let feedbackElem = document.getElementById("quizF" + q.slice(-1));
+      let userAnswer = selectElem.value;
+
+      if (userAnswer === correctAnswers[q]) {
+        feedbackElem.innerText = "✔";
+        feedbackElem.style.color = "#2e7d32";
+        score++;
+      } else {
+        feedbackElem.innerText = "✘";
+        feedbackElem.style.color = "#d32f2f";
+      }
+    }
+
+    document.getElementById("quizScore").innerText = `You scored ${score} out of 10!`;
+  }
+
+  // Initialize: show screen 1
+  showScreen(1);
+</script>
+</body>
+</html>
