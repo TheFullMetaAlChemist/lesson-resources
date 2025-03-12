@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Lesson: Metals and Non-metals</title>
+  <style>
+    /* Import a modern sans-serif font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #e6f7ff, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #f57c00;
+      margin-bottom: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff9800;
+      margin-top: 30px;
+      border-bottom: 2px solid #ffcc80;
+      padding-bottom: 5px;
+    }
+    p, li {
+      line-height: 1.6;
+      font-size: 1.1em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .question, .practice-question, .quiz-question {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid #ffcc80;
+      border-radius: 8px;
+      background-color: #fff8e1;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #f57c00;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e65100;
+    }
+    button:disabled {
+      background-color: #ffcc80;
+      color: #fff8e1;
+      cursor: not-allowed;
+    }
+    .feedback {
+      color: #d32f2f;
+      margin-left: 10px;
+      font-weight: 500;
+    }
+    select, input[type="text"], textarea {
+      padding: 8px;
+      margin-top: 5px;
+      font-size: 1em;
+      border: 1px solid #ffcc80;
+      border-radius: 4px;
+    }
+    .nav-btn {
+      background-color: #f57c00;
+    }
+    #descriptorMessage {
+      font-size: 2em;
+      font-weight: 700;
+      text-align: center;
+      color: #2e7d32;
+      margin-top: 30px;
+    }
+
+    /* The matching game */
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .match-tile {
+      background-color: #ffcc80;
+      border-radius: 8px;
+      border: 2px solid #ff9800;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-align: center;
+      padding: 5px;
+    }
+    .match-tile.won {
+      background-color: #c8e6c9;
+      border-color: #2e7d32;
+      color: #2e7d32;
+      cursor: default;
+    }
+    .round-header {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #f57c00;
+    }
+    .clue-area {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 1.3em;
+      color: #333;
+      background-color: #fff8e1;
+      padding: 10px;
+      border: 1px solid #ffcc80;
+      border-radius: 6px;
+      max-width: 400px;
+      margin: 15px auto;
+    }
+    .timer-area {
+      text-align: center;
+      font-size: 1.1em;
+      margin: 10px;
+      color: #666;
+    }
+    .game-complete {
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2e7d32;
+      margin: 20px 0;
+    }
+    .quiz-feedback {
+      color: #d32f2f;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+    .quiz-score {
+      text-align: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #2e7d32;
+    }
+
+    /* Metal or Non-metal Game Styles (Screen 9) */
+    .game-container {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff8e1;
+      border: 2px solid #ffcc80;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 600px;
+    }
+    .game-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .timer {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #d32f2f;
+    }
+    .score {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2e7d32;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Metals and Non-metals: An Interactive Lesson</h1>
+  <!-- Navigation Buttons -->
+  <div style="text-align:right;">
+    <button class="nav-btn" onclick="showScreen(6)">Matching Game</button>
+    <button class="nav-btn" onclick="showScreen(9)">Metal or Non-metal Game</button>
+    <button class="nav-btn" onclick="showScreen(7)">10-Mark Quiz</button>
+    <button class="nav-btn" onclick="showScreen(8)">Extended Question</button>
+    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
+  </div>
+  
+  <!-- Screen 1: Introduction to Metals and Non-metals -->
+  <div id="screen1" class="screen active">
+    <h2>1. Introduction to Metals and Non-metals</h2>
+    <p>
+      Elements in the periodic table can be broadly classified as <strong>metals</strong> or <strong>non-metals</strong>. 
+      Metals are typically found on the left side and center of the periodic table, while non-metals are often on the right side.
+    </p>
+    <p>
+      Metals have characteristic physical properties like being good conductors of heat and electricity, having high melting points, 
+      and being malleable or ductile. Non-metals, on the other hand, tend to be brittle (when solid), have lower melting points, 
+      and are poor conductors of heat and electricity.
+    </p>
+    <p>Let's check some key ideas:</p>
+    <div class="question">
+      <p><strong>Q1:</strong> Which of these is a typical property of metals?</p>
+      <select id="q1a">
+        <option value="">--Select--</option>
+        <option value="metalConductor">Good conductor of electricity</option>
+        <option value="brittle">Brittle</option>
+        <option value="lowMelting">Low melting point</option>
+        <option value="dull">Dull</option>
+      </select>
+      <span id="feedback1a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> Which is a typical property of non-metals?</p>
+      <select id="q1b">
+        <option value="">--Select--</option>
+        <option value="highDensity">High density</option>
+        <option value="shiny">Shiny</option>
+        <option value="nonMetalBrittle">Brittle</option>
+        <option value="ductile">Ductile</option>
+      </select>
+      <span id="feedback1b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> Which of the following is generally NOT a property of metals?</p>
+      <select id="q1c">
+        <option value="">--Select--</option>
+        <option value="ductile">Ductile</option>
+        <option value="conductorHeat">Good conductor of heat</option>
+        <option value="acidicOxides">Forms acidic oxides</option>
+        <option value="highMelt">High melting point</option>
+      </select>
+      <span id="feedback1c" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen1()">Check Answers</button>
+    <br><br>
+    <button id="next1" disabled onclick="showScreen(2)">Next</button>
+  </div>
+  
+  <!-- Screen 2: Metal Oxides -->
+  <div id="screen2" class="screen">
+    <h2>2. Formation of Metal Oxides</h2>
+    <p>
+      When metals react with oxygen, they form <strong>metal oxides</strong>. 
+      Most metal oxides are <em>basic</em> oxides, meaning they can react with acids to form salts and water.
+    </p>
+    <p>
+      The word equation for the reaction of a metal with oxygen can be written as:
+      <br><strong>metal + oxygen → metal oxide</strong>
+    </p>
+    <p>Try these word equations:</p>
+    <div class="question">
+      <p><strong>Q1:</strong> Magnesium reacts with oxygen to form:</p>
+      <select id="q2a">
+        <option value="">--Select--</option>
+        <option value="magnesiumOxide">magnesium oxide</option>
+        <option value="carbonDioxide">carbon dioxide</option>
+        <option value="hydrogenChloride">hydrogen chloride</option>
+        <option value="sodiumOxide">sodium oxide</option>
+      </select>
+      <span id="feedback2a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> Sodium reacts with oxygen to form:</p>
+      <select id="q2b">
+        <option value="">--Select--</option>
+        <option value="calciumOxide">calcium oxide</option>
+        <option value="sodiumOxide">sodium oxide</option>
+        <option value="sulfurDioxide">sulfur dioxide</option>
+        <option value="ironOxide">iron oxide</option>
+      </select>
+      <span id="feedback2b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> The word equation for iron reacting with oxygen is:</p>
+      <select id="q2c">
+        <option value="">--Select--</option>
+        <option value="ironPlusO2IronOxide">iron + oxygen → iron oxide</option>
+        <option value="ironPlusO2IronChloride">iron + oxygen → iron chloride</option>
+        <option value="ironPlusO2SodiumOxide">iron + oxygen → sodium oxide</option>
+        <option value="ironPlusO2CarbonDioxide">iron + oxygen → carbon dioxide</option>
+      </select>
+      <span id="feedback2c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> Most metal oxides are:</p>
+      <select id="q2d">
+        <option value="">--Select--</option>
+        <option value="acidic">Acidic</option>
+        <option value="neutral">Neutral</option>
+        <option value="basic">Basic</option>
+        <option value="both">They are both acidic and basic</option>
+      </select>
+      <span id="feedback2d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen2()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(1)">Back</button>
+    <button id="next2" disabled onclick="showScreen(3)">Next</button>
+  </div>
+  
+  <!-- Screen 3: Non-metal Oxides -->
+  <div id="screen3" class="screen">
+    <h2>3. Formation of Non-metal Oxides</h2>
+    <p>
+      Non-metals also react with oxygen to form <strong>non-metal oxides</strong>. 
+      Many non-metal oxides are <em>acidic</em> and can dissolve in water to form acidic solutions.
+    </p>
+    <p>
+      The word equation for a non-metal reacting with oxygen is often:
+      <br><strong>non-metal + oxygen → non-metal oxide</strong>
+    </p>
+    <p>Try these:</p>
+    <div class="question">
+      <p><strong>Q1:</strong> Carbon reacts with oxygen to form:</p>
+      <select id="q3a">
+        <option value="">--Select--</option>
+        <option value="carbonDioxide">carbon dioxide</option>
+        <option value="calciumOxide">calcium oxide</option>
+        <option value="magnesiumOxide">magnesium oxide</option>
+        <option value="sodiumChloride">sodium chloride</option>
+      </select>
+      <span id="feedback3a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> Sulfur reacts with oxygen to form:</p>
+      <select id="q3b">
+        <option value="">--Select--</option>
+        <option value="sodiumOxide">sodium oxide</option>
+        <option value="sulfurDioxide">sulfur dioxide</option>
+        <option value="potassiumChloride">potassium chloride</option>
+        <option value="aluminiumOxide">aluminium oxide</option>
+      </select>
+      <span id="feedback3b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> The word equation for hydrogen reacting with oxygen is:</p>
+      <select id="q3c">
+        <option value="">--Select--</option>
+        <option value="hydrogenPlusO2H2O">hydrogen + oxygen → water</option>
+        <option value="hydrogenPlusO2CO2">hydrogen + oxygen → carbon dioxide</option>
+        <option value="hydrogenPlusO2SulfurDioxide">hydrogen + oxygen → sulfur dioxide</option>
+        <option value="hydrogenPlusO2CalciumOxide">hydrogen + oxygen → calcium oxide</option>
+      </select>
+      <span id="feedback3c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> Most non-metal oxides are:</p>
+      <select id="q3d">
+        <option value="">--Select--</option>
+        <option value="basic">Basic</option>
+        <option value="acidic">Acidic</option>
+        <option value="neutral">Neutral</option>
+        <option value="both">They are both acidic and basic</option>
+      </select>
+      <span id="feedback3d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen3()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(2)">Back</button>
+    <button id="next3" disabled onclick="showScreen(4)">Next</button>
+  </div>
+  
+  <!-- Screen 4: Oxidation & Particle Diagrams -->
+  <div id="screen4" class="screen">
+    <h2>4. Oxidation Reactions & Particle Diagrams</h2>
+    <p>
+      An <strong>oxidation reaction</strong> is one in which a substance combines with oxygen. We often show these reactions with particle diagrams 
+      to illustrate how atoms rearrange to form new substances.
+    </p>
+    <p>For instance, magnesium atoms (Mg) can combine with oxygen molecules (O<sub>2</sub>) to form magnesium oxide (MgO). In a particle diagram, 
+      you’d see two magnesium atoms bonding with two oxygen atoms to produce two MgO units.
+    </p>
+    <p>Answer these questions about oxidation and particle diagrams:</p>
+    <div class="question">
+      <p><strong>Q1:</strong> In an oxidation reaction, a substance typically:</p>
+      <select id="q4a">
+        <option value="">--Select--</option>
+        <option value="losesOxygen">Loses oxygen</option>
+        <option value="gainsOxygen">Gains oxygen</option>
+        <option value="producesHydrogen">Produces hydrogen</option>
+        <option value="disappearsCompletely">Disappears completely</option>
+      </select>
+      <span id="feedback4a" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q2:</strong> In a particle diagram showing magnesium reacting with oxygen, the final product is:</p>
+      <select id="q4b">
+        <option value="">--Select--</option>
+        <option value="MgO">MgO</option>
+        <option value="MgCl2">MgCl<sub>2</sub></option>
+        <option value="H2O">H<sub>2</sub>O</option>
+        <option value="CO2">CO<sub>2</sub></option>
+      </select>
+      <span id="feedback4b" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q3:</strong> If you see a particle diagram with two sulfur atoms bonding with two O<sub>2</sub> molecules, 
+        it might represent the formation of:</p>
+      <select id="q4c">
+        <option value="">--Select--</option>
+        <option value="sulfurDioxide">sulfur dioxide (SO<sub>2</sub>)</option>
+        <option value="sulfurTrioxide">sulfur trioxide (SO<sub>3</sub>)</option>
+        <option value="carbonDioxide">carbon dioxide (CO<sub>2</sub>)</option>
+        <option value="water">water (H<sub>2</sub>O)</option>
+      </select>
+      <span id="feedback4c" class="feedback"></span>
+    </div>
+    <div class="question">
+      <p><strong>Q4:</strong> Particle diagrams are useful because they:</p>
+      <select id="q4d">
+        <option value="">--Select--</option>
+        <option value="confuseStudents">Confuse students intentionally</option>
+        <option value="onlyShowMetals">Only show metals</option>
+        <option value="showHowAtomsRearrange">Show how atoms rearrange during reactions</option>
+        <option value="replaceWordEquationsCompletely">Replace word equations completely</option>
+      </select>
+      <span id="feedback4d" class="feedback"></span>
+    </div>
+    <button onclick="checkScreen4()">Check Answers</button>
+    <br><br>
+    <button onclick="showScreen(3)">Back</button>
+    <button id="next4" disabled onclick="showScreen(5)">Next</button>
+  </div>
+  
+  <!-- Screen 5: Properties of Metal & Non-metal Oxides -->
+  <div id="screen5" class="screen">
+    <h2>5. Properties of Metal and Non-metal Oxides</h2>
+    <p>
+      <strong>Metal oxides</strong> are typically <em>basic</em>, which means they can neutralize acids. 
+      <strong>Non-metal oxides</strong> are often <em>acidic</em> and can form acidic solutions when dissolved in water.
+    </p>
+    <p>Answer these short questions:</p>
+    <div class="practice-question">
+      <p><strong>Q1:</strong> Name a metal oxide you have learned:</p>
+      <input type="text" id="s5q1" size="40" placeholder="">
+      <p><strong>Q2:</strong> Is your chosen metal oxide acidic or basic?</p>
+      <input type="text" id="s5q2" size="40" placeholder="">
+      <p><strong>Q3:</strong> Name a non-metal oxide you have learned:</p>
+      <input type="text" id="s5q3" size="40" placeholder="">
+      <p><strong>Q4:</strong> Is your chosen non-metal oxide acidic or basic?</p>
+      <input type="text" id="s5q4" size="40" placeholder="">
+      <br><br>
+      <button onclick="checkS5Matching()">Check Answers</button>
+      <p id="s5feedback" class="feedback"></p>
+    </div>
+    <button onclick="showScreen(4)">Back</button>
+    <button onclick="showScreen(6)">Next</button>
+  </div>
+
+  <!-- Screen 6: Metal & Non-metal Oxide Matching Game -->
+  <div id="screen6" class="screen">
+    <h2>Metal & Non-metal Oxide Matching Game</h2>
+    <p>
+      Let's match some common metal and non-metal oxides to their correct names or formulas! You’ll play <strong>two rounds</strong>:
+    </p>
+    <ul>
+      <li><strong>Round 1:</strong> A <em>name</em> appears below. Tap the correct <em>formula</em> on the grid.</li>
+      <li><strong>Round 2:</strong> A <em>formula</em> appears below. Tap the correct <em>name</em> on the grid.</li>
+    </ul>
+    <p>
+      If you guess correctly, the tile is “won.” If you guess incorrectly, that clue will appear again later. 
+      Try to win all tiles as quickly as possible!
+    </p>
+    <div class="timer-area">
+      <span id="timerLabel">Time: 0s</span>
+    </div>
+    <div class="round-header" id="roundHeader">Round 1: Tap the correct formula!</div>
+    <div class="match-grid" id="matchGrid"></div>
+    <div class="clue-area">
+      <p id="clueText"></p>
+    </div>
+    <div class="game-complete" id="gameCompleteMsg" style="display:none;"></div>
+    <button onclick="startRound()" id="startRoundBtn">Start Round</button>
+  </div>
+
+  <!-- Screen 7: 10-Mark Quiz -->
+  <div id="screen7" class="screen">
+    <h2>7. 10-Mark Quiz</h2>
+    <p>
+      Test yourself on metals, non-metals, and their oxides!
+    </p>
+    <div id="quizContainer">
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <h4>Q1: Which of the following is a property typical of metals?</h4>
+        <select id="quizQ1">
+          <option value="">--Select--</option>
+          <option value="Brittle">Brittle</option>
+          <option value="PoorConductor">Poor conductor of electricity</option>
+          <option value="ShinyGoodConductor">Shiny and good conductor of electricity</option>
+          <option value="LowDensity">Very low density</option>
+        </select>
+        <span id="quizF1" class="quiz-feedback"></span>
+      </div>
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <h4>Q2: Metal oxides tend to be:</h4>
+        <select id="quizQ2">
+          <option value="">--Select--</option>
+          <option value="Acidic">Acidic</option>
+          <option value="Basic">Basic</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Metallic">Metallic but not reactive with acids</option>
+        </select>
+        <span id="quizF2" class="quiz-feedback"></span>
+      </div>
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <h4>Q3: Non-metal oxides tend to be:</h4>
+        <select id="quizQ3">
+          <option value="">--Select--</option>
+          <option value="Acidic">Acidic</option>
+          <option value="Basic">Basic</option>
+          <option value="Both">Both acidic and basic</option>
+          <option value="None">Neither acidic nor basic</option>
+        </select>
+        <span id="quizF3" class="quiz-feedback"></span>
+      </div>
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <h4>Q4: Which equation shows magnesium reacting with oxygen?</h4>
+        <select id="quizQ4">
+          <option value="">--Select--</option>
+          <option value="MgPlusO2MgO">magnesium + oxygen → magnesium oxide</option>
+          <option value="MgPlusO2H2O">magnesium + oxygen → water</option>
+          <option value="MgPlusO2FeO">magnesium + oxygen → iron oxide</option>
+          <option value="MgPlusO2CO2">magnesium + oxygen → carbon dioxide</option>
+        </select>
+        <span id="quizF4" class="quiz-feedback"></span>
+      </div>
+      <!-- Q5 -->
+      <div class="quiz-question">
+        <h4>Q5: Which of these is a non-metal oxide?</h4>
+        <select id="quizQ5">
+          <option value="">--Select--</option>
+          <option value="MagnesiumOxide">Magnesium oxide (MgO)</option>
+          <option value="CarbonDioxide">Carbon dioxide (CO<sub>2</sub>)</option>
+          <option value="CalciumOxide">Calcium oxide (CaO)</option>
+          <option value="SodiumOxide">Sodium oxide (Na<sub>2</sub>O)</option>
+        </select>
+        <span id="quizF5" class="quiz-feedback"></span>
+      </div>
+      <!-- Q6 -->
+      <div class="quiz-question">
+        <h4>Q6: A reaction is called “oxidation” if the substance:</h4>
+        <select id="quizQ6">
+          <option value="">--Select--</option>
+          <option value="LosesOxygen">Loses oxygen</option>
+          <option value="GainsOxygen">Gains oxygen</option>
+          <option value="GainsHydrogen">Gains hydrogen</option>
+          <option value="NeutralizesAcid">Neutralizes acid</option>
+        </select>
+        <span id="quizF6" class="quiz-feedback"></span>
+      </div>
+      <!-- Q7 -->
+      <div class="quiz-question">
+        <h4>Q7: Which word equation is correct for sulfur reacting with oxygen?</h4>
+        <select id="quizQ7">
+          <option value="">--Select--</option>
+          <option value="SulfurPlusOxygenSulfurDioxide">sulfur + oxygen → sulfur dioxide</option>
+          <option value="SulfurPlusOxygenWater">sulfur + oxygen → water</option>
+          <option value="SulfurPlusOxygenCalciumOxide">sulfur + oxygen → calcium oxide</option>
+          <option value="SulfurPlusOxygenMagnesiumChloride">sulfur + oxygen → magnesium chloride</option>
+        </select>
+        <span id="quizF7" class="quiz-feedback"></span>
+      </div>
+      <!-- Q8 -->
+      <div class="quiz-question">
+        <h4>Q8: Which statement about metal and non-metal oxides is true?</h4>
+        <select id="quizQ8">
+          <option value="">--Select--</option>
+          <option value="MetalOxidesAcidicNonMetalBasic">Metal oxides are acidic; non-metal oxides are basic</option>
+          <option value="MetalOxidesBasicNonMetalAcidic">Metal oxides are basic; non-metal oxides are acidic</option>
+          <option value="AllAcidic">All oxides are acidic</option>
+          <option value="AllBasic">All oxides are basic</option>
+        </select>
+        <span id="quizF8" class="quiz-feedback"></span>
+      </div>
+      <!-- Q9 -->
+      <div class="quiz-question">
+        <h4>Q9: Which property is NOT typical of non-metals?</h4>
+        <select id="quizQ9">
+          <option value="">--Select--</option>
+          <option value="LowMeltingPoint">Low melting point</option>
+          <option value="PoorConductor">Poor conductor of electricity</option>
+          <option value="HighDensityMalleable">High density and malleable</option>
+          <option value="BrittleSolid">Brittle (if solid)</option>
+        </select>
+        <span id="quizF9" class="quiz-feedback"></span>
+      </div>
+      <!-- Q10 -->
+      <div class="quiz-question">
+        <h4>Q10: Which of these best describes a typical metal?</h4>
+        <select id="quizQ10">
+          <option value="">--Select--</option>
+          <option value="ShinyMalleable">Shiny, malleable, and good conductor</option>
+          <option value="DullBrittle">Dull, brittle, and poor conductor</option>
+          <option value="LowBoilingPoint">Low boiling point, dull, non-conductor</option>
+          <option value="NoProperties">No distinct properties at all</option>
+        </select>
+        <span id="quizF10" class="quiz-feedback"></span>
+      </div>
+    </div>
+    <button onclick="checkQuiz()">Check Answers</button>
+    <div id="quizScore" class="quiz-score"></div>
+    <br>
+    <button onclick="showScreen(6)">Back</button>
+    <button onclick="showScreen(8)">Next</button>
+  </div>
+
+  <!-- Screen 8: Extended Question -->
+  <div id="screen8" class="screen">
+    <h2>8. Extended Question</h2>
+    <p>
+      Using what you’ve learned about metals, non-metals, and their oxides, describe in a short paragraph:
+    </p>
+    <ul>
+      <li>How metals and non-metals differ in their physical properties.</li>
+      <li>How their oxides differ (basic vs acidic).</li>
+      <li>How you would represent an oxidation reaction using a particle diagram.</li>
+    </ul>
+    <p>Feel free to write your response on paper or in a separate document.</p>
+    <button onclick="showScreen(7)">Back</button>
+  </div>
+
+  <!-- Screen 9: Metal or Non-metal Game -->
+  <div id="screen9" class="screen">
+    <h2>9. Metal or Non-metal Game</h2>
+    <p>Identify whether the statement describes a <strong>metal</strong> or a <strong>non-metal</strong> before time runs out!</p>
+    <div class="game-container">
+      <p class="timer" id="gameTimer">Time: 60s</p>
+      <p id="gameStatement" class="question">Press start to begin.</p>
+      <div class="game-buttons">
+        <button onclick="answerGame('metal')">Metal</button>
+        <button onclick="answerGame('non-metal')">Non-metal</button>
+      </div>
+      <p class="score" id="gameScore">Score: 0</p>
+    </div>
+    <button onclick="startGame()">Start Game</button>
+    <button onclick="showScreen(1)">Back</button>
+  </div>
+
+  <!-- Screen 10: Performance Descriptor -->
+  <div id="screen10" class="screen">
+    <h2>Performance Descriptor</h2>
+    <p id="descriptorMessage"></p>
+    <button onclick="showScreen(1)">Back to Start</button>
+  </div>
+</div>
+
+<script>
+  /* ---------------------------
+     NAVIGATION + LESSON LOGIC
+     --------------------------- */
+  let currentScreen = 1;
+
+  function showScreen(n) {
+    const allScreens = document.getElementsByClassName("screen");
+    for (let i = 0; i < allScreens.length; i++) {
+      allScreens[i].classList.remove("active");
+    }
+    const target = document.getElementById("screen" + n);
+    if (target) {
+      target.classList.add("active");
+      currentScreen = n;
+    } else {
+      console.error("Screen " + n + " does not exist!");
+    }
+  }
+
+  function showPerformanceDescriptor() {
+    let descriptor = "Complete all sections, quizzes, and the games. Great job so far!";
+    document.getElementById("descriptorMessage").innerText = descriptor;
+    showScreen(10);
+  }
+
+  /* ----------
+     SCREEN 1 CHECKS
+     ---------- */
+  function checkScreen1() {
+    // Correct answers:
+    // Q1a -> "metalConductor"
+    // Q1b -> "nonMetalBrittle"
+    // Q1c -> "acidicOxides"
+
+    let q1a = document.getElementById("q1a").value; 
+    let q1b = document.getElementById("q1b").value; 
+    let q1c = document.getElementById("q1c").value; 
+
+    let feedback1a = document.getElementById("feedback1a");
+    let feedback1b = document.getElementById("feedback1b");
+    let feedback1c = document.getElementById("feedback1c");
+    let nextBtn = document.getElementById("next1");
+
+    let allCorrect = true;
+
+    if (q1a === "metalConductor") {
+      feedback1a.innerText = "Correct!";
+    } else {
+      feedback1a.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (q1b === "nonMetalBrittle") {
+      feedback1b.innerText = "Correct!";
+    } else {
+      feedback1b.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (q1c === "acidicOxides") {
+      feedback1c.innerText = "Correct!";
+    } else {
+      feedback1c.innerText = "Try again.";
+      allCorrect = false;
+    }
+
+    if (allCorrect) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+     SCREEN 2 CHECKS (Metal Oxides)
+     ---------- */
+  function checkScreen2() {
+    // Q2a -> "magnesiumOxide"
+    // Q2b -> "sodiumOxide"
+    // Q2c -> "ironPlusO2IronOxide"
+    // Q2d -> "basic"
+
+    let q2a = document.getElementById("q2a").value;
+    let q2b = document.getElementById("q2b").value;
+    let q2c = document.getElementById("q2c").value;
+    let q2d = document.getElementById("q2d").value;
+
+    let f2a = document.getElementById("feedback2a");
+    let f2b = document.getElementById("feedback2b");
+    let f2c = document.getElementById("feedback2c");
+    let f2d = document.getElementById("feedback2d");
+    let nextBtn = document.getElementById("next2");
+
+    let correct = true;
+
+    if (q2a === "magnesiumOxide") {
+      f2a.innerText = "Correct!";
+    } else {
+      f2a.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2b === "sodiumOxide") {
+      f2b.innerText = "Correct!";
+    } else {
+      f2b.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2c === "ironPlusO2IronOxide") {
+      f2c.innerText = "Correct!";
+    } else {
+      f2c.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q2d === "basic") {
+      f2d.innerText = "Correct!";
+    } else {
+      f2d.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (correct) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+     SCREEN 3 CHECKS (Non-metal Oxides)
+     ---------- */
+  function checkScreen3() {
+    // Q3a -> "carbonDioxide"
+    // Q3b -> "sulfurDioxide"
+    // Q3c -> "hydrogenPlusO2H2O"
+    // Q3d -> "acidic"
+
+    let q3a = document.getElementById("q3a").value;
+    let q3b = document.getElementById("q3b").value;
+    let q3c = document.getElementById("q3c").value;
+    let q3d = document.getElementById("q3d").value;
+
+    let f3a = document.getElementById("feedback3a");
+    let f3b = document.getElementById("feedback3b");
+    let f3c = document.getElementById("feedback3c");
+    let f3d = document.getElementById("feedback3d");
+    let nextBtn = document.getElementById("next3");
+
+    let correct = true;
+
+    if (q3a === "carbonDioxide") {
+      f3a.innerText = "Correct!";
+    } else {
+      f3a.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3b === "sulfurDioxide") {
+      f3b.innerText = "Correct!";
+    } else {
+      f3b.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3c === "hydrogenPlusO2H2O") {
+      f3c.innerText = "Correct!";
+    } else {
+      f3c.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (q3d === "acidic") {
+      f3d.innerText = "Correct!";
+    } else {
+      f3d.innerText = "Try again.";
+      correct = false;
+    }
+
+    if (correct) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+     SCREEN 4 CHECKS (Oxidation & Particle Diagrams)
+     ---------- */
+  function checkScreen4() {
+    // Q4a -> "gainsOxygen"
+    // Q4b -> "MgO"
+    // Q4c -> "sulfurDioxide"
+    // Q4d -> "showHowAtomsRearrange"
+
+    let q4a = document.getElementById("q4a").value; 
+    let q4b = document.getElementById("q4b").value; 
+    let q4c = document.getElementById("q4c").value; 
+    let q4d = document.getElementById("q4d").value; 
+
+    let f4a = document.getElementById("feedback4a");
+    let f4b = document.getElementById("feedback4b");
+    let f4c = document.getElementById("feedback4c");
+    let f4d = document.getElementById("feedback4d");
+    let nextBtn = document.getElementById("next4");
+
+    let correctAll = true;
+
+    if (q4a === "gainsOxygen") {
+      f4a.innerText = "Correct!";
+    } else {
+      f4a.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4b === "MgO") {
+      f4b.innerText = "Correct!";
+    } else {
+      f4b.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4c === "sulfurDioxide") {
+      f4c.innerText = "Correct!";
+    } else {
+      f4c.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (q4d === "showHowAtomsRearrange") {
+      f4d.innerText = "Correct!";
+    } else {
+      f4d.innerText = "Try again.";
+      correctAll = false;
+    }
+
+    if (correctAll) {
+      nextBtn.disabled = false;
+    }
+  }
+
+  /* ----------
+     SCREEN 5 CHECKS
+     ---------- */
+  function checkS5Matching() {
+    // Just verify something is entered for each field
+    let s5q1 = document.getElementById("s5q1").value.trim();
+    let s5q2 = document.getElementById("s5q2").value.trim();
+    let s5q3 = document.getElementById("s5q3").value.trim();
+    let s5q4 = document.getElementById("s5q4").value.trim();
+
+    let feedback = document.getElementById("s5feedback");
+
+    if (s5q1 && s5q2 && s5q3 && s5q4) {
+      feedback.innerText = "Looks good! Remember, metal oxides are typically basic, and non-metal oxides are typically acidic.";
+      feedback.style.color = "#2e7d32";
+    } else {
+      feedback.innerText = "Please fill in all parts.";
+      feedback.style.color = "#d32f2f";
+    }
+  }
+
+  /* ===============================
+     MATCHING GAME (SCREEN 6)
+     =============================== */
+  // We'll match 8 metal oxides + 8 non-metal oxides
+  // Round 1: "Name" => find the correct formula
+  // Round 2: "Formula" => find the correct name
+
+  const gameData = [
+    // 8 Metal Oxides
+    { formulaHTML: "MgO",   name: "magnesium oxide" },
+    { formulaHTML: "CaO",   name: "calcium oxide" },
+    { formulaHTML: "FeO",   name: "iron oxide" },
+    { formulaHTML: "Al<sub>2</sub>O<sub>3</sub>", name: "aluminium oxide" },
+    { formulaHTML: "Na<sub>2</sub>O", name: "sodium oxide" },
+    { formulaHTML: "K<sub>2</sub>O",  name: "potassium oxide" },
+    { formulaHTML: "CuO",   name: "copper oxide" },
+    { formulaHTML: "ZnO",   name: "zinc oxide" },
+    // 8 Non-metal Oxides
+    { formulaHTML: "CO<sub>2</sub>",   name: "carbon dioxide" },
+    { formulaHTML: "CO",               name: "carbon monoxide" },
+    { formulaHTML: "SO<sub>2</sub>",   name: "sulfur dioxide" },
+    { formulaHTML: "SO<sub>3</sub>",   name: "sulfur trioxide" },
+    { formulaHTML: "NO<sub>2</sub>",   name: "nitrogen dioxide" },
+    { formulaHTML: "NO",               name: "nitrogen monoxide" },
+    { formulaHTML: "SiO<sub>2</sub>",  name: "silicon dioxide" },
+    { formulaHTML: "P<sub>2</sub>O<sub>5</sub>", name: "phosphorus pentoxide" }
+  ];
+
+  let roundNumber = 1;      
+  let tileData = [];        
+  let clueQueue = [];       
+  let currentClue = null;   
+  let cardsLeft = 0;        
+  let roundTimer = null;    
+  let timeElapsed = 0;      
+
+  function startRound() {
+    // If we’re beyond round 2, reset to round 1
+    if (roundNumber > 2) {
+      roundNumber = 1;
+    }
+    setupBoardForRound(roundNumber);
+    startTimer();
+    document.getElementById("gameCompleteMsg").style.display = "none";
+    document.getElementById("startRoundBtn").disabled = true;
+    showNextClue();
+  }
+
+  function setupBoardForRound(rnd) {
+    const grid = document.getElementById("matchGrid");
+    grid.innerHTML = "";
+    timeElapsed = 0;
+    updateTimerLabel(0);
+
+    // Round 1: grid shows formula, clues are names
+    // Round 2: grid shows names, clues are formulaHTML
+    if (rnd === 1) {
+      document.getElementById("roundHeader").innerText = "Round 1: Tap the correct formula!";
+      tileData = gameData.map(item => ({
+        display: item.formulaHTML,
+        answer: item.name.toLowerCase()
+      }));
+      clueQueue = gameData.map(item => item.name.toLowerCase());
+    } else {
+      document.getElementById("roundHeader").innerText = "Round 2: Tap the correct name!";
+      tileData = gameData.map(item => ({
+        display: item.name,
+        answer: item.formulaHTML
+      }));
+      clueQueue = gameData.map(item => item.formulaHTML);
+    }
+
+    shuffleArray(tileData);
+    shuffleArray(clueQueue);
+
+    tileData.forEach((tile, idx) => {
+      const tileDiv = document.createElement("div");
+      tileDiv.classList.add("match-tile");
+      tileDiv.innerHTML = tile.display;
+      tileDiv.setAttribute("data-answer", tile.answer);
+      tileDiv.setAttribute("data-index", idx.toString());
+      tileDiv.addEventListener("click", () => tileClicked(tileDiv));
+      grid.appendChild(tileDiv);
+    });
+
+    cardsLeft = 16;
+  }
+
+  function tileClicked(tileDiv) {
+    if (!currentClue) return;
+    if (tileDiv.classList.contains("won")) return;
+
+    const tileIndex = parseInt(tileDiv.getAttribute("data-index"));
+    const tileInfo = tileData[tileIndex];
+    const tileAnswer = tileInfo.answer;
+
+    // Compare tileAnswer with currentClue
+    if (tileAnswer === currentClue) {
+      tileDiv.classList.add("won");
+      cardsLeft--;
+      removeClueFromQueue(currentClue);
+      if (cardsLeft === 0) {
+        // Round is complete
+        stopTimer();
+        document.getElementById("gameCompleteMsg").style.display = "block";
+        if (roundNumber === 1) {
+          document.getElementById("gameCompleteMsg").innerText = 
+            `Round 1 Complete! Time: ${timeElapsed}s. Next is Round 2!`;
+          roundNumber = 2;
+        } else {
+          document.getElementById("gameCompleteMsg").innerText = 
+            `Round 2 Complete! Time: ${timeElapsed}s. You’ve matched all items!`;
+          roundNumber = 3; 
+        }
+        currentClue = null;
+        document.getElementById("startRoundBtn").disabled = false;
+        return;
+      }
+    }
+    // If incorrect, just move on
+    showNextClue();
+  }
+
+  function showNextClue() {
+    if (clueQueue.length === 0) {
+      if (cardsLeft > 0) {
+        clueQueue = tileData
+          .filter((t, i) => {
+            const tileElem = document.getElementsByClassName("match-tile")[i];
+            return !tileElem.classList.contains("won");
+          })
+          .map(t => t.answer);
+        shuffleArray(clueQueue);
+      }
+    }
+    if (clueQueue.length === 0) {
+      document.getElementById("clueText").innerText = "";
+      return;
+    }
+    currentClue = clueQueue.shift();
+
+    if (roundNumber === 1) {
+      document.getElementById("clueText").innerText = "Name: " + capitalize(currentClue);
+    } else {
+      document.getElementById("clueText").innerHTML = "Formula: " + currentClue;
+    }
+  }
+
+  function removeClueFromQueue(clue) {
+    clueQueue = clueQueue.filter(c => c !== clue);
+  }
+
+  function startTimer() {
+    stopTimer();
+    timeElapsed = 0;
+    updateTimerLabel(timeElapsed);
+    roundTimer = setInterval(() => {
+      timeElapsed++;
+      updateTimerLabel(timeElapsed);
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (roundTimer) {
+      clearInterval(roundTimer);
+      roundTimer = null;
+    }
+  }
+
+  function updateTimerLabel(seconds) {
+    document.getElementById("timerLabel").innerText = `Time: ${seconds}s`;
+  }
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  function capitalize(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  /* ---------------------------
+     10-QUESTION QUIZ (SCREEN 7)
+     --------------------------- */
+  function checkQuiz() {
+    let score = 0;
+
+    // The correct answers for each <select> in the quiz
+    const correctAnswers = {
+      quizQ1: "ShinyGoodConductor",
+      quizQ2: "Basic",
+      quizQ3: "Acidic",
+      quizQ4: "MgPlusO2MgO",
+      quizQ5: "CarbonDioxide",
+      quizQ6: "GainsOxygen",
+      quizQ7: "SulfurPlusOxygenSulfurDioxide",
+      quizQ8: "MetalOxidesBasicNonMetalAcidic",
+      quizQ9: "HighDensityMalleable",
+      quizQ10: "ShinyMalleable"
+    };
+
+    for (let q in correctAnswers) {
+      let selectElem = document.getElementById(q);
+      let feedbackElem = document.getElementById("quizF" + q.slice(-1));
+      let userAnswer = selectElem.value;
+
+      if (userAnswer === correctAnswers[q]) {
+        feedbackElem.innerText = "✔";
+        feedbackElem.style.color = "#2e7d32";
+        score++;
+      } else {
+        feedbackElem.innerText = "✘";
+        feedbackElem.style.color = "#d32f2f";
+      }
+    }
+
+    document.getElementById("quizScore").innerText = `You scored ${score} out of 10!`;
+  }
+
+  /* ===============================
+     METAL OR NON-METAL GAME (SCREEN 9)
+     =============================== */
+  // Variables and functions for the Metal or Non-metal Game
+  let gameStatements = [
+    { text: "Good conductor of electricity", type: "metal" },
+    { text: "Poor conductor of heat", type: "non-metal" },
+    { text: "Malleable and ductile", type: "metal" },
+    { text: "Brittle when solid", type: "non-metal" },
+    { text: "Forms acidic oxides", type: "non-metal" },
+    { text: "Forms basic oxides", type: "metal" },
+    { text: "Low density and dull", type: "non-metal" },
+    { text: "High melting and boiling points", type: "metal" },
+    { text: "Oxides react with acids to form salts", type: "metal" },
+    { text: "Oxides react with bases to form salts", type: "non-metal" },
+    { text: "Shiny in appearance", type: "metal" },
+    { text: "Mostly solids at room temperature", type: "metal" },
+    { text: "Often gases at room temperature", type: "non-metal" },
+    { text: "Found on the left of the periodic table", type: "metal" },
+    { text: "Found on the right of the periodic table", type: "non-metal" },
+    { text: "Iron, copper, and aluminum are examples", type: "metal" },
+    { text: "Oxygen, nitrogen, and chlorine are examples", type: "non-metal" },
+    { text: "Conduct heat and electricity even as a liquid", type: "metal" },
+    { text: "Cannot conduct electricity when solid", type: "non-metal" },
+    { text: "React with oxygen to form basic oxides", type: "metal" },
+    { text: "React with oxygen to form acidic oxides", type: "non-metal" },
+    { text: "Zinc and lead are examples", type: "metal" },
+    { text: "Sulfur and bromine are examples", type: "non-metal" },
+    { text: "Some are magnetic", type: "metal" }
+  ];
+
+  let gameTime = 60;
+  let gameScore = 0;
+  let incorrectQueue = [];
+  let currentStatement = {};
+  let timerInterval;
+  let consecutiveCorrect = 0;
+
+  function startGame() {
+    gameScore = 0;
+    gameTime = 60;
+    consecutiveCorrect = 0;
+    incorrectQueue = [];
+    shuffleArray(gameStatements);
+    showNextStatement();
+    updateGameUI();
+    timerInterval = setInterval(() => {
+      gameTime--;
+      updateGameUI();
+      if (gameTime <= 0) endGame();
+    }, 1000);
+  }
+
+  function showNextStatement() {
+    if (gameStatements.length === 0) {
+      if (incorrectQueue.length === 0) {
+        endGame();
+        return;
+      }
+      gameStatements = [...incorrectQueue];
+      incorrectQueue = [];
+      shuffleArray(gameStatements);
+    }
+    currentStatement = gameStatements.pop();
+    document.getElementById("gameStatement").innerText = currentStatement.text;
+  }
+
+  function answerGame(answer) {
+    if (answer === currentStatement.type) {
+      gameScore += 10;
+      consecutiveCorrect++;
+      if (consecutiveCorrect >= 3) {
+        gameScore += 5;
+      }
+    } else {
+      gameTime -= 10;
+      incorrectQueue.push(currentStatement);
+      consecutiveCorrect = 0;
+    }
+    showNextStatement();
+    updateGameUI();
+  }
+
+  function updateGameUI() {
+    document.getElementById("gameTimer").innerText = `Time: ${gameTime}s`;
+    document.getElementById("gameScore").innerText = `Score: ${gameScore}`;
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    document.getElementById("gameStatement").innerText = `Game Over! Final Score: ${gameScore}`;
+  }
+
+  // Initialize the lesson on first load
+  showScreen(1);
+</script>
+</body>
+</html>
