@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chemistry Detective Lab</title>
+  <style>
+    /* Global styling */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #283593, #3f51b5);
+      background-size: cover;
+      color: #fff;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      color: #333;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #1a237e;
+      margin: 10px 0;
+    }
+    p {
+      margin: 0 0 16px;
+    }
+    button {
+      background: #3949ab;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 0.95em;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.25s ease;
+    }
+    button:hover {
+      background: #303f9f;
+    }
+    /* Hiding/Showing screens */
+    .screen {
+      display: none; /* hidden by default */
+    }
+    .active {
+      display: block; /* visible screen */
+    }
+    /* Quiz styling */
+    .quiz-question {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin: 20px 0 10px;
+    }
+    .quiz-answers {
+      list-style: none;
+      padding: 0;
+    }
+    .quiz-answers li {
+      margin: 6px 0;
+    }
+    /* NaOH tutorial steps */
+    .tutorial-step {
+      background-color: #fff;
+      border: 2px solid #cfd8dc;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      color: #333;
+    }
+    .step-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    /* Ionic Equations quiz */
+    .equation-item {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+    }
+    .equation-item p {
+      margin-top: 0;
+    }
+    .equation-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+      margin: 8px 0;
+    }
+    select, input[type="text"] {
+      padding: 4px 8px;
+      font-size: 0.9em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .equation-feedback {
+      color: #e53935; /* red for incorrect feedback */
+      margin-top: 5px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ========== START SCREEN ========== -->
+  <div id="startScreen" class="screen active">
+    <h1>Chemistry Detective Lab</h1>
+    <p>Select the test you want to explore:</p>
+    <button onclick="showScreen('flameTutorialScreen')">Flame Colours</button>
+    <button onclick="showScreen('naohTutorialScreen')">NaOH Tests</button>
+    <button onclick="startChallenge()">Forensic Challenge</button>
+  </div>
+
+  <!-- ========== FLAME COLOURS TUTORIAL ========== -->
+  <div id="flameTutorialScreen" class="screen">
+    <h2>Flame Colours (Tutorial)</h2>
+    <ul>
+      <li><strong>Lithium (Li<sup>+</sup>)</strong>: crimson</li>
+      <li><strong>Sodium (Na<sup>+</sup>)</strong>: yellow</li>
+      <li><strong>Potassium (K<sup>+</sup>)</strong>: lilac</li>
+      <li><strong>Calcium (Ca<sup>2+</sup>)</strong>: orange‐red</li>
+      <li><strong>Copper (Cu<sup>2+</sup>)</strong>: green</li>
+    </ul>
+    <p><em>Note:</em> Multiple ions can mask each other’s colours.</p>
+    <button onclick="startFlameQuiz()">Test Yourself: Flame Colours</button>
+    <button onclick="backToStart()">Back to Main Menu</button>
+  </div>
+
+  <!-- FLAME QUIZ SCREEN -->
+  <div id="flameQuizScreen" class="screen">
+    <h2>Flame Colours Quiz</h2>
+    <div id="flameQuizContent"></div>
+  </div>
+
+  <!-- ========== NaOH TESTS TUTORIAL ========== -->
+  <div id="naohTutorialScreen" class="screen">
+    <h2>Sodium Hydroxide Tests (Tutorial)</h2>
+
+    <!-- Step 1 -->
+    <div class="tutorial-step">
+      <div class="step-header">Step 1: Observe the precipitate</div>
+      <p>You add NaOH to the unknown solution. What do you see?</p>
+      <button onclick="showNaohStep('whitePptStep')">White precipitate</button>
+      <button onclick="showNaohStep('coloredPptStep')">Colored precipitate</button>
+    </div>
+
+    <!-- White Precipitate Step -->
+    <div id="whitePptStep" class="tutorial-step" style="display:none;">
+      <div class="step-header">White Precipitate</div>
+      <p>Does the white precipitate dissolve in excess NaOH?</p>
+      <button onclick="showNaohStep('alResult')">Yes, it dissolves</button>
+      <button onclick="showNaohStep('mgCaStep')">No, it doesn’t</button>
+    </div>
+
+    <div id="alResult" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Al<sup>3+</sup></div>
+      <p>White ppt dissolves in excess → <strong>Al<sup>3+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <div id="mgCaStep" class="tutorial-step" style="display:none;">
+      <div class="step-header">Possible Mg<sup>2+</sup> or Ca<sup>2+</sup></div>
+      <p>White ppt is insoluble in excess. Check the flame test result:</p>
+      <button onclick="showNaohStep('caResult')">Orange‐red flame</button>
+      <button onclick="showNaohStep('mgResult')">No flame colour</button>
+    </div>
+
+    <div id="caResult" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Ca<sup>2+</sup></div>
+      <p>Orange‐red flame → <strong>Ca<sup>2+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <div id="mgResult" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Mg<sup>2+</sup></div>
+      <p>No flame colour → <strong>Mg<sup>2+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <!-- Colored Precipitate Step -->
+    <div id="coloredPptStep" class="tutorial-step" style="display:none;">
+      <div class="step-header">Colored Precipitate</div>
+      <p>Which colour best describes it?</p>
+      <button onclick="showNaohStep('cuResult')">Light blue</button>
+      <button onclick="showNaohStep('fe2Result')">Green (turns brown)</button>
+      <button onclick="showNaohStep('fe3Result')">Reddish‐brown</button>
+    </div>
+
+    <div id="cuResult" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Cu<sup>2+</sup></div>
+      <p>Light blue ppt → <strong>Cu<sup>2+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <div id="fe2Result" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Fe<sup>2+</sup></div>
+      <p>Greenish ppt that slowly turns brown → <strong>Fe<sup>2+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <div id="fe3Result" class="tutorial-step" style="display:none;">
+      <div class="step-header">Result: Fe<sup>3+</sup></div>
+      <p>Reddish‐brown ppt → <strong>Fe<sup>3+</sup></strong>.</p>
+      <button onclick="showNaohStep('start')">Go Back to Step 1</button>
+    </div>
+
+    <!-- Buttons to test themselves -->
+    <p><strong>Test Yourself on NaOH Tests:</strong></p>
+    <button onclick="startNaohQuiz()">NaOH MCQ Quiz</button>
+    <button onclick="startEquationsQuiz()">Ionic Equations Quiz</button>
+    <button onclick="backToStart()">Back to Main Menu</button>
+  </div>
+
+  <!-- NAOH MCQ QUIZ SCREEN -->
+  <div id="naohQuizScreen" class="screen">
+    <h2>NaOH Tests Quiz</h2>
+    <div id="naohQuizContent"></div>
+  </div>
+
+  <!-- ========== 4. Ionic Equations Quiz (Fixed Section) ========== -->
+  <div id="naohEquationsScreen" class="screen">
+    <h2>Ionic Equations Quiz</h2>
+    <div id="equationsContent"></div>
+  </div>
+
+  <!-- (The Forensic Challenge Section is omitted as requested.) -->
+
+  <div class="footer">&copy; 2025 Your School &mdash; Chemistry Detective Lab</div>
+</div>
+
+<script>
+/* ========== HELPER: Shuffle any array in place ========== */
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/* ========== SCREEN NAVIGATION ========== */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+}
+function backToStart() {
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove('active');
+  });
+  document.getElementById('startScreen').classList.add('active');
+}
+
+/* ========== 1. FLAME COLOURS QUIZ ========== */
+const flameQuestions = [
+  {
+    question: "Which ion produces a crimson flame?",
+    answers: ["Lithium (Li⁺)", "Sodium (Na⁺)", "Potassium (K⁺)"],
+    correct: "Lithium (Li⁺)"
+  },
+  {
+    question: "Which ion produces a yellow flame?",
+    answers: ["Sodium (Na⁺)", "Calcium (Ca²⁺)", "Copper (Cu²⁺)"],
+    correct: "Sodium (Na⁺)"
+  },
+  {
+    question: "Which ion produces a lilac flame?",
+    answers: ["Calcium (Ca²⁺)", "Lithium (Li⁺)", "Potassium (K⁺)"],
+    correct: "Potassium (K⁺)"
+  },
+  {
+    question: "Which ion produces a green flame?",
+    answers: ["Copper (Cu²⁺)", "Sodium (Na⁺)", "Lithium (Li⁺)"],
+    correct: "Copper (Cu²⁺)"
+  },
+  {
+    question: "Which ion produces an orange‐red flame?",
+    answers: ["Calcium (Ca²⁺)", "Sodium (Na⁺)", "Potassium (K⁺)"],
+    correct: "Calcium (Ca²⁺)"
+  }
+];
+let flameIndex = 0;
+let flameShuffled = [];
+
+function shuffleFlameQ() {
+  flameShuffled = [...flameQuestions];
+  shuffleArray(flameShuffled);
+}
+function startFlameQuiz() {
+  flameIndex = 0;
+  shuffleFlameQ();
+  showScreen('flameQuizScreen');
+  loadFlameQuestion();
+}
+function loadFlameQuestion() {
+  const container = document.getElementById('flameQuizContent');
+  container.innerHTML = "";
+  if (flameIndex >= flameShuffled.length) {
+    container.innerHTML = `
+      <p>Excellent! You answered all Flame Colour questions correctly.</p>
+      <button onclick="backToStart()">Main Menu</button>
+      <button onclick="showScreen('flameTutorialScreen')">Back to Flame Tutorial</button>
+    `;
+    return;
+  }
+  const qObj = flameShuffled[flameIndex];
+  const answerOptions = [...qObj.answers];
+  shuffleArray(answerOptions);
+
+  const qDiv = document.createElement('div');
+  qDiv.className = 'quiz-question';
+  qDiv.textContent = qObj.question;
+  container.appendChild(qDiv);
+
+  const ansUl = document.createElement('ul');
+  ansUl.className = 'quiz-answers';
+  answerOptions.forEach(function(ans) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.textContent = ans;
+    btn.onclick = function() { checkFlameAnswer(ans, qObj.correct); };
+    li.appendChild(btn);
+    ansUl.appendChild(li);
+  });
+  container.appendChild(ansUl);
+}
+function checkFlameAnswer(selected, correct) {
+  if (selected === correct) {
+    flameIndex++;
+    loadFlameQuestion();
+  } else {
+    alert("Incorrect! Back to the Flame Tutorial.");
+    showScreen('flameTutorialScreen');
+  }
+}
+
+/* ========== 2. NaOH MCQ QUIZ ========== */
+const naohQuestions = [
+  {
+    question: "Which ion forms a light blue precipitate with NaOH?",
+    answers: ["Cu²⁺", "Fe²⁺", "Fe³⁺"],
+    correct: "Cu²⁺"
+  },
+  {
+    question: "Which ion forms a green ppt that turns brown on standing?",
+    answers: ["Fe²⁺", "Fe³⁺", "Ca²⁺"],
+    correct: "Fe²⁺"
+  },
+  {
+    question: "A white ppt dissolves in excess NaOH. Which ion is it?",
+    answers: ["Al³⁺", "Ca²⁺", "Mg²⁺"],
+    correct: "Al³⁺"
+  },
+  {
+    question: "A white ppt that does NOT dissolve in NaOH, but has an orange‐red flame. Which ion?",
+    answers: ["Ca²⁺", "Fe³⁺", "Mg²⁺"],
+    correct: "Ca²⁺"
+  },
+  {
+    question: "A reddish‐brown ppt forms with NaOH. Which ion?",
+    answers: ["Fe³⁺", "Fe²⁺", "Cu²⁺"],
+    correct: "Fe³⁺"
+  }
+];
+let naohIndex = 0;
+let naohShuffled = [];
+function shuffleNaohQ() {
+  naohShuffled = [...naohQuestions];
+  shuffleArray(naohShuffled);
+}
+function startNaohQuiz() {
+  naohIndex = 0;
+  shuffleNaohQ();
+  showScreen('naohQuizScreen');
+  loadNaohQuestion();
+}
+function loadNaohQuestion() {
+  const container = document.getElementById('naohQuizContent');
+  container.innerHTML = "";
+  if (naohIndex >= naohShuffled.length) {
+    container.innerHTML = `
+      <p>Well done! You answered all NaOH questions correctly.</p>
+      <button onclick="backToStart()">Main Menu</button>
+      <button onclick="showScreen('naohTutorialScreen')">Back to NaOH Tutorial</button>
+    `;
+    return;
+  }
+  const qObj = naohShuffled[naohIndex];
+  const answerOptions = [...qObj.answers];
+  shuffleArray(answerOptions);
+
+  const qDiv = document.createElement('div');
+  qDiv.className = 'quiz-question';
+  qDiv.textContent = qObj.question;
+  container.appendChild(qDiv);
+
+  const ansUl = document.createElement('ul');
+  ansUl.className = 'quiz-answers';
+  answerOptions.forEach(function(ans) {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.textContent = ans;
+    btn.onclick = function() { checkNaohAnswer(ans, qObj.correct); };
+    li.appendChild(btn);
+    ansUl.appendChild(li);
+  });
+  container.appendChild(ansUl);
+}
+function checkNaohAnswer(selected, correct) {
+  if (selected === correct) {
+    naohIndex++;
+    loadNaohQuestion();
+  } else {
+    alert("Incorrect! Restarting the NaOH quiz...");
+    naohIndex = 0; 
+    loadNaohQuestion();
+  }
+}
+
+/* ========== 3. NaOH Tutorial Steps ========== */
+function showNaohStep(stepId) {
+  document.getElementById('whitePptStep').style.display = 'none';
+  document.getElementById('alResult').style.display = 'none';
+  document.getElementById('mgCaStep').style.display = 'none';
+  document.getElementById('caResult').style.display = 'none';
+  document.getElementById('mgResult').style.display = 'none';
+  document.getElementById('coloredPptStep').style.display = 'none';
+  document.getElementById('cuResult').style.display = 'none';
+  document.getElementById('fe2Result').style.display = 'none';
+  document.getElementById('fe3Result').style.display = 'none';
+
+  if(stepId === 'start'){
+    return;
+  }
+  const stepDiv = document.getElementById(stepId);
+  if(stepDiv) stepDiv.style.display = 'block';
+}
+
+/* ========== 4. Ionic Equations Quiz (Fixed Section) ========== */
+const eqData = [
+  {
+    cation: "Cu²⁺",
+    ohNeeded: "2",
+    product: "Cu(OH)₂", // For reference only
+    questionText: "Form Copper(II) hydroxide from Cu²⁺ and OH⁻."
+  },
+  {
+    cation: "Fe²⁺",
+    ohNeeded: "2",
+    product: "Fe(OH)₂",
+    questionText: "Form Iron(II) hydroxide from Fe²⁺ and OH⁻."
+  },
+  {
+    cation: "Fe³⁺",
+    ohNeeded: "3",
+    product: "Fe(OH)₃",
+    questionText: "Form Iron(III) hydroxide from Fe³⁺ and OH⁻."
+  },
+  {
+    cation: "Al³⁺",
+    ohNeeded: "3",
+    product: "Al(OH)₃",
+    questionText: "Form Aluminium hydroxide from Al³⁺ and OH⁻."
+  },
+  {
+    cation: "Ca²⁺",
+    ohNeeded: "2",
+    product: "Ca(OH)₂",
+    questionText: "Form Calcium hydroxide from Ca²⁺ and OH⁻."
+  },
+  {
+    cation: "Mg²⁺",
+    ohNeeded: "2",
+    product: "Mg(OH)₂",
+    questionText: "Form Magnesium hydroxide from Mg²⁺ and OH⁻."
+  }
+];
+let eqIndex = 0;
+let eqShuffled = [];
+function shuffleEqData() {
+  eqShuffled = [...eqData];
+  shuffleArray(eqShuffled);
+}
+function startEquationsQuiz() {
+  eqIndex = 0;
+  shuffleEqData();
+  showScreen('naohEquationsScreen');
+  loadEquationItem();
+}
+function loadEquationItem() {
+  const container = document.getElementById('equationsContent');
+  container.innerHTML = "";
+  if (eqIndex >= eqShuffled.length) {
+    container.innerHTML = `
+      <p>Great job! You've completed the ionic equations quiz.</p>
+      <button onclick="backToStart()">Main Menu</button>
+      <button onclick="showScreen('naohTutorialScreen')">Back to NaOH Tutorial</button>
+    `;
+    return;
+  }
+  const item = eqShuffled[eqIndex];
+  const div = document.createElement('div');
+  div.className = "equation-item";
+
+  const promptP = document.createElement('p');
+  promptP.textContent = item.questionText;
+  div.appendChild(promptP);
+
+  const formDiv = document.createElement('div');
+  formDiv.className = "equation-inputs";
+
+  // --- Reactant Side ---
+  // Cation symbol
+  const cationSpan = document.createElement('span');
+  cationSpan.innerHTML = item.cation;
+  
+  // Cation state dropdown
+  const catStateSel = document.createElement('select');
+  let blankOption = document.createElement('option');
+  blankOption.value = "";
+  blankOption.textContent = "Select State";
+  catStateSel.appendChild(blankOption);
+  ["(aq)", "(s)"].forEach(function(st) {
+    const opt = document.createElement('option');
+    opt.value = st;
+    opt.textContent = st;
+    catStateSel.appendChild(opt);
+  });
+
+  const plusSpan = document.createElement('span');
+  plusSpan.textContent = " + ";
+
+  // OH⁻ coefficient input
+  const ohCoeff = document.createElement('input');
+  ohCoeff.type = 'text';
+  ohCoeff.size = 1;
+  ohCoeff.placeholder = "#";
+
+  // OH⁻ label
+  const ohSpan = document.createElement('span');
+  ohSpan.innerHTML = " OH<sup>-</sup>";
+
+  // OH⁻ state dropdown
+  const ohStateSel = document.createElement('select');
+  let blankOpt2 = document.createElement('option');
+  blankOpt2.value = "";
+  blankOpt2.textContent = "Select State";
+  ohStateSel.appendChild(blankOpt2);
+  ["(aq)", "(s)"].forEach(function(st) {
+    const opt = document.createElement('option');
+    opt.value = st;
+    opt.textContent = st;
+    ohStateSel.appendChild(opt);
+  });
+
+  const arrowSpan = document.createElement('span');
+  arrowSpan.textContent = " → ";
+
+  // --- Product Side ---
+  // Build product as: Metal symbol, open parenthesis, "OH", close parenthesis, then dropdown for OH subscript, then product state dropdown.
+  const metalMatch = item.cation.match(/[A-Za-z]+/);
+  const metal = metalMatch ? metalMatch[0] : item.cation;
+  const productMetalSpan = document.createElement('span');
+  productMetalSpan.textContent = metal;
+  const openParenSpan = document.createElement('span');
+  openParenSpan.textContent = "(";
+  const productOHSpan = document.createElement('span');
+  productOHSpan.innerHTML = "OH";
+  const closeParenSpan = document.createElement('span');
+  closeParenSpan.textContent = ")";
+  // Dropdown for the number of OH groups (subscript)
+  const ohSubscriptSel = document.createElement('select');
+  let blankOptSub = document.createElement('option');
+  blankOptSub.value = "";
+  blankOptSub.textContent = "Select #";
+  ohSubscriptSel.appendChild(blankOptSub);
+  ["1", "2", "3", "4"].forEach(function(num) {
+    const opt = document.createElement('option');
+    opt.value = num;
+    opt.textContent = num;
+    ohSubscriptSel.appendChild(opt);
+  });
+  // Product state dropdown
+  const prodStateSel = document.createElement('select');
+  let blankOpt3 = document.createElement('option');
+  blankOpt3.value = "";
+  blankOpt3.textContent = "Select State";
+  prodStateSel.appendChild(blankOpt3);
+  ["(s)", "(aq)"].forEach(function(st) {
+    const opt = document.createElement('option');
+    opt.value = st;
+    opt.textContent = st;
+    prodStateSel.appendChild(opt);
+  });
+
+  // Assemble the full equation line:
+  formDiv.appendChild(cationSpan);
+  formDiv.appendChild(catStateSel);
+  formDiv.appendChild(plusSpan);
+  formDiv.appendChild(ohCoeff);
+  formDiv.appendChild(ohSpan);
+  formDiv.appendChild(ohStateSel);
+  formDiv.appendChild(arrowSpan);
+  formDiv.appendChild(productMetalSpan);
+  formDiv.appendChild(openParenSpan);
+  formDiv.appendChild(productOHSpan);
+  formDiv.appendChild(closeParenSpan);
+  formDiv.appendChild(ohSubscriptSel);
+  formDiv.appendChild(prodStateSel);
+
+  div.appendChild(formDiv);
+
+  // Feedback + check button
+  const feedback = document.createElement('div');
+  feedback.className = 'equation-feedback';
+  const checkBtn = document.createElement('button');
+  checkBtn.textContent = "Check";
+  checkBtn.onclick = function() {
+    const userCatState = catStateSel.value;
+    const userOhCoeff = ohCoeff.value.trim();
+    const userOhState = ohStateSel.value;
+    const userOHSubscript = ohSubscriptSel.value;
+    const userProdState = prodStateSel.value;
+    
+    let allGood = true;
+    if(userCatState !== "(aq)") allGood = false;
+    if(userOhCoeff !== item.ohNeeded) allGood = false;
+    if(userOhState !== "(aq)") allGood = false;
+    if(userOHSubscript !== item.ohNeeded) allGood = false;
+    if(userProdState !== "(s)") allGood = false;
+
+    if(allGood) {
+      eqIndex++;
+      loadEquationItem();
+    } else {
+      feedback.textContent = "Not quite right. Check your coefficient, OH count, and state symbols carefully!";
+    }
+  };
+
+  div.appendChild(checkBtn);
+  div.appendChild(feedback);
+  container.appendChild(div);
+}
+</script>
+</body>
+</html>
