@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atoms in Chemical Reactions</title>
+    <style>
+        :root {
+            --primary: #4285f4;
+            --secondary: #fbbc05;
+            --success: #34a853;
+            --danger: #ea4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --yellow-bg: #ffffcc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1, h2, h3 {
+            color: var(--dark);
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .yellow-section {
+            background-color: var(--yellow-bg);
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .activity {
+            background-color: #e3f2fd;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .quiz {
+            background-color: #e8f5e9;
+            border-left: 5px solid var(--success);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #3367d6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .flex-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .molecule-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 20px;
+            margin: 20px 0;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        
+        .atom {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            user-select: none;
+            z-index: 2;
+        }
+        
+        .atom-H {
+            background-color: #cccccc;
+        }
+        
+        .atom-O {
+            background-color: #ff0000;
+        }
+        
+        .atom-C {
+            background-color: #333333;
+        }
+        
+        .atom-N {
+            background-color: #3050F8;
+        }
+        
+        .atom-Cl {
+            background-color: #1FF01F;
+        }
+        
+        .atom-Na {
+            background-color: #AB5CF2;
+        }
+        
+        .atom-Mg {
+            background-color: #8AFF00;
+        }
+        
+        .atom-Zn {
+            background-color: #006985;
+        }
+        
+        .molecule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            margin: 0 5px;
+            min-width: 100px;
+            min-height: 100px;
+            position: relative;
+        }
+        
+        .arrow {
+            font-size: 30px;
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-top: none;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background-color: var(--success);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .drag-element {
+            cursor: move;
+        }
+        
+        .drop-target {
+            border: 2px dashed #aaa;
+            min-height: 80px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+        
+        /* For the reaction builder */
+        .reaction-builder {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border: 1px solid #add8e6;
+        }
+        
+        .equation-display {
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            min-height: 30px;
+        }
+        
+        .reaction-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .reaction-controls button {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        /* Molymod style */
+        .molymod {
+            display: inline-flex;
+            position: relative;
+            margin: 5px;
+        }
+        
+        .molymod-bond {
+            width: 20px;
+            height: 2px;
+            background-color: #333;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Atoms in Chemical Reactions</h1>
+        <p>Understanding chemical changes and conservation of mass</p>
+    </header>
+    
+    <div class="container">
+        <div class="progress-container">
+            <div class="progress-bar" id="lessonProgress">0%</div>
+        </div>
+        
+        <div class="section yellow-section">
+            <h2>Learning Objectives</h2>
+            <p>By the end of this lesson, you will be able to:</p>
+            <ul>
+                <li>Describe the model of chemical change and conservation of mass</li>
+                <li>Write word equations from information about chemical reactions</li>
+                <li>Use particle diagrams to show what happens in a chemical reaction</li>
+            </ul>
+        </div>
+        
+        <div class="section" id="section1">
+            <h2>1. What is a Chemical Reaction?</h2>
+            
+            <div class="card">
+                <p>A <strong>chemical reaction</strong> is a process where substances change into new substances with different properties. The original substances are called <strong>reactants</strong>, and the new substances formed are called <strong>products</strong>.</p>
+                
+                <div class="molecule-container">
+                    <div class="molecule">
+                        <div class="atom atom-H"></div>
+                        <div class="atom atom-H"></div>
+                    </div>
+                    <div class="molecule">
+                        <div class="atom atom-O"></div>
+                        <div class="atom atom-O"></div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="molecule">
+                        <div class="atom atom-H"></div>
+                        <div class="atom atom-O"></div>
+                    </div>
+                    <div class="molecule">
+                        <div class="atom atom-H"></div>
+                        <div class="atom atom-O"></div>
+                    </div>
+                </div>
+                
+                <p class="text-center"><strong>Reactants</strong> → <strong>Products</strong></p>
+            </div>
+            
+            <div class="activity">
+                <h3>How do we know when a chemical reaction happens?</h3>
+                <p>Click on each indicator to learn more:</p>
+                
+                <div class="flex-container">
+                    <div class="flex-item card" onclick="showInfo('temp')">
+                        <h4>Temperature Change</h4>
+                        <div id="temp-info" class="hidden">
+                            <p>Reactions can get hotter (exothermic) or colder (endothermic). This happens because energy is either released or absorbed during the reaction.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item card" onclick="showInfo('color')">
+                        <h4>Color Change</h4>
+                        <div id="color-info" class="hidden">
+                            <p>New substances often have different colors than the reactants.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item card" onclick="showInfo('fizz')">
+                        <h4>Fizzing/Bubbling</h4>
+                        <div id="fizz-info" class="hidden">
+                            <p>Gas being produced can cause bubbling or fizzing.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item card" onclick="showInfo('smell')">
+                        <h4>New Smell</h4>
+                        <div id="smell-info" class="hidden">
+                            <p>New substances may have different smells than the reactants.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item card" onclick="showInfo('light')">
+                        <h4>Light Production</h4>
+                        <div id="light-info" class="hidden">
+                            <p>Some reactions release energy in the form of light.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quiz">
+                <h3>Quick Check: Chemical or Physical Change?</h3>
+                <p>Determine whether each of these is a chemical or physical change:</p>
+                
+                <div class="card">
+                    <p>1. Breaking a glass</p>
+                    <select id="q1">
+                        <option value="">Select your answer</option>
+                        <option value="chemical">Chemical Change</option>
+                        <option value="physical">Physical Change</option>
+                    </select>
+                    <div id="q1-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <p>2. Toasting bread</p>
+                    <select id="q2">
+                        <option value="">Select your answer</option>
+                        <option value="chemical">Chemical Change</option>
+                        <option value="physical">Physical Change</option>
+                    </select>
+                    <div id="q2-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <p>3. Rusting nails</p>
+                    <select id="q3">
+                        <option value="">Select your answer</option>
+                        <option value="chemical">Chemical Change</option>
+                        <option value="physical">Physical Change</option>
+                    </select>
+                    <div id="q3-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <button onclick="checkChanges()">Check Answers</button>
+            </div>
+            
+            <button onclick="showNextSection(2)">Next: Conservation of Mass</button>
+        </div>
+        
+        <div class="section hidden" id="section2">
+            <h2>2. Conservation of Mass in Chemical Reactions</h2>
+            
+            <div class="card">
+                <p>A key principle in chemistry is that <strong>mass is conserved</strong> during a chemical reaction. This means:</p>
+                <ul>
+                    <li>No atoms can be created or destroyed during a reaction</li>
+                    <li>Atoms are only rearranged to form new substances</li>
+                    <li>The total mass of reactants equals the total mass of products</li>
+                </ul>
+                <p>This is known as the <strong>Law of Conservation of Mass</strong>.</p>
+            </div>
+            
+            <div class="activity">
+                <h3>Interactive Conservation of Mass</h3>
+                <p>Click "Start Reaction" to see how atoms are rearranged but conserved in this reaction:</p>
+                
+                <div class="molecule-container" id="animation-container">
+                    <!-- Initially show reactant side -->
+                    <div class="molecule" style="position: relative; min-height: 100px; min-width: 100px;">
+                        <div class="atom atom-C" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">C</div>
+                        <div class="atom atom-H" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%);">H</div>
+                        <div class="atom atom-H" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);">H</div>
+                        <div class="atom atom-H" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">H</div>
+                        <div class="atom atom-H" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">H</div>
+                    </div>
+                    <div class="molecule" style="min-width: 100px;">
+                        <div class="atom atom-O">O</div>
+                        <div class="atom atom-O">O</div>
+                    </div>
+                    <div class="molecule" style="min-width: 100px;">
+                        <div class="atom atom-O">O</div>
+                        <div class="atom atom-O">O</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div id="products" style="display: flex; gap: 20px;">
+                        <!-- Product side will be populated by animation -->
+                    </div>
+                </div>
+                
+                <button id="reaction-btn" onclick="animateReaction()">Start Reaction</button>
+                
+                <p id="reaction-eq">CH<sub>4</sub> + 2O<sub>2</sub> → CO<sub>2</sub> + 2H<sub>2</sub>O</p>
+                
+                <div id="atom-count" class="card hidden">
+                    <h4>Atom Count</h4>
+                    <table>
+                        <tr>
+                            <th>Element</th>
+                            <th>Reactants</th>
+                            <th>Products</th>
+                        </tr>
+                        <tr>
+                            <td>Carbon (C)</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Hydrogen (H)</td>
+                            <td>4</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Oxygen (O)</td>
+                            <td>4</td>
+                            <td>4</td>
+                        </tr>
+                    </table>
+                    <p>As you can see, the number of atoms on each side is the same. Mass is conserved!</p>
+                </div>
+            </div>
+            
+            <div class="quiz">
+                <h3>Quick Check: Conservation of Mass</h3>
+                
+                <div class="card">
+                    <p>Consider this reaction: 2H<sub>2</sub> + O<sub>2</sub> → 2H<sub>2</sub>O</p>
+                    <p>Is mass conserved? Count the atoms on each side:</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Element</th>
+                            <th>Reactants</th>
+                            <th>Products</th>
+                        </tr>
+                        <tr>
+                            <td>Hydrogen (H)</td>
+                            <td><input type="number" id="h-reactants" min="0" max="10" style="width: 50px;"></td>
+                            <td><input type="number" id="h-products" min="0" max="10" style="width: 50px;"></td>
+                        </tr>
+                        <tr>
+                            <td>Oxygen (O)</td>
+                            <td><input type="number" id="o-reactants" min="0" max="10" style="width: 50px;"></td>
+                            <td><input type="number" id="o-products" min="0" max="10" style="width: 50px;"></td>
+                        </tr>
+                    </table>
+                    
+                    <div id="conservation-feedback" class="feedback hidden"></div>
+                    <button onclick="checkConservation()">Check My Count</button>
+                </div>
+            </div>
+            
+            <button onclick="showNextSection(3)">Next: Writing Chemical Equations</button>
+        </div>
+        
+        <div class="section hidden" id="section3">
+            <h2>3. Writing Chemical Equations</h2>
+            
+            <div class="card">
+                <p>Chemical reactions can be represented as equations:</p>
+                <ol>
+                    <li><strong>Word equations</strong>: use the names of substances</li>
+                    <li><strong>Symbol equations</strong>: use chemical symbols and formulas</li>
+                </ol>
+                
+                <div class="example">
+                    <p><strong>Example:</strong> Methane burning in oxygen</p>
+                    <p><strong>Word equation:</strong> methane + oxygen → carbon dioxide + water</p>
+                    <p><strong>Symbol equation:</strong> CH<sub>4</sub> + 2O<sub>2</sub> → CO<sub>2</sub> + 2H<sub>2</sub>O</p>
+                </div>
+            </div>
+            
+            <div class="activity">
+                <h3>Equation Builder</h3>
+                <p>Let's practice writing word equations and symbol equations.</p>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab(event, 'word-eq')">Word Equations</div>
+                    <div class="tab" onclick="switchTab(event, 'symbol-eq')">Symbol Equations</div>
+                </div>
+                
+                <div id="word-eq" class="tab-content active">
+                    <p>Match the reactions by dragging the correct products to each set of reactants:</p>
+                    
+                    <div class="card">
+                        <p><strong>Magnesium + Oxygen →</strong></p>
+                        <div class="drop-target" id="drop1" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    
+                    <div class="card">
+                        <p><strong>Sodium + Water →</strong></p>
+                        <div class="drop-target" id="drop2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    </div>
+                    
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <div class="card drag-element" draggable="true" ondragstart="drag(event)" id="product1">
+                                Magnesium Oxide
+                            </div>
+                        </div>
+                        <div class="flex-item">
+                            <div class="card drag-element" draggable="true" ondragstart="drag(event)" id="product2">
+                                Sodium Hydroxide + Hydrogen
+                            </div>
+                        </div>
+                        <div class="flex-item">
+                            <div class="card drag-element" draggable="true" ondragstart="drag(event)" id="product3">
+                                Sodium Oxide
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkWordEquations()">Check Answers</button>
+                    <div id="word-eq-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div id="symbol-eq" class="tab-content">
+                    <p>Complete these symbol equations by selecting the correct products:</p>
+                    
+                    <div class="card">
+                        <p>Zinc + Hydrochloric acid → ?</p>
+                        <select id="symbol-q1">
+                            <option value="">Select the products</option>
+                            <option value="1">Zn + 2HCl → ZnCl₂ + H₂</option>
+                            <option value="2">Zn + HCl → ZnCl + H</option>
+                            <option value="3">Zn + HCl → ZnHCl</option>
+                        </select>
+                    </div>
+                    
+                    <div class="card">
+                        <p>Calcium carbonate + Heat → ?</p>
+                        <select id="symbol-q2">
+                            <option value="">Select the products</option>
+                            <option value="1">CaCO₃ → CaO + CO₂</option>
+                            <option value="2">CaCO₃ → Ca + CO₃</option>
+                            <option value="3">CaCO₃ → CaC + O₃</option>
+                        </select>
+                    </div>
+                    
+                    <button onclick="checkSymbolEquations()">Check Answers</button>
+                    <div id="symbol-eq-feedback" class="feedback hidden"></div>
+                </div>
+            </div>
+            
+            <button onclick="showNextSection(4)">Next: Particle Diagrams</button>
+        </div>
+        
+        <div class="section hidden" id="section4">
+            <h2>4. Particle Diagrams and Molymods</h2>
+            
+            <div class="card">
+                <p>Particle diagrams and molecular models (Molymods) help us visualize what happens in a chemical reaction at the atomic level.</p>
+                
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <h4>Particle Diagrams</h4>
+                        <p>Use circles or dots to represent different atoms</p>
+                        <div style="text-align: center;">
+                            <div style="display: inline-block; margin: 10px;">
+                                <span style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; background-color: red;"></span> = Oxygen
+                            </div>
+                            <div style="display: inline-block; margin: 10px;">
+                                <span style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; background-color: white; border: 1px solid black;"></span> = Hydrogen
+                            </div>
+                            <div style="display: inline-block; margin: 10px;">
+                                <span style="display: inline-block; width: 20px; height: 20px; border-radius: 50%; background-color: black;"></span> = Carbon
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-item">
+                        <h4>Molymods</h4>
+                        <p>Physical models with balls (atoms) and sticks (bonds)</p>
+                        <div style="text-align: center;">
+                            <div class="molymod">
+                                <div class="atom atom-O">O</div>
+                            </div>
+                            <div class="molymod">
+                                <div class="atom atom-H">H</div>
+                            </div>
+                            <div class="molymod">
+                                <div class="atom atom-C">C</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="activity">
+                <h3>Interactive Particle Diagram Builder</h3>
+                <p>Build a particle diagram for the reaction: N<sub>2</sub> + 3H<sub>2</sub> → 2NH<sub>3</sub></p>
+                
+                <div style="display: flex; align-items: center; overflow-x: auto; margin: 20px 0;">
+                    <div style="flex: 3;">
+                        <h4>Reactants</h4>
+                        <div class="molecule-container" id="reactants-container" style="justify-content: flex-start;">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 24px; margin: 0 5px;">→</div>
+                    
+                    <div style="flex: 1;">
+                        <h4>Products</h4>
+                        <div class="molecule-container" id="products-container" style="justify-content: flex-start;">
+                            <!-- Will be populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                
+                <button onclick="showParticleDiagram()">Show Correct Diagram</button>
+                <button onclick="hideParticleDiagram()">Try Again</button>
+            </div>
+            
+            <!-- Additional worked examples -->
+            <div class="activity">
+                <h3>Worked Example: Magnesium and Oxygen</h3>
+                <p>When magnesium metal burns in oxygen, it produces magnesium oxide.</p>
+                
+                <div class="card">
+                    <h4>Step 1: Write the word equation</h4>
+                    <p>magnesium + oxygen → magnesium oxide</p>
+                    
+                    <h4>Step 2: Write the unbalanced symbol equation</h4>
+                    <p>Mg + O<sub>2</sub> → MgO</p>
+                    
+                    <h4>Step 3: Count atoms on each side</h4>
+                    <table>
+                        <tr>
+                            <th>Element</th>
+                            <th>Reactants</th>
+                            <th>Products</th>
+                        </tr>
+                        <tr>
+                            <td>Magnesium (Mg)</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Oxygen (O)</td>
+                            <td>2</td>
+                            <td>1</td>
+                        </tr>
+                    </table>
+                    <p>The equation is not balanced because there are 2 oxygen atoms on the left but only 1 on the right.</p>
+                    
+                    <h4>Step 4: Balance the equation</h4>
+                    <div id="balancing-steps">
+                        <p>1. Start with: Mg + O<sub>2</sub> → MgO</p>
+                        
+                        <p>2. Balance oxygen atoms by adding a coefficient to MgO:</p>
+                        <p>Mg + O<sub>2</sub> → <strong>2</strong>MgO</p>
+                        
+                        <p>3. Now the magnesium atoms are unbalanced. We have 1 on the left but 2 on the right. Add a coefficient to Mg:</p>
+                        <p><strong>2</strong>Mg + O<sub>2</sub> → 2MgO</p>
+                        
+                        <p>4. Final check: The balanced equation has the same number of atoms of each element on both sides.</p>
+                        <table>
+                            <tr>
+                                <th>Element</th>
+                                <th>Reactants</th>
+                                <th>Products</th>
+                            </tr>
+                            <tr>
+                                <td>Magnesium (Mg)</td>
+                                <td>2</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Oxygen (O)</td>
+                                <td>2</td>
+                                <td>2</td>
+                            </tr>
+                        </table>
+                        <p>The balanced equation is: 2Mg + O<sub>2</sub> → 2MgO</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="activity">
+                <h3>Worked Example: Reaction between Zinc and Sulfuric Acid</h3>
+                <p>When zinc metal reacts with sulfuric acid, it produces zinc sulfate and hydrogen gas.</p>
+                
+                <div class="card">
+                    <h4>Step 1: Write the word equation</h4>
+                    <p>zinc + sulfuric acid → zinc sulfate + hydrogen</p>
+                    
+                    <h4>Step 2: Write the unbalanced symbol equation</h4>
+                    <p>Zn + H<sub>2</sub>SO<sub>4</sub> → ZnSO<sub>4</sub> + H<sub>2</sub></p>
+                    
+                    <h4>Step 3: Check if the equation is balanced</h4>
+                    <table>
+                        <tr>
+                            <th>Element</th>
+                            <th>Reactants</th>
+                            <th>Products</th>
+                        </tr>
+                        <tr>
+                            <td>Zinc (Zn)</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Hydrogen (H)</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Sulfur (S)</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>Oxygen (O)</td>
+                            <td>4</td>
+                            <td>4</td>
+                        </tr>
+                    </table>
+                    <p>The equation is already balanced! Same number of atoms on both sides.</p>
+                    
+                    <h4>Step 4: Draw a particle diagram</h4>
+                    <button onclick="toggleZincReaction()">Show/Hide Particle Diagram</button>
+                    <div id="zinc-reaction" class="hidden" style="margin-top: 15px; text-align: center;">
+                        <img src="/api/placeholder/600/200" alt="Zinc + Sulfuric Acid Particle Diagram" style="max-width: 100%; height: auto;"/>
+                        <p>Particle diagram showing zinc atoms (gray) reacting with H<sub>2</sub>SO<sub>4</sub> molecules to form ZnSO<sub>4</sub> and H<sub>2</sub> molecules</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional practice questions -->
+            <div class="quiz">
+                <h3>Additional Practice: Chemical Equations</h3>
+                
+                <div class="card">
+                    <h4>1. Balance this equation:</h4>
+                    <p>H<sub>2</sub> + O<sub>2</sub> → H<sub>2</sub>O</p>
+                    
+                    <p>What coefficient do you need to add to each substance?</p>
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <label for="h2-coef">H<sub>2</sub> coefficient:</label>
+                            <input type="number" id="h2-coef" min="1" max="10" style="width: 50px;">
+                        </div>
+                        <div class="flex-item">
+                            <label for="o2-coef-simple">O<sub>2</sub> coefficient:</label>
+                            <input type="number" id="o2-coef-simple" min="1" max="10" style="width: 50px;">
+                        </div>
+                        <div class="flex-item">
+                            <label for="h2o-coef-simple">H<sub>2</sub>O coefficient:</label>
+                            <input type="number" id="h2o-coef-simple" min="1" max="10" style="width: 50px;">
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkSimpleBalancing()">Check Answer</button>
+                    <div id="simple-balancing-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <h4>2. Write the word equation for this reaction:</h4>
+                    <p>CaCO<sub>3</sub> + 2HCl → CaCl<sub>2</sub> + H<sub>2</sub>O + CO<sub>2</sub></p>
+                    
+                    <p>Select the correct word equation:</p>
+                    <select id="word-eq-practice">
+                        <option value="">Select your answer</option>
+                        <option value="1">Calcium carbonate + Hydrochloric acid → Calcium chloride + Water + Carbon dioxide</option>
+                        <option value="2">Calcium carbonate + Hydrogen chloride → Calcium chloride + Hydrogen oxide + Carbon dioxide</option>
+                        <option value="3">Carbon calcium oxide + Hydrochloric acid → Calcium chloride + Water + Carbon dioxide</option>
+                    </select>
+                    
+                    <button onclick="checkWordEq()">Check Answer</button>
+                    <div id="word-eq-practice-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <h4>3. For the reaction: 2Al + 3Cl<sub>2</sub> → 2AlCl<sub>3</sub></h4>
+                    <p>Complete the table showing the number of atoms on each side:</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Element</th>
+                            <th>Reactants</th>
+                            <th>Products</th>
+                        </tr>
+                        <tr>
+                            <td>Aluminum (Al)</td>
+                            <td><input type="number" id="al-reactants" min="0" max="10" style="width: 50px;"></td>
+                            <td><input type="number" id="al-products" min="0" max="10" style="width: 50px;"></td>
+                        </tr>
+                        <tr>
+                            <td>Chlorine (Cl)</td>
+                            <td><input type="number" id="cl-reactants" min="0" max="10" style="width: 50px;"></td>
+                            <td><input type="number" id="cl-products" min="0" max="10" style="width: 50px;"></td>
+                        </tr>
+                    </table>
+                    
+                    <p>Is mass conserved in this reaction?</p>
+                    <select id="al-conservation">
+                        <option value="">Select your answer</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    
+                    <button onclick="checkAtomCounting()">Check Answer</button>
+                    <div id="atom-counting-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <h4>4. From these observations, identify which is a chemical reaction:</h4>
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <input type="radio" id="reaction1" name="reaction-type">
+                            <label for="reaction1">Ice melting to form water</label>
+                        </div>
+                        <div class="flex-item">
+                            <input type="radio" id="reaction2" name="reaction-type">
+                            <label for="reaction2">Sodium fizzing and dissolving in water</label>
+                        </div>
+                        <div class="flex-item">
+                            <input type="radio" id="reaction3" name="reaction-type">
+                            <label for="reaction3">Sugar dissolving in tea</label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkReactionType()">Check Answer</button>
+                    <div id="reaction-type-feedback" class="feedback hidden"></div>
+                </div>
+            </div>
+            
+            <div class="quiz">
+                <h3>Challenge Questions</h3>
+                
+                <div class="card">
+                    <h4>1. Balance this combustion reaction:</h4>
+                    <p>____ C<sub>2</sub>H<sub>6</sub> + ____ O<sub>2</sub> → ____ CO<sub>2</sub> + ____ H<sub>2</sub>O</p>
+                    
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <label for="c2h6-coef">C<sub>2</sub>H<sub>6</sub> coefficient:</label>
+                            <input type="number" id="c2h6-coef" min="1" max="10" style="width: 50px;">
+                        </div>
+                        <div class="flex-item">
+                            <label for="o2-coef-2">O<sub>2</sub> coefficient:</label>
+                            <input type="number" id="o2-coef-2" min="1" max="10" style="width: 50px;">
+                        </div>
+                        <div class="flex-item">
+                            <label for="co2-coef">CO<sub>2</sub> coefficient:</label>
+                            <input type="number" id="co2-coef" min="1" max="10" style="width: 50px;">
+                        </div>
+                        <div class="flex-item">
+                            <label for="h2o-coef">H<sub>2</sub>O coefficient:</label>
+                            <input type="number" id="h2o-coef" min="1" max="10" style="width: 50px;">
+                        </div>
+                    </div>
+                    
+                    <button onclick="checkChallengeBalancing()">Check Answer</button>
+                    <div id="challenge-balancing-feedback" class="feedback hidden"></div>
+                </div>
+                
+                <div class="card">
+                    <h4>2. For photosynthesis (6CO<sub>2</sub> + 6H<sub>2</sub>O → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub>), explain why mass is conserved.</h4>
+                    <textarea id="photosynthesis-explanation" rows="4" style="width: 100%;"></textarea>
+                    
+                    <button onclick="checkPhotosynthesisExplanation()">Check Answer</button>
+                    <div id="photosynthesis-feedback" class="feedback hidden"></div>
+                </div>
+            </div>
+            
+            <div class="quiz">
+                <h3>Final Check: Understanding Chemical Reactions</h3>
+                
+                <div class="card">
+                    <p>For the photosynthesis reaction: 6CO<sub>2</sub> + 6H<sub>2</sub>O → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6O<sub>2</sub></p>
+                    
+                    <p>1. What are the reactants?</p>
+                    <select id="final-q1">
+                        <option value="">Select your answer</option>
+                        <option value="1">6CO₂ and 6H₂O</option>
+                        <option value="2">C₆H₁₂O₆ and 6O₂</option>
+                        <option value="3">6CO₂ and C₆H₁₂O₆</option>
+                    </select>
+                    
+                    <p>2. What are the products?</p>
+                    <select id="final-q2">
+                        <option value="">Select your answer</option>
+                        <option value="1">6CO₂ and 6H₂O</option>
+                        <option value="2">C₆H₁₂O₆ and 6O₂</option>
+                        <option value="3">6H₂O and 6O₂</option>
+                    </select>
+                    
+                    <p>3. How many oxygen atoms are on the product side?</p>
+                    <input type="number" id="final-q3" min="0" max="20" style="width: 50px;">
+                    
+                    <p>4. Is mass conserved in this reaction?</p>
+                    <select id="final-q4">
+                        <option value="">Select your answer</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    
+                    <p>5. What process does this chemical reaction represent?</p>
+                    <select id="final-q5">
+                        <option value="">Select your answer</option>
+                        <option value="1">Respiration</option>
+                        <option value="2">Photosynthesis</option>
+                        <option value="3">Combustion</option>
+                    </select>
+                    
+                    <button onclick="checkFinalQuiz()">Check Answers</button>
+                    <div id="final-quiz-feedback" class="feedback hidden"></div>
+                </div>
+            </div>
+            
+            <div class="section yellow-section">
+                <h2>Lesson Summary</h2>
+                <p>In this lesson, we've learned:</p>
+                <ul>
+                    <li>Chemical reactions involve reactants transforming into products</li>
+                    <li>Signs of chemical reactions include temperature change, color change, fizzing, smell, and light</li>
+                    <li>The Law of Conservation of Mass states that atoms cannot be created or destroyed in a reaction</li>
+                    <li>Chemical reactions can be represented using word equations and symbol equations</li>
+                    <li>Particle diagrams and Molymods help us visualize reactions at the atomic level</li>
+                </ul>
+                
+                <p>Well done for completing the lesson! Try the extension activity below or review any sections you found challenging.</p>
+            </div>
+            
+            <div class="activity">
+                <h3>Extension Activity: Write Word Equations</h3>
+                <p>Write word equations for these reactions:</p>
+                <ol>
+                    <li>N<sub>2</sub> + O<sub>2</sub> → 2NO</li>
+                    <li>H<sub>2</sub> + Cl<sub>2</sub> → 2HCl</li>
+                    <li>2NO + O<sub>2</sub> → 2NO<sub>2</sub></li>
+                    <li>CH<sub>4</sub> + 2O<sub>2</sub> → CO<sub>2</sub> + 2H<sub>2</sub>O</li>
+                </ol>
+                
+                <button onclick="showWordEquations()">Show Answers</button>
+                <div id="extension-answers" class="hidden">
+                    <ol>
+                        <li>Nitrogen + Oxygen → Nitrogen Monoxide</li>
+                        <li>Hydrogen + Chlorine → Hydrogen Chloride</li>
+                        <li>Nitrogen Monoxide + Oxygen → Nitrogen Dioxide</li>
+                        <li>Methane + Oxygen → Carbon Dioxide + Water</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Track progress through the lesson
+        let progress = 0;
+        const totalSections = 4;
+        
+        function updateProgress() {
+            progress++;
+            const percentage = Math.min(Math.round((progress / (totalSections * 2)) * 100), 100);
+            document.getElementById('lessonProgress').style.width = percentage + '%';
+            document.getElementById('lessonProgress').textContent = percentage + '%';
+        }
+        
+        // Show/hide information sections
+        function showInfo(id) {
+            const infoElement = document.getElementById(id + '-info');
+            if (infoElement.classList.contains('hidden')) {
+                infoElement.classList.remove('hidden');
+                updateProgress();
+            } else {
+                infoElement.classList.add('hidden');
+            }
+        }
+        
+        // Navigate between sections
+        function showNextSection(sectionNum) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById('section' + i).classList.add('hidden');
+            }
+            
+            // Show the requested section
+            document.getElementById('section' + sectionNum).classList.remove('hidden');
+            
+            // Scroll to top of the section
+            window.scrollTo(0, 0);
+            
+            updateProgress();
+        }
+        
+        // Check answers for physical/chemical changes
+        function checkChanges() {
+            let allCorrect = true;
+            
+            // Question 1: Breaking glass - Physical
+            const q1 = document.getElementById('q1').value;
+            const q1Feedback = document.getElementById('q1-feedback');
+            q1Feedback.classList.remove('hidden');
+            
+            if (q1 === 'physical') {
+                q1Feedback.textContent = 'Correct! Breaking glass is a physical change because no new substance is formed.';
+                q1Feedback.className = 'feedback correct';
+            } else if (q1 === 'chemical') {
+                q1Feedback.textContent = 'Incorrect. Breaking glass only changes the shape, not the substance itself.';
+                q1Feedback.className = 'feedback incorrect';
+                allCorrect = false;
+            } else {
+                q1Feedback.textContent = 'Please select an answer.';
+                q1Feedback.className = 'feedback';
+                allCorrect = false;
+            }
+            
+            // Question 2: Toasting bread - Chemical
+            const q2 = document.getElementById('q2').value;
+            const q2Feedback = document.getElementById('q2-feedback');
+            q2Feedback.classList.remove('hidden');
+            
+            if (q2 === 'chemical') {
+                q2Feedback.textContent = 'Correct! Toasting bread causes chemical changes as new substances form (which is why it tastes and smells different).';
+                q2Feedback.className = 'feedback correct';
+            } else if (q2 === 'physical') {
+                q2Feedback.textContent = 'Incorrect. Toasting bread creates new substances with different properties.';
+                q2Feedback.className = 'feedback incorrect';
+                allCorrect = false;
+            } else {
+                q2Feedback.textContent = 'Please select an answer.';
+                q2Feedback.className = 'feedback';
+                allCorrect = false;
+            }
+            
+            // Question 3: Rusting nails - Chemical
+            const q3 = document.getElementById('q3').value;
+            const q3Feedback = document.getElementById('q3-feedback');
+            q3Feedback.classList.remove('hidden');
+            
+            if (q3 === 'chemical') {
+                q3Feedback.textContent = 'Correct! Rusting is a chemical change where iron combines with oxygen to form a new substance (iron oxide).';
+                q3Feedback.className = 'feedback correct';
+            } else if (q3 === 'physical') {
+                q3Feedback.textContent = 'Incorrect. Rusting creates a new substance (iron oxide) with different properties.';
+                q3Feedback.className = 'feedback incorrect';
+                allCorrect = false;
+            } else {
+                q3Feedback.textContent = 'Please select an answer.';
+                q3Feedback.className = 'feedback';
+                allCorrect = false;
+            }
+            
+            if (allCorrect) {
+                updateProgress();
+            }
+        }
+        
+        // Animation for the reaction
+        function animateReaction() {
+            const productsDiv = document.getElementById('products');
+            const reactionBtn = document.getElementById('reaction-btn');
+            
+            // Clear any existing content
+            productsDiv.innerHTML = '';
+            
+            // Create the product molecules
+            const co2 = document.createElement('div');
+            co2.className = 'molecule';
+            co2.style.position = 'relative';
+            co2.style.minHeight = '100px';
+            co2.style.minWidth = '100px';
+            co2.innerHTML = '<div class="atom atom-C" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">C</div>' + 
+                           '<div class="atom atom-O" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">O</div>' + 
+                           '<div class="atom atom-O" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">O</div>';
+            
+            const h2o1 = document.createElement('div');
+            h2o1.className = 'molecule';
+            h2o1.style.position = 'relative';
+            h2o1.style.minHeight = '100px';
+            h2o1.style.minWidth = '100px';
+            h2o1.innerHTML = '<div class="atom atom-O" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">O</div>' + 
+                            '<div class="atom atom-H" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">H</div>' + 
+                            '<div class="atom atom-H" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">H</div>';
+            
+            const h2o2 = document.createElement('div');
+            h2o2.className = 'molecule';
+            h2o2.style.position = 'relative';
+            h2o2.style.minHeight = '100px';
+            h2o2.style.minWidth = '100px';
+            h2o2.innerHTML = '<div class="atom atom-O" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">O</div>' + 
+                            '<div class="atom atom-H" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">H</div>' + 
+                            '<div class="atom atom-H" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">H</div>';
+            
+            // Add them to the products div
+            productsDiv.appendChild(co2);
+            productsDiv.appendChild(h2o1);
+            productsDiv.appendChild(h2o2);
+            
+            // Show atom count
+            document.getElementById('atom-count').classList.remove('hidden');
+            
+            // Change button text
+            reactionBtn.textContent = 'Reset Reaction';
+            reactionBtn.onclick = resetReaction;
+            
+            updateProgress();
+        }
+        
+        function resetReaction() {
+            const productsDiv = document.getElementById('products');
+            const reactionBtn = document.getElementById('reaction-btn');
+            
+            // Clear products
+            productsDiv.innerHTML = '';
+            
+            // Hide atom count
+            document.getElementById('atom-count').classList.add('hidden');
+            
+            // Reset button
+            reactionBtn.textContent = 'Start Reaction';
+            reactionBtn.onclick = animateReaction;
+        }
+        
+        // Check conservation of mass question
+        function checkConservation() {
+            const hReactants = parseInt(document.getElementById('h-reactants').value) || 0;
+            const hProducts = parseInt(document.getElementById('h-products').value) || 0;
+            const oReactants = parseInt(document.getElementById('o-reactants').value) || 0;
+            const oProducts = parseInt(document.getElementById('o-products').value) || 0;
+            
+            const feedback = document.getElementById('conservation-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (hReactants === 4 && hProducts === 4 && oReactants === 2 && oProducts === 2) {
+                feedback.textContent = 'Correct! There are 4 hydrogen atoms and 2 oxygen atoms on both sides of the equation. Mass is conserved.';
+                feedback.className = 'feedback correct';
+                updateProgress();
+            } else {
+                // Give hints about what's wrong
+                let message = 'Not quite right. Remember to count all atoms carefully:';
+                
+                if (hReactants !== 4) {
+                    message += '\n- In the reactants: 2H₂ means 2 molecules, each with 2 hydrogen atoms = 4 H atoms total';
+                }
+                
+                if (hProducts !== 4) {
+                    message += '\n- In the products: 2H₂O means 2 molecules, each with 2 hydrogen atoms = 4 H atoms total';
+                }
+                
+                if (oReactants !== 2) {
+                    message += '\n- In the reactants: O₂ means 1 molecule with 2 oxygen atoms = 2 O atoms total';
+                }
+                
+                if (oProducts !== 2) {
+                    message += '\n- In the products: 2H₂O means 2 molecules, each with 1 oxygen atom = 2 O atoms total';
+                }
+                
+                feedback.textContent = message;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Switch tabs for equation building
+        function switchTab(event, tabId) {
+            // Hide all tab contents
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Remove active class from all tabs
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Show the selected tab content and mark tab as active
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Drag and drop functionality
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+        
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+        
+        // Check word equation answers
+        function checkWordEquations() {
+            const drop1 = document.getElementById('drop1');
+            const drop2 = document.getElementById('drop2');
+            const feedback = document.getElementById('word-eq-feedback');
+            
+            feedback.classList.remove('hidden');
+            
+            if (drop1.contains(document.getElementById('product1')) && drop2.contains(document.getElementById('product2'))) {
+                feedback.textContent = 'Correct! Well done.';
+                feedback.className = 'feedback correct';
+                updateProgress();
+            } else {
+                feedback.textContent = 'Not quite right. Check your answers and try again.';
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Check symbol equation answers
+        function checkSymbolEquations() {
+            const q1 = document.getElementById('symbol-q1').value;
+            const q2 = document.getElementById('symbol-q2').value;
+            const feedback = document.getElementById('symbol-eq-feedback');
+            
+            feedback.classList.remove('hidden');
+            
+            if (q1 === '1' && q2 === '1') {
+                feedback.textContent = 'Correct! Well done.';
+                feedback.className = 'feedback correct';
+                updateProgress();
+            } else {
+                let message = 'Not quite right:';
+                
+                if (q1 !== '1') {
+                    message += '\n- For zinc + hydrochloric acid, the products are zinc chloride and hydrogen gas.';
+                }
+                
+                if (q2 !== '1') {
+                    message += '\n- When calcium carbonate is heated, it decomposes to calcium oxide and carbon dioxide.';
+                }
+                
+                feedback.textContent = message;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Show particle diagram for N₂ + 3H₂ → 2NH₃
+        function showParticleDiagram() {
+            const reactantsContainer = document.getElementById('reactants-container');
+            const productsContainer = document.getElementById('products-container');
+            
+            // Clear containers
+            reactantsContainer.innerHTML = '';
+            productsContainer.innerHTML = '';
+            
+            // Add N₂
+            const n2 = document.createElement('div');
+            n2.className = 'molecule';
+            n2.style.minWidth = '100px';
+            n2.innerHTML = '<div class="atom atom-N">N</div><div class="atom atom-N">N</div>';
+            reactantsContainer.appendChild(n2);
+            
+            // Add 3H₂
+            for (let i = 0; i < 3; i++) {
+                const h2 = document.createElement('div');
+                h2.className = 'molecule';
+                h2.style.minWidth = '100px';
+                h2.innerHTML = '<div class="atom atom-H">H</div><div class="atom atom-H">H</div>';
+                reactantsContainer.appendChild(h2);
+            }
+            
+            // Add 2NH₃
+            for (let i = 0; i < 2; i++) {
+                const nh3 = document.createElement('div');
+                nh3.className = 'molecule';
+                nh3.style.position = 'relative';
+                nh3.style.minHeight = '100px';
+                nh3.style.minWidth = '100px';
+                nh3.innerHTML = '<div class="atom atom-N" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">N</div>' +
+                               '<div class="atom atom-H" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%);">H</div>' +
+                               '<div class="atom atom-H" style="position: absolute; bottom: 20px; left: 20px;">H</div>' +
+                               '<div class="atom atom-H" style="position: absolute; bottom: 20px; right: 20px;">H</div>';
+                productsContainer.appendChild(nh3);
+            }
+            
+            updateProgress();
+        }
+        
+        function hideParticleDiagram() {
+            document.getElementById('reactants-container').innerHTML = '';
+            document.getElementById('products-container').innerHTML = '';
+        }
+        
+        // Check final quiz answers
+        function checkFinalQuiz() {
+            const q1 = document.getElementById('final-q1').value;
+            const q2 = document.getElementById('final-q2').value;
+            const q3 = document.getElementById('final-q3').value;
+            const q4 = document.getElementById('final-q4').value;
+            const q5 = document.getElementById('final-q5').value;
+            
+            const feedback = document.getElementById('final-quiz-feedback');
+            feedback.classList.remove('hidden');
+            
+            let correct = 0;
+            let message = '';
+            
+            // Check each answer
+            if (q1 === '1') {
+                correct++;
+            } else {
+                message += 'Question 1: The reactants are 6CO₂ and 6H₂O (the substances before the arrow).\n';
+            }
+            
+            if (q2 === '2') {
+                correct++;
+            } else {
+                message += 'Question 2: The products are C₆H₁₂O₆ and 6O₂ (the substances after the arrow).\n';
+            }
+            
+            if (q3 === '18') {
+                correct++;
+            } else {
+                message += 'Question 3: On the product side, there are 6 oxygen atoms in C₆H₁₂O₆ and 12 oxygen atoms in 6O₂, for a total of 18 oxygen atoms.\n';
+            }
+            
+            if (q4 === 'yes') {
+                correct++;
+            } else {
+                message += 'Question 4: Yes, mass is conserved. Count the atoms on both sides to verify this.\n';
+            }
+            
+            if (q5 === '2') {
+                correct++;
+            } else {
+                message += 'Question 5: This is the photosynthesis reaction, where plants use carbon dioxide and water to produce glucose and oxygen.\n';
+            }
+            
+            // Display feedback
+            if (correct === 5) {
+                feedback.textContent = 'Excellent! You got all questions correct.';
+                feedback.className = 'feedback correct';
+                updateProgress();
+            } else {
+                feedback.textContent = `You got ${correct} out of 5 correct. Let's review the ones you missed:\n${message}`;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Show word equations for extension activity
+        function showWordEquations() {
+            document.getElementById('extension-answers').classList.remove('hidden');
+        }
+        
+        // Toggle zinc reaction diagram
+        function toggleZincReaction() {
+            const diagram = document.getElementById('zinc-reaction');
+            if (diagram.classList.contains('hidden')) {
+                diagram.classList.remove('hidden');
+            } else {
+                diagram.classList.add('hidden');
+            }
+        }
+        
+        // Check simple balancing question (H2 + O2 → H2O)
+        function checkSimpleBalancing() {
+            const h2Coef = parseInt(document.getElementById('h2-coef').value) || 0;
+            const o2Coef = parseInt(document.getElementById('o2-coef-simple').value) || 0;
+            const h2oCoef = parseInt(document.getElementById('h2o-coef-simple').value) || 0;
+            
+            const feedback = document.getElementById('simple-balancing-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (h2Coef === 2 && o2Coef === 1 && h2oCoef === 2) {
+                feedback.textContent = 'Correct! The balanced equation is 2H₂ + O₂ → 2H₂O';
+                feedback.className = 'feedback correct';
+            } else {
+                let hint = 'Not quite right. Try counting the atoms on each side:';
+                
+                if (h2Coef !== 2 || h2oCoef !== 2) {
+                    hint += '\n- There are 2 hydrogen atoms in H₂ and also 2 in H₂O';
+                }
+                
+                if (o2Coef !== 1 || h2oCoef !== 2) {
+                    hint += '\n- There are 2 oxygen atoms in O₂ and 1 in each H₂O';
+                }
+                
+                feedback.textContent = hint;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Check word equation practice
+        function checkWordEq() {
+            const answer = document.getElementById('word-eq-practice').value;
+            const feedback = document.getElementById('word-eq-practice-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (answer === '1') {
+                feedback.textContent = 'Correct! Calcium carbonate + Hydrochloric acid → Calcium chloride + Water + Carbon dioxide';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = 'Incorrect. The correct answer is: Calcium carbonate + Hydrochloric acid → Calcium chloride + Water + Carbon dioxide';
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Check atom counting
+        function checkAtomCounting() {
+            const alReactants = parseInt(document.getElementById('al-reactants').value) || 0;
+            const alProducts = parseInt(document.getElementById('al-products').value) || 0;
+            const clReactants = parseInt(document.getElementById('cl-reactants').value) || 0;
+            const clProducts = parseInt(document.getElementById('cl-products').value) || 0;
+            const conservation = document.getElementById('al-conservation').value;
+            
+            const feedback = document.getElementById('atom-counting-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (alReactants === 2 && alProducts === 2 && clReactants === 6 && clProducts === 6 && conservation === 'yes') {
+                feedback.textContent = 'Correct! There are 2 aluminum atoms and 6 chlorine atoms on each side of the equation. Mass is conserved.';
+                feedback.className = 'feedback correct';
+            } else {
+                let message = 'Not quite right:';
+                
+                if (alReactants !== 2) {
+                    message += '\n- Reactants side has 2 Al atoms (from 2Al)';
+                }
+                
+                if (alProducts !== 2) {
+                    message += '\n- Products side has 2 Al atoms (from 2AlCl₃)';
+                }
+                
+                if (clReactants !== 6) {
+                    message += '\n- Reactants side has 6 Cl atoms (from 3Cl₂, where each Cl₂ has 2 chlorine atoms)';
+                }
+                
+                if (clProducts !== 6) {
+                    message += '\n- Products side has 6 Cl atoms (from 2AlCl₃, where each AlCl₃ has 3 chlorine atoms)';
+                }
+                
+                if (conservation !== 'yes') {
+                    message += '\n- Mass is conserved because the number of atoms of each element is the same on both sides';
+                }
+                
+                feedback.textContent = message;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Check reaction type identification
+        function checkReactionType() {
+            const reaction1 = document.getElementById('reaction1').checked;
+            const reaction2 = document.getElementById('reaction2').checked;
+            const reaction3 = document.getElementById('reaction3').checked;
+            
+            const feedback = document.getElementById('reaction-type-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (reaction2) {
+                feedback.textContent = 'Correct! Sodium reacting with water is a chemical reaction that produces sodium hydroxide and hydrogen gas.';
+                feedback.className = 'feedback correct';
+            } else if (reaction1 || reaction3) {
+                feedback.textContent = 'Incorrect. Ice melting and sugar dissolving are physical changes, not chemical reactions.';
+                feedback.className = 'feedback incorrect';
+            } else {
+                feedback.textContent = 'Please select an answer.';
+                feedback.className = 'feedback';
+            }
+        }
+        
+        // Check challenge balancing question
+        function checkChallengeBalancing() {
+            const c2h6Coef = parseInt(document.getElementById('c2h6-coef').value) || 0;
+            const o2Coef = parseInt(document.getElementById('o2-coef-2').value) || 0;
+            const co2Coef = parseInt(document.getElementById('co2-coef').value) || 0;
+            const h2oCoef = parseInt(document.getElementById('h2o-coef').value) || 0;
+            
+            const feedback = document.getElementById('challenge-balancing-feedback');
+            feedback.classList.remove('hidden');
+            
+            if (c2h6Coef === 2 && o2Coef === 7 && co2Coef === 4 && h2oCoef === 6) {
+                feedback.textContent = 'Excellent! The correctly balanced equation is 2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O';
+                feedback.className = 'feedback correct';
+            } else {
+                let message = 'Not quite right. Try following these steps:';
+                message += '\n1. Count the carbon atoms: 2 in C₂H₆ and 1 in CO₂';
+                message += '\n2. Count hydrogen atoms: 6 in C₂H₆ and 2 in H₂O';
+                message += '\n3. Count oxygen atoms: 2 in O₂, 2 in CO₂, and 1 in H₂O';
+                message += '\n4. Balance carbon first, then hydrogen, and finally oxygen';
+                
+                feedback.textContent = message;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Check photosynthesis explanation
+        function checkPhotosynthesisExplanation() {
+            const explanation = document.getElementById('photosynthesis-explanation').value.toLowerCase();
+            const feedback = document.getElementById('photosynthesis-feedback');
+            feedback.classList.remove('hidden');
+            
+            // Check for key concepts in the explanation
+            const hasConservation = explanation.includes('conserv') || explanation.includes('same number');
+            const hasCounting = explanation.includes('count') || explanation.includes('atoms');
+            const hasComparing = explanation.includes('both sides') || explanation.includes('reactants and products');
+            
+            if (hasConservation && hasCounting && hasComparing && explanation.length > 20) {
+                feedback.textContent = 'Great explanation! You understand that mass is conserved because the same atoms are present on both sides of the reaction, just rearranged into different molecules.';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = 'Your explanation needs to include: (1) the concept of conservation of mass, (2) counting atoms on both sides of the equation, and (3) comparing reactants and products.';
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Initialize particle diagram containers
+        window.onload = function() {
+            // Set up initial state as needed
+        };
+    </script>
+</body>
+</html>
