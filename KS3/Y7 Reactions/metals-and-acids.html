@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metals and Acids - Learning Support</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .intro {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .task-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .task-button {
+            background-color: #42a5f5;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .task-button:hover {
+            background-color: #1976d2;
+            transform: translateY(-2px);
+        }
+        
+        .task-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 5px solid #42a5f5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .task-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        h2 {
+            color: #1976d2;
+            border-bottom: 2px solid #e3f2fd;
+            padding-bottom: 8px;
+        }
+        
+        .hint, .example, .tip {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+        .hint {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .example {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .tip {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .hint h3, .example h3, .tip h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #e0e0e0;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #e3f2fd;
+        }
+        
+        .back-to-top {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .icon {
+            margin-right: 8px;
+        }
+        
+        .info-box {
+            background-color: #e8eaf6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .reactivity-scale {
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to right, #f44336, #ffeb3b, #4caf50);
+            border-radius: 5px;
+            position: relative;
+            margin: 20px 0;
+        }
+        
+        .reactivity-label {
+            position: absolute;
+            transform: translateX(-50%);
+            top: -25px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .formula {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .experiment-steps {
+            counter-reset: step;
+            list-style-type: none;
+            padding-left: 15px;
+        }
+        
+        .experiment-steps li {
+            position: relative;
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        
+        .experiment-steps li:before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: #1e88e5;
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 14px;
+            line-height: 22px;
+        }
+        
+        .diagram {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 15px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Metals and Acids - Learning Support</h1>
+        </header>
+        
+        <div class="intro">
+            <p>Welcome to your interactive learning support for the Metals and Acids worksheet! Click on any task button below to get help, hints, examples, and guidance. Think of this as your digital teaching assistant to help you complete your worksheet.</p>
+            <p><strong>Remember:</strong> This support tool is designed to help you understand the concepts and guide you through the tasks, not to give you the answers directly. Good luck!</p>
+        </div>
+        
+        <div class="task-buttons">
+            <button class="task-button" onclick="showTask(1)">Task 1: Fill in the Blanks</button>
+            <button class="task-button" onclick="showTask(2)">Task 2: Match the Equations</button>
+            <button class="task-button" onclick="showTask(3)">Task 3: Ordering Reactivity</button>
+            <button class="task-button" onclick="showTask(4)">Task 4: True or False</button>
+            <button class="task-button" onclick="showTask(5)">Task 5: Label the Diagram</button>
+            <button class="task-button" onclick="showTask(6)">Task 6: Explain the Reactions</button>
+            <button class="task-button" onclick="showTask(7)">Task 7: Real-world Applications</button>
+            <button class="task-button" onclick="showTask(8)">Task 8: Challenge Questions</button>
+            <button class="task-button" onclick="showTask(9)">Task 9: Creative Application</button>
+        </div>
+        
+        <!-- Task 1 Content -->
+        <div id="task1" class="task-content">
+            <h2>Task 1: Fill in the Blanks</h2>
+            
+            <div class="hint">
+                <h3>Hint: What happens when metals react with acids?</h3>
+                <p>When metals react with acids, they typically produce two things:</p>
+                <ul>
+                    <li>A metal salt (the type depends on which acid is used)</li>
+                    <li>A gas that can be seen as bubbles during the reaction</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Zinc reacting with hydrochloric acid</h3>
+                <p>When zinc metal reacts with hydrochloric acid:</p>
+                <p class="formula">Zinc + Hydrochloric acid → Zinc chloride + Hydrogen gas</p>
+                <p>Notice that:</p>
+                <ul>
+                    <li>The metal (zinc) combines with the non-hydrogen part of the acid (chloride) to form a salt</li>
+                    <li>The hydrogen from the acid is released as a gas</li>
+                    <li>The salt name includes both the metal name and the acid name without the "hydro" and "acid" parts</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Naming the salts</h3>
+                <p>Different acids produce different salts:</p>
+                <ul>
+                    <li>Hydrochloric acid produces <strong>chloride</strong> salts</li>
+                    <li>Sulfuric acid produces <strong>sulfate</strong> salts</li>
+                    <li>Nitric acid produces <strong>nitrate</strong> salts</li>
+                </ul>
+            </div>
+            
+            <div class="hint">
+                <h3>Hint: Metal reactivity</h3>
+                <p>Metals have different levels of reactivity:</p>
+                <ul>
+                    <li>More reactive metals (like magnesium) react quickly and vigorously with acids</li>
+                    <li>Less reactive metals (like lead) react more slowly</li>
+                    <li>Some metals (like gold and platinum) are so unreactive that they don't react with dilute acids at all</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 2 Content -->
+        <div id="task2" class="task-content">
+            <h2>Task 2: Match the Equations</h2>
+            
+            <div class="hint">
+                <h3>Hint: Understanding the pattern</h3>
+                <p>For this task, you need to understand that when a metal reacts with hydrochloric acid, it follows this pattern:</p>
+                <p class="formula">Metal + Hydrochloric acid → Metal chloride + Hydrogen gas</p>
+                <p>The name of the salt produced will always include the name of the metal plus "chloride".</p>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Magnesium with hydrochloric acid</h3>
+                <p>When magnesium reacts with hydrochloric acid:</p>
+                <p class="formula">Magnesium + Hydrochloric acid → Magnesium chloride + Hydrogen gas</p>
+                <p>So magnesium should be matched with "Magnesium chloride + Hydrogen".</p>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Think about the pattern</h3>
+                <p>For any metal + hydrochloric acid reaction:</p>
+                <ul>
+                    <li>The metal in the reactants will be the same metal in the products</li>
+                    <li>The product will always be "[Metal name] chloride + Hydrogen"</li>
+                    <li>Every reaction produces hydrogen gas - this is a key indicator of a metal-acid reaction</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 3 Content -->
+        <div id="task3" class="task-content">
+            <h2>Task 3: Ordering Reactivity</h2>
+            
+            <div class="hint">
+                <h3>Hint: Signs of reactivity</h3>
+                <p>When ordering metals by reactivity, look for these signs:</p>
+                <ul>
+                    <li>Speed of reaction - faster reactions indicate higher reactivity</li>
+                    <li>Intensity of bubbling - more vigorous bubbling means higher reactivity</li>
+                    <li>How quickly the metal disappears - faster disappearance means higher reactivity</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Comparing metal reactivity</h3>
+                <p>If we put equal-sized pieces of different metals in the same concentration of acid:</p>
+                <ul>
+                    <li>Magnesium will react very quickly with lots of bubbles</li>
+                    <li>Zinc will react moderately fast with steady bubbling</li>
+                    <li>Iron will react more slowly with gentle bubbling</li>
+                    <li>Lead will react very slowly with few bubbles</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>Reactivity Series</h3>
+                <p>The reactivity series of metals (from most to least reactive) includes:</p>
+                <div class="reactivity-scale">
+                    <span class="reactivity-label" style="left: 10%;">Potassium</span>
+                    <span class="reactivity-label" style="left: 20%;">Sodium</span>
+                    <span class="reactivity-label" style="left: 30%;">Calcium</span>
+                    <span class="reactivity-label" style="left: 40%;">Magnesium</span>
+                    <span class="reactivity-label" style="left: 50%;">Aluminum</span>
+                    <span class="reactivity-label" style="left: 60%;">Zinc</span>
+                    <span class="reactivity-label" style="left: 70%;">Iron</span>
+                    <span class="reactivity-label" style="left: 80%;">Lead</span>
+                    <span class="reactivity-label" style="left: 90%;">Copper</span>
+                </div>
+                <p>The higher up a metal is in the reactivity series, the more vigorously it will react with acids.</p>
+            </div>
+        </div>
+        
+        <!-- Task 4 Content -->
+        <div id="task4" class="task-content">
+            <h2>Task 4: True or False</h2>
+            
+            <div class="hint">
+                <h3>Hint: Key facts about metal-acid reactions</h3>
+                <p>When answering true or false questions, remember these key facts:</p>
+                <ul>
+                    <li>Not all metals react with acids - some are too unreactive</li>
+                    <li>Hydrogen gas is a product of metal-acid reactions</li>
+                    <li>Different acids produce different salts</li>
+                    <li>Metals higher in the reactivity series react more vigorously</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Some metals are very unreactive</h3>
+                <p>Gold and platinum are examples of very unreactive metals. They do not react with dilute acids. This is why they're valuable for jewelry and why we call them "noble metals."</p>
+                <p>Copper, silver, and mercury are also examples of less reactive metals that don't easily react with dilute acids.</p>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Thinking about metal-acid reactions</h3>
+                <p>Consider these points:</p>
+                <ul>
+                    <li>More reactive metals like magnesium, zinc, and iron do react with acids</li>
+                    <li>Less reactive metals like copper, silver, gold, and platinum typically don't react with dilute acids</li>
+                    <li>All metal-acid reactions produce hydrogen gas (identifiable as bubbles)</li>
+                    <li>The salt produced depends on which acid is used (e.g., chloride salts from hydrochloric acid, sulfate salts from sulfuric acid)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 5 Content -->
+        <div id="task5" class="task-content">
+            <h2>Task 5: Label the Diagram</h2>
+            
+            <div class="hint">
+                <h3>Hint: Components of a metal-acid reaction</h3>
+                <p>In a metal-acid reaction setup, you typically have:</p>
+                <ul>
+                    <li>A solid metal piece (usually a strip, granules, or powder)</li>
+                    <li>An acid solution (like hydrochloric acid)</li>
+                    <li>Hydrogen gas bubbles forming and rising</li>
+                    <li>A salt solution forming as the reaction progresses</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: What happens during the reaction</h3>
+                <p>When a solid metal is placed in an acid solution:</p>
+                <ol>
+                    <li>The metal begins to dissolve in the acid</li>
+                    <li>Hydrogen gas bubbles form on the metal surface and rise to the top</li>
+                    <li>The clear acid solution gradually changes as metal ions combine with the acid to form a salt solution</li>
+                    <li>Eventually, if enough metal is present, all the acid will be used up and only the salt solution (and any remaining metal) will be left</li>
+                </ol>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Identifying features in the diagram</h3>
+                <p>Look for these features in the diagram:</p>
+                <ul>
+                    <li>Small bubbles rising from a solid object would be hydrogen gas</li>
+                    <li>The solid object at the bottom would be the metal</li>
+                    <li>The liquid surrounding everything would be the acid solution initially, changing to a salt solution</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 6 Content -->
+        <div id="task6" class="task-content">
+            <h2>Task 6: Explain the Reactions</h2>
+            
+            <div class="hint">
+                <h3>Hint: Comparing reaction speeds</h3>
+                <p>When explaining why reactions happen at different speeds, consider:</p>
+                <ul>
+                    <li>Position of the metal in the reactivity series</li>
+                    <li>Surface area of the metal (e.g., ribbon vs. nail)</li>
+                    <li>Concentration of the acid</li>
+                    <li>Temperature of the reaction</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Magnesium vs. Iron reactivity</h3>
+                <p>Magnesium is higher in the reactivity series than iron. This means:</p>
+                <ul>
+                    <li>Magnesium atoms give up their electrons more readily than iron atoms</li>
+                    <li>Magnesium reacts more vigorously (faster, more bubbles) than iron</li>
+                    <li>A piece of magnesium will disappear more quickly in acid than a similar-sized piece of iron</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Writing word equations</h3>
+                <p>A word equation follows this structure:</p>
+                <p class="formula">Reactants → Products</p>
+                <p>For metal-acid reactions:</p>
+                <p class="formula">Metal + Acid → Salt + Hydrogen</p>
+                <p>For example:</p>
+                <p class="formula">Iron + Hydrochloric acid → Iron chloride + Hydrogen</p>
+            </div>
+            
+            <div class="info-box">
+                <h3>Why does magnesium react faster?</h3>
+                <p>Magnesium is more reactive than iron because:</p>
+                <ul>
+                    <li>Magnesium atoms have 2 electrons in their outer shell that they want to lose</li>
+                    <li>Iron atoms hold onto their electrons more tightly</li>
+                    <li>Magnesium is higher in the reactivity series than iron</li>
+                </ul>
+                <p>This means magnesium gives up its electrons more easily and reacts more quickly with acids.</p>
+            </div>
+        </div>
+        
+        <!-- Task 7 Content -->
+        <div id="task7" class="task-content">
+            <h2>Task 7: Real-world Applications</h2>
+            
+            <div class="hint">
+                <h3>Hint: The case of the sick hyena</h3>
+                <p>When thinking about the zinc coins in the hyena's stomach:</p>
+                <ul>
+                    <li>The stomach contains hydrochloric acid</li>
+                    <li>Zinc is a reactive metal that will react with acid</li>
+                    <li>The reaction produces zinc chloride and hydrogen gas</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Word equation for zinc and hydrochloric acid</h3>
+                <p>The reaction between zinc and hydrochloric acid follows this equation:</p>
+                <p class="formula">Zinc + Hydrochloric acid → Zinc chloride + Hydrogen gas</p>
+                <p>This reaction occurred in the hyena's stomach when it swallowed zinc coins.</p>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Metal toxicity and safety</h3>
+                <p>Many metal compounds can be toxic to animals and humans:</p>
+                <ul>
+                    <li>Zinc chloride is toxic if ingested in large amounts</li>
+                    <li>Copper doesn't react with dilute acids as easily, making it safer for coins</li>
+                    <li>Coating reactive metals with less reactive ones can prevent unwanted reactions</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>Practical applications of metal reactivity knowledge</h3>
+                <p>Understanding metal reactivity helps us:</p>
+                <ul>
+                    <li>Choose appropriate metals for specific uses (like coins, cookware, or buildings)</li>
+                    <li>Prevent dangerous reactions by using metals that won't react with their environment</li>
+                    <li>Protect more reactive metals with coatings of less reactive metals</li>
+                    <li>Understand potential health hazards when metals react with acids in the body</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 8 Content -->
+        <div id="task8" class="task-content">
+            <h2>Task 8: Challenge Questions</h2>
+            
+            <div class="hint">
+                <h3>Hint: Predicting reactions</h3>
+                <p>To predict what happens when aluminum reacts with sulfuric acid:</p>
+                <ul>
+                    <li>Consider that aluminum is a reactive metal</li>
+                    <li>Sulfuric acid produces sulfate salts</li>
+                    <li>The reaction will follow the general pattern: Metal + Acid → Salt + Hydrogen</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Aluminum and sulfuric acid</h3>
+                <p>When aluminum reacts with sulfuric acid:</p>
+                <p class="formula">Aluminum + Sulfuric acid → Aluminum sulfate + Hydrogen gas</p>
+                <p>The reaction would show bubbling as hydrogen gas is produced, and the aluminum would gradually dissolve.</p>
+            </div>
+            
+            <div class="hint">
+                <h3>Hint: Precious metals and jewelery</h3>
+                <p>When thinking about why gold and silver are used for jewelry:</p>
+                <ul>
+                    <li>Consider their position in the reactivity series (very low)</li>
+                    <li>Think about how they react (or don't react) with substances they come into contact with</li>
+                    <li>Consider what would happen if jewelry was made from a highly reactive metal like sodium or magnesium</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Designing an experiment</h3>
+                <p>When designing an experiment to test reactivity:</p>
+                <ul>
+                    <li>You'll need to control variables (same acid concentration, temperature, etc.)</li>
+                    <li>You could measure reaction rate by observing:
+                        <ul>
+                            <li>How quickly bubbles form</li>
+                            <li>How quickly the metal disappears</li>
+                            <li>The volume of hydrogen gas produced over time</li>
+                            <li>The temperature change during the reaction</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>Are all metals reactive with acids?</h3>
+                <p>When considering whether "All metals react with acids to produce hydrogen gas":</p>
+                <ul>
+                    <li>Some metals (like gold, platinum, and silver) are so unreactive they don't react with dilute acids</li>
+                    <li>Some metals (like copper) will react with some acids (like concentrated nitric acid) but not others</li>
+                    <li>Not all metal-acid reactions produce hydrogen gas - some oxidizing acids like nitric acid can produce different gases</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Task 9 Content -->
+        <div id="task9" class="task-content">
+            <h2>Task 9: Creative Application</h2>
+            
+            <div class="hint">
+                <h3>Hint: Choosing appropriate metals</h3>
+                <p>When designing a container for acid storage:</p>
+                <ul>
+                    <li>Consider the reactivity of different metals with acids</li>
+                    <li>Remember that more reactive metals will corrode quickly in an acid environment</li>
+                    <li>Think about metals that don't react with acids at all</li>
+                </ul>
+            </div>
+            
+            <div class="example">
+                <h3>Example: Materials for acid containers</h3>
+                <p>In real-world chemistry and industry:</p>
+                <ul>
+                    <li>Acid containers are often made of glass, ceramic, or certain plastics</li>
+                    <li>When metals must be used, they are often coated or lined with protective materials</li>
+                    <li>Some less reactive metals like lead have been used historically, though modern solutions are preferred due to toxicity concerns</li>
+                </ul>
+            </div>
+            
+            <div class="tip">
+                <h3>Tip: Evaluating choices</h3>
+                <p>When evaluating which metal would be best or worst:</p>
+                <ul>
+                    <li>Consider both reactivity and practicality</li>
+                    <li>The worst choices would be very reactive metals like magnesium or zinc</li>
+                    <li>Better choices would be less reactive metals like gold or platinum (though these would be expensive)</li>
+                    <li>A practical choice might be a less reactive metal that's also affordable</li>
+                    <li>Consider safety - some metals might be unreactive but could be toxic or have other drawbacks</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <h3>Real-world considerations</h3>
+                <p>In real-world chemistry, when storing acids:</p>
+                <ul>
+                    <li>Materials must be chosen based on their chemical resistance</li>
+                    <li>Cost, availability, and safety are also important factors</li>
+                    <li>Many acid containers use plastic linings or glass containers</li>
+                    <li>Metal acid containers often use special alloys or have protective coatings</li>
+                    <li>Storage methods also consider temperature, pressure, and concentration of the acid</li>
+                </ul>
+            </div>
+        </div>
+        
+        <button class="back-to-top" onclick="hideAllTasks()">Back to Task Selection</button>
+    </div>
+
+    <script>
+        function showTask(taskNumber) {
+            // Hide all task contents
+            hideAllTasks();
+            
+            // Show the selected task
+            document.getElementById('task' + taskNumber).classList.add('active');
+            
+            // Scroll to the task content
+            document.getElementById('task' + taskNumber).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        
+        function hideAllTasks() {
+            // Get all task content elements
+            const taskContents = document.querySelectorAll('.task-content');
+            
+            // Remove active class from all
+            taskContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Scroll back to top of the page
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
