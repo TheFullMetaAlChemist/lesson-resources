@@ -61,6 +61,29 @@
             text-align: center;
             margin-bottom: 20px;
         }
+        
+        .settings-bar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .reset-progress-btn {
+            background-color: #f0f0f0;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reset-progress-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+        }
 
         .start-info {
             margin-bottom: 30px;
@@ -710,6 +733,9 @@
     <header>
         <h1>Periodic Table Challenge</h1>
         <p>Learn the elements of the periodic table step by step</p>
+        <div class="settings-bar">
+            <button id="reset-progress-btn" class="reset-progress-btn">Reset Progress</button>
+        </div>
     </header>
     
     <!-- Start Screen -->
@@ -992,8 +1018,8 @@
             { atomicNumber: 118, symbol: 'Og', name: 'Oganesson', atomicMass: 294, category: 'Unknown', discovery: '2006' }
         ];
 
-        // Game state
-        const gameState = {
+        // Game state (will be initialized with saved data or defaults)
+        let gameState = {
             currentRound: 1,
             currentMode: 'symbol-to-name', // 'symbol-to-name' or 'name-to-symbol'
             gameMode: 'practice', // 'practice' or 'challenge'
@@ -1017,13 +1043,123 @@
                 // round: { symbolToName: [atomicNumbers], nameToSymbol: [atomicNumbers] }
             }
         };
+        
+        // Local storage availability flag
+        let localStorageAvailable = false;
 
-        // Initialize progress data
-        for (let i = 1; i <= gameState.roundLimits.length; i++) {
-            gameState.progressData[i] = {
-                'symbol-to-name': [],
-                'name-to-symbol': []
-            };
+        // Check if localStorage is available
+        function checkLocalStorageAvailability() {
+            try {
+                const testKey = '__storage_test__';
+                localStorage.setItem(testKey, testKey);
+                localStorage.removeItem(testKey);
+                localStorageAvailable = true;
+                return true;
+            } catch (e) {
+                localStorageAvailable = false;
+                console.warn('localStorage is not available. Progress will not be saved between sessions.');
+                return false;
+            }
+        }
+        
+        // Local storage functions
+        function saveGameState() {
+            if (!localStorageAvailable) return;
+            
+            try {
+                // Only save what's needed for persistence (not temp state like currentQuestion)
+                const stateToSave = {
+                    currentRound: gameState.currentRound,
+                    currentMode: gameState.currentMode,
+                    gameMode: gameState.gameMode,
+                    score: gameState.score,
+                    roundTimes: gameState.roundTimes,
+                    progressData: gameState.progressData
+                };
+                
+                localStorage.setItem('periodicTableGameState', JSON.stringify(stateToSave));
+                console.log('Game progress saved');
+            } catch (error) {
+                console.warn('Error saving game state:', error);
+                localStorageAvailable = false;
+            }
+        }
+        
+        function loadGameState() {
+            if (!localStorageAvailable) return false;
+            
+            try {
+                const savedState = localStorage.getItem('periodicTableGameState');
+                
+                if (savedState) {
+                    const parsedState = JSON.parse(savedState);
+                    
+                    // Update gameState with saved values
+                    gameState.currentRound = parsedState.currentRound || 1;
+                    gameState.currentMode = parsedState.currentMode || 'symbol-to-name';
+                    gameState.gameMode = parsedState.gameMode || 'practice';
+                    gameState.score = parsedState.score || 0;
+                    gameState.roundTimes = parsedState.roundTimes || [];
+                    
+                    // Load progress data if it exists
+                    if (parsedState.progressData) {
+                        gameState.progressData = parsedState.progressData;
+                    } else {
+                        // Initialize progress data
+                        initializeProgressData();
+                    }
+                    
+                    console.log('Game progress loaded');
+                    return true;
+                } else {
+                    // No saved state, initialize progress data
+                    initializeProgressData();
+                    return false;
+                }
+            } catch (error) {
+                console.warn('Error loading game state:', error);
+                localStorageAvailable = false;
+                initializeProgressData();
+                return false;
+            }
+        }
+        
+        function resetGameProgress() {
+            // Clear saved game state
+            if (localStorageAvailable) {
+                try {
+                    localStorage.removeItem('periodicTableGameState');
+                } catch (error) {
+                    console.warn('Error removing saved game state:', error);
+                    localStorageAvailable = false;
+                }
+            }
+            
+            // Reset game state
+            gameState.currentRound = 1;
+            gameState.currentMode = 'symbol-to-name';
+            gameState.gameMode = 'practice';
+            gameState.score = 0;
+            gameState.startTime = null;
+            gameState.roundTimes = [];
+            
+            // Clear progress data
+            initializeProgressData();
+            
+            // Update UI
+            updateScore();
+            
+            console.log('Game progress reset');
+        }
+        
+        function initializeProgressData() {
+            gameState.progressData = {};
+            for (let i = 1; i <= gameState.roundLimits.length; i++) {
+                gameState.progressData[i] = {
+                    'symbol-to-name': [],
+                    'name-to-symbol': []
+                };
+            }
         }
 
         // DOM Elements
@@ -1048,10 +1184,93 @@
 
         // Initialize the game
         function initGame() {
+            // Check if localStorage is available
+            checkLocalStorageAvailability();
+            
+            // Try to load saved game state
+            const hasSavedState = loadGameState();
+            
+            // Show storage status indicator and set up reset button
+            setupStorageIndicator();
+            
+            // Setup event for reset progress button
+            document.getElementById('reset-progress-btn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset all your progress? This cannot be undone.')) {
+                    resetGameProgress();
+                    // Reload the page to reflect reset
+                    window.location.reload();
+                }
+            });
+            
+            // Setup start screen
             setupStartScreen();
 
             // Initialize with no element selected
             showElementDetails(null);
+            
+            // If there's saved progress, show a notification
+            if (hasSavedState) {
+                // Check if there's actual progress (not just a new game)
+                let hasProgress = false;
+                for (let round in gameState.progressData) {
+                    if (gameState.progressData[round]['symbol-to-name'].length > 0 || 
+                        gameState.progressData[round]['name-to-symbol'].length > 0) {
+                        hasProgress = true;
+                        break;
+                    }
+                }
+                
+                if (hasProgress) {
+                    const notification = document.createElement('div');
+                    notification.style.background = '#2ecc71';
+                    notification.style.color = 'white';
+                    notification.style.padding = '10px';
+                    notification.style.textAlign = 'center';
+                    notification.style.marginBottom = '15px';
+                    notification.style.borderRadius = '5px';
+                    notification.textContent = 'Your previous progress has been loaded!';
+                    
+                    // Insert after header
+                    const header = document.querySelector('header');
+                    header.parentNode.insertBefore(notification, header.nextSibling);
+                    
+                    // Remove after 5 seconds
+                    setTimeout(function() {
+                        notification.style.opacity = '0';
+                        notification.style.transition = 'opacity 1s';
+                        setTimeout(function() {
+                            notification.remove();
+                        }, 1000);
+                    }, 5000);
+                }
+            }
+        }
+        
+        function setupStorageIndicator() {
+            const resetBtn = document.getElementById('reset-progress-btn');
+            
+            // Update the reset button appearance based on storage availability
+            if (!localStorageAvailable) {
+                resetBtn.textContent = 'Progress Not Saved';
+                resetBtn.style.background = '#f0f0f0';
+                resetBtn.style.color = '#95a5a6';
+                resetBtn.style.border = '1px solid #95a5a6';
+                resetBtn.style.cursor = 'default';
+                
+                // Show tooltip on hover
+                resetBtn.title = 'LocalStorage is not available. Progress will not be saved between sessions. Try opening the game on a web server instead of a local file.';
+                
+                // Remove click handler
+                resetBtn.onclick = null;
+                
+                // Add popup with more info when clicked
+                resetBtn.addEventListener('click', function() {
+                    alert('LocalStorage is not available in your browser when running from a local file. To enable progress saving:\n\n' +
+                          '1. Upload this HTML file to a web server, or\n' +
+                          '2. Use a local development server like http-server, or\n' +
+                          '3. Open the game in a different browser.');
+                });
+            }
         }
 
         // Setup start screen
@@ -1248,6 +1467,9 @@
                 const endTime = new Date();
                 const roundTimeInSeconds = Math.floor((endTime - gameState.roundStartTime) / 1000);
                 gameState.roundTimes[gameState.currentRound - 1] = roundTimeInSeconds;
+                
+                // Save the timer data
+                saveGameState();
             }
         }
 
@@ -1542,6 +1764,9 @@
                 const currentProgress = gameState.progressData[gameState.currentRound][gameState.currentMode];
                 if (!currentProgress.includes(selectedElement.atomicNumber)) {
                     currentProgress.push(selectedElement.atomicNumber);
+                    
+                    // Save progress to local storage
+                    saveGameState();
                 }
                 
                 // Remove from questions remaining
@@ -1552,6 +1777,9 @@
                 // Add points
                 gameState.score += 10;
                 updateScore();
+                
+                // Save updated score
+                saveGameState();
                 
                 // Show element details
                 showElementDetails(selectedElement);
@@ -1573,6 +1801,9 @@
                 // Deduct points
                 gameState.score = Math.max(0, gameState.score - 2);
                 updateScore();
+                
+                // Save updated score
+                saveGameState();
                 
                 // Remove incorrect marking after a delay
                 setTimeout(function() {
@@ -1712,6 +1943,9 @@
                 // Just switch modes within the same round
                 toggleGameMode();
             }
+            
+            // Save progress before updating UI
+            saveGameState();
             
             updateRoundProgressIndicators();
             createMiniPeriodicTable();
