@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Chemistry: Electrolysis Half-Equations</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --cathode: #3498db;
+            --anode: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 1.5rem;
+        }
+        
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .intro {
+            background-color: #f1f8ff;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .cathode {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 5px solid var(--cathode);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .anode {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 5px solid var(--anode);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        
+        .important {
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .electrode {
+            display: inline-block;
+            padding: 3px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .cathode-label {
+            background-color: var(--cathode);
+            color: white;
+        }
+        
+        .anode-label {
+            background-color: var(--anode);
+            color: white;
+        }
+        
+        .equation {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            border-left: 5px solid #ddd;
+        }
+        
+        .selection-container {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+        }
+        
+        .equation-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .equation-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .equation-option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .equation-option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .coefficient-input {
+            width: 30px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 3px;
+            margin: 0 2px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        .equation-text {
+            margin: 0 2px;
+            white-space: nowrap;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .correct {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 5px solid var(--success);
+        }
+        
+        .incorrect {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 5px solid var(--danger);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .hint-btn {
+            background-color: var(--warning);
+            margin-left: 10px;
+        }
+        
+        .hint-btn:hover {
+            background-color: #e67e22;
+        }
+        
+        .hint {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(243, 156, 18, 0.1);
+            border-left: 5px solid var(--warning);
+            border-radius: 5px;
+        }
+        
+        .section-nav {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: var(--primary);
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .explanation {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e8f4fc;
+            border-radius: 5px;
+        }
+        
+        .summary {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .completion-message {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(46, 204, 113, 0.2);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .superscript {
+            vertical-align: super;
+            font-size: smaller;
+        }
+        
+        .subscript {
+            vertical-align: sub;
+            font-size: smaller;
+        }
+        
+        .equation-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GCSE Chemistry: Writing Half-Equations for Electrolysis</h1>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('intro-section')">Introduction</div>
+            <div class="tab" onclick="showSection('molten-section')">Molten Compounds</div>
+            <div class="tab" onclick="showSection('aqueous-section')">Aqueous Solutions</div>
+            <div class="tab" onclick="showSection('mixed-section')">Mixed Practice</div>
+            <div class="tab" onclick="showSection('summary-section')">Summary</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar">0%</div>
+        </div>
+        
+        <!-- Introduction Section -->
+        <div class="section active" id="intro-section">
+            <div class="intro">
+                <h2>Introduction to Electrolysis</h2>
+                <p>Electrolysis is the process of splitting ionic compounds into their elements using electricity. During this process:</p>
+                <ul>
+                    <li><span class="important">Oxidation</span> (loss of electrons) occurs at the <span class="electrode anode-label">anode (+)</span></li>
+                    <li><span class="important">Reduction</span> (gain of electrons) occurs at the <span class="electrode cathode-label">cathode (–)</span></li>
+                </ul>
+                <p>Half-equations show these processes clearly, allowing us to see exactly what happens at each electrode.</p>
+                
+                <h3>Key Points to Remember</h3>
+                <ul>
+                    <li>The <span class="electrode cathode-label">cathode (–)</span> is <span class="important">negatively charged</span> and attracts <span class="important">positive ions</span> (cations)</li>
+                    <li>The <span class="electrode anode-label">anode (+)</span> is <span class="important">positively charged</span> and attracts <span class="important">negative ions</span> (anions)</li>
+                    <li>At the <span class="electrode cathode-label">cathode (–)</span>, ions <span class="important">gain electrons</span> (reduction)</li>
+                    <li>At the <span class="electrode anode-label">anode (+)</span>, ions <span class="important">lose electrons</span> (oxidation)</li>
+                </ul>
+                
+                <h3>OIL RIG</h3>
+                <p>Remember the mnemonic: <strong>OIL RIG</strong></p>
+                <p><strong>O</strong>xidation <strong>I</strong>s <strong>L</strong>oss of electrons | <strong>R</strong>eduction <strong>I</strong>s <strong>G</strong>ain of electrons</p>
+                
+                <div class="explanation">
+                    <h3>Why Write Half-Equations?</h3>
+                    <p>Half-equations are important because they:</p>
+                    <ul>
+                        <li>Show exactly what is happening at each electrode</li>
+                        <li>Indicate which elements are being produced</li>
+                        <li>Demonstrate the flow of electrons</li>
+                        <li>Help balance the overall equation for the electrolysis process</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button onclick="showSection('molten-section')">Continue to Molten Compounds →</button>
+        </div>
+        
+        <!-- Molten Compounds Section -->
+        <div class="section" id="molten-section">
+            <h2>Writing Half-Equations for Molten Compounds</h2>
+            
+            <div class="explanation">
+                <p><strong>In molten compounds</strong>, the ions are free to move but there's no water present. This means:</p>
+                <div class="cathode">
+                    <h3>At the <span class="electrode cathode-label">cathode (–)</span>:</h3>
+                    <p>Positive ions (cations) gain electrons and are reduced to form their elements.</p>
+                    <p>General equation: <span class="equation">X<sup>n+</sup> + ne<sup>−</sup> → X</span></p>
+                </div>
+                
+                <div class="anode">
+                    <h3>At the <span class="electrode anode-label">anode (+)</span>:</h3>
+                    <p>Negative ions (anions) lose electrons and are oxidized to form their elements.</p>
+                    <p>General equation: <span class="equation">nY<sup>−</sup> → (n/2)Y<sub>2</sub> + ne<sup>−</sup></span></p>
+                </div>
+            </div>
+            
+            <div class="example">
+                <h3>Worked Example: Molten Sodium Chloride (NaCl)</h3>
+                <p>In molten NaCl, we have Na<sup>+</sup> and Cl<sup>−</sup> ions.</p>
+                
+                <div class="cathode">
+                    <h4>At the <span class="electrode cathode-label">cathode (–)</span>:</h4>
+                    <p>Sodium ions gain electrons: <span class="equation">Na<sup>+</sup> + e<sup>−</sup> → Na</span></p>
+                </div>
+                
+                <div class="anode">
+                    <h4>At the <span class="electrode anode-label">anode (+)</span>:</h4>
+                    <p>Chloride ions lose electrons: <span class="equation">2Cl<sup>−</sup> → Cl<sub>2</sub> + 2e<sup>−</sup></span></p>
+                </div>
+            </div>
+            
+            <h3>Practice Questions: Molten Compounds</h3>
+            
+            <div class="cathode">
+                <h4>At the <span class="electrode cathode-label">cathode (–)</span>:</h4>
+                
+                <div class="question" id="molten-cathode-1">
+                    <p>1. Write the half-equation for the cathode reaction in molten potassium chloride (KCl).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="mc1-coef1" maxlength="1">
+                        <span class="equation-text">K<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="mc1-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="mc1-coef3" maxlength="1">
+                        <span class="equation-text">K</span>
+                    </div>
+                    <button onclick="checkAnswer('molten-cathode-1')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-cathode-1')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Think about which ion is positive in KCl. At the cathode, positive ions gain electrons.</div>
+                </div>
+                
+                <div class="question" id="molten-cathode-2">
+                    <p>2. Write the half-equation for the cathode reaction in molten calcium oxide (CaO).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="mc2-coef1" maxlength="1">
+                        <span class="equation-text">Ca<sup>2+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="mc2-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="mc2-coef3" maxlength="1">
+                        <span class="equation-text">Ca</span>
+                    </div>
+                    <button onclick="checkAnswer('molten-cathode-2')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-cathode-2')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">In CaO, calcium forms Ca²⁺ ions. Remember that the charge determines how many electrons are needed.</div>
+                </div>
+                
+                <div class="question" id="molten-cathode-3">
+                    <p>3. Write the half-equation for the cathode reaction in molten aluminium oxide (Al₂O₃).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="mc3-coef1" maxlength="1">
+                        <span class="equation-text">Al<sup>3+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="mc3-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="mc3-coef3" maxlength="1">
+                        <span class="equation-text">Al</span>
+                    </div>
+                    <button onclick="checkAnswer('molten-cathode-3')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-cathode-3')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Aluminium forms Al³⁺ ions. The number of electrons needed equals the charge on the ion.</div>
+                </div>
+                
+                <div class="question" id="molten-cathode-4">
+                    <p>4. Write the half-equation for the cathode reaction in molten lithium fluoride (LiF).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="mc4-coef1" maxlength="1">
+                        <span class="equation-text">Li<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="mc4-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="mc4-coef3" maxlength="1">
+                        <span class="equation-text">Li</span>
+                    </div>
+                    <button onclick="checkAnswer('molten-cathode-4')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-cathode-4')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Lithium forms Li⁺ ions. At the cathode, these positive ions gain electrons.</div>
+                </div>
+                
+                <div class="question" id="molten-cathode-5">
+                    <p>5. Write the half-equation for the cathode reaction in molten magnesium bromide (MgBr₂).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="mc5-coef1" maxlength="1">
+                        <span class="equation-text">Mg<sup>2+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="mc5-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="mc5-coef3" maxlength="1">
+                        <span class="equation-text">Mg</span>
+                    </div>
+                    <button onclick="checkAnswer('molten-cathode-5')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-cathode-5')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Magnesium forms Mg²⁺ ions. The charge tells you how many electrons are needed.</div>
+                </div>
+            </div>
+            
+            <div class="anode">
+                <h4>At the <span class="electrode anode-label">anode (+)</span>:</h4>
+                
+                <div class="question" id="molten-anode-1">
+                    <p>1. Write the half-equation for the anode reaction in molten potassium iodide (KI).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="ma1-coef1" maxlength="1">
+                        <span class="equation-text">I<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ma1-coef2" maxlength="3">
+                        <span class="equation-text">I<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="ma1-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                    </div>
+                    <button onclick="checkAnswer('molten-anode-1')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-anode-1')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Iodide ions (I⁻) are negative and lose electrons at the anode. Remember that halide ions (like I⁻) form diatomic molecules (I₂).</div>
+                </div>
+                
+                <div class="question" id="molten-anode-2">
+                    <p>2. Write the half-equation for the anode reaction in molten sodium bromide (NaBr).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="ma2-coef1" maxlength="1">
+                        <span class="equation-text">Br<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ma2-coef2" maxlength="3">
+                        <span class="equation-text">Br<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="ma2-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                    </div>
+                    <button onclick="checkAnswer('molten-anode-2')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-anode-2')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Bromide ions (Br⁻) lose electrons at the anode. Remember that halides form diatomic molecules (Br₂).</div>
+                </div>
+                
+                <div class="question" id="molten-anode-3">
+                    <p>3. Write the half-equation for the anode reaction in molten zinc chloride (ZnCl₂).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="ma3-coef1" maxlength="1">
+                        <span class="equation-text">Cl<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ma3-coef2" maxlength="3">
+                        <span class="equation-text">Cl<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="ma3-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                    </div>
+                    <button onclick="checkAnswer('molten-anode-3')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-anode-3')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Chloride ions (Cl⁻) lose electrons at the anode to form chlorine gas (Cl₂).</div>
+                </div>
+                
+                <div class="question" id="molten-anode-4">
+                    <p>4. Write the half-equation for the anode reaction in molten copper(II) oxide (CuO).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="ma4-coef1" maxlength="1">
+                        <span class="equation-text">O<sup>2-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ma4-coef2" maxlength="3">
+                        <span class="equation-text">O<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="ma4-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                    </div>
+                    <button onclick="checkAnswer('molten-anode-4')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-anode-4')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Oxide ions (O²⁻) lose electrons at the anode to form oxygen gas (O₂).</div>
+                </div>
+                
+                <div class="question" id="molten-anode-5">
+                    <p>5. Write the half-equation for the anode reaction in molten iron(III) fluoride (FeF₃).</p>
+                    <div class="equation-container">
+                        <input type="text" class="coefficient-input" id="ma5-coef1" maxlength="1">
+                        <span class="equation-text">F<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ma5-coef2" maxlength="3">
+                        <span class="equation-text">F<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="ma5-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                    </div>
+                    <button onclick="checkAnswer('molten-anode-5')">Check Answer</button>
+                    <button class="hint-btn" onclick="showHint('molten-anode-5')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Fluoride ions (F⁻) lose electrons at the anode. Remember that halogens form diatomic molecules (F₂).</div>
+                </div>
+            </div>
+            
+            <div class="section-nav">
+                <button onclick="showSection('intro-section')">← Back to Introduction</button>
+                <button onclick="showSection('aqueous-section')">Continue to Aqueous Solutions →</button>
+            </div>
+        </div>
+        
+        <!-- Aqueous Solutions Section -->
+        <div class="section" id="aqueous-section">
+            <h2>Writing Half-Equations for Aqueous Solutions</h2>
+            
+            <div class="explanation">
+                <p>In <strong>aqueous solutions</strong>, water (H₂O) introduces additional ions and complications. The reactivity of ions determines which will discharge at each electrode.</p>
+                
+                <div class="cathode">
+                    <h3>At the <span class="electrode cathode-label">cathode (–)</span>:</h3>
+                    <p>There is competition between metal ions and hydrogen ions (from water):</p>
+                    <ul>
+                        <li>If metal ions are <strong>less reactive than hydrogen</strong> (e.g., Cu, Ag), they will discharge: <span class="equation">Cu<sup>2+</sup> + 2e<sup>−</sup> → Cu</span></li>
+                        <li>If metal ions are <strong>more reactive than hydrogen</strong> (e.g., Na, K, Ca), hydrogen gas will form instead: <span class="equation">2H<sup>+</sup> + 2e<sup>−</sup> → H<sub>2</sub></span></li>
+                    </ul>
+                </div>
+                
+                <div class="anode">
+                    <h3>At the <span class="electrode anode-label">anode (+)</span>:</h3>
+                    <p>There is competition between other negative ions and hydroxide ions (from water):</p>
+                    <ul>
+                        <li>If halide ions (Cl⁻, Br⁻, I⁻) are present, they will discharge: <span class="equation">2Cl<sup>−</sup> → Cl<sub>2</sub> + 2e<sup>−</sup></span></li>
+                        <li>If no halide ions are present, hydroxide ions discharge: <span class="equation">4OH<sup>−</sup> → O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>−</sup></span></li>
+                    </ul>
+                </div>
+                
+                <h3>Reactivity Series for Metals</h3>
+                <p>This simplified reactivity series will help you determine if a metal will discharge at the cathode:</p>
+                <table>
+                    <tr>
+                        <th>Most Reactive<br>(Will NOT discharge)</th>
+                        <td>Potassium (K)</td>
+                        <td>Sodium (Na)</td>
+                        <td>Calcium (Ca)</td>
+                        <td>Magnesium (Mg)</td>
+                        <td>Aluminium (Al)</td>
+                        <td>Zinc (Zn)</td>
+                        <td>Iron (Fe)</td>
+                    </tr>
+                    <tr>
+                        <th>Hydrogen</th>
+                        <td colspan="7" style="text-align: center;">Reference point</td>
+                    </tr>
+                    <tr>
+                        <th>Least Reactive<br>(WILL discharge)</th>
+                        <td>Lead (Pb)</td>
+                        <td>Copper (Cu)</td>
+                        <td>Silver (Ag)</td>
+                        <td>Gold (Au)</td>
+                        <td>Platinum (Pt)</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="example">
+                <h3>Worked Example: Aqueous Sodium Chloride (NaCl)</h3>
+                <p>In aqueous NaCl, we have Na<sup>+</sup>, Cl<sup>−</sup>, H<sup>+</sup>, and OH<sup>−</sup> ions.</p>
+                
+                <div class="cathode">
+                    <h4>At the <span class="electrode cathode-label">cathode (–)</span>:</h4>
+                    <p>Sodium is more reactive than hydrogen, so hydrogen ions are discharged instead of sodium:</p>
+                    <p><span class="equation">2H<sup>+</sup> + 2e<sup>−</sup> → H<sub>2</sub></span></p>
+                </div>
+                
+                <div class="anode">
+                    <h4>At the <span class="electrode anode-label">anode (+)</span>:</h4>
+                    <p>Chloride ions are present (a halide), so they discharge:</p>
+                    <p><span class="equation">2Cl<sup>−</sup> → Cl<sub>2</sub> + 2e<sup>−</sup></span></p>
+                </div>
+            </div>
+            
+            <h3>Practice Questions: Aqueous Solutions</h3>
+            
+            <div class="cathode">
+                <h4>At the <span class="electrode cathode-label">cathode (–)</span>:</h4>
+                
+                <div class="question" id="aqueous-cathode-1">
+                    <p>1. Write the half-equation for the cathode reaction in aqueous copper(II) sulfate (CuSO₄).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the cathode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="ac1-product" value="metal"> Copper metal (Cu) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="ac1-product" value="hydrogen"> Hydrogen gas (H₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-cathode-1')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="ac1-equation-container">
+                        <input type="text" class="coefficient-input" id="ac1-coef1" maxlength="1">
+                        <span class="equation-text">Cu<sup>2+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="ac1-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ac1-coef3" maxlength="1">
+                        <span class="equation-text">Cu</span>
+                        <button onclick="checkAnswer('aqueous-cathode-1')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-cathode-1')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Copper is less reactive than hydrogen, so copper ions will discharge at the cathode.</div>
+                </div>
+                
+                <div class="question" id="aqueous-cathode-2">
+                    <p>2. Write the half-equation for the cathode reaction in aqueous sodium nitrate (NaNO₃).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the cathode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="ac2-product" value="metal"> Sodium metal (Na) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="ac2-product" value="hydrogen"> Hydrogen gas (H₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-cathode-2')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="ac2-equation-container">
+                        <input type="text" class="coefficient-input" id="ac2-coef1" maxlength="1">
+                        <span class="equation-text">H<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="ac2-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ac2-coef3" maxlength="1">
+                        <span class="equation-text">H<sub>2</sub></span>
+                        <button onclick="checkAnswer('aqueous-cathode-2')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-cathode-2')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Sodium is more reactive than hydrogen, so hydrogen ions will discharge at the cathode instead of sodium.</div>
+                </div>
+                
+                <div class="question" id="aqueous-cathode-3">
+                    <p>3. Write the half-equation for the cathode reaction in aqueous silver nitrate (AgNO₃).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the cathode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="ac3-product" value="metal"> Silver metal (Ag) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="ac3-product" value="hydrogen"> Hydrogen gas (H₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-cathode-3')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="ac3-equation-container">
+                        <input type="text" class="coefficient-input" id="ac3-coef1" maxlength="1">
+                        <span class="equation-text">Ag<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="ac3-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ac3-coef3" maxlength="1">
+                        <span class="equation-text">Ag</span>
+                        <button onclick="checkAnswer('aqueous-cathode-3')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-cathode-3')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Silver is less reactive than hydrogen, so silver ions will discharge at the cathode.</div>
+                </div>
+                
+                <div class="question" id="aqueous-cathode-4">
+                    <p>4. Write the half-equation for the cathode reaction in aqueous calcium chloride (CaCl₂).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the cathode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="ac4-product" value="metal"> Calcium metal (Ca) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="ac4-product" value="hydrogen"> Hydrogen gas (H₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-cathode-4')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="ac4-equation-container">
+                        <input type="text" class="coefficient-input" id="ac4-coef1" maxlength="1">
+                        <span class="equation-text">H<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="ac4-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ac4-coef3" maxlength="1">
+                        <span class="equation-text">H<sub>2</sub></span>
+                        <button onclick="checkAnswer('aqueous-cathode-4')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-cathode-4')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Calcium is more reactive than hydrogen, so hydrogen ions will discharge at the cathode instead of calcium.</div>
+                </div>
+                
+                <div class="question" id="aqueous-cathode-5">
+                    <p>5. Write the half-equation for the cathode reaction in aqueous potassium sulfate (K₂SO₄).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the cathode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="ac5-product" value="metal"> Potassium metal (K) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="ac5-product" value="hydrogen"> Hydrogen gas (H₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-cathode-5')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="ac5-equation-container">
+                        <input type="text" class="coefficient-input" id="ac5-coef1" maxlength="1">
+                        <span class="equation-text">H<sup>+</sup> + </span>
+                        <input type="text" class="coefficient-input" id="ac5-coef2" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="ac5-coef3" maxlength="1">
+                        <span class="equation-text">H<sub>2</sub></span>
+                        <button onclick="checkAnswer('aqueous-cathode-5')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-cathode-5')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Potassium is more reactive than hydrogen, so hydrogen ions will discharge at the cathode instead of potassium.</div>
+                </div>
+            </div>
+            
+            <div class="anode">
+                <h4>At the <span class="electrode anode-label">anode (+)</span>:</h4>
+                
+                <div class="question" id="aqueous-anode-1">
+                    <p>1. Write the half-equation for the anode reaction in aqueous sodium chloride (NaCl).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the anode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="aa1-product" value="halogen"> Chlorine gas (Cl₂) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="aa1-product" value="oxygen"> Oxygen gas (O₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-anode-1')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="aa1-equation-container">
+                        <input type="text" class="coefficient-input" id="aa1-coef1" maxlength="1">
+                        <span class="equation-text">Cl<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="aa1-coef2" maxlength="3">
+                        <span class="equation-text">Cl<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="aa1-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                        <button onclick="checkAnswer('aqueous-anode-1')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-anode-1')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Chloride ions are halide ions, which discharge preferentially at the anode.</div>
+                </div>
+                
+                <div class="question" id="aqueous-anode-2">
+                    <p>2. Write the half-equation for the anode reaction in aqueous potassium iodide (KI).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the anode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="aa2-product" value="halogen"> Iodine (I₂) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="aa2-product" value="oxygen"> Oxygen gas (O₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-anode-2')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="aa2-equation-container">
+                        <input type="text" class="coefficient-input" id="aa2-coef1" maxlength="1">
+                        <span class="equation-text">I<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="aa2-coef2" maxlength="3">
+                        <span class="equation-text">I<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="aa2-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                        <button onclick="checkAnswer('aqueous-anode-2')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-anode-2')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Iodide ions are halide ions, which discharge preferentially at the anode.</div>
+                </div>
+                
+                <div class="question" id="aqueous-anode-3">
+                    <p>3. Write the half-equation for the anode reaction in aqueous copper(II) sulfate (CuSO₄).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the anode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="aa3-product" value="halogen"> Sulfur or sulfur compounds will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="aa3-product" value="oxygen"> Oxygen gas (O₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-anode-3')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="aa3-equation-container">
+                        <input type="text" class="coefficient-input" id="aa3-coef1" maxlength="1">
+                        <span class="equation-text">OH<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="aa3-coef2" maxlength="3">
+                        <span class="equation-text">O<sub>2</sub> + 2H<sub>2</sub>O + </span>
+                        <input type="text" class="coefficient-input" id="aa3-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                        <button onclick="checkAnswer('aqueous-anode-3')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-anode-3')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Sulfate ions do not discharge at the anode. Instead, hydroxide ions from water discharge when no halide ions are present.</div>
+                </div>
+                
+                <div class="question" id="aqueous-anode-4">
+                    <p>4. Write the half-equation for the anode reaction in aqueous magnesium nitrate (Mg(NO₃)₂).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the anode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="aa4-product" value="halogen"> Nitrogen compounds will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="aa4-product" value="oxygen"> Oxygen gas (O₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-anode-4')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="aa4-equation-container">
+                        <input type="text" class="coefficient-input" id="aa4-coef1" maxlength="1">
+                        <span class="equation-text">OH<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="aa4-coef2" maxlength="3">
+                        <span class="equation-text">O<sub>2</sub> + 2H<sub>2</sub>O + </span>
+                        <input type="text" class="coefficient-input" id="aa4-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                        <button onclick="checkAnswer('aqueous-anode-4')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-anode-4')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Nitrate ions do not discharge at the anode. Instead, hydroxide ions from water discharge when no halide ions are present.</div>
+                </div>
+                
+                <div class="question" id="aqueous-anode-5">
+                    <p>5. Write the half-equation for the anode reaction in aqueous lithium bromide (LiBr).</p>
+                    
+                    <div class="selection-container">
+                        <p>First, decide what will be produced at the anode:</p>
+                        <div class="equation-options">
+                            <label class="equation-option">
+                                <input type="radio" name="aa5-product" value="halogen"> Bromine (Br₂) will form
+                            </label>
+                            <label class="equation-option">
+                                <input type="radio" name="aa5-product" value="oxygen"> Oxygen gas (O₂) will form
+                            </label>
+                        </div>
+                        <button onclick="checkSelection('aqueous-anode-5')">Check Selection</button>
+                        <div class="selection-feedback"></div>
+                    </div>
+                    
+                    <div class="equation-container hidden" id="aa5-equation-container">
+                        <input type="text" class="coefficient-input" id="aa5-coef1" maxlength="1">
+                        <span class="equation-text">Br<sup>-</sup> → </span>
+                        <input type="text" class="coefficient-input" id="aa5-coef2" maxlength="3">
+                        <span class="equation-text">Br<sub>2</sub> + </span>
+                        <input type="text" class="coefficient-input" id="aa5-coef3" maxlength="1">
+                        <span class="equation-text">e<sup>-</sup></span>
+                        <button onclick="checkAnswer('aqueous-anode-5')">Check Answer</button>
+                    </div>
+                    
+                    <button class="hint-btn" onclick="showHint('aqueous-anode-5')">Hint</button>
+                    <div class="feedback"></div>
+                    <div class="hint">Bromide ions are halide ions, which discharge preferentially at the anode.</div>
+                </div>
+            </div>
+            
+            <div class="section-nav">
+                <button onclick="showSection('molten-section')">← Back to Molten Compounds</button>
+                <button onclick="showSection('mixed-section')">Continue to Mixed Practice →</button>
+            </div>
+        </div>
+        
+        <!-- Mixed Practice Section -->
+        <div class="section" id="mixed-section">
+            <h2>Mixed Practice: Understanding Both Situations</h2>
+            
+            <p>Now let's apply what we've learned to a mixed set of questions. For each question, you need to:</p>
+            <ol>
+                <li>Identify if the compound is molten or aqueous</li>
+                <li>Determine which ions will discharge at the specified electrode</li>
+                <li>Write the correct half-equation</li>
+            </ol>
+            
+            <div class="question" id="mixed-1">
+                <p>1. Write the half-equation for the <span class="electrode cathode-label">cathode (–)</span> reaction in <strong>molten</strong> calcium bromide (CaBr₂).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi1-coef1" maxlength="1">
+                    <span class="equation-text">Ca<sup>2+</sup> + </span>
+                    <input type="text" class="coefficient-input" id="mi1-coef2" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi1-coef3" maxlength="1">
+                    <span class="equation-text">Ca</span>
+                </div>
+                <button onclick="checkAnswer('mixed-1')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-1')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">In molten CaBr₂, calcium ions (Ca²⁺) will gain electrons at the cathode.</div>
+            </div>
+            
+            <div class="question" id="mixed-2">
+                <p>2. Write the half-equation for the <span class="electrode anode-label">anode (+)</span> reaction in <strong>aqueous</strong> copper(II) chloride (CuCl₂).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi2-coef1" maxlength="1">
+                    <span class="equation-text">Cl<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi2-coef2" maxlength="3">
+                    <span class="equation-text">Cl<sub>2</sub> + </span>
+                    <input type="text" class="coefficient-input" id="mi2-coef3" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup></span>
+                </div>
+                <button onclick="checkAnswer('mixed-2')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-2')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">Chloride ions are halide ions, which discharge preferentially at the anode in aqueous solutions.</div>
+            </div>
+            
+            <div class="question" id="mixed-3">
+                <p>3. Write the half-equation for the <span class="electrode cathode-label">cathode (–)</span> reaction in <strong>aqueous</strong> potassium iodide (KI).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi3-coef1" maxlength="1">
+                    <span class="equation-text">H<sup>+</sup> + </span>
+                    <input type="text" class="coefficient-input" id="mi3-coef2" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi3-coef3" maxlength="1">
+                    <span class="equation-text">H<sub>2</sub></span>
+                </div>
+                <button onclick="checkAnswer('mixed-3')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-3')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">Potassium is more reactive than hydrogen, so hydrogen ions will discharge at the cathode instead of potassium in an aqueous solution.</div>
+            </div>
+            
+            <div class="question" id="mixed-4">
+                <p>4. Write the half-equation for the <span class="electrode anode-label">anode (+)</span> reaction in <strong>molten</strong> magnesium fluoride (MgF₂).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi4-coef1" maxlength="1">
+                    <span class="equation-text">F<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi4-coef2" maxlength="3">
+                    <span class="equation-text">F<sub>2</sub> + </span>
+                    <input type="text" class="coefficient-input" id="mi4-coef3" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup></span>
+                </div>
+                <button onclick="checkAnswer('mixed-4')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-4')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">In molten MgF₂, fluoride ions (F⁻) will lose electrons at the anode.</div>
+            </div>
+            
+            <div class="question" id="mixed-5">
+                <p>5. Write the half-equation for the <span class="electrode cathode-label">cathode (–)</span> reaction in <strong>aqueous</strong> sodium sulfate (Na₂SO₄).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi5-coef1" maxlength="1">
+                    <span class="equation-text">H<sup>+</sup> + </span>
+                    <input type="text" class="coefficient-input" id="mi5-coef2" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi5-coef3" maxlength="1">
+                    <span class="equation-text">H<sub>2</sub></span>
+                </div>
+                <button onclick="checkAnswer('mixed-5')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-5')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">Sodium is more reactive than hydrogen, so hydrogen ions will discharge at the cathode instead of sodium in an aqueous solution.</div>
+            </div>
+            
+            <div class="question" id="mixed-6">
+                <p>6. Write the half-equation for the <span class="electrode anode-label">anode (+)</span> reaction in <strong>aqueous</strong> silver nitrate (AgNO₃).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi6-coef1" maxlength="1">
+                    <span class="equation-text">OH<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi6-coef2" maxlength="3">
+                    <span class="equation-text">O<sub>2</sub> + 2H<sub>2</sub>O + </span>
+                    <input type="text" class="coefficient-input" id="mi6-coef3" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup></span>
+                </div>
+                <button onclick="checkAnswer('mixed-6')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-6')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">There are no halide ions in silver nitrate, so hydroxide ions from water will discharge at the anode.</div>
+            </div>
+            
+            <div class="question" id="mixed-7">
+                <p>7. Write the half-equation for the <span class="electrode cathode-label">cathode (–)</span> reaction in <strong>molten</strong> lithium oxide (Li₂O).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi7-coef1" maxlength="1">
+                    <span class="equation-text">Li<sup>+</sup> + </span>
+                    <input type="text" class="coefficient-input" id="mi7-coef2" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi7-coef3" maxlength="1">
+                    <span class="equation-text">Li</span>
+                </div>
+                <button onclick="checkAnswer('mixed-7')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-7')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">In molten Li₂O, lithium ions (Li⁺) will gain electrons at the cathode.</div>
+            </div>
+            
+            <div class="question" id="mixed-8">
+                <p>8. Write the half-equation for the <span class="electrode anode-label">anode (+)</span> reaction in <strong>aqueous</strong> potassium bromide (KBr).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi8-coef1" maxlength="1">
+                    <span class="equation-text">Br<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi8-coef2" maxlength="3">
+                    <span class="equation-text">Br<sub>2</sub> + </span>
+                    <input type="text" class="coefficient-input" id="mi8-coef3" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup></span>
+                </div>
+                <button onclick="checkAnswer('mixed-8')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-8')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">Bromide ions are halide ions, which discharge preferentially at the anode in aqueous solutions.</div>
+            </div>
+            
+            <div class="question" id="mixed-9">
+                <p>9. Write the half-equation for the <span class="electrode cathode-label">cathode (–)</span> reaction in <strong>aqueous</strong> copper(II) sulfate (CuSO₄).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi9-coef1" maxlength="1">
+                    <span class="equation-text">Cu<sup>2+</sup> + </span>
+                    <input type="text" class="coefficient-input" id="mi9-coef2" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi9-coef3" maxlength="1">
+                    <span class="equation-text">Cu</span>
+                </div>
+                <button onclick="checkAnswer('mixed-9')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-9')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">Copper is less reactive than hydrogen, so copper ions will discharge at the cathode in an aqueous solution.</div>
+            </div>
+            
+            <div class="question" id="mixed-10">
+                <p>10. Write the half-equation for the <span class="electrode anode-label">anode (+)</span> reaction in <strong>molten</strong> aluminium oxide (Al₂O₃).</p>
+                <div class="equation-container">
+                    <input type="text" class="coefficient-input" id="mi10-coef1" maxlength="1">
+                    <span class="equation-text">O<sup>2-</sup> → </span>
+                    <input type="text" class="coefficient-input" id="mi10-coef2" maxlength="3">
+                    <span class="equation-text">O<sub>2</sub> + </span>
+                    <input type="text" class="coefficient-input" id="mi10-coef3" maxlength="1">
+                    <span class="equation-text">e<sup>-</sup></span>
+                </div>
+                <button onclick="checkAnswer('mixed-10')">Check Answer</button>
+                <button class="hint-btn" onclick="showHint('mixed-10')">Hint</button>
+                <div class="feedback"></div>
+                <div class="hint">In molten Al₂O₃, oxide ions (O²⁻) will lose electrons at the anode to form oxygen gas.</div>
+            </div>
+            
+            <div class="completion-message" id="completion-message">
+                <h3>Excellent work! You've completed all the questions.</h3>
+                <p>Your understanding of half-equations in electrolysis is really coming along. Keep practicing!</p>
+            </div>
+            
+            <div class="section-nav">
+                <button onclick="showSection('aqueous-section')">← Back to Aqueous Solutions</button>
+                <button onclick="showSection('summary-section')">Continue to Summary →</button>
+            </div>
+        </div>
+        
+        <!-- Summary Section -->
+        <div class="section" id="summary-section">
+            <h2>Summary: Writing Half-Equations for Electrolysis</h2>
+            
+            <div class="summary">
+                <h3>Key Points to Remember</h3>
+                
+                <h4>1. Electrodes</h4>
+                <ul>
+                    <li><span class="electrode cathode-label">Cathode (–)</span>: Negative electrode where <strong>reduction</strong> occurs (gain of electrons)</li>
+                    <li><span class="electrode anode-label">Anode (+)</span>: Positive electrode where <strong>oxidation</strong> occurs (loss of electrons)</li>
+                </ul>
+                
+                <h4>2. Molten Ionic Compounds</h4>
+                <div class="cathode">
+                    <p><strong>At the cathode:</strong> Metal ions gain electrons</p>
+                    <p>General equation: <span class="equation">M<sup>n+</sup> + ne<sup>−</sup> → M</span></p>
+                </div>
+                <div class="anode">
+                    <p><strong>At the anode:</strong> Non-metal ions lose electrons</p>
+                    <p>General equation: <span class="equation">2X<sup>−</sup> → X<sub>2</sub> + 2e<sup>−</sup></span> (for halides)</p>
+                    <p>General equation: <span class="equation">2O<sup>2−</sup> → O<sub>2</sub> + 4e<sup>−</sup></span> (for oxides)</p>
+                </div>
+                
+                <h4>3. Aqueous Solutions</h4>
+                <div class="cathode">
+                    <p><strong>At the cathode:</strong> Competition between metal ions and H<sup>+</sup> from water</p>
+                    <ul>
+                        <li>If metal is <strong>less reactive</strong> than hydrogen: <span class="equation">M<sup>n+</sup> + ne<sup>−</sup> → M</span></li>
+                        <li>If metal is <strong>more reactive</strong> than hydrogen: <span class="equation">2H<sup>+</sup> + 2e<sup>−</sup> → H<sub>2</sub></span></li>
+                    </ul>
+                </div>
+                <div class="anode">
+                    <p><strong>At the anode:</strong> Competition between anions and OH<sup>−</sup> from water</p>
+                    <ul>
+                        <li>If halide ions are present: <span class="equation">2X<sup>−</sup> → X<sub>2</sub> + 2e<sup>−</sup></span></li>
+                        <li>If no halide ions are present: <span class="equation">4OH<sup>−</sup> → O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>−</sup></span></li>
+                    </ul>
+                </div>
+                
+                <h4>4. Steps for Writing Half-Equations</h4>
+                <ol>
+                    <li>Identify if the compound is <strong>molten</strong> or in <strong>aqueous</strong> solution</li>
+                    <li>Determine which electrode you're writing for (<span class="electrode cathode-label">cathode</span> or <span class="electrode anode-label">anode</span>)</li>
+                    <li>For <strong>molten compounds</strong>: Identify the ions present and write equations accordingly</li>
+                    <li>For <strong>aqueous solutions</strong>: Consider reactivity and competition from water</li>
+                    <li>Balance the half-equation by ensuring charge and atoms are balanced on both sides</li>
+                </ol>
+                
+                <h4>5. Common Mistakes to Avoid</h4>
+                <ul>
+                    <li>Forgetting to include electrons in the half-equation</li>
+                    <li>Putting electrons on the wrong side (they're gained at the cathode, lost at the anode)</li>
+                    <li>Incorrect number of electrons in the equation</li>
+                    <li>Not accounting for the state of the compound (molten vs. aqueous)</li>
+                    <li>Overlooking the reactivity series when dealing with aqueous solutions</li>
+                </ul>
+            </div>
+            
+            <button onclick="resetLesson()">Restart Lesson</button>
+        </div>
+    </div>
+    
+    <script>
+        // Define the correct selections
+        const correctSelections = {
+            'aqueous-cathode-1': 'metal',    // Copper
+            'aqueous-cathode-2': 'hydrogen', // Sodium
+            'aqueous-cathode-3': 'metal',    // Silver
+            'aqueous-cathode-4': 'hydrogen', // Calcium
+            'aqueous-cathode-5': 'hydrogen', // Potassium
+            'aqueous-anode-1': 'halogen',    // Chloride
+            'aqueous-anode-2': 'halogen',    // Iodide
+            'aqueous-anode-3': 'oxygen',     // Sulfate
+            'aqueous-anode-4': 'oxygen',     // Nitrate
+            'aqueous-anode-5': 'halogen'     // Bromide
+        };
+        
+        // Check the selected product
+        function checkSelection(questionId) {
+            const prefix = questionId.replace(/-/g, '');
+            const selectionContainer = document.querySelector(`#${questionId} .selection-container`);
+            const selectionFeedback = selectionContainer.querySelector('.selection-feedback');
+            const equationContainer = document.getElementById(`${prefix.substring(0, 2)}${questionId.split('-').pop()}-equation-container`);
+            
+            // Get the selected option
+            const selectedOption = document.querySelector(`input[name="${prefix.substring(0, 2)}${questionId.split('-').pop()}-product"]:checked`);
+            
+            if (!selectedOption) {
+                selectionFeedback.innerHTML = '<p>Please select an option.</p>';
+                selectionFeedback.className = 'feedback incorrect';
+                selectionFeedback.style.display = 'block';
+                return;
+            }
+            
+            const selectedValue = selectedOption.value;
+            const correctValue = correctSelections[questionId];
+            
+            if (selectedValue === correctValue) {
+                selectionFeedback.innerHTML = '<p>✓ Correct! Now complete the half-equation.</p>';
+                selectionFeedback.className = 'feedback correct';
+                equationContainer.classList.remove('hidden');
+            } else {
+                selectionFeedback.innerHTML = '<p>✗ Not correct. Check the reactivity series or presence of halide ions.</p>';
+                selectionFeedback.className = 'feedback incorrect';
+                equationContainer.classList.add('hidden');
+            }
+            
+            selectionFeedback.style.display = 'block';
+        }
+        
+        // Define the correct answers as coefficient arrays
+        const correctAnswers = {
+            // Molten Compounds - Cathode
+            'molten-cathode-1': { coef1: "1", coef2: "1", coef3: "1" },
+            'molten-cathode-2': { coef1: "1", coef2: "2", coef3: "1" },
+            'molten-cathode-3': { coef1: "1", coef2: "3", coef3: "1" },
+            'molten-cathode-4': { coef1: "1", coef2: "1", coef3: "1" },
+            'molten-cathode-5': { coef1: "1", coef2: "2", coef3: "1" },
+            
+            // Molten Compounds - Anode
+            'molten-anode-1': { coef1: "2", coef2: "1", coef3: "2" },
+            'molten-anode-2': { coef1: "2", coef2: "1", coef3: "2" },
+            'molten-anode-3': { coef1: "2", coef2: "1", coef3: "2" },
+            'molten-anode-4': { coef1: "2", coef2: "1", coef3: "4" },
+            'molten-anode-5': { coef1: "2", coef2: "1", coef3: "2" },
+            
+            // Aqueous Solutions - Cathode
+            'aqueous-cathode-1': { coef1: "1", coef2: "2", coef3: "1" },
+            'aqueous-cathode-2': { coef1: "2", coef2: "2", coef3: "1" },
+            'aqueous-cathode-3': { coef1: "1", coef2: "1", coef3: "1" },
+            'aqueous-cathode-4': { coef1: "2", coef2: "2", coef3: "1" },
+            'aqueous-cathode-5': { coef1: "2", coef2: "2", coef3: "1" },
+            
+            // Aqueous Solutions - Anode
+            'aqueous-anode-1': { coef1: "2", coef2: "1", coef3: "2" },
+            'aqueous-anode-2': { coef1: "2", coef2: "1", coef3: "2" },
+            'aqueous-anode-3': { coef1: "4", coef2: "1", coef3: "4" },
+            'aqueous-anode-4': { coef1: "4", coef2: "1", coef3: "4" },
+            'aqueous-anode-5': { coef1: "2", coef2: "1", coef3: "2" },
+            
+            // Mixed Practice
+            'mixed-1': { coef1: "1", coef2: "2", coef3: "1" },
+            'mixed-2': { coef1: "2", coef2: "1", coef3: "2" },
+            'mixed-3': { coef1: "2", coef2: "2", coef3: "1" },
+            'mixed-4': { coef1: "2", coef2: "1", coef3: "2" },
+            'mixed-5': { coef1: "2", coef2: "2", coef3: "1" },
+            'mixed-6': { coef1: "4", coef2: "1", coef3: "4" },
+            'mixed-7': { coef1: "1", coef2: "1", coef3: "1" },
+            'mixed-8': { coef1: "2", coef2: "1", coef3: "2" },
+            'mixed-9': { coef1: "1", coef2: "2", coef3: "1" },
+            'mixed-10': { coef1: "2", coef2: "1", coef3: "4" }
+        };
+        
+        // Track completed questions
+        const completedQuestions = {};
+        let totalQuestions = 0;
+        let correctQuestions = 0;
+        
+        // Count total questions
+        function countTotalQuestions() {
+            totalQuestions = Object.keys(correctAnswers).length;
+            updateProgress();
+        }
+        
+        // Check the user's answer
+        function checkAnswer(questionId) {
+            const feedbackElement = document.querySelector(`#${questionId} .feedback`);
+            const correctAnswer = correctAnswers[questionId];
+            
+            // Extract ID prefix for the input fields
+            let prefix;
+            if (questionId.startsWith('molten-cathode')) {
+                prefix = 'mc';
+            } else if (questionId.startsWith('molten-anode')) {
+                prefix = 'ma';
+            } else if (questionId.startsWith('aqueous-cathode')) {
+                prefix = 'ac';
+            } else if (questionId.startsWith('aqueous-anode')) {
+                prefix = 'aa';
+            } else if (questionId.startsWith('mixed')) {
+                prefix = 'mi';
+            }
+            
+            // Get the question number
+            const number = questionId.includes('-') ? questionId.split('-').pop() : questionId;
+            
+            // Get the user's coefficients
+            const userCoef1 = document.getElementById(`${prefix}${number}-coef1`).value.trim();
+            const userCoef2 = document.getElementById(`${prefix}${number}-coef2`).value.trim();
+            const userCoef3 = document.getElementById(`${prefix}${number}-coef3`).value.trim();
+            
+            // Check if all coefficients match
+            const isCorrect = (
+                userCoef1 === correctAnswer.coef1 &&
+                userCoef2 === correctAnswer.coef2 &&
+                userCoef3 === correctAnswer.coef3
+            );
+            
+            if (isCorrect) {
+                feedbackElement.innerHTML = `<p>✓ Correct! Well done.</p>`;
+                feedbackElement.className = 'feedback correct';
+                
+                // Mark as completed if not already
+                if (!completedQuestions[questionId]) {
+                    completedQuestions[questionId] = true;
+                    correctQuestions++;
+                    updateProgress();
+                    checkAllCompleted();
+                }
+            } else {
+                feedbackElement.innerHTML = `<p>✗ Not quite right. Try again or use the hint.</p>`;
+                feedbackElement.className = 'feedback incorrect';
+            }
+            
+            feedbackElement.style.display = 'block';
+        }
+        
+        // Show hint for a question
+        function showHint(questionId) {
+            const hintElement = document.querySelector(`#${questionId} .hint`);
+            hintElement.style.display = 'block';
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            const percentage = Math.round((correctQuestions / totalQuestions) * 100);
+            progressBar.style.width = `${percentage}%`;
+            progressBar.textContent = `${percentage}% Complete`;
+        }
+        
+        // Check if all questions are completed
+        function checkAllCompleted() {
+            if (correctQuestions === totalQuestions) {
+                document.getElementById('completion-message').style.display = 'block';
+            }
+        }
+        
+        // Show a specific section
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show the selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active tab
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Find the tab that corresponds to this section and make it active
+            tabs.forEach(tab => {
+                if (tab.getAttribute('onclick').includes(sectionId)) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        // Reset the lesson
+        function resetLesson() {
+            // Clear all inputs
+            const inputs = document.querySelectorAll('.answer-input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            
+            // Hide all feedback
+            const feedbacks = document.querySelectorAll('.feedback');
+            feedbacks.forEach(feedback => {
+                feedback.style.display = 'none';
+            });
+            
+            // Hide all hints
+            const hints = document.querySelectorAll('.hint');
+            hints.forEach(hint => {
+                hint.style.display = 'none';
+            });
+            
+            // Reset progress
+            correctQuestions = 0;
+            Object.keys(completedQuestions).forEach(key => {
+                completedQuestions[key] = false;
+            });
+            updateProgress();
+            
+            // Hide completion message
+            document.getElementById('completion-message').style.display = 'none';
+            
+            // Go to intro section
+            showSection('intro-section');
+        }
+        
+        // Initialize the lesson
+        window.onload = function() {
+            countTotalQuestions();
+            
+            // Set up tab navigation
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const sectionId = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    showSection(sectionId);
+                });
+            });
+        };
+    </script>
+</body>
+</html>
