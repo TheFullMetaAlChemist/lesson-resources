@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Chemistry - Moles Calculations</title>
+    <style>
+        :root {
+            --primary-color: #5c6bc0;
+            --secondary-color: #26a69a;
+            --light-bg: #f5f5f5;
+            --dark-bg: #37474f;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --error-color: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            min-height: calc(100vh - 150px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.2rem 0 0.8rem;
+            color: var(--secondary-color);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .container {
+            margin-bottom: 2rem;
+        }
+        
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: #3f51b5;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #00897b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #388e3c;
+        }
+        
+        .section {
+            display: none;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: #fff8e1;
+            border-left: 4px solid var(--warning-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .formula-box {
+            background-color: #f3e5f5;
+            border: 1px solid #ce93d8;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        .example-box {
+            background-color: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        
+        .calculator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 280px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            display: none;
+        }
+        
+        .calculator.minimized {
+            height: 40px;
+            overflow: hidden;
+        }
+        
+        .calculator-header {
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 0.5rem;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .calculator-body {
+            padding: 1rem;
+        }
+        
+        .calculator-display {
+            width: 100%;
+            height: 50px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 1rem;
+            font-size: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .calc-btn {
+            padding: 0.8rem;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        .calc-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .calc-btn.operator {
+            background-color: #ffcc80;
+        }
+        
+        .calc-btn.equals {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .calc-btn.clear {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .nav-buttons {
+            margin: 1rem 0;
+        }
+        
+        .question-container {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .answer-input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 120px;
+        }
+        
+        .hint {
+            color: var(--secondary-color);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+        
+        .hint-content {
+            display: none;
+            background-color: #e8f5e9;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .feedback.correct {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+        }
+        
+        .feedback.incorrect {
+            background-color: #ffebee;
+            color: var(--error-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .difficulty-selector {
+            margin: 1rem 0;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab-btn.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .calculator-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.7rem;
+            }
+            
+            h3 {
+                font-size: 1.3rem;
+            }
+            
+            main {
+                padding: 1rem;
+            }
+            
+            .calculator {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>GCSE Chemistry: Moles Calculations</h1>
+        <p>A complete interactive guide to understanding and calculating moles</p>
+    </header>
+    
+    <main>
+        <!-- Introduction Section -->
+        <section id="intro" class="section active">
+            <h2>Introduction to Moles</h2>
+            <div class="card">
+                <p>Welcome to this interactive lesson on moles calculations for GCSE Chemistry. This lesson will help you understand the concept of moles and how to perform calculations using moles.</p>
+                
+                <div class="info-box">
+                    <h3>What you will learn:</h3>
+                    <ul>
+                        <li>What a mole is and why it's important in chemistry</li>
+                        <li>How to calculate the number of moles in a given mass</li>
+                        <li>How to calculate mass from the number of moles</li>
+                        <li>The relationship between moles, atoms, and the Avogadro constant</li>
+                    </ul>
+                </div>
+                
+                <h3>Lesson Structure</h3>
+                <p>This lesson is divided into two main sections:</p>
+                
+                <div class="flex-container">
+                    <div class="card">
+                        <h3>Tutorial Mode</h3>
+                        <p>Learn about moles through explanations and worked examples. This section covers all the key concepts and calculations you need to know.</p>
+                        <button class="btn" onclick="showSection('tutorial')">Start Tutorial</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Practice Mode</h3>
+                        <p>Test your understanding with self-checking questions at different difficulty levels. Get instant feedback and hints to help you learn.</p>
+                        <button class="btn btn-secondary" onclick="showSection('practice')">Start Practice</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Game Mode</h3>
+                        <p>Challenge yourself with a fun game to test your mole calculation skills! Earn points, beat the clock, and climb the leaderboard.</p>
+                        <button class="btn" style="background-color: #FF5722;" onclick="showSection('game')">Play Game</button>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <h3>Key Specification Points:</h3>
+                    <ul>
+                        <li>Chemical amounts are measured in moles. The symbol for the unit mole is mol.</li>
+                        <li>The mass of one mole of a substance in grams is numerically equal to its relative formula mass.</li>
+                        <li>One mole of a substance contains the same number of the stated particles (atoms, molecules or ions) as one mole of any other substance.</li>
+                        <li>The number of atoms, molecules or ions in a mole of a given substance is the Avogadro constant (6.02 × 10²³ per mole).</li>
+                        <li>You should be able to use the relative formula mass of a substance to calculate the number of moles in a given mass of that substance and vice versa.</li>
+                    </ul>
+                </div>
+                
+                <p>Ready to learn about moles? Let's get started!</p>
+                <button class="btn" onclick="showSection('tutorial')">Begin Lesson</button>
+            </div>
+        </section>
+        
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="section">
+            <h2>Tutorial: Understanding Moles</h2>
+            
+            <div class="nav-buttons">
+                <button class="btn" onclick="showSection('intro')">Back to Intro</button>
+                <button class="btn btn-secondary" onclick="showSection('practice')">Go to Practice</button>
+            </div>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab('what-is-mole')">What is a Mole?</button>
+                <button class="tab-btn" onclick="openTab('avogadro')">Avogadro Constant</button>
+                <button class="tab-btn" onclick="openTab('calculations')">Mole Calculations</button>
+                <button class="tab-btn" onclick="openTab('worked-examples')">Worked Examples</button>
+            </div>
+            
+            <div id="what-is-mole" class="tab-content active">
+                <h3>What is a Mole?</h3>
+                
+                <div class="info-box">
+                    <p>A <strong>mole</strong> is a unit of measurement in chemistry that represents a specific number of particles (atoms, molecules, ions, etc.).</p>
+                    <p>The symbol for mole is <strong>mol</strong>.</p>
+                </div>
+                
+                <h3>Why Do We Need Moles?</h3>
+                <p>Atoms and molecules are incredibly small. It would be impractical to count them individually or work with their actual masses, which are measured in tiny fractions of grams.</p>
+                
+                <p>To solve this problem, chemists use the concept of a <strong>mole</strong> as a way to:</p>
+                <ul>
+                    <li>Count very large numbers of particles</li>
+                    <li>Convert between the microscopic world of atoms and the macroscopic world we can measure in the lab</li>
+                    <li>Make chemical calculations manageable</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>Analogy: Thinking About Moles</h4>
+                    <p>Think of a mole like a "dozen" - but a very, very large dozen!</p>
+                    <ul>
+                        <li>A dozen = 12 items</li>
+                        <li>A mole = 6.02 × 10²³ items</li>
+                    </ul>
+                    <p>Just as you might buy a dozen eggs or a dozen doughnuts, chemists work with moles of atoms or molecules.</p>
+                </div>
+                
+                <h3>Key Points About Moles</h3>
+                <ul>
+                    <li>One mole of any substance contains exactly the same number of particles</li>
+                    <li>This number is the Avogadro constant: 6.02 × 10²³</li>
+                    <li>The mass of one mole of a substance in grams is equal to its relative formula mass</li>
+                </ul>
+                
+                <p>Let's continue to the next section to learn more about the Avogadro constant.</p>
+                <button class="btn" onclick="openTab('avogadro')">Next: Avogadro Constant</button>
+            </div>
+            
+            <div id="avogadro" class="tab-content">
+                <h3>The Avogadro Constant</h3>
+                
+                <div class="info-box">
+                    <p>The <strong>Avogadro constant</strong> is the number of particles in one mole of a substance.</p>
+                    <p>Its value is 6.02 × 10²³ per mole.</p>
+                </div>
+                
+                <h3>Understanding the Avogadro Constant</h3>
+                <p>The Avogadro constant is named after the Italian scientist Amedeo Avogadro. It represents an incredibly large number:</p>
+                <div class="formula-box">
+                    6.02 × 10²³ = 602,000,000,000,000,000,000,000
+                </div>
+                
+                <p>This means that:</p>
+                <ul>
+                    <li>1 mole of hydrogen atoms contains 6.02 × 10²³ hydrogen atoms</li>
+                    <li>1 mole of water molecules contains 6.02 × 10²³ water molecules</li>
+                    <li>1 mole of sodium ions contains 6.02 × 10²³ sodium ions</li>
+                </ul>
+                
+                <div class="example-box">
+                    <h4>How Big is Avogadro's Number?</h4>
+                    <p>If you had Avogadro's number of standard sized marbles, they would cover the entire Earth to a depth of about 50 miles!</p>
+                </div>
+                
+                <h3>Relative Formula Mass and Moles</h3>
+                <p>The mass of one mole of a substance in grams is equal to its relative formula mass (Mr).</p>
+                
+                <table>
+                    <tr>
+                        <th>Substance</th>
+                        <th>Relative Formula Mass (Mr)</th>
+                        <th>Mass of 1 mole</th>
+                        <th>Number of particles in 1 mole</th>
+                    </tr>
+                    <tr>
+                        <td>Hydrogen (H₂)</td>
+                        <td>2</td>
+                        <td>2g</td>
+                        <td>6.02 × 10²³ molecules</td>
+                    </tr>
+                    <tr>
+                        <td>Oxygen (O₂)</td>
+                        <td>32</td>
+                        <td>32g</td>
+                        <td>6.02 × 10²³ molecules</td>
+                    </tr>
+                    <tr>
+                        <td>Water (H₂O)</td>
+                        <td>18</td>
+                        <td>18g</td>
+                        <td>6.02 × 10²³ molecules</td>
+                    </tr>
+                    <tr>
+                        <td>Sodium chloride (NaCl)</td>
+                        <td>58.5</td>
+                        <td>58.5g</td>
+                        <td>6.02 × 10²³ formula units</td>
+                    </tr>
+                </table>
+                
+                <p>Let's move on to learn how to perform calculations using moles.</p>
+                <button class="btn" onclick="openTab('calculations')">Next: Mole Calculations</button>
+            </div>
+            
+            <div id="calculations" class="tab-content">
+                <h3>Mole Calculations</h3>
+                
+                <h4>The Mole Equation</h4>
+                <p>The most important equation for mole calculations is:</p>
+                
+                <div class="formula-box">
+                    number of moles = mass (g) ÷ relative formula mass
+                </div>
+                
+                <p>This can be rearranged to:</p>
+                
+                <div class="formula-box">
+                    mass (g) = number of moles × relative formula mass
+                </div>
+                
+                <h4>How to Calculate Moles from Mass</h4>
+                <ol>
+                    <li>Identify the substance and find its relative formula mass (Mr)</li>
+                    <li>Measure or note the mass of the substance in grams</li>
+                    <li>Divide the mass by the relative formula mass</li>
+                </ol>
+                
+                <div class="example-box">
+                    <h4>Example: Calculating Moles from Mass</h4>
+                    <p>Calculate the number of moles in 10g of calcium carbonate (CaCO₃).</p>
+                    <p>Relative formula mass of CaCO₃ = 40 + 12 + (3 × 16) = 100</p>
+                    <p>Number of moles = mass ÷ relative formula mass</p>
+                    <p>Number of moles = 10g ÷ 100 = 0.1 mol</p>
+                </div>
+                
+                <h4>How to Calculate Mass from Moles</h4>
+                <ol>
+                    <li>Identify the substance and find its relative formula mass (Mr)</li>
+                    <li>Multiply the number of moles by the relative formula mass</li>
+                </ol>
+                
+                <div class="example-box">
+                    <h4>Example: Calculating Mass from Moles</h4>
+                    <p>Calculate the mass of 0.5 mol of sodium hydroxide (NaOH).</p>
+                    <p>Relative formula mass of NaOH = 23 + 16 + 1 = 40</p>
+                    <p>Mass = number of moles × relative formula mass</p>
+                    <p>Mass = 0.5 mol × 40 = 20g</p>
+                </div>
+                
+                <h4>Calculating Number of Particles</h4>
+                <p>To calculate the number of particles in a substance:</p>
+                <div class="formula-box">
+                    number of particles = number of moles × Avogadro constant
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example: Calculating Number of Particles</h4>
+                    <p>Calculate the number of molecules in 0.25 mol of CO₂.</p>
+                    <p>Number of molecules = number of moles × Avogadro constant</p>
+                    <p>Number of molecules = 0.25 mol × 6.02 × 10²³ = 1.505 × 10²³ molecules</p>
+                </div>
+                
+                <p>Let's look at some more worked examples to solidify your understanding.</p>
+                <button class="btn" onclick="openTab('worked-examples')">Next: Worked Examples</button>
+            </div>
+            
+            <div id="worked-examples" class="tab-content">
+                <h3>Worked Examples</h3>
+                
+                <div class="example-box">
+                    <h4>Example 1: Mass to Moles</h4>
+                    <p><strong>Question:</strong> Calculate the number of moles in 20g of magnesium oxide (MgO).</p>
+                    
+                    <h4>Step 1: Find the relative formula mass (Mr) of MgO</h4>
+                    <p>Mg = 24, O = 16</p>
+                    <p>Mr of MgO = 24 + 16 = 40</p>
+                    
+                    <h4>Step 2: Use the mole equation</h4>
+                    <p>Number of moles = mass ÷ Mr</p>
+                    <p>Number of moles = 20g ÷ 40 = 0.5 mol</p>
+                    
+                    <p><strong>Answer:</strong> There are 0.5 mol of MgO in 20g of magnesium oxide.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 2: Moles to Mass</h4>
+                    <p><strong>Question:</strong> Calculate the mass of 0.25 mol of copper sulfate (CuSO₄).</p>
+                    
+                    <h4>Step 1: Find the relative formula mass (Mr) of CuSO₄</h4>
+                    <p>Cu = 63.5, S = 32, O = 16 (4 atoms)</p>
+                    <p>Mr of CuSO₄ = 63.5 + 32 + (4 × 16) = 63.5 + 32 + 64 = 159.5</p>
+                    
+                    <h4>Step 2: Use the mole equation rearranged for mass</h4>
+                    <p>Mass = number of moles × Mr</p>
+                    <p>Mass = 0.25 mol × 159.5 = 39.875g ≈ 39.9g</p>
+                    
+                    <p><strong>Answer:</strong> The mass of 0.25 mol of CuSO₄ is 39.9g.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 3: Calculating Number of Particles</h4>
+                    <p><strong>Question:</strong> How many molecules are there in 0.075 mol of carbon dioxide (CO₂)?</p>
+                    
+                    <h4>Step 1: Use the equation for number of particles</h4>
+                    <p>Number of molecules = number of moles × Avogadro constant</p>
+                    <p>Number of molecules = 0.075 mol × 6.02 × 10²³ = 4.515 × 10²² molecules</p>
+                    
+                    <p><strong>Answer:</strong> There are 4.515 × 10²² molecules in 0.075 mol of CO₂.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 4: From Mass to Number of Atoms</h4>
+                    <p><strong>Question:</strong> Calculate the number of atoms in 2.3g of sodium (Na).</p>
+                    
+                    <h4>Step 1: Find the relative atomic mass (Ar) of Na</h4>
+                    <p>Ar of Na = 23</p>
+                    
+                    <h4>Step 2: Calculate the number of moles</h4>
+                    <p>Number of moles = mass ÷ Ar</p>
+                    <p>Number of moles = 2.3g ÷ 23 = 0.1 mol</p>
+                    
+                    <h4>Step 3: Calculate the number of atoms</h4>
+                    <p>Number of atoms = number of moles × Avogadro constant</p>
+                    <p>Number of atoms = 0.1 mol × 6.02 × 10²³ = 6.02 × 10²² atoms</p>
+                    
+                    <p><strong>Answer:</strong> There are 6.02 × 10²² atoms in 2.3g of sodium.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 5: Complex Calculation</h4>
+                    <p><strong>Question:</strong> If you have 3.4g of ammonia (NH₃), calculate:</p>
+                    <p>a) The number of moles</p>
+                    <p>b) The number of molecules</p>
+                    <p>c) The number of hydrogen atoms</p>
+                    
+                    <h4>Step 1: Find the relative formula mass (Mr) of NH₃</h4>
+                    <p>N = 14, H = 1 (3 atoms)</p>
+                    <p>Mr of NH₃ = 14 + (3 × 1) = 17</p>
+                    
+                    <h4>Step 2: Calculate the number of moles</h4>
+                    <p>Number of moles = mass ÷ Mr</p>
+                    <p>Number of moles = 3.4g ÷ 17 = 0.2 mol</p>
+                    
+                    <h4>Step 3: Calculate the number of molecules</h4>
+                    <p>Number of molecules = number of moles × Avogadro constant</p>
+                    <p>Number of molecules = 0.2 mol × 6.02 × 10²³ = 1.204 × 10²³ molecules</p>
+                    
+                    <h4>Step 4: Calculate the number of hydrogen atoms</h4>
+                    <p>Each NH₃ molecule contains 3 hydrogen atoms</p>
+                    <p>Number of hydrogen atoms = number of molecules × 3</p>
+                    <p>Number of hydrogen atoms = 1.204 × 10²³ × 3 = 3.612 × 10²³ hydrogen atoms</p>
+                    
+                    <p><strong>Answers:</strong></p>
+                    <p>a) 0.2 mol</p>
+                    <p>b) 1.204 × 10²³ molecules</p>
+                    <p>c) 3.612 × 10²³ hydrogen atoms</p>
+                </div>
+                
+                <p>Now that you've seen some worked examples, let's practice with some questions.</p>
+                <button class="btn btn-secondary" onclick="showSection('practice')">Go to Practice Mode</button>
+            </div>
+        </section>
+        
+        <!-- Practice Section -->
+        <section id="practice" class="section">
+            <h2>Practice: Moles Calculations</h2>
+            
+            <div class="nav-buttons">
+                <button class="btn" onclick="showSection('intro')">Back to Intro</button>
+                <button class="btn btn-secondary" onclick="showSection('tutorial')">Back to Tutorial</button>
+                <button class="btn" style="background-color: #FF5722;" onclick="showSection('game')">Try Game Mode</button>
+            </div>
+            
+            <div class="difficulty-selector">
+                <h3>Select Difficulty Level:</h3>
+                <button class="btn active" id="beginner-btn" onclick="selectDifficulty('beginner')">Beginner</button>
+                <button class="btn" id="intermediate-btn" onclick="selectDifficulty('intermediate')">Intermediate</button>
+                <button class="btn" id="advanced-btn" onclick="selectDifficulty('advanced')">Advanced</button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div id="beginner-questions" class="difficulty-section active">
+                <h3>Beginner Questions</h3>
+                <div id="question-container" class="question-container">
+                    <!-- Questions will be loaded here via JavaScript -->
+                    <p>Loading questions...</p>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn" id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
+                    <button class="btn" id="next-btn" onclick="nextQuestion()">Next</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Game Section -->
+        <section id="game" class="section">
+            <h2>Mole Challenge Game</h2>
+            
+            <div class="nav-buttons">
+                <button class="btn" onclick="showSection('intro')">Back to Intro</button>
+                <button class="btn btn-secondary" onclick="showSection('practice')">Back to Practice</button>
+            </div>
+            
+            <div class="card" id="game-intro" style="background-color: #FFF9C4; border-left: 5px solid #FFC107;">
+                <h3>Welcome to Mole Challenge!</h3>
+                <p>Put your mole calculation skills to the test in this fast-paced game. Solve problems correctly to score points and advance through levels. The faster you answer, the more points you earn!</p>
+                
+                <div class="info-box" style="background-color: #E8F5E9;">
+                    <h4>How to Play:</h4>
+                    <ul>
+                        <li>Answer questions as quickly and accurately as possible</li>
+                        <li>Score points for correct answers and bonus points for speed</li>
+                        <li>Build up a combo for multipliers by getting consecutive correct answers</li>
+                        <li>Complete levels to unlock new challenges</li>
+                        <li>Try to beat your high score!</li>
+                    </ul>
+                </div>
+                
+                <div class="flex-container">
+                    <div>
+                        <h4>Choose your challenge:</h4>
+                        <select id="game-mode-select" class="answer-input" style="width: auto;">
+                            <option value="time-attack">Time Attack (60 seconds)</option>
+                            <option value="survival">Survival Mode (3 lives)</option>
+                            <option value="endless">Endless Mode</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <h4>Start with difficulty:</h4>
+                        <select id="game-difficulty-select" class="answer-input" style="width: auto;">
+                            <option value="beginner">Beginner</option>
+                            <option value="mixed">Mixed (Increases as you progress)</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="btn" style="background-color: #FF5722; margin-top: 20px; font-size: 1.2rem;" onclick="startGame()">START GAME</button>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Your Stats:</h4>
+                    <p><strong>High Score:</strong> <span id="high-score">0</span></p>
+                    <p><strong>Games Played:</strong> <span id="games-played">0</span></p>
+                </div>
+            </div>
+            
+            <div id="game-play-area" style="display: none;">
+                <div class="flex-container" style="align-items: center;">
+                    <div>
+                        <h3>Score: <span id="game-score">0</span></h3>
+                        <h4>Level: <span id="game-level">1</span></h4>
+                    </div>
+                    
+                    <div>
+                        <div id="game-timer" style="font-size: 1.5rem; font-weight: bold; text-align: center;">60</div>
+                        <div id="game-lives" style="font-size: 1.5rem; text-align: center; color: #F44336;">❤️ ❤️ ❤️</div>
+                    </div>
+                    
+                    <div>
+                        <h4>Combo: <span id="combo-counter">x1</span></h4>
+                        <div id="streak-indicator" style="font-size: 0.9rem; color: #4CAF50;">Streak: 0</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container" style="height: 15px; margin: 10px 0;">
+                    <div id="game-progress-bar" class="progress-bar" style="background-color: #FF5722; width: 0%;"></div>
+                </div>
+                
+                <div id="game-question-container" class="question-container" style="background-color: white; border: 2px solid #FF9800; padding: 20px; border-radius: 10px;">
+                    <h3 id="game-question-text">Question will appear here</h3>
+                    
+                    <div id="multiple-choice-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                        <!-- Options will be generated here -->
+                    </div>
+                    
+                    <div id="numerical-answer-container" style="margin: 15px 0;">
+                        <input type="text" id="game-answer-input" class="answer-input" style="width: 150px; font-size: 1.2rem; padding: 10px;">
+                        <span id="game-answer-unit">g</span>
+                        <button class="btn" style="background-color: #4CAF50;" onclick="submitGameAnswer()">Submit</button>
+                    </div>
+                    
+                    <div id="game-feedback" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+                </div>
+                
+                <div id="power-ups" style="display: flex; justify-content: center; gap: 20px; margin: 15px 0;">
+                    <button id="hint-power" class="btn" style="background-color: #9C27B0;" onclick="usePowerUp('hint')" disabled>Hint (0)</button>
+                    <button id="skip-power" class="btn" style="background-color: #FF9800;" onclick="usePowerUp('skip')" disabled>Skip (0)</button>
+                    <button id="time-power" class="btn" style="background-color: #03A9F4;" onclick="usePowerUp('time')" disabled>+10s (0)</button>
+                </div>
+            </div>
+            
+            <div id="game-over-screen" style="display: none; text-align: center; margin-top: 20px;">
+                <h2 style="color: #F44336;">Game Over!</h2>
+                <h3>Final Score: <span id="final-score">0</span></h3>
+                <div id="high-score-message" style="font-size: 1.5rem; color: #4CAF50; margin: 15px 0; display: none;">
+                    New High Score! 🏆
+                </div>
+                
+                <div class="card" style="max-width: 500px; margin: 0 auto;">
+                    <h4>Game Stats:</h4>
+                    <p>Questions Answered: <span id="questions-answered">0</span></p>
+                    <p>Correct Answers: <span id="correct-answers">0</span></p>
+                    <p>Highest Combo: <span id="highest-combo">x1</span></p>
+                    <p>Average Time per Question: <span id="avg-time">0</span> seconds</p>
+                </div>
+                
+                <button class="btn" style="background-color: #FF5722; margin-top: 20px; font-size: 1.2rem;" onclick="resetGame()">Play Again</button>
+                <button class="btn" style="background-color: #2196F3; margin-top: 20px; font-size: 1.2rem;" onclick="showGameIntro()">Change Mode</button>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Calculator Button -->
+    <button id="calculator-toggle" class="btn calculator-toggle" onclick="toggleCalculator()">Show Calculator</button>
+    
+    <!-- Calculator -->
+    <div id="calculator" class="calculator">
+        <div id="calculator-header" class="calculator-header">
+            <span>Scientific Calculator</span>
+            <div>
+                <button class="icon-btn" onclick="minimizeCalculator()">_</button>
+                <button class="icon-btn" onclick="toggleCalculator()">×</button>
+            </div>
+        </div>
+        <div class="calculator-body">
+            <div id="calculator-display" class="calculator-display">0</div>
+            <div class="calculator-buttons">
+                <button class="calc-btn clear" onclick="clearCalculator()">C</button>
+                <button class="calc-btn" onclick="deleteCharacter()">DEL</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('(')">(</button>
+                <button class="calc-btn operator" onclick="appendToCalculator(')')">)</button>
+                
+                <button class="calc-btn" onclick="appendToCalculator('7')">7</button>
+                <button class="calc-btn" onclick="appendToCalculator('8')">8</button>
+                <button class="calc-btn" onclick="appendToCalculator('9')">9</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('/')">/</button>
+                
+                <button class="calc-btn" onclick="appendToCalculator('4')">4</button>
+                <button class="calc-btn" onclick="appendToCalculator('5')">5</button>
+                <button class="calc-btn" onclick="appendToCalculator('6')">6</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('*')">×</button>
+                
+                <button class="calc-btn" onclick="appendToCalculator('1')">1</button>
+                <button class="calc-btn" onclick="appendToCalculator('2')">2</button>
+                <button class="calc-btn" onclick="appendToCalculator('3')">3</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('-')">-</button>
+                
+                <button class="calc-btn" onclick="appendToCalculator('0')">0</button>
+                <button class="calc-btn" onclick="appendToCalculator('.')">.</button>
+                <button class="calc-btn equals" onclick="calculate()">=</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('+')">+</button>
+                
+                <button class="calc-btn operator" onclick="appendToCalculator('**')">^</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('Math.sqrt(')">√</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('10**')">10^</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('*10**')">×10^</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let currentSection = 'intro';
+        let currentTab = 'what-is-mole';
+        let currentDifficulty = 'beginner';
+        let currentQuestionIndex = 0;
+        let questions = {
+            beginner: [
+                {
+                    question: "Calculate the number of moles in 23g of sodium (Na). (Relative atomic mass of Na = 23)",
+                    answer: 1,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For sodium, the relative atomic mass is 23."
+                },
+                {
+                    question: "Calculate the mass of 0.5 moles of magnesium (Mg). (Relative atomic mass of Mg = 24)",
+                    answer: 12,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For magnesium, the relative atomic mass is 24."
+                },
+                {
+                    question: "How many moles are there in 36g of water (H₂O)? (Relative formula mass of H₂O = 18)",
+                    answer: 2,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For water, the relative formula mass is 18."
+                },
+                {
+                    question: "Calculate the mass of 0.25 moles of carbon dioxide (CO₂). (Relative formula mass of CO₂ = 44)",
+                    answer: 11,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For carbon dioxide, the relative formula mass is 44."
+                },
+                {
+                    question: "How many moles are there in 39g of potassium (K)? (Relative atomic mass of K = 39)",
+                    answer: 1,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For potassium, the relative atomic mass is 39."
+                },
+                {
+                    question: "Calculate the mass of 2 moles of oxygen (O₂). (Relative formula mass of O₂ = 32)",
+                    answer: 64,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For oxygen gas, the relative formula mass is 32."
+                },
+                {
+                    question: "How many moles are there in 65g of zinc (Zn)? (Relative atomic mass of Zn = 65)",
+                    answer: 1,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For zinc, the relative atomic mass is 65."
+                },
+                {
+                    question: "Calculate the mass of 0.1 moles of calcium carbonate (CaCO₃). (Relative formula mass of CaCO₃ = 100)",
+                    answer: 10,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For calcium carbonate, the relative formula mass is 100."
+                },
+                {
+                    question: "How many moles are there in 58.5g of sodium chloride (NaCl)? (Relative formula mass of NaCl = 58.5)",
+                    answer: 1,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For sodium chloride, the relative formula mass is 58.5."
+                },
+                {
+                    question: "Calculate the mass of 1.5 moles of iron (Fe). (Relative atomic mass of Fe = 56)",
+                    answer: 84,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For iron, the relative atomic mass is 56."
+                }
+            ],
+            intermediate: [
+                {
+                    question: "Calculate the number of moles in 4.9g of sulfuric acid (H₂SO₄). (Relative formula mass of H₂SO₄ = 98)",
+                    answer: 0.05,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For sulfuric acid, the relative formula mass is 98."
+                },
+                {
+                    question: "How many moles are there in 8.5g of ammonia (NH₃)? (Relative formula mass of NH₃ = 17)",
+                    answer: 0.5,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For ammonia, the relative formula mass is 17."
+                },
+                {
+                    question: "Calculate the mass of 0.75 moles of copper sulfate (CuSO₄). (Relative formula mass of CuSO₄ = 159.5)",
+                    answer: 119.625,
+                    unit: "g",
+                    allowedError: 0.1,
+                    hint: "Use the formula: mass = moles × relative formula mass. For copper sulfate, the relative formula mass is 159.5."
+                },
+                {
+                    question: "How many moles are there in 11.7g of sodium hydroxide (NaOH)? (Relative formula mass of NaOH = 40)",
+                    answer: 0.2925,
+                    unit: "mol",
+                    allowedError: 0.001,
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For sodium hydroxide, the relative formula mass is 40."
+                },
+                {
+                    question: "Calculate the mass of 0.35 moles of calcium nitrate (Ca(NO₃)₂). (Relative formula mass of Ca(NO₃)₂ = 164)",
+                    answer: 57.4,
+                    unit: "g",
+                    hint: "Use the formula: mass = moles × relative formula mass. For calcium nitrate, the relative formula mass is 164."
+                },
+                {
+                    question: "How many molecules are in 0.25 moles of water (H₂O)?",
+                    answer: 1.505e23,
+                    displayAnswer: "1.505 × 10²³",
+                    unit: "molecules",
+                    allowedError: 0.01e23,
+                    hint: "Use the formula: number of molecules = moles × Avogadro constant. The Avogadro constant is 6.02 × 10²³."
+                },
+                {
+                    question: "Calculate the number of moles in 3.01 × 10²² molecules of carbon dioxide (CO₂).",
+                    answer: 0.05,
+                    unit: "mol",
+                    allowedError: 0.001,
+                    hint: "Use the formula: moles = number of molecules ÷ Avogadro constant. The Avogadro constant is 6.02 × 10²³."
+                },
+                {
+                    question: "How many moles are there in 16.8g of hydrochloric acid (HCl)? (Relative formula mass of HCl = 36.5)",
+                    answer: 0.46,
+                    unit: "mol",
+                    allowedError: 0.01,
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For hydrochloric acid, the relative formula mass is 36.5."
+                },
+                {
+                    question: "Calculate the mass of 2.5 × 10²³ atoms of carbon (C). (Relative atomic mass of C = 12)",
+                    answer: 4.98,
+                    unit: "g",
+                    allowedError: 0.01,
+                    hint: "First, calculate moles using: moles = number of atoms ÷ Avogadro constant. Then use: mass = moles × relative atomic mass."
+                },
+                {
+                    question: "How many atoms are there in 7.8g of magnesium (Mg)? (Relative atomic mass of Mg = 24)",
+                    answer: 1.956e23,
+                    displayAnswer: "1.956 × 10²³",
+                    unit: "atoms",
+                    allowedError: 0.01e23,
+                    hint: "First, calculate moles using: moles = mass ÷ relative atomic mass. Then use: number of atoms = moles × Avogadro constant."
+                }
+            ],
+            advanced: [
+                {
+                    question: "A sample of copper(II) sulfate pentahydrate (CuSO₄·5H₂O) has a mass of 12.5g. Calculate the number of moles. (Relative formula mass of CuSO₄·5H₂O = 249.5)",
+                    answer: 0.05,
+                    unit: "mol",
+                    hint: "Use the formula: moles = mass ÷ relative formula mass. For copper(II) sulfate pentahydrate, the relative formula mass is 249.5."
+                },
+                {
+                    question: "How many water molecules are there in 0.025 moles of copper(II) sulfate pentahydrate (CuSO₄·5H₂O)?",
+                    answer: 7.525e22,
+                    displayAnswer: "7.525 × 10²²",
+                    unit: "molecules",
+                    allowedError: 0.01e22,
+                    hint: "Each mole of CuSO₄·5H₂O contains 5 moles of H₂O. Calculate the moles of water and then use the Avogadro constant."
+                },
+                {
+                    question: "An unknown compound has a mass of 8.4g and contains 0.15 moles. Calculate its relative formula mass.",
+                    answer: 56,
+                    unit: "g/mol",
+                    hint: "Use the formula: relative formula mass = mass ÷ moles."
+                },
+                {
+                    question: "If 4.2g of a substance contains 0.03 moles, what is its relative formula mass?",
+                    answer: 140,
+                    unit: "g/mol",
+                    hint: "Use the formula: relative formula mass = mass ÷ moles."
+                },
+                {
+                    question: "Calculate the mass of 3.01 × 10²³ atoms of carbon (C). (Relative atomic mass of C = 12)",
+                    answer: 6,
+                    unit: "g",
+                    allowedError: 0.1,
+                    hint: "First, calculate moles using: moles = number of atoms ÷ Avogadro constant. Then use: mass = moles × relative atomic mass."
+                },
+                {
+                    question: "A compound contains 75% oxygen by mass. If the compound has a relative formula mass of 80, calculate the mass of oxygen in 0.5 moles of the compound.",
+                    answer: 30,
+                    unit: "g",
+                    hint: "1. Calculate the total mass: mass = moles × relative formula mass. 2. Calculate mass of oxygen: mass of oxygen = total mass × percentage of oxygen."
+                },
+                {
+                    question: "Calculate the number of hydrogen atoms in 0.4 moles of glucose (C₆H₁₂O₆).",
+                    answer: 2.89e24,
+                    displayAnswer: "2.89 × 10²⁴",
+                    unit: "atoms",
+                    allowedError: 0.01e24,
+                    hint: "1. Calculate the number of molecules: molecules = moles × Avogadro constant. 2. Each glucose molecule contains 12 hydrogen atoms. 3. Total hydrogen atoms = number of molecules × 12."
+                },
+                {
+                    question: "A hydrated salt has formula XSO₄·nH₂O. When 24.6g of the hydrated salt is heated, it loses 9g of water. If the anhydrous salt (XSO₄) has a relative formula mass of 120, find the value of n.",
+                    answer: 5,
+                    unit: "",
+                    hint: "1. Calculate moles of water lost: moles = mass ÷ relative formula mass. 2. Calculate moles of anhydrous salt: moles = mass ÷ relative formula mass. 3. The ratio of these values gives n."
+                },
+                {
+                    question: "A scientist has 3.65g of hydrochloric acid (HCl). Calculate the number of chlorine atoms present. (Relative formula mass of HCl = 36.5)",
+                    answer: 6.02e22,
+                    displayAnswer: "6.02 × 10²²",
+                    unit: "atoms",
+                    allowedError: 0.01e22,
+                    hint: "1. Calculate moles of HCl: moles = mass ÷ relative formula mass. 2. Each HCl molecule contains 1 chlorine atom. 3. Number of chlorine atoms = moles × Avogadro constant."
+                },
+                {
+                    question: "Calculate the mass of 0.25 moles of iron(III) oxide (Fe₂O₃). If the percentage of iron in this compound is 70%, what mass of iron does this sample contain? (Relative formula mass of Fe₂O₃ = 160)",
+                    answer: 28,
+                    unit: "g",
+                    hint: "1. Calculate the total mass: mass = moles × relative formula mass. 2. Calculate mass of iron: mass of iron = total mass × percentage of iron."
+                }
+            ]
+        };
+        
+        // Section switching
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            currentSection = sectionId;
+            
+            if (sectionId === 'practice') {
+                loadQuestions();
+            }
+        }
+        
+        // Tab switching
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`button[onclick="openTab('${tabId}')"]`).classList.add('active');
+            currentTab = tabId;
+        }
+        
+        // Difficulty selection
+        function selectDifficulty(difficulty) {
+            document.getElementById('beginner-btn').classList.remove('active');
+            document.getElementById('intermediate-btn').classList.remove('active');
+            document.getElementById('advanced-btn').classList.remove('active');
+            document.getElementById(`${difficulty}-btn`).classList.add('active');
+            
+            currentDifficulty = difficulty;
+            currentQuestionIndex = 0;
+            loadQuestions();
+        }
+        
+        // Load questions
+        function loadQuestions() {
+            const container = document.getElementById('question-container');
+            const currentQuestion = questions[currentDifficulty][currentQuestionIndex];
+            
+            // Update progress bar
+            const progressBar = document.getElementById('progress-bar');
+            const progress = ((currentQuestionIndex + 1) / questions[currentDifficulty].length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Generate HTML for the current question
+            let html = `
+                <h4>Question ${currentQuestionIndex + 1} of ${questions[currentDifficulty].length}</h4>
+                <p>${currentQuestion.question}</p>
+                <div class="answer-section">
+                    <label for="user-answer">Your answer:</label>
+                    <input type="text" id="user-answer" class="answer-input"> ${currentQuestion.unit}
+                    <button class="btn btn-secondary" onclick="checkAnswer()">Check Answer</button>
+                </div>
+                <p class="hint" onclick="showHint()">Need a hint?</p>
+                <div id="hint-content" class="hint-content">${currentQuestion.hint}</div>
+                <div id="feedback" class="feedback"></div>
+            `;
+            
+            container.innerHTML = html;
+            
+            // Enable/disable navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').disabled = currentQuestionIndex === questions[currentDifficulty].length - 1;
+        }
+        
+        // Show hint
+        function showHint() {
+            document.getElementById('hint-content').style.display = 'block';
+        }
+        
+        // Check answer
+        function checkAnswer() {
+            const userAnswer = document.getElementById('user-answer').value.trim();
+            const currentQuestion = questions[currentDifficulty][currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            
+            if (userAnswer === '') {
+                feedback.innerHTML = 'Please enter an answer.';
+                feedback.className = 'feedback';
+                return;
+            }
+            
+            // For text-based answers (like element names)
+            if (typeof currentQuestion.answer === 'string') {
+                if (userAnswer.toLowerCase() === currentQuestion.answer.toLowerCase()) {
+                    feedback.innerHTML = 'Correct! Well done.';
+                    feedback.className = 'feedback correct';
+                } else {
+                    feedback.innerHTML = `Incorrect. The answer is ${currentQuestion.answer}.`;
+                    feedback.className = 'feedback incorrect';
+                }
+                return;
+            }
+            
+            // For numerical answers
+            const numericAnswer = parseFloat(userAnswer);
+            
+            if (isNaN(numericAnswer)) {
+                feedback.innerHTML = 'Please enter a numeric value.';
+                feedback.className = 'feedback';
+                return;
+            }
+            
+            const allowedError = currentQuestion.allowedError || 0.01;
+            const isCorrect = Math.abs(numericAnswer - currentQuestion.answer) <= allowedError;
+            
+            if (isCorrect) {
+                feedback.innerHTML = 'Correct! Well done.';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.innerHTML = `Incorrect. The answer is ${currentQuestion.answer} ${currentQuestion.unit}.`;
+                feedback.className = 'feedback incorrect';
+            }
+        }
+        
+        // Navigate questions
+        function nextQuestion() {
+            if (currentQuestionIndex < questions[currentDifficulty].length - 1) {
+                currentQuestionIndex++;
+                loadQuestions();
+            }
+        }
+        
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestions();
+            }
+        }
+        
+        // Calculator functions
+        function toggleCalculator() {
+            const calculator = document.getElementById('calculator');
+            const toggleButton = document.getElementById('calculator-toggle');
+            
+            if (calculator.style.display === 'none' || calculator.style.display === '') {
+                calculator.style.display = 'block';
+                toggleButton.textContent = 'Hide Calculator';
+            } else {
+                calculator.style.display = 'none';
+                toggleButton.textContent = 'Show Calculator';
+            }
+        }
+        
+        function minimizeCalculator() {
+            const calculator = document.getElementById('calculator');
+            calculator.classList.toggle('minimized');
+        }
+        
+        function appendToCalculator(value) {
+            const display = document.getElementById('calculator-display');
+            if (display.textContent === '0' && !isNaN(value)) {
+                display.textContent = value;
+            } else {
+                display.textContent += value;
+            }
+        }
+        
+        function clearCalculator() {
+            document.getElementById('calculator-display').textContent = '0';
+        }
+        
+        function deleteCharacter() {
+            const display = document.getElementById('calculator-display');
+            if (display.textContent.length === 1) {
+                display.textContent = '0';
+            } else {
+                display.textContent = display.textContent.slice(0, -1);
+            }
+        }
+        
+        function calculate() {
+            const display = document.getElementById('calculator-display');
+            try {
+                // Use Function constructor instead of eval for better security
+                const result = Function('"use strict"; return (' + display.textContent + ')')();
+                display.textContent = result;
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+        
+        // Make calculator draggable
+        const calculatorHeader = document.getElementById('calculator-header');
+        const calculator = document.getElementById('calculator');
+        
+        let isDragging = false;
+        let offsetX, offsetY;
+        
+        calculatorHeader.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            offsetX = e.clientX - calculator.getBoundingClientRect().left;
+            offsetY = e.clientY - calculator.getBoundingClientRect().top;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const x = e.clientX - offsetX;
+            const y = e.clientY - offsetY;
+            
+            calculator.style.left = `${x}px`;
+            calculator.style.top = `${y}px`;
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        // Game variables
+        let gameMode = 'time-attack';
+        let gameDifficulty = 'beginner';
+        let gameScore = 0;
+        let gameLevel = 1;
+        let gameLives = 3;
+        let gameTimer = 60;
+        let gameTimerInterval;
+        let gameQuestions = [];
+        let currentGameQuestionIndex = 0;
+        let combo = 1;
+        let streak = 0;
+        let highScore = 0;
+        let gamesPlayed = 0;
+        let questionStartTime;
+        let powerUps = {
+            hint: 0,
+            skip: 0,
+            time: 0
+        };
+        let gameStats = {
+            questionsAnswered: 0,
+            correctAnswers: 0,
+            highestCombo: 1,
+            totalTime: 0
+        };
+        
+        // Load game stats from localStorage with fallback for sandboxed environments
+        function loadGameStats() {
+            try {
+                if (window.localStorage && localStorage.getItem('molesGameHighScore')) {
+                    highScore = parseInt(localStorage.getItem('molesGameHighScore'));
+                    document.getElementById('high-score').textContent = highScore;
+                }
+                
+                if (window.localStorage && localStorage.getItem('molesGamePlayed')) {
+                    gamesPlayed = parseInt(localStorage.getItem('molesGamePlayed'));
+                    document.getElementById('games-played').textContent = gamesPlayed;
+                }
+            } catch (e) {
+                // Silently fail if localStorage is not available
+                console.log("localStorage not available - using session-only stats");
+                document.getElementById('high-score').textContent = highScore;
+                document.getElementById('games-played').textContent = gamesPlayed;
+            }
+        }
+        
+        // Show game intro and hide game area
+        function showGameIntro() {
+            document.getElementById('game-intro').style.display = 'block';
+            document.getElementById('game-play-area').style.display = 'none';
+            document.getElementById('game-over-screen').style.display = 'none';
+        }
+        
+        // Start the game
+        function startGame() {
+            // Get selected game mode and difficulty
+            gameMode = document.getElementById('game-mode-select').value;
+            gameDifficulty = document.getElementById('game-difficulty-select').value;
+            
+            // Reset game variables
+            gameScore = 0;
+            gameLevel = 1;
+            combo = 1;
+            streak = 0;
+            
+            // Update UI
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-level').textContent = gameLevel;
+            document.getElementById('combo-counter').textContent = 'x1';
+            document.getElementById('streak-indicator').textContent = 'Streak: 0';
+            
+            // Reset game stats
+            gameStats = {
+                questionsAnswered: 0,
+                correctAnswers: 0,
+                highestCombo: 1,
+                totalTime: 0
+            };
+            
+            // Set initial power-ups
+            powerUps = {
+                hint: 1,
+                skip: 1,
+                time: 1
+            };
+            updatePowerUpButtons();
+            
+            // Set game-specific settings
+            if (gameMode === 'time-attack') {
+                gameTimer = 60;
+                document.getElementById('game-timer').style.display = 'block';
+                document.getElementById('game-lives').style.display = 'none';
+                document.getElementById('game-timer').textContent = gameTimer;
+                startGameTimer();
+            } else if (gameMode === 'survival') {
+                gameLives = 3;
+                document.getElementById('game-timer').style.display = 'none';
+                document.getElementById('game-lives').style.display = 'block';
+                document.getElementById('game-lives').textContent = '❤️'.repeat(gameLives);
+            } else if (gameMode === 'endless') {
+                document.getElementById('game-timer').style.display = 'none';
+                document.getElementById('game-lives').style.display = 'none';
+            }
+            
+            // Generate game questions
+            generateGameQuestions();
+            
+            // Show game area and hide intro
+            document.getElementById('game-intro').style.display = 'none';
+            document.getElementById('game-play-area').style.display = 'block';
+            document.getElementById('game-over-screen').style.display = 'none';
+            
+            // Load first question
+            loadGameQuestion();
+        }
+        
+        // Generate game questions based on difficulty
+        function generateGameQuestions() {
+            gameQuestions = [];
+            
+            if (gameDifficulty === 'beginner') {
+                // Use beginner questions with slight modifications
+                gameQuestions = [...questions.beginner];
+            } else if (gameDifficulty === 'intermediate') {
+                // Use intermediate questions
+                gameQuestions = [...questions.intermediate];
+            } else if (gameDifficulty === 'advanced') {
+                // Use advanced questions
+                gameQuestions = [...questions.advanced];
+            } else if (gameDifficulty === 'mixed') {
+                // Mix questions from all levels
+                gameQuestions = [...questions.beginner.slice(0, 5), ...questions.intermediate.slice(0, 3), ...questions.advanced.slice(0, 2)];
+            }
+            
+            // Shuffle the questions
+            shuffleArray(gameQuestions);
+            
+            // Add game-specific properties to questions
+            gameQuestions.forEach(q => {
+                q.points = calculateQuestionPoints(q);
+                
+                // For multiple choice, generate options
+                if (typeof q.answer === 'number') {
+                    q.options = generateOptions(q.answer);
+                }
+                
+                // Format answer for display if it's in scientific notation
+                if (typeof q.answer === 'number' && q.answer.toString().includes('e')) {
+                    q.displayAnswer = formatScientificNotation(q.answer);
+                } else {
+                    q.displayAnswer = q.answer;
+                }
+            });
+            
+            currentGameQuestionIndex = 0;
+        }
+        
+        // Format scientific notation properly for students (e.g., 1.2e23 → 1.2 × 10²³)
+        function formatScientificNotation(num) {
+            if (typeof num !== 'number' || !num.toString().includes('e')) {
+                return num;
+            }
+            
+            const parts = num.toString().split('e');
+            const base = parseFloat(parts[0]);
+            const exponent = parseInt(parts[1]);
+            
+            // Format the base with 2-3 decimal places if needed
+            let baseFormatted;
+            if (Number.isInteger(base)) {
+                baseFormatted = base.toString();
+            } else {
+                baseFormatted = base.toFixed(2).replace(/\.?0+$/, '');
+            }
+            
+            // Convert the exponent to superscript
+            const superscriptMap = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', 
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+                '+': '⁺', '-': '⁻'
+            };
+            
+            let superscriptExponent = '';
+            exponent.toString().split('').forEach(char => {
+                superscriptExponent += superscriptMap[char] || char;
+            });
+            
+            return `${baseFormatted} × 10${superscriptExponent}`;
+        }
+        
+        // Shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Calculate points for a question based on difficulty
+        function calculateQuestionPoints(question) {
+            let basePoints = 10;
+            
+            // Adjust points based on the question's origin
+            if (questions.advanced.includes(question)) {
+                basePoints = 30;
+            } else if (questions.intermediate.includes(question)) {
+                basePoints = 20;
+            }
+            
+            return basePoints;
+        }
+        
+        // Generate multiple choice options for a question
+        function generateOptions(correctAnswer) {
+            const options = [correctAnswer];
+            
+            // Generate 3 wrong options
+            while (options.length < 4) {
+                let wrongOption;
+                
+                if (correctAnswer === 0) {
+                    // Special case for zero
+                    wrongOption = ((Math.random() * 0.5) + 0.1).toFixed(2);
+                } else if (correctAnswer < 1) {
+                    // For small decimals
+                    wrongOption = (correctAnswer * (0.5 + Math.random() * 1.5)).toFixed(2);
+                } else {
+                    // For larger numbers
+                    const deviation = Math.max(0.1, correctAnswer * 0.3);
+                    wrongOption = (correctAnswer + (Math.random() * 2 - 1) * deviation).toFixed(2);
+                }
+                
+                // Convert to number and ensure it's not too close to correct answer or other options
+                wrongOption = parseFloat(wrongOption);
+                
+                if (!options.some(opt => Math.abs(opt - wrongOption) / Math.max(0.1, correctAnswer) < 0.05)) {
+                    options.push(wrongOption);
+                }
+            }
+            
+            // Shuffle options
+            return shuffleArray(options);
+        }
+        
+        // Start the game timer
+        function startGameTimer() {
+            clearInterval(gameTimerInterval);
+            gameTimerInterval = setInterval(() => {
+                gameTimer--;
+                document.getElementById('game-timer').textContent = gameTimer;
+                
+                if (gameTimer <= 10) {
+                    document.getElementById('game-timer').style.color = '#F44336';
+                }
+                
+                if (gameTimer <= 0) {
+                    clearInterval(gameTimerInterval);
+                    gameOver();
+                }
+            }, 1000);
+        }
+        
+        // Load a game question
+        function loadGameQuestion() {
+            if (currentGameQuestionIndex >= gameQuestions.length) {
+                // Generate new questions if we've gone through all of them
+                generateGameQuestions();
+            }
+            
+            const currentQuestion = gameQuestions[currentGameQuestionIndex];
+            document.getElementById('game-question-text').textContent = currentQuestion.question;
+            
+            // Record the start time for this question
+            questionStartTime = Date.now();
+            
+            // Update the progress bar
+            const progress = ((gameLevel - 1) * 10 + currentGameQuestionIndex) % 100;
+            document.getElementById('game-progress-bar').style.width = `${progress}%`;
+            
+            // Clear feedback
+            document.getElementById('game-feedback').style.display = 'none';
+            
+            // Choose between multiple choice and numerical input
+            const useMultipleChoice = Math.random() < 0.7; // 70% chance of multiple choice
+            
+            if (useMultipleChoice && typeof currentQuestion.answer === 'number' && currentQuestion.options) {
+                // Show multiple choice
+                document.getElementById('multiple-choice-container').style.display = 'grid';
+                document.getElementById('numerical-answer-container').style.display = 'none';
+                
+                // Generate options
+                const optionsContainer = document.getElementById('multiple-choice-container');
+                optionsContainer.innerHTML = '';
+                
+                currentQuestion.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'btn';
+                    button.style.fontSize = '1.1rem';
+                    button.style.padding = '10px';
+                    
+                    // Format the option nicely
+                    let displayOption = option;
+                    if (typeof option === 'number') {
+                        if (option.toString().includes('e')) {
+                            displayOption = formatScientificNotation(option);
+                        } else if (option > 1000000) {
+                            displayOption = formatScientificNotation(option.toExponential(2));
+                        } else if (Number.isInteger(option)) {
+                            displayOption = option;
+                        } else {
+                            displayOption = option.toFixed(2);
+                        }
+                    }
+                    
+                    button.textContent = `${displayOption} ${currentQuestion.unit || ''}`;
+                    button.onclick = () => checkGameAnswer(option);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                // Show numerical input
+                document.getElementById('multiple-choice-container').style.display = 'none';
+                document.getElementById('numerical-answer-container').style.display = 'block';
+                
+                // Clear previous answer
+                document.getElementById('game-answer-input').value = '';
+                
+                // Set unit
+                document.getElementById('game-answer-unit').textContent = currentQuestion.unit || '';
+                
+                // Focus the input
+                setTimeout(() => {
+                    document.getElementById('game-answer-input').focus();
+                }, 100);
+                
+                // Allow pressing Enter to submit
+                document.getElementById('game-answer-input').onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        submitGameAnswer();
+                    }
+                };
+            }
+        }
+        
+        // Submit numerical answer
+        function submitGameAnswer() {
+            const answerInput = document.getElementById('game-answer-input').value.trim();
+            if (answerInput === '') return;
+            
+            const numericAnswer = parseFloat(answerInput);
+            if (isNaN(numericAnswer)) {
+                showGameFeedback('Please enter a valid number', 'warning');
+                return;
+            }
+            
+            checkGameAnswer(numericAnswer);
+        }
+        
+        // Check the game answer
+        function checkGameAnswer(userAnswer) {
+            const currentQuestion = gameQuestions[currentGameQuestionIndex];
+            const timeTaken = (Date.now() - questionStartTime) / 1000;
+            gameStats.totalTime += timeTaken;
+            gameStats.questionsAnswered++;
+            
+            // Determine if the answer is correct
+            let isCorrect = false;
+            
+            if (typeof currentQuestion.answer === 'string') {
+                isCorrect = userAnswer.toLowerCase() === currentQuestion.answer.toLowerCase();
+            } else {
+                const allowedError = currentQuestion.allowedError || 0.01;
+                isCorrect = Math.abs(userAnswer - currentQuestion.answer) <= allowedError;
+            }
+            
+            if (isCorrect) {
+                // Calculate time bonus (max 50% bonus for answering in 2 seconds or less)
+                const timeBonus = Math.max(0, 1 - (timeTaken / 10));
+                
+                // Calculate points with time bonus and combo multiplier
+                let pointsEarned = Math.round(currentQuestion.points * (1 + timeBonus) * combo);
+                
+                // Add level bonus (10% per level)
+                pointsEarned = Math.round(pointsEarned * (1 + (gameLevel - 1) * 0.1));
+                
+                // Update score
+                gameScore += pointsEarned;
+                document.getElementById('game-score').textContent = gameScore;
+                
+                // Update combo
+                streak++;
+                if (streak % 3 === 0) {
+                    combo++;
+                    if (combo > gameStats.highestCombo) {
+                        gameStats.highestCombo = combo;
+                    }
+                    
+                    // Award power-up every 3 combos
+                    awardPowerUp();
+                }
+                
+                document.getElementById('combo-counter').textContent = `x${combo}`;
+                document.getElementById('streak-indicator').textContent = `Streak: ${streak}`;
+                
+                // Show feedback
+                showGameFeedback(`Correct! +${pointsEarned} points`, 'correct');
+                
+                // Track stats
+                gameStats.correctAnswers++;
+                
+                // Add time bonus in time attack mode
+                if (gameMode === 'time-attack') {
+                    gameTimer += Math.round(timeBonus * 2);
+                    document.getElementById('game-timer').textContent = gameTimer;
+                }
+                
+                // Level up check (every 5 correct answers)
+                if (gameStats.correctAnswers % 5 === 0) {
+                    levelUp();
+                }
+            } else {
+                // Wrong answer
+                const currentQuestion = gameQuestions[currentGameQuestionIndex];
+                let correctAnswerDisplay = currentQuestion.displayAnswer || currentQuestion.answer;
+                
+                // Format for display
+                if (typeof correctAnswerDisplay === 'number' && correctAnswerDisplay.toString().includes('e')) {
+                    correctAnswerDisplay = formatScientificNotation(correctAnswerDisplay);
+                }
+                
+                showGameFeedback(`Incorrect! The answer is ${correctAnswerDisplay} ${currentQuestion.unit || ''}`, 'incorrect');
+                
+                // Reset combo
+                combo = 1;
+                streak = 0;
+                document.getElementById('combo-counter').textContent = 'x1';
+                document.getElementById('streak-indicator').textContent = 'Streak: 0';
+                
+                // Reduce lives in survival mode
+                if (gameMode === 'survival') {
+                    gameLives--;
+                    document.getElementById('game-lives').textContent = '❤️'.repeat(gameLives);
+                    
+                    if (gameLives <= 0) {
+                        gameOver();
+                        return;
+                    }
+                }
+                
+                // Reduce time in time attack mode
+                if (gameMode === 'time-attack') {
+                    gameTimer -= 5;
+                    document.getElementById('game-timer').textContent = gameTimer;
+                    
+                    if (gameTimer <= 0) {
+                        gameOver();
+                        return;
+                    }
+                }
+            }
+            
+            // Load next question after a delay
+            setTimeout(() => {
+                currentGameQuestionIndex++;
+                loadGameQuestion();
+            }, 1500);
+        }
+        
+        // Show game feedback
+        function showGameFeedback(message, type) {
+            const feedbackEl = document.getElementById('game-feedback');
+            feedbackEl.textContent = message;
+            feedbackEl.style.display = 'block';
+            
+            // Set style based on type
+            if (type === 'correct') {
+                feedbackEl.style.backgroundColor = '#E8F5E9';
+                feedbackEl.style.color = '#388E3C';
+            } else if (type === 'incorrect') {
+                feedbackEl.style.backgroundColor = '#FFEBEE';
+                feedbackEl.style.color = '#D32F2F';
+            } else {
+                feedbackEl.style.backgroundColor = '#FFF8E1';
+                feedbackEl.style.color = '#FF8F00';
+            }
+        }
+        
+        // Level up
+        function levelUp() {
+            gameLevel++;
+            document.getElementById('game-level').textContent = gameLevel;
+            
+            // Show level up message
+            showGameFeedback(`Level Up! You're now at level ${gameLevel}`, 'correct');
+            
+            // Award power-ups
+            powerUps.hint++;
+            powerUps.skip++;
+            if (gameLevel % 2 === 0) {
+                powerUps.time++;
+            }
+            updatePowerUpButtons();
+            
+            // If using mixed difficulty, increase difficulty as levels progress
+            if (gameDifficulty === 'mixed' && gameLevel >= 3) {
+                // Replace more beginner questions with intermediate and advanced
+                generateGameQuestions();
+            }
+            
+            // Add bonus time or lives based on game mode
+            if (gameMode === 'time-attack') {
+                gameTimer += 15;
+                document.getElementById('game-timer').textContent = gameTimer;
+            } else if (gameMode === 'survival') {
+                gameLives = Math.min(gameLives + 1, 5);
+                document.getElementById('game-lives').textContent = '❤️'.repeat(gameLives);
+            }
+        }
+        
+        // Award a random power-up
+        function awardPowerUp() {
+            const powerUpTypes = ['hint', 'skip', 'time'];
+            const randomPowerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+            
+            powerUps[randomPowerUp]++;
+            updatePowerUpButtons();
+            
+            showGameFeedback(`Combo Bonus! You earned a ${randomPowerUp} power-up!`, 'correct');
+        }
+        
+        // Update power-up buttons
+        function updatePowerUpButtons() {
+            document.getElementById('hint-power').textContent = `Hint (${powerUps.hint})`;
+            document.getElementById('hint-power').disabled = powerUps.hint === 0;
+            
+            document.getElementById('skip-power').textContent = `Skip (${powerUps.skip})`;
+            document.getElementById('skip-power').disabled = powerUps.skip === 0;
+            
+            document.getElementById('time-power').textContent = `+10s (${powerUps.time})`;
+            document.getElementById('time-power').disabled = powerUps.time === 0 || gameMode !== 'time-attack';
+        }
+        
+        // Use a power-up
+        function usePowerUp(type) {
+            if (powerUps[type] <= 0) return;
+            
+            powerUps[type]--;
+            
+            if (type === 'hint') {
+                // Show hint for current question
+                const currentQuestion = gameQuestions[currentGameQuestionIndex];
+                showGameFeedback(`Hint: ${currentQuestion.hint}`, 'warning');
+            } else if (type === 'skip') {
+                // Skip to next question
+                currentGameQuestionIndex++;
+                loadGameQuestion();
+            } else if (type === 'time') {
+                // Add time (only in time attack mode)
+                if (gameMode === 'time-attack') {
+                    gameTimer += 10;
+                    document.getElementById('game-timer').textContent = gameTimer;
+                }
+            }
+            
+            updatePowerUpButtons();
+        }
+        
+        // Game over
+        function gameOver() {
+            clearInterval(gameTimerInterval);
+            
+            // Show game over screen
+            document.getElementById('game-play-area').style.display = 'none';
+            document.getElementById('game-over-screen').style.display = 'block';
+            
+            // Update final score
+            document.getElementById('final-score').textContent = gameScore;
+            
+            // Update stats
+            document.getElementById('questions-answered').textContent = gameStats.questionsAnswered;
+            document.getElementById('correct-answers').textContent = gameStats.correctAnswers;
+            document.getElementById('highest-combo').textContent = `x${gameStats.highestCombo}`;
+            
+            // Calculate average time per question
+            const avgTime = gameStats.questionsAnswered > 0 ? 
+                (gameStats.totalTime / gameStats.questionsAnswered).toFixed(1) : 0;
+            document.getElementById('avg-time').textContent = avgTime;
+            
+            // Check for high score
+            if (gameScore > highScore) {
+                highScore = gameScore;
+                document.getElementById('high-score').textContent = highScore;
+                document.getElementById('high-score-message').style.display = 'block';
+                
+                // Try to save to localStorage
+                try {
+                    if (window.localStorage) {
+                        localStorage.setItem('molesGameHighScore', highScore);
+                    }
+                } catch (e) {
+                    // Silently fail if localStorage is not available
+                }
+            } else {
+                document.getElementById('high-score-message').style.display = 'none';
+            }
+            
+            // Update games played
+            gamesPlayed++;
+            document.getElementById('games-played').textContent = gamesPlayed;
+            
+            // Try to save to localStorage
+            try {
+                if (window.localStorage) {
+                    localStorage.setItem('molesGamePlayed', gamesPlayed);
+                }
+            } catch (e) {
+                // Silently fail if localStorage is not available
+            }
+        }
+        
+        // Reset the game
+        function resetGame() {
+            // Reset everything and start a new game
+            startGame();
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('intro');
+            loadGameStats();
+        });
+    </script>
+</body>
+</html>
