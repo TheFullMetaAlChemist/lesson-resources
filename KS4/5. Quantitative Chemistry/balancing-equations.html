@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balancing Chemical Equations - GCSE Chemistry</title>
+    <style>
+        :root {
+            --primary: #4a6da7;
+            --secondary: #8da9db;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background-color: var(--light);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border-radius: 5px;
+            margin: 0 10px;
+            color: var(--dark);
+        }
+        
+        .tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .content {
+            margin-bottom: 30px;
+        }
+        
+        .mode {
+            display: none;
+        }
+        
+        .mode.active {
+            display: block;
+        }
+        
+        .equation {
+            font-size: 24px;
+            margin: 20px 0;
+            text-align: center;
+            line-height: 2;
+        }
+        
+        .step {
+            background-color: var(--light);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: var(--primary);
+            margin-right: 8px;
+        }
+        
+        .step-explanation {
+            margin-top: 10px;
+        }
+        
+        .coefficient {
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background-color: #fffde7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5a8f;
+        }
+        
+        .btn-secondary {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .practice-container {
+            text-align: center;
+        }
+        
+        .practice-equation {
+            font-size: 24px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .practice-input {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            text-align: center;
+            margin: 0 5px;
+            border: 2px solid var(--secondary);
+            border-radius: 5px;
+        }
+        
+        .practice-input.correct {
+            border-color: var(--success);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .practice-input.incorrect {
+            border-color: var(--danger);
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+        
+        .feedback {
+            margin-top: 20px;
+        }
+        
+        .feedback.success {
+            color: var(--success);
+        }
+        
+        .feedback.error {
+            color: var(--danger);
+        }
+        
+        .hint-container {
+            margin-top: 20px;
+        }
+        
+        .hint {
+            display: none;
+            background-color: #fff9c4;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .hint.visible {
+            display: block;
+        }
+        
+        .progress {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 5px;
+        }
+        
+        .difficulty-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .element-count {
+            font-size: 16px;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+        }
+        
+        .element-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .element-item {
+            padding: 5px 10px;
+            background-color: #e3f2fd;
+            border-radius: 3px;
+        }
+        
+        .changed {
+            animation: highlight-change 1.5s ease;
+        }
+        
+        @keyframes highlight-change {
+            0% { background-color: #ffeb3b; }
+            100% { background-color: transparent; }
+        }
+        
+        .intro-section {
+            margin-bottom: 25px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .intro-section h3 {
+            color: var(--primary);
+            margin-top: 0;
+        }
+        
+        .intro-section h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .example-box {
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-left: 4px solid var(--primary);
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        #intro-screen {
+            text-align: center;
+        }
+        
+        #intro-screen ol, #intro-screen p {
+            text-align: left;
+            max-width: 800px;
+            margin: 10px auto;
+        }
+        
+        #intro-screen .btn {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 12px 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .equation, .practice-equation {
+                font-size: 18px;
+            }
+            
+            .practice-input {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Balancing Chemical Equations</h1>
+            <p>Interactive tutorial and practice for GCSE Chemistry</p>
+        </header>
+        
+        <div id="intro-screen">
+            <h2>Introduction to Chemical Equations</h2>
+            
+            <div class="intro-section">
+                <h3>What are Chemical Equations?</h3>
+                <p>Chemical equations show how substances (reactants) change into other substances (products) during a chemical reaction. The arrow (→) separates reactants on the left from products on the right.</p>
+                <div class="example-box">
+                    <p>Example: <span class="equation">H₂ + O₂ → H₂O</span></p>
+                    <p>This shows hydrogen gas and oxygen gas reacting to form water.</p>
+                </div>
+            </div>
+            
+            <div class="intro-section">
+                <h3>Understanding Chemical Formulas</h3>
+                
+                <h4>Subscripts</h4>
+                <p>The small numbers written below and to the right of element symbols are called <strong>subscripts</strong>. They show how many atoms of that element are in one molecule.</p>
+                <div class="example-box">
+                    <p>Example: In <span class="equation">H₂O</span>, the subscript 2 means each water molecule has 2 hydrogen atoms and 1 oxygen atom (when no subscript is shown, it's understood to be 1).</p>
+                </div>
+                
+                <h4>Brackets</h4>
+                <p>Brackets group atoms together, and the subscript after the brackets applies to everything inside.</p>
+                <div class="example-box">
+                    <p>Example: In <span class="equation">Ca(OH)₂</span>, the subscript 2 after the brackets means there are 2 OH groups, giving 1 calcium atom, 2 oxygen atoms, and 2 hydrogen atoms.</p>
+                </div>
+            </div>
+            
+            <div class="intro-section">
+                <h3>Coefficients in Chemical Equations</h3>
+                <p><strong>Coefficients</strong> are the numbers written in front of chemical formulas in an equation. They indicate how many molecules or formula units of that substance are involved in the reaction.</p>
+                <div class="example-box">
+                    <p>Example: <span class="equation">2H₂ + O₂ → 2H₂O</span></p>
+                    <p>The coefficient 2 in front of H₂ means 2 molecules of hydrogen gas, and the coefficient 2 in front of H₂O means 2 molecules of water.</p>
+                </div>
+            </div>
+            
+            <div class="intro-section">
+                <h3>Why Balance Equations?</h3>
+                <p>Chemical equations must be balanced to obey the <strong>Law of Conservation of Mass</strong> - matter cannot be created or destroyed in a chemical reaction. This means the number of atoms of each element must be the same on both sides of the equation.</p>
+                <div class="example-box">
+                    <p>Unbalanced: <span class="equation">H₂ + O₂ → H₂O</span></p>
+                    <p>Left side: 2 H atoms, 2 O atoms</p>
+                    <p>Right side: 2 H atoms, 1 O atom</p>
+                    <p>This equation is not balanced because the number of oxygen atoms is different.</p>
+                    <p>Balanced: <span class="equation">2H₂ + O₂ → 2H₂O</span></p>
+                    <p>Left side: 4 H atoms, 2 O atoms</p>
+                    <p>Right side: 4 H atoms, 2 O atoms</p>
+                    <p>Now the equation is balanced - the same number of each atom on both sides.</p>
+                </div>
+            </div>
+            
+            <div class="intro-section">
+                <h3>How to Balance Chemical Equations</h3>
+                <ol>
+                    <li>Count the atoms of each element on both sides</li>
+                    <li>Add coefficients (numbers in front of formulas) to balance the atoms</li>
+                    <li>Start with the most complex formula or the element that appears in the fewest compounds</li>
+                    <li>Verify that all elements are balanced when finished</li>
+                </ol>
+                <p><strong>Important:</strong> Never change subscripts in a formula - this would change the substance itself!</p>
+            </div>
+            
+            <button id="start-app" class="btn btn-primary">Start Learning</button>
+        </div>
+        
+        <div class="tabs" style="display: none;" id="main-tabs">
+            <button class="tab active" data-mode="tutorial">Tutorial Mode</button>
+            <button class="tab" data-mode="practice">Practice Mode</button>
+        </div>
+        
+        <div class="content">
+            <div id="tutorial-mode" class="mode active" style="display: none;">
+                <div class="difficulty-selector">
+                    <label for="tutorial-difficulty">Difficulty Level:</label>
+                    <select id="tutorial-difficulty" class="btn btn-secondary">
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="intermediate">Intermediate</option>
+                    </select>
+                </div>
+                
+                <div id="tutorial-content">
+                    <!-- Tutorial content will be dynamically loaded here -->
+                </div>
+                
+                <div class="navigation">
+                    <button id="prev-tutorial" class="btn btn-secondary">Previous</button>
+                    <button id="next-tutorial" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+            
+            <div id="practice-mode" class="mode" style="display: none;">
+                <div class="difficulty-selector">
+                    <label for="practice-difficulty">Difficulty Level:</label>
+                    <select id="practice-difficulty" class="btn btn-secondary">
+                        <option value="easy">Easy</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="intermediate">Intermediate</option>
+                    </select>
+                </div>
+                
+                <div class="practice-container">
+                    <h2 id="practice-title">Balance the equation:</h2>
+                    <div id="practice-equation" class="practice-equation">
+                        <!-- Practice equation will be dynamically loaded here -->
+                    </div>
+                    
+                    <button id="check-answer" class="btn btn-primary">Check Answer</button>
+                    <button id="reset-equation" class="btn btn-secondary">Reset</button>
+                    
+                    <div id="feedback" class="feedback"></div>
+                    
+                    <div class="hint-container">
+                        <button id="show-hint" class="btn btn-secondary">Show Hint</button>
+                        <div id="hint" class="hint"></div>
+                    </div>
+                    
+                    <div id="element-counter" class="element-count"></div>
+                </div>
+                
+                <div class="progress">
+                    <p>Progress: <span id="progress-value">0%</span></p>
+                    <p>Correct: <span id="correct-count">0</span> / <span id="total-count">0</span></p>
+                </div>
+                
+                <div class="navigation">
+                    <button id="prev-practice" class="btn btn-secondary">Previous</button>
+                    <button id="next-practice" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            let currentTutorialLevel = "easy";
+            let currentTutorialId = 1;
+            let currentPracticeLevel = "easy";
+            let currentPracticeId = 1;
+            let currentStep = 0;
+            let correctAnswers = 0;
+            let totalAttempts = 0;
+            
+            // Tutorial data
+            const tutorialData = {
+                easy: [
+                    {
+                        id: 1,
+                        unbalanced: "H₂ + O₂ → H₂O",
+                        balanced: "2H₂ + O₂ → 2H₂O",
+                        steps: [
+                            {
+                                explanation: "First, let's identify all the elements in the equation and count their atoms on each side.",
+                                working: "Left side: 2 H atoms, 2 O atoms<br>Right side: 2 H atoms, 1 O atom"
+                            },
+                            {
+                                explanation: "Notice that oxygen is unbalanced - 2 atoms on the left but only 1 on the right.",
+                                working: "To balance oxygen, we need to add a coefficient in front of H₂O to double the oxygen atoms on the right."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of H₂O.",
+                                working: "H₂ + O₂ → <span class='coefficient'>2</span>H₂O"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms on each side.",
+                                working: "Left side: 2 H atoms, 2 O atoms<br>Right side: <span class='highlight'>4 H atoms</span>, 2 O atoms"
+                            },
+                            {
+                                explanation: "Now hydrogen is unbalanced - 2 atoms on the left, 4 on the right.",
+                                working: "To balance hydrogen, we add a coefficient of 2 in front of H₂."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of H₂.",
+                                working: "<span class='coefficient'>2</span>H₂ + O₂ → 2H₂O"
+                            },
+                            {
+                                explanation: "Let's do our final count to confirm the equation is balanced.",
+                                working: "Left side: 4 H atoms, 2 O atoms<br>Right side: 4 H atoms, 2 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced! Both sides have the same number of each type of atom.",
+                                working: "<span class='coefficient'>2</span>H₂ + O₂ → <span class='coefficient'>2</span>H₂O"
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "Na + Cl₂ → NaCl",
+                        balanced: "2Na + Cl₂ → 2NaCl",
+                        steps: [
+                            {
+                                explanation: "First, let's identify and count all atoms on each side.",
+                                working: "Left side: 1 Na atom, 2 Cl atoms<br>Right side: 1 Na atom, 1 Cl atom"
+                            },
+                            {
+                                explanation: "Notice that chlorine is unbalanced - 2 atoms on the left but only 1 on the right.",
+                                working: "To balance chlorine, we need to add a coefficient in front of NaCl."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of NaCl.",
+                                working: "Na + Cl₂ → <span class='coefficient'>2</span>NaCl"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 1 Na atom, 2 Cl atoms<br>Right side: <span class='highlight'>2 Na atoms</span>, 2 Cl atoms"
+                            },
+                            {
+                                explanation: "Now sodium is unbalanced - 1 atom on the left, 2 on the right.",
+                                working: "To balance sodium, we add a coefficient of 2 in front of Na."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of Na.",
+                                working: "<span class='coefficient'>2</span>Na + Cl₂ → 2NaCl"
+                            },
+                            {
+                                explanation: "Let's do our final count.",
+                                working: "Left side: 2 Na atoms, 2 Cl atoms<br>Right side: 2 Na atoms, 2 Cl atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "<span class='coefficient'>2</span>Na + Cl₂ → <span class='coefficient'>2</span>NaCl"
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "Mg + O₂ → MgO",
+                        balanced: "2Mg + O₂ → 2MgO",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 Mg atom, 2 O atoms<br>Right side: 1 Mg atom, 1 O atom"
+                            },
+                            {
+                                explanation: "Both magnesium and oxygen are unbalanced. Let's start by balancing oxygen.",
+                                working: "To balance oxygen, we need to add a coefficient in front of MgO."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of MgO.",
+                                working: "Mg + O₂ → <span class='coefficient'>2</span>MgO"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 1 Mg atom, 2 O atoms<br>Right side: <span class='highlight'>2 Mg atoms</span>, 2 O atoms"
+                            },
+                            {
+                                explanation: "Now magnesium is unbalanced - 1 atom on the left, 2 on the right.",
+                                working: "To balance magnesium, we add a coefficient of 2 in front of Mg."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of Mg.",
+                                working: "<span class='coefficient'>2</span>Mg + O₂ → 2MgO"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 2 Mg atoms, 2 O atoms<br>Right side: 2 Mg atoms, 2 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "<span class='coefficient'>2</span>Mg + O₂ → <span class='coefficient'>2</span>MgO"
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        unbalanced: "N₂ + H₂ → NH₃",
+                        balanced: "N₂ + 3H₂ → 2NH₃",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 2 N atoms, 2 H atoms<br>Right side: 1 N atom, 3 H atoms"
+                            },
+                            {
+                                explanation: "Both nitrogen and hydrogen are unbalanced. Let's start with nitrogen.",
+                                working: "To balance nitrogen, we need 2 atoms on the right side."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of NH₃.",
+                                working: "N₂ + H₂ → <span class='coefficient'>2</span>NH₃"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 2 N atoms, 2 H atoms<br>Right side: 2 N atoms, <span class='highlight'>6 H atoms</span>"
+                            },
+                            {
+                                explanation: "Now hydrogen is unbalanced - 2 atoms on the left, 6 on the right.",
+                                working: "To balance hydrogen, we need 6 atoms on the left side."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 3 in front of H₂.",
+                                working: "N₂ + <span class='coefficient'>3</span>H₂ → 2NH₃"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 2 N atoms, 6 H atoms<br>Right side: 2 N atoms, 6 H atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "N₂ + <span class='coefficient'>3</span>H₂ → <span class='coefficient'>2</span>NH₃"
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        unbalanced: "C + O₂ → CO₂",
+                        balanced: "C + O₂ → CO₂",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 C atom, 2 O atoms<br>Right side: 1 C atom, 2 O atoms"
+                            },
+                            {
+                                explanation: "Let's check if the equation is already balanced.",
+                                working: "Carbon (C): 1 atom on the left, 1 atom on the right<br>Oxygen (O): 2 atoms on the left, 2 atoms on the right"
+                            },
+                            {
+                                explanation: "All elements are already balanced!",
+                                working: "This equation is already balanced as written. No coefficients need to be added."
+                            },
+                            {
+                                explanation: "The equation is balanced!",
+                                working: "C + O₂ → CO₂"
+                            }
+                        ]
+                    }
+                ],
+                moderate: [
+                    {
+                        id: 1,
+                        unbalanced: "CH₄ + O₂ → CO₂ + H₂O",
+                        balanced: "CH₄ + 2O₂ → CO₂ + 2H₂O",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 C atom, 4 H atoms, 2 O atoms<br>Right side: 1 C atom, 2 H atoms, 3 O atoms"
+                            },
+                            {
+                                explanation: "Carbon is already balanced (1 on each side), but hydrogen and oxygen are not.",
+                                working: "For hydrogen: 4 atoms on the left, 2 atoms on the right."
+                            },
+                            {
+                                explanation: "To balance hydrogen, we add a coefficient of 2 in front of H₂O.",
+                                working: "CH₄ + O₂ → CO₂ + <span class='coefficient'>2</span>H₂O"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 1 C atom, 4 H atoms, 2 O atoms<br>Right side: 1 C atom, 4 H atoms, <span class='highlight'>4 O atoms</span>"
+                            },
+                            {
+                                explanation: "Now oxygen is unbalanced - 2 atoms on the left, 4 on the right.",
+                                working: "To balance oxygen, we need to add a coefficient of 2 in front of O₂."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of O₂.",
+                                working: "CH₄ + <span class='coefficient'>2</span>O₂ → CO₂ + 2H₂O"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 1 C atom, 4 H atoms, 4 O atoms<br>Right side: 1 C atom, 4 H atoms, 4 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "CH₄ + <span class='coefficient'>2</span>O₂ → CO₂ + <span class='coefficient'>2</span>H₂O"
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "Zn + HCl → ZnCl₂ + H₂",
+                        balanced: "Zn + 2HCl → ZnCl₂ + H₂",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 Zn atom, 1 H atom, 1 Cl atom<br>Right side: 1 Zn atom, 2 H atoms, 2 Cl atoms"
+                            },
+                            {
+                                explanation: "Both hydrogen and chlorine are unbalanced - 1 atom each on the left, 2 atoms each on the right.",
+                                working: "To balance both, we need to add a coefficient of 2 in front of HCl."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of HCl.",
+                                working: "Zn + <span class='coefficient'>2</span>HCl → ZnCl₂ + H₂"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 1 Zn atom, 2 H atoms, 2 Cl atoms<br>Right side: 1 Zn atom, 2 H atoms, 2 Cl atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "Zn + <span class='coefficient'>2</span>HCl → ZnCl₂ + H₂"
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "CuO + H₂ → Cu + H₂O",
+                        balanced: "CuO + H₂ → Cu + H₂O",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 Cu atom, 1 O atom, 2 H atoms<br>Right side: 1 Cu atom, 2 H atoms, 1 O atom"
+                            },
+                            {
+                                explanation: "Let's check if the equation is already balanced.",
+                                working: "Copper (Cu): 1 atom on the left, 1 atom on the right<br>Oxygen (O): 1 atom on the left, 1 atom on the right<br>Hydrogen (H): 2 atoms on the left, 2 atoms on the right"
+                            },
+                            {
+                                explanation: "All elements are already balanced!",
+                                working: "This equation is already balanced as written. No coefficients need to be added."
+                            },
+                            {
+                                explanation: "The equation is balanced!",
+                                working: "CuO + H₂ → Cu + H₂O"
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        unbalanced: "Na₂CO₃ + HCl → NaCl + H₂O + CO₂",
+                        balanced: "Na₂CO₃ + 2HCl → 2NaCl + H₂O + CO₂",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 2 Na atoms, 1 C atom, 3 O atoms, 1 H atom, 1 Cl atom<br>Right side: 1 Na atom, 1 C atom, 3 O atoms, 2 H atoms, 1 Cl atom"
+                            },
+                            {
+                                explanation: "Sodium, hydrogen, and chlorine are unbalanced. Let's start with sodium.",
+                                working: "We have 2 Na atoms on the left, so we need 2 on the right."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of NaCl.",
+                                working: "Na₂CO₃ + HCl → <span class='coefficient'>2</span>NaCl + H₂O + CO₂"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 2 Na atoms, 1 C atom, 3 O atoms, 1 H atom, 1 Cl atom<br>Right side: 2 Na atoms, 1 C atom, 3 O atoms, 2 H atoms, <span class='highlight'>2 Cl atoms</span>"
+                            },
+                            {
+                                explanation: "Now chlorine is unbalanced - 1 atom on the left, 2 on the right.",
+                                working: "We need 2 Cl atoms on the left, so we add a coefficient of 2 to HCl."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of HCl.",
+                                working: "Na₂CO₃ + <span class='coefficient'>2</span>HCl → 2NaCl + H₂O + CO₂"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 2 Na atoms, 1 C atom, 3 O atoms, 2 H atoms, 2 Cl atoms<br>Right side: 2 Na atoms, 1 C atom, 3 O atoms, 2 H atoms, 2 Cl atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "Na₂CO₃ + <span class='coefficient'>2</span>HCl → <span class='coefficient'>2</span>NaCl + H₂O + CO₂"
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        unbalanced: "Fe + O₂ → Fe₂O₃",
+                        balanced: "4Fe + 3O₂ → 2Fe₂O₃",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 Fe atom, 2 O atoms<br>Right side: 2 Fe atoms, 3 O atoms"
+                            },
+                            {
+                                explanation: "Both iron and oxygen are unbalanced. Let's try to balance them systematically.",
+                                working: "Notice that the right side has Fe₂O₃, which contains 2 Fe atoms and 3 O atoms per molecule."
+                            },
+                            {
+                                explanation: "We need to find the least common multiple of the number of atoms needed.",
+                                working: "Let's add a coefficient of 2 in front of Fe₂O₃."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of Fe₂O₃.",
+                                working: "Fe + O₂ → <span class='coefficient'>2</span>Fe₂O₃"
+                            },
+                            {
+                                explanation: "Now let's recount the atoms.",
+                                working: "Left side: 1 Fe atom, 2 O atoms<br>Right side: <span class='highlight'>4 Fe atoms</span>, <span class='highlight'>6 O atoms</span>"
+                            },
+                            {
+                                explanation: "Now we need 4 Fe atoms on the left side.",
+                                working: "Adding a coefficient of 4 in front of Fe."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 4 in front of Fe.",
+                                working: "<span class='coefficient'>4</span>Fe + O₂ → 2Fe₂O₃"
+                            },
+                            {
+                                explanation: "Recounting the atoms again.",
+                                working: "Left side: 4 Fe atoms, 2 O atoms<br>Right side: 4 Fe atoms, <span class='highlight'>6 O atoms</span>"
+                            },
+                            {
+                                explanation: "Finally, we need 6 O atoms on the left side.",
+                                working: "Adding a coefficient of 3 in front of O₂."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 3 in front of O₂.",
+                                working: "4Fe + <span class='coefficient'>3</span>O₂ → 2Fe₂O₃"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 4 Fe atoms, 6 O atoms<br>Right side: 4 Fe atoms, 6 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "<span class='coefficient'>4</span>Fe + <span class='coefficient'>3</span>O₂ → <span class='coefficient'>2</span>Fe₂O₃"
+                            }
+                        ]
+                    }
+                ],
+                intermediate: [
+                    {
+                        id: 1,
+                        unbalanced: "CaCO₃ → CaO + CO₂",
+                        balanced: "CaCO₃ → CaO + CO₂",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 Ca atom, 1 C atom, 3 O atoms<br>Right side: 1 Ca atom, 1 C atom, 3 O atoms"
+                            },
+                            {
+                                explanation: "Let's check each element carefully:",
+                                working: "Calcium (Ca): 1 atom on the left, 1 atom on the right<br>Carbon (C): 1 atom on the left, 1 atom on the right<br>Oxygen (O): 3 atoms on the left, 3 atoms on the right (1 in CaO + 2 in CO₂)"
+                            },
+                            {
+                                explanation: "All elements are already balanced!",
+                                working: "This equation is already balanced as written. No coefficients need to be added."
+                            },
+                            {
+                                explanation: "The equation is balanced!",
+                                working: "CaCO₃ → CaO + CO₂"
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "C₃H₈ + O₂ → CO₂ + H₂O",
+                        balanced: "C₃H₈ + 5O₂ → 3CO₂ + 4H₂O",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 3 C atoms, 8 H atoms, 2 O atoms<br>Right side: 1 C atom, 2 H atoms, 3 O atoms"
+                            },
+                            {
+                                explanation: "All elements are unbalanced. Let's start with carbon.",
+                                working: "We have 3 C atoms on the left, so we need 3 on the right."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 3 in front of CO₂.",
+                                working: "C₃H₈ + O₂ → <span class='coefficient'>3</span>CO₂ + H₂O"
+                            },
+                            {
+                                explanation: "Now let's balance hydrogen.",
+                                working: "We have 8 H atoms on the left, so we need 8 on the right."
+                            },
+                            {
+                                explanation: "Each H₂O provides 2 H atoms, so we need 4 H₂O molecules.",
+                                working: "C₃H₈ + O₂ → 3CO₂ + <span class='coefficient'>4</span>H₂O"
+                            },
+                            {
+                                explanation: "Now let's count oxygen atoms on the right side.",
+                                working: "Right side: 3 CO₂ molecules × 2 O atoms + 4 H₂O molecules × 1 O atom = 6 + 4 = 10 O atoms"
+                            },
+                            {
+                                explanation: "We need 10 O atoms on the left, which means 5 O₂ molecules.",
+                                working: "C₃H₈ + <span class='coefficient'>5</span>O₂ → 3CO₂ + 4H₂O"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 3 C atoms, 8 H atoms, 10 O atoms<br>Right side: 3 C atoms, 8 H atoms, 10 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "C₃H₈ + <span class='coefficient'>5</span>O₂ → <span class='coefficient'>3</span>CO₂ + <span class='coefficient'>4</span>H₂O"
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "KClO₃ → KCl + O₂",
+                        balanced: "2KClO₃ → 2KCl + 3O₂",
+                        steps: [
+                            {
+                                explanation: "First, identify and count all atoms on each side.",
+                                working: "Left side: 1 K atom, 1 Cl atom, 3 O atoms<br>Right side: 1 K atom, 1 Cl atom, 2 O atoms"
+                            },
+                            {
+                                explanation: "Potassium and chlorine are balanced, but oxygen is not.",
+                                working: "We have 3 O atoms on the left, but only 2 on the right."
+                            },
+                            {
+                                explanation: "This is tricky because we can't easily balance oxygen with these numbers.",
+                                working: "Let's try using multiple KClO₃ molecules to make it easier to balance."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of KClO₃.",
+                                working: "<span class='coefficient'>2</span>KClO₃ → KCl + O₂"
+                            },
+                            {
+                                explanation: "Now we have 2 K atoms and 2 Cl atoms on the left.",
+                                working: "We need to add a coefficient of 2 in front of KCl."
+                            },
+                            {
+                                explanation: "Adding a coefficient of 2 in front of KCl.",
+                                working: "2KClO₃ → <span class='coefficient'>2</span>KCl + O₂"
+                            },
+                            {
+                                explanation: "Now let's count the oxygen atoms.",
+                                working: "Left side: 2 KClO₃ molecules × 3 O atoms = 6 O atoms<br>Right side: 1 O₂ molecule × 2 O atoms = 2 O atoms"
+                            },
+                            {
+                                explanation: "We need 6 O atoms on the right, which means 3 O₂ molecules.",
+                                working: "2KClO₃ → 2KCl + <span class='coefficient'>3</span>O₂"
+                            },
+                            {
+                                explanation: "Final count of atoms.",
+                                working: "Left side: 2 K atoms, 2 Cl atoms, 6 O atoms<br>Right side: 2 K atoms, 2 Cl atoms, 6 O atoms"
+                            },
+                            {
+                                explanation: "The equation is now balanced!",
+                                working: "<span class='coefficient'>2</span>KClO₃ → <span class='coefficient'>2</span>KCl + <span class='coefficient'>3</span>O₂"
+                            }
+                        ]
+                    }
+                ]
+            };
+            
+            // Practice data
+            const practiceData = {
+                easy: [
+                    {
+                        id: 1,
+                        unbalanced: "Li + O₂ → Li₂O",
+                        balanced: "4Li + O₂ → 2Li₂O",
+                        hint: "Remember that oxygen (O₂) has 2 atoms, and in Li₂O there are 2 Li atoms for each O atom. Think about how many Li₂O molecules you need to use all the oxygen atoms."
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "Ca + Cl₂ → CaCl₂",
+                        balanced: "Ca + Cl₂ → CaCl₂",
+                        hint: "Check if the equation is already balanced by counting atoms on each side. Ca: 1 atom, Cl: 2 atoms on both sides."
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "H₂ + Cl₂ → HCl",
+                        balanced: "H₂ + Cl₂ → 2HCl",
+                        hint: "H₂ has 2 hydrogen atoms and Cl₂ has 2 chlorine atoms. How many HCl molecules do you need to use all these atoms?"
+                    },
+                    {
+                        id: 4,
+                        unbalanced: "Mg + HCl → MgCl₂ + H₂",
+                        balanced: "Mg + 2HCl → MgCl₂ + H₂",
+                        hint: "MgCl₂ has 2 Cl atoms. How many HCl molecules would you need to provide these Cl atoms?"
+                    },
+                    {
+                        id: 5,
+                        unbalanced: "Fe + S → FeS",
+                        balanced: "Fe + S → FeS",
+                        hint: "Count the atoms on each side. Sometimes equations are already balanced!"
+                    }
+                ],
+                moderate: [
+                    {
+                        id: 1,
+                        unbalanced: "Fe + O₂ → Fe₂O₃",
+                        balanced: "4Fe + 3O₂ → 2Fe₂O₃",
+                        hint: "Each Fe₂O₃ contains 2 Fe atoms and 3 O atoms. If you use 2 Fe₂O₃ molecules, how many Fe and O atoms would you need?"
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "C₃H₈ + O₂ → CO₂ + H₂O",
+                        balanced: "C₃H₈ + 5O₂ → 3CO₂ + 4H₂O",
+                        hint: "Start by balancing carbon. Each C₃H₈ has 3 C atoms, so you'll need 3 CO₂ molecules. Then balance hydrogen and finally oxygen."
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "Cu + O₂ → CuO",
+                        balanced: "2Cu + O₂ → 2CuO",
+                        hint: "Each oxygen molecule (O₂) has 2 oxygen atoms, while each CuO only uses 1 oxygen atom. How many CuO molecules would you need?"
+                    },
+                    {
+                        id: 4,
+                        unbalanced: "Zn + CuSO₄ → ZnSO₄ + Cu",
+                        balanced: "Zn + CuSO₄ → ZnSO₄ + Cu",
+                        hint: "Check if atoms of each element are already balanced on both sides of the equation. This is a single replacement reaction."
+                    },
+                    {
+                        id: 5,
+                        unbalanced: "Al + O₂ → Al₂O₃",
+                        balanced: "4Al + 3O₂ → 2Al₂O₃",
+                        hint: "Each Al₂O₃ has 2 Al atoms and 3 O atoms. Try balancing with a coefficient of 2 for Al₂O₃ and see what happens."
+                    }
+                ],
+                intermediate: [
+                    {
+                        id: 1,
+                        unbalanced: "Al + H₂SO₄ → Al₂(SO₄)₃ + H₂",
+                        balanced: "2Al + 3H₂SO₄ → Al₂(SO₄)₃ + 3H₂",
+                        hint: "Notice that Al₂(SO₄)₃ needs 2 Al atoms. For the sulfate (SO₄) groups, compare how many are on each side and balance accordingly."
+                    },
+                    {
+                        id: 2,
+                        unbalanced: "NaOH + H₂SO₄ → Na₂SO₄ + H₂O",
+                        balanced: "2NaOH + H₂SO₄ → Na₂SO₄ + 2H₂O",
+                        hint: "Notice that Na₂SO₄ has 2 Na atoms, while NaOH has only 1. How many NaOH molecules do you need? Then check hydrogen and oxygen."
+                    },
+                    {
+                        id: 3,
+                        unbalanced: "CuCO₃ → CuO + CO₂",
+                        balanced: "CuCO₃ → CuO + CO₂",
+                        hint: "Count each atom carefully. The carbon from CuCO₃ goes to CO₂, and the copper remains in CuO. Check if the equation is already balanced."
+                    }
+                ]
+            };
+            
+            // Get DOM elements
+            const tutorialMode = document.getElementById("tutorial-mode");
+            const practiceMode = document.getElementById("practice-mode");
+            const tutorialContent = document.getElementById("tutorial-content");
+            const practiceEquation = document.getElementById("practice-equation");
+            const tutorialDifficulty = document.getElementById("tutorial-difficulty");
+            const practiceDifficulty = document.getElementById("practice-difficulty");
+            const prevTutorial = document.getElementById("prev-tutorial");
+            const nextTutorial = document.getElementById("next-tutorial");
+            const prevPractice = document.getElementById("prev-practice");
+            const nextPractice = document.getElementById("next-practice");
+            const checkAnswer = document.getElementById("check-answer");
+            const resetEquation = document.getElementById("reset-equation");
+            const feedback = document.getElementById("feedback");
+            const showHint = document.getElementById("show-hint");
+            const hint = document.getElementById("hint");
+            const progressValue = document.getElementById("progress-value");
+            const correctCount = document.getElementById("correct-count");
+            const totalCount = document.getElementById("total-count");
+            const elementCounter = document.getElementById("element-counter");
+            
+            // Setup start button
+            document.getElementById('start-app').addEventListener('click', function() {
+                document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('main-tabs').style.display = 'flex';
+                document.getElementById('tutorial-mode').style.display = 'block';
+                loadTutorial();
+                loadPractice();
+            });
+            
+            // Tab switching
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    const mode = tab.dataset.mode;
+                    
+                    // Update active tab
+                    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    
+                    // Update active mode
+                    document.querySelectorAll(".mode").forEach(m => {
+                        m.classList.remove("active");
+                        m.style.display = "none";
+                    });
+                    document.getElementById(`${mode}-mode`).classList.add("active");
+                    document.getElementById(`${mode}-mode`).style.display = "block";
+                    
+                    // Reset hints
+                    hint.classList.remove("visible");
+                });
+            });
+            
+            // Load tutorial content
+            function loadTutorial() {
+                const tutorials = tutorialData[currentTutorialLevel];
+                const tutorial = tutorials.find(t => t.id === currentTutorialId);
+                
+                if (!tutorial) {
+                    return;
+                }
+                
+                let html = `
+                    <h2>Example ${currentTutorialId}: ${tutorial.unbalanced}</h2>
+                    <div class="equation" id="equation-display">${tutorial.unbalanced}</div>
+                `;
+                
+                // Only show steps up to the current step
+                for (let i = 0; i <= currentStep && i < tutorial.steps.length; i++) {
+                    const step = tutorial.steps[i];
+                    html += `
+                        <div class="step">
+                            <span class="step-number">Step ${i + 1}:</span> ${step.explanation}
+                            <div class="step-explanation">${step.working}</div>
+                        </div>
+                    `;
+                }
+                
+                // If all steps are shown, display the balanced equation
+                if (currentStep >= tutorial.steps.length - 1) {
+                    html += `
+                        <div class="step">
+                            <span class="step-number">Final Balanced Equation:</span>
+                            <div class="equation">${tutorial.balanced}</div>
+                        </div>
+                    `;
+                }
+                
+                tutorialContent.innerHTML = html;
+                
+                // Update navigation buttons
+                prevTutorial.disabled = currentTutorialId === 1 && currentStep === 0;
+                nextTutorial.disabled = currentTutorialId === tutorials.length && currentStep >= tutorial.steps.length - 1;
+            }
+            
+            // Load practice content
+            function loadPractice() {
+                const practices = practiceData[currentPracticeLevel];
+                const practice = practices.find(p => p.id === currentPracticeId);
+                
+                if (!practice) {
+                    return;
+                }
+                
+                // Extract the unbalanced equation and parse it
+                const parts = practice.unbalanced.split(" → ");
+                const leftSide = parts[0].split(" + ");
+                const rightSide = parts[1].split(" + ");
+                
+                // Create the interactive equation
+                let html = "";
+                
+                // Left side
+                for (let i = 0; i < leftSide.length; i++) {
+                    if (i > 0) {
+                        html += " + ";
+                    }
+                    html += `<input type="text" class="practice-input" data-position="left" data-index="${i}"> ${leftSide[i]}`;
+                }
+                
+                // Arrow
+                html += " → ";
+                
+                // Right side
+                for (let i = 0; i < rightSide.length; i++) {
+                    if (i > 0) {
+                        html += " + ";
+                    }
+                    html += `<input type="text" class="practice-input" data-position="right" data-index="${i}"> ${rightSide[i]}`;
+                }
+                
+                practiceEquation.innerHTML = html;
+                hint.textContent = practice.hint;
+                hint.classList.remove("visible");
+                feedback.textContent = "";
+                feedback.className = "feedback";
+                
+                // Set default value 1 for inputs
+                document.querySelectorAll(".practice-input").forEach(input => {
+                    input.value = "1";
+                    input.classList.remove("correct", "incorrect");
+                    
+                    // Add event listener for input change
+                    input.addEventListener("input", updateElementCounts);
+                });
+                
+                // Update element counter
+                updateElementCounts();
+                
+                // Update navigation buttons
+                prevPractice.disabled = currentPracticeId === 1;
+                nextPractice.disabled = currentPracticeId === practices.length;
+                
+                // Update progress
+                updateProgress();
+            }
+            
+            // Update element counts for practice mode
+            function updateElementCounts() {
+                const practices = practiceData[currentPracticeLevel];
+                const practice = practices.find(p => p.id === currentPracticeId);
+                
+                if (!practice) {
+                    return;
+                }
+                
+                // Extract the unbalanced equation
+                const parts = practice.unbalanced.split(" → ");
+                const leftSide = parts[0].split(" + ");
+                const rightSide = parts[1].split(" + ");
+                
+                // Get the current coefficients
+                const coefficients = {
+                    left: [],
+                    right: []
+                };
+                
+                document.querySelectorAll(".practice-input").forEach(input => {
+                    const position = input.dataset.position;
+                    const index = parseInt(input.dataset.index);
+                    const value = parseInt(input.value) || 1;
+                    
+                    if (position === "left") {
+                        coefficients.left[index] = value;
+                    } else {
+                        coefficients.right[index] = value;
+                    }
+                });
+                
+                // Count elements on each side
+                const elements = {};
+                
+                // Parse chemical formulas and count elements
+                function parseFormula(formula, coefficient, side) {
+                    // Convert subscript Unicode characters to regular numbers
+                    formula = formula
+                        .replace(/₀/g, '0')
+                        .replace(/₁/g, '1')
+                        .replace(/₂/g, '2')
+                        .replace(/₃/g, '3')
+                        .replace(/₄/g, '4')
+                        .replace(/₅/g, '5')
+                        .replace(/₆/g, '6')
+                        .replace(/₇/g, '7')
+                        .replace(/₈/g, '8')
+                        .replace(/₉/g, '9');
+                    
+                    // Handle parentheses in formulas like (NO3)2
+                    function expandParentheses(formula) {
+                        // Find all instances of parentheses with a number after them
+                        const parenthesesRegex = /\(([^)]+)\)(\d+)/g;
+                        let match;
+                        
+                        // Replace all parentheses groups
+                        while ((match = parenthesesRegex.exec(formula)) !== null) {
+                            const group = match[1];
+                            const multiplier = parseInt(match[2]);
+                            const expandedGroup = group.repeat(multiplier);
+                            
+                            // Replace the parentheses group in the formula
+                            formula = formula.replace(match[0], expandedGroup);
+                            
+                            // Reset the regex to search from the beginning
+                            parenthesesRegex.lastIndex = 0;
+                        }
+                        
+                        return formula;
+                    }
+                    
+                    // Expand any parentheses in the formula
+                    formula = expandParentheses(formula);
+                    
+                    // Extract element symbols and their counts
+                    const elementRegex = /([A-Z][a-z]*)(\d*)/g;
+                    let elementMatch;
+                    
+                    while ((elementMatch = elementRegex.exec(formula)) !== null) {
+                        const element = elementMatch[1];
+                        const count = elementMatch[2] ? parseInt(elementMatch[2]) : 1;
+                        
+                        if (!elements[element]) {
+                            elements[element] = { left: 0, right: 0 };
+                        }
+                        
+                        if (side === "left") {
+                            elements[element].left += count * coefficient;
+                        } else {
+                            elements[element].right += count * coefficient;
+                        }
+                    }
+                }
+                
+                // Count left side
+                leftSide.forEach((compound, index) => {
+                    const coefficient = coefficients.left[index] || 1;
+                    parseFormula(compound, coefficient, "left");
+                });
+                
+                // Count right side
+                rightSide.forEach((compound, index) => {
+                    const coefficient = coefficients.right[index] || 1;
+                    parseFormula(compound, coefficient, "right");
+                });
+                
+                // Display element counts
+                let html = "<div class='element-list'>";
+                
+                for (const element in elements) {
+                    html += `
+                        <div class="element-item">
+                            ${element}: 
+                            Left: ${elements[element].left}, 
+                            Right: ${elements[element].right}
+                            ${elements[element].left === elements[element].right ? " ✓" : ""}
+                        </div>
+                    `;
+                }
+                
+                html += "</div>";
+                elementCounter.innerHTML = html;
+            }
+            
+            // Check practice answer
+            function checkPracticeAnswer() {
+                const practices = practiceData[currentPracticeLevel];
+                const practice = practices.find(p => p.id === currentPracticeId);
+                
+                if (!practice) {
+                    return;
+                }
+                
+                // Get the current coefficients
+                const coefficients = {
+                    left: [],
+                    right: []
+                };
+                
+                document.querySelectorAll(".practice-input").forEach(input => {
+                    const position = input.dataset.position;
+                    const index = parseInt(input.dataset.index);
+                    const value = parseInt(input.value) || 1; // Default to 1 if empty or invalid
+                    
+                    if (position === "left") {
+                        coefficients.left[index] = value;
+                    } else {
+                        coefficients.right[index] = value;
+                    }
+                });
+                
+                // Function to parse chemical formulas and count atoms
+                function countAtoms(formula, coefficient = 1) {
+                    const atomCount = {};
+                    
+                    // Convert subscript Unicode characters to regular numbers
+                    formula = formula
+                        .replace(/₀/g, '0')
+                        .replace(/₁/g, '1')
+                        .replace(/₂/g, '2')
+                        .replace(/₃/g, '3')
+                        .replace(/₄/g, '4')
+                        .replace(/₅/g, '5')
+                        .replace(/₆/g, '6')
+                        .replace(/₇/g, '7')
+                        .replace(/₈/g, '8')
+                        .replace(/₉/g, '9');
+                    
+                    // Handle parentheses in formulas like (NO3)2
+                    function expandParentheses(formula) {
+                        const parenthesesRegex = /\(([^)]+)\)(\d+)/g;
+                        let match;
+                        
+                        while ((match = parenthesesRegex.exec(formula)) !== null) {
+                            const group = match[1];
+                            const multiplier = parseInt(match[2]);
+                            const expandedGroup = group.repeat(multiplier);
+                            
+                            formula = formula.replace(match[0], expandedGroup);
+                            parenthesesRegex.lastIndex = 0;
+                        }
+                        
+                        return formula;
+                    }
+                    
+                    formula = expandParentheses(formula);
+                    
+                    // Extract element symbols and their counts
+                    const elementRegex = /([A-Z][a-z]*)(\d*)/g;
+                    let elementMatch;
+                    
+                    while ((elementMatch = elementRegex.exec(formula)) !== null) {
+                        const element = elementMatch[1];
+                        const count = elementMatch[2] ? parseInt(elementMatch[2]) : 1;
+                        
+                        if (!atomCount[element]) {
+                            atomCount[element] = 0;
+                        }
+                        
+                        atomCount[element] += count * coefficient;
+                    }
+                    
+                    return atomCount;
+                }
+                
+                // Count atoms on both sides of the equation
+                function countEquationAtoms(equation, coefficients) {
+                    const leftSide = equation.split(" → ")[0].split(" + ");
+                    const rightSide = equation.split(" → ")[1].split(" + ");
+                    
+                    // Count atoms on left side
+                    const leftAtoms = {};
+                    leftSide.forEach((compound, index) => {
+                        const coefficient = coefficients.left[index] || 1;
+                        const atoms = countAtoms(compound, coefficient);
+                        
+                        // Add atoms to total
+                        for (const element in atoms) {
+                            if (!leftAtoms[element]) {
+                                leftAtoms[element] = 0;
+                            }
+                            leftAtoms[element] += atoms[element];
+                        }
+                    });
+                    
+                    // Count atoms on right side
+                    const rightAtoms = {};
+                    rightSide.forEach((compound, index) => {
+                        const coefficient = coefficients.right[index] || 1;
+                        const atoms = countAtoms(compound, coefficient);
+                        
+                        // Add atoms to total
+                        for (const element in atoms) {
+                            if (!rightAtoms[element]) {
+                                rightAtoms[element] = 0;
+                            }
+                            rightAtoms[element] += atoms[element];
+                        }
+                    });
+                    
+                    return { left: leftAtoms, right: rightAtoms };
+                }
+                
+                // Count atoms with user's coefficients
+                const atomCounts = countEquationAtoms(practice.unbalanced, coefficients);
+                
+                // An equation is balanced if each element has the same number of atoms on both sides
+                let isBalanced = true;
+                const allElements = new Set([
+                    ...Object.keys(atomCounts.left),
+                    ...Object.keys(atomCounts.right)
+                ]);
+                
+                // Check if atoms are balanced for each element
+                for (const element of allElements) {
+                    const leftCount = atomCounts.left[element] || 0;
+                    const rightCount = atomCounts.right[element] || 0;
+                    
+                    if (leftCount !== rightCount) {
+                        isBalanced = false;
+                        break;
+                    }
+                }
+                
+                // Additional check: ensure user isn't using all zeros or all ones when that's not valid
+                const allCoefficients = [...coefficients.left, ...coefficients.right];
+                const allOnes = allCoefficients.every(c => c === 1);
+                const zeroPresent = allCoefficients.some(c => c === 0);
+                
+                // Convert the expected balanced equation to check if all ones is valid
+                if (allOnes && practice.balanced !== practice.unbalanced) {
+                    isBalanced = false;
+                }
+                
+                // Zero coefficients are never valid
+                if (zeroPresent) {
+                    isBalanced = false;
+                }
+                
+                // If balanced, update the UI
+                if (isBalanced) {
+                    feedback.textContent = "Correct! The equation is balanced.";
+                    feedback.className = "feedback success";
+                    document.querySelectorAll(".practice-input").forEach(input => {
+                        input.classList.add("correct");
+                    });
+                    
+                    // Update progress
+                    correctAnswers++;
+                    totalAttempts++;
+                    updateProgress();
+                    
+                    // Enable the next button
+                    nextPractice.disabled = currentPracticeId === practices.length;
+                } else {
+                    feedback.textContent = "Not quite. Try again or check the hint.";
+                    feedback.className = "feedback error";
+                    
+                    document.querySelectorAll(".practice-input").forEach(input => {
+                        input.classList.add("incorrect");
+                    });
+                    
+                    // Update attempts
+                    totalAttempts++;
+                    updateProgress();
+                }
+            }
+            
+            // Update progress
+            function updateProgress() {
+                if (totalAttempts > 0) {
+                    const percentage = Math.round((correctAnswers / totalAttempts) * 100);
+                    progressValue.textContent = `${percentage}%`;
+                } else {
+                    progressValue.textContent = "0%";
+                }
+                
+                correctCount.textContent = correctAnswers;
+                totalCount.textContent = totalAttempts;
+            }
+            
+            // Reset practice equation
+            function resetPracticeEquation() {
+                document.querySelectorAll(".practice-input").forEach(input => {
+                    input.value = "1";
+                    input.classList.remove("correct", "incorrect");
+                });
+                
+                feedback.textContent = "";
+                feedback.className = "feedback";
+                hint.classList.remove("visible");
+                
+                // Update element counter
+                updateElementCounts();
+            }
+            
+            // Tutorial difficulty change
+            tutorialDifficulty.addEventListener("change", () => {
+                currentTutorialLevel = tutorialDifficulty.value;
+                currentTutorialId = 1;
+                currentStep = 0;
+                loadTutorial();
+            });
+            
+            // Practice difficulty change
+            practiceDifficulty.addEventListener("change", () => {
+                currentPracticeLevel = practiceDifficulty.value;
+                currentPracticeId = 1;
+                loadPractice();
+            });
+            
+            // Tutorial navigation
+            prevTutorial.addEventListener("click", () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    loadTutorial();
+                } else if (currentTutorialId > 1) {
+                    currentTutorialId--;
+                    const tutorials = tutorialData[currentTutorialLevel];
+                    const tutorial = tutorials.find(t => t.id === currentTutorialId);
+                    currentStep = tutorial.steps.length - 1;
+                    loadTutorial();
+                }
+            });
+            
+            nextTutorial.addEventListener("click", () => {
+                const tutorials = tutorialData[currentTutorialLevel];
+                const tutorial = tutorials.find(t => t.id === currentTutorialId);
+                
+                if (currentStep < tutorial.steps.length - 1) {
+                    currentStep++;
+                    loadTutorial();
+                } else if (currentTutorialId < tutorials.length) {
+                    currentTutorialId++;
+                    currentStep = 0;
+                    loadTutorial();
+                }
+            });
+            
+            // Practice navigation
+            prevPractice.addEventListener("click", () => {
+                if (currentPracticeId > 1) {
+                    currentPracticeId--;
+                    loadPractice();
+                }
+            });
+            
+            nextPractice.addEventListener("click", () => {
+                const practices = practiceData[currentPracticeLevel];
+                
+                if (currentPracticeId < practices.length) {
+                    currentPracticeId++;
+                    loadPractice();
+                }
+            });
+            
+            // Check answer
+            checkAnswer.addEventListener("click", checkPracticeAnswer);
+            
+            // Reset equation
+            resetEquation.addEventListener("click", resetPracticeEquation);
+            
+            // Show hint
+            showHint.addEventListener("click", () => {
+                hint.classList.toggle("visible");
+            });
+        });
+    </script>
+</body>
+</html>
