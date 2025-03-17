@@ -35,6 +35,130 @@
             opacity: 0;
         }
         
+        /* Calculator styles */
+        .calculator-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #3498db;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .calculator-container {
+            position: fixed;
+            width: 280px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            overflow: hidden;
+            transition: height 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+        
+        .calculator-header {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .calculator-title {
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .calculator-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .calculator-control {
+            cursor: pointer;
+            font-size: 14px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .calculator-control:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .calculator-body {
+            padding: 10px;
+        }
+        
+        .calculator-display {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            text-align: right;
+            font-size: 20px;
+            min-height: 35px;
+            border: 1px solid #ddd;
+            overflow: auto;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        .calculator-button {
+            background-color: #e9ecef;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .calculator-button:hover {
+            background-color: #dee2e6;
+        }
+        
+        .calculator-button.operator {
+            background-color: #ffcc80;
+        }
+        
+        .calculator-button.equals {
+            background-color: #81c784;
+        }
+        
+        .calculator-button.clear {
+            background-color: #ff8a80;
+        }
+        
+        .minimized .calculator-body {
+            display: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        }
+        
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -364,6 +488,54 @@
             border: 1px solid #ef5350;
         }
         
+        /* Step-by-step practice styles */
+        .practice-step {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        
+        .active-step {
+            border: 2px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hidden-step {
+            display: none;
+        }
+        
+        .step-inputs {
+            margin: 15px 0;
+        }
+        
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .element-info {
+            min-width: 200px;
+        }
+        
+        .total-row {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .error {
+            border: 2px solid #e74c3c !important;
+            background-color: #ffebee;
+        }
+        
+        .correct {
+            border: 2px solid #2ecc71 !important;
+            background-color: #e8f5e9;
+        }
+        
         .hidden {
             display: none;
         }
@@ -410,6 +582,52 @@
 </head>
 <body>
     <div id="toast-notification" class="toast"></div>
+    
+    <!-- Calculator Toggle Button -->
+    <div id="calculator-toggle" class="calculator-toggle">
+        <span>🧮</span>
+    </div>
+    
+    <!-- Calculator -->
+    <div id="calculator" class="calculator-container hidden" style="bottom: 80px; left: 20px;">
+        <div id="calculator-header" class="calculator-header">
+            <div class="calculator-title">Calculator</div>
+            <div class="calculator-controls">
+                <div id="minimize-calculator" class="calculator-control">_</div>
+                <div id="close-calculator" class="calculator-control">×</div>
+            </div>
+        </div>
+        <div class="calculator-body">
+            <div id="calculator-display" class="calculator-display">0</div>
+            <div class="calculator-buttons">
+                <button class="calculator-button clear" data-action="clear">C</button>
+                <button class="calculator-button" data-action="bracket">(</button>
+                <button class="calculator-button" data-action="bracket">)</button>
+                <button class="calculator-button operator" data-action="operator">÷</button>
+                
+                <button class="calculator-button" data-action="number">7</button>
+                <button class="calculator-button" data-action="number">8</button>
+                <button class="calculator-button" data-action="number">9</button>
+                <button class="calculator-button operator" data-action="operator">×</button>
+                
+                <button class="calculator-button" data-action="number">4</button>
+                <button class="calculator-button" data-action="number">5</button>
+                <button class="calculator-button" data-action="number">6</button>
+                <button class="calculator-button operator" data-action="operator">−</button>
+                
+                <button class="calculator-button" data-action="number">1</button>
+                <button class="calculator-button" data-action="number">2</button>
+                <button class="calculator-button" data-action="number">3</button>
+                <button class="calculator-button operator" data-action="operator">+</button>
+                
+                <button class="calculator-button" data-action="number">0</button>
+                <button class="calculator-button" data-action="decimal">.</button>
+                <button class="calculator-button" data-action="backspace">⌫</button>
+                <button class="calculator-button equals" data-action="calculate">=</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <!-- Intro Screen -->
         <div id="intro-screen" class="screen active-screen">
@@ -990,64 +1208,379 @@
         function displayPracticeQuestion() {
             const question = practiceQuestions[practiceLevel][practiceQuestion];
             
+            // Parse and analyze the formula to determine correct atom counts
+            const atomCounts = parseFormula(question.formula);
+            
+            // Create a step-by-step interface
             practiceContainer.innerHTML = `
                 <h2>Question ${practiceQuestion + 1} of ${practiceQuestions[practiceLevel].length}</h2>
                 <p>Calculate the relative formula mass of <strong>${question.formula}</strong> (${question.name}).</p>
                 
-                <div class="answer-container">
-                    <div class="input-group">
-                        <label for="answer">Your Answer (u)</label>
-                        <input type="number" id="answer" placeholder="Enter your answer" step="0.1">
+                <!-- Progress indicator -->
+                <div class="progress-indicator">
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" style="width: 0%"></div>
                     </div>
-                    <button class="secondary-btn" id="submit-answer">Submit</button>
+                    <div class="step-indicator active" id="indicator-1">
+                        1
+                        <div class="step-label">Identify atoms</div>
+                    </div>
+                    <div class="step-indicator" id="indicator-2">
+                        2
+                        <div class="step-label">Calculate masses</div>
+                    </div>
+                    <div class="step-indicator" id="indicator-3">
+                        3
+                        <div class="step-label">Total RFM</div>
+                    </div>
                 </div>
                 
-                <div class="feedback hidden" id="feedback"></div>
+                <div class="practice-steps">
+                    <!-- Step 1: Identify atoms -->
+                    <div id="step1" class="practice-step active-step">
+                        <h3>Step 1: Identify the number of atoms of each element</h3>
+                        <p>For each element in the formula, enter how many atoms are present:</p>
+                        <div id="atom-inputs" class="step-inputs">
+                            ${Object.keys(atomCounts).map(element => `
+                                <div class="input-row">
+                                    <label>${element}:</label>
+                                    <input type="number" id="atom-${element}" class="atom-count-input" min="0" placeholder="Number of atoms">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button id="check-step1" class="primary-btn">Check Atoms</button>
+                        <div id="feedback-step1" class="feedback hidden"></div>
+                    </div>
+                    
+                    <!-- Step 2: Calculate mass contribution of each element -->
+                    <div id="step2" class="practice-step hidden-step">
+                        <h3>Step 2: Calculate the mass contribution of each element</h3>
+                        <p>For each element, multiply the atomic mass by the number of atoms:</p>
+                        <div id="mass-inputs" class="step-inputs">
+                            ${Object.keys(atomCounts).map(element => `
+                                <div class="input-row">
+                                    <span class="element-info">${element} (${periodicTableData[element].atomicMass} u) × ${atomCounts[element]} atoms =</span>
+                                    <input type="number" id="mass-${element}" class="mass-input" min="0" step="0.1" placeholder="Mass contribution">
+                                    <span>u</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button id="check-step2" class="primary-btn">Check Mass Contributions</button>
+                        <div id="feedback-step2" class="feedback hidden"></div>
+                    </div>
+                    
+                    <!-- Step 3: Calculate total RFM -->
+                    <div id="step3" class="practice-step hidden-step">
+                        <h3>Step 3: Calculate the total relative formula mass</h3>
+                        <p>Add up all the mass contributions to find the total relative formula mass:</p>
+                        <div class="input-row total-row">
+                            <label>Total RFM:</label>
+                            <input type="number" id="total-rfm" min="0" step="0.1" placeholder="Total RFM">
+                            <span>u</span>
+                        </div>
+                        <button id="check-step3" class="primary-btn">Check Final Answer</button>
+                        <div id="feedback-step3" class="feedback hidden"></div>
+                    </div>
+                </div>
+                
+                <div id="final-feedback" class="feedback hidden"></div>
+                <button id="next-question-btn" class="primary-btn hidden">Next Question</button>
             `;
             
             populatePracticeElements();
             
-            // Add event listener to submit button
-            document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+            // Add event listeners for each step
+            document.getElementById('check-step1').addEventListener('click', () => checkStep1(atomCounts));
+            document.getElementById('check-step2').addEventListener('click', () => checkStep2(atomCounts));
+            document.getElementById('check-step3').addEventListener('click', () => checkStep3(question.answer));
+            document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
         }
-
-        // Check practice answer
-        function checkAnswer() {
-            const answerInput = document.getElementById('answer');
-            const feedbackElement = document.getElementById('feedback');
-            const userAnswer = parseFloat(answerInput.value);
+        
+        // Function to parse a chemical formula and count atoms
+        function parseFormula(formula) {
+            // This is a simplified parser that handles basic formulas, brackets, and hydrates
+            const atomCounts = {};
+            
+            // Helper function to add atoms to the count
+            function addAtoms(element, count = 1) {
+                if (atomCounts[element]) {
+                    atomCounts[element] += count;
+                } else {
+                    atomCounts[element] = count;
+                }
+            }
+            
+            // Handle hydrates (e.g., CuSO₄·5H₂O)
+            const parts = formula.split('·');
+            let mainFormula = parts[0];
+            
+            // Parse main formula
+            parseSubFormula(mainFormula, 1);
+            
+            // Parse hydrate part if exists
+            if (parts.length > 1) {
+                const hydratePart = parts[1];
+                const match = hydratePart.match(/^(\d+)(.+)$/);
+                if (match) {
+                    const count = parseInt(match[1]);
+                    const subFormula = match[2];
+                    parseSubFormula(subFormula, count);
+                }
+            }
+            
+            function parseSubFormula(subFormula, multiplier) {
+                // Regular expression to match elements and their counts
+                // This handles subscripts like H₂O as well as regular digits like H2O
+                const regex = /([A-Z][a-z]*)([₀₁₂₃₄₅₆₇₈₉]*)(\d*)/g;
+                let match;
+                
+                while ((match = regex.exec(subFormula)) !== null) {
+                    const element = match[1];
+                    let count = 1;
+                    
+                    // Handle subscripts
+                    if (match[2]) {
+                        count = convertSubscriptToNumber(match[2]);
+                    }
+                    // Handle regular digits
+                    else if (match[3]) {
+                        count = parseInt(match[3]);
+                    }
+                    
+                    addAtoms(element, count * multiplier);
+                }
+                
+                // Handle brackets - this is simplified and might not handle all complex cases
+                // (e.g., nested brackets or multiple bracket groups)
+                const bracketRegex = /\(([^()]+)\)(\d+)/g;
+                
+                let bracketMatch;
+                let processedFormula = subFormula;
+                
+                while ((bracketMatch = bracketRegex.exec(subFormula)) !== null) {
+                    const innerFormula = bracketMatch[1];
+                    const bracketMultiplier = parseInt(bracketMatch[2]);
+                    
+                    // Clear previous counts for elements in this bracket
+                    const tempAtomCounts = {};
+                    const innerRegex = /([A-Z][a-z]*)([₀₁₂₃₄₅₆₇₈₉]*)(\d*)/g;
+                    let innerMatch;
+                    
+                    while ((innerMatch = innerRegex.exec(innerFormula)) !== null) {
+                        const element = innerMatch[1];
+                        let count = 1;
+                        
+                        // Handle subscripts
+                        if (innerMatch[2]) {
+                            count = convertSubscriptToNumber(innerMatch[2]);
+                        }
+                        // Handle regular digits
+                        else if (innerMatch[3]) {
+                            count = parseInt(innerMatch[3]);
+                        }
+                        
+                        // Multiply by both the bracket multiplier and the overall multiplier
+                        if (tempAtomCounts[element]) {
+                            tempAtomCounts[element] += count * bracketMultiplier;
+                        } else {
+                            tempAtomCounts[element] = count * bracketMultiplier;
+                        }
+                    }
+                    
+                    // Add these counts to the main counts
+                    for (const element in tempAtomCounts) {
+                        addAtoms(element, tempAtomCounts[element] * multiplier);
+                    }
+                    
+                    // Remove this bracket group from further processing
+                    processedFormula = processedFormula.replace(bracketMatch[0], '');
+                }
+            }
+            
+            return atomCounts;
+        }
+        
+        // Convert subscript Unicode characters to numbers
+        function convertSubscriptToNumber(subscript) {
+            const subscriptMap = {
+                '₀': 0, '₁': 1, '₂': 2, '₃': 3, '₄': 4, 
+                '₅': 5, '₆': 6, '₇': 7, '₈': 8, '₉': 9
+            };
+            
+            let number = 0;
+            for (let i = 0; i < subscript.length; i++) {
+                number = number * 10 + subscriptMap[subscript[i]];
+            }
+            
+            return number || 1; // Default to 1 if no valid subscript
+        }
+        
+        // Check Step 1: Validate atom counts
+        function checkStep1(correctAtomCounts) {
+            const feedbackElement = document.getElementById('feedback-step1');
+            let allCorrect = true;
+            let feedbackMessage = '';
+            
+            // Check each element's atom count
+            for (const element in correctAtomCounts) {
+                const inputElement = document.getElementById(`atom-${element}`);
+                const userCount = parseInt(inputElement.value);
+                
+                if (isNaN(userCount)) {
+                    allCorrect = false;
+                    inputElement.classList.add('error');
+                    feedbackMessage = 'Please enter a number for each element.';
+                    break;
+                }
+                
+                if (userCount !== correctAtomCounts[element]) {
+                    allCorrect = false;
+                    inputElement.classList.add('error');
+                } else {
+                    inputElement.classList.remove('error');
+                    inputElement.classList.add('correct');
+                }
+            }
+            
+            // Show appropriate feedback
+            feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
+            
+            if (allCorrect) {
+                feedbackElement.classList.add('correct');
+                feedbackElement.textContent = 'Correct! Now let\'s calculate the mass contribution of each element.';
+                
+                // Enable step 2
+                document.getElementById('step1').classList.remove('active-step');
+                document.getElementById('step2').classList.remove('hidden-step');
+                document.getElementById('step2').classList.add('active-step');
+                
+                // Update progress indicators
+                document.getElementById('indicator-1').classList.remove('active');
+                document.getElementById('indicator-1').classList.add('completed');
+                document.getElementById('indicator-2').classList.add('active');
+                document.querySelector('.progress-bar-fill').style.width = '50%';
+                
+                // Disable inputs in step 1
+                document.querySelectorAll('.atom-count-input').forEach(input => {
+                    input.disabled = true;
+                });
+                
+                document.getElementById('check-step1').disabled = true;
+            } else {
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.textContent = feedbackMessage || 'Some atom counts are incorrect. Please check your answers.';
+            }
+        }
+        
+        // Check Step 2: Validate mass contributions
+        function checkStep2(atomCounts) {
+            const feedbackElement = document.getElementById('feedback-step2');
+            let allCorrect = true;
+            let feedbackMessage = '';
+            
+            // Check each element's mass contribution
+            for (const element in atomCounts) {
+                const inputElement = document.getElementById(`mass-${element}`);
+                const userMass = parseFloat(inputElement.value);
+                const correctMass = periodicTableData[element].atomicMass * atomCounts[element];
+                
+                if (isNaN(userMass)) {
+                    allCorrect = false;
+                    inputElement.classList.add('error');
+                    feedbackMessage = 'Please enter a number for each element.';
+                    break;
+                }
+                
+                // Allow for small rounding differences
+                if (Math.abs(userMass - correctMass) > 0.1) {
+                    allCorrect = false;
+                    inputElement.classList.add('error');
+                } else {
+                    inputElement.classList.remove('error');
+                    inputElement.classList.add('correct');
+                }
+            }
+            
+            // Show appropriate feedback
+            feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
+            
+            if (allCorrect) {
+                feedbackElement.classList.add('correct');
+                feedbackElement.textContent = 'Correct! Now let\'s calculate the total relative formula mass.';
+                
+                // Enable step 3
+                document.getElementById('step2').classList.remove('active-step');
+                document.getElementById('step3').classList.remove('hidden-step');
+                document.getElementById('step3').classList.add('active-step');
+                
+                // Update progress indicators
+                document.getElementById('indicator-2').classList.remove('active');
+                document.getElementById('indicator-2').classList.add('completed');
+                document.getElementById('indicator-3').classList.add('active');
+                document.querySelector('.progress-bar-fill').style.width = '100%';
+                
+                // Disable inputs in step 2
+                document.querySelectorAll('.mass-input').forEach(input => {
+                    input.disabled = true;
+                });
+                
+                document.getElementById('check-step2').disabled = true;
+            } else {
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.textContent = feedbackMessage || 'Some mass contributions are incorrect. Please check your answers.';
+            }
+        }
+        
+        // Check Step 3: Validate final RFM
+        function checkStep3(correctAnswer) {
+            const feedbackElement = document.getElementById('feedback-step3');
+            const totalInput = document.getElementById('total-rfm');
+            const userAnswer = parseFloat(totalInput.value);
             
             if (isNaN(userAnswer)) {
-                alert('Please enter a valid number');
+                feedbackElement.classList.remove('hidden', 'correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.textContent = 'Please enter a number for the total RFM.';
+                totalInput.classList.add('error');
                 return;
             }
             
-            const correctAnswer = practiceQuestions[practiceLevel][practiceQuestion].answer;
+            // Allow for small rounding differences
             const isCorrect = Math.abs(userAnswer - correctAnswer) < 0.1;
             
-            feedbackElement.className = isCorrect ? 'feedback correct' : 'feedback incorrect';
-            feedbackElement.textContent = isCorrect ? 
-                'Correct! Well done!' : 
-                `Incorrect. The correct answer is ${correctAnswer} u.`;
-            feedbackElement.classList.remove('hidden');
+            feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
             
-            // Update stats
             if (isCorrect) {
+                feedbackElement.classList.add('correct');
+                feedbackElement.textContent = 'Correct! You\'ve successfully calculated the relative formula mass.';
+                totalInput.classList.remove('error');
+                totalInput.classList.add('correct');
+                totalInput.disabled = true;
+                
+                document.getElementById('check-step3').disabled = true;
+                
+                // Update progress indicators
+                document.getElementById('indicator-3').classList.remove('active');
+                document.getElementById('indicator-3').classList.add('completed');
+                
+                // Show final feedback and next question button
+                const finalFeedback = document.getElementById('final-feedback');
+                finalFeedback.classList.remove('hidden');
+                finalFeedback.classList.add('correct');
+                finalFeedback.textContent = `Great job! The relative formula mass of ${practiceQuestions[practiceLevel][practiceQuestion].formula} is ${correctAnswer} u.`;
+                
+                document.getElementById('next-question-btn').classList.remove('hidden');
+                
+                // Update stats
+                practiceStats[practiceLevel].attempted++;
                 practiceStats[practiceLevel].correct++;
+                updateStatsDisplay();
+                saveProgress();
+            } else {
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.textContent = 'That\'s not quite right. Please check your addition.';
+                totalInput.classList.add('error');
             }
-            practiceStats[practiceLevel].attempted++;
-            
-            // Update stats display
-            updateStatsDisplay();
-            
-            // Disable input and change button
-            answerInput.disabled = true;
-            document.getElementById('submit-answer').outerHTML = `
-                <button class="primary-btn" id="next-question">Next Question</button>
-            `;
-            
-            // Add event listener to next question button
-            document.getElementById('next-question').addEventListener('click', nextQuestion);
         }
 
         // Move to next question
@@ -1213,10 +1746,276 @@
             
             // Show the last active screen
             switchScreen(currentScreen);
+            
+            // Initialize calculator
+            initCalculator();
         });
         
         // Also initialize elements immediately for faster loading
         populateIntroElements();
+        
+        // Calculator functionality
+        function initCalculator() {
+            const calculator = document.getElementById('calculator');
+            const calculatorToggle = document.getElementById('calculator-toggle');
+            const calculatorHeader = document.getElementById('calculator-header');
+            const minimizeBtn = document.getElementById('minimize-calculator');
+            const closeBtn = document.getElementById('close-calculator');
+            const display = document.getElementById('calculator-display');
+            
+            // Toggle calculator visibility
+            calculatorToggle.addEventListener('click', () => {
+                calculator.classList.toggle('hidden');
+                // Save calculator state in localStorage
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('rfm_calculatorVisible', !calculator.classList.contains('hidden'));
+                }
+            });
+            
+            // Minimize calculator
+            minimizeBtn.addEventListener('click', () => {
+                calculator.classList.toggle('minimized');
+                // Save minimized state in localStorage
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('rfm_calculatorMinimized', calculator.classList.contains('minimized'));
+                }
+            });
+            
+            // Close calculator
+            closeBtn.addEventListener('click', () => {
+                calculator.classList.add('hidden');
+                // Save calculator state in localStorage
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('rfm_calculatorVisible', false);
+                }
+            });
+            
+            // Make calculator draggable
+            let isDragging = false;
+            let offsetX, offsetY;
+            
+            calculatorHeader.addEventListener('mousedown', startDrag);
+            calculatorHeader.addEventListener('touchstart', startDrag);
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('touchmove', drag);
+            
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchend', endDrag);
+            
+            function startDrag(e) {
+                isDragging = true;
+                
+                // Prevent default behavior only for touch events
+                if (e.type === 'touchstart') {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    offsetX = touch.clientX - calculator.getBoundingClientRect().left;
+                    offsetY = touch.clientY - calculator.getBoundingClientRect().top;
+                } else {
+                    offsetX = e.clientX - calculator.getBoundingClientRect().left;
+                    offsetY = e.clientY - calculator.getBoundingClientRect().top;
+                }
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                
+                let clientX, clientY;
+                
+                if (e.type === 'touchmove') {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    clientX = touch.clientX;
+                    clientY = touch.clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+                
+                // Calculate new position
+                const newLeft = clientX - offsetX;
+                const newTop = clientY - offsetY;
+                
+                // Check boundaries
+                const maxX = window.innerWidth - calculator.offsetWidth;
+                const maxY = window.innerHeight - calculator.offsetHeight;
+                
+                // Apply position
+                calculator.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
+                calculator.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+                
+                // Remove bottom positioning when dragging
+                calculator.style.bottom = 'auto';
+                
+                // Save position in localStorage
+                if (isLocalStorageAvailable()) {
+                    localStorage.setItem('rfm_calculatorPosition', JSON.stringify({
+                        left: calculator.style.left,
+                        top: calculator.style.top
+                    }));
+                }
+            }
+            
+            function endDrag() {
+                isDragging = false;
+            }
+            
+            // Calculator operations
+            let currentInput = '0';
+            let memory = 0;
+            let lastOperation = '';
+            let waitingForOperand = false;
+            
+            // Handle number buttons
+            document.querySelectorAll('.calculator-button[data-action="number"]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const digit = button.textContent;
+                    
+                    if (waitingForOperand) {
+                        currentInput = digit;
+                        waitingForOperand = false;
+                    } else {
+                        currentInput = currentInput === '0' ? digit : currentInput + digit;
+                    }
+                    
+                    display.textContent = currentInput;
+                });
+            });
+            
+            // Handle operator buttons
+            document.querySelectorAll('.calculator-button[data-action="operator"]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const operator = button.textContent;
+                    let operatorForCalculation;
+                    
+                    switch(operator) {
+                        case '÷':
+                            operatorForCalculation = '/';
+                            break;
+                        case '×':
+                            operatorForCalculation = '*';
+                            break;
+                        case '−':
+                            operatorForCalculation = '-';
+                            break;
+                        default:
+                            operatorForCalculation = operator;
+                    }
+                    
+                    if (waitingForOperand) {
+                        // Replace the previous operator
+                        currentInput = currentInput.slice(0, -1) + operatorForCalculation;
+                    } else {
+                        currentInput += operatorForCalculation;
+                        waitingForOperand = true;
+                    }
+                    
+                    display.textContent = currentInput;
+                });
+            });
+            
+            // Handle decimal button
+            document.querySelector('.calculator-button[data-action="decimal"]').addEventListener('click', () => {
+                if (waitingForOperand) {
+                    currentInput = '0.';
+                    waitingForOperand = false;
+                } else if (!currentInput.includes('.')) {
+                    currentInput += '.';
+                }
+                
+                display.textContent = currentInput;
+            });
+            
+            // Handle brackets
+            document.querySelectorAll('.calculator-button[data-action="bracket"]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const bracket = button.textContent;
+                    
+                    if (waitingForOperand) {
+                        currentInput += bracket;
+                        waitingForOperand = false;
+                    } else {
+                        if (currentInput === '0') {
+                            currentInput = bracket;
+                        } else {
+                            currentInput += bracket;
+                        }
+                    }
+                    
+                    display.textContent = currentInput;
+                });
+            });
+            
+            // Handle clear button
+            document.querySelector('.calculator-button[data-action="clear"]').addEventListener('click', () => {
+                currentInput = '0';
+                memory = 0;
+                lastOperation = '';
+                waitingForOperand = false;
+                display.textContent = currentInput;
+            });
+            
+            // Handle backspace button
+            document.querySelector('.calculator-button[data-action="backspace"]').addEventListener('click', () => {
+                if (currentInput.length > 1) {
+                    currentInput = currentInput.slice(0, -1);
+                } else {
+                    currentInput = '0';
+                }
+                
+                waitingForOperand = false;
+                display.textContent = currentInput;
+            });
+            
+            // Handle equals button (calculation)
+            document.querySelector('.calculator-button[data-action="calculate"]').addEventListener('click', () => {
+                try {
+                    // Replace display operators with JavaScript operators
+                    let expression = currentInput.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+                    
+                    // Evaluate the expression (this uses JavaScript's built-in order of operations)
+                    const result = Function('"use strict";return (' + expression + ')')();
+                    
+                    // Format the result
+                    currentInput = Number.isInteger(result) ? result.toString() : result.toFixed(2).replace(/\.00$/, '');
+                    display.textContent = currentInput;
+                    waitingForOperand = true;
+                } catch (error) {
+                    display.textContent = 'Error';
+                    currentInput = '0';
+                    waitingForOperand = true;
+                }
+            });
+            
+            // Load calculator state and position
+            if (isLocalStorageAvailable()) {
+                // Load visibility
+                const calculatorVisible = localStorage.getItem('rfm_calculatorVisible');
+                if (calculatorVisible === 'true') {
+                    calculator.classList.remove('hidden');
+                }
+                
+                // Load minimized state
+                const calculatorMinimized = localStorage.getItem('rfm_calculatorMinimized');
+                if (calculatorMinimized === 'true') {
+                    calculator.classList.add('minimized');
+                }
+                
+                // Load position
+                const position = localStorage.getItem('rfm_calculatorPosition');
+                if (position) {
+                    try {
+                        const { left, top } = JSON.parse(position);
+                        calculator.style.left = left;
+                        calculator.style.top = top;
+                        calculator.style.bottom = 'auto';
+                    } catch (error) {
+                        console.error('Error loading calculator position', error);
+                    }
+                }
+            }
+        }
     </script>
 </body>
 </html>
