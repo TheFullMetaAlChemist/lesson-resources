@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrocarbon Properties</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        #chain-length-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .molecule-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding: 20px 0;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+        .molecule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        .carbon {
+            background-color: #333;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 5px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .bond {
+            background-color: #555;
+            height: 5px;
+            width: 20px;
+        }
+        .hydrogen {
+            background-color: #4C9ED9;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 8px;
+        }
+        .h-top {
+            top: -20px;
+            left: 7.5px;
+        }
+        .h-right {
+            right: -20px;
+            top: 7.5px;
+        }
+        .h-bottom {
+            bottom: -20px;
+            left: 7.5px;
+        }
+        .h-left {
+            left: -20px;
+            top: 7.5px;
+        }
+        .properties {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .property-card {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .property-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .property-icon {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .property-value {
+            position: relative;
+            height: 24px;
+            background-color: #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .value-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .boiling-point .value-bar {
+            background-color: #E74C3C;
+        }
+        .volatility .value-bar {
+            background-color: #3498DB;
+        }
+        .viscosity .value-bar {
+            background-color: #2ECC71;
+        }
+        .flammability .value-bar {
+            background-color: #F39C12;
+        }
+        .property-value-text {
+            position: relative;
+            z-index: 1;
+            padding: 0 10px;
+            line-height: 24px;
+            color: #333;
+            text-align: right;
+            font-weight: bold;
+        }
+        .property-description {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: auto;
+        }
+        .formula {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .name {
+            text-align: center;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+        }
+        .explanation {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+        }
+        .hydrocarbon-details {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .detail-label {
+            font-weight: bold;
+        }
+        @media (max-width: 700px) {
+            .properties {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hydrocarbon Properties</h1>
+        
+        <div class="controls">
+            <div class="slider-container">
+                <label for="chain-length-slider">Select Carbon Chain Length: <span id="chain-length">1</span></label>
+                <input type="range" id="chain-length-slider" min="1" max="10" value="1">
+                <div class="slider-labels">
+                    <span>C1</span>
+                    <span>C10</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="name" id="hydrocarbon-name">Methane</div>
+        <div class="formula" id="hydrocarbon-formula">CH<sub>4</sub></div>
+        
+        <div class="molecule-container">
+            <div class="molecule" id="molecule-display"></div>
+        </div>
+        
+        <div class="hydrocarbon-details">
+            <div class="detail-row">
+                <span class="detail-label">State at room temperature:</span>
+                <span id="state">Gas</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Common uses:</span>
+                <span id="uses">Fuel (natural gas)</span>
+            </div>
+        </div>
+        
+        <div class="properties">
+            <div class="property-card boiling-point">
+                <div class="property-title">
+                    <div class="property-icon">🌡️</div>
+                    Boiling Point
+                </div>
+                <div class="property-value">
+                    <div class="value-bar" id="boiling-point-bar"></div>
+                    <div class="property-value-text" id="boiling-point-value">-161.5°C</div>
+                </div>
+                <div class="property-description">
+                    Boiling point increases with chain length due to stronger intermolecular forces (van der Waals forces).
+                </div>
+            </div>
+            
+            <div class="property-card volatility">
+                <div class="property-title">
+                    <div class="property-icon">💨</div>
+                    Volatility
+                </div>
+                <div class="property-value">
+                    <div class="value-bar" id="volatility-bar"></div>
+                    <div class="property-value-text" id="volatility-value">Very High</div>
+                </div>
+                <div class="property-description">
+                    Volatility decreases as chain length increases because longer molecules have stronger attractions between them.
+                </div>
+            </div>
+            
+            <div class="property-card viscosity">
+                <div class="property-title">
+                    <div class="property-icon">🍯</div>
+                    Viscosity
+                </div>
+                <div class="property-value">
+                    <div class="value-bar" id="viscosity-bar"></div>
+                    <div class="property-value-text" id="viscosity-value">Very Low</div>
+                </div>
+                <div class="property-description">
+                    Viscosity increases with chain length as molecules become more entangled and less able to flow past each other.
+                </div>
+            </div>
+            
+            <div class="property-card flammability">
+                <div class="property-title">
+                    <div class="property-icon">🔥</div>
+                    Flammability
+                </div>
+                <div class="property-value">
+                    <div class="value-bar" id="flammability-bar"></div>
+                    <div class="property-value-text" id="flammability-value">Very High</div>
+                </div>
+                <div class="property-description">
+                    Flammability generally decreases with chain length, although all hydrocarbons are flammable.
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3>How Chain Length Affects Hydrocarbon Properties</h3>
+            <p>Hydrocarbons are compounds made up of carbon and hydrogen atoms. The simplest hydrocarbons are the alkanes, with the general formula C<sub>n</sub>H<sub>2n+2</sub>.</p>
+            <p>As the carbon chain length increases:</p>
+            <ul>
+                <li><strong>Boiling Point:</strong> Increases due to stronger van der Waals forces between larger molecules</li>
+                <li><strong>Volatility:</strong> Decreases because more energy is required to overcome intermolecular forces</li>
+                <li><strong>Viscosity:</strong> Increases as molecules become more entangled and less able to flow past each other</li>
+                <li><strong>Flammability:</strong> Generally decreases, though all hydrocarbons remain flammable</li>
+            </ul>
+            <p>This pattern helps explain why methane (CH<sub>4</sub>) is a gas at room temperature, while longer-chain hydrocarbons like octane (C<sub>8</sub>H<sub>18</sub>) are liquids, and very long chains like those in polyethylene are solids.</p>
+        </div>
+    </div>
+
+    <script>
+        // Hydrocarbon data
+        const hydrocarbons = [
+            { 
+                formula: "CH<sub>4</sub>", 
+                name: "Methane", 
+                boilingPoint: -161.5, 
+                volatility: 1.0, 
+                viscosity: 0.01, 
+                flammability: 1.0,
+                state: "Gas",
+                uses: "Fuel (natural gas)"
+            },
+            { 
+                formula: "C<sub>2</sub>H<sub>6</sub>", 
+                name: "Ethane", 
+                boilingPoint: -88.6, 
+                volatility: 0.9, 
+                viscosity: 0.05, 
+                flammability: 0.95,
+                state: "Gas",
+                uses: "Natural gas component, production of ethylene"
+            },
+            { 
+                formula: "C<sub>3</sub>H<sub>8</sub>", 
+                name: "Propane", 
+                boilingPoint: -42.1, 
+                volatility: 0.8, 
+                viscosity: 0.1, 
+                flammability: 0.9,
+                state: "Gas (can be liquefied under pressure)",
+                uses: "LPG, fuel for heating and cooking"
+            },
+            { 
+                formula: "C<sub>4</sub>H<sub>10</sub>", 
+                name: "Butane", 
+                boilingPoint: -0.5, 
+                volatility: 0.7, 
+                viscosity: 0.15, 
+                flammability: 0.85,
+                state: "Gas (easily liquefied under pressure)",
+                uses: "Lighter fuel, portable gas stoves"
+            },
+            { 
+                formula: "C<sub>5</sub>H<sub>12</sub>", 
+                name: "Pentane", 
+                boilingPoint: 36.1, 
+                volatility: 0.6, 
+                viscosity: 0.23, 
+                flammability: 0.8,
+                state: "Liquid",
+                uses: "Solvent, in gasoline blends"
+            },
+            { 
+                formula: "C<sub>6</sub>H<sub>14</sub>", 
+                name: "Hexane", 
+                boilingPoint: 68.7, 
+                volatility: 0.5, 
+                viscosity: 0.3, 
+                flammability: 0.75,
+                state: "Liquid",
+                uses: "Solvent, extracting vegetable oils"
+            },
+            { 
+                formula: "C<sub>7</sub>H<sub>16</sub>", 
+                name: "Heptane", 
+                boilingPoint: 98.4, 
+                volatility: 0.4, 
+                viscosity: 0.4, 
+                flammability: 0.7,
+                state: "Liquid",
+                uses: "Component of gasoline, solvent"
+            },
+            { 
+                formula: "C<sub>8</sub>H<sub>18</sub>", 
+                name: "Octane", 
+                boilingPoint: 125.7, 
+                volatility: 0.3, 
+                viscosity: 0.5, 
+                flammability: 0.65,
+                state: "Liquid",
+                uses: "Major component of gasoline"
+            },
+            { 
+                formula: "C<sub>9</sub>H<sub>20</sub>", 
+                name: "Nonane", 
+                boilingPoint: 150.8, 
+                volatility: 0.2, 
+                viscosity: 0.7, 
+                flammability: 0.6,
+                state: "Liquid",
+                uses: "Component in diesel fuel, research"
+            },
+            { 
+                formula: "C<sub>10</sub>H<sub>22</sub>", 
+                name: "Decane", 
+                boilingPoint: 174.1, 
+                volatility: 0.1, 
+                viscosity: 0.9, 
+                flammability: 0.55,
+                state: "Liquid",
+                uses: "Component in diesel and jet fuels"
+            }
+        ];
+
+        // DOM elements
+        const slider = document.getElementById('chain-length-slider');
+        const chainLengthDisplay = document.getElementById('chain-length');
+        const formulaDisplay = document.getElementById('hydrocarbon-formula');
+        const nameDisplay = document.getElementById('hydrocarbon-name');
+        const moleculeDisplay = document.getElementById('molecule-display');
+        const boilingPointBar = document.getElementById('boiling-point-bar');
+        const boilingPointValue = document.getElementById('boiling-point-value');
+        const volatilityBar = document.getElementById('volatility-bar');
+        const volatilityValue = document.getElementById('volatility-value');
+        const viscosityBar = document.getElementById('viscosity-bar');
+        const viscosityValue = document.getElementById('viscosity-value');
+        const flammabilityBar = document.getElementById('flammability-bar');
+        const flammabilityValue = document.getElementById('flammability-value');
+        const stateDisplay = document.getElementById('state');
+        const usesDisplay = document.getElementById('uses');
+
+        // Function to update the display based on chain length
+        function updateDisplay(chainLength) {
+            const index = chainLength - 1;
+            const hydrocarbon = hydrocarbons[index];
+            
+            // Update formula and name
+            formulaDisplay.innerHTML = hydrocarbon.formula;
+            nameDisplay.textContent = hydrocarbon.name;
+            
+            // Update molecule display
+            renderMolecule(chainLength);
+            
+            // Update property bars and values
+            // Calculate normalized boiling point for display (range from -161.5 to 174.1)
+            const normalizedBP = (hydrocarbon.boilingPoint + 161.5) / (174.1 + 161.5) * 100;
+            boilingPointBar.style.width = `${normalizedBP}%`;
+            boilingPointValue.textContent = `${hydrocarbon.boilingPoint}°C`;
+            
+            // Update volatility
+            volatilityBar.style.width = `${hydrocarbon.volatility * 100}%`;
+            updateRelativeValue(volatilityValue, hydrocarbon.volatility);
+            
+            // Update viscosity
+            viscosityBar.style.width = `${hydrocarbon.viscosity * 100}%`;
+            updateRelativeValue(viscosityValue, hydrocarbon.viscosity);
+            
+            // Update flammability
+            flammabilityBar.style.width = `${hydrocarbon.flammability * 100}%`;
+            updateRelativeValue(flammabilityValue, hydrocarbon.flammability);
+            
+            // Update state and uses
+            stateDisplay.textContent = hydrocarbon.state;
+            usesDisplay.textContent = hydrocarbon.uses;
+        }
+        
+        // Function to render the molecule
+        function renderMolecule(chainLength) {
+            moleculeDisplay.innerHTML = '';
+            
+            for (let i = 0; i < chainLength; i++) {
+                // Create carbon atom
+                const carbon = document.createElement('div');
+                carbon.className = 'carbon';
+                carbon.textContent = 'C';
+                
+                // Add hydrogens (simplified)
+                if (i === 0) {
+                    // First carbon has 3 or 4 hydrogens
+                    addHydrogen(carbon, 'h-top');
+                    addHydrogen(carbon, 'h-bottom');
+                    addHydrogen(carbon, 'h-left');
+                    
+                    // Add fourth hydrogen for methane (CH4)
+                    if (chainLength === 1) {
+                        addHydrogen(carbon, 'h-right');
+                    }
+                } else if (i === chainLength - 1) {
+                    // Last carbon has 3 hydrogens
+                    addHydrogen(carbon, 'h-top');
+                    addHydrogen(carbon, 'h-bottom');
+                    addHydrogen(carbon, 'h-right');
+                } else {
+                    // Middle carbons have 2 hydrogens
+                    addHydrogen(carbon, 'h-top');
+                    addHydrogen(carbon, 'h-bottom');
+                }
+                
+                moleculeDisplay.appendChild(carbon);
+                
+                // Add bond between carbon atoms
+                if (i < chainLength - 1) {
+                    const bond = document.createElement('div');
+                    bond.className = 'bond';
+                    moleculeDisplay.appendChild(bond);
+                }
+            }
+        }
+        
+        // Function to add hydrogen to carbon
+        function addHydrogen(carbon, position) {
+            const hydrogen = document.createElement('div');
+            hydrogen.className = `hydrogen ${position}`;
+            hydrogen.textContent = 'H';
+            carbon.appendChild(hydrogen);
+        }
+        
+        // Function to update relative value display (Low, Medium, High, etc.)
+        function updateRelativeValue(element, value) {
+            if (value >= 0.9) {
+                element.textContent = 'Very High';
+            } else if (value >= 0.7) {
+                element.textContent = 'High';
+            } else if (value >= 0.4) {
+                element.textContent = 'Medium';
+            } else if (value >= 0.2) {
+                element.textContent = 'Low';
+            } else {
+                element.textContent = 'Very Low';
+            }
+        }
+        
+        // Event listener for slider
+        slider.addEventListener('input', function() {
+            const chainLength = parseInt(this.value);
+            chainLengthDisplay.textContent = chainLength;
+            updateDisplay(chainLength);
+        });
+        
+        // Initialize the display
+        updateDisplay(1);
+    </script>
+</body>
+</html>
