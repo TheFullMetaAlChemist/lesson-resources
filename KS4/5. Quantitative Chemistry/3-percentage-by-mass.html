@@ -492,9 +492,9 @@
         
         /* Calculator Styles */
         .calc-toggle-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
             padding: 8px 12px;
             background-color: var(--dark-color);
             color: white;
@@ -506,7 +506,7 @@
             align-items: center;
             gap: 5px;
             box-shadow: var(--shadow);
-            z-index: 100;
+            z-index: 1001;
         }
         
         .calc-toggle-btn:hover {
@@ -592,6 +592,7 @@
             padding: 10px;
             margin-bottom: 15px;
             text-align: right;
+            border: 1px solid #ddd;
         }
         
         .calculator-history {
@@ -715,29 +716,30 @@
                     <div id="calculatorScreen" class="calculator-screen">0</div>
                 </div>
                 <div class="calculator-buttons">
+                    <button class="calc-btn calc-btn-op">(</button>
+                    <button class="calc-btn calc-btn-op">)</button>
                     <button class="calc-btn calc-btn-clear">C</button>
                     <button class="calc-btn calc-btn-backspace">⌫</button>
-                    <button class="calc-btn calc-btn-op">%</button>
-                    <button class="calc-btn calc-btn-op">÷</button>
                     
                     <button class="calc-btn calc-btn-num">7</button>
                     <button class="calc-btn calc-btn-num">8</button>
                     <button class="calc-btn calc-btn-num">9</button>
-                    <button class="calc-btn calc-btn-op">×</button>
+                    <button class="calc-btn calc-btn-op">÷</button>
                     
                     <button class="calc-btn calc-btn-num">4</button>
                     <button class="calc-btn calc-btn-num">5</button>
                     <button class="calc-btn calc-btn-num">6</button>
-                    <button class="calc-btn calc-btn-op">-</button>
+                    <button class="calc-btn calc-btn-op">×</button>
                     
                     <button class="calc-btn calc-btn-num">1</button>
                     <button class="calc-btn calc-btn-num">2</button>
                     <button class="calc-btn calc-btn-num">3</button>
-                    <button class="calc-btn calc-btn-op">+</button>
+                    <button class="calc-btn calc-btn-op">-</button>
                     
-                    <button class="calc-btn calc-btn-num zero">0</button>
+                    <button class="calc-btn calc-btn-num">0</button>
                     <button class="calc-btn calc-btn-num">.</button>
                     <button class="calc-btn calc-btn-equals">=</button>
+                    <button class="calc-btn calc-btn-op">+</button>
                 </div>
             </div>
         </div>
@@ -1290,9 +1292,8 @@
             const calculatorButtons = document.querySelectorAll('.calc-btn');
             
             // Calculator state
-            let currentInput = '0';
-            let previousInput = '';
-            let operation = null;
+            let expressionString = '0';
+            let lastResult = '';
             let resetScreen = false;
             let isDragging = false;
             let dragOffsetX = 0;
@@ -1383,116 +1384,178 @@
             
             // Calculator functions
             function updateDisplay() {
-                calculatorScreen.textContent = currentInput;
+                calculatorScreen.textContent = expressionString;
                 
-                if (previousInput && operation) {
-                    calculatorHistory.textContent = `${previousInput} ${operation}`;
+                if (lastResult && lastResult !== expressionString) {
+                    calculatorHistory.textContent = lastResult;
                 } else {
                     calculatorHistory.textContent = '';
                 }
             }
             
             function clear() {
-                currentInput = '0';
-                previousInput = '';
-                operation = null;
+                expressionString = '0';
+                lastResult = '';
                 resetScreen = false;
                 updateDisplay();
             }
             
             function backspace() {
-                if (currentInput.length > 1) {
-                    currentInput = currentInput.slice(0, -1);
+                if (expressionString.length > 1) {
+                    expressionString = expressionString.slice(0, -1);
                 } else {
-                    currentInput = '0';
+                    expressionString = '0';
                 }
                 updateDisplay();
             }
             
             function appendNumber(number) {
-                if (currentInput === '0' || resetScreen) {
-                    currentInput = number;
+                if (expressionString === '0' || resetScreen) {
+                    expressionString = number;
                     resetScreen = false;
                 } else {
-                    currentInput += number;
+                    expressionString += number;
                 }
                 updateDisplay();
             }
             
             function handleDecimal() {
+                // Check if the last number in the expression already has a decimal
+                const parts = expressionString.split(/[\+\-\×\÷\(\)]/);
+                const lastPart = parts[parts.length - 1];
+                
                 if (resetScreen) {
-                    currentInput = '0.';
+                    expressionString = '0.';
                     resetScreen = false;
-                } else if (!currentInput.includes('.')) {
-                    currentInput += '.';
+                } else if (!lastPart.includes('.')) {
+                    // If the last character is an operator, add "0."
+                    if (/[\+\-\×\÷\(]$/.test(expressionString)) {
+                        expressionString += '0';
+                    }
+                    expressionString += '.';
                 }
                 updateDisplay();
             }
             
-            function handleOperator(op) {
-                const inputValue = parseFloat(currentInput);
-                
-                if (previousInput === '' && !isNaN(inputValue)) {
-                    previousInput = currentInput;
-                } else if (operation && !resetScreen) {
-                    compute();
-                    previousInput = currentInput;
+            function appendOperator(op) {
+                // Replace any trailing operator with the new one
+                if (/[\+\-\×\÷]$/.test(expressionString)) {
+                    expressionString = expressionString.slice(0, -1) + op;
+                } else {
+                    // If the expression is 0, and we're adding minus, replace the 0
+                    if (expressionString === '0' && op === '-') {
+                        expressionString = op;
+                    } else if (expressionString === '0') {
+                        // Do nothing if expression is 0 for other operators
+                    } else {
+                        expressionString += op;
+                    }
                 }
-                
-                operation = op;
-                resetScreen = true;
+                resetScreen = false;
                 updateDisplay();
+            }
+            
+            function appendBracket(bracket) {
+                if (expressionString === '0') {
+                    expressionString = bracket;
+                } else {
+                    // Logic for smooth bracket entry
+                    if (bracket === '(') {
+                        // If last char is a digit and not an operator, add a multiplication sign
+                        if (/[0-9)]$/.test(expressionString)) {
+                            expressionString += '×' + bracket;
+                        } else {
+                            expressionString += bracket;
+                        }
+                    } else if (bracket === ')') {
+                        // Only add closing bracket if there are unclosed opening brackets
+                        const openCount = (expressionString.match(/\(/g) || []).length;
+                        const closeCount = (expressionString.match(/\)/g) || []).length;
+                        if (openCount > closeCount) {
+                            expressionString += bracket;
+                        }
+                    }
+                }
+                resetScreen = false;
+                updateDisplay();
+            }
+            
+            function evaluateExpression(expr) {
+                // Replace the display operators with JavaScript operators
+                expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+                
+                try {
+                    // Use math.js or a similar library in a real app for safer evaluation
+                    // For this demo, we'll use Function constructor, which is not recommended
+                    // for production due to security concerns, but works for our purposes
+                    return Function('"use strict"; return (' + expr + ')')();
+                } catch (e) {
+                    return 'Error';
+                }
             }
             
             function compute() {
-                const prev = parseFloat(previousInput);
-                const current = parseFloat(currentInput);
-                
-                if (isNaN(prev) || isNaN(current)) return;
-                
-                let result;
-                
-                switch (operation) {
-                    case '+':
-                        result = prev + current;
-                        break;
-                    case '-':
-                        result = prev - current;
-                        break;
-                    case '×':
-                        result = prev * current;
-                        break;
-                    case '÷':
-                        if (current === 0) {
-                            result = 'Error';
-                        } else {
-                            result = prev / current;
-                        }
-                        break;
-                    case '%':
-                        result = (prev * current) / 100;
-                        break;
-                    default:
+                try {
+                    // Handle empty expressions or just a digit
+                    if (expressionString === '' || expressionString === '0') {
                         return;
-                }
-                
-                // Format the result
-                if (result === 'Error') {
-                    currentInput = result;
-                } else {
-                    const resultString = result.toString();
-                    // Limit decimal places to 10 or fewer
-                    if (resultString.includes('.') && resultString.split('.')[1].length > 10) {
-                        currentInput = result.toFixed(10).replace(/\.?0+$/, '');
-                    } else {
-                        currentInput = resultString;
                     }
+                    
+                    // Check for unclosed brackets and close them
+                    const openCount = (expressionString.match(/\(/g) || []).length;
+                    const closeCount = (expressionString.match(/\)/g) || []).length;
+                    let tempExpr = expressionString;
+                    
+                    if (openCount > closeCount) {
+                        for (let i = 0; i < openCount - closeCount; i++) {
+                            tempExpr += ')';
+                        }
+                    }
+                    
+                    lastResult = tempExpr;
+                    const result = evaluateExpression(tempExpr);
+                    
+                    if (result === 'Error') {
+                        expressionString = 'Error';
+                    } else {
+                        // Format the result
+                        expressionString = formatResult(result);
+                    }
+                    
+                    resetScreen = true;
+                    updateDisplay();
+                } catch (error) {
+                    expressionString = 'Error';
+                    updateDisplay();
+                }
+            }
+            
+            function formatResult(result) {
+                // Handle precision and display formatting
+                if (typeof result !== 'number') {
+                    return 'Error';
                 }
                 
-                operation = null;
-                previousInput = '';
-                resetScreen = true;
-                updateDisplay();
+                // Handle integers
+                if (Number.isInteger(result)) {
+                    return result.toString();
+                }
+                
+                // For floating point results, limit decimal places
+                const resultStr = result.toString();
+                if (resultStr.includes('e')) {
+                    // For scientific notation, just return as is
+                    return resultStr;
+                }
+                
+                // For regular decimals, limit to 10 places
+                const parts = resultStr.split('.');
+                if (parts.length === 2 && parts[1].length > 10) {
+                    // Round to 10 decimal places and remove trailing zeros
+                    return parseFloat(result.toFixed(10)).toString();
+                }
+                
+                return resultStr;
             }
             
             // Add event listeners to calculator buttons
@@ -1501,18 +1564,24 @@
                     // Prevent buttons from triggering when pressing Enter in input fields
                     e.preventDefault();
                     
+                    const btnText = button.textContent;
+                    
                     // Number buttons
                     if (button.classList.contains('calc-btn-num')) {
-                        if (button.textContent === '.') {
+                        if (btnText === '.') {
                             handleDecimal();
                         } else {
-                            appendNumber(button.textContent);
+                            appendNumber(btnText);
                         }
                     }
                     
                     // Operator buttons
                     if (button.classList.contains('calc-btn-op')) {
-                        handleOperator(button.textContent);
+                        if (btnText === '(' || btnText === ')') {
+                            appendBracket(btnText);
+                        } else {
+                            appendOperator(btnText);
+                        }
                     }
                     
                     // Equals button
@@ -1551,17 +1620,15 @@
                     appendNumber(e.key);
                 } else if (e.key === '.') {
                     handleDecimal();
-                } else if (e.key === '+') {
-                    handleOperator('+');
-                } else if (e.key === '-') {
-                    handleOperator('-');
+                } else if (e.key === '+' || e.key === '-') {
+                    appendOperator(e.key);
                 } else if (e.key === '*') {
-                    handleOperator('×');
+                    appendOperator('×');
                 } else if (e.key === '/') {
                     e.preventDefault(); // Prevent browser's find feature
-                    handleOperator('÷');
-                } else if (e.key === '%') {
-                    handleOperator('%');
+                    appendOperator('÷');
+                } else if (e.key === '(' || e.key === ')') {
+                    appendBracket(e.key);
                 } else if (e.key === 'Enter' || e.key === '=') {
                     e.preventDefault(); // Prevent form submission
                     compute();
