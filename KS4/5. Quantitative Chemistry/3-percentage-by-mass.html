@@ -1,2513 +1,1579 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Percentage Mass Calculator - Interactive Chemistry Lesson</title>
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --tertiary-color: #e74c3c;
-            --dark-color: #2c3e50;
-            --light-color: #ecf0f1;
-            --hover-color: #1abc9c;
-            --shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        h2 {
-            font-size: 1.8rem;
-            margin: 20px 0;
-            color: var(--primary-color);
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-            margin: 15px 0;
-            color: var(--dark-color);
-        }
-        
-        p {
-            margin: 15px 0;
-            font-size: 1.1rem;
-        }
-        
-        .screen {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-        
-        .screen.active {
-            display: block;
-        }
-        
-        .intro-screen {
-            text-align: center;
-        }
-        
-        .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        button {
-            padding: 12px 24px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s, transform 0.2s;
-            box-shadow: var(--shadow);
-        }
-        
-        button:hover {
-            background-color: var(--hover-color);
-            transform: translateY(-2px);
-        }
-        
-        button.secondary {
-            background-color: var(--secondary-color);
-        }
-        
-        button.tertiary {
-            background-color: var(--tertiary-color);
-        }
-        
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-        
-        .example-container {
-            background-color: rgba(52, 152, 219, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 5px solid var(--primary-color);
-        }
-        
-        .step {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: rgba(46, 204, 113, 0.1);
-            border-radius: 5px;
-        }
-        
-        .formula {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            display: inline-block;
-            margin: 10px 0;
-            font-weight: bold;
-        }
-        
-        .question-container {
-            background-color: rgba(52, 152, 219, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 5px solid var(--primary-color);
-        }
-        
-        .answer-container {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            gap: 10px;
-        }
-        
-        input[type="number"] {
-            padding: 10px;
-            border: 2px solid var(--primary-color);
-            border-radius: 5px;
-            font-size: 1rem;
-            width: 100px;
-        }
-        
-        .feedback {
-            margin-top: 10px;
-            font-weight: bold;
-            display: none;
-        }
-        
-        .feedback.correct {
-            color: var(--secondary-color);
-        }
-        
-        .feedback.incorrect {
-            color: var(--tertiary-color);
-        }
-        
-        .hint {
-            display: none;
-            padding: 15px;
-            background-color: rgba(241, 196, 15, 0.2);
-            border-radius: 5px;
-            margin-top: 10px;
-            border-left: 5px solid #f1c40f;
-        }
-        
-        .difficulty-selector {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .difficulty-btn {
-            padding: 10px 20px;
-            background-color: #bdc3c7;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .difficulty-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background-color: var(--secondary-color);
-            border-radius: 5px;
-            width: 0;
-            transition: width 0.3s;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin: 20px 0;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        
-        .element-box {
-            display: inline-block;
-            padding: 5px 10px;
-            margin-right: 5px;
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 3px;
-        }
-        
-        .challenge-result {
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-        
-        .matches {
-            background-color: rgba(46, 204, 113, 0.2);
-            border: 2px solid var(--secondary-color);
-        }
-        
-        .does-not-match {
-            background-color: rgba(231, 76, 60, 0.2);
-            border: 2px solid var(--tertiary-color);
-        }
-        
-        .periodic-table {
-            width: 100%;
-            overflow-x: auto;
-            margin: 20px 0;
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-        }
-        
-        .periodic-table table {
-            border-collapse: separate;
-            border-spacing: 2px;
-        }
-        
-        .periodic-table td {
-            width: 60px;
-            height: 60px;
-            text-align: center;
-            font-size: 0.8rem;
-            border: 1px solid #ddd;
-            position: relative;
-            padding: 5px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .periodic-table td:hover {
-            transform: scale(1.1);
-            z-index: 1;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
-        
-        .element-symbol {
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .atomic-mass {
-            font-size: 0.7rem;
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-        }
-        
-        .non-metal {
-            background-color: #FFEB3B;
-        }
-        
-        .alkali-metal {
-            background-color: #FF5722;
-        }
-        
-        .alkaline-earth {
-            background-color: #FF9800;
-        }
-        
-        .transition-metal {
-            background-color: #FFC107;
-        }
-        
-        .metalloid {
-            background-color: #8BC34A;
-        }
-        
-        .noble-gas {
-            background-color: #03A9F4;
-        }
-        
-        .halogen {
-            background-color: #00BCD4;
-        }
-        
-        .metal {
-            background-color: #9E9E9E;
-        }
-        
-        .responsive-img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 20px auto;
-        }
-        
-        /* Added CSS for local storage notice and progress summary that was misplaced */
-        .css-storage-notice {
-            text-align: center;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            color: #777;
-        }
-        
-        #progressSummary {
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            display: none;
-        }
-        
-        #progressSummary h3 {
-            margin-top: 0;
-            color: var(--primary-color);
-        }
-        
-        .progress-stat {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
-        }
-        
-        .progress-value {
-            font-weight: bold;
-            color: var(--secondary-color);
-        }
-        
-        #clearProgressBtn {
-            background-color: #e74c3c;
-            margin-top: 10px;
-        }
-        
-        #practiceNavButtons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .top-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .challenge-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        /* Add some styling to make the active challenge button stand out */
-        .challenge-buttons button.active {
-            background-color: var(--dark-color);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        
-        .calculation-step {
-            background-color: rgba(52, 152, 219, 0.05);
-            border-left: 4px solid var(--primary-color);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-        
-        .calculation-step h4 {
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        
-        .input-group-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .input-group {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-        
-        .input-group label {
-            min-width: 180px;
-        }
-        
-        .formula-text {
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-        }
-        
-        .formula-display {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        
-        .step-check-btn {
-            background-color: var(--secondary-color);
-            margin-top: 10px;
-        }
-        
-        .hint-btn {
-            background-color: #f39c12;
-            margin-top: 10px;
-        }
-        
-        /* Calculator Styles */
-        .calc-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 8px 12px;
-            background-color: var(--dark-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: var(--shadow);
-            z-index: 1001;
-        }
-        
-        .calc-toggle-btn:hover {
-            background-color: var(--hover-color);
-        }
-        
-        .calc-icon {
-            font-size: 1.2rem;
-        }
-        
-        .calculator {
-            position: fixed;
-            width: 280px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            top: 100px;
-            right: 20px;
-            user-select: none;
-            transition: box-shadow 0.3s;
-            resize: none; /* Disable browser resize behavior */
-        }
-        
-        .calculator.active {
-            display: flex;
-        }
-        
-        .calculator.dragging {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            opacity: 0.95;
-        }
-        
-        .calculator.minimized .calculator-body {
-            display: none;
-        }
-        
-        .calculator-header {
-            padding: 10px 15px;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: move;
-            font-weight: bold;
-        }
-        
-        .calculator-controls {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .calc-control-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            padding: 0;
-        }
-        
-        .calc-control-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .calculator-body {
-            padding: 15px;
-        }
-        
-        .calculator-display {
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 15px;
-            text-align: right;
-            border: 1px solid #ddd;
-        }
-        
-        .calculator-history {
-            min-height: 20px;
-            font-size: 0.8rem;
-            color: #777;
-            margin-bottom: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .calculator-screen {
-            font-size: 1.5rem;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #222;
-        }
-        
-        .calculator-buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        
-        .calc-btn {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            font-weight: bold;
-            color: #333;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .calc-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .calc-btn-num {
-            background-color: #e6e6e6;
-        }
-        
-        .calc-btn-num:hover {
-            background-color: #d4d4d4;
-        }
-        
-        .calc-btn-op {
-            background-color: #e2eff9;
-            color: var(--primary-color);
-        }
-        
-        .calc-btn-op:hover {
-            background-color: #d0e5f7;
-        }
-        
-        .calc-btn-equals {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .calc-btn-equals:hover {
-            background-color: var(--hover-color);
-        }
-        
-        .calc-btn-clear, .calc-btn-backspace {
-            background-color: #ffd0d0;
-            color: #d83030;
-        }
-        
-        .calc-btn-clear:hover, .calc-btn-backspace:hover {
-            background-color: #ffbaba;
-        }
-        
-        .zero {
-            grid-column: span 2;
-        }
-        
-        @media (max-width: 768px) {
-            .top-controls {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .challenge-buttons {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .calculator {
-                width: 260px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relative Formula Mass Calculator - GCSE Chemistry</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    /* Toast notification styles */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: translateY(100px);
+      opacity: 0;
+    }
+    /* Calculator styles */
+    .calculator-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #3498db;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .calculator-container {
+      position: fixed;
+      width: 280px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      overflow: hidden;
+      transition: height 0.3s ease;
+      font-family: Arial, sans-serif;
+    }
+    .calculator-header {
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+    }
+    .calculator-title {
+      font-weight: bold;
+      pointer-events: none;
+    }
+    .calculator-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .calculator-control {
+      cursor: pointer;
+      font-size: 14px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+    .calculator-control:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .calculator-body {
+      padding: 10px;
+    }
+    .calculator-display {
+      background-color: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      text-align: right;
+      font-size: 20px;
+      min-height: 35px;
+      border: 1px solid #ddd;
+      overflow: auto;
+    }
+    .calculator-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .calculator-button {
+      background-color: #e9ecef;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .calculator-button:hover {
+      background-color: #dee2e6;
+    }
+    .calculator-button.operator {
+      background-color: #ffcc80;
+    }
+    .calculator-button.equals {
+      background-color: #81c784;
+    }
+    .calculator-button.clear {
+      background-color: #ff8a80;
+    }
+    .minimized .calculator-body {
+      display: none;
+    }
+    .hidden {
+      display: none;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+    h1 {
+      text-align: center;
+      color: #3498db;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    h2 {
+      font-size: 22px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    p {
+      margin-bottom: 15px;
+    }
+    .info-box {
+      background-color: #e8f4fc;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .importance-box {
+      background-color: #e8fcef;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .mode-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .mode-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .mode-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .tutorial-card {
+      background-color: #fff8e1;
+    }
+    .tutorial-card:hover {
+      background-color: #ffecb3;
+    }
+    .practice-card {
+      background-color: #e8f0fe;
+    }
+    .practice-card:hover {
+      background-color: #d4e4fc;
+    }
+    .element-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .element-card {
+      width: 80px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+    .element-symbol {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .element-name {
+      font-size: 12px;
+    }
+    .element-mass {
+      font-size: 14px;
+    }
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .nav-btn {
+      background-color: #e0e0e0;
+    }
+    .nav-btn:hover {
+      background-color: #d0d0d0;
+    }
+    .primary-btn {
+      background-color: #3498db;
+      color: white;
+    }
+    .primary-btn:hover {
+      background-color: #2980b9;
+    }
+    .secondary-btn {
+      background-color: #9b59b6;
+      color: white;
+    }
+    .secondary-btn:hover {
+      background-color: #8e44ad;
+    }
+    .disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .example-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .example-container {
+      background-color: #e8f4fc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .example-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .formula {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .difficulty {
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 14px;
+    }
+    .easy {
+      background-color: #c8e6c9;
+    }
+    .intermediate {
+      background-color: #fff9c4;
+    }
+    .hard {
+      background-color: #ffccbc;
+    }
+    .expert {
+      background-color: #ffab91;
+    }
+    .calculation-steps {
+      margin-bottom: 20px;
+    }
+    .calculation-working {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .result {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .level-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .level-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .level-btn.active {
+      color: white;
+    }
+    .beginner-btn {
+      background-color: #e8f5e9;
+    }
+    .beginner-btn.active {
+      background-color: #66bb6a;
+    }
+    .intermediate-btn {
+      background-color: #fff8e1;
+    }
+    .intermediate-btn.active {
+      background-color: #fdd835;
+    }
+    .expert-btn {
+      background-color: #ffebee;
+    }
+    .expert-btn.active {
+      background-color: #ef5350;
+    }
+    .stats-container {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .practice-container {
+      background-color: #f0e6ff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .answer-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .input-group {
+      flex-grow: 1;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .feedback {
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    .correct {
+      background-color: #e8f5e9;
+      border: 1px solid #66bb6a;
+    }
+    .incorrect {
+      background-color: #ffebee;
+      border: 1px solid #ef5350;
+    }
+    .hidden {
+      display: none;
+    }
+    ol {
+      padding-left: 25px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    ul {
+      padding-left: 25px;
+    }
+    .calculation-line {
+      margin-bottom: 8px;
+    }
+    .screen {
+      display: none;
+    }
+    .active-screen {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .mode-selector {
+        grid-template-columns: 1fr;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .answer-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Percentage Mass Calculator</h1>
-            <p>Learn how to calculate the percentage mass of elements in chemical compounds</p>
-            <div class="css-storage-notice">Your progress is automatically saved on this device</div>
-            <button id="calculatorToggle" class="calc-toggle-btn">
-                <span class="calc-icon">🧮</span> Calculator
-            </button>
-        </header>
-        
-        <div id="calculator" class="calculator">
-            <div id="calculatorHeader" class="calculator-header">
-                <span>Calculator</span>
-                <div class="calculator-controls">
-                    <button id="minimizeCalculator" class="calc-control-btn">_</button>
-                    <button id="closeCalculator" class="calc-control-btn">×</button>
-                </div>
-            </div>
-            <div class="calculator-body">
-                <div class="calculator-display">
-                    <div id="calculatorHistory" class="calculator-history"></div>
-                    <div id="calculatorScreen" class="calculator-screen">0</div>
-                </div>
-                <div class="calculator-buttons">
-                    <button class="calc-btn calc-btn-op">(</button>
-                    <button class="calc-btn calc-btn-op">)</button>
-                    <button class="calc-btn calc-btn-clear">C</button>
-                    <button class="calc-btn calc-btn-backspace">⌫</button>
-                    
-                    <button class="calc-btn calc-btn-num">7</button>
-                    <button class="calc-btn calc-btn-num">8</button>
-                    <button class="calc-btn calc-btn-num">9</button>
-                    <button class="calc-btn calc-btn-op">÷</button>
-                    
-                    <button class="calc-btn calc-btn-num">4</button>
-                    <button class="calc-btn calc-btn-num">5</button>
-                    <button class="calc-btn calc-btn-num">6</button>
-                    <button class="calc-btn calc-btn-op">×</button>
-                    
-                    <button class="calc-btn calc-btn-num">1</button>
-                    <button class="calc-btn calc-btn-num">2</button>
-                    <button class="calc-btn calc-btn-num">3</button>
-                    <button class="calc-btn calc-btn-op">-</button>
-                    
-                    <button class="calc-btn calc-btn-num">0</button>
-                    <button class="calc-btn calc-btn-num">.</button>
-                    <button class="calc-btn calc-btn-equals">=</button>
-                    <button class="calc-btn calc-btn-op">+</button>
-                </div>
-            </div>
+  <div id="toast-notification" class="toast"></div>
+
+  <!-- Calculator Toggle Button -->
+  <div id="calculator-toggle" class="calculator-toggle">
+    <span>🧮</span>
+  </div>
+
+  <!-- Calculator -->
+  <div id="calculator" class="calculator-container hidden" style="bottom: 80px; left: 20px;">
+    <div id="calculator-header" class="calculator-header">
+      <div class="calculator-title">Calculator</div>
+      <div class="calculator-controls">
+        <div id="minimize-calculator" class="calculator-control">_</div>
+        <div id="close-calculator" class="calculator-control">×</div>
+      </div>
+    </div>
+    <div class="calculator-body">
+      <div id="calculator-display" class="calculator-display">0</div>
+      <div class="calculator-buttons">
+        <button class="calculator-button clear" data-action="clear">C</button>
+        <button class="calculator-button" data-action="bracket">(</button>
+        <button class="calculator-button" data-action="bracket">)</button>
+        <button class="calculator-button operator" data-action="operator">÷</button>
+
+        <button class="calculator-button" data-action="number">7</button>
+        <button class="calculator-button" data-action="number">8</button>
+        <button class="calculator-button" data-action="number">9</button>
+        <button class="calculator-button operator" data-action="operator">×</button>
+
+        <button class="calculator-button" data-action="number">4</button>
+        <button class="calculator-button" data-action="number">5</button>
+        <button class="calculator-button" data-action="number">6</button>
+        <button class="calculator-button operator" data-action="operator">−</button>
+
+        <button class="calculator-button" data-action="number">1</button>
+        <button class="calculator-button" data-action="number">2</button>
+        <button class="calculator-button" data-action="number">3</button>
+        <button class="calculator-button operator" data-action="operator">+</button>
+
+        <button class="calculator-button" data-action="number">0</button>
+        <button class="calculator-button" data-action="decimal">.</button>
+        <button class="calculator-button" data-action="backspace">⌫</button>
+        <button class="calculator-button equals" data-action="calculate">=</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="screen active-screen">
+      <h1>Relative Formula Mass Calculator</h1>
+      <div class="info-box">
+        <h3>What is Relative Formula Mass?</h3>
+        <p>Relative formula mass (RFM) is the sum of all the atomic masses of all the atoms in a compound's formula.</p>
+        <p>For example, water (H₂O) has a relative formula mass of 18 u, because:</p>
+        <ul>
+          <li>Hydrogen (H) has a relative atomic mass of 1 u</li>
+          <li>Oxygen (O) has a relative atomic mass of 16 u</li>
+          <li>Water has 2 hydrogen atoms and 1 oxygen atom</li>
+          <li>So the calculation is: (2 × 1) + (1 × 16) = 2 + 16 = 18 u</li>
+        </ul>
+      </div>
+      <div class="importance-box">
+        <h3>Why is RFM Important?</h3>
+        <p>Understanding relative formula mass is crucial for:</p>
+        <ul>
+          <li>Calculating the amounts of substances in chemical reactions</li>
+          <li>Working out percentage composition of compounds</li>
+          <li>Determining empirical and molecular formulas</li>
+          <li>Understanding stoichiometry in chemical equations</li>
+        </ul>
+      </div>
+      <div class="mode-selector">
+        <div class="mode-card tutorial-card" id="tutorial-card">
+          <h3>Tutorial Mode</h3>
+          <p>Learn with 10 step-by-step examples ranging from easy to advanced compounds.</p>
         </div>
-        
-        <div id="progressSummary">
-            <h3>Your Progress</h3>
-            <div class="progress-stat">
-                <span>Difficulty Level:</span>
-                <span class="progress-value" id="savedDifficulty">Beginner</span>
-            </div>
-            <div class="progress-stat">
-                <span>Completed Questions:</span>
-                <span class="progress-value" id="completedQuestions">0 of 5</span>
-            </div>
-            <div class="progress-stat">
-                <span>Correct Answers:</span>
-                <span class="progress-value" id="correctAnswersCount">0</span>
-            </div>
-            <button id="clearProgressBtn">Clear Saved Progress</button>
+        <div class="mode-card practice-card" id="practice-card">
+          <h3>Practice Mode</h3>
+          <p>Test your skills with 30 self-marking questions at different difficulty levels.</p>
         </div>
-        
-        <!-- Introduction Screen -->
-        <div id="introScreen" class="screen active intro-screen">
-            <h2>Welcome to the Interactive Chemistry Lesson!</h2>
-            <p>In chemistry, understanding the composition of compounds is essential. One way we analyze compounds is by determining the percentage mass of each element.</p>
-            
-            <div class="example-container">
-                <h3>What is Percentage Mass?</h3>
-                <p>Percentage mass tells us what percentage of a compound's total mass is made up of a specific element.</p>
-                <p>For example, in water (H<sub>2</sub>O), we can calculate what percentage of the total mass comes from hydrogen and what percentage comes from oxygen.</p>
-            </div>
-            
-            <div class="example-container">
-                <h3>Why is it Important?</h3>
-                <ul>
-                    <li>Helps identify unknown compounds</li>
-                    <li>Used in quality control for manufacturing</li>
-                    <li>Essential for forensic analysis</li>
-                    <li>Used to verify the purity of substances</li>
-                </ul>
-            </div>
-            
-            <div class="example-container">
-                <h3>The Formula</h3>
-                <p>To calculate the percentage mass of an element in a compound:</p>
-                <div class="formula">% mass = (atomic mass of element × number of atoms) ÷ formula mass of compound × 100%</div>
-            </div>
-            
-            <div class="button-container">
-                <button id="startTutorial" class="secondary">Start Tutorial</button>
-                <button id="startPractice">Start Practice</button>
-            </div>
+      </div>
+      <div>
+        <h3>Periodic Table Elements</h3>
+        <p>Here are some common elements and their atomic masses that you'll use in this lesson:</p>
+        <div class="element-cards" id="intro-elements">
+          <!-- Elements will be populated by JavaScript -->
         </div>
-        
-        <!-- Tutorial Screen -->
-        <div id="tutorialScreen" class="screen">
-            <h2>Tutorial: Calculating Percentage Mass</h2>
-            
-            <div class="example-container">
-                <h3>Step 1: Find the Relative Atomic Masses</h3>
-                <p>First, we need to know the relative atomic mass (R.A.M.) of each element in the compound. These can be found in the periodic table.</p>
-                
-                <div class="table-container">
-                    <table>
-                        <tr>
-                            <th>Element</th>
-                            <th>Symbol</th>
-                            <th>Relative Atomic Mass</th>
-                        </tr>
-                        <tr>
-                            <td>Hydrogen</td>
-                            <td>H</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>Carbon</td>
-                            <td>C</td>
-                            <td>12</td>
-                        </tr>
-                        <tr>
-                            <td>Nitrogen</td>
-                            <td>N</td>
-                            <td>14</td>
-                        </tr>
-                        <tr>
-                            <td>Oxygen</td>
-                            <td>O</td>
-                            <td>16</td>
-                        </tr>
-                        <tr>
-                            <td>Sodium</td>
-                            <td>Na</td>
-                            <td>23</td>
-                        </tr>
-                        <tr>
-                            <td>Magnesium</td>
-                            <td>Mg</td>
-                            <td>24</td>
-                        </tr>
-                        <tr>
-                            <td>Chlorine</td>
-                            <td>Cl</td>
-                            <td>35.5</td>
-                        </tr>
-                        <tr>
-                            <td>Calcium</td>
-                            <td>Ca</td>
-                            <td>40</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="example-container">
-                <h3>Step 2: Determine the Number of Atoms of Each Element</h3>
-                <p>Look at the chemical formula to find out how many atoms of each element are present.</p>
-                <p>For example, in H<sub>2</sub>O:</p>
-                <ul>
-                    <li>There are 2 hydrogen atoms (H<sub>2</sub>)</li>
-                    <li>There is 1 oxygen atom (O)</li>
-                </ul>
-                <p>In more complex formulas like Ca(OH)<sub>2</sub>:</p>
-                <ul>
-                    <li>1 calcium atom (Ca)</li>
-                    <li>2 oxygen atoms (one in each OH group)</li>
-                    <li>2 hydrogen atoms (one in each OH group)</li>
-                </ul>
-            </div>
-            
-            <div class="example-container">
-                <h3>Step 3: Calculate the Total Mass of Each Element</h3>
-                <p>Multiply the relative atomic mass by the number of atoms:</p>
-                <div class="step">
-                    <p>Mass of element = Relative atomic mass × Number of atoms</p>
-                </div>
-            </div>
-            
-            <div class="example-container">
-                <h3>Step 4: Calculate the Total Molecular Mass</h3>
-                <p>Add up the masses of all elements in the compound:</p>
-                <div class="step">
-                    <p>Molecular mass = Sum of masses of all elements</p>
-                </div>
-            </div>
-            
-            <div class="example-container">
-                <h3>Step 5: Calculate the Percentage Mass</h3>
-                <p>For each element, divide its total mass by the molecular mass and multiply by a hundred:</p>
-                <div class="step">
-                    <p>% mass = (Mass of element ÷ Molecular mass) × 100</p>
-                </div>
-            </div>
-            
-            <div class="example-container">
-                <h3>Example 1: Water (H<sub>2</sub>O)</h3>
-                <div class="step">
-                    <p><strong>Step 1:</strong> Find relative atomic masses</p>
-                    <p>H = 1, O = 16</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 2:</strong> Determine number of atoms</p>
-                    <p>2 hydrogen atoms, 1 oxygen atom</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 3:</strong> Calculate mass of each element</p>
-                    <p>Mass of hydrogen = 1 × 2 = 2</p>
-                    <p>Mass of oxygen = 16 × 1 = 16</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 4:</strong> Calculate formula mass</p>
-                    <p>Formula mass = 2 + 16 = 18</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 5:</strong> Calculate percentage mass</p>
-                    <p>% mass of hydrogen = (2 ÷ 18) × 100 = 11.1%</p>
-                    <p>% mass of oxygen = (16 ÷ 18) × 100 = 88.9%</p>
-                </div>
-            </div>
-            
-            <div class="example-container">
-                <h3>Example 2: Carbon Dioxide (CO<sub>2</sub>)</h3>
-                <div class="step">
-                    <p><strong>Step 1:</strong> Find relative atomic masses</p>
-                    <p>C = 12, O = 16</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 2:</strong> Determine number of atoms</p>
-                    <p>1 carbon atom, 2 oxygen atoms</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 3:</strong> Calculate mass of each element</p>
-                    <p>Mass of carbon = 12 × 1 = 12</p>
-                    <p>Mass of oxygen = 16 × 2 = 32</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 4:</strong> Calculate formula mass</p>
-                    <p>Formula mass = 12 + 32 = 44</p>
-                </div>
-                <div class="step">
-                    <p><strong>Step 5:</strong> Calculate percentage mass</p>
-                    <p>% mass of carbon = (12 ÷ 44) × 100 = 27.3%</p>
-                    <p>% mass of oxygen = (32 ÷ 44) × 100 = 72.7%</p>
-                </div>
-            </div>
-            
-            <div class="nav-buttons">
-                <button id="tutorialBackToIntro">Back to Intro</button>
-                <button id="tutorialNext" class="secondary">Start Practice</button>
-            </div>
-        </div>
-        
-        <!-- Practice Screen -->
-        <div id="practiceScreen" class="screen">
-            <h2>Practice: Calculate Percentage Mass</h2>
-            
-            <div class="top-controls">
-                <div class="difficulty-selector">
-                    <div class="difficulty-btn active" data-difficulty="beginner">Beginner</div>
-                    <div class="difficulty-btn" data-difficulty="intermediate">Intermediate</div>
-                    <div class="difficulty-btn" data-difficulty="expert">Expert</div>
-                </div>
-                
-                <div class="challenge-buttons">
-                    <button id="startChallenge" class="tertiary">Novichok Analysis</button>
-                    <button id="startMurderMystery" class="tertiary">Murder Mystery</button>
-                </div>
-            </div>
-            
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
-            
-            <div id="questionArea">
-                <!-- Questions will be loaded here -->
-            </div>
-            
-            <div id="challengeScreen" style="display: none;">
-                <h2>Real-World Challenge: Forensic Analysis</h2>
-                <p>You are a forensic chemist analyzing a substance found at a crime scene. You need to determine if it matches the composition of a known nerve agent (A-234, a Novichok-class compound).</p>
-                
-                <div class="example-container">
-                    <h3>Information:</h3>
-                    <p>A simplified representation of A-234 has the molecular formula C<sub>7</sub>H<sub>14</sub>N<sub>2</sub>O<sub>2</sub>P.</p>
-                    <p>Your task is to:</p>
-                    <ol>
-                        <li>Calculate the percentage composition by mass of each element in A-234</li>
-                        <li>Compare with the analysis from the crime scene sample</li>
-                        <li>Determine if the sample is likely to be A-234</li>
-                    </ol>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <tr>
-                            <th>Element</th>
-                            <th>Symbol</th>
-                            <th>Relative Atomic Mass</th>
-                        </tr>
-                        <tr>
-                            <td>Carbon</td>
-                            <td>C</td>
-                            <td>12</td>
-                        </tr>
-                        <tr>
-                            <td>Hydrogen</td>
-                            <td>H</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>Nitrogen</td>
-                            <td>N</td>
-                            <td>14</td>
-                        </tr>
-                        <tr>
-                            <td>Oxygen</td>
-                            <td>O</td>
-                            <td>16</td>
-                        </tr>
-                        <tr>
-                            <td>Phosphorus</td>
-                            <td>P</td>
-                            <td>31</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div class="example-container">
-                    <h3>Crime Scene Sample Analysis:</h3>
-                    <p>The forensic lab has provided the following percentage composition for the unknown sample:</p>
-                    <ul>
-                        <li>Carbon: 42.1%</li>
-                        <li>Hydrogen: 7.0%</li>
-                        <li>Nitrogen: 14.0%</li>
-                        <li>Oxygen: 16.0%</li>
-                        <li>Phosphorus: 20.9%</li>
-                    </ul>
-                </div>
-                
-                <div class="question-container">
-                    <h3>Challenge Questions:</h3>
-                    
-                    <div class="step">
-                        <p>1. Calculate the percentage of carbon in A-234:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="carbonAnswer">
-                            <button class="check-btn" data-element="carbon" data-correct="42.1">Check</button>
-                            <button class="hint-btn" data-hint="carbonHint">Hint</button>
-                        </div>
-                        <div id="carbonHint" class="hint">
-                            Consider that there are 7 carbon atoms, each with a mass of 12. Calculate the total formula mass first.
-                        </div>
-                        <div class="feedback" id="carbonFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>2. Calculate the percentage of hydrogen in A-234:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="hydrogenAnswer">
-                            <button class="check-btn" data-element="hydrogen" data-correct="7.0">Check</button>
-                            <button class="hint-btn" data-hint="hydrogenHint">Hint</button>
-                        </div>
-                        <div id="hydrogenHint" class="hint">
-                            There are 14 hydrogen atoms, each with a mass of 1. Divide their total mass by the formula mass.
-                        </div>
-                        <div class="feedback" id="hydrogenFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>3. Calculate the percentage of nitrogen in A-234:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="nitrogenAnswer">
-                            <button class="check-btn" data-element="nitrogen" data-correct="14.0">Check</button>
-                            <button class="hint-btn" data-hint="nitrogenHint">Hint</button>
-                        </div>
-                        <div id="nitrogenHint" class="hint">
-                            There are 2 nitrogen atoms, each with a mass of 14. Divide their total mass by the formula mass.
-                        </div>
-                        <div class="feedback" id="nitrogenFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>4. Calculate the percentage of oxygen in A-234:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="oxygenAnswer">
-                            <button class="check-btn" data-element="oxygen" data-correct="16.0">Check</button>
-                            <button class="hint-btn" data-hint="oxygenHint">Hint</button>
-                        </div>
-                        <div id="oxygenHint" class="hint">
-                            There are 2 oxygen atoms, each with a mass of 16. Divide their total mass by the formula mass.
-                        </div>
-                        <div class="feedback" id="oxygenFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>5. Calculate the percentage of phosphorus in A-234:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="phosphorusAnswer">
-                            <button class="check-btn" data-element="phosphorus" data-correct="20.9">Check</button>
-                            <button class="hint-btn" data-hint="phosphorusHint">Hint</button>
-                        </div>
-                        <div id="phosphorusHint" class="hint">
-                            There is 1 phosphorus atom with a mass of 31. Divide by the formula mass.
-                        </div>
-                        <div class="feedback" id="phosphorusFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>6. Based on your calculations, does the crime scene sample match A-234?</p>
-                        <div class="answer-container">
-                            <button id="checkMatchBtn">Check Match</button>
-                        </div>
-                        <div class="challenge-result" id="matchResult"></div>
-                    </div>
-                </div>
-                
-                <div class="nav-buttons">
-                    <button id="challengeBackToPractice">Back to Practice</button>
-                    <button id="restartChallenge" class="secondary">Restart Challenge</button>
-                </div>
-            </div>
-            
-            <div id="practiceNavButtons">
-                <button id="practiceBackToIntro">Back to Intro</button>
-                <button id="practiceNext" class="secondary">Next Question</button>
-            </div>
-            
-            <div id="murderMysteryScreen" style="display: none;">
-                <h2>Forensic Challenge: The Poisoned Tea</h2>
-                
-                <div class="example-container">
-                    <h3>Murder Mystery Scenario</h3>
-                    <p>A wealthy businessman has been found dead in his study. The autopsy reveals he died from poison, and investigators suspect it was administered in his afternoon tea. A white powder residue was found at the bottom of his cup.</p>
-                    <p>You are the forensic chemist assigned to the case. The lead detective tells you they suspect arsenic poisoning, specifically arsenic trioxide (As₂O₃), a tasteless white powder often used in historical poisoning cases.</p>
-                    <p>Your task is to analyze the substance found in the teacup and determine if it matches arsenic trioxide.</p>
-                </div>
-                
-                <div class="example-container">
-                    <h3>The Evidence</h3>
-                    <p>The lab has performed initial tests on the powder from the teacup and provided the following data:</p>
-                    <ul>
-                        <li>The substance is a white, crystalline powder</li>
-                        <li>It dissolves slowly in water</li>
-                        <li>Elemental analysis shows it contains only arsenic and oxygen</li>
-                        <li>A preliminary mass spectrometry result is available</li>
-                    </ul>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <tr>
-                            <th>Element</th>
-                            <th>Symbol</th>
-                            <th>Relative Atomic Mass</th>
-                        </tr>
-                        <tr>
-                            <td>Arsenic</td>
-                            <td>As</td>
-                            <td>75</td>
-                        </tr>
-                        <tr>
-                            <td>Oxygen</td>
-                            <td>O</td>
-                            <td>16</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div class="question-container">
-                    <h3>Forensic Analysis</h3>
-                    
-                    <div class="step">
-                        <p>1. First, determine the formula mass of arsenic trioxide (As₂O₃):</p>
-                        <div class="answer-container">
-                            <input type="number" step="1" min="0" max="500" id="formulaMassAnswer">
-                            <button class="check-btn" data-element="formulaMass" data-correct="198">Check</button>
-                            <button class="hint-btn" data-hint="formulaMassHint">Hint</button>
-                        </div>
-                        <div id="formulaMassHint" class="hint">
-                            Calculate: (2 × atomic mass of As) + (3 × atomic mass of O) = (2 × 75) + (3 × 16)
-                        </div>
-                        <div class="feedback" id="formulaMassFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>2. Calculate the percentage by mass of arsenic in As₂O₃:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="arsenicPercentAnswer">
-                            <button class="check-btn" data-element="arsenicPercent" data-correct="75.8">Check</button>
-                            <button class="hint-btn" data-hint="arsenicPercentHint">Hint</button>
-                        </div>
-                        <div id="arsenicPercentHint" class="hint">
-                            Percentage mass of arsenic = ((2 × 75) ÷ 198) × 100 = (150 ÷ 198) × 100
-                        </div>
-                        <div class="feedback" id="arsenicPercentFeedback"></div>
-                    </div>
-                    
-                    <div class="step">
-                        <p>3. Calculate the percentage by mass of oxygen in As₂O₃:</p>
-                        <div class="answer-container">
-                            <input type="number" step="0.1" min="0" max="100" id="oxygenPercentAnswer">
-                            <button class="check-btn" data-element="oxygenPercent" data-correct="24.2">Check</button>
-                            <button class="hint-btn" data-hint="oxygenPercentHint">Hint</button>
-                        </div>
-                        <div id="oxygenPercentHint" class="hint">
-                            Percentage mass of oxygen = ((3 × 16) ÷ 198) × 100 = (48 ÷ 198) × 100
-                        </div>
-                        <div class="feedback" id="oxygenPercentFeedback"></div>
-                    </div>
-                    
-                    <div class="example-container">
-                        <h3>Mass Spectrometry Results from Crime Scene</h3>
-                        <p>The lab has analyzed the powder found in the victim's teacup and provided these percentages:</p>
-                        <ul>
-                            <li>Element X: 65.5%</li>
-                            <li>Element Y: 34.5%</li>
-                        </ul>
-                        <p>Based on various tests, the lab has confirmed that Element X is arsenic and Element Y is oxygen.</p>
-                    </div>
-                    
-                    <div class="step">
-                        <p>4. Does the teacup sample match arsenic trioxide (As₂O₃)?</p>
-                        <div class="answer-container">
-                            <button id="matchYesBtn">Yes, it's arsenic trioxide</button>
-                            <button id="matchNoBtn">No, it's a different compound</button>
-                        </div>
-                        <div class="feedback" id="matchFeedback"></div>
-                    </div>
-                    
-                    <div id="additionalAnalysis" style="display: none;">
-                        <div class="step">
-                            <p>5. If it's not arsenic trioxide, what could the sample be? Analyze these possible arsenic compounds:</p>
-                            <ul>
-                                <li>Arsenic pentoxide (As₂O₅)</li>
-                                <li>Arsenic trisulfide (As₂S₃)</li>
-                                <li>Realgar (As₄S₄)</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="step">
-                            <p>Calculate the percentage of arsenic in As₂O₅:</p>
-                            <div class="answer-container">
-                                <input type="number" step="0.1" min="0" max="100" id="as2o5Answer">
-                                <button class="check-btn" data-element="as2o5" data-correct="65.2">Check</button>
-                                <button class="hint-btn" data-hint="as2o5Hint">Hint</button>
-                            </div>
-                            <div id="as2o5Hint" class="hint">
-                                As₂O₅ has a formula mass of 2×75 + 5×16 = 230. Percentage of As = (150÷230)×100
-                            </div>
-                            <div class="feedback" id="as2o5Feedback"></div>
-                        </div>
-                        
-                        <div class="step">
-                            <p>6. Based on your calculations, which compound best matches the sample found in the teacup?</p>
-                            <div class="answer-container">
-                                <select id="finalAnswerSelect">
-                                    <option value="">Select your answer</option>
-                                    <option value="as2o3">Arsenic trioxide (As₂O₃)</option>
-                                    <option value="as2o5">Arsenic pentoxide (As₂O₅)</option>
-                                    <option value="as2s3">Arsenic trisulfide (As₂S₃)</option>
-                                    <option value="as4s4">Realgar (As₄S₄)</option>
-                                </select>
-                                <button id="checkFinalAnswer">Submit Final Answer</button>
-                            </div>
-                            <div class="feedback" id="finalAnswerFeedback"></div>
-                        </div>
-                        
-                        <div class="challenge-result" id="caseResult"></div>
-                    </div>
-                </div>
-                
-                <div class="nav-buttons">
-                    <button id="murderBackToPractice">Back to Practice</button>
-                    <button id="restartMurder" class="secondary">Restart Investigation</button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <script>
-        // Calculator functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Calculator elements
-            const calculator = document.getElementById('calculator');
-            const calculatorHeader = document.getElementById('calculatorHeader');
-            const calculatorToggle = document.getElementById('calculatorToggle');
-            const closeCalculator = document.getElementById('closeCalculator');
-            const minimizeCalculator = document.getElementById('minimizeCalculator');
-            const calculatorScreen = document.getElementById('calculatorScreen');
-            const calculatorHistory = document.getElementById('calculatorHistory');
-            const calculatorButtons = document.querySelectorAll('.calc-btn');
-            
-            // Calculator state
-            let expressionString = '0';
-            let lastResult = '';
-            let resetScreen = false;
-            let isDragging = false;
-            let dragOffsetX = 0;
-            let dragOffsetY = 0;
-            
-            // Initialize calculator position from localStorage or use default
-            function initCalculatorPosition() {
-                const savedPosition = localStorage.getItem('calculatorPosition');
-                if (savedPosition) {
-                    try {
-                        const position = JSON.parse(savedPosition);
-                        calculator.style.top = position.top;
-                        calculator.style.left = position.left;
-                        calculator.style.right = 'auto'; // Clear default right positioning
-                    } catch (e) {
-                        console.error('Error loading calculator position:', e);
-                    }
-                }
-            }
-            
-            // Save calculator position to localStorage
-            function saveCalculatorPosition() {
-                const position = {
-                    top: calculator.style.top,
-                    left: calculator.style.left
-                };
-                localStorage.setItem('calculatorPosition', JSON.stringify(position));
-            }
-            
-            // Toggle calculator visibility
-            calculatorToggle.addEventListener('click', () => {
-                calculator.classList.toggle('active');
-                calculator.classList.remove('minimized');
-                initCalculatorPosition();
-            });
-            
-            // Close calculator
-            closeCalculator.addEventListener('click', () => {
-                calculator.classList.remove('active');
-            });
-            
-            // Minimize calculator
-            minimizeCalculator.addEventListener('click', () => {
-                calculator.classList.toggle('minimized');
-            });
-            
-            // Make calculator draggable
-            calculatorHeader.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                calculator.classList.add('dragging');
-                
-                // Calculate the offset of the mouse within the calculator header
-                const rect = calculator.getBoundingClientRect();
-                dragOffsetX = e.clientX - rect.left;
-                dragOffsetY = e.clientY - rect.top;
-                
-                // Prevent text selection during drag
-                e.preventDefault();
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                
-                // Calculate new position
-                const x = e.clientX - dragOffsetX;
-                const y = e.clientY - dragOffsetY;
-                
-                // Apply position constraints to keep calculator within viewport
-                const maxX = window.innerWidth - calculator.offsetWidth;
-                const maxY = window.innerHeight - calculator.offsetHeight;
-                
-                const constrainedX = Math.max(0, Math.min(maxX, x));
-                const constrainedY = Math.max(0, Math.min(maxY, y));
-                
-                calculator.style.left = constrainedX + 'px';
-                calculator.style.top = constrainedY + 'px';
-                calculator.style.right = 'auto';
-                calculator.style.bottom = 'auto';
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    calculator.classList.remove('dragging');
-                    saveCalculatorPosition();
-                }
-            });
-            
-            // Calculator functions
-            function updateDisplay() {
-                calculatorScreen.textContent = expressionString;
-                
-                if (lastResult && lastResult !== expressionString) {
-                    calculatorHistory.textContent = lastResult;
-                } else {
-                    calculatorHistory.textContent = '';
-                }
-            }
-            
-            function clear() {
-                expressionString = '0';
-                lastResult = '';
-                resetScreen = false;
-                updateDisplay();
-            }
-            
-            function backspace() {
-                if (expressionString.length > 1) {
-                    expressionString = expressionString.slice(0, -1);
-                } else {
-                    expressionString = '0';
-                }
-                updateDisplay();
-            }
-            
-            function appendNumber(number) {
-                if (expressionString === '0' || resetScreen) {
-                    expressionString = number;
-                    resetScreen = false;
-                } else {
-                    expressionString += number;
-                }
-                updateDisplay();
-            }
-            
-            function handleDecimal() {
-                // Check if the last number in the expression already has a decimal
-                const parts = expressionString.split(/[\+\-\×\÷\(\)]/);
-                const lastPart = parts[parts.length - 1];
-                
-                if (resetScreen) {
-                    expressionString = '0.';
-                    resetScreen = false;
-                } else if (!lastPart.includes('.')) {
-                    // If the last character is an operator, add "0."
-                    if (/[\+\-\×\÷\(]$/.test(expressionString)) {
-                        expressionString += '0';
-                    }
-                    expressionString += '.';
-                }
-                updateDisplay();
-            }
-            
-            function appendOperator(op) {
-                // Replace any trailing operator with the new one
-                if (/[\+\-\×\÷]$/.test(expressionString)) {
-                    expressionString = expressionString.slice(0, -1) + op;
-                } else {
-                    // If the expression is 0, and we're adding minus, replace the 0
-                    if (expressionString === '0' && op === '-') {
-                        expressionString = op;
-                    } else if (expressionString === '0') {
-                        // Do nothing if expression is 0 for other operators
-                    } else {
-                        expressionString += op;
-                    }
-                }
-                resetScreen = false;
-                updateDisplay();
-            }
-            
-            function appendBracket(bracket) {
-                if (expressionString === '0') {
-                    expressionString = bracket;
-                } else {
-                    // Logic for smooth bracket entry
-                    if (bracket === '(') {
-                        // If last char is a digit and not an operator, add a multiplication sign
-                        if (/[0-9)]$/.test(expressionString)) {
-                            expressionString += '×' + bracket;
-                        } else {
-                            expressionString += bracket;
-                        }
-                    } else if (bracket === ')') {
-                        // Only add closing bracket if there are unclosed opening brackets
-                        const openCount = (expressionString.match(/\(/g) || []).length;
-                        const closeCount = (expressionString.match(/\)/g) || []).length;
-                        if (openCount > closeCount) {
-                            expressionString += bracket;
-                        }
-                    }
-                }
-                resetScreen = false;
-                updateDisplay();
-            }
-            
-            function evaluateExpression(expr) {
-                // Replace the display operators with JavaScript operators
-                expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
-                
-                try {
-                    // Use math.js or a similar library in a real app for safer evaluation
-                    // For this demo, we'll use Function constructor, which is not recommended
-                    // for production due to security concerns, but works for our purposes
-                    return Function('"use strict"; return (' + expr + ')')();
-                } catch (e) {
-                    return 'Error';
-                }
-            }
-            
-            function compute() {
-                try {
-                    // Handle empty expressions or just a digit
-                    if (expressionString === '' || expressionString === '0') {
-                        return;
-                    }
-                    
-                    // Check for unclosed brackets and close them
-                    const openCount = (expressionString.match(/\(/g) || []).length;
-                    const closeCount = (expressionString.match(/\)/g) || []).length;
-                    let tempExpr = expressionString;
-                    
-                    if (openCount > closeCount) {
-                        for (let i = 0; i < openCount - closeCount; i++) {
-                            tempExpr += ')';
-                        }
-                    }
-                    
-                    lastResult = tempExpr;
-                    const result = evaluateExpression(tempExpr);
-                    
-                    if (result === 'Error') {
-                        expressionString = 'Error';
-                    } else {
-                        // Format the result
-                        expressionString = formatResult(result);
-                    }
-                    
-                    resetScreen = true;
-                    updateDisplay();
-                } catch (error) {
-                    expressionString = 'Error';
-                    updateDisplay();
-                }
-            }
-            
-            function formatResult(result) {
-                // Handle precision and display formatting
-                if (typeof result !== 'number') {
-                    return 'Error';
-                }
-                
-                // Handle integers
-                if (Number.isInteger(result)) {
-                    return result.toString();
-                }
-                
-                // For floating point results, limit decimal places
-                const resultStr = result.toString();
-                if (resultStr.includes('e')) {
-                    // For scientific notation, just return as is
-                    return resultStr;
-                }
-                
-                // For regular decimals, limit to 10 places
-                const parts = resultStr.split('.');
-                if (parts.length === 2 && parts[1].length > 10) {
-                    // Round to 10 decimal places and remove trailing zeros
-                    return parseFloat(result.toFixed(10)).toString();
-                }
-                
-                return resultStr;
-            }
-            
-            // Add event listeners to calculator buttons
-            calculatorButtons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    // Prevent buttons from triggering when pressing Enter in input fields
-                    e.preventDefault();
-                    
-                    const btnText = button.textContent;
-                    
-                    // Number buttons
-                    if (button.classList.contains('calc-btn-num')) {
-                        if (btnText === '.') {
-                            handleDecimal();
-                        } else {
-                            appendNumber(btnText);
-                        }
-                    }
-                    
-                    // Operator buttons
-                    if (button.classList.contains('calc-btn-op')) {
-                        if (btnText === '(' || btnText === ')') {
-                            appendBracket(btnText);
-                        } else {
-                            appendOperator(btnText);
-                        }
-                    }
-                    
-                    // Equals button
-                    if (button.classList.contains('calc-btn-equals')) {
-                        compute();
-                    }
-                    
-                    // Clear button
-                    if (button.classList.contains('calc-btn-clear')) {
-                        clear();
-                    }
-                    
-                    // Backspace button
-                    if (button.classList.contains('calc-btn-backspace')) {
-                        backspace();
-                    }
-                });
-            });
-            
-            // Handle keyboard input
-            document.addEventListener('keydown', (e) => {
-                // Only process keyboard input for calculator if:
-                // 1. Calculator is visible
-                // 2. User is not typing in an input field or textarea
-                // 3. User is not typing in a contenteditable element
-                const activeElement = document.activeElement;
-                const isInputActive = activeElement.tagName === 'INPUT' || 
-                                     activeElement.tagName === 'TEXTAREA' || 
-                                     activeElement.isContentEditable;
-                
-                if (!calculator.classList.contains('active') || isInputActive) {
-                    return;
-                }
-                
-                if (e.key >= '0' && e.key <= '9') {
-                    appendNumber(e.key);
-                } else if (e.key === '.') {
-                    handleDecimal();
-                } else if (e.key === '+' || e.key === '-') {
-                    appendOperator(e.key);
-                } else if (e.key === '*') {
-                    appendOperator('×');
-                } else if (e.key === '/') {
-                    e.preventDefault(); // Prevent browser's find feature
-                    appendOperator('÷');
-                } else if (e.key === '(' || e.key === ')') {
-                    appendBracket(e.key);
-                } else if (e.key === 'Enter' || e.key === '=') {
-                    e.preventDefault(); // Prevent form submission
-                    compute();
-                } else if (e.key === 'Escape') {
-                    clear();
-                } else if (e.key === 'Backspace') {
-                    backspace();
-                }
-            });
-            
-            // Initialize calculator
-            updateDisplay();
-        });
-        
-        // Data for practice questions
-        const questions = {
-            beginner: [
-                {
-                    id: 1,
-                    compound: "H₂O (Water)",
-                    formula: "H<sub>2</sub>O",
-                    elements: [
-                        { name: "Hydrogen", symbol: "H", count: 2, mass: 1 },
-                        { name: "Oxygen", symbol: "O", count: 1, mass: 16 }
-                    ],
-                    questionElement: "Hydrogen",
-                    correctAnswer: 11.1,
-                    hint: "Calculate the total mass of hydrogen (1 × 2) and divide by the formula mass (1 × 2 + 16)."
-                },
-                {
-                    id: 2,
-                    compound: "CO₂ (Carbon Dioxide)",
-                    formula: "CO<sub>2</sub>",
-                    elements: [
-                        { name: "Carbon", symbol: "C", count: 1, mass: 12 },
-                        { name: "Oxygen", symbol: "O", count: 2, mass: 16 }
-                    ],
-                    questionElement: "Oxygen",
-                    correctAnswer: 72.7,
-                    hint: "Calculate the total mass of oxygen (16 × 2) and divide by the formula mass (12 + 16 × 2)."
-                },
-                {
-                    id: 3,
-                    compound: "NaCl (Table Salt)",
-                    formula: "NaCl",
-                    elements: [
-                        { name: "Sodium", symbol: "Na", count: 1, mass: 23 },
-                        { name: "Chlorine", symbol: "Cl", count: 1, mass: 35.5 }
-                    ],
-                    questionElement: "Sodium",
-                    correctAnswer: 39.3,
-                    hint: "Calculate the formula mass (23 + 35.5) and divide the mass of sodium by that total."
-                },
-                {
-                    id: 4,
-                    compound: "NH₃ (Ammonia)",
-                    formula: "NH<sub>3</sub>",
-                    elements: [
-                        { name: "Nitrogen", symbol: "N", count: 1, mass: 14 },
-                        { name: "Hydrogen", symbol: "H", count: 3, mass: 1 }
-                    ],
-                    questionElement: "Nitrogen",
-                    correctAnswer: 82.4,
-                    hint: "Calculate the formula mass (14 + 3 × 1) and divide the mass of nitrogen by that total."
-                },
-                {
-                    id: 5,
-                    compound: "MgO (Magnesium Oxide)",
-                    formula: "MgO",
-                    elements: [
-                        { name: "Magnesium", symbol: "Mg", count: 1, mass: 24 },
-                        { name: "Oxygen", symbol: "O", count: 1, mass: 16 }
-                    ],
-                    questionElement: "Magnesium",
-                    correctAnswer: 60.0,
-                    hint: "Calculate the formula mass (24 + 16) and divide the mass of magnesium by that total."
-                }
-            ],
-            intermediate: [
-                {
-                    id: 1,
-                    compound: "CaCO₃ (Calcium Carbonate)",
-                    formula: "CaCO<sub>3</sub>",
-                    elements: [
-                        { name: "Calcium", symbol: "Ca", count: 1, mass: 40 },
-                        { name: "Carbon", symbol: "C", count: 1, mass: 12 },
-                        { name: "Oxygen", symbol: "O", count: 3, mass: 16 }
-                    ],
-                    questionElement: "Calcium",
-                    correctAnswer: 40.0,
-                    hint: "Calculate the formula mass (40 + 12 + 3 × 16) and divide the mass of calcium by that total."
-                },
-                {
-                    id: 2,
-                    compound: "H₂SO₄ (Sulfuric Acid)",
-                    formula: "H<sub>2</sub>SO<sub>4</sub>",
-                    elements: [
-                        { name: "Hydrogen", symbol: "H", count: 2, mass: 1 },
-                        { name: "Sulfur", symbol: "S", count: 1, mass: 32 },
-                        { name: "Oxygen", symbol: "O", count: 4, mass: 16 }
-                    ],
-                    questionElement: "Oxygen",
-                    correctAnswer: 65.3,
-                    hint: "Calculate the total mass of oxygen (4 × 16) and divide by the formula mass (2 × 1 + 32 + 4 × 16)."
-                },
-                {
-                    id: 3,
-                    compound: "Ca(OH)₂ (Calcium Hydroxide)",
-                    formula: "Ca(OH)<sub>2</sub>",
-                    elements: [
-                        { name: "Calcium", symbol: "Ca", count: 1, mass: 40 },
-                        { name: "Oxygen", symbol: "O", count: 2, mass: 16 },
-                        { name: "Hydrogen", symbol: "H", count: 2, mass: 1 }
-                    ],
-                    questionElement: "Hydrogen",
-                    correctAnswer: 2.7,
-                    hint: "Calculate the total mass of hydrogen (2 × 1) and divide by the formula mass (40 + 2 × 16 + 2 × 1)."
-                },
-                {
-                    id: 4,
-                    compound: "CH₃COOH (Acetic Acid)",
-                    formula: "CH<sub>3</sub>COOH",
-                    elements: [
-                        { name: "Carbon", symbol: "C", count: 2, mass: 12 },
-                        { name: "Hydrogen", symbol: "H", count: 4, mass: 1 },
-                        { name: "Oxygen", symbol: "O", count: 2, mass: 16 }
-                    ],
-                    questionElement: "Carbon",
-                    correctAnswer: 40.0,
-                    hint: "Calculate the total mass of carbon (2 × 12) and divide by the formula mass (2 × 12 + 4 × 1 + 2 × 16)."
-                },
-                {
-                    id: 5,
-                    compound: "NaHCO₃ (Sodium Bicarbonate)",
-                    formula: "NaHCO<sub>3</sub>",
-                    elements: [
-                        { name: "Sodium", symbol: "Na", count: 1, mass: 23 },
-                        { name: "Hydrogen", symbol: "H", count: 1, mass: 1 },
-                        { name: "Carbon", symbol: "C", count: 1, mass: 12 },
-                        { name: "Oxygen", symbol: "O", count: 3, mass: 16 }
-                    ],
-                    questionElement: "Oxygen",
-                    correctAnswer: 57.1,
-                    hint: "Calculate the total mass of oxygen (3 × 16) and divide by the formula mass (23 + 1 + 12 + 3 × 16)."
-                }
-            ],
-            expert: [
-                {
-                    id: 1,
-                    compound: "C₆H₁₂O₆ (Glucose)",
-                    formula: "C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>",
-                    elements: [
-                        { name: "Carbon", symbol: "C", count: 6, mass: 12 },
-                        { name: "Hydrogen", symbol: "H", count: 12, mass: 1 },
-                        { name: "Oxygen", symbol: "O", count: 6, mass: 16 }
-                    ],
-                    questionElement: "Carbon",
-                    correctAnswer: 40.0,
-                    hint: "Calculate the total mass of carbon (6 × 12) and divide by the formula mass (6 × 12 + 12 × 1 + 6 × 16)."
-                },
-                {
-                    id: 2,
-                    compound: "CuCl₂ (Copper(II) Chloride)",
-                    formula: "CuCl<sub>2</sub>",
-                    elements: [
-                        { name: "Copper", symbol: "Cu", count: 1, mass: 63.5 },
-                        { name: "Chlorine", symbol: "Cl", count: 2, mass: 35.5 }
-                    ],
-                    questionElement: "Copper",
-                    correctAnswer: 47.2,
-                    hint: "Calculate the formula mass (63.5 + 2 × 35.5) and divide the mass of copper by that total."
-                },
-                {
-                    id: 3,
-                    compound: "Fe₂O₃ (Iron(III) Oxide)",
-                    formula: "Fe<sub>2</sub>O<sub>3</sub>",
-                    elements: [
-                        { name: "Iron", symbol: "Fe", count: 2, mass: 56 },
-                        { name: "Oxygen", symbol: "O", count: 3, mass: 16 }
-                    ],
-                    questionElement: "Iron",
-                    correctAnswer: 70.0,
-                    hint: "Calculate the total mass of iron (2 × 56) and divide by the formula mass (2 × 56 + 3 × 16)."
-                },
-                {
-                    id: 4,
-                    compound: "C₈H₁₀N₄O₂ (Caffeine)",
-                    formula: "C<sub>8</sub>H<sub>10</sub>N<sub>4</sub>O<sub>2</sub>",
-                    elements: [
-                        { name: "Carbon", symbol: "C", count: 8, mass: 12 },
-                        { name: "Hydrogen", symbol: "H", count: 10, mass: 1 },
-                        { name: "Nitrogen", symbol: "N", count: 4, mass: 14 },
-                        { name: "Oxygen", symbol: "O", count: 2, mass: 16 }
-                    ],
-                    questionElement: "Nitrogen",
-                    correctAnswer: 28.9,
-                    hint: "Calculate the total mass of nitrogen (4 × 14) and divide by the formula mass (8 × 12 + 10 × 1 + 4 × 14 + 2 × 16)."
-                },
-                {
-                    id: 5,
-                    compound: "CuSO₄·5H₂O (Copper(II) Sulfate Pentahydrate)",
-                    formula: "CuSO<sub>4</sub>·5H<sub>2</sub>O",
-                    elements: [
-                        { name: "Copper", symbol: "Cu", count: 1, mass: 63.5 },
-                        { name: "Sulfur", symbol: "S", count: 1, mass: 32 },
-                        { name: "Oxygen", symbol: "O", count: 9, mass: 16 },
-                        { name: "Hydrogen", symbol: "H", count: 10, mass: 1 }
-                    ],
-                    questionElement: "Copper",
-                    correctAnswer: 25.5,
-                    hint: "Calculate the formula mass (63.5 + 32 + 9 × 16 + 10 × 1) and divide the mass of copper by that total."
-                }
-            ]
-        };
-        
-        // Global variables
-        let currentDifficulty = 'beginner';
-        let currentQuestionIndex = 0;
-        let correctAnswers = 0;
-        
-        // DOM elements
-        const screens = {
-            intro: document.getElementById('introScreen'),
-            tutorial: document.getElementById('tutorialScreen'),
-            practice: document.getElementById('practiceScreen'),
-            challenge: document.getElementById('challengeScreen'),
-            murderMystery: document.getElementById('murderMysteryScreen')
-        };
-        
-        const buttons = {};
-        
-        const questionArea = document.getElementById('questionArea');
-        const progressBar = document.querySelector('.progress-bar');
-        const difficultyBtns = document.querySelectorAll('.difficulty-btn');
-        
-        // Local Storage Functions
-        function saveProgress() {
-            const progress = {
-                difficulty: currentDifficulty,
-                questionIndex: currentQuestionIndex,
-                correctAnswers: correctAnswers,
-                completed: {},
-                lastScreen: getCurrentScreen()
-            };
-            
-            // Save which questions are completed
-            questions[currentDifficulty].forEach((question, index) => {
-                if (index < currentQuestionIndex) {
-                    progress.completed[`${currentDifficulty}_${index}`] = true;
-                }
-            });
-            
-            localStorage.setItem('percentageMassProgress', JSON.stringify(progress));
-            updateProgressSummary();
-        }
-        
-        function loadProgress() {
-            try {
-                const savedProgress = localStorage.getItem('percentageMassProgress');
-                
-                if (savedProgress) {
-                    const progress = JSON.parse(savedProgress);
-                    
-                    // Restore state
-                    currentDifficulty = progress.difficulty || 'beginner';
-                    currentQuestionIndex = progress.questionIndex || 0;
-                    correctAnswers = progress.correctAnswers || 0;
-                    
-                    // Set difficulty buttons
-                    difficultyBtns.forEach(btn => {
-                        btn.classList.remove('active');
-                        if (btn.getAttribute('data-difficulty') === currentDifficulty) {
-                            btn.classList.add('active');
-                        }
-                    });
-                    
-                    // Show proper screen
-                    if (progress.lastScreen) {
-                        showScreen(progress.lastScreen);
-                    } else {
-                        // Default to intro if no screen is saved
-                        showScreen('intro');
-                    }
-                    
-                    // If in practice mode, load the current question
-                    if (progress.lastScreen === 'practice') {
-                        loadQuestion();
-                    }
-                    
-                    // Show the progress summary
-                    updateProgressSummary();
-                    document.getElementById('progressSummary').style.display = 'block';
-                    
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error loading progress:', error);
-                // Clear potentially corrupted data
-                localStorage.removeItem('percentageMassProgress');
-            }
-            
-            return false;
-        }
-        
-        function updateProgressSummary() {
-            document.getElementById('savedDifficulty').textContent = 
-                currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
-            
-            document.getElementById('completedQuestions').textContent = 
-                `${currentQuestionIndex} of ${questions[currentDifficulty].length}`;
-            
-            document.getElementById('correctAnswersCount').textContent = correctAnswers;
-        }
-        
-        function clearProgress() {
-            localStorage.removeItem('percentageMassProgress');
-            currentDifficulty = 'beginner';
-            currentQuestionIndex = 0;
-            correctAnswers = 0;
-            
-            // Reset difficulty buttons
-            difficultyBtns.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.getAttribute('data-difficulty') === 'beginner') {
-                    btn.classList.add('active');
-                }
-            });
-            
-            // Hide progress summary
-            document.getElementById('progressSummary').style.display = 'none';
-            
-            // Show intro screen
-            showScreen('intro');
-        }
-        
-        function getCurrentScreen() {
-            for (const [name, screen] of Object.entries(screens)) {
-                if (screen.classList.contains('active')) {
-                    return name;
-                }
-            }
-            return 'intro';
-        }
-        
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("DOM Content Loaded - Initializing application");
-            // Get all button references
-            buttons.startTutorial = document.getElementById('startTutorial');
-            buttons.startPractice = document.getElementById('startPractice');
-            buttons.tutorialBackToIntro = document.getElementById('tutorialBackToIntro');
-            buttons.tutorialNext = document.getElementById('tutorialNext');
-            buttons.practiceBackToIntro = document.getElementById('practiceBackToIntro');
-            buttons.practiceNext = document.getElementById('practiceNext');
-            buttons.startChallenge = document.getElementById('startChallenge');
-            buttons.startMurderMystery = document.getElementById('startMurderMystery');
-            buttons.challengeBackToPractice = document.getElementById('challengeBackToPractice');
-            buttons.restartChallenge = document.getElementById('restartChallenge');
-            buttons.murderBackToPractice = document.getElementById('murderBackToPractice');
-            buttons.restartMurder = document.getElementById('restartMurder');
-            buttons.checkMatchBtn = document.getElementById('checkMatchBtn');
-            buttons.matchYesBtn = document.getElementById('matchYesBtn');
-            buttons.matchNoBtn = document.getElementById('matchNoBtn');
-            buttons.checkFinalAnswer = document.getElementById('checkFinalAnswer');
-            
-            // Set up clear progress button
-            document.getElementById('clearProgressBtn').addEventListener('click', clearProgress);
-            
-            // Always start with intro screen first, then try to load progress
-            showScreen('intro');
-            
-            // Try to load saved progress
-            const hasProgress = loadProgress();
-            
-            // Challenge buttons are now always visible in the UI
-            
-            // Event listeners
-            buttons.startTutorial.addEventListener('click', () => showScreen('tutorial'));
-            buttons.startPractice.addEventListener('click', () => {
-                showScreen('practice');
-                loadQuestion();
-            });
-            buttons.tutorialBackToIntro.addEventListener('click', () => showScreen('intro'));
-            buttons.tutorialNext.addEventListener('click', () => {
-                showScreen('practice');
-                loadQuestion();
-            });
-            buttons.practiceBackToIntro.addEventListener('click', () => showScreen('intro'));
-            buttons.practiceNext.addEventListener('click', () => {
-                currentQuestionIndex++;
-                if (currentQuestionIndex >= questions[currentDifficulty].length) {
-                    currentQuestionIndex = 0;
-                    if (correctAnswers === questions[currentDifficulty].length) {
-                        buttons.startChallenge.style.display = 'inline-block';
-                        buttons.startMurderMystery.style.display = 'inline-block';
-                    }
-                }
-                loadQuestion();
-                saveProgress();
-            });
-            buttons.startChallenge.addEventListener('click', () => {
-                // Hide question area and show challenge screen
-                document.getElementById('questionArea').style.display = 'none';
-                document.getElementById('challengeScreen').style.display = 'block';
-                
-                // Hide murder mystery screen if it's showing
-                document.getElementById('murderMysteryScreen').style.display = 'none';
-                
-                // Highlight the active button
-                buttons.startChallenge.classList.add('active');
-                buttons.startMurderMystery.classList.remove('active');
-            });
-            
-            buttons.challengeBackToPractice.addEventListener('click', () => {
-                // Show question area and hide challenge screen
-                document.getElementById('questionArea').style.display = 'block';
-                document.getElementById('challengeScreen').style.display = 'none';
-                
-                // Remove active state from button
-                buttons.startChallenge.classList.remove('active');
-            });
-            buttons.restartChallenge.addEventListener('click', () => {
-                // Reset challenge inputs and feedback
-                document.querySelectorAll('#challengeScreen input').forEach(input => {
-                    input.value = '';
-                });
-                document.querySelectorAll('#challengeScreen .feedback').forEach(feedback => {
-                    feedback.style.display = 'none';
-                    feedback.textContent = '';
-                    feedback.classList.remove('correct', 'incorrect');
-                });
-                document.getElementById('matchResult').style.display = 'none';
-            });
-            
-            // Murder Mystery Challenge Event Listeners
-            buttons.startMurderMystery.addEventListener('click', () => {
-                // Hide question area and show murder mystery screen
-                document.getElementById('questionArea').style.display = 'none';
-                document.getElementById('murderMysteryScreen').style.display = 'block';
-                
-                // Hide challenge screen if it's showing
-                document.getElementById('challengeScreen').style.display = 'none';
-                
-                // Highlight the active button
-                buttons.startMurderMystery.classList.add('active');
-                buttons.startChallenge.classList.remove('active');
-            });
-            
-            buttons.murderBackToPractice.addEventListener('click', () => {
-                // Show question area and hide murder mystery screen
-                document.getElementById('questionArea').style.display = 'block';
-                document.getElementById('murderMysteryScreen').style.display = 'none';
-                
-                // Remove active state from button
-                buttons.startMurderMystery.classList.remove('active');
-            });
-            
-            buttons.restartMurder.addEventListener('click', () => {
-                // Reset murder mystery inputs and feedback
-                document.querySelectorAll('#murderMysteryScreen input').forEach(input => {
-                    input.value = '';
-                });
-                document.querySelectorAll('#murderMysteryScreen .feedback').forEach(feedback => {
-                    feedback.style.display = 'none';
-                    feedback.textContent = '';
-                    feedback.classList.remove('correct', 'incorrect');
-                });
-                document.getElementById('caseResult').style.display = 'none';
-                document.getElementById('additionalAnalysis').style.display = 'none';
-            });
-            
-            // Murder Mystery Check Buttons
-            document.querySelectorAll('#murderMysteryScreen .check-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const element = btn.getAttribute('data-element');
-                    const correct = parseFloat(btn.getAttribute('data-correct'));
-                    const input = document.getElementById(`${element}Answer`);
-                    const feedback = document.getElementById(`${element}Feedback`);
-                    
-                    const userAnswer = parseFloat(input.value);
-                    
-                    if (Math.abs(userAnswer - correct) <= 0.3) { // Allow for rounding errors
-                        feedback.textContent = 'Correct!';
-                        feedback.classList.add('correct');
-                        feedback.classList.remove('incorrect');
-                    } else {
-                        feedback.textContent = `Incorrect. The correct answer is ${correct}.`;
-                        feedback.classList.add('incorrect');
-                        feedback.classList.remove('correct');
-                    }
-                    
-                    feedback.style.display = 'block';
-                });
-            });
-            
-            // Murder Mystery match buttons
-            buttons.matchYesBtn.addEventListener('click', () => {
-                let feedback = document.getElementById('matchFeedback');
-                feedback.textContent = 'Incorrect. The percentages don\'t match arsenic trioxide closely enough. Further analysis is needed.';
-                feedback.classList.add('incorrect');
-                feedback.classList.remove('correct');
-                feedback.style.display = 'block';
-                document.getElementById('additionalAnalysis').style.display = 'block';
-            });
-            
-            buttons.matchNoBtn.addEventListener('click', () => {
-                const feedback = document.getElementById('matchFeedback');
-                feedback.textContent = 'Correct! The sample has significantly different percentages than arsenic trioxide. Further analysis is needed.';
-                feedback.classList.add('correct');
-                feedback.classList.remove('incorrect');
-                feedback.style.display = 'block';
-                document.getElementById('additionalAnalysis').style.display = 'block';
-            });
-            
-            // Final answer check
-            buttons.checkFinalAnswer.addEventListener('click', () => {
-                const selectedAnswer = document.getElementById('finalAnswerSelect').value;
-                const feedback = document.getElementById('finalAnswerFeedback');
-                const caseResult = document.getElementById('caseResult');
-                
-                if (selectedAnswer === 'as2o5') {
-                    feedback.textContent = 'Correct! The arsenic percentage (65.2%) and oxygen percentage (34.8%) in arsenic pentoxide (As₂O₅) are much closer to our sample.';
-                    feedback.classList.add('correct');
-                    feedback.classList.remove('incorrect');
-                    
-                    caseResult.textContent = 'Case Solved: You have determined that the poison used was arsenic pentoxide (As₂O₅), not the more common arsenic trioxide. This critical evidence will help the detectives track down the source of the poison and identify the murderer.';
-                    caseResult.classList.add('matches');
-                    caseResult.classList.remove('does-not-match');
-                    caseResult.style.display = 'block';
-                } else {
-                    feedback.textContent = 'Incorrect. Based on the percentages, arsenic pentoxide (As₂O₅) is the closest match to our sample.';
-                    feedback.classList.add('incorrect');
-                    feedback.classList.remove('correct');
-                }
-                
-                feedback.style.display = 'block';
-            });
-            
-            // Difficulty selection
-            difficultyBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active difficulty
-                    difficultyBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Set current difficulty and reset
-                    currentDifficulty = btn.getAttribute('data-difficulty');
-                    currentQuestionIndex = 0;
-                    correctAnswers = 0;
-                    loadQuestion();
-                    
-                    // Save progress
-                    saveProgress();
-                });
-            });
-            
-            // Challenge check buttons
-            document.querySelectorAll('.check-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const element = btn.getAttribute('data-element');
-                    const correct = parseFloat(btn.getAttribute('data-correct'));
-                    const input = document.getElementById(`${element}Answer`);
-                    const feedback = document.getElementById(`${element}Feedback`);
-                    
-                    const userAnswer = parseFloat(input.value);
-                    
-                    if (Math.abs(userAnswer - correct) <= 0.2) { // Allow for rounding errors
-                        feedback.textContent = 'Correct!';
-                        feedback.classList.add('correct');
-                        feedback.classList.remove('incorrect');
-                    } else {
-                        feedback.textContent = `Incorrect. The correct answer is ${correct}%.`;
-                        feedback.classList.add('incorrect');
-                        feedback.classList.remove('correct');
-                    }
-                    
-                    feedback.style.display = 'block';
-                });
-            });
-            
-            // Hint buttons
-            document.querySelectorAll('.hint-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const hintId = btn.getAttribute('data-hint');
-                    const hint = document.getElementById(hintId);
-                    
-                    if (hint.style.display === 'block') {
-                        hint.style.display = 'none';
-                    } else {
-                        hint.style.display = 'block';
-                    }
-                });
-            });
-            
-            // Check match button
-            buttons.checkMatchBtn.addEventListener('click', () => {
-                const inputs = [
-                    document.getElementById('carbonAnswer'),
-                    document.getElementById('hydrogenAnswer'),
-                    document.getElementById('nitrogenAnswer'),
-                    document.getElementById('oxygenAnswer'),
-                    document.getElementById('phosphorusAnswer')
-                ];
-                
-                const correctValues = [42.1, 7.0, 14.0, 16.0, 20.9];
-                let allCorrect = true;
-                
-                inputs.forEach((input, index) => {
-                    const userValue = parseFloat(input.value);
-                    if (isNaN(userValue) || Math.abs(userValue - correctValues[index]) > 0.2) {
-                        allCorrect = false;
-                    }
-                });
-                
-                const resultDiv = document.getElementById('matchResult');
-                
-                if (allCorrect) {
-                    resultDiv.textContent = 'Your analysis confirms that the sample matches the composition of A-234. This evidence suggests the sample is likely to be the nerve agent.';
-                    resultDiv.classList.add('matches');
-                    resultDiv.classList.remove('does-not-match');
-                } else {
-                    resultDiv.textContent = 'Your analysis is incomplete or incorrect. Please double-check your calculations for all elements.';
-                    resultDiv.classList.add('does-not-match');
-                    resultDiv.classList.remove('matches');
-                }
-                
-                resultDiv.style.display = 'block';
-            });
-        });
+    <!-- Tutorial Screen -->
+    <div id="tutorial-screen" class="screen">
+      <div class="navigation">
+        <button class="nav-btn" id="tutorial-back">Back to Introduction</button>
+        <h2>Tutorial Mode</h2>
+        <button class="secondary-btn" id="tutorial-to-practice">Practice Mode</button>
+      </div>
+      <div class="example-nav">
+        <button class="primary-btn" id="prev-example">Previous Example</button>
+        <span id="example-counter">Example 1 of 10</span>
+        <button class="primary-btn" id="next-example">Next Example</button>
+      </div>
+      <div class="example-container" id="example-container">
+        <!-- Current example will be displayed here -->
+      </div>
+      <div>
+        <h3>Relevant Atomic Masses</h3>
+        <div class="element-cards" id="tutorial-elements">
+          <!-- Relevant elements will be displayed here -->
+        </div>
+      </div>
+    </div>
 
-        // Functions
-        function showScreen(screenName) {
-            console.log("Showing screen:", screenName);
-            
-            // Hide all screens
-            Object.values(screens).forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            // Show selected screen
-            screens[screenName].classList.add('active');
-            
-            // Save progress
-            saveProgress();
-        }
-        
-        function loadQuestion() {
-            const question = questions[currentDifficulty][currentQuestionIndex];
-            
-            // Update progress bar
-            const progressPercentage = ((currentQuestionIndex) / questions[currentDifficulty].length) * 100;
-            progressBar.style.width = `${progressPercentage}%`;
-            
-            // Calculate molecular mass for validation
-            let molecularMass = 0;
-            question.elements.forEach(element => {
-                molecularMass += element.mass * element.count;
-            });
-            
-            // Find the questioned element
-            const questionedElement = question.elements.find(element => element.name === question.questionElement);
-            const elementTotalMass = questionedElement.mass * questionedElement.count;
-            const correctPercentage = (elementTotalMass / molecularMass) * 100;
-            
-            // Generate question HTML with step-by-step approach
-            let html = `
-                <div class="question-container">
-                    <h3>Question ${currentQuestionIndex + 1} of ${questions[currentDifficulty].length}: ${question.compound}</h3>
-                    <p>Calculate the percentage mass of <strong>${question.questionElement}</strong> in ${question.formula}.</p>
-                    
-                    <div class="table-container">
-                        <table>
-                            <tr>
-                                <th>Element</th>
-                                <th>Symbol</th>
-                                <th>Relative Atomic Mass</th>
-                            </tr>`;
-            
-            question.elements.forEach(element => {
-                html += `
-                            <tr>
-                                <td>${element.name}</td>
-                                <td>${element.symbol}</td>
-                                <td>${element.mass}</td>
-                            </tr>`;
-            });
-            
-            html += `
-                        </table>
-                    </div>
-                    
-                    <div class="step-by-step-container">
-                        <!-- Step 1: Counting atoms -->
-                        <div class="calculation-step" id="step1">
-                            <h4>Step 1: Number of atoms of each element</h4>`;
-            
-            // Create inputs for counting atoms for each element
-            question.elements.forEach(element => {
-                html += `
-                            <div class="input-group">
-                                <label>Number of ${element.name} atoms:</label>
-                                <input type="number" min="0" class="atom-count-input" data-element="${element.name}" id="atomCount_${element.name}">
-                            </div>`;
-            });
-            
-            html += `
-                            <button id="checkAtomCount" class="step-check-btn">Check</button>
-                            <div class="feedback" id="atomCountFeedback"></div>
-                        </div>
-                        
-                        <!-- Step 2: Calculate mass of each element -->
-                        <div class="calculation-step" id="step2" style="display:none;">
-                            <h4>Step 2: Total mass of each element</h4>`;
-            
-            // Create inputs for element masses
-            question.elements.forEach(element => {
-                html += `
-                            <div class="input-group">
-                                <label>Total mass of ${element.name}:</label>
-                                <input type="number" step="0.1" min="0" class="element-mass-input" data-element="${element.name}" id="elementMass_${element.name}">
-                            </div>`;
-            });
-            
-            html += `
-                            <button id="checkElementMasses" class="step-check-btn">Check</button>
-                            <div class="feedback" id="elementMassFeedback"></div>
-                        </div>
-                        
-                        <!-- Step 3: Calculate formula mass -->
-                        <div class="calculation-step" id="step3" style="display:none;">
-                            <h4>Step 3: Formula mass</h4>
-                            <div class="input-group">
-                                <label>Formula mass:</label>
-                                <input type="number" step="0.1" min="0" id="formulaMassInput">
-                                <button id="checkFormulaMass" class="step-check-btn">Check</button>
-                            </div>
-                            <div class="feedback" id="formulaMassFeedback"></div>
-                        </div>
-                        
-                        <!-- Step 4: Calculate percentage mass -->
-                        <div class="calculation-step" id="step4" style="display:none;">
-                            <h4>Step 4: Percentage mass of ${question.questionElement}</h4>
-                            <div class="input-group">
-                                <label>Percentage mass (%):</label>
-                                <input type="number" step="0.1" min="0" max="100" id="percentageMassInput">
-                                <button id="checkPercentageMass" class="step-check-btn">Check</button>
-                            </div>
-                            <div class="feedback" id="percentageMassFeedback"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="hint" id="hint" style="display:none;">${question.hint}</div>
-                    <button id="showHint" class="hint-btn">Show Hint</button>
+    <!-- Practice Screen -->
+    <div id="practice-screen" class="screen">
+      <div class="navigation">
+        <button class="nav-btn" id="practice-back">Back to Introduction</button>
+        <h2>Practice Mode</h2>
+        <button class="primary-btn" id="practice-to-tutorial">Tutorial Mode</button>
+      </div>
+      <div class="level-selector">
+        <button class="level-btn beginner-btn active" id="beginner-btn">Beginner</button>
+        <button class="level-btn intermediate-btn" id="intermediate-btn">Intermediate</button>
+        <button class="level-btn expert-btn" id="expert-btn">Expert</button>
+      </div>
+      <div class="stats-container">
+        <div class="stats-grid">
+          <div><strong>Beginner:</strong> <span id="beginner-stats">0/0 correct</span></div>
+          <div><strong>Intermediate:</strong> <span id="intermediate-stats">0/0 correct</span></div>
+          <div><strong>Expert:</strong> <span id="expert-stats">0/0 correct</span></div>
+        </div>
+      </div>
+      <div class="practice-container" id="practice-container">
+        <!-- Current question will be displayed here -->
+      </div>
+      <div>
+        <h3>Relevant Atomic Masses</h3>
+        <div class="element-cards" id="practice-elements">
+          <!-- Relevant elements will be displayed here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check if localStorage is available
+    function isLocalStorageAvailable() {
+      try {
+        const test = 'test';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+      } catch(e) {
+        return false;
+      }
+    }
+
+    // Periodic Table Data
+    const periodicTableData = {
+      H: { name: 'Hydrogen', atomicMass: 1 },
+      He: { name: 'Helium', atomicMass: 4 },
+      Li: { name: 'Lithium', atomicMass: 7 },
+      C: { name: 'Carbon', atomicMass: 12 },
+      N: { name: 'Nitrogen', atomicMass: 14 },
+      O: { name: 'Oxygen', atomicMass: 16 },
+      F: { name: 'Fluorine', atomicMass: 19 },
+      Na: { name: 'Sodium', atomicMass: 23 },
+      Mg: { name: 'Magnesium', atomicMass: 24 },
+      Al: { name: 'Aluminum', atomicMass: 27 },
+      Si: { name: 'Silicon', atomicMass: 28 },
+      P: { name: 'Phosphorus', atomicMass: 31 },
+      S: { name: 'Sulfur', atomicMass: 32 },
+      Cl: { name: 'Chlorine', atomicMass: 35.5 },
+      K: { name: 'Potassium', atomicMass: 39 },
+      Ca: { name: 'Calcium', atomicMass: 40 },
+      Fe: { name: 'Iron', atomicMass: 56 },
+      Cu: { name: 'Copper', atomicMass: 63.5 },
+      Zn: { name: 'Zinc', atomicMass: 65 },
+      Br: { name: 'Bromine', atomicMass: 80 },
+      I: { name: 'Iodine', atomicMass: 127 }
+    };
+
+    // Tutorial examples
+    const tutorialExamples = [
+      {
+        formula: 'H₂O',
+        name: 'Water',
+        difficulty: 'Easy',
+        steps: [
+          "Identify the elements: hydrogen (H) and oxygen (O)",
+          "Find their atomic masses: H = 1, O = 16",
+          "Count atoms: 2 hydrogen atoms and 1 oxygen atom",
+          "Calculate: (2 × 1) + (1 × 16) = 2 + 16 = 18"
+        ],
+        calculation: [
+          "<strong>H₂O</strong> = (2 × atomic mass of H) + (1 × atomic mass of O)",
+          "= (2 × 1) + (1 × 16)",
+          "= 2 + 16",
+          "= 18 u"
+        ],
+        answer: 18,
+        elements: ['H', 'O']
+      },
+      {
+        formula: 'CO₂',
+        name: 'Carbon dioxide',
+        difficulty: 'Easy',
+        steps: [
+          "Identify the elements: carbon (C) and oxygen (O)",
+          "Find their atomic masses: C = 12, O = 16",
+          "Count atoms: 1 carbon atom and 2 oxygen atoms",
+          "Calculate: (1 × 12) + (2 × 16) = 12 + 32 = 44"
+        ],
+        calculation: [
+          "<strong>CO₂</strong> = (1 × atomic mass of C) + (2 × atomic mass of O)",
+          "= (1 × 12) + (2 × 16)",
+          "= 12 + 32",
+          "= 44 u"
+        ],
+        answer: 44,
+        elements: ['C', 'O']
+      },
+      {
+        formula: 'NaCl',
+        name: 'Sodium chloride (table salt)',
+        difficulty: 'Easy',
+        steps: [
+          "Identify the elements: sodium (Na) and chlorine (Cl)",
+          "Find their atomic masses: Na = 23, Cl = 35.5",
+          "Count atoms: 1 sodium atom and 1 chlorine atom",
+          "Calculate: (1 × 23) + (1 × 35.5) = 23 + 35.5 = 58.5"
+        ],
+        calculation: [
+          "<strong>NaCl</strong> = (1 × atomic mass of Na) + (1 × atomic mass of Cl)",
+          "= (1 × 23) + (1 × 35.5)",
+          "= 23 + 35.5",
+          "= 58.5 u"
+        ],
+        answer: 58.5,
+        elements: ['Na', 'Cl']
+      },
+      {
+        formula: 'CaCO₃',
+        name: 'Calcium carbonate',
+        difficulty: 'Intermediate',
+        steps: [
+          "Identify the elements: calcium (Ca), carbon (C), and oxygen (O)",
+          "Find their atomic masses: Ca = 40, C = 12, O = 16",
+          "Count atoms: 1 calcium atom, 1 carbon atom, and 3 oxygen atoms",
+          "Calculate: (1 × 40) + (1 × 12) + (3 × 16) = 40 + 12 + 48 = 100"
+        ],
+        calculation: [
+          "<strong>CaCO₃</strong> = (1 × atomic mass of Ca) + (1 × atomic mass of C) + (3 × atomic mass of O)",
+          "= (1 × 40) + (1 × 12) + (3 × 16)",
+          "= 40 + 12 + 48",
+          "= 100 u"
+        ],
+        answer: 100,
+        elements: ['Ca', 'C', 'O']
+      },
+      {
+        formula: 'H₂SO₄',
+        name: 'Sulfuric acid',
+        difficulty: 'Intermediate',
+        steps: [
+          "Identify the elements: hydrogen (H), sulfur (S), and oxygen (O)",
+          "Find their atomic masses: H = 1, S = 32, O = 16",
+          "Count atoms: 2 hydrogen atoms, 1 sulfur atom, and 4 oxygen atoms",
+          "Calculate: (2 × 1) + (1 × 32) + (4 × 16) = 2 + 32 + 64 = 98"
+        ],
+        calculation: [
+          "<strong>H₂SO₄</strong> = (2 × atomic mass of H) + (1 × atomic mass of S) + (4 × atomic mass of O)",
+          "= (2 × 1) + (1 × 32) + (4 × 16)",
+          "= 2 + 32 + 64",
+          "= 98 u"
+        ],
+        answer: 98,
+        elements: ['H', 'S', 'O']
+      },
+      {
+        formula: 'NH₄OH',
+        name: 'Ammonium hydroxide',
+        difficulty: 'Intermediate',
+        steps: [
+          "Identify the elements: nitrogen (N), hydrogen (H), and oxygen (O)",
+          "Find their atomic masses: N = 14, H = 1, O = 16",
+          "Count atoms: 1 nitrogen atom, 5 hydrogen atoms (4 in NH₄ + 1 in OH), and 1 oxygen atom",
+          "Calculate: (1 × 14) + (5 × 1) + (1 × 16) = 14 + 5 + 16 = 35"
+        ],
+        calculation: [
+          "<strong>NH₄OH</strong> = (1 × atomic mass of N) + (5 × atomic mass of H) + (1 × atomic mass of O)",
+          "= (1 × 14) + (5 × 1) + (1 × 16)",
+          "= 14 + 5 + 16",
+          "= 35 u"
+        ],
+        answer: 35,
+        elements: ['N', 'H', 'O']
+      },
+      {
+        formula: 'Al₂(SO₄)₃',
+        name: 'Aluminum sulfate',
+        difficulty: 'Hard',
+        steps: [
+          "Identify the elements: aluminum (Al), sulfur (S), and oxygen (O)",
+          "Find their atomic masses: Al = 27, S = 32, O = 16",
+          "Identify the grouping: (SO₄)₃ means we have 3 × (1 S atom and 4 O atoms)",
+          "Count atoms: 2 aluminum atoms, 3 sulfur atoms, and 12 oxygen atoms",
+          "Calculate: (2 × 27) + (3 × 32) + (12 × 16) = 54 + 96 + 192 = 342"
+        ],
+        calculation: [
+          "<strong>Al₂(SO₄)₃</strong> = (2 × atomic mass of Al) + 3 × [(1 × atomic mass of S) + (4 × atomic mass of O)]",
+          "= (2 × 27) + 3 × [32 + (4 × 16)]",
+          "= 54 + 3 × [32 + 64]",
+          "= 54 + 3 × 96",
+          "= 54 + 288",
+          "= 342 u"
+        ],
+        answer: 342,
+        elements: ['Al', 'S', 'O']
+      },
+      {
+        formula: 'Ca(NO₃)₂',
+        name: 'Calcium nitrate',
+        difficulty: 'Hard',
+        steps: [
+          "Identify the elements: calcium (Ca), nitrogen (N), and oxygen (O)",
+          "Find their atomic masses: Ca = 40, N = 14, O = 16",
+          "Identify the grouping: (NO₃)₂ means we have 2 × (1 N atom and 3 O atoms)",
+          "Count atoms: 1 calcium atom, 2 nitrogen atoms, and 6 oxygen atoms",
+          "Calculate: (1 × 40) + (2 × 14) + (6 × 16) = 40 + 28 + 96 = 164"
+        ],
+        calculation: [
+          "<strong>Ca(NO₃)₂</strong> = (1 × atomic mass of Ca) + 2 × [(1 × atomic mass of N) + (3 × atomic mass of O)]",
+          "= (1 × 40) + 2 × [14 + (3 × 16)]",
+          "= 40 + 2 × [14 + 48]",
+          "= 40 + 2 × 62",
+          "= 40 + 124",
+          "= 164 u"
+        ],
+        answer: 164,
+        elements: ['Ca', 'N', 'O']
+      },
+      {
+        formula: 'Fe₂(SO₄)₃',
+        name: 'Iron(III) sulfate',
+        difficulty: 'Hard',
+        steps: [
+          "Identify the elements: iron (Fe), sulfur (S), and oxygen (O)",
+          "Find their atomic masses: Fe = 56, S = 32, O = 16",
+          "Identify the grouping: (SO₄)₃ means we have 3 × (1 S atom and 4 O atoms)",
+          "Count atoms: 2 iron atoms, 3 sulfur atoms, and 12 oxygen atoms",
+          "Calculate: (2 × 56) + (3 × 32) + (12 × 16) = 112 + 96 + 192 = 400"
+        ],
+        calculation: [
+          "<strong>Fe₂(SO₄)₃</strong> = (2 × atomic mass of Fe) + 3 × [(1 × atomic mass of S) + (4 × atomic mass of O)]",
+          "= (2 × 56) + 3 × [32 + (4 × 16)]",
+          "= 112 + 3 × [32 + 64]",
+          "= 112 + 3 × 96",
+          "= 112 + 288",
+          "= 400 u"
+        ],
+        answer: 400,
+        elements: ['Fe', 'S', 'O']
+      },
+      {
+        formula: 'CuSO₄·5H₂O',
+        name: 'Copper(II) sulfate pentahydrate',
+        difficulty: 'Expert',
+        steps: [
+          "Identify the elements: copper (Cu), sulfur (S), oxygen (O), and hydrogen (H)",
+          "Find their atomic masses: Cu = 63.5, S = 32, O = 16, H = 1",
+          "Identify the parts: CuSO₄ (copper sulfate) and 5H₂O (five water molecules)",
+          "Count atoms: 1 copper atom, 1 sulfur atom, 9 oxygen atoms (4 + 5), and 10 hydrogen atoms",
+          "Calculate: (1 × 63.5) + (1 × 32) + (9 × 16) + (10 × 1) = 63.5 + 32 + 144 + 10 = 249.5"
+        ],
+        calculation: [
+          "<strong>CuSO₄·5H₂O</strong> = [(1 × atomic mass of Cu) + (1 × atomic mass of S) + (4 × atomic mass of O)] + 5 × [(2 × atomic mass of H) + (1 × atomic mass of O)]",
+          "= [63.5 + 32 + (4 × 16)] + 5 × [(2 × 1) + 16]",
+          "= [63.5 + 32 + 64] + 5 × [2 + 16]",
+          "= 159.5 + 5 × 18",
+          "= 159.5 + 90",
+          "= 249.5 u"
+        ],
+        answer: 249.5,
+        elements: ['Cu', 'S', 'O', 'H']
+      }
+    ];
+
+    // Practice questions
+    const practiceQuestions = {
+      beginner: [
+        { formula: "HCl", answer: 36.5, name: "Hydrogen chloride", elements: ['H', 'Cl'] },
+        { formula: "NaF", answer: 42, name: "Sodium fluoride", elements: ['Na', 'F'] },
+        { formula: "MgO", answer: 40, name: "Magnesium oxide", elements: ['Mg', 'O'] },
+        { formula: "KBr", answer: 119, name: "Potassium bromide", elements: ['K', 'Br'] },
+        { formula: "LiI", answer: 134, name: "Lithium iodide", elements: ['Li', 'I'] },
+        { formula: "CO", answer: 28, name: "Carbon monoxide", elements: ['C', 'O'] },
+        { formula: "NO", answer: 30, name: "Nitrogen monoxide", elements: ['N', 'O'] },
+        { formula: "N₂", answer: 28, name: "Nitrogen gas", elements: ['N'] },
+        { formula: "O₂", answer: 32, name: "Oxygen gas", elements: ['O'] },
+        { formula: "H₂", answer: 2, name: "Hydrogen gas", elements: ['H'] }
+      ],
+      intermediate: [
+        { formula: "NaOH", answer: 40, name: "Sodium hydroxide", elements: ['Na', 'O', 'H'] },
+        { formula: "CH₄", answer: 16, name: "Methane", elements: ['C', 'H'] },
+        { formula: "CaCl₂", answer: 111, name: "Calcium chloride", elements: ['Ca', 'Cl'] },
+        { formula: "MgSO₄", answer: 120, name: "Magnesium sulfate", elements: ['Mg', 'S', 'O'] },
+        { formula: "C₆H₁₂O₆", answer: 180, name: "Glucose", elements: ['C', 'H', 'O'] },
+        { formula: "Na₂CO₃", answer: 106, name: "Sodium carbonate", elements: ['Na', 'C', 'O'] },
+        { formula: "HNO₃", answer: 63, name: "Nitric acid", elements: ['H', 'N', 'O'] },
+        { formula: "NH₃", answer: 17, name: "Ammonia", elements: ['N', 'H'] },
+        { formula: "KOH", answer: 56, name: "Potassium hydroxide", elements: ['K', 'O', 'H'] },
+        { formula: "H₃PO₄", answer: 98, name: "Phosphoric acid", elements: ['H', 'P', 'O'] }
+      ],
+      expert: [
+        { formula: "K₂Cr₂O₇", answer: 294, name: "Potassium dichromate", elements: ['K', 'Cr', 'O'] },
+        { formula: "Mg(OH)₂", answer: 58, name: "Magnesium hydroxide", elements: ['Mg', 'O', 'H'] },
+        { formula: "Ca(HCO₃)₂", answer: 162, name: "Calcium bicarbonate", elements: ['Ca', 'H', 'C', 'O'] },
+        { formula: "Fe(NO₃)₃", answer: 242, name: "Iron(III) nitrate", elements: ['Fe', 'N', 'O'] },
+        { formula: "Al₂(SO₄)₃", answer: 342, name: "Aluminum sulfate", elements: ['Al', 'S', 'O'] },
+        { formula: "NaHCO₃", answer: 84, name: "Sodium bicarbonate", elements: ['Na', 'H', 'C', 'O'] },
+        { formula: "CaSO₄·2H₂O", answer: 172, name: "Calcium sulfate dihydrate (gypsum)", elements: ['Ca', 'S', 'O', 'H'] },
+        { formula: "KAl(SO₄)₂·12H₂O", answer: 474, name: "Potassium alum", elements: ['K', 'Al', 'S', 'O', 'H'] },
+        { formula: "ZnSO₄·7H₂O", answer: 287, name: "Zinc sulfate heptahydrate", elements: ['Zn', 'S', 'O', 'H'] },
+        { formula: "CuSO₄·5H₂O", answer: 249.5, name: "Copper(II) sulfate pentahydrate", elements: ['Cu', 'S', 'O', 'H'] }
+      ]
+    };
+
+    // State variables
+    let currentScreen = 'intro';
+    let tutorialExample = 0;
+    let practiceLevel = 'beginner';
+    let practiceQuestion = 0;
+    let practiceStats = {
+      beginner: { attempted: 0, correct: 0 },
+      intermediate: { attempted: 0, correct: 0 },
+      expert: { attempted: 0, correct: 0 }
+    };
+
+    // Helper functions
+    function createElementCard(symbol) {
+      const element = periodicTableData[symbol];
+      const card = document.createElement('div');
+      card.className = 'element-card';
+      card.innerHTML = `
+        <div class="element-symbol">${symbol}</div>
+        <div class="element-name">${element.name}</div>
+        <div class="element-mass">${element.atomicMass} u</div>
+      `;
+      return card;
+    }
+
+    function populateIntroElements() {
+      const introElements = document.getElementById('intro-elements');
+      introElements.innerHTML = '';
+      const commonElements = ['H', 'C', 'N', 'O', 'Na', 'Mg', 'Al', 'Cl', 'Cu', 'Fe'];
+      commonElements.forEach(symbol => {
+        introElements.appendChild(createElementCard(symbol));
+      });
+    }
+
+    function populateTutorialElements() {
+      const tutorialElements = document.getElementById('tutorial-elements');
+      tutorialElements.innerHTML = '';
+      const example = tutorialExamples[tutorialExample];
+      example.elements.forEach(symbol => {
+        tutorialElements.appendChild(createElementCard(symbol));
+      });
+    }
+
+    function populatePracticeElements() {
+      const practiceElements = document.getElementById('practice-elements');
+      practiceElements.innerHTML = '';
+      const question = practiceQuestions[practiceLevel][practiceQuestion];
+      question.elements.forEach(symbol => {
+        practiceElements.appendChild(createElementCard(symbol));
+      });
+    }
+
+    function displayTutorialExample() {
+      const example = tutorialExamples[tutorialExample];
+      document.getElementById('example-counter').textContent = `Example ${tutorialExample + 1} of ${tutorialExamples.length}`;
+      let difficultyClass = '';
+      if (example.difficulty === 'Easy') difficultyClass = 'easy';
+      else if (example.difficulty === 'Intermediate') difficultyClass = 'intermediate';
+      else if (example.difficulty === 'Hard') difficultyClass = 'hard';
+      else if (example.difficulty === 'Expert') difficultyClass = 'expert';
+      let calculationHTML = '';
+      example.calculation.forEach(line => {
+        calculationHTML += `<p class="calculation-line">${line}</p>`;
+      });
+      document.getElementById('example-container').innerHTML = `
+        <div class="example-header">
+          <h2 class="formula">${example.formula}</h2>
+          <div>
+            <span>${example.name}</span>
+            <span class="difficulty ${difficultyClass}">${example.difficulty}</span>
+          </div>
+        </div>
+        <div class="calculation-steps">
+          <h3>Step-by-Step Calculation:</h3>
+          <ol>
+            ${example.steps.map(step => `<li>${step}</li>`).join('')}
+          </ol>
+        </div>
+        <div class="calculation-working">
+          <h3>Working:</h3>
+          ${calculationHTML}
+          <p class="result">Result: ${example.answer} u</p>
+        </div>
+      `;
+      populateTutorialElements();
+      document.getElementById('prev-example').disabled = tutorialExample === 0;
+      document.getElementById('next-example').disabled = tutorialExample === tutorialExamples.length - 1;
+    }
+
+    function displayPracticeQuestion() {
+      const question = practiceQuestions[practiceLevel][practiceQuestion];
+      const atomCounts = parseFormula(question.formula);
+      document.getElementById('practice-container').innerHTML = `
+        <h2>Question ${practiceQuestion + 1} of ${practiceQuestions[practiceLevel].length}</h2>
+        <p>Calculate the relative formula mass of <strong>${question.formula}</strong> (${question.name}).</p>
+        <div class="progress-indicator">
+          <div class="progress-bar">
+            <div class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="step-indicator active" id="indicator-1">
+            1
+            <div class="step-label">Identify atoms</div>
+          </div>
+          <div class="step-indicator" id="indicator-2">
+            2
+            <div class="step-label">Calculate masses</div>
+          </div>
+          <div class="step-indicator" id="indicator-3">
+            3
+            <div class="step-label">Total RFM</div>
+          </div>
+        </div>
+        <div class="practice-steps">
+          <div id="step1" class="practice-step active-step">
+            <h3>Step 1: Identify the number of atoms of each element</h3>
+            <p>For each element in the formula, enter how many atoms are present:</p>
+            <div id="atom-inputs" class="step-inputs">
+              ${Object.keys(atomCounts).map(element => `
+                <div class="input-row">
+                  <label>${element}:</label>
+                  <input type="number" id="atom-${element}" class="atom-count-input" min="0" placeholder="Number of atoms">
                 </div>
-            `;
-            
-            // Set question area content
-            questionArea.innerHTML = html;
-            
-            // Add event listeners for steps
-            
-            // Step 1: Check atom counts
-            document.getElementById('checkAtomCount').addEventListener('click', () => {
-                let allCorrect = true;
-                
-                question.elements.forEach(element => {
-                    const input = document.getElementById(`atomCount_${element.name}`);
-                    const userCount = parseInt(input.value);
-                    
-                    if (userCount !== element.count) {
-                        allCorrect = false;
-                    }
-                });
-                
-                const feedback = document.getElementById('atomCountFeedback');
-                
-                if (allCorrect) {
-                    feedback.textContent = 'Correct! All atom counts are right.';
-                    feedback.classList.add('correct');
-                    feedback.classList.remove('incorrect');
-                    feedback.style.display = 'block';
-                    
-                    // Show next step
-                    document.getElementById('step2').style.display = 'block';
-                } else {
-                    feedback.textContent = 'Some atom counts are incorrect. Check the formula again.';
-                    feedback.classList.add('incorrect');
-                    feedback.classList.remove('correct');
-                    feedback.style.display = 'block';
-                }
-            });
-            
-            // Step 2: Check element masses
-            document.getElementById('checkElementMasses').addEventListener('click', () => {
-                let allCorrect = true;
-                
-                question.elements.forEach(element => {
-                    const input = document.getElementById(`elementMass_${element.name}`);
-                    const userMass = parseFloat(input.value);
-                    const correctMass = element.mass * element.count;
-                    
-                    if (Math.abs(userMass - correctMass) > 0.1) {
-                        allCorrect = false;
-                    }
-                });
-                
-                const feedback = document.getElementById('elementMassFeedback');
-                
-                if (allCorrect) {
-                    feedback.textContent = 'Correct! All element masses are calculated correctly.';
-                    feedback.classList.add('correct');
-                    feedback.classList.remove('incorrect');
-                    feedback.style.display = 'block';
-                    
-                    // Show next step
-                    document.getElementById('step3').style.display = 'block';
-                } else {
-                    feedback.textContent = 'Some element masses are incorrect. Remember to multiply the atomic mass by the number of atoms.';
-                    feedback.classList.add('incorrect');
-                    feedback.classList.remove('correct');
-                    feedback.style.display = 'block';
-                }
-            });
-            
-            // Step 3: Check formula mass
-            document.getElementById('checkFormulaMass').addEventListener('click', () => {
-                const input = document.getElementById('formulaMassInput');
-                const userMass = parseFloat(input.value);
-                
-                if (Math.abs(userMass - molecularMass) <= 0.1) {
-                    const feedback = document.getElementById('formulaMassFeedback');
-                    feedback.textContent = 'Correct! The formula mass is calculated correctly.';
-                    feedback.classList.add('correct');
-                    feedback.classList.remove('incorrect');
-                    feedback.style.display = 'block';
-                    
-                    // Show next step
-                    document.getElementById('step4').style.display = 'block';
-                } else {
-                    const feedback = document.getElementById('formulaMassFeedback');
-                    feedback.textContent = `Incorrect. The formula mass should be ${molecularMass.toFixed(1)}.`;
-                    feedback.classList.add('incorrect');
-                    feedback.classList.remove('correct');
-                    feedback.style.display = 'block';
-                }
-            });
-            
-            // Step 4: Check percentage mass
-            document.getElementById('checkPercentageMass').addEventListener('click', () => {
-                const input = document.getElementById('percentageMassInput');
-                const userPercentage = parseFloat(input.value);
-                
-                if (Math.abs(userPercentage - correctPercentage) <= 0.5) { // Allow for rounding
-                    const feedback = document.getElementById('percentageMassFeedback');
-                    feedback.textContent = 'Correct! You\'ve successfully calculated the percentage mass.';
-                    feedback.classList.add('correct');
-                    feedback.classList.remove('incorrect');
-                    feedback.style.display = 'block';
-                    
-                    correctAnswers++;
-                } else {
-                    const feedback = document.getElementById('percentageMassFeedback');
-                    feedback.textContent = `Incorrect. The percentage mass of ${question.questionElement} should be ${correctPercentage.toFixed(1)}%.`;
-                    feedback.classList.add('incorrect');
-                    feedback.classList.remove('correct');
-                    feedback.style.display = 'block';
-                }
-            });
-            
-            // Hint button
-            document.getElementById('showHint').addEventListener('click', () => {
-                const hint = document.getElementById('hint');
-                if (hint.style.display === 'block') {
-                    hint.style.display = 'none';
-                } else {
-                    hint.style.display = 'block';
-                }
-            });
+              `).join('')}
+            </div>
+            <button id="check-step1" class="primary-btn">Check Atoms</button>
+            <div id="feedback-step1" class="feedback hidden"></div>
+          </div>
+          <div id="step2" class="practice-step hidden-step">
+            <h3>Step 2: Calculate the mass contribution of each element</h3>
+            <p>For each element, multiply the atomic mass by the number of atoms:</p>
+            <div id="mass-inputs" class="step-inputs">
+              ${Object.keys(atomCounts).map(element => `
+                <div class="input-row">
+                  <span class="element-info">${element} (${periodicTableData[element].atomicMass} u) × ${atomCounts[element]} atoms =</span>
+                  <input type="number" id="mass-${element}" class="mass-input" min="0" step="0.1" placeholder="Mass contribution">
+                  <span>u</span>
+                </div>
+              `).join('')}
+            </div>
+            <button id="check-step2" class="primary-btn">Check Mass Contributions</button>
+            <div id="feedback-step2" class="feedback hidden"></div>
+          </div>
+          <div id="step3" class="practice-step hidden-step">
+            <h3>Step 3: Calculate the total relative formula mass</h3>
+            <p>Add up all the mass contributions to find the total relative formula mass:</p>
+            <div class="input-row total-row">
+              <label>Total RFM:</label>
+              <input type="number" id="total-rfm" min="0" step="0.1" placeholder="Total RFM">
+              <span>u</span>
+            </div>
+            <button id="check-step3" class="primary-btn">Check Final Answer</button>
+            <div id="feedback-step3" class="feedback hidden"></div>
+          </div>
+        </div>
+        <div id="final-feedback" class="feedback hidden"></div>
+        <button id="next-question-btn" class="primary-btn hidden">Next Question</button>
+      `;
+      populatePracticeElements();
+      document.getElementById('check-step1').addEventListener('click', () => checkStep1(atomCounts));
+      document.getElementById('check-step2').addEventListener('click', () => checkStep2(atomCounts));
+      document.getElementById('check-step3').addEventListener('click', () => checkStep3(question.answer));
+      document.getElementById('next-question-btn').addEventListener('click', nextQuestion);
+    }
+
+    function parseFormula(formula) {
+      const atomCounts = {};
+      function addAtoms(element, count = 1) {
+        atomCounts[element] = (atomCounts[element] || 0) + count;
+      }
+      const parts = formula.split('·');
+      let mainFormula = parts[0];
+      parseSubFormula(mainFormula, 1);
+      if (parts.length > 1) {
+        const hydratePart = parts[1];
+        const match = hydratePart.match(/^(\d+)(.+)$/);
+        if (match) {
+          const count = parseInt(match[1]);
+          const subFormula = match[2];
+          parseSubFormula(subFormula, count);
         }
-    </script>
+      }
+      function parseSubFormula(subFormula, multiplier) {
+        const bracketRegex = /\(([^()]+)\)([₀₁₂₃₄₅₆₇₈₉\d]+)/g;
+        let processedFormula = subFormula;
+        let matchBracket;
+        while ((matchBracket = bracketRegex.exec(subFormula)) !== null) {
+          const innerFormula = matchBracket[1];
+          let bracketMultiplier = /[₀-₉]/.test(matchBracket[2])
+            ? convertSubscriptToNumber(matchBracket[2])
+            : parseInt(matchBracket[2]);
+          const innerCounts = {};
+          const innerRegex = /([A-Z][a-z]*)([₀₁₂₃₄₅₆₇₈₉]*)(\d*)/g;
+          let innerMatch;
+          while ((innerMatch = innerRegex.exec(innerFormula)) !== null) {
+            const element = innerMatch[1];
+            let count = innerMatch[2] ? convertSubscriptToNumber(innerMatch[2]) : (innerMatch[3] ? parseInt(innerMatch[3]) : 1);
+            innerCounts[element] = (innerCounts[element] || 0) + count;
+          }
+          for (const element in innerCounts) {
+            addAtoms(element, innerCounts[element] * bracketMultiplier * multiplier);
+          }
+          processedFormula = processedFormula.replace(matchBracket[0], '');
+        }
+        const regex = /([A-Z][a-z]*)([₀₁₂₃₄₅₆₇₈₉]*)(\d*)/g;
+        let match;
+        while ((match = regex.exec(processedFormula)) !== null) {
+          const element = match[1];
+          let count = match[2] ? convertSubscriptToNumber(match[2]) : (match[3] ? parseInt(match[3]) : 1);
+          addAtoms(element, count * multiplier);
+        }
+      }
+      return atomCounts;
+    }
+
+    function convertSubscriptToNumber(subscript) {
+      const subscriptMap = {
+        '₀': 0, '₁': 1, '₂': 2, '₃': 3, '₄': 4, 
+        '₅': 5, '₆': 6, '₇': 7, '₈': 8, '₉': 9
+      };
+      let number = 0;
+      for (let i = 0; i < subscript.length; i++) {
+        number = number * 10 + subscriptMap[subscript[i]];
+      }
+      return number || 1;
+    }
+
+    function checkStep1(correctAtomCounts) {
+      const feedbackElement = document.getElementById('feedback-step1');
+      let allCorrect = true;
+      let feedbackMessage = '';
+      for (const element in correctAtomCounts) {
+        const inputElement = document.getElementById(`atom-${element}`);
+        const userCount = parseInt(inputElement.value);
+        if (isNaN(userCount)) {
+          allCorrect = false;
+          inputElement.classList.add('error');
+          feedbackMessage = 'Please enter a number for each element.';
+          break;
+        }
+        if (userCount !== correctAtomCounts[element]) {
+          allCorrect = false;
+          inputElement.classList.add('error');
+        } else {
+          inputElement.classList.remove('error');
+          inputElement.classList.add('correct');
+        }
+      }
+      feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
+      if (allCorrect) {
+        feedbackElement.classList.add('correct');
+        feedbackElement.textContent = 'Correct! Now let\'s calculate the mass contribution of each element.';
+        document.getElementById('step1').classList.remove('active-step');
+        document.getElementById('step2').classList.remove('hidden-step');
+        document.getElementById('step2').classList.add('active-step');
+        document.getElementById('indicator-1').classList.remove('active');
+        document.getElementById('indicator-1').classList.add('completed');
+        document.getElementById('indicator-2').classList.add('active');
+        document.querySelector('.progress-bar-fill').style.width = '50%';
+        document.querySelectorAll('.atom-count-input').forEach(input => input.disabled = true);
+        document.getElementById('check-step1').disabled = true;
+      } else {
+        feedbackElement.classList.add('incorrect');
+        feedbackElement.textContent = feedbackMessage || 'Some atom counts are incorrect. Please check your answers.';
+      }
+    }
+
+    function checkStep2(atomCounts) {
+      const feedbackElement = document.getElementById('feedback-step2');
+      let allCorrect = true;
+      let feedbackMessage = '';
+      for (const element in atomCounts) {
+        const inputElement = document.getElementById(`mass-${element}`);
+        const userMass = parseFloat(inputElement.value);
+        const correctMass = periodicTableData[element].atomicMass * atomCounts[element];
+        if (isNaN(userMass)) {
+          allCorrect = false;
+          inputElement.classList.add('error');
+          feedbackMessage = 'Please enter a number for each element.';
+          break;
+        }
+        if (Math.abs(userMass - correctMass) > 0.1) {
+          allCorrect = false;
+          inputElement.classList.add('error');
+        } else {
+          inputElement.classList.remove('error');
+          inputElement.classList.add('correct');
+        }
+      }
+      feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
+      if (allCorrect) {
+        feedbackElement.classList.add('correct');
+        feedbackElement.textContent = 'Correct! Now let\'s calculate the total relative formula mass.';
+        document.getElementById('step2').classList.remove('active-step');
+        document.getElementById('step3').classList.remove('hidden-step');
+        document.getElementById('step3').classList.add('active-step');
+        document.getElementById('indicator-2').classList.remove('active');
+        document.getElementById('indicator-2').classList.add('completed');
+        document.getElementById('indicator-3').classList.add('active');
+        document.querySelector('.progress-bar-fill').style.width = '100%';
+        document.querySelectorAll('.mass-input').forEach(input => input.disabled = true);
+        document.getElementById('check-step2').disabled = true;
+      } else {
+        feedbackElement.classList.add('incorrect');
+        feedbackElement.textContent = feedbackMessage || 'Some mass contributions are incorrect. Please check your answers.';
+      }
+    }
+
+    function checkStep3(correctAnswer) {
+      const feedbackElement = document.getElementById('feedback-step3');
+      const totalInput = document.getElementById('total-rfm');
+      const userAnswer = parseFloat(totalInput.value);
+      if (isNaN(userAnswer)) {
+        feedbackElement.classList.remove('hidden', 'correct');
+        feedbackElement.classList.add('incorrect');
+        feedbackElement.textContent = 'Please enter a number for the total RFM.';
+        totalInput.classList.add('error');
+        return;
+      }
+      const isCorrect = Math.abs(userAnswer - correctAnswer) < 0.1;
+      feedbackElement.classList.remove('hidden', 'correct', 'incorrect');
+      if (isCorrect) {
+        feedbackElement.classList.add('correct');
+        feedbackElement.textContent = 'Correct! You\'ve successfully calculated the relative formula mass.';
+        totalInput.classList.remove('error');
+        totalInput.classList.add('correct');
+        totalInput.disabled = true;
+        document.getElementById('check-step3').disabled = true;
+        document.getElementById('indicator-3').classList.remove('active');
+        document.getElementById('indicator-3').classList.add('completed');
+        const finalFeedback = document.getElementById('final-feedback');
+        finalFeedback.classList.remove('hidden');
+        finalFeedback.classList.add('correct');
+        finalFeedback.textContent = `Great job! The relative formula mass of ${practiceQuestions[practiceLevel][practiceQuestion].formula} is ${correctAnswer} u.`;
+        document.getElementById('next-question-btn').classList.remove('hidden');
+        practiceStats[practiceLevel].attempted++;
+        practiceStats[practiceLevel].correct++;
+        updateStatsDisplay();
+        saveProgress();
+      } else {
+        feedbackElement.classList.add('incorrect');
+        feedbackElement.textContent = 'That\'s not quite right. Please check your addition.';
+        totalInput.classList.add('error');
+      }
+    }
+
+    function nextQuestion() {
+      if (practiceQuestion < practiceQuestions[practiceLevel].length - 1) {
+        practiceQuestion++;
+      } else {
+        practiceQuestion = 0;
+      }
+      displayPracticeQuestion();
+      saveProgress();
+    }
+
+    function updateStatsDisplay() {
+      document.getElementById('beginner-stats').textContent = `${practiceStats.beginner.correct}/${practiceStats.beginner.attempted} correct`;
+      document.getElementById('intermediate-stats').textContent = `${practiceStats.intermediate.correct}/${practiceStats.intermediate.attempted} correct`;
+      document.getElementById('expert-stats').textContent = `${practiceStats.expert.correct}/${practiceStats.expert.attempted} correct`;
+      saveProgress();
+    }
+
+    function switchScreen(screen) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
+      document.getElementById(`${screen}-screen`).classList.add('active-screen');
+      currentScreen = screen;
+      if (screen === 'tutorial') {
+        displayTutorialExample();
+      } else if (screen === 'practice') {
+        displayPracticeQuestion();
+      } else if (screen === 'intro') {
+        populateIntroElements();
+      }
+      saveProgress();
+    }
+
+    function saveProgress() {
+      if (!isLocalStorageAvailable()) return;
+      localStorage.setItem('rfm_tutorialExample', tutorialExample);
+      localStorage.setItem('rfm_practiceLevel', practiceLevel);
+      localStorage.setItem('rfm_practiceQuestion', practiceQuestion);
+      localStorage.setItem('rfm_practiceStats', JSON.stringify(practiceStats));
+      localStorage.setItem('rfm_currentScreen', currentScreen);
+      showToast("Progress saved");
+    }
+
+    function loadProgress() {
+      if (!isLocalStorageAvailable()) return;
+      const savedTutorialExample = localStorage.getItem('rfm_tutorialExample');
+      const savedPracticeLevel = localStorage.getItem('rfm_practiceLevel');
+      const savedPracticeQuestion = localStorage.getItem('rfm_practiceQuestion');
+      const savedPracticeStats = localStorage.getItem('rfm_practiceStats');
+      const savedScreen = localStorage.getItem('rfm_currentScreen');
+      if (savedTutorialExample !== null) {
+        tutorialExample = parseInt(savedTutorialExample);
+      }
+      if (savedPracticeLevel !== null) {
+        practiceLevel = savedPracticeLevel;
+      }
+      if (savedPracticeQuestion !== null) {
+        practiceQuestion = parseInt(savedPracticeQuestion);
+      }
+      if (savedPracticeStats !== null) {
+        practiceStats = JSON.parse(savedPracticeStats);
+      }
+      if (savedScreen !== null && (savedScreen === 'intro' || savedScreen === 'tutorial' || savedScreen === 'practice')) {
+        currentScreen = savedScreen;
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      toast.textContent = message;
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+      }, 2000);
+    }
+
+    function addResetButton() {
+      const introScreen = document.getElementById('intro-screen');
+      const resetButtonContainer = document.createElement('div');
+      resetButtonContainer.className = 'reset-container';
+      resetButtonContainer.style.textAlign = 'center';
+      resetButtonContainer.style.marginTop = '20px';
+      const resetButton = document.createElement('button');
+      resetButton.textContent = 'Reset Progress';
+      resetButton.className = 'nav-btn';
+      resetButton.addEventListener('click', resetProgress);
+      resetButtonContainer.appendChild(resetButton);
+      introScreen.appendChild(resetButtonContainer);
+    }
+
+    function resetProgress() {
+      if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+        practiceStats = {
+          beginner: { attempted: 0, correct: 0 },
+          intermediate: { attempted: 0, correct: 0 },
+          expert: { attempted: 0, correct: 0 }
+        };
+        tutorialExample = 0;
+        practiceLevel = 'beginner';
+        practiceQuestion = 0;
+        if (isLocalStorageAvailable()) {
+          localStorage.removeItem('rfm_tutorialExample');
+          localStorage.removeItem('rfm_practiceLevel');
+          localStorage.removeItem('rfm_practiceQuestion');
+          localStorage.removeItem('rfm_practiceStats');
+          localStorage.removeItem('rfm_currentScreen');
+        }
+        updateStatsDisplay();
+        alert('Progress reset successfully.');
+        switchScreen('intro');
+      }
+    }
+
+    function parseAllEventListeners() {
+      // Navigation event listeners
+      document.getElementById('tutorial-card').addEventListener('click', () => switchScreen('tutorial'));
+      document.getElementById('practice-card').addEventListener('click', () => switchScreen('practice'));
+      document.getElementById('tutorial-back').addEventListener('click', () => switchScreen('intro'));
+      document.getElementById('practice-back').addEventListener('click', () => switchScreen('intro'));
+      document.getElementById('tutorial-to-practice').addEventListener('click', () => switchScreen('practice'));
+      document.getElementById('practice-to-tutorial').addEventListener('click', () => switchScreen('tutorial'));
+
+      // Practice level buttons
+      document.getElementById('beginner-btn').addEventListener('click', () => {
+        practiceLevel = 'beginner';
+        practiceQuestion = 0;
+        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('beginner-btn').classList.add('active');
+        displayPracticeQuestion();
+        saveProgress();
+      });
+      document.getElementById('intermediate-btn').addEventListener('click', () => {
+        practiceLevel = 'intermediate';
+        practiceQuestion = 0;
+        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('intermediate-btn').classList.add('active');
+        displayPracticeQuestion();
+        saveProgress();
+      });
+      document.getElementById('expert-btn').addEventListener('click', () => {
+        practiceLevel = 'expert';
+        practiceQuestion = 0;
+        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('expert-btn').classList.add('active');
+        displayPracticeQuestion();
+        saveProgress();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProgress();
+      updateStatsDisplay();
+      addResetButton();
+      populateIntroElements();
+      // Register navigation event listeners here
+      parseAllEventListeners();
+      // Set active level button based on loaded progress
+      document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+      if (practiceLevel === 'beginner') {
+        document.getElementById('beginner-btn').classList.add('active');
+      } else if (practiceLevel === 'intermediate') {
+        document.getElementById('intermediate-btn').classList.add('active');
+      } else if (practiceLevel === 'expert') {
+        document.getElementById('expert-btn').classList.add('active');
+      }
+      switchScreen(currentScreen);
+      initCalculator();
+    });
+
+    // Calculator functionality
+    function initCalculator() {
+      const calculator = document.getElementById('calculator');
+      const calculatorToggle = document.getElementById('calculator-toggle');
+      const calculatorHeader = document.getElementById('calculator-header');
+      const minimizeBtn = document.getElementById('minimize-calculator');
+      const closeBtn = document.getElementById('close-calculator');
+      const display = document.getElementById('calculator-display');
+      calculatorToggle.addEventListener('click', () => {
+        calculator.classList.toggle('hidden');
+        if (isLocalStorageAvailable()) {
+          localStorage.setItem('rfm_calculatorVisible', !calculator.classList.contains('hidden'));
+        }
+      });
+      minimizeBtn.addEventListener('click', () => {
+        calculator.classList.toggle('minimized');
+        if (isLocalStorageAvailable()) {
+          localStorage.setItem('rfm_calculatorMinimized', calculator.classList.contains('minimized'));
+        }
+      });
+      closeBtn.addEventListener('click', () => {
+        calculator.classList.add('hidden');
+        if (isLocalStorageAvailable()) {
+          localStorage.setItem('rfm_calculatorVisible', false);
+        }
+      });
+      let isDragging = false;
+      let offsetX, offsetY;
+      calculatorHeader.addEventListener('mousedown', startDrag);
+      calculatorHeader.addEventListener('touchstart', startDrag);
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('touchmove', drag);
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchend', endDrag);
+      function startDrag(e) {
+        isDragging = true;
+        if (e.type === 'touchstart') {
+          e.preventDefault();
+          const touch = e.touches[0];
+          offsetX = touch.clientX - calculator.getBoundingClientRect().left;
+          offsetY = touch.clientY - calculator.getBoundingClientRect().top;
+        } else {
+          offsetX = e.clientX - calculator.getBoundingClientRect().left;
+          offsetY = e.clientY - calculator.getBoundingClientRect().top;
+        }
+      }
+      function drag(e) {
+        if (!isDragging) return;
+        let clientX, clientY;
+        if (e.type === 'touchmove') {
+          e.preventDefault();
+          const touch = e.touches[0];
+          clientX = touch.clientX;
+          clientY = touch.clientY;
+        } else {
+          clientX = e.clientX;
+          clientY = e.clientY;
+        }
+        const newLeft = clientX - offsetX;
+        const newTop = clientY - offsetY;
+        const maxX = window.innerWidth - calculator.offsetWidth;
+        const maxY = window.innerHeight - calculator.offsetHeight;
+        calculator.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
+        calculator.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+        calculator.style.bottom = 'auto';
+        if (isLocalStorageAvailable()) {
+          localStorage.setItem('rfm_calculatorPosition', JSON.stringify({
+            left: calculator.style.left,
+            top: calculator.style.top
+          }));
+        }
+      }
+      function endDrag() {
+        isDragging = false;
+      }
+      let currentInput = '0';
+      let memory = 0;
+      let lastOperation = '';
+      let waitingForOperand = false;
+      document.querySelectorAll('.calculator-button[data-action="number"]').forEach(button => {
+        button.addEventListener('click', () => {
+          const digit = button.textContent;
+          if (waitingForOperand) {
+            currentInput += digit;
+            waitingForOperand = false;
+          } else {
+            currentInput = currentInput === '0' ? digit : currentInput + digit;
+          }
+          display.textContent = currentInput;
+        });
+      });
+      document.querySelectorAll('.calculator-button[data-action="operator"]').forEach(button => {
+        button.addEventListener('click', () => {
+          const operator = button.textContent;
+          let operatorForCalculation;
+          switch(operator) {
+            case '÷':
+              operatorForCalculation = '/';
+              break;
+            case '×':
+              operatorForCalculation = '*';
+              break;
+            case '−':
+              operatorForCalculation = '-';
+              break;
+            default:
+              operatorForCalculation = operator;
+          }
+          if (waitingForOperand) {
+            currentInput = currentInput.slice(0, -1) + operatorForCalculation;
+          } else {
+            currentInput += operatorForCalculation;
+            waitingForOperand = true;
+          }
+          display.textContent = currentInput;
+        });
+      });
+      document.querySelector('.calculator-button[data-action="decimal"]').addEventListener('click', () => {
+        if (waitingForOperand) {
+          currentInput = '0.';
+          waitingForOperand = false;
+        } else if (!currentInput.includes('.')) {
+          currentInput += '.';
+        }
+        display.textContent = currentInput;
+      });
+      document.querySelectorAll('.calculator-button[data-action="bracket"]').forEach(button => {
+        button.addEventListener('click', () => {
+          const bracket = button.textContent;
+          if (waitingForOperand) {
+            currentInput += bracket;
+            waitingForOperand = false;
+          } else {
+            currentInput = currentInput === '0' ? bracket : currentInput + bracket;
+          }
+          display.textContent = currentInput;
+        });
+      });
+      document.querySelector('.calculator-button[data-action="clear"]').addEventListener('click', () => {
+        currentInput = '0';
+        memory = 0;
+        lastOperation = '';
+        waitingForOperand = false;
+        display.textContent = currentInput;
+      });
+      document.querySelector('.calculator-button[data-action="backspace"]').addEventListener('click', () => {
+        if (currentInput.length > 1) {
+          currentInput = currentInput.slice(0, -1);
+        } else {
+          currentInput = '0';
+        }
+        waitingForOperand = false;
+        display.textContent = currentInput;
+      });
+      document.querySelector('.calculator-button[data-action="calculate"]').addEventListener('click', () => {
+        try {
+          let expression = currentInput.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+          const result = Function('"use strict";return (' + expression + ')')();
+          currentInput = Number.isInteger(result) ? result.toString() : result.toFixed(2).replace(/\.00$/, '');
+          display.textContent = currentInput;
+          waitingForOperand = true;
+        } catch (error) {
+          display.textContent = 'Error';
+          currentInput = '0';
+          waitingForOperand = true;
+        }
+      });
+      if (isLocalStorageAvailable()) {
+        const calculatorVisible = localStorage.getItem('rfm_calculatorVisible');
+        if (calculatorVisible === 'true') {
+          calculator.classList.remove('hidden');
+        }
+        const calculatorMinimized = localStorage.getItem('rfm_calculatorMinimized');
+        if (calculatorMinimized === 'true') {
+          calculator.classList.add('minimized');
+        }
+        const position = localStorage.getItem('rfm_calculatorPosition');
+        if (position) {
+          try {
+            const { left, top } = JSON.parse(position);
+            calculator.style.left = left;
+            calculator.style.top = top;
+            calculator.style.bottom = 'auto';
+          } catch (error) {
+            console.error('Error loading calculator position', error);
+          }
+        }
+      }
+    }
+  </script>
 </body>
 </html>
