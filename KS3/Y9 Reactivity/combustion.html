@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combustion - Interactive Science Lesson</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-height: 80vh;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .screen.active {
+            display: block;
+        }
+        .title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #3498db;
+            font-size: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-secondary {
+            background-color: #2ecc71;
+        }
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        .btn-warning {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        .progress-bar {
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            margin: 10px 0 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s;
+        }
+        input[type="text"], textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        textarea {
+            max-width: 100%;
+            resize: vertical;
+            min-height: 80px;
+        }
+        input[type="text"]:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        .hint-box {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .answer-box {
+            background-color: #e7f6ee;
+            border-left: 4px solid #2ecc71;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .hint-btn, .answer-btn {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+        .hint-btn:hover, .answer-btn:hover {
+            background-color: #e67e22;
+            transform: translateY(-1px);
+        }
+        .answer-btn {
+            background-color: #2ecc71;
+        }
+        .answer-btn:hover {
+            background-color: #27ae60;
+        }
+        .fire-triangle {
+            width: 300px;
+            height: 280px;
+            position: relative;
+            margin: 30px auto;
+            perspective: 800px;
+        }
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 260px solid transparent;
+            position: relative;
+            animation: rotate 30s infinite linear;
+            transform-style: preserve-3d;
+        }
+        .triangle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150px;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 260px solid rgba(231, 76, 60, 0.7);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+        .triangle-label {
+            position: absolute;
+            font-weight: bold;
+            font-size: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .triangle-label:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .heat {
+            top: 30px;
+            right: -50px;
+            color: #c0392b;
+            border-left: 3px solid #c0392b;
+        }
+        .oxygen {
+            top: 30px;
+            left: -90px;
+            color: #3498db;
+            border-left: 3px solid #3498db;
+        }
+        .fuel {
+            bottom: -30px;
+            left: 120px;
+            color: #8e44ad;
+            border-left: 3px solid #8e44ad;
+        }
+        .fire-center {
+            position: absolute;
+            top: 120px;
+            left: 130px;
+            font-size: 40px;
+            animation: flame 2s infinite alternate;
+            filter: drop-shadow(0 0 10px #ff8c00);
+            z-index: 10;
+        }
+        @keyframes flame {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px #ff8c00); }
+            100% { transform: scale(1.2); filter: drop-shadow(0 0 15px #ff4500); }
+        }
+        .quiz-option {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover {
+            background-color: #e9ecef;
+            border-color: #bdc3c7;
+        }
+        .quiz-option.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        .quiz-option.correct {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        .quiz-option.incorrect {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        .result-message {
+            text-align: center;
+            font-size: 20px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .game-container {
+            position: relative;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .equation-game {
+            text-align: center;
+            padding: 20px;
+        }
+        .equation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .equation-piece {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .equation-drop {
+            width: 100px;
+            height: 40px;
+            border: 2px dashed #3498db;
+            border-radius: 4px;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .equation-drop.filled {
+            border-style: solid;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 500;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .celebratory {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: fall 3s linear forwards;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+        .molecule {
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            display: inline-block;
+            margin: 2px;
+        }
+        .balanced-equation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            font-size: 20px;
+        }
+        .drag-drop-container {
+            margin: 20px 0;
+        }
+        .drag-item {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: grab;
+        }
+        .drop-target {
+            display: inline-block;
+            width: 100px;
+            height: 30px;
+            border: 2px dashed #3498db;
+            border-radius: 4px;
+            margin: 5px;
+            vertical-align: middle;
+        }
+        .correct-answer {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .incorrect-answer {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .empty-answer {
+            border-bottom: 2px solid #3498db;
+            display: inline-block;
+            width: 100px;
+            text-align: center;
+        }
+        .check-answer-btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+        .check-answer-btn:hover {
+            background-color: #8e44ad;
+        }
+        .feedback-msg {
+            margin-top: 5px;
+            font-weight: 500;
+            height: 20px;
+        }
+        .coefficient-input {
+            width: 40px !important;
+        }
+        .equation-table {
+            width: 100%;
+            margin: 20px 0;
+        }
+        .equation-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+        }
+        .equation-table td {
+            padding: 10px;
+            text-align: center;
+        }
+        .equation-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .equation-row {
+            margin: 15px 0;
+        }
+        .equation-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div class="screen active" id="screen-0">
+            <h1 class="title">Combustion - Interactive Science Lesson</h1>
+            <p>Welcome to your interactive combustion lesson! In this activity, you will learn about:</p>
+            <ul>
+                <li>What combustion is</li>
+                <li>The fire triangle</li>
+                <li>Complete and incomplete combustion</li>
+                <li>Chemical equations for combustion reactions</li>
+                <li>Balancing equations</li>
+                <li>Products of different combustion reactions</li>
+            </ul>
+            <p>Each screen will have tasks for you to complete. Read the instructions carefully and try your best!</p>
+            <p>If you need help, click the "Give me a hint" button. You can also check your answers by clicking the "Check answer" button.</p>
+            <div class="navigation">
+                <button class="btn" id="next-btn">Let's Start!</button>
+            </div>
+        </div>
+
+        <!-- Screen 1: Intro to Combustion -->
+        <div class="screen" id="screen-1">
+            <h1 class="title">What is Combustion?</h1>
+            <p>Combustion is another name for <input type="text" id="combustion-name" placeholder="What word means the same as combustion?">
+                <button class="check-answer-btn" onclick="checkAnswer('combustion-name', 'burning')">Check</button>
+                <div id="combustion-name-feedback" class="feedback-msg"></div>
+            </p>
+
+            <p>It happens when a fuel reacts with <input type="text" id="combustion-reactant" placeholder="What does fuel need to burn?">
+                <button class="check-answer-btn" onclick="checkAnswer('combustion-reactant', 'oxygen')">Check</button>
+                <div id="combustion-reactant-feedback" class="feedback-msg"></div>
+            at high temperatures.</p>
+            
+            <p><input type="text" id="common-fuel" placeholder="A common fuel used in homes">
+                <button class="check-answer-btn" onclick="checkAnswer('common-fuel', 'methane', ['methane', 'natural gas'])">Check</button>
+                <div id="common-fuel-feedback" class="feedback-msg"></div>
+             is the fuel used in Bunsen burners, gas cookers and boilers in the home. It is a hydrocarbon.</p>
+            
+            <p>A hydrocarbon is a molecule that contains <input type="text" id="element1" placeholder="Element 1">
+                <button class="check-answer-btn" onclick="checkAnswer('element1', 'carbon')">Check</button>
+                <div id="element1-feedback" class="feedback-msg"></div>
+             and <input type="text" id="element2" placeholder="Element 2">
+                <button class="check-answer-btn" onclick="checkAnswer('element2', 'hydrogen')">Check</button>
+                <div id="element2-feedback" class="feedback-msg"></div>
+            .</p>
+            
+            <button class="hint-btn" onclick="toggleHint('hint1')">Give me a hint</button>
+            <div class="hint-box" id="hint1">
+                <p>Combustion is another word for burning. When something burns, it reacts with oxygen from the air. Methane is a common fuel used in homes. Hydrocarbons contain carbon and hydrogen.</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn" disabled>Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Fire Triangle -->
+        <div class="screen" id="screen-2">
+            <h1 class="title">The Fire Triangle</h1>
+            
+            <div class="fire-triangle">
+                <div class="triangle"></div>
+                <div class="triangle-label oxygen">OXYGEN</div>
+                <div class="triangle-label heat">HEAT</div>
+                <div class="triangle-label fuel">FUEL</div>
+                <div class="fire-center">🔥</div>
+            </div>
+            
+            <div class="subtitle">Fire Triangle Questions</div>
+            
+            <p>1. What does this triangle show?</p>
+            <input type="text" id="triangle-purpose" placeholder="What does it show?">
+            <button class="check-answer-btn" onclick="checkAnswer('triangle-purpose', 'the three things needed for a fire', ['the three things needed for a fire', 'what is needed for combustion', 'what is needed for fire', 'the fire triangle'])">Check</button>
+            <div id="triangle-purpose-feedback" class="feedback-msg"></div>
+            
+            <p>2. Describe what would happen if you took away one or two of the keywords.</p>
+            <textarea id="keyword-removal" rows="4" placeholder="Describe what would happen"></textarea>
+            <button class="answer-btn" onclick="toggleAnswer('answer1')">Show Answer</button>
+            <div class="answer-box" id="answer1">
+                <p>If you remove any one element of the fire triangle, the fire will go out:</p>
+                <ul>
+                    <li>Remove oxygen: The fire will go out because combustion requires oxygen.</li>
+                    <li>Remove heat: The fire will go out because it needs heat to maintain the reaction.</li>
+                    <li>Remove fuel: The fire will go out because there's nothing left to burn.</li>
+                </ul>
+                <p>If you remove two elements, the fire will definitely go out even faster.</p>
+            </div>
+            
+            <p>3. How does a fire extinguisher work?</p>
+            <input type="text" id="extinguisher" placeholder="How does it work?">
+            <button class="answer-btn" onclick="toggleAnswer('answer2')">Show Answer</button>
+            <div class="answer-box" id="answer2">
+                <p>Fire extinguishers work by removing one or more elements from the fire triangle:</p>
+                <ul>
+                    <li>Water extinguishers: Remove heat by cooling the fire</li>
+                    <li>CO2 extinguishers: Remove oxygen by displacing it</li>
+                    <li>Foam extinguishers: Separate the fuel from oxygen and remove heat</li>
+                    <li>Powder extinguishers: Interrupt the chemical reaction of burning</li>
+                </ul>
+            </div>
+            
+            <button class="hint-btn" onclick="toggleHint('hint2')">Give me a hint</button>
+            <div class="hint-box" id="hint2">
+                <p>The fire triangle shows the three things needed for a fire to burn: fuel, oxygen, and heat. If you remove any one of these, the fire will go out.</p>
+                <p>Fire extinguishers work by removing one of these elements. For example, water extinguishers remove heat, CO2 extinguishers remove oxygen, and foam extinguishers can separate the fuel from oxygen.</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 3: Complete vs Incomplete Combustion -->
+        <div class="screen" id="screen-3">
+            <h1 class="title">Complete vs. Incomplete Combustion</h1>
+            
+            <div class="subtitle">Complete Combustion</div>
+            <p>Complete combustion happens when there is <span style="font-weight: bold; color: #3498db;">plenty of oxygen</span> available. The fuel burns completely.</p>
+            
+            <div class="balanced-equation">
+                <div class="molecule">Fuel</div>
+                <span>+</span>
+                <div class="molecule">Oxygen</div>
+                <span>→</span>
+                <div class="molecule">Carbon Dioxide</div>
+                <span>+</span>
+                <div class="molecule">Water</div>
+                <span>+</span>
+                <div class="molecule">Heat Energy</div>
+            </div>
+            
+            <div class="subtitle">Incomplete Combustion</div>
+            <p>Incomplete combustion happens when there is <span style="font-weight: bold; color: #e74c3c;">not enough oxygen</span> available. The fuel burns incompletely.</p>
+            
+            <div class="balanced-equation">
+                <div class="molecule">Fuel</div>
+                <span>+</span>
+                <div class="molecule">Oxygen</div>
+                <span>→</span>
+                <div class="molecule">Carbon Monoxide</div>
+                <span>+</span>
+                <div class="molecule">Water</div>
+                <span>+</span>
+                <div class="molecule">Heat Energy</div>
+            </div>
+            
+            <p>Carbon monoxide (CO) is a <span style="font-weight: bold; color: #e74c3c;">poisonous gas</span>. It is dangerous because:</p>
+            <ul>
+                <li>It has no smell or color, so you can't detect it</li>
+                <li>It stops your blood from carrying oxygen</li>
+                <li>It can cause death if you breathe too much of it</li>
+            </ul>
+            
+            <div class="subtitle">Your Task</div>
+            <p>Fill in the blanks:</p>
+            <p>1. Complete combustion produces <input type="text" id="complete-product1" placeholder="Product 1">
+                <button class="check-answer-btn" onclick="checkAnswer('complete-product1', 'carbon dioxide', ['carbon dioxide', 'co2'])">Check</button>
+                <div id="complete-product1-feedback" class="feedback-msg"></div>
+            and <input type="text" id="complete-product2" placeholder="Product 2">
+                <button class="check-answer-btn" onclick="checkAnswer('complete-product2', 'water', ['water', 'h2o'])">Check</button>
+                <div id="complete-product2-feedback" class="feedback-msg"></div>
+            .</p>
+            
+            <p>2. Incomplete combustion produces <input type="text" id="incomplete-product1" placeholder="Product 1">
+                <button class="check-answer-btn" onclick="checkAnswer('incomplete-product1', 'carbon monoxide', ['carbon monoxide', 'co'])">Check</button>
+                <div id="incomplete-product1-feedback" class="feedback-msg"></div>
+            and <input type="text" id="incomplete-product2" placeholder="Product 2">
+                <button class="check-answer-btn" onclick="checkAnswer('incomplete-product2', 'water', ['water', 'h2o'])">Check</button>
+                <div id="incomplete-product2-feedback" class="feedback-msg"></div>
+            .</p>
+            
+            <p>3. Incomplete combustion happens when there is:</p>
+            <div id="incomplete-cause-options">
+                <div class="quiz-option" onclick="selectMultiChoiceOption('incomplete-cause', 0)">Too much oxygen</div>
+                <div class="quiz-option" onclick="selectMultiChoiceOption('incomplete-cause', 1)">Not enough oxygen</div>
+                <div class="quiz-option" onclick="selectMultiChoiceOption('incomplete-cause', 2)">Too much fuel</div>
+                <div class="quiz-option" onclick="selectMultiChoiceOption('incomplete-cause', 3)">No heat</div>
+            </div>
+            <div id="incomplete-cause-feedback" class="feedback-msg"></div>
+            
+            <button class="hint-btn" onclick="toggleHint('hint3')">Give me a hint</button>
+            <div class="hint-box" id="hint3">
+                <p>Complete combustion produces carbon dioxide (CO₂) and water (H₂O).</p>
+                <p>Incomplete combustion produces carbon monoxide (CO) and water (H₂O).</p>
+                <p>Incomplete combustion happens when there is not enough oxygen available.</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Word Equations -->
+        <div class="screen" id="screen-4">
+            <h1 class="title">Word Equations for Combustion</h1>
+            
+            <div class="subtitle">General Word Equation</div>
+            <p>Let's learn how to write a word equation for combustion:</p>
+            
+            <div class="balanced-equation">
+                <input type="text" id="word-eq-1" placeholder="Fuel name">
+                <span>+</span>
+                <input type="text" id="word-eq-2" placeholder="What's needed">
+                <span>→</span>
+                <input type="text" id="word-eq-3" placeholder="Product 1">
+                <span>+</span>
+                <input type="text" id="word-eq-4" placeholder="Product 2">
+            </div>
+            
+            <button class="check-answer-btn" onclick="checkWordEquation()">Check Equation</button>
+            <div id="word-equation-feedback" class="feedback-msg"></div>
+            
+            <div class="subtitle">Examples</div>
+            <p>Complete these word equations:</p>
+            
+            <p>1. If the fuel is methane:</p>
+            <div class="balanced-equation">
+                <input type="text" id="methane-eq-1" placeholder="Fuel name">
+                <span>+</span>
+                <input type="text" id="methane-eq-2" placeholder="What's needed">
+                <span>→</span>
+                <input type="text" id="methane-eq-3" placeholder="Product 1">
+                <span>+</span>
+                <input type="text" id="methane-eq-4" placeholder="Product 2">
+            </div>
+            
+            <button class="check-answer-btn" onclick="checkMethaneEquation()">Check Equation</button>
+            <div id="methane-equation-feedback" class="feedback-msg"></div>
+            
+            <p>2. If the fuel is ethanol:</p>
+            <div class="balanced-equation">
+                <input type="text" id="ethanol-eq-1" placeholder="Fuel name">
+                <span>+</span>
+                <input type="text" id="ethanol-eq-2" placeholder="What's needed">
+                <span>→</span>
+                <input type="text" id="ethanol-eq-3" placeholder="Product 1">
+                <span>+</span>
+                <input type="text" id="ethanol-eq-4" placeholder="Product 2">
+            </div>
+            
+            <button class="check-answer-btn" onclick="checkEthanolEquation()">Check Equation</button>
+            <div id="ethanol-equation-feedback" class="feedback-msg"></div>
+            
+            <button class="hint-btn" onclick="toggleHint('hint4')">Give me a hint</button>
+            <div class="hint-box" id="hint4">
+                <p>The general word equation is: Fuel + Oxygen → Carbon Dioxide + Water</p>
+                <p>1. Methane + Oxygen → Carbon Dioxide + Water</p>
+                <p>2. Ethanol + Oxygen → Carbon Dioxide + Water</p>
+                <p>Remember, the products are the same for complete combustion of any hydrocarbon fuel. Only the fuel name changes!</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 5: Symbol Equations -->
+        <div class="screen" id="screen-5">
+            <h1 class="title">Symbol Equations and Balancing</h1>
+            
+            <div class="subtitle">Symbol Equation for Methane Combustion</div>
+            <p>Now let's look at the symbol equation for the complete combustion of methane:</p>
+            
+            <div class="balanced-equation">
+                <div class="molecule">CH<sub>4</sub></div>
+                <span>+</span>
+                <div class="molecule">O<sub>2</sub></div>
+                <span>→</span>
+                <div class="molecule">CO<sub>2</sub></div>
+                <span>+</span>
+                <div class="molecule">H<sub>2</sub>O</div>
+            </div>
+            
+            <p>But this equation is not balanced! The number of atoms on each side must be equal.</p>
+            
+            <div class="subtitle">Balancing the Equation</div>
+            <p>To balance the equation, we need to check how many atoms of each element are on each side:</p>
+            
+            <table>
+                <tr>
+                    <th>Element</th>
+                    <th>Reactants side</th>
+                    <th>Products side</th>
+                    <th>Balanced?</th>
+                </tr>
+                <tr>
+                    <td>Carbon (C)</td>
+                    <td>1 (from CH<sub>4</sub>)</td>
+                    <td>1 (from CO<sub>2</sub>)</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>Hydrogen (H)</td>
+                    <td>4 (from CH<sub>4</sub>)</td>
+                    <td>2 (from H<sub>2</sub>O)</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>Oxygen (O)</td>
+                    <td>2 (from O<sub>2</sub>)</td>
+                    <td>3 (2 from CO<sub>2</sub> + 1 from H<sub>2</sub>O)</td>
+                    <td>✗</td>
+                </tr>
+            </table>
+            
+            <p>We need to add coefficients (numbers in front of molecules) to balance the equation:</p>
+            
+            <div class="balanced-equation">
+                <div class="molecule">CH<sub>4</sub></div>
+                <span>+</span>
+                <div class="molecule">2O<sub>2</sub></div>
+                <span>→</span>
+                <div class="molecule">CO<sub>2</sub></div>
+                <span>+</span>
+                <div class="molecule">2H<sub>2</sub>O</div>
+            </div>
+            
+            <div class="subtitle">Your Turn - Balance These Equations</div>
+            
+            <div class="equation-row">
+                <p class="equation-name">1. Complete combustion of ethene (C<sub>2</sub>H<sub>4</sub>):</p>
+                <div class="balanced-equation">
+                    <input type="text" class="coefficient-input" id="ethene-coef1" placeholder="#"> <div class="molecule">C<sub>2</sub>H<sub>4</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="ethene-coef2" placeholder="#"> <div class="molecule">O<sub>2</sub></div>
+                    <span>→</span>
+                    <input type="text" class="coefficient-input" id="ethene-coef3" placeholder="#"> <div class="molecule">CO<sub>2</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="ethene-coef4" placeholder="#"> <div class="molecule">H<sub>2</sub>O</div>
+                </div>
+                <button class="check-answer-btn" onclick="checkBalancedEquation('ethene', [1, 3, 2, 2])">Check Equation</button>
+                <div id="ethene-equation-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <div class="equation-row">
+                <p class="equation-name">2. Complete combustion of propane (C<sub>3</sub>H<sub>8</sub>):</p>
+                <div class="balanced-equation">
+                    <input type="text" class="coefficient-input" id="propane-coef1" placeholder="#"> <div class="molecule">C<sub>3</sub>H<sub>8</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="propane-coef2" placeholder="#"> <div class="molecule">O<sub>2</sub></div>
+                    <span>→</span>
+                    <input type="text" class="coefficient-input" id="propane-coef3" placeholder="#"> <div class="molecule">CO<sub>2</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="propane-coef4" placeholder="#"> <div class="molecule">H<sub>2</sub>O</div>
+                </div>
+                <button class="check-answer-btn" onclick="checkBalancedEquation('propane', [1, 5, 3, 4])">Check Equation</button>
+                <div id="propane-equation-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <div class="equation-row">
+                <p class="equation-name">3. Incomplete combustion of ethene (C<sub>2</sub>H<sub>4</sub>):</p>
+                <div class="balanced-equation">
+                    <input type="text" class="coefficient-input" id="ethene-incomplete-coef1" placeholder="#"> <div class="molecule">C<sub>2</sub>H<sub>4</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="ethene-incomplete-coef2" placeholder="#"> <div class="molecule">O<sub>2</sub></div>
+                    <span>→</span>
+                    <input type="text" class="coefficient-input" id="ethene-incomplete-coef3" placeholder="#"> <div class="molecule">CO</div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="ethene-incomplete-coef4" placeholder="#"> <div class="molecule">H<sub>2</sub>O</div>
+                </div>
+                <button class="check-answer-btn" onclick="checkBalancedEquation('ethene-incomplete', [1, 2, 2, 2])">Check Equation</button>
+                <div id="ethene-incomplete-equation-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <div class="equation-row">
+                <p class="equation-name">4. Incomplete combustion of propene (C<sub>3</sub>H<sub>6</sub>):</p>
+                <div class="balanced-equation">
+                    <input type="text" class="coefficient-input" id="propene-incomplete-coef1" placeholder="#"> <div class="molecule">C<sub>3</sub>H<sub>6</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="propene-incomplete-coef2" placeholder="#"> <div class="molecule">O<sub>2</sub></div>
+                    <span>→</span>
+                    <input type="text" class="coefficient-input" id="propene-incomplete-coef3" placeholder="#"> <div class="molecule">CO</div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="propene-incomplete-coef4" placeholder="#"> <div class="molecule">H<sub>2</sub>O</div>
+                </div>
+                <button class="check-answer-btn" onclick="checkBalancedEquation('propene-incomplete', [1, 3, 3, 3])">Check Equation</button>
+                <div id="propene-incomplete-equation-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <div class="equation-row">
+                <p class="equation-name">5. Incomplete combustion of butene (C<sub>4</sub>H<sub>8</sub>):</p>
+                <div class="balanced-equation">
+                    <input type="text" class="coefficient-input" id="butene-incomplete-coef1" placeholder="#"> <div class="molecule">C<sub>4</sub>H<sub>8</sub></div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="butene-incomplete-coef2" placeholder="#"> <div class="molecule">O<sub>2</sub></div>
+                    <span>→</span>
+                    <input type="text" class="coefficient-input" id="butene-incomplete-coef3" placeholder="#"> <div class="molecule">CO</div>
+                    <span>+</span>
+                    <input type="text" class="coefficient-input" id="butene-incomplete-coef4" placeholder="#"> <div class="molecule">H<sub>2</sub>O</div>
+                </div>
+                <button class="check-answer-btn" onclick="checkBalancedEquation('butene-incomplete', [1, 4, 4, 4])">Check Equation</button>
+                <div id="butene-incomplete-equation-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <button class="hint-btn" onclick="toggleHint('hint5')">Give me a hint</button>
+            <div class="hint-box" id="hint5">
+                <p>Remember to count all atoms on both sides and make them equal:</p>
+                <ol>
+                    <li>For ethene complete combustion: C<sub>2</sub>H<sub>4</sub> + 3O<sub>2</sub> → 2CO<sub>2</sub> + 2H<sub>2</sub>O</li>
+                    <li>For propane complete combustion: C<sub>3</sub>H<sub>8</sub> + 5O<sub>2</sub> → 3CO<sub>2</sub> + 4H<sub>2</sub>O</li>
+                    <li>For ethene incomplete combustion: C<sub>2</sub>H<sub>4</sub> + 2O<sub>2</sub> → 2CO + 2H<sub>2</sub>O</li>
+                    <li>For propene incomplete combustion: C<sub>3</sub>H<sub>6</sub> + 3O<sub>2</sub> → 3CO + 3H<sub>2</sub>O</li>
+                    <li>For butene incomplete combustion: C<sub>4</sub>H<sub>8</sub> + 4O<sub>2</sub> → 4CO + 4H<sub>2</sub>O</li>
+                </ol>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 6: Predicting Products -->
+        <div class="screen" id="screen-6">
+            <h1 class="title">Predicting Combustion Products</h1>
+            
+            <div class="subtitle">Combustion of Different Elements</div>
+            <p>Different elements produce different products when they burn in oxygen.</p>
+            
+            <p>1. Let's first look at hydrogen combustion:</p>
+            <div class="balanced-equation">
+                <div class="molecule">Hydrogen</div>
+                <span>+</span>
+                <div class="molecule">Oxygen</div>
+                <span>→</span>
+                <input type="text" id="h-combustion" style="width: 100px;">
+                <button class="check-answer-btn" onclick="checkAnswer('h-combustion', 'water', ['water', 'h2o'])">Check</button>
+                <div id="h-combustion-feedback" class="feedback-msg"></div>
+            </div>
+            
+            <div class="subtitle">Combustion Products Table</div>
+            <p>Complete the missing products in this table:</p>
+            
+            <table>
+                <tr>
+                    <th>Fuel</th>
+                    <th>Oxygen</th>
+                    <th>Product 1</th>
+                    <th>Product 2</th>
+                </tr>
+                <tr>
+                    <td>Calcium (Ca)</td>
+                    <td>Oxygen (O<sub>2</sub>)</td>
+                    <td>Calcium oxide</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Sulfur (S)</td>
+                    <td>Oxygen (O<sub>2</sub>)</td>
+                    <td><input type="text" id="sulfur-product" style="width: 120px;">
+                        <button class="check-answer-btn" onclick="checkAnswer('sulfur-product', 'sulfur dioxide', ['sulfur dioxide', 'so2'])">Check</button>
+                        <div id="sulfur-product-feedback" class="feedback-msg"></div>
+                    </td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Carbon (C)</td>
+                    <td>Oxygen (O<sub>2</sub>)</td>
+                    <td><input type="text" id="carbon-product" style="width: 120px;">
+                        <button class="check-answer-btn" onclick="checkAnswer('carbon-product', 'carbon dioxide', ['carbon dioxide', 'co2'])">Check</button>
+                        <div id="carbon-product-feedback" class="feedback-msg"></div>
+                    </td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Methane (CH<sub>4</sub>)</td>
+                    <td>Oxygen (O<sub>2</sub>)</td>
+                    <td>Carbon dioxide</td>
+                    <td>Water</td>
+                </tr>
+                <tr>
+                    <td>Ethane (C<sub>2</sub>H<sub>6</sub>)</td>
+                    <td>Oxygen (O<sub>2</sub>)</td>
+                    <td><input type="text" id="ethane-product1" style="width: 120px;">
+                        <button class="check-answer-btn" onclick="checkAnswer('ethane-product1', 'carbon dioxide', ['carbon dioxide', 'co2'])">Check</button>
+                        <div id="ethane-product1-feedback" class="feedback-msg"></div>
+                    </td>
+                    <td><input type="text" id="ethane-product2" style="width: 120px;">
+                        <button class="check-answer-btn" onclick="checkAnswer('ethane-product2', 'water', ['water', 'h2o'])">Check</button>
+                        <div id="ethane-product2-feedback" class="feedback-msg"></div>
+                    </td>
+                </tr>
+            </table>
+            
+            <button class="hint-btn" onclick="toggleHint('hint6')">Give me a hint</button>
+            <div class="hint-box" id="hint6">
+                <p>Hydrogen + Oxygen → Water (H<sub>2</sub>O)</p>
+                <p>Sulfur + Oxygen → Sulfur dioxide (SO<sub>2</sub>)</p>
+                <p>Carbon + Oxygen → Carbon dioxide (CO<sub>2</sub>)</p>
+                <p>Ethane + Oxygen → Carbon dioxide + Water</p>
+                <p>When elements burn, they combine with oxygen to form oxides. When hydrocarbons burn completely, they always form carbon dioxide and water.</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 7: Rusting -->
+        <div class="screen" id="screen-7">
+            <h1 class="title">Rusting - Another Reaction with Oxygen</h1>
+            
+            <div class="subtitle">What is Rusting?</div>
+            <p>Rusting is a slow combustion reaction where iron reacts with oxygen.</p>
+            
+            <p>In this reaction, there are 2 reactants. Iron is one reactant and iron oxide is the product.</p>
+            
+            <p>1. What is the other reactant? <input type="text" id="rust-reactant" style="width: 120px;">
+                <button class="check-answer-btn" onclick="checkAnswer('rust-reactant', 'oxygen', ['oxygen', 'o2'])">Check</button>
+                <div id="rust-reactant-feedback" class="feedback-msg"></div>
+            </p>
+            
+            <p>2. Complete the word equation for this reaction:</p>
+            <div class="balanced-equation">
+                <div class="molecule">Iron</div>
+                <span>+</span>
+                <input type="text" id="rust-eq-1" style="width: 100px;">
+                <span>→</span>
+                <input type="text" id="rust-eq-2" style="width: 100px;">
+            </div>
+            
+            <button class="check-answer-btn" onclick="checkRustEquation()">Check Equation</button>
+            <div id="rust-equation-feedback" class="feedback-msg"></div>
+            
+            <button class="hint-btn" onclick="toggleHint('hint7')">Give me a hint</button>
+            <div class="hint-box" id="hint7">
+                <p>The other reactant in rusting is oxygen (from the air).</p>
+                <p>The word equation is: Iron + Oxygen → Iron oxide</p>
+            </div>
+            
+            <div class="navigation">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="next-btn">Next</button>
+            </div>
+        </div>
+
+        <!-- Screen 8: Quiz -->
+        <div class="screen" id="screen-8">
+            <h1 class="title">Combustion Quiz</h1>
+            <div id="quiz-container">
+                <div id="question-container">
+                    <h3 id="question-text"></h3>
+                    <div id="options-container"></div>
+                </div>
+                <div id="quiz-navigation" class="navigation" style="justify-content: center;">
+                    <button class="btn" id="submit-answer" style="margin-right: 10px;">Submit Answer</button>
+                    <button class="btn" id="next-question" style="display: none;">Next Question</button>
+                </div>
+                <div id="quiz-progress" style="text-align: center; margin-top: 10px;">
+                    Question <span id="current-question">1</span> of 10
+                </div>
+                <div id="quiz-result" style="display: none;">
+                    <h2>Quiz Results</h2>
+                    <p>You scored: <span id="score">0</span> out of 10</p>
+                    <div id="feedback"></div>
+                </div>
+            </div>
+            
+            <div class="navigation" style="margin-top: 20px;">
+                <button class="btn" id="prev-btn">Previous</button>
+                <button class="btn" id="finish-btn">Finish Lesson</button>
+            </div>
+        </div>
+
+        <!-- Final Screen -->
+        <div class="screen" id="screen-9">
+            <h1 class="title">Congratulations!</h1>
+            <div style="text-align: center;">
+                <p style="font-size: 20px;">You've completed the combustion lesson!</p>
+                <div style="font-size: 72px; margin: 20px 0;">🎉</div>
+                <p>You've learned about:</p>
+                <ul style="text-align: left; display: inline-block;">
+                    <li>What combustion is</li>
+                    <li>The fire triangle</li>
+                    <li>Complete and incomplete combustion</li>
+                    <li>Word and symbol equations</li>
+                    <li>Balancing equations</li>
+                    <li>Products of different combustion reactions</li>
+                </ul>
+                <p style="margin-top: 20px;">Well done!</p>
+            </div>
+            
+            <div class="navigation" style="justify-content: center;">
+                <button class="btn" id="restart-btn">Start Again</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebratory" id="celebratory"></div>
+
+    <script>
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "What is combustion?",
+                options: ["Freezing", "Burning", "Melting", "Evaporating"],
+                correctAnswer: 1
+            },
+            {
+                question: "Which three things are needed for a fire to burn?",
+                options: ["Fuel, oxygen, heat", "Fuel, water, heat", "Fuel, carbon dioxide, heat", "Fuel, nitrogen, heat"],
+                correctAnswer: 0
+            },
+            {
+                question: "What does complete combustion produce?",
+                options: ["Carbon monoxide and water", "Carbon and water", "Carbon dioxide and hydrogen", "Carbon dioxide and water"],
+                correctAnswer: 3
+            },
+            {
+                question: "When does incomplete combustion happen?",
+                options: ["When there is too much oxygen", "When there is not enough oxygen", "When there is no heat", "When there is too much fuel"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is the chemical formula for methane?",
+                options: ["CH3", "CH4", "C2H6", "CO2"],
+                correctAnswer: 1
+            },
+            {
+                question: "Which of these is a product of incomplete combustion?",
+                options: ["Carbon dioxide", "Oxygen", "Carbon monoxide", "Hydrogen"],
+                correctAnswer: 2
+            },
+            {
+                question: "What happens when hydrogen burns in oxygen?",
+                options: ["It produces carbon dioxide", "It produces water", "It produces hydrogen oxide", "It produces carbon monoxide"],
+                correctAnswer: 1
+            },
+            {
+                question: "Which element in the fire triangle can be removed by a CO2 fire extinguisher?",
+                options: ["Fuel", "Oxygen", "Heat", "Carbon"],
+                correctAnswer: 1
+            },
+            {
+                question: "What is rusting an example of?",
+                options: ["Fast combustion", "Slow combustion", "Incomplete combustion", "Not a type of combustion"],
+                correctAnswer: 1
+            },
+            {
+                question: "When balancing equations, what must be true?",
+                options: ["The number of molecules must be the same on both sides", "The number of atoms of each element must be the same on both sides", "The number of bonds must be the same on both sides", "The charges must be the same on both sides"],
+                correctAnswer: 1
+            }
+        ];
+
+        // Define game levels for equation building
+        const gameLevels = [
+            {
+                instruction: "Build the equation for methane combustion",
+                correctAnswer: ["CH4", "O2", "CO2", "H2O"]
+            },
+            {
+                instruction: "Build the equation for ethanol combustion",
+                correctAnswer: ["C2H5OH", "O2", "CO2", "H2O"]
+            },
+            {
+                instruction: "Build the equation for incomplete propane combustion",
+                correctAnswer: ["C3H8", "O2", "CO", "H2O"]
+            }
+        ];
+
+        // Variables to track state
+        let currentScreen = 0;
+        let quizScore = 0;
+        let currentQuestion = 0;
+        let selectedOption = null;
+        let gameLevel = 0;
+        let draggedItem = null;
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            updateProgress();
+            setupNavigation();
+            setupQuiz();
+        });
+
+        // Handle screen navigation
+        function setupNavigation() {
+            const nextButtons = document.querySelectorAll("#next-btn");
+            const prevButtons = document.querySelectorAll("#prev-btn");
+            const finishButton = document.querySelector("#finish-btn");
+            const restartButton = document.querySelector("#restart-btn");
+
+            nextButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    navigateToScreen(currentScreen + 1);
+                });
+            });
+
+            prevButtons.forEach(button => {
+                button.addEventListener("click", () => {
+                    navigateToScreen(currentScreen - 1);
+                });
+            });
+
+            finishButton.addEventListener("click", () => {
+                navigateToScreen(9);
+            });
+
+            restartButton.addEventListener("click", () => {
+                navigateToScreen(0);
+                resetQuiz();
+            });
+        }
+
+        function navigateToScreen(screenIndex) {
+            document.querySelector(`#screen-${currentScreen}`).classList.remove("active");
+            document.querySelector(`#screen-${screenIndex}`).classList.add("active");
+            currentScreen = screenIndex;
+            updateProgress();
+
+            // Initialize specific screen content
+            if (screenIndex === 8) {
+                loadQuestion(0);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentScreen / 9) * 100;
+            document.getElementById("progress").style.width = `${progress}%`;
+        }
+
+        // Toggle hint and answer displays
+        function toggleHint(hintId) {
+            const hintBox = document.getElementById(hintId);
+            if (hintBox.style.display === "block") {
+                hintBox.style.display = "none";
+            } else {
+                hintBox.style.display = "block";
+            }
+        }
+
+        function toggleAnswer(answerId) {
+            const answerBox = document.getElementById(answerId);
+            if (answerBox.style.display === "block") {
+                answerBox.style.display = "none";
+            } else {
+                answerBox.style.display = "block";
+            }
+        }
+
+        // Check single answer
+        function checkAnswer(inputId, correctAnswer, alternativeAnswers = []) {
+            const input = document.getElementById(inputId);
+            const feedbackElement = document.getElementById(`${inputId}-feedback`);
+            const userAnswer = input.value.trim().toLowerCase();
+            
+            // Add the correct answer to the alternatives array for checking
+            const allAcceptableAnswers = [correctAnswer.toLowerCase(), ...alternativeAnswers.map(a => a.toLowerCase())];
+            
+            if (allAcceptableAnswers.includes(userAnswer)) {
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.className = "feedback-msg correct-answer";
+                input.style.borderColor = "#2ecc71";
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                input.style.borderColor = "#e74c3c";
+                return false;
+            }
+        }
+
+        // Check word equations
+        function checkWordEquation() {
+            const word1 = document.getElementById("word-eq-1").value.trim().toLowerCase();
+            const word2 = document.getElementById("word-eq-2").value.trim().toLowerCase();
+            const word3 = document.getElementById("word-eq-3").value.trim().toLowerCase();
+            const word4 = document.getElementById("word-eq-4").value.trim().toLowerCase();
+            
+            const feedbackElement = document.getElementById("word-equation-feedback");
+            
+            const correctAnswers = {
+                fuel: ["fuel"],
+                oxygen: ["oxygen", "o2"],
+                carbonDioxide: ["carbon dioxide", "co2"],
+                water: ["water", "h2o"]
+            };
+            
+            if (correctAnswers.fuel.includes(word1) && 
+                correctAnswers.oxygen.includes(word2) && 
+                correctAnswers.carbonDioxide.includes(word3) && 
+                correctAnswers.water.includes(word4)) {
+                
+                feedbackElement.textContent = "Correct! That's the general word equation for combustion.";
+                feedbackElement.className = "feedback-msg correct-answer";
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again. The general equation is: Fuel + Oxygen → Carbon Dioxide + Water";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                return false;
+            }
+        }
+
+        function checkMethaneEquation() {
+            const word1 = document.getElementById("methane-eq-1").value.trim().toLowerCase();
+            const word2 = document.getElementById("methane-eq-2").value.trim().toLowerCase();
+            const word3 = document.getElementById("methane-eq-3").value.trim().toLowerCase();
+            const word4 = document.getElementById("methane-eq-4").value.trim().toLowerCase();
+            
+            const feedbackElement = document.getElementById("methane-equation-feedback");
+            
+            if (["methane", "ch4"].includes(word1) && 
+                ["oxygen", "o2"].includes(word2) && 
+                ["carbon dioxide", "co2"].includes(word3) && 
+                ["water", "h2o"].includes(word4)) {
+                
+                feedbackElement.textContent = "Correct! That's the word equation for methane combustion.";
+                feedbackElement.className = "feedback-msg correct-answer";
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again. The equation is: Methane + Oxygen → Carbon Dioxide + Water";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                return false;
+            }
+        }
+
+        function checkEthanolEquation() {
+            const word1 = document.getElementById("ethanol-eq-1").value.trim().toLowerCase();
+            const word2 = document.getElementById("ethanol-eq-2").value.trim().toLowerCase();
+            const word3 = document.getElementById("ethanol-eq-3").value.trim().toLowerCase();
+            const word4 = document.getElementById("ethanol-eq-4").value.trim().toLowerCase();
+            
+            const feedbackElement = document.getElementById("ethanol-equation-feedback");
+            
+            if (["ethanol", "c2h5oh"].includes(word1) && 
+                ["oxygen", "o2"].includes(word2) && 
+                ["carbon dioxide", "co2"].includes(word3) && 
+                ["water", "h2o"].includes(word4)) {
+                
+                feedbackElement.textContent = "Correct! That's the word equation for ethanol combustion.";
+                feedbackElement.className = "feedback-msg correct-answer";
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again. The equation is: Ethanol + Oxygen → Carbon Dioxide + Water";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                return false;
+            }
+        }
+
+        function checkRustEquation() {
+            const word1 = document.getElementById("rust-eq-1").value.trim().toLowerCase();
+            const word2 = document.getElementById("rust-eq-2").value.trim().toLowerCase();
+            
+            const feedbackElement = document.getElementById("rust-equation-feedback");
+            
+            if (["oxygen", "o2"].includes(word1) && 
+                ["iron oxide", "fe2o3", "rust"].includes(word2)) {
+                
+                feedbackElement.textContent = "Correct! That's the word equation for rusting.";
+                feedbackElement.className = "feedback-msg correct-answer";
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again. The equation is: Iron + Oxygen → Iron Oxide";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                return false;
+            }
+        }
+
+        // Check balanced equations
+        function checkBalancedEquation(prefix, correctCoefficients) {
+            const coef1 = document.getElementById(`${prefix}-coef1`).value.trim();
+            const coef2 = document.getElementById(`${prefix}-coef2`).value.trim();
+            const coef3 = document.getElementById(`${prefix}-coef3`).value.trim();
+            const coef4 = document.getElementById(`${prefix}-coef4`).value.trim();
+            
+            const feedbackElement = document.getElementById(`${prefix}-equation-feedback`);
+            
+            // Convert to numbers for comparison
+            const userCoefficients = [
+                coef1 === "" ? 1 : parseInt(coef1),
+                coef2 === "" ? 1 : parseInt(coef2),
+                coef3 === "" ? 1 : parseInt(coef3),
+                coef4 === "" ? 1 : parseInt(coef4)
+            ];
+            
+            // Check if the ratio of coefficients is correct
+            let correct = true;
+            for (let i = 0; i < correctCoefficients.length; i++) {
+                // Allow any multiple of the correct ratio
+                if (isNaN(userCoefficients[i]) || 
+                    (userCoefficients[0] / correctCoefficients[0]) * correctCoefficients[i] !== userCoefficients[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+            
+            if (correct) {
+                feedbackElement.textContent = "Correct! Your equation is balanced.";
+                feedbackElement.className = "feedback-msg correct-answer";
+                showCelebration(5);
+                return true;
+            } else {
+                feedbackElement.textContent = "Try again. Check your coefficients.";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+                return false;
+            }
+        }
+
+        // Quiz functions
+        function setupQuiz() {
+            document.getElementById("submit-answer").addEventListener("click", submitAnswer);
+            document.getElementById("next-question").addEventListener("click", nextQuestion);
+        }
+
+        function loadQuestion(index) {
+            const questionContainer = document.getElementById("question-container");
+            const optionsContainer = document.getElementById("options-container");
+            const currentQuestionSpan = document.getElementById("current-question");
+            
+            // Reset
+            optionsContainer.innerHTML = "";
+            document.getElementById("submit-answer").style.display = "block";
+            document.getElementById("next-question").style.display = "none";
+            selectedOption = null;
+            
+            // Update question
+            document.getElementById("question-text").textContent = quizQuestions[index].question;
+            currentQuestionSpan.textContent = index + 1;
+            
+            // Add options
+            quizQuestions[index].options.forEach((option, i) => {
+                const optionDiv = document.createElement("div");
+                optionDiv.className = "quiz-option";
+                optionDiv.textContent = option;
+                optionDiv.dataset.index = i;
+                optionDiv.addEventListener("click", () => {
+                    document.querySelectorAll(".quiz-option").forEach(opt => {
+                        opt.classList.remove("selected");
+                    });
+                    optionDiv.classList.add("selected");
+                    selectedOption = i;
+                });
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            currentQuestion = index;
+        }
+
+        function submitAnswer() {
+            const question = quizQuestions[currentQuestion];
+            const options = document.querySelectorAll(".quiz-option");
+            
+            if (selectedOption !== null) {
+                options.forEach(option => {
+                    const optionIndex = parseInt(option.dataset.index);
+                    if (optionIndex === question.correctAnswer) {
+                        option.classList.add("correct");
+                    } else if (optionIndex === selectedOption) {
+                        option.classList.add("incorrect");
+                    }
+                });
+                
+                if (selectedOption === question.correctAnswer) {
+                    quizScore++;
+                    showCelebration(5);
+                }
+                
+                document.getElementById("submit-answer").style.display = "none";
+                
+                if (currentQuestion < quizQuestions.length - 1) {
+                    document.getElementById("next-question").style.display = "block";
+                } else {
+                    setTimeout(() => {
+                        showQuizResults();
+                    }, 1000);
+                }
+            } else {
+                alert("Please select an answer!");
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < quizQuestions.length - 1) {
+                loadQuestion(currentQuestion + 1);
+            }
+        }
+
+        function showQuizResults() {
+            document.getElementById("question-container").style.display = "none";
+            document.getElementById("quiz-navigation").style.display = "none";
+            document.getElementById("quiz-progress").style.display = "none";
+            document.getElementById("quiz-result").style.display = "block";
+            document.getElementById("score").textContent = quizScore;
+            
+            let feedback = "";
+            if (quizScore === 10) {
+                feedback = "Fantastic! You're a combustion expert!";
+                showCelebration(20);
+            } else if (quizScore >= 7) {
+                feedback = "Great job! You understand combustion very well!";
+            } else if (quizScore >= 5) {
+                feedback = "Good effort! You know the basics, but could revise a few topics.";
+            } else {
+                feedback = "You might need to revisit the lesson to improve your understanding.";
+            }
+            
+            document.getElementById("feedback").textContent = feedback;
+        }
+
+        function resetQuiz() {
+            quizScore = 0;
+            currentQuestion = 0;
+            selectedOption = null;
+            document.getElementById("question-container").style.display = "block";
+            document.getElementById("quiz-navigation").style.display = "flex";
+            document.getElementById("quiz-progress").style.display = "block";
+            document.getElementById("quiz-result").style.display = "none";
+        }
+
+        // Game functions
+        function setupGame() {
+            setupDragAndDrop();
+            
+            document.getElementById("check-equation").addEventListener("click", () => {
+                checkEquation();
+            });
+            
+            document.getElementById("next-level").addEventListener("click", () => {
+                gameLevel++;
+                if (gameLevel < gameLevels.length) {
+                    loadGameLevel(gameLevel);
+                    document.getElementById("check-equation").style.display = "block";
+                    document.getElementById("next-level").style.display = "none";
+                } else {
+                    document.getElementById("game-complete").style.display = "block";
+                    document.getElementById("check-equation").style.display = "none";
+                    document.getElementById("next-level").style.display = "none";
+                }
+            });
+        }
+
+        function setupDragAndDrop() {
+            const pieces = document.querySelectorAll(".equation-piece");
+            const dropTargets = document.querySelectorAll(".drop-target");
+            
+            pieces.forEach(piece => {
+                piece.addEventListener("dragstart", function(e) {
+                    draggedItem = this;
+                    e.dataTransfer.setData('text/plain', this.dataset.piece);
+                    setTimeout(() => this.style.opacity = "0.4", 0);
+                });
+                
+                piece.addEventListener("dragend", function() {
+                    this.style.opacity = "1";
+                    setTimeout(() => this.style.display = "inline-block", 0);
+                });
+            });
+
+            dropTargets.forEach(target => {
+                target.addEventListener("dragover", function(e) {
+                    e.preventDefault();
+                });
+                
+                target.addEventListener("dragenter", function(e) {
+                    e.preventDefault();
+                    this.style.backgroundColor = "#f0f0f0";
+                });
+                
+                target.addEventListener("dragleave", function() {
+                    this.style.backgroundColor = "";
+                });
+                
+                target.addEventListener("drop", function() {
+                    this.style.backgroundColor = "";
+                    if (draggedItem) {
+                        this.innerHTML = ""; // Clear any existing content
+                        const clone = draggedItem.cloneNode(true);
+                        clone.style.display = "inline-block";
+                        clone.style.margin = "0";
+                        clone.style.position = "static";
+                        this.appendChild(clone);
+                        this.dataset.value = draggedItem.dataset.piece;
+                        this.classList.add("filled");
+                    }
+                });
+            });
+        }
+
+        function loadGameLevel(level) {
+            const dropTargets = document.querySelectorAll(".drop-target");
+            dropTargets.forEach(target => {
+                target.innerHTML = "";
+                target.dataset.value = "";
+                target.classList.remove("filled");
+            });
+            
+            document.getElementById("game-level").textContent = `Level ${level + 1}`;
+            document.getElementById("game-instruction").textContent = gameLevels[level].instruction;
+            document.getElementById("current-level").textContent = level + 1;
+            document.getElementById("game-result").textContent = "";
+        }
+
+        function checkEquation() {
+            const dropTargets = document.querySelectorAll(".drop-target");
+            const currentLevelAnswer = gameLevels[gameLevel].correctAnswer;
+            
+            let userAnswer = [];
+            let allFilled = true;
+            
+            dropTargets.forEach((target, index) => {
+                if (target.dataset.value) {
+                    userAnswer.push(target.dataset.value);
+                } else {
+                    allFilled = false;
+                }
+            });
+            
+            if (!allFilled) {
+                document.getElementById("game-result").textContent = "Please fill all positions in the equation!";
+                document.getElementById("game-result").style.color = "#e74c3c";
+                return;
+            }
+            
+            let correct = true;
+            for (let i = 0; i < currentLevelAnswer.length; i++) {
+                if (userAnswer[i] !== currentLevelAnswer[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+            
+            if (correct) {
+                document.getElementById("game-result").textContent = "Correct! Well done!";
+                document.getElementById("game-result").style.color = "#2ecc71";
+                document.getElementById("check-equation").style.display = "none";
+                document.getElementById("next-level").style.display = "block";
+                showCelebration(10);
+            } else {
+                document.getElementById("game-result").textContent = "Try again! That's not quite right.";
+                document.getElementById("game-result").style.color = "#e74c3c";
+            }
+        }
+
+        function resetGame() {
+            gameLevel = 0;
+            loadGameLevel(0);
+            document.getElementById("check-equation").style.display = "block";
+            document.getElementById("next-level").style.display = "none";
+            document.getElementById("game-complete").style.display = "none";
+        }
+
+        // Function to handle multiple choice options
+        function selectMultiChoiceOption(questionId, optionIndex) {
+            const options = document.querySelectorAll(`#${questionId}-options .quiz-option`);
+            const feedbackElement = document.getElementById(`${questionId}-feedback`);
+            
+            // Reset all options
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Mark selected option
+            options[optionIndex].classList.add('selected');
+            
+            // Check if correct (for incomplete-cause, option 1 is correct)
+            if (questionId === 'incomplete-cause' && optionIndex === 1) {
+                options[optionIndex].classList.add('correct');
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.className = "feedback-msg correct-answer";
+            } else {
+                options[optionIndex].classList.add('incorrect');
+                feedbackElement.textContent = "Try again";
+                feedbackElement.className = "feedback-msg incorrect-answer";
+            }
+        }
+        
+        // Celebration effect
+        function showCelebration(count) {
+            const celebratoryDiv = document.getElementById("celebratory");
+            celebratoryDiv.style.display = "block";
+            celebratoryDiv.innerHTML = "";
+            
+            const colors = ["#e74c3c", "#2ecc71", "#3498db", "#f1c40f", "#9b59b6", "#1abc9c"];
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement("div");
+                confetti.className = "confetti";
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = `${2 + Math.random() * 2}s`;
+                celebratoryDiv.appendChild(confetti);
+            }
+            
+            setTimeout(() => {
+                celebratoryDiv.style.display = "none";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
