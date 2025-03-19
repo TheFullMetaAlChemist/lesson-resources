@@ -177,12 +177,14 @@
             bottom: 20px;
             left: 20px;
             width: 280px;
-            background-color: white;
+            background-color: #333;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 1000;
             transition: transform 0.3s ease;
             display: none;
+            font-family: "Digital-7", monospace;
+            border: 2px solid #111;
         }
         
         .calculator.minimized {
@@ -191,7 +193,7 @@
         }
         
         .calculator-header {
-            background-color: var(--dark-bg);
+            background-color: #222;
             color: white;
             padding: 0.5rem;
             border-top-left-radius: 8px;
@@ -209,48 +211,81 @@
         .calculator-display {
             width: 100%;
             height: 50px;
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
+            background-color: #c5e1a5;
+            border: 1px solid #333;
             margin-bottom: 1rem;
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            padding: 0 1rem;
+            padding: 0 0.5rem;
             font-size: 1.5rem;
             overflow: hidden;
+            font-family: "Digital", monospace;
+            border-radius: 4px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            color: #333;
         }
         
         .calculator-buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.5rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.4rem;
         }
         
         .calc-btn {
-            padding: 0.8rem;
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
+            padding: 0.6rem 0.4rem;
+            background-color: #666;
+            color: white;
+            border: 1px solid #444;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             transition: background-color 0.2s ease;
+            border-radius: 4px;
+            text-align: center;
         }
         
         .calc-btn:hover {
-            background-color: #e0e0e0;
+            background-color: #777;
         }
         
         .calc-btn.operator {
-            background-color: #ffcc80;
+            background-color: #e65100;
+        }
+        
+        .calc-btn.operator:hover {
+            background-color: #f57c00;
         }
         
         .calc-btn.equals {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: #2e7d32;
+        }
+        
+        .calc-btn.equals:hover {
+            background-color: #43a047;
         }
         
         .calc-btn.clear {
-            background-color: var(--error-color);
-            color: white;
+            background-color: #c62828;
+        }
+        
+        .calc-btn.clear:hover {
+            background-color: #d32f2f;
+        }
+        
+        .calc-btn.memory {
+            background-color: #1565c0;
+        }
+        
+        .calc-btn.memory:hover {
+            background-color: #1976d2;
+        }
+        
+        .calc-btn.function {
+            background-color: #4527a0;
+        }
+        
+        .calc-btn.function:hover {
+            background-color: #512da8;
         }
         
         .nav-buttons {
@@ -763,27 +798,49 @@
                 <button class="btn" style="background-color: #FF5722;" onclick="showSection('game')">Try Game Mode</button>
             </div>
             
+            <!-- Key equations box -->
+            <div class="formula-box" style="background-color: #e3f2fd; padding: 15px; margin-bottom: 20px; border: 2px solid #5c6bc0;">
+                <h3 style="margin-top: 0;">Key Equations:</h3>
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 15px;">
+                    <div style="background-color: white; padding: 10px; border-radius: 5px; border: 1px solid #ccc; min-width: 200px;">
+                        <p style="font-weight: bold; text-align: center;">Mass = Moles × M<sub>r</sub></p>
+                        <p style="text-align: center; color: #666;">mass in grams (g)</p>
+                    </div>
+                    <div style="background-color: white; padding: 10px; border-radius: 5px; border: 1px solid #ccc; min-width: 200px;">
+                        <p style="font-weight: bold; text-align: center;">Moles = Mass ÷ M<sub>r</sub></p>
+                        <p style="text-align: center; color: #666;">moles in mol</p>
+                    </div>
+                    <div style="background-color: white; padding: 10px; border-radius: 5px; border: 1px solid #ccc; min-width: 200px;">
+                        <p style="font-weight: bold; text-align: center;">Number of particles = Moles × N<sub>A</sub></p>
+                        <p style="text-align: center; color: #666;">N<sub>A</sub> = 6.02 × 10<sup>23</sup> mol<sup>-1</sup></p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="difficulty-selector">
                 <h3>Select Difficulty Level:</h3>
-                <button class="btn active" id="beginner-btn" onclick="selectDifficulty('beginner')">Beginner</button>
-                <button class="btn" id="intermediate-btn" onclick="selectDifficulty('intermediate')">Intermediate</button>
-                <button class="btn" id="advanced-btn" onclick="selectDifficulty('advanced')">Advanced</button>
+                <div style="display: flex; gap: 10px; margin: 10px 0;">
+                    <button class="btn active" id="beginner-btn" onclick="selectDifficulty('beginner')">Beginner</button>
+                    <button class="btn" id="intermediate-btn" onclick="selectDifficulty('intermediate')">Intermediate</button>
+                    <button class="btn" id="advanced-btn" onclick="selectDifficulty('advanced')">Advanced</button>
+                </div>
             </div>
             
             <div class="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
             
-            <div id="beginner-questions" class="difficulty-section active">
-                <h3>Beginner Questions</h3>
-                <div id="question-container" class="question-container">
-                    <!-- Questions will be loaded here via JavaScript -->
-                    <p>Loading questions...</p>
-                </div>
-                <div class="nav-buttons">
-                    <button class="btn" id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
-                    <button class="btn" id="next-btn" onclick="nextQuestion()">Next</button>
-                </div>
+            <div id="difficulty-title">
+                <h3 id="difficulty-heading">Beginner Questions</h3>
+            </div>
+            
+            <div id="question-container" class="question-container">
+                <!-- Questions will be loaded here via JavaScript -->
+                <p>Loading questions...</p>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn" id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
+                <button class="btn" id="next-btn" onclick="nextQuestion()">Next</button>
             </div>
         </section>
         
@@ -913,7 +970,7 @@
     <!-- Calculator -->
     <div id="calculator" class="calculator">
         <div id="calculator-header" class="calculator-header">
-            <span>Scientific Calculator</span>
+            <span>CASIO fx-83GT</span>
             <div>
                 <button class="icon-btn" onclick="minimizeCalculator()">_</button>
                 <button class="icon-btn" onclick="toggleCalculator()">×</button>
@@ -922,35 +979,41 @@
         <div class="calculator-body">
             <div id="calculator-display" class="calculator-display">0</div>
             <div class="calculator-buttons">
-                <button class="calc-btn clear" onclick="clearCalculator()">C</button>
-                <button class="calc-btn" onclick="deleteCharacter()">DEL</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('(')">(</button>
-                <button class="calc-btn operator" onclick="appendToCalculator(')')">)</button>
+                <button class="calc-btn memory" onclick="memoryStore()">M+</button>
+                <button class="calc-btn memory" onclick="memoryRecall()">MR</button>
+                <button class="calc-btn memory" onclick="memoryClear()">MC</button>
+                <button class="calc-btn clear" onclick="clearCalculator()">AC</button>
+                <button class="calc-btn clear" onclick="deleteCharacter()">DEL</button>
                 
+                <button class="calc-btn function" onclick="appendToCalculator('(')">(</button>
+                <button class="calc-btn function" onclick="appendToCalculator(')')">)</button>
+                <button class="calc-btn function" onclick="calculateSquareRoot()">√</button>
+                <button class="calc-btn function" onclick="appendToCalculator('**2')">x²</button>
+                <button class="calc-btn function" onclick="appendToCalculator('**')">x^y</button>
+                
+                <button class="calc-btn function" onclick="calculateTenPower()">10^x</button>
+                <button class="calc-btn function" onclick="calculateExp()">EXP</button>
                 <button class="calc-btn" onclick="appendToCalculator('7')">7</button>
                 <button class="calc-btn" onclick="appendToCalculator('8')">8</button>
                 <button class="calc-btn" onclick="appendToCalculator('9')">9</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('/')">/</button>
                 
+                <button class="calc-btn function" onclick="calculateLog()">log</button>
+                <button class="calc-btn function" onclick="calculateLn()">ln</button>
                 <button class="calc-btn" onclick="appendToCalculator('4')">4</button>
                 <button class="calc-btn" onclick="appendToCalculator('5')">5</button>
                 <button class="calc-btn" onclick="appendToCalculator('6')">6</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('*')">×</button>
                 
+                <button class="calc-btn operator" onclick="appendToCalculator('*')">×</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('/')">÷</button>
                 <button class="calc-btn" onclick="appendToCalculator('1')">1</button>
                 <button class="calc-btn" onclick="appendToCalculator('2')">2</button>
                 <button class="calc-btn" onclick="appendToCalculator('3')">3</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('-')">-</button>
                 
+                <button class="calc-btn operator" onclick="appendToCalculator('+')">+</button>
+                <button class="calc-btn operator" onclick="appendToCalculator('-')">-</button>
                 <button class="calc-btn" onclick="appendToCalculator('0')">0</button>
                 <button class="calc-btn" onclick="appendToCalculator('.')">.</button>
                 <button class="calc-btn equals" onclick="calculate()">=</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('+')">+</button>
-                
-                <button class="calc-btn operator" onclick="appendToCalculator('**')">^</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('Math.sqrt(')">√</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('10**')">10^</button>
-                <button class="calc-btn operator" onclick="appendToCalculator('*10**')">×10^</button>
             </div>
         </div>
     </div>
@@ -1199,6 +1262,9 @@
             document.getElementById('advanced-btn').classList.remove('active');
             document.getElementById(`${difficulty}-btn`).classList.add('active');
             
+            // Update the heading text to match the selected difficulty
+            document.getElementById('difficulty-heading').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1) + ' Questions';
+            
             currentDifficulty = difficulty;
             currentQuestionIndex = 0;
             loadQuestions();
@@ -1301,6 +1367,8 @@
         }
         
         // Calculator functions
+        let memoryValue = 0;
+        
         function toggleCalculator() {
             const calculator = document.getElementById('calculator');
             const toggleButton = document.getElementById('calculator-toggle');
@@ -1350,6 +1418,81 @@
             } catch (error) {
                 display.textContent = 'Error';
             }
+        }
+        
+        function calculateSquareRoot() {
+            const display = document.getElementById('calculator-display');
+            try {
+                const value = parseFloat(display.textContent);
+                if (value >= 0) {
+                    display.textContent = Math.sqrt(value);
+                } else {
+                    display.textContent = 'Error';
+                }
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+        
+        function calculateTenPower() {
+            const display = document.getElementById('calculator-display');
+            try {
+                const value = parseFloat(display.textContent);
+                display.textContent = Math.pow(10, value);
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+        
+        function calculateExp() {
+            // This adds "×10^" to the display for scientific notation
+            const display = document.getElementById('calculator-display');
+            display.textContent += '*10**';
+        }
+        
+        function calculateLog() {
+            const display = document.getElementById('calculator-display');
+            try {
+                const value = parseFloat(display.textContent);
+                if (value > 0) {
+                    display.textContent = Math.log10(value);
+                } else {
+                    display.textContent = 'Error';
+                }
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+        
+        function calculateLn() {
+            const display = document.getElementById('calculator-display');
+            try {
+                const value = parseFloat(display.textContent);
+                if (value > 0) {
+                    display.textContent = Math.log(value);
+                } else {
+                    display.textContent = 'Error';
+                }
+            } catch (error) {
+                display.textContent = 'Error';
+            }
+        }
+        
+        function memoryStore() {
+            const display = document.getElementById('calculator-display');
+            try {
+                memoryValue = parseFloat(display.textContent);
+            } catch (error) {
+                // Do nothing if value can't be stored
+            }
+        }
+        
+        function memoryRecall() {
+            document.getElementById('calculator-display').textContent = memoryValue;
+        }
+        
+        function memoryClear() {
+            memoryValue = 0;
         }
         
         // Make calculator draggable
