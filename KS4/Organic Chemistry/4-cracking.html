@@ -381,13 +381,32 @@
             font-size: 1.2rem;
         }
         
-        .coefficient-input {
+        .subscript-input {
             width: 40px;
-            height: 40px;
+            height: 30px;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1rem;
             border: 2px solid #ddd;
             border-radius: 5px;
+        }
+        
+        .formula-equation {
+            font-size: 1.3rem;
+            margin: 15px 0;
+        }
+        
+        .hint {
+            background-color: #f8f9fa;
+            border-left: 4px solid #f39c12;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+        
+        .button.small {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            margin: 5px 0;
         }
         
         /* For the drag and drop game */
@@ -821,8 +840,8 @@
             </div>
             
             <div class="card">
-                <h3>Balancing Equations</h3>
-                <p>Balance the following equations for cracking reactions by filling in the correct coefficients:</p>
+                <h3>Complete the Hydrocarbon Formulas</h3>
+                <p>In a cracking reaction, a larger hydrocarbon breaks down into a smaller alkane and an alkene. For each equation below, fill in the missing subscripts to complete the hydrocarbon formula:</p>
                 
                 <div id="equations-container">
                     <!-- Equation exercises will be added here via JavaScript -->
@@ -1731,32 +1750,55 @@
         checkAnswersBtn.addEventListener('click', checkAnswers);
         resetQuizBtn.addEventListener('click', setupQuiz);
         
-        // Balancing Equations
+        // Equations for formula completion
         const equationsContainer = document.getElementById('equations-container');
         const checkEquationsBtn = document.getElementById('check-equations-btn');
         const resetEquationsBtn = document.getElementById('reset-equations-btn');
         
         const equations = [
             {
-                left: "C₁₀H₂₂",
-                right: "C₆H₁₄ + C₄H₈",
-                leftCoeff: 1,
-                rightCoeff1: 1,
-                rightCoeff2: 1
+                type: 'reactant',
+                html: `C<sub>?</sub>H<sub>?</sub> → C<sub>4</sub>H<sub>10</sub> + C<sub>6</sub>H<sub>12</sub>`,
+                answers: {
+                    carbon: 10,
+                    hydrogen: 22
+                },
+                hint: "Remember, the starting alkane needs enough carbons for both products. For hydrogen, the formula for alkanes is C<sub>n</sub>H<sub>2n+2</sub> and for alkenes is C<sub>n</sub>H<sub>2n</sub>."
             },
             {
-                left: "C₁₂H₂₆",
-                right: "C₈H₁₈ + C₄H₈",
-                leftCoeff: 1,
-                rightCoeff1: 1,
-                rightCoeff2: 1
+                type: 'alkane',
+                html: `C<sub>12</sub>H<sub>26</sub> → C<sub>?</sub>H<sub>?</sub> + C<sub>5</sub>H<sub>10</sub>`,
+                answers: {
+                    carbon: 7,
+                    hydrogen: 16
+                },
+                hint: "The number of carbon atoms must be conserved. For the hydrogen in the alkane product, remember the formula C<sub>n</sub>H<sub>2n+2</sub>."
             },
             {
-                left: "C₁₆H₃₄",
-                right: "C₄H₁₀ + C₁₂H₂₄",
-                leftCoeff: 1,
-                rightCoeff1: 1,
-                rightCoeff2: 1
+                type: 'alkene',
+                html: `C<sub>16</sub>H<sub>34</sub> → C<sub>10</sub>H<sub>22</sub> + C<sub>?</sub>H<sub>?</sub>`,
+                answers: {
+                    carbon: 6,
+                    hydrogen: 12
+                },
+                hint: "The number of carbon atoms must be conserved. For the hydrogen in the alkene product, remember the formula C<sub>n</sub>H<sub>2n</sub>."
+            },
+            {
+                type: 'complex-reactant',
+                html: `C<sub>?</sub>H<sub>?</sub> → C<sub>8</sub>H<sub>18</sub> + C<sub>10</sub>H<sub>20</sub>`,
+                answers: {
+                    carbon: 18,
+                    hydrogen: 38
+                },
+                hint: "Add up the carbon atoms in the products. For hydrogen, remember that in an alkane, the hydrogen count is 2n+2, and in an alkene, it's 2n."
+            },
+            {
+                type: 'terminal-alkene',
+                html: `C<sub>14</sub>H<sub>30</sub> → C<sub>8</sub>H<sub>18</sub> + C<sub>6</sub>H<sub>?</sub>`,
+                answers: {
+                    hydrogen: 12
+                },
+                hint: "For an alkene, the formula is C<sub>n</sub>H<sub>2n</sub>. So for C<sub>6</sub>, the hydrogen count would be 2×6."
             }
         ];
         
@@ -1765,45 +1807,168 @@
             let equationHTML = '';
             
             equations.forEach((eq, index) => {
-                equationHTML += `
+                let questionHTML = `
                     <div class="equation-container" id="equation-${index}">
-                        <input type="number" min="1" max="10" class="coefficient-input" id="left-coeff-${index}" placeholder="?">
-                        ${eq.left} →
-                        <input type="number" min="1" max="10" class="coefficient-input" id="right-coeff1-${index}" placeholder="?">
-                        ${eq.right}
-                        <span class="feedback" id="equation-feedback-${index}"></span>
+                        <h4>Equation ${index + 1}:</h4>
+                        <div class="formula-equation">
+                `;
+                
+                // Replace the ? marks with input fields
+                const inputFormula = eq.html.replace(/\?/g, (match, offset, string) => {
+                    // Check if this ? is for carbon or hydrogen
+                    const prevChar = string.charAt(offset - 1);
+                    const inputName = prevChar === 'C' ? 'carbon' : 'hydrogen';
+                    return `<input type="number" min="1" max="50" class="subscript-input" 
+                            id="${inputName}-${index}" placeholder="?">`;
+                });
+                
+                questionHTML += inputFormula;
+                
+                questionHTML += `
+                        </div>
+                        <div class="feedback correct" id="feedback-correct-${index}">Correct! The formula balances correctly.</div>
+                        <div class="feedback incorrect" id="feedback-incorrect-${index}">Incorrect. Check your carbon and hydrogen counts.</div>
+                        <div class="debug-info" id="debug-${index}" style="font-size: 0.8rem; color: #666;"></div>
+                        <button class="button small" id="hint-btn-${index}">Show Hint</button>
+                        <div class="hint" id="hint-${index}" style="display: none;">${eq.hint}</div>
                     </div>
                 `;
+                
+                equationHTML += questionHTML;
             });
             
             equationsContainer.innerHTML = equationHTML;
+            
+            // Add event listeners for hint buttons
+            equations.forEach((eq, index) => {
+                const hintBtn = document.getElementById(`hint-btn-${index}`);
+                const hint = document.getElementById(`hint-${index}`);
+                
+                hintBtn.addEventListener('click', function() {
+                    if (hint.style.display === 'none') {
+                        hint.style.display = 'block';
+                        hintBtn.textContent = 'Hide Hint';
+                    } else {
+                        hint.style.display = 'none';
+                        hintBtn.textContent = 'Show Hint';
+                    }
+                });
+            });
         }
         
         function checkEquations() {
             let correctCount = 0;
             
             equations.forEach((eq, index) => {
-                const leftCoeffInput = document.getElementById(`left-coeff-${index}`);
-                const rightCoeff1Input = document.getElementById(`right-coeff1-${index}`);
-                const feedbackSpan = document.getElementById(`equation-feedback-${index}`);
+                const feedbackCorrect = document.getElementById(`feedback-correct-${index}`);
+                const feedbackIncorrect = document.getElementById(`feedback-incorrect-${index}`);
+                const debugInfo = document.getElementById(`debug-${index}`);
                 
-                const leftCoeff = parseInt(leftCoeffInput.value) || 0;
-                const rightCoeff1 = parseInt(rightCoeff1Input.value) || 0;
+                feedbackCorrect.style.display = 'none';
+                feedbackIncorrect.style.display = 'none';
                 
-                if (leftCoeff === eq.leftCoeff && rightCoeff1 === eq.rightCoeff1) {
-                    feedbackSpan.textContent = " ✓ Correct!";
-                    feedbackSpan.style.color = 'green';
+                let allCorrect = true;
+                let debugText = "";
+                
+                // Explicit checking for each equation to avoid any logic issues
+                if (index === 0) {
+                    // Equation 1: C?H? → C₄H₁₀ + C₆H₁₂
+                    const carbonInput = document.getElementById(`carbon-0`);
+                    const hydrogenInput = document.getElementById(`hydrogen-0`);
+                    
+                    const carbonValue = carbonInput ? carbonInput.value : "";
+                    const hydrogenValue = hydrogenInput ? hydrogenInput.value : "";
+                    
+                    debugText = `You entered: C<sub>${carbonValue}</sub>H<sub>${hydrogenValue}</sub>, Expected: C<sub>10</sub>H<sub>22</sub>`;
+                    
+                    if (carbonValue === "10" && hydrogenValue === "22") {
+                        allCorrect = true;
+                    } else {
+                        allCorrect = false;
+                    }
+                }
+                else if (index === 1) {
+                    // Equation 2: C₁₂H₂₆ → C?H? + C₅H₁₀
+                    const carbonInput = document.getElementById(`carbon-1`);
+                    const hydrogenInput = document.getElementById(`hydrogen-1`);
+                    
+                    const carbonValue = carbonInput ? carbonInput.value : "";
+                    const hydrogenValue = hydrogenInput ? hydrogenInput.value : "";
+                    
+                    debugText = `You entered: C<sub>${carbonValue}</sub>H<sub>${hydrogenValue}</sub>, Expected: C<sub>7</sub>H<sub>16</sub>`;
+                    
+                    if (carbonValue === "7" && hydrogenValue === "16") {
+                        allCorrect = true;
+                    } else {
+                        allCorrect = false;
+                    }
+                }
+                else if (index === 2) {
+                    // Equation 3: C₁₆H₃₄ → C₁₀H₂₂ + C?H?
+                    const carbonInput = document.getElementById(`carbon-2`);
+                    const hydrogenInput = document.getElementById(`hydrogen-2`);
+                    
+                    const carbonValue = carbonInput ? carbonInput.value : "";
+                    const hydrogenValue = hydrogenInput ? hydrogenInput.value : "";
+                    
+                    debugText = `You entered: C<sub>${carbonValue}</sub>H<sub>${hydrogenValue}</sub>, Expected: C<sub>6</sub>H<sub>12</sub>`;
+                    
+                    if (carbonValue === "6" && hydrogenValue === "12") {
+                        allCorrect = true;
+                    } else {
+                        allCorrect = false;
+                    }
+                }
+                else if (index === 3) {
+                    // Equation 4: C?H? → C₈H₁₈ + C₁₀H₂₀
+                    const carbonInput = document.getElementById(`carbon-3`);
+                    const hydrogenInput = document.getElementById(`hydrogen-3`);
+                    
+                    const carbonValue = carbonInput ? carbonInput.value : "";
+                    const hydrogenValue = hydrogenInput ? hydrogenInput.value : "";
+                    
+                    debugText = `You entered: C<sub>${carbonValue}</sub>H<sub>${hydrogenValue}</sub>, Expected: C<sub>18</sub>H<sub>38</sub>`;
+                    
+                    if (carbonValue === "18" && hydrogenValue === "38") {
+                        allCorrect = true;
+                    } else {
+                        allCorrect = false;
+                    }
+                }
+                else if (index === 4) {
+                    // Equation 5: C₁₄H₃₀ → C₈H₁₈ + C₆H?
+                    const hydrogenInput = document.getElementById(`hydrogen-4`);
+                    const hydrogenValue = hydrogenInput ? hydrogenInput.value : "";
+                    
+                    debugText = `You entered: C<sub>6</sub>H<sub>${hydrogenValue}</sub>, Expected: C<sub>6</sub>H<sub>12</sub>`;
+                    
+                    if (hydrogenValue === "12") {
+                        allCorrect = true;
+                    } else {
+                        allCorrect = false;
+                    }
+                }
+                
+                // Display feedback
+                debugInfo.innerHTML = debugText;
+                
+                if (allCorrect) {
+                    feedbackCorrect.style.display = 'block';
                     correctCount++;
                 } else {
-                    feedbackSpan.textContent = " ✗ Try again";
-                    feedbackSpan.style.color = 'red';
+                    feedbackIncorrect.style.display = 'block';
                 }
             });
             
             if (correctCount === equations.length) {
                 showModal(
-                    "Well Done!", 
-                    `You've correctly balanced all ${equations.length} equations.`
+                    "Excellent Work!", 
+                    `You've correctly completed all ${equations.length} hydrocarbon formulas. You understand how to balance cracking equations and determine the correct formulas!`
+                );
+            } else {
+                showModal(
+                    "Keep Practicing", 
+                    `You got ${correctCount} out of ${equations.length} correct. Remember to check both carbon and hydrogen balance in the equations.`
                 );
             }
         }
