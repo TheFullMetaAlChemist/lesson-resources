@@ -1,1 +1,1517 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metal Extraction by Electrolysis: Aluminum</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), #6ab7ff);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin: 25px 0 15px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            color: var(--dark);
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .nav-tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background-color: #e9ecef;
+            border-radius: 10px 10px 0 0;
+            margin-right: 5px;
+        }
+        
+        .nav-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0d62d1;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .highlight-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .diagram-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        #animation-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .question-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options {
+            margin-top: 15px;
+        }
+        
+        .option {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background-color: #f1f3f5;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background-color: #e9ecef;
+        }
+        
+        .option.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .option.correct {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .option.incorrect {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .feedback.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .feedback.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        #game-container {
+            width: 100%;
+            height: 500px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .game-item {
+            position: absolute;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+        
+        .electrode {
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .anode {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .cathode {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .ion {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .positive-ion {
+            background-color: #dc3545;
+        }
+        
+        .negative-ion {
+            background-color: #28a745;
+        }
+        
+        .element {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .drop-zone {
+            border: 2px dashed #6c757d;
+            border-radius: 5px;
+            padding: 20px;
+            min-height: 80px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--primary);
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Animation specific styles */
+        #electrolysis-cell {
+            width: 80%;
+            height: 300px;
+            margin: 0 auto;
+            background-color: #cfe8fc;
+            border: 3px solid #6c757d;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .electrode-container {
+            position: absolute;
+            height: 280px;
+            width: 50px;
+            top: 10px;
+        }
+        
+        #anode-container {
+            left: 50px;
+        }
+        
+        #cathode-container {
+            right: 50px;
+        }
+        
+        .electrode-rod {
+            width: 20px;
+            height: 220px;
+            margin: 0 auto;
+            position: relative;
+            top: 10px;
+        }
+        
+        #anode-rod {
+            background-color: #212529;
+            border-radius: 3px;
+        }
+        
+        #cathode-rod {
+            background-color: #6c757d;
+            border-radius: 3px;
+        }
+        
+        .ion-particle {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        #controls {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .reaction-text {
+            position: absolute;
+            width: 150px;
+            font-size: 0.9rem;
+            padding: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        #anode-reaction {
+            top: 50px;
+            left: 5px;
+        }
+        
+        #cathode-reaction {
+            top: 50px;
+            right: 5px;
+        }
+        
+        /* Game specific styles */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .game-card {
+            background-color: var(--primary);
+            color: white;
+            height: 120px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .game-card-front, .game-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .game-card-front {
+            background-color: var(--primary);
+            transform: rotateY(0deg);
+        }
+        
+        .game-card-back {
+            background-color: white;
+            color: var(--dark);
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary);
+        }
+        
+        .game-card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .matched {
+            background-color: var(--success);
+            opacity: 0.8;
+        }
+        
+        #timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+        
+        #score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--success);
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0 15px 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .nav-tab {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            #animation-container {
+                height: 300px;
+            }
+            
+            #game-container {
+                height: 400px;
+            }
+            
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Metal Extraction by Electrolysis</h1>
+            <p>A comprehensive guide to understanding how metals are extracted using electrolysis, with a focus on aluminium production</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <ul class="nav-tabs">
+            <li class="nav-tab active" data-tab="tutorial">Tutorial</li>
+            <li class="nav-tab" data-tab="practice">Practice</li>
+            <li class="nav-tab" data-tab="game">Game</li>
+        </ul>
+        
+        <!-- TUTORIAL SECTION -->
+        <div id="tutorial" class="tab-content active">
+            <div class="card">
+                <h2>Introduction to Metal Extraction</h2>
+                <p>Metals can be extracted from their ores using various methods depending on their reactivity. The method used depends on the position of the metal in the reactivity series:</p>
+                
+                <div class="highlight-box">
+                    <p><strong>Very reactive metals</strong> (like potassium, sodium, calcium, magnesium and aluminium) are extracted using <strong>electrolysis</strong>.</p>
+                    <p><strong>Moderately reactive metals</strong> (like zinc, iron and tin) can be extracted using carbon reduction.</p>
+                    <p><strong>Less reactive metals</strong> (like copper, silver and gold) may be found as native metals or can be extracted by simple chemical processes.</p>
+                </div>
+                
+                <p>In this lesson, we'll focus on how <strong>electrolysis</strong> is used to extract metals that are too reactive to be extracted by reduction with carbon or that react with carbon.</p>
+            </div>
+            
+            <div class="card">
+                <h2>Understanding Electrolysis</h2>
+                <p>Electrolysis is the process of using electricity to break down a compound into its elements. It involves:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>A liquid compound or solution that can conduct electricity (an electrolyte)</li>
+                    <li>Two electrodes (usually made of carbon or an inert metal)</li>
+                    <li>A source of direct current (DC) electricity</li>
+                </ul>
+                
+                <p>During electrolysis:</p>
+                <ol style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>The electrolyte is melted or dissolved in water to allow ions to move freely</li>
+                    <li>The positive ions (cations) are attracted to the negative electrode (cathode)</li>
+                    <li>The negative ions (anions) are attracted to the positive electrode (anode)</li>
+                    <li>At the electrodes, the ions either gain or lose electrons (redox reactions)</li>
+                </ol>
+                
+                <div class="highlight-box">
+                    <p><strong>Key Point:</strong> Large amounts of energy are used in the extraction process to melt the compounds and to produce the electrical current.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Aluminium Extraction</h2>
+                <p>Aluminium is the most abundant metal in the Earth's crust, but it's never found in its pure form due to its high reactivity. The main ore of aluminium is <span class="tooltip">bauxite<span class="tooltip-text">Bauxite contains aluminium oxide (Al₂O₃) mixed with impurities</span></span>, which contains aluminium oxide (Al₂O₃).</p>
+                
+                <h3>The Hall-Héroult Process</h3>
+                <p>Aluminium is manufactured by the electrolysis of a molten mixture of aluminium oxide (Al₂O₃) and cryolite (Na₃AlF₆) using carbon as the positive electrode (anode).</p>
+                
+                <div class="highlight-box">
+                    <h4>Why is a mixture used as the electrolyte?</h4>
+                    <p>Pure aluminium oxide (Al₂O₃) has a very high melting point (over 2000°C), which would make the process extremely expensive due to energy costs.</p>
+                    <p>Cryolite (Na₃AlF₆) is added to lower the melting point to about 950°C, making the process more economically viable. This mixture also improves the conductivity of the electrolyte.</p>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>Why must the positive electrode (anode) be continually replaced?</h4>
+                    <p>The carbon anodes are gradually consumed during the electrolysis process because:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Oxygen is produced at the anode from the oxide ions (O²⁻)</li>
+                        <li>This oxygen reacts with the carbon anode to form carbon dioxide (CO₂)</li>
+                        <li>The reaction: C(s) + O₂(g) → CO₂(g)</li>
+                        <li>This gradually erodes the anode, requiring regular replacement</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Electrolysis of Aluminium Animation</h2>
+                <p>Below is an interactive animation showing the electrolysis process for aluminium extraction. Use the controls to observe what happens at each electrode.</p>
+                
+                <div id="animation-container">
+                    <div id="electrolysis-cell">
+                        <div class="electrode-container" id="anode-container">
+                            <div class="electrode-rod" id="anode-rod"></div>
+                            <div style="text-align: center; margin-top: 5px; font-weight: bold;">Anode (+)</div>
+                        </div>
+                        
+                        <div class="electrode-container" id="cathode-container">
+                            <div class="electrode-rod" id="cathode-rod"></div>
+                            <div style="text-align: center; margin-top: 5px; font-weight: bold;">Cathode (-)</div>
+                        </div>
+                        
+                        <div class="reaction-text" id="anode-reaction">
+                            O²⁻ → O₂ + 4e⁻<br>
+                            C + O₂ → CO₂
+                        </div>
+                        
+                        <div class="reaction-text" id="cathode-reaction">
+                            Al³⁺ + 3e⁻ → Al
+                        </div>
+                    </div>
+                    
+                    <div id="controls">
+                        <button id="start-animation" class="btn btn-primary">Start Animation</button>
+                        <button id="reset-animation" class="btn btn-primary" disabled>Reset</button>
+                    </div>
+                    
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #dc3545;"></div>
+                            <span>Al³⁺ ions</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #28a745;"></div>
+                            <span>O²⁻ ions</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #6c757d;"></div>
+                            <span>Aluminium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #17a2b8;"></div>
+                            <span>Oxygen</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #343a40;"></div>
+                            <span>Carbon dioxide</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h3>What's happening in the animation?</h3>
+                    <ol style="margin-left: 20px;">
+                        <li>The molten mixture of aluminium oxide and cryolite contains Al³⁺ and O²⁻ ions</li>
+                        <li>At the cathode (negative electrode): Al³⁺ ions gain electrons to form aluminium metal</li>
+                        <li>At the anode (positive electrode): O²⁻ ions lose electrons to form oxygen gas</li>
+                        <li>The oxygen reacts with the carbon anode to form carbon dioxide</li>
+                        <li>Molten aluminium collects at the bottom of the cell and is periodically tapped off</li>
+                        <li>The carbon anodes are gradually consumed and must be replaced</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>Environmental and Economic Considerations</h2>
+                <p>Aluminium extraction by electrolysis has significant environmental and economic impacts:</p>
+                
+                <h3>Environmental Impact</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>High energy consumption contributes to carbon emissions if fossil fuels are used</li>
+                    <li>Production of carbon dioxide from the anodes adds to greenhouse gas emissions</li>
+                    <li>Mining of bauxite can lead to deforestation and habitat destruction</li>
+                </ul>
+                
+                <h3>Economic Considerations</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Electrolysis is very energy-intensive and therefore expensive</li>
+                    <li>The cost of regularly replacing carbon anodes adds to production expenses</li>
+                    <li>Recycling aluminium uses only about 5% of the energy needed for primary production</li>
+                </ul>
+                
+                <div class="highlight-box">
+                    <p><strong>Key Fact:</strong> Recycling aluminium is highly efficient and can save significant energy and resources. Aluminium can be recycled indefinitely without loss of quality.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PRACTICE SECTION -->
+        <div id="practice" class="tab-content">
+            <div class="card">
+                <h2>Test Your Knowledge</h2>
+                <p>Answer the following questions to check your understanding of metal extraction by electrolysis.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="quiz-progress"></div>
+                </div>
+                
+                <div id="quiz-container">
+                    <!-- Questions will be loaded here by JavaScript -->
+                </div>
+                
+                <div id="quiz-results" style="display: none;">
+                    <h3>Quiz Results</h3>
+                    <p>You scored <span id="quiz-score">0</span> out of <span id="quiz-total">0</span></p>
+                    <button id="restart-quiz" class="btn btn-primary">Restart Quiz</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GAME SECTION -->
+        <div id="game" class="tab-content">
+            <div class="card">
+                <h2>Electrolysis Memory Match</h2>
+                <p>Test your knowledge of electrolysis terminology by matching the terms with their correct definitions. Find all pairs as quickly as you can!</p>
+                
+                <div id="game-stats">
+                    <div id="timer">Time: 0s</div>
+                    <div id="score">Matches: 0/8</div>
+                </div>
+                
+                <div class="game-board" id="memory-game">
+                    <!-- Memory cards will be loaded here by JavaScript -->
+                </div>
+                
+                <button id="restart-game" class="btn btn-primary">Restart Game</button>
+            </div>
+            
+            <div class="card">
+                <h2>Aluminium Production Challenge</h2>
+                <p>Arrange the steps of aluminium production in the correct order by dragging and dropping them into the sequence boxes.</p>
+                
+                <div id="drag-drop-game">
+                    <div class="drag-items" id="steps-container">
+                        <!-- Draggable items will be loaded here -->
+                    </div>
+                    
+                    <h3>Place the steps in the correct order:</h3>
+                    <div class="drop-zones" id="sequence-container">
+                        <!-- Drop zones will be loaded here -->
+                    </div>
+                    
+                    <button id="check-sequence" class="btn btn-primary" style="margin-top: 15px;">Check Answers</button>
+                    <div id="sequence-feedback" class="feedback"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Electrolysis Animation
+        const startAnimationBtn = document.getElementById('start-animation');
+        const resetAnimationBtn = document.getElementById('reset-animation');
+        const electrolysisCellElem = document.getElementById('electrolysis-cell');
+        const anodeReactionElem = document.getElementById('anode-reaction');
+        const cathodeReactionElem = document.getElementById('cathode-reaction');
+        const anodeRodElem = document.getElementById('anode-rod');
+        
+        let animationRunning = false;
+        let particles = [];
+        let anodeErosionInterval;
+        
+        function createIonParticle(type) {
+            const ion = document.createElement('div');
+            ion.classList.add('ion-particle');
+            
+            // Random position within the cell, but not too close to the edges
+            const randomX = 100 + Math.random() * (electrolysisCellElem.offsetWidth - 200);
+            const randomY = 50 + Math.random() * (electrolysisCellElem.offsetHeight - 100);
+            
+            ion.style.left = `${randomX}px`;
+            ion.style.top = `${randomY}px`;
+            
+            if (type === 'aluminium') {
+                ion.textContent = 'Al³⁺';
+                ion.style.backgroundColor = '#dc3545';
+            } else {
+                ion.textContent = 'O²⁻';
+                ion.style.backgroundColor = '#28a745';
+            }
+            
+            electrolysisCellElem.appendChild(ion);
+            return ion;
+        }
+        
+        function moveToElectrode(ionElem, isAluminium) {
+            const targetX = isAluminium ? 
+                electrolysisCellElem.offsetWidth - 80 : // Cathode (for aluminium)
+                70; // Anode (for oxygen)
+                
+            const randomY = 50 + Math.random() * 150;
+            
+            // Animation duration between 1.5 and 3 seconds
+            const duration = 1500 + Math.random() * 1500;
+            
+            // Animate movement
+            return new Promise(resolve => {
+                const startTime = Date.now();
+                const startX = parseFloat(ionElem.style.left);
+                const startY = parseFloat(ionElem.style.top);
+                
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Easing function for smoother movement
+                    const easedProgress = 1 - Math.pow(1 - progress, 3);
+                    
+                    ionElem.style.left = `${startX + (targetX - startX) * easedProgress}px`;
+                    ionElem.style.top = `${startY + (randomY - startY) * easedProgress}px`;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        resolve();
+                    }
+                }
+                
+                animate();
+            });
+        }
+        
+        function produceAluminium(ionElem) {
+            // Change appearance to represent aluminium
+            ionElem.textContent = 'Al';
+            ionElem.style.backgroundColor = '#6c757d';
+            
+            // Animate sinking to bottom
+            return new Promise(resolve => {
+                const startY = parseFloat(ionElem.style.top);
+                const targetY = electrolysisCellElem.offsetHeight - 40;
+                const duration = 1000;
+                const startTime = Date.now();
+                
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    ionElem.style.top = `${startY + (targetY - startY) * progress}px`;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        resolve();
+                    }
+                }
+                
+                animate();
+            });
+        }
+        
+        function produceOxygen(ionElem) {
+            // Change appearance to represent oxygen
+            ionElem.textContent = 'O₂';
+            ionElem.style.backgroundColor = '#17a2b8';
+            
+            // Animate reaction with carbon anode
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    ionElem.textContent = 'CO₂';
+                    ionElem.style.backgroundColor = '#343a40';
+                    
+                    // Animate rising
+                    const startY = parseFloat(ionElem.style.top);
+                    const targetY = -30; // Above the cell
+                    const duration = 1500;
+                    const startTime = Date.now();
+                    
+                    function animate() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        ionElem.style.top = `${startY + (targetY - startY) * progress}px`;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            electrolysisCellElem.removeChild(ionElem);
+                            resolve();
+                        }
+                    }
+                    
+                    animate();
+                }, 500);
+            });
+        }
+        
+        function erodeAnode() {
+            // Initially the anode is 220px high
+            const currentHeight = parseFloat(getComputedStyle(anodeRodElem).height);
+            if (currentHeight > 150) {
+                anodeRodElem.style.height = `${currentHeight - 1}px`;
+            } else {
+                clearInterval(anodeErosionInterval);
+            }
+        }
+        
+        async function runAnimation() {
+            animationRunning = true;
+            startAnimationBtn.disabled = true;
+            resetAnimationBtn.disabled = true;
+            
+            // Show reaction equations
+            anodeReactionElem.style.opacity = 1;
+            cathodeReactionElem.style.opacity = 1;
+            
+            // Start anode erosion
+            anodeErosionInterval = setInterval(erodeAnode, 500);
+            
+            // Run multiple ion movements in parallel
+            const aluminiumIons = [];
+            const oxygenIons = [];
+            
+            // Create 10 aluminium ions and 15 oxygen ions (as O²⁻ needs more ions to balance)
+            for (let i = 0; i < 10; i++) {
+                aluminiumIons.push(createIonParticle('aluminium'));
+            }
+            
+            for (let i = 0; i < 15; i++) {
+                oxygenIons.push(createIonParticle('oxygen'));
+            }
+            
+            // Move all ions to their respective electrodes
+            const alPromises = aluminiumIons.map(ion => moveToElectrode(ion, true));
+            const oxPromises = oxygenIons.map(ion => moveToElectrode(ion, false));
+            
+            // Wait for ions to reach electrodes
+            await Promise.all([...alPromises, ...oxPromises]);
+            
+            // Process reactions at electrodes
+            const alReactions = aluminiumIons.map(ion => produceAluminium(ion));
+            const oxReactions = oxygenIons.map(ion => produceOxygen(ion));
+            
+            // Wait for all reactions to complete
+            await Promise.all([...alReactions, ...oxReactions]);
+            
+            // Animation complete
+            resetAnimationBtn.disabled = false;
+            animationRunning = false;
+        }
+        
+        function resetAnimation() {
+            // Clear any existing particles
+            document.querySelectorAll('.ion-particle').forEach(particle => {
+                particle.remove();
+            });
+            
+            // Reset anode
+            clearInterval(anodeErosionInterval);
+            anodeRodElem.style.height = '220px';
+            
+            // Hide reaction equations
+            anodeReactionElem.style.opacity = 0;
+            cathodeReactionElem.style.opacity = 0;
+            
+            // Reset buttons
+            startAnimationBtn.disabled = false;
+            resetAnimationBtn.disabled = true;
+        }
+        
+        startAnimationBtn.addEventListener('click', runAnimation);
+        resetAnimationBtn.addEventListener('click', resetAnimation);
+        
+        // Quiz System
+        const quizQuestions = [
+            {
+                question: "Why is electrolysis used to extract metals like aluminium?",
+                options: [
+                    "Because it is cheaper than other methods",
+                    "Because these metals are too reactive to be extracted by reduction with carbon",
+                    "Because it produces higher purity metals",
+                    "Because it requires less energy than other methods"
+                ],
+                answer: 1,
+                explanation: "Electrolysis is used for very reactive metals like aluminium because they are too reactive to be extracted by reduction with carbon or they react with carbon."
+            },
+            {
+                question: "Why is cryolite (Na₃AlF₆) added to aluminium oxide during the extraction of aluminium?",
+                options: [
+                    "To increase the melting point of the mixture",
+                    "To lower the melting point of the mixture",
+                    "To make the final aluminium stronger",
+                    "To remove impurities from the aluminium oxide"
+                ],
+                answer: 1,
+                explanation: "Cryolite lowers the melting point of aluminium oxide from over 2000°C to about 950°C, making the process more economically viable by reducing energy costs."
+            },
+            {
+                question: "Why must the carbon anodes be continually replaced during aluminium extraction?",
+                options: [
+                    "They gradually dissolve in the molten electrolyte",
+                    "They become coated with aluminium and stop working",
+                    "They are gradually consumed as they react with oxygen to form carbon dioxide",
+                    "They break due to the high temperatures"
+                ],
+                answer: 2,
+                explanation: "The carbon anodes react with the oxygen produced (from oxide ions) to form carbon dioxide gas (C + O₂ → CO₂), gradually eroding the anode."
+            },
+            {
+                question: "What happens at the cathode during the electrolysis of aluminium oxide?",
+                options: [
+                    "Oxygen is produced",
+                    "Carbon dioxide is produced",
+                    "Aluminium oxide is broken down",
+                    "Aluminium ions gain electrons to form aluminium metal"
+                ],
+                answer: 3,
+                explanation: "At the cathode (negative electrode), aluminium ions (Al³⁺) gain electrons to form aluminium metal through the reaction: Al³⁺ + 3e⁻ → Al"
+            },
+            {
+                question: "Why is the extraction of aluminium through electrolysis considered energy-intensive?",
+                options: [
+                    "Because of the high melting point of the electrolyte mixture",
+                    "Because of the need for continuous stirring",
+                    "Because of the need to produce large amounts of electrical current and heat the mixture",
+                    "Because of the need to purify the metal afterwards"
+                ],
+                answer: 2,
+                explanation: "Large amounts of energy are used in the extraction process to both melt the compounds (heating to around 950°C) and to produce the electrical current needed for electrolysis."
+            },
+            {
+                question: "What is the main environmental concern with aluminium extraction?",
+                options: [
+                    "Water pollution from the electrolysis process",
+                    "High energy consumption and carbon dioxide production",
+                    "Noise pollution from the electrolysis plants",
+                    "Radiation from the electrodes"
+                ],
+                answer: 1,
+                explanation: "The high energy consumption contributes to carbon emissions if fossil fuels are used, and the production of carbon dioxide from the carbon anodes adds to greenhouse gas emissions."
+            },
+            {
+                question: "What is the correct half-equation for the reaction at the anode during aluminium extraction?",
+                options: [
+                    "Al³⁺ + 3e⁻ → Al",
+                    "2O²⁻ → O₂ + 4e⁻",
+                    "2H₂O → O₂ + 4H⁺ + 4e⁻",
+                    "2Cl⁻ → Cl₂ + 2e⁻"
+                ],
+                answer: 1,
+                explanation: "At the anode (positive electrode), oxide ions (O²⁻) lose electrons to form oxygen gas through the reaction: 2O²⁻ → O₂ + 4e⁻"
+            },
+            {
+                question: "Approximately how much energy is saved by recycling aluminium compared to producing it from raw materials?",
+                options: [
+                    "About 50%",
+                    "About 75%",
+                    "About 95%",
+                    "About 25%"
+                ],
+                answer: 2,
+                explanation: "Recycling aluminium uses only about 5% of the energy needed for primary production, saving approximately 95% of the energy."
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+        
+        function loadQuestion() {
+            const quizContainer = document.getElementById('quiz-container');
+            const currentQ = quizQuestions[currentQuestion];
+            
+            // Update progress bar
+            const progressBar = document.getElementById('quiz-progress');
+            progressBar.style.width = `${((currentQuestion + 1) / quizQuestions.length) * 100}%`;
+            
+            // Create question card
+            const questionCard = document.createElement('div');
+            questionCard.className = 'question-card';
+            
+            // Add question number and text
+            questionCard.innerHTML = `
+                <h3>Question ${currentQuestion + 1} of ${quizQuestions.length}</h3>
+                <p>${currentQ.question}</p>
+                <div class="options"></div>
+                <div class="feedback"></div>
+                <button class="btn btn-primary" id="next-question" style="display: none;">Next Question</button>
+            `;
+            
+            // Clear previous question and add new one
+            quizContainer.innerHTML = '';
+            quizContainer.appendChild(questionCard);
+            
+            // Add options
+            const optionsContainer = questionCard.querySelector('.options');
+            currentQ.options.forEach((option, index) => {
+                const optionElem = document.createElement('div');
+                optionElem.className = 'option';
+                optionElem.textContent = option;
+                optionElem.dataset.index = index;
+                optionElem.addEventListener('click', selectOption);
+                optionsContainer.appendChild(optionElem);
+            });
+            
+            // Setup next button
+            const nextButton = document.getElementById('next-question');
+            nextButton.addEventListener('click', () => {
+                currentQuestion++;
+                if (currentQuestion < quizQuestions.length) {
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            });
+        }
+        
+        function selectOption(e) {
+            // Disable further selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.removeEventListener('click', selectOption);
+                opt.style.cursor = 'default';
+            });
+            
+            const selectedIndex = parseInt(e.target.dataset.index);
+            const correctIndex = quizQuestions[currentQuestion].answer;
+            
+            // Mark selected option
+            e.target.classList.add('selected');
+            
+            // Show correct/incorrect feedback
+            if (selectedIndex === correctIndex) {
+                e.target.classList.add('correct');
+                score++;
+                showFeedback(true, quizQuestions[currentQuestion].explanation);
+            } else {
+                e.target.classList.add('incorrect');
+                // Also highlight the correct answer
+                document.querySelectorAll('.option')[correctIndex].classList.add('correct');
+                showFeedback(false, quizQuestions[currentQuestion].explanation);
+            }
+            
+            // Show next button
+            document.getElementById('next-question').style.display = 'block';
+        }
+        
+        function showFeedback(isCorrect, explanation) {
+            const feedbackElem = document.querySelector('.question-card .feedback');
+            feedbackElem.className = `feedback ${isCorrect ? 'success' : 'error'}`;
+            feedbackElem.innerHTML = `
+                <p><strong>${isCorrect ? 'Correct!' : 'Incorrect!'}</strong></p>
+                <p>${explanation}</p>
+            `;
+        }
+        
+        function showResults() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'block';
+            document.getElementById('quiz-score').textContent = score;
+            document.getElementById('quiz-total').textContent = quizQuestions.length;
+            
+            // Reset quiz on restart
+            document.getElementById('restart-quiz').addEventListener('click', () => {
+                currentQuestion = 0;
+                score = 0;
+                document.getElementById('quiz-container').style.display = 'block';
+                document.getElementById('quiz-results').style.display = 'none';
+                loadQuestion();
+            });
+        }
+        
+        // Memory Match Game
+        const memoryCards = [
+            { id: 1, term: "Anode", definition: "Positive electrode where oxidation occurs" },
+            { id: 2, term: "Cathode", definition: "Negative electrode where reduction occurs" },
+            { id: 3, term: "Electrolyte", definition: "Molten or dissolved substance that conducts electricity" },
+            { id: 4, term: "Cryolite", definition: "Added to lower the melting point of aluminum oxide" },
+            { id: 5, term: "Bauxite", definition: "Main ore of aluminum containing aluminum oxide" },
+            { id: 6, term: "Carbon dioxide", definition: "Gas produced when carbon anodes react with oxygen" },
+            { id: 7, term: "Hall-Héroult", definition: "Process used for commercial aluminum production" },
+            { id: 8, term: "Recycling", definition: "Uses only 5% of the energy needed for primary aluminum production" }
+        ];
+        
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let canFlip = false;
+        let gameTimer;
+        let gameTime = 0;
+        
+        function setupMemoryGame() {
+            // Double the cards (pairs of terms and definitions)
+            const allCards = [
+                ...memoryCards.map(card => ({ ...card, type: 'term' })),
+                ...memoryCards.map(card => ({ ...card, type: 'definition' }))
+            ];
+            
+            // Shuffle the cards
+            cards = shuffleArray(allCards);
+            
+            const gameBoard = document.getElementById('memory-game');
+            gameBoard.innerHTML = '';
+            
+            // Create cards
+            cards.forEach((card, index) => {
+                const cardElem = document.createElement('div');
+                cardElem.className = 'game-card';
+                cardElem.dataset.index = index;
+                
+                const frontElem = document.createElement('div');
+                frontElem.className = 'game-card-front';
+                frontElem.textContent = '?';
+                
+                const backElem = document.createElement('div');
+                backElem.className = 'game-card-back';
+                backElem.textContent = card.type === 'term' ? card.term : card.definition;
+                
+                cardElem.appendChild(frontElem);
+                cardElem.appendChild(backElem);
+                
+                cardElem.addEventListener('click', () => flipCard(index));
+                gameBoard.appendChild(cardElem);
+            });
+            
+            // Reset game state
+            flippedCards = [];
+            matchedPairs = 0;
+            document.getElementById('score').textContent = `Matches: 0/8`;
+            
+            // Start timer
+            clearInterval(gameTimer);
+            gameTime = 0;
+            document.getElementById('timer').textContent = `Time: 0s`;
+            gameTimer = setInterval(updateGameTimer, 1000);
+            
+            // Allow flipping after a brief delay
+            setTimeout(() => {
+                canFlip = true;
+            }, 500);
+        }
+        
+        function updateGameTimer() {
+            gameTime++;
+            document.getElementById('timer').textContent = `Time: ${gameTime}s`;
+        }
+        
+        function flipCard(index) {
+            // Prevent flipping if: game not ready, card already flipped, already have 2 cards flipped, or card already matched
+            if (!canFlip || flippedCards.includes(index) || flippedCards.length >= 2 || cards[index].matched) {
+                return;
+            }
+            
+            // Flip the card
+            const cardElem = document.querySelector(`.game-card[data-index="${index}"]`);
+            cardElem.classList.add('flipped');
+            flippedCards.push(index);
+            
+            // Check for match if we have two cards flipped
+            if (flippedCards.length === 2) {
+                canFlip = false; // Prevent further flips while checking
+                
+                const card1 = cards[flippedCards[0]];
+                const card2 = cards[flippedCards[1]];
+                
+                // Check if the two cards form a matching pair (same id but different types)
+                if (card1.id === card2.id && card1.type !== card2.type) {
+                    // Match found
+                    setTimeout(() => {
+                        // Mark cards as matched
+                        flippedCards.forEach(idx => {
+                            cards[idx].matched = true;
+                            const matchedCard = document.querySelector(`.game-card[data-index="${idx}"]`);
+                            matchedCard.classList.add('matched');
+                        });
+                        
+                        matchedPairs++;
+                        document.getElementById('score').textContent = `Matches: ${matchedPairs}/8`;
+                        
+                        // Check if all pairs are matched
+                        if (matchedPairs === 8) {
+                            clearInterval(gameTimer);
+                            setTimeout(() => {
+                                alert(`Congratulations! You completed the game in ${gameTime} seconds!`);
+                            }, 500);
+                        }
+                        
+                        // Reset flipped cards and allow flipping again
+                        flippedCards = [];
+                        canFlip = true;
+                    }, 1000);
+                } else {
+                    // No match
+                    setTimeout(() => {
+                        // Flip cards back
+                        flippedCards.forEach(idx => {
+                            const unmatchedCard = document.querySelector(`.game-card[data-index="${idx}"]`);
+                            unmatchedCard.classList.remove('flipped');
+                        });
+                        
+                        // Reset flipped cards and allow flipping again
+                        flippedCards = [];
+                        canFlip = true;
+                    }, 1500);
+                }
+            }
+        }
+        
+        // Drag and Drop Sequence Game
+        const productionSteps = [
+            { id: 1, text: "Mining bauxite ore containing aluminum oxide" },
+            { id: 2, text: "Purifying the aluminum oxide (Bayer process)" },
+            { id: 3, text: "Mixing aluminum oxide with cryolite to lower the melting point" },
+            { id: 4, text: "Melting the mixture at around 950°C" },
+            { id: 5, text: "Setting up carbon electrodes (anode and cathode)" },
+            { id: 6, text: "Applying direct current to start electrolysis" },
+            { id: 7, text: "Aluminum ions receiving electrons at the cathode to form aluminum metal" },
+            { id: 8, text: "Oxide ions releasing electrons at the anode to form oxygen" },
+            { id: 9, text: "Oxygen reacting with carbon anodes to form carbon dioxide" },
+            { id: 10, text: "Molten aluminum collecting at the bottom of the cell" },
+            { id: 11, text: "Periodically replacing consumed carbon anodes" },
+            { id: 12, text: "Tapping off the molten aluminum for casting" }
+        ];
+        
+        function setupDragDropGame() {
+            // Shuffle the steps
+            const shuffledSteps = shuffleArray([...productionSteps]);
+            
+            // Create draggable items
+            const stepsContainer = document.getElementById('steps-container');
+            stepsContainer.innerHTML = '';
+            
+            shuffledSteps.forEach(step => {
+                const stepElem = document.createElement('div');
+                stepElem.className = 'option';
+                stepElem.textContent = step.text;
+                stepElem.id = `step-${step.id}`;
+                stepElem.draggable = true;
+                
+                // Add drag event listeners
+                stepElem.addEventListener('dragstart', dragStart);
+                
+                stepsContainer.appendChild(stepElem);
+            });
+            
+            // Create drop zones
+            const sequenceContainer = document.getElementById('sequence-container');
+            sequenceContainer.innerHTML = '';
+            
+            for (let i = 0; i < productionSteps.length; i++) {
+                const dropZone = document.createElement('div');
+                dropZone.className = 'drop-zone';
+                dropZone.id = `drop-${i + 1}`;
+                dropZone.textContent = `Step ${i + 1}`;
+                
+                // Add drop event listeners
+                dropZone.addEventListener('dragover', dragOver);
+                dropZone.addEventListener('drop', drop);
+                
+                sequenceContainer.appendChild(dropZone);
+            }
+            
+            // Reset feedback
+            document.getElementById('sequence-feedback').className = 'feedback';
+            document.getElementById('sequence-feedback').textContent = '';
+        }
+        
+        // Drag and drop functionality
+        let draggedItem = null;
+        
+        function dragStart(e) {
+            draggedItem = e.target;
+            setTimeout(() => {
+                e.target.style.opacity = '0.5';
+            }, 0);
+        }
+        
+        function dragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('drop-hover');
+        }
+        
+        function dragLeave(e) {
+            e.target.classList.remove('drop-hover');
+        }
+        
+        function drop(e) {
+            e.preventDefault();
+            
+            // If dropping on a drop zone
+            if (e.target.classList.contains('drop-zone')) {
+                // If the drop zone is empty or dropping on a different zone
+                if (e.target.textContent === `Step ${e.target.id.split('-')[1]}` || draggedItem.parentElement === e.target) {
+                    e.target.textContent = '';
+                    e.target.appendChild(draggedItem);
+                    draggedItem.style.opacity = '1';
+                }
+            }
+            
+            e.target.classList.remove('drop-hover');
+        }
+        
+        function checkSequence() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let correct = true;
+            let placed = 0;
+            
+            dropZones.forEach((zone, index) => {
+                const stepElem = zone.querySelector('[id^="step-"]');
+                
+                if (stepElem) {
+                    placed++;
+                    const stepId = parseInt(stepElem.id.split('-')[1]);
+                    
+                    // Check if the step is in the correct position
+                    if (stepId !== index + 1) {
+                        correct = false;
+                        zone.style.backgroundColor = '#f8d7da';
+                    } else {
+                        zone.style.backgroundColor = '#d4edda';
+                    }
+                }
+            });
+            
+            const feedback = document.getElementById('sequence-feedback');
+            
+            if (placed < productionSteps.length) {
+                feedback.className = 'feedback error';
+                feedback.textContent = `Please place all steps in the sequence before checking.`;
+            } else if (correct) {
+                feedback.className = 'feedback success';
+                feedback.textContent = `Correct! You've placed all the steps in the right order.`;
+            } else {
+                feedback.className = 'feedback error';
+                feedback.textContent = `Some steps are in the wrong order. The highlighted steps need to be rearranged.`;
+            }
+        }
+        
+        // Utility function to shuffle an array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // Initialize quiz and games
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize quiz
+            loadQuestion();
+            
+            // Set up memory game
+            setupMemoryGame();
+            document.getElementById('restart-game').addEventListener('click', setupMemoryGame);
+            
+            // Set up drag and drop game
+            setupDragDropGame();
+            document.getElementById('check-sequence').addEventListener('click', checkSequence);
+        });
+    </script>
+</body>
+</html>
