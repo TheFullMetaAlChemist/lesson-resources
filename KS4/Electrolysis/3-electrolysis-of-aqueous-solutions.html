@@ -491,21 +491,117 @@
         .game-container {
             border: 3px solid var(--primary);
             border-radius: 8px;
-            padding: 1rem;
+            padding: 1.5rem;
             margin-top: 1.5rem;
             background-color: #f8f9fa;
-            min-height: 500px;
+            min-height: 600px;
+            position: relative;
         }
         
         .game-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .game-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .game-score, .game-timer, .game-progress {
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            background-color: #f0f0f0;
         }
         
         .game-score {
-            font-weight: bold;
             color: var(--primary);
+        }
+        
+        .game-timer {
+            color: var(--warning);
+        }
+        
+        .game-timer.low {
+            color: white;
+            background-color: var(--accent);
+            animation: pulse 1s infinite;
+        }
+        
+        .game-progress {
+            color: var(--dark);
+        }
+        
+        /* Electrolyte Card */
+        .electrolyte-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid var(--dark);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .electrolyte-card:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .electrolyte-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .electrolyte-state {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 1rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .electrolyte-state.molten {
+            background-color: var(--warning);
+        }
+        
+        .electrolyte-state.aqueous {
+            background-color: var(--primary);
+        }
+        
+        /* Product Cards */
+        .products-header {
+            margin: 1.5rem 0 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .products-header h3 {
+            margin: 0;
+        }
+        
+        .product-hint {
+            color: var(--primary);
+            font-style: italic;
+            margin: 0;
         }
         
         .drag-container {
@@ -513,23 +609,95 @@
             flex-wrap: wrap;
             gap: 1rem;
             margin: 1rem 0;
+            justify-content: center;
         }
         
-        .draggable {
-            padding: 0.5rem 1rem;
-            background-color: var(--light);
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .product-card {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             cursor: move;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            text-align: center;
+            user-select: none;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .product-symbol {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .product-name {
+            font-size: 0.8rem;
+            line-height: 1;
+        }
+        
+        /* Beaker Visualization */
+        .beaker-visualization {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        
+        .mini-beaker {
+            width: 100px;
+            height: 120px;
+            border: 2px solid #95a5a6;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            position: relative;
+            background-color: rgba(173, 216, 230, 0.2);
+        }
+        
+        .mini-cathode, .mini-anode {
+            position: absolute;
+            width: 5px;
+            height: 100px;
+            background-color: #333;
+            bottom: 10px;
+        }
+        
+        .mini-cathode {
+            left: 20px;
+            border: 1px solid var(--cathode);
+        }
+        
+        .mini-anode {
+            right: 20px;
+            border: 1px solid var(--anode);
+        }
+        
+        .mini-solution {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80%;
+            border-radius: 0 0 8px 8px;
+            background-color: rgba(173, 216, 230, 0.3);
+            transition: background-color 0.5s;
+        }
+        
+        .electrode-card {
             transition: all 0.3s;
         }
         
-        .draggable:hover {
-            background-color: #e3e3e3;
-        }
-        
+        /* Drop Targets */
         .drop-target {
-            height: 100px;
+            height: 120px;
             border: 2px dashed #ccc;
             border-radius: 8px;
             margin: 0.5rem 0;
@@ -537,21 +705,74 @@
             justify-content: center;
             align-items: center;
             transition: all 0.3s;
+            position: relative;
+        }
+        
+        .drop-label {
+            color: #999;
+            font-style: italic;
         }
         
         .drop-target.hover {
             background-color: rgba(52, 152, 219, 0.1);
             border-color: var(--primary);
+            transform: scale(1.05);
         }
         
         .drop-target.correct {
             background-color: rgba(46, 204, 113, 0.1);
             border-color: var(--success);
+            border-style: solid;
+            border-width: 3px;
         }
         
         .drop-target.incorrect {
             background-color: rgba(231, 76, 60, 0.1);
             border-color: var(--accent);
+            border-style: solid;
+            border-width: 3px;
+        }
+        
+        /* Game Controls */
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Results Display */
+        #round-results, #game-over {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background-color: white;
+            z-index: 100;
+            border: 3px solid var(--primary);
+        }
+        
+        #final-score {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        /* Animation for product cards */
+        @keyframes cardPopIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
         
         footer {
@@ -894,39 +1115,78 @@
         </section>
         
         <section id="game">
-            <h2>Electrolysis Game: Ion Sorting Challenge</h2>
-            <p>Test your understanding of electrolysis by dragging the ions to the correct electrode where they will be discharged.</p>
+            <h2>Electrolysis Game: Product Prediction Challenge</h2>
+            <p>Test your understanding of electrolysis by predicting what products will form at each electrode when different electrolytes undergo electrolysis.</p>
             
             <div class="game-header">
-                <div class="game-instructions">Drag each ion to the electrode where it will be discharged</div>
-                <div class="game-score">Score: <span id="score">0</span> / 10</div>
+                <div class="game-instructions">Drag the correct products to each electrode</div>
+                <div class="game-stats">
+                    <div class="game-score">Score: <span id="score">0</span> / 10</div>
+                    <div class="game-timer">Time: <span id="timer">60</span> seconds</div>
+                    <div class="game-progress">Round: <span id="current-round">1</span> / 10</div>
+                </div>
             </div>
             
             <div class="game-container">
+                <!-- Electrolyte Card -->
+                <div class="electrolyte-card" id="electrolyte-card">
+                    <div class="electrolyte-name">Select an electrolyte to begin</div>
+                    <div class="electrolyte-state"></div>
+                </div>
+                
+                <!-- Electrodes -->
                 <div class="flex-container">
-                    <div class="card" style="flex: 1;">
+                    <div class="card electrode-card" style="flex: 1;">
                         <div class="card-header">Cathode (Negative)</div>
-                        <div class="drop-target" id="cathode-target" data-accepts="cation">
-                            Drop positive ions here
+                        <div class="drop-target" id="cathode-target" data-accepts="cathode">
+                            <div class="drop-label">Drop product here</div>
                         </div>
                     </div>
                     
-                    <div class="card" style="flex: 1;">
+                    <div class="beaker-visualization">
+                        <div class="mini-beaker">
+                            <div class="mini-cathode"></div>
+                            <div class="mini-anode"></div>
+                            <div class="mini-solution"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card electrode-card" style="flex: 1;">
                         <div class="card-header">Anode (Positive)</div>
-                        <div class="drop-target" id="anode-target" data-accepts="anion">
-                            Drop negative ions here
+                        <div class="drop-target" id="anode-target" data-accepts="anode">
+                            <div class="drop-label">Drop product here</div>
                         </div>
                     </div>
                 </div>
                 
-                <div id="ions-container" class="drag-container">
-                    <!-- Ions will be added here dynamically -->
+                <!-- Product options -->
+                <div class="products-header">
+                    <h3>Possible Products</h3>
+                    <p class="product-hint">Consider whether the electrolyte is molten or aqueous!</p>
                 </div>
                 
-                <div id="game-feedback" style="margin-top: 1rem; text-align: center; min-height: 50px;"></div>
+                <div id="products-container" class="drag-container">
+                    <!-- Products will be added here dynamically -->
+                </div>
                 
-                <button id="new-game" class="btn btn-success">New Game</button>
-                <button id="check-game" class="btn btn-accent">Check Answers</button>
+                <div id="game-feedback" style="margin-top: 1rem; text-align: center; min-height: 60px;"></div>
+                
+                <div class="game-controls">
+                    <button id="new-game" class="btn btn-success">Start New Game</button>
+                    <button id="submit-answer" class="btn btn-accent">Submit Answer</button>
+                    <button id="next-round" class="btn btn-primary" disabled>Next Round</button>
+                </div>
+                
+                <div id="round-results" class="hidden">
+                    <h3>Round Results</h3>
+                    <div id="round-details"></div>
+                </div>
+                
+                <div id="game-over" class="hidden">
+                    <h2>Game Over!</h2>
+                    <div id="final-score"></div>
+                    <button id="play-again" class="btn btn-success">Play Again</button>
+                </div>
             </div>
         </section>
     </main>
@@ -2350,77 +2610,1080 @@
         runExperimentBtn.addEventListener('click', runLabExperiment);
         resetLabBtn.addEventListener('click', resetLab);
         
-        // Game Section
-        const ionsContainer = document.getElementById('ions-container');
-        const cathodeTarget = document.getElementById('cathode-target');
-        const anodeTarget = document.getElementById('anode-target');
-        const scoreDisplay = document.getElementById('score');
-        const gameFeedback = document.getElementById('game-feedback');
-        const newGameBtn = document.getElementById('new-game');
-        const checkGameBtn = document.getElementById('check-game');
-        
-        // Game data
-        const gameIons = [
-            { id: 'na', symbol: 'Na⁺', name: 'Sodium ion', type: 'cation', discharged: false, color: '#f39c12' },
-            { id: 'cl', symbol: 'Cl⁻', name: 'Chloride ion', type: 'anion', discharged: true, color: '#27ae60' },
-            { id: 'cu', symbol: 'Cu²⁺', name: 'Copper(II) ion', type: 'cation', discharged: true, color: '#e67e22' },
-            { id: 'so4', symbol: 'SO₄²⁻', name: 'Sulfate ion', type: 'anion', discharged: false, color: '#9b59b6' },
-            { id: 'k', symbol: 'K⁺', name: 'Potassium ion', type: 'cation', discharged: false, color: '#e74c3c' },
-            { id: 'br', symbol: 'Br⁻', name: 'Bromide ion', type: 'anion', discharged: true, color: '#8e44ad' },
-            { id: 'h', symbol: 'H⁺', name: 'Hydrogen ion', type: 'cation', discharged: true, color: '#f1c40f' },
-            { id: 'oh', symbol: 'OH⁻', name: 'Hydroxide ion', type: 'anion', discharged: true, color: '#3498db' },
-            { id: 'mg', symbol: 'Mg²⁺', name: 'Magnesium ion', type: 'cation', discharged: false, color: '#1abc9c' },
-            { id: 'i', symbol: 'I⁻', name: 'Iodide ion', type: 'anion', discharged: true, color: '#d35400' },
-            { id: 'ag', symbol: 'Ag⁺', name: 'Silver ion', type: 'cation', discharged: true, color: '#95a5a6' },
-            { id: 'no3', symbol: 'NO₃⁻', name: 'Nitrate ion', type: 'anion', discharged: false, color: '#3498db' },
-            { id: 'zn', symbol: 'Zn²⁺', name: 'Zinc ion', type: 'cation', discharged: true, color: '#7f8c8d' },
-            { id: 'fe2', symbol: 'Fe²⁺', name: 'Iron(II) ion', type: 'cation', discharged: true, color: '#795548' },
-            { id: 'fe3', symbol: 'Fe³⁺', name: 'Iron(III) ion', type: 'cation', discharged: true, color: '#d84315' }
-        ];
-        
-        let gameScore = 0;
-        let currentGameIons = [];
-        
-        function initGame() {
-            // Reset game state
-            gameScore = 0;
-            scoreDisplay.textContent = '0';
-            ionsContainer.innerHTML = '';
-            cathodeTarget.innerHTML = 'Drop positive ions here';
-            cathodeTarget.className = 'drop-target';
-            anodeTarget.innerHTML = 'Drop negative ions here';
-            anodeTarget.className = 'drop-target';
-            gameFeedback.innerHTML = '';
+        // Game Section - Everything wrapped in a function to avoid global scope issues
+        const setupElectrolysisGame = function() {
+            // Game state variables
+            let gameActive = false;
+            let gameScore = 0;
+            let currentRound = 0;
+            let timerInterval;
+            let timeRemaining = 60;
+            let gameCompoundQueue = [];
+            let currentCompound = null;
             
-            // Select 10 random ions for the game
-            const shuffled = [...gameIons].sort(() => 0.5 - Math.random());
-            currentGameIons = shuffled.slice(0, 10);
+            // Game data - Possible electrolytes
+            const gameCompounds = [
+                // Aqueous compounds
+                {
+                    id: 'nacl-aq',
+                    name: 'Sodium Chloride (NaCl)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'Na⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'Chloride ions (Cl⁻) are preferentially discharged over OH⁻ from water.'
+                },
+                {
+                    id: 'cuso4-aq',
+                    name: 'Copper Sulfate (CuSO₄)',
+                    state: 'aqueous',
+                    cathodeProduct: 'Cu',
+                    anodeProduct: 'O₂',
+                    cathodeReason: 'Cu²⁺ is less reactive than hydrogen, so Cu²⁺ is discharged.',
+                    anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+                },
+                {
+                    id: 'kbr-aq',
+                    name: 'Potassium Bromide (KBr)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'Br₂',
+                    cathodeReason: 'K⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'Bromide ions (Br⁻) are preferentially discharged over OH⁻ from water.'
+                },
+                {
+                    id: 'mgso4-aq',
+                    name: 'Magnesium Sulfate (MgSO₄)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'O₂',
+                    cathodeReason: 'Mg²⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+                },
+                {
+                    id: 'agno3-aq',
+                    name: 'Silver Nitrate (AgNO₃)',
+                    state: 'aqueous',
+                    cathodeProduct: 'Ag',
+                    anodeProduct: 'O₂',
+                    cathodeReason: 'Ag⁺ is less reactive than hydrogen, so Ag⁺ is discharged.',
+                    anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+                },
+                {
+                    id: 'znso4-aq',
+                    name: 'Zinc Sulfate (ZnSO₄)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'O₂',
+                    cathodeReason: 'Zn²⁺ is MORE reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+                },
+                {
+                    id: 'ki-aq',
+                    name: 'Potassium Iodide (KI)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'I₂',
+                    cathodeReason: 'K⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'Iodide ions (I⁻) are preferentially discharged over OH⁻ from water.'
+                },
+                {
+                    id: 'fecl2-aq',
+                    name: 'Iron(II) Chloride (FeCl₂)',
+                    state: 'aqueous',
+                    cathodeProduct: 'H₂',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'Fe²⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                    anodeReason: 'Chloride ions (Cl⁻) are preferentially discharged over OH⁻ from water.'
+                },
+                
+                // Molten compounds (no water present)
+                {
+                    id: 'nacl-molten',
+                    name: 'Sodium Chloride (NaCl)',
+                    state: 'molten',
+                    cathodeProduct: 'Na',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'In molten NaCl, only Na⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten NaCl, only Cl⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'mgcl2-molten',
+                    name: 'Magnesium Chloride (MgCl₂)',
+                    state: 'molten',
+                    cathodeProduct: 'Mg',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'In molten MgCl₂, only Mg²⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten MgCl₂, only Cl⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'cacl2-molten',
+                    name: 'Calcium Chloride (CaCl₂)',
+                    state: 'molten',
+                    cathodeProduct: 'Ca',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'In molten CaCl₂, only Ca²⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten CaCl₂, only Cl⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'kbr-molten',
+                    name: 'Potassium Bromide (KBr)',
+                    state: 'molten',
+                    cathodeProduct: 'K',
+                    anodeProduct: 'Br₂',
+                    cathodeReason: 'In molten KBr, only K⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten KBr, only Br⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'nai-molten',
+                    name: 'Sodium Iodide (NaI)',
+                    state: 'molten',
+                    cathodeProduct: 'Na',
+                    anodeProduct: 'I₂',
+                    cathodeReason: 'In molten NaI, only Na⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten NaI, only I⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'lif-molten',
+                    name: 'Lithium Fluoride (LiF)',
+                    state: 'molten',
+                    cathodeProduct: 'Li',
+                    anodeProduct: 'F₂',
+                    cathodeReason: 'In molten LiF, only Li⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten LiF, only F⁻ ions are available at the anode.'
+                },
+                {
+                    id: 'zncl2-molten',
+                    name: 'Zinc Chloride (ZnCl₂)',
+                    state: 'molten',
+                    cathodeProduct: 'Zn',
+                    anodeProduct: 'Cl₂',
+                    cathodeReason: 'In molten ZnCl₂, only Zn²⁺ ions are available at the cathode.',
+                    anodeReason: 'In molten ZnCl₂, only Cl⁻ ions are available at the anode.'
+                }
+            ];
             
-            // Create draggable ions
-            currentGameIons.forEach(ion => {
-                const ionElement = document.createElement('div');
-                ionElement.id = ion.id;
-                ionElement.className = 'draggable';
-                ionElement.setAttribute('draggable', 'true');
-                ionElement.style.backgroundColor = ion.color;
-                ionElement.style.color = 'white';
-                ionElement.innerHTML = `<strong>${ion.symbol}</strong> (${ion.name})`;
-                ionElement.dataset.type = ion.type;
-                ionElement.dataset.discharged = ion.discharged;
+            // Product options for the game
+            const possibleProducts = [
+                // Cathode products
+                { id: 'hydrogen', symbol: 'H₂', name: 'Hydrogen', type: 'cathode', color: '#f1c40f' },
+                { id: 'sodium', symbol: 'Na', name: 'Sodium', type: 'cathode', color: '#f39c12' },
+                { id: 'potassium', symbol: 'K', name: 'Potassium', type: 'cathode', color: '#e74c3c' },
+                { id: 'copper', symbol: 'Cu', name: 'Copper', type: 'cathode', color: '#e67e22' },
+                { id: 'magnesium', symbol: 'Mg', name: 'Magnesium', type: 'cathode', color: '#1abc9c' },
+                { id: 'calcium', symbol: 'Ca', name: 'Calcium', type: 'cathode', color: '#d35400' },
+                { id: 'silver', symbol: 'Ag', name: 'Silver', type: 'cathode', color: '#95a5a6' },
+                { id: 'zinc', symbol: 'Zn', name: 'Zinc', type: 'cathode', color: '#7f8c8d' },
+                { id: 'lithium', symbol: 'Li', name: 'Lithium', type: 'cathode', color: '#c0392b' },
                 
-                ionsContainer.appendChild(ionElement);
+                // Anode products
+                { id: 'oxygen', symbol: 'O₂', name: 'Oxygen', type: 'anode', color: '#3498db' },
+                { id: 'chlorine', symbol: 'Cl₂', name: 'Chlorine', type: 'anode', color: '#27ae60' },
+                { id: 'bromine', symbol: 'Br₂', name: 'Bromine', type: 'anode', color: '#8e44ad' },
+                { id: 'iodine', symbol: 'I₂', name: 'Iodine', type: 'anode', color: '#9b59b6' },
+                { id: 'fluorine', symbol: 'F₂', name: 'Fluorine', type: 'anode', color: '#2ecc71' }
+            ];
+            
+            // Initialize game
+            function initGame() {
+                // Reset game state
+                gameActive = true;
+                gameScore = 0;
+                currentRound = 0;
+                timeRemaining = 60;
                 
-                // Add drag events
-                ionElement.addEventListener('dragstart', drag);
-            });
+                // Get DOM elements (always fresh references)
+                const scoreDisplay = document.getElementById('score');
+                const timerDisplay = document.getElementById('timer');
+                const currentRoundDisplay = document.getElementById('current-round');
+                const gameFeedback = document.getElementById('game-feedback');
+                const roundResults = document.getElementById('round-results');
+                const gameOver = document.getElementById('game-over');
+                const newGameBtn = document.getElementById('new-game');
+                const submitAnswerBtn = document.getElementById('submit-answer');
+                const nextRoundBtn = document.getElementById('next-round');
+                
+                // Update displays
+                if (scoreDisplay) scoreDisplay.textContent = '0';
+                if (timerDisplay) timerDisplay.textContent = '60';
+                if (currentRoundDisplay) currentRoundDisplay.textContent = '1';
+                
+                // Reset targets
+                resetDropTargets();
+                
+                // Hide results
+                if (roundResults) roundResults.classList.add('hidden');
+                if (gameOver) gameOver.classList.add('hidden');
+                
+                // Clear feedback
+                if (gameFeedback) gameFeedback.innerHTML = '';
+                
+                // Create compound queue - 5 molten and 5 aqueous in random order
+                const moltenCompounds = gameCompounds.filter(c => c.state === 'molten');
+                const aqueousCompounds = gameCompounds.filter(c => c.state === 'aqueous');
+                
+                // Randomly select 5 from each
+                const selectedMolten = moltenCompounds.sort(() => 0.5 - Math.random()).slice(0, 5);
+                const selectedAqueous = aqueousCompounds.sort(() => 0.5 - Math.random()).slice(0, 5);
+                
+                // Combine and shuffle for random order
+                gameCompoundQueue = [...selectedMolten, ...selectedAqueous].sort(() => 0.5 - Math.random());
+                
+                // Start first round
+                nextRound();
+                
+                // Start timer
+                startTimer();
+                
+                // Update button states
+                if (newGameBtn) newGameBtn.disabled = true;
+                if (submitAnswerBtn) submitAnswerBtn.disabled = false;
+                if (nextRoundBtn) nextRoundBtn.disabled = true;
+            }
+            
+            // Start the timer
+            function startTimer() {
+                const timerDisplay = document.getElementById('timer');
+                if (!timerDisplay) return;
+                
+                clearInterval(timerInterval);
+                timerDisplay.parentElement.classList.remove('low');
+                
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    timerDisplay.textContent = timeRemaining;
+                    
+                    // Warning when time is low
+                    if (timeRemaining <= 10) {
+                        timerDisplay.parentElement.classList.add('low');
+                    }
+                    
+                    // End round if time runs out
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        checkAnswer(true); // Force check with timeout flag
+                    }
+                }, 1000);
+            }
+            
+            // Reset timer for next round
+            function resetTimer() {
+                const timerDisplay = document.getElementById('timer');
+                if (!timerDisplay) return;
+                
+                clearInterval(timerInterval);
+                timeRemaining = 60;
+                timerDisplay.textContent = timeRemaining;
+                timerDisplay.parentElement.classList.remove('low');
+            }
+            
+            // Move to next round
+            function nextRound() {
+                // Get fresh DOM references
+                const currentRoundDisplay = document.getElementById('current-round');
+                const roundResults = document.getElementById('round-results');
+                const gameFeedback = document.getElementById('game-feedback');
+                const submitAnswerBtn = document.getElementById('submit-answer');
+                const nextRoundBtn = document.getElementById('next-round');
+                const electrolyteName = document.querySelector('.electrolyte-name');
+                const electrolyteState = document.querySelector('.electrolyte-state');
+                const miniSolution = document.querySelector('.mini-solution');
+                
+                // Reset targets
+                resetDropTargets();
+                
+                // Clear feedback
+                if (gameFeedback) gameFeedback.innerHTML = '';
+                
+                // Hide results
+                if (roundResults) roundResults.classList.add('hidden');
+                
+                // Update round number
+                currentRound++;
+                if (currentRoundDisplay) currentRoundDisplay.textContent = currentRound;
+                
+                // Get next compound
+                currentCompound = gameCompoundQueue[currentRound - 1];
+                
+                // Update electrolyte card
+                if (electrolyteName && currentCompound) electrolyteName.textContent = currentCompound.name;
+                if (electrolyteState && currentCompound) {
+                    electrolyteState.textContent = currentCompound.state.charAt(0).toUpperCase() + currentCompound.state.slice(1);
+                    electrolyteState.className = `electrolyte-state ${currentCompound.state}`;
+                }
+                
+                // Update mini-beaker color based on electrolyte state
+                if (miniSolution && currentCompound) {
+                    if (currentCompound.state === 'molten') {
+                        miniSolution.style.backgroundColor = 'rgba(243, 156, 18, 0.3)'; // More orange for molten
+                    } else {
+                        miniSolution.style.backgroundColor = 'rgba(173, 216, 230, 0.3)'; // Blue for aqueous
+                    }
+                }
+                
+                // Create product cards
+                createProductCards();
+                
+                // Update button states
+                if (submitAnswerBtn) submitAnswerBtn.disabled = false;
+                if (nextRoundBtn) nextRoundBtn.disabled = true;
+                
+                // Reset timer
+                resetTimer();
+                startTimer();
+            }
+            
+            // Create product cards
+            function createProductCards() {
+                const productsContainer = document.getElementById('products-container');
+                if (!productsContainer) return;
+                
+                productsContainer.innerHTML = '';
+                
+                // Shuffle products for random order
+                const shuffledProducts = [...possibleProducts].sort(() => 0.5 - Math.random());
+                
+                // Create and add cards with animation delay
+                shuffledProducts.forEach((product, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.id = `product-${product.id}`;
+                    card.style.backgroundColor = product.color;
+                    card.setAttribute('draggable', 'true');
+                    card.dataset.type = product.type;
+                    card.dataset.id = product.id;
+                    card.dataset.symbol = product.symbol;
+                    
+                    // Animation delay
+                    card.style.animation = `cardPopIn 0.5s forwards ${index * 0.05}s`;
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.5)';
+                    
+                    // Card content
+                    card.innerHTML = `
+                        <div class="product-symbol">${product.symbol}</div>
+                        <div class="product-name">${product.name}</div>
+                    `;
+                    
+                    productsContainer.appendChild(card);
+                    
+                    // Add drag events
+                    card.addEventListener('dragstart', drag);
+                });
+            }
             
             // Reset drop targets
-            [cathodeTarget, anodeTarget].forEach(target => {
-                target.innerHTML = target === cathodeTarget ? 'Drop positive ions here' : 'Drop negative ions here';
-                target.className = 'drop-target';
+            function resetDropTargets() {
+                const cathodeTarget = document.getElementById('cathode-target');
+                const anodeTarget = document.getElementById('anode-target');
+                
+                if (cathodeTarget) {
+                    cathodeTarget.innerHTML = '<div class="drop-label">Drop product here</div>';
+                    cathodeTarget.className = 'drop-target';
+                }
+                
+                if (anodeTarget) {
+                    anodeTarget.innerHTML = '<div class="drop-label">Drop product here</div>';
+                    anodeTarget.className = 'drop-target';
+                }
+            }
+            
+            // Drag function
+            function drag(e) {
+                e.dataTransfer.setData('text', e.target.id);
+            }
+            
+            // Set up drop targets function
+            function setupDropTargets() {
+                const cathodeTargetElement = document.getElementById('cathode-target');
+                const anodeTargetElement = document.getElementById('anode-target');
+                
+                if (cathodeTargetElement) {
+                    // Clear existing listeners
+                    const newCathode = cathodeTargetElement.cloneNode(true);
+                    cathodeTargetElement.parentNode.replaceChild(newCathode, cathodeTargetElement);
+                    
+                    newCathode.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        newCathode.classList.add('hover');
+                    });
+                    
+                    newCathode.addEventListener('dragleave', () => {
+                        newCathode.classList.remove('hover');
+                    });
+                    
+                    newCathode.addEventListener('drop', e => {
+                        e.preventDefault();
+                        newCathode.classList.remove('hover');
+                        
+                        const productId = e.dataTransfer.getData('text');
+                        const product = document.getElementById(productId);
+                        
+                        // Only allow dropping if product type matches target and target is empty
+                        if (product && product.dataset.type === newCathode.dataset.accepts && 
+                            (!newCathode.querySelector('.product-card'))) {
+                            
+                            // Remove drop label
+                            const label = newCathode.querySelector('.drop-label');
+                            if (label) label.remove();
+                            
+                            // Clone the product card for the drop target
+                            const clone = product.cloneNode(true);
+                            clone.style.animation = 'none';
+                            clone.style.transform = 'none';
+                            clone.style.opacity = '1';
+                            clone.style.margin = '0 auto';
+                            clone.style.cursor = 'default';
+                            clone.setAttribute('draggable', 'false');
+                            
+                            newCathode.appendChild(clone);
+                            
+                            // Hide the original product
+                            product.style.opacity = '0.3';
+                            product.setAttribute('draggable', 'false');
+                        }
+                    });
+                }
+                
+                if (anodeTargetElement) {
+                    // Clear existing listeners
+                    const newAnode = anodeTargetElement.cloneNode(true);
+                    anodeTargetElement.parentNode.replaceChild(newAnode, anodeTargetElement);
+                    
+                    newAnode.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        newAnode.classList.add('hover');
+                    });
+                    
+                    newAnode.addEventListener('dragleave', () => {
+                        newAnode.classList.remove('hover');
+                    });
+                    
+                    newAnode.addEventListener('drop', e => {
+                        e.preventDefault();
+                        newAnode.classList.remove('hover');
+                        
+                        const productId = e.dataTransfer.getData('text');
+                        const product = document.getElementById(productId);
+                        
+                        // Only allow dropping if product type matches target and target is empty
+                        if (product && product.dataset.type === newAnode.dataset.accepts && 
+                            (!newAnode.querySelector('.product-card'))) {
+                            
+                            // Remove drop label
+                            const label = newAnode.querySelector('.drop-label');
+                            if (label) label.remove();
+                            
+                            // Clone the product card for the drop target
+                            const clone = product.cloneNode(true);
+                            clone.style.animation = 'none';
+                            clone.style.transform = 'none';
+                            clone.style.opacity = '1';
+                            clone.style.margin = '0 auto';
+                            clone.style.cursor = 'default';
+                            clone.setAttribute('draggable', 'false');
+                            
+                            newAnode.appendChild(clone);
+                            
+                            // Hide the original product
+                            product.style.opacity = '0.3';
+                            product.setAttribute('draggable', 'false');
+                        }
+                    });
+                }
+            }
+            
+            // Check answer
+            function checkAnswer(timeout = false) {
+                // Get fresh DOM references
+                const cathodeTarget = document.getElementById('cathode-target');
+                const anodeTarget = document.getElementById('anode-target');
+                const gameFeedback = document.getElementById('game-feedback');
+                const scoreDisplay = document.getElementById('score');
+                
+                // Stop the timer
+                clearInterval(timerInterval);
+                
+                // Check if both targets have products
+                const cathodeProduct = cathodeTarget ? cathodeTarget.querySelector('.product-card') : null;
+                const anodeProduct = anodeTarget ? anodeTarget.querySelector('.product-card') : null;
+                
+                if (!cathodeProduct || !anodeProduct) {
+                    if (timeout) {
+                        if (gameFeedback) gameFeedback.innerHTML = `<div class="warning-box">Time's up! You must select products for both electrodes.</div>`;
+                        endRound(false, false);
+                    } else {
+                        if (gameFeedback) gameFeedback.innerHTML = `<div class="warning-box">Please select products for both electrodes!</div>`;
+                        return; // Don't proceed if both aren't selected
+                    }
+                } else {
+                    // Check if answers are correct
+                    const cathodeCorrect = cathodeProduct.dataset.symbol === currentCompound.cathodeProduct;
+                    const anodeCorrect = anodeProduct.dataset.symbol === currentCompound.anodeProduct;
+                    
+                    // Mark targets as correct or incorrect
+                    if (cathodeTarget) cathodeTarget.classList.add(cathodeCorrect ? 'correct' : 'incorrect');
+                    if (anodeTarget) anodeTarget.classList.add(anodeCorrect ? 'correct' : 'incorrect');
+                    
+                    // Update score - award points only for correct answers
+                    if (cathodeCorrect) gameScore++;
+                    if (anodeCorrect) gameScore++;
+                    
+                    // Update display
+                    if (scoreDisplay) scoreDisplay.textContent = gameScore;
+                    
+                    // Show feedback
+                    let feedbackMessage = '';
+                    if (cathodeCorrect && anodeCorrect) {
+                        feedbackMessage = '<div class="info-box" style="border-color: #27ae60;"><h3>Perfect! ✓✓</h3><p>Both products are correct!</p></div>';
+                    } else if (cathodeCorrect || anodeCorrect) {
+                        feedbackMessage = '<div class="info-box" style="border-color: #f39c12;"><h3>Partially Correct! ✓</h3><p>One product is correct.</p></div>';
+                    } else {
+                        feedbackMessage = '<div class="info-box" style="border-color: #e74c3c;"><h3>Incorrect ✗</h3><p>Neither product is correct.</p></div>';
+                    }
+                    
+                    if (gameFeedback) gameFeedback.innerHTML = feedbackMessage;
+                    
+                    // End the round
+                    endRound(cathodeCorrect, anodeCorrect);
+                }
+            }
+            
+            // End the round and show results
+            function endRound(cathodeCorrect, anodeCorrect) {
+                // Get fresh DOM references
+                const submitAnswerBtn = document.getElementById('submit-answer');
+                const nextRoundBtn = document.getElementById('next-round');
+                const roundResults = document.getElementById('round-results');
+                const roundDetails = document.getElementById('round-details');
+                const cathodeTarget = document.getElementById('cathode-target');
+                const anodeTarget = document.getElementById('anode-target');
+                
+                // Disable submit button and enable next round button
+                if (submitAnswerBtn) submitAnswerBtn.disabled = true;
+                
+                // Show detailed results
+                if (roundResults) roundResults.classList.remove('hidden');
+                
+                if (roundDetails && currentCompound) {
+                    // Get the user's answers
+                    const cathodeAnswer = cathodeTarget && cathodeTarget.querySelector('.product-card') ? 
+                        cathodeTarget.querySelector('.product-card').dataset.symbol : 'None';
+                    const anodeAnswer = anodeTarget && anodeTarget.querySelector('.product-card') ? 
+                        anodeTarget.querySelector('.product-card').dataset.symbol : 'None';
+                    
+                    let resultHTML = `
+                        <div class="result-summary">
+                            <h4>${currentCompound.name} (${currentCompound.state})</h4>
+                            <div class="result-details">
+                                <div class="cathode-result">
+                                    <p><strong>At the Cathode:</strong><br>
+                                    Your answer: ${cathodeAnswer}<br>
+                                    Correct answer: ${currentCompound.cathodeProduct}<br>
+                                    ${cathodeCorrect ? '✓ Correct!' : '✗ Incorrect'}</p>
+                                    <p><small>${currentCompound.cathodeReason}</small></p>
+                                </div>
+                                <div class="anode-result">
+                                    <p><strong>At the Anode:</strong><br>
+                                    Your answer: ${anodeAnswer}<br>
+                                    Correct answer: ${currentCompound.anodeProduct}<br>
+                                    ${anodeCorrect ? '✓ Correct!' : '✗ Incorrect'}</p>
+                                    <p><small>${currentCompound.anodeReason}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    roundDetails.innerHTML = resultHTML;
+                }
+                
+                // Check if game is over
+                if (currentRound >= 10) {
+                    // Show game over screen after a short delay
+                    setTimeout(() => {
+                        endGame();
+                    }, 2000);
+                } else {
+                    // Enable next round button
+                    if (nextRoundBtn) nextRoundBtn.disabled = false;
+                }
+            }
+            
+            // End the game and show final score
+            function endGame() {
+                // Get fresh DOM references
+                const roundResults = document.getElementById('round-results');
+                const gameOver = document.getElementById('game-over');
+                const finalScore = document.getElementById('final-score');
+                const newGameBtn = document.getElementById('new-game');
+                
+                // Hide round results
+                if (roundResults) roundResults.classList.add('hidden');
+                
+                // Show game over screen
+                if (gameOver) gameOver.classList.remove('hidden');
+                
+                // Update final score
+                if (finalScore) {
+                    const maxScore = 20; // 10 rounds, 2 points per round
+                    const percentage = Math.round((gameScore / maxScore) * 100);
+                    let gradeMessage = '';
+                    
+                    if (percentage >= 90) {
+                        gradeMessage = 'Outstanding! You have mastered electrolysis principles!';
+                    } else if (percentage >= 75) {
+                        gradeMessage = 'Great job! You have a strong understanding of electrolysis.';
+                    } else if (percentage >= 60) {
+                        gradeMessage = 'Good effort! Review the principles that you missed.';
+                    } else {
+                        gradeMessage = 'Keep practicing! Review the tutorial section to improve your understanding.';
+                    }
+                    
+                    finalScore.innerHTML = `
+                        <p>Your final score: ${gameScore} out of ${maxScore} points (${percentage}%)</p>
+                        <p>${gradeMessage}</p>
+                    `;
+                }
+                
+                // Reset for new game
+                gameActive = false;
+                if (newGameBtn) newGameBtn.disabled = false;
+            }
+            
+            // Set up all event listeners
+            function setupEventListeners() {
+                const newGameBtn = document.getElementById('new-game');
+                const submitAnswerBtn = document.getElementById('submit-answer');
+                const nextRoundBtn = document.getElementById('next-round');
+                const playAgainBtn = document.getElementById('play-again');
+                
+                if (newGameBtn) newGameBtn.addEventListener('click', initGame);
+                if (submitAnswerBtn) submitAnswerBtn.addEventListener('click', () => checkAnswer(false));
+                if (nextRoundBtn) nextRoundBtn.addEventListener('click', nextRound);
+                if (playAgainBtn) playAgainBtn.addEventListener('click', initGame);
+                
+                // Set up drop targets
+                setupDropTargets();
+            }
+            
+            // Initialize after a slight delay to ensure DOM is ready
+            window.setTimeout(() => {
+                try {
+                    // Set initial UI state
+                    const electrolyteName = document.querySelector('.electrolyte-name');
+                    if (electrolyteName) {
+                        electrolyteName.textContent = 'Click "Start New Game" to begin';
+                    }
+                    
+                    // Set up all event handlers
+                    const newGameBtn = document.getElementById('new-game');
+                    const submitAnswerBtn = document.getElementById('submit-answer');
+                    const nextRoundBtn = document.getElementById('next-round');
+                    const playAgainBtn = document.getElementById('play-again');
+                    
+                    if (newGameBtn) {
+                        // Remove any existing handlers
+                        const newButton = newGameBtn.cloneNode(true);
+                        newGameBtn.parentNode.replaceChild(newButton, newGameBtn);
+                        newButton.addEventListener('click', initGame);
+                    }
+                    
+                    if (submitAnswerBtn) {
+                        // Remove any existing handlers
+                        const newButton = submitAnswerBtn.cloneNode(true);
+                        submitAnswerBtn.parentNode.replaceChild(newButton, submitAnswerBtn);
+                        newButton.addEventListener('click', function() { checkAnswer(false); });
+                    }
+                    
+                    if (nextRoundBtn) {
+                        // Remove any existing handlers
+                        const newButton = nextRoundBtn.cloneNode(true);
+                        nextRoundBtn.parentNode.replaceChild(newButton, nextRoundBtn);
+                        newButton.addEventListener('click', nextRound);
+                    }
+                    
+                    if (playAgainBtn) {
+                        // Remove any existing handlers
+                        const newButton = playAgainBtn.cloneNode(true);
+                        playAgainBtn.parentNode.replaceChild(newButton, playAgainBtn);
+                        newButton.addEventListener('click', initGame);
+                    }
+                    
+                    // Set up drop targets
+                    setupDropTargets();
+                    
+                    console.log('Electrolysis game initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing electrolysis game:', error);
+                }
+            }, 500);
+        };
+        
+        // Initialize everything
+        window.addEventListener('load', () => {
+            try {
+                console.log('Page loaded, initializing sections');
+                
+                // Make the first section visible and hide others
+                document.querySelectorAll('main > section').forEach((section, index) => {
+                    section.style.display = index === 0 ? 'block' : 'none';
+                });
+                
+                // Listen for navigation changes
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Remove active class from all links
+                        document.querySelectorAll('.nav-link').forEach(l => {
+                            l.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked link
+                        this.classList.add('active');
+                        
+                        // Show the corresponding section
+                        const targetId = this.getAttribute('href').substring(1);
+                        document.querySelectorAll('main > section').forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        
+                        const targetSection = document.getElementById(targetId);
+                        if (targetSection) {
+                            targetSection.style.display = 'block';
+                            
+                            // If navigating to game section, initialize game
+                            if (targetId === 'game') {
+                                console.log('Game section displayed, initializing game');
+                                setupElectrolysisGame();
+                            }
+                        }
+                    });
+                });
+                
+                console.log('Page initialization complete');
+            } catch (error) {
+                console.error('Error during page initialization:', error);
+            }
+        });
+        
+        // Game data - Possible electrolytes
+        const gameCompounds = [
+            // Aqueous compounds
+            {
+                id: 'nacl-aq',
+                name: 'Sodium Chloride (NaCl)',
+                state: 'aqueous',
+                cathodeProduct: 'H₂',
+                anodeProduct: 'Cl₂',
+                cathodeReason: 'Na⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                anodeReason: 'Chloride ions (Cl⁻) are preferentially discharged over OH⁻ from water.'
+            },
+            {
+                id: 'cuso4-aq',
+                name: 'Copper Sulfate (CuSO₄)',
+                state: 'aqueous',
+                cathodeProduct: 'Cu',
+                anodeProduct: 'O₂',
+                cathodeReason: 'Cu²⁺ is less reactive than hydrogen, so Cu²⁺ is discharged.',
+                anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+            },
+            {
+                id: 'kbr-aq',
+                name: 'Potassium Bromide (KBr)',
+                state: 'aqueous',
+                cathodeProduct: 'H₂',
+                anodeProduct: 'Br₂',
+                cathodeReason: 'K⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                anodeReason: 'Bromide ions (Br⁻) are preferentially discharged over OH⁻ from water.'
+            },
+            {
+                id: 'mgso4-aq',
+                name: 'Magnesium Sulfate (MgSO₄)',
+                state: 'aqueous',
+                cathodeProduct: 'H₂',
+                anodeProduct: 'O₂',
+                cathodeReason: 'Mg²⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+            },
+            {
+                id: 'agno3-aq',
+                name: 'Silver Nitrate (AgNO₃)',
+                state: 'aqueous',
+                cathodeProduct: 'Ag',
+                anodeProduct: 'O₂',
+                cathodeReason: 'Ag⁺ is less reactive than hydrogen, so Ag⁺ is discharged.',
+                anodeReason: 'No halide ions present, so OH⁻ from water is discharged to form oxygen.'
+            },
+            {
+                id: 'znbr2-aq',
+                name: 'Zinc Bromide (ZnBr₂)',
+                state: 'aqueous',
+                cathodeProduct: 'Zn',
+                anodeProduct: 'Br₂',
+                cathodeReason: 'Zn²⁺ is less reactive than hydrogen, so Zn²⁺ is discharged.',
+                anodeReason: 'Bromide ions (Br⁻) are preferentially discharged over OH⁻ from water.'
+            },
+            {
+                id: 'ki-aq',
+                name: 'Potassium Iodide (KI)',
+                state: 'aqueous',
+                cathodeProduct: 'H₂',
+                anodeProduct: 'I₂',
+                cathodeReason: 'K⁺ is more reactive than hydrogen, so H⁺ from water is discharged instead.',
+                anodeReason: 'Iodide ions (I⁻) are preferentially discharged over OH⁻ from water.'
+            },
+            
+            // Molten compounds (no water present)
+            {
+                id: 'nacl-molten',
+                name: 'Sodium Chloride (NaCl)',
+                state: 'molten',
+                cathodeProduct: 'Na',
+                anodeProduct: 'Cl₂',
+                cathodeReason: 'In molten NaCl, only Na⁺ ions are available at the cathode.',
+                anodeReason: 'In molten NaCl, only Cl⁻ ions are available at the anode.'
+            },
+            {
+                id: 'mgcl2-molten',
+                name: 'Magnesium Chloride (MgCl₂)',
+                state: 'molten',
+                cathodeProduct: 'Mg',
+                anodeProduct: 'Cl₂',
+                cathodeReason: 'In molten MgCl₂, only Mg²⁺ ions are available at the cathode.',
+                anodeReason: 'In molten MgCl₂, only Cl⁻ ions are available at the anode.'
+            },
+            {
+                id: 'cacl2-molten',
+                name: 'Calcium Chloride (CaCl₂)',
+                state: 'molten',
+                cathodeProduct: 'Ca',
+                anodeProduct: 'Cl₂',
+                cathodeReason: 'In molten CaCl₂, only Ca²⁺ ions are available at the cathode.',
+                anodeReason: 'In molten CaCl₂, only Cl⁻ ions are available at the anode.'
+            },
+            {
+                id: 'kbr-molten',
+                name: 'Potassium Bromide (KBr)',
+                state: 'molten',
+                cathodeProduct: 'K',
+                anodeProduct: 'Br₂',
+                cathodeReason: 'In molten KBr, only K⁺ ions are available at the cathode.',
+                anodeReason: 'In molten KBr, only Br⁻ ions are available at the anode.'
+            },
+            {
+                id: 'nai-molten',
+                name: 'Sodium Iodide (NaI)',
+                state: 'molten',
+                cathodeProduct: 'Na',
+                anodeProduct: 'I₂',
+                cathodeReason: 'In molten NaI, only Na⁺ ions are available at the cathode.',
+                anodeReason: 'In molten NaI, only I⁻ ions are available at the anode.'
+            },
+            {
+                id: 'lif-molten',
+                name: 'Lithium Fluoride (LiF)',
+                state: 'molten',
+                cathodeProduct: 'Li',
+                anodeProduct: 'F₂',
+                cathodeReason: 'In molten LiF, only Li⁺ ions are available at the cathode.',
+                anodeReason: 'In molten LiF, only F⁻ ions are available at the anode.'
+            }
+        ];
+        
+        // Product options for the game
+        const possibleProducts = [
+            // Cathode products
+            { id: 'hydrogen', symbol: 'H₂', name: 'Hydrogen', type: 'cathode', color: '#f1c40f' },
+            { id: 'sodium', symbol: 'Na', name: 'Sodium', type: 'cathode', color: '#f39c12' },
+            { id: 'potassium', symbol: 'K', name: 'Potassium', type: 'cathode', color: '#e74c3c' },
+            { id: 'copper', symbol: 'Cu', name: 'Copper', type: 'cathode', color: '#e67e22' },
+            { id: 'magnesium', symbol: 'Mg', name: 'Magnesium', type: 'cathode', color: '#1abc9c' },
+            { id: 'calcium', symbol: 'Ca', name: 'Calcium', type: 'cathode', color: '#d35400' },
+            { id: 'silver', symbol: 'Ag', name: 'Silver', type: 'cathode', color: '#95a5a6' },
+            { id: 'zinc', symbol: 'Zn', name: 'Zinc', type: 'cathode', color: '#7f8c8d' },
+            { id: 'lithium', symbol: 'Li', name: 'Lithium', type: 'cathode', color: '#c0392b' },
+            
+            // Anode products
+            { id: 'oxygen', symbol: 'O₂', name: 'Oxygen', type: 'anode', color: '#3498db' },
+            { id: 'chlorine', symbol: 'Cl₂', name: 'Chlorine', type: 'anode', color: '#27ae60' },
+            { id: 'bromine', symbol: 'Br₂', name: 'Bromine', type: 'anode', color: '#8e44ad' },
+            { id: 'iodine', symbol: 'I₂', name: 'Iodine', type: 'anode', color: '#9b59b6' },
+            { id: 'fluorine', symbol: 'F₂', name: 'Fluorine', type: 'anode', color: '#2ecc71' }
+        ];
+        
+        // Game state variables
+        let gameActive = false;
+        let gameScore = 0;
+        let currentRound = 0;
+        let timerInterval;
+        let timeRemaining = 60;
+        let gameCompoundQueue = [];
+        let currentCompound = null;
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            gameActive = true;
+            gameScore = 0;
+            currentRound = 0;
+            timeRemaining = 60;
+            
+            // Update displays
+            scoreDisplay.textContent = '0';
+            timerDisplay.textContent = '60';
+            currentRoundDisplay.textContent = '1';
+            
+            // Reset targets
+            resetDropTargets();
+            
+            // Hide results
+            roundResults.classList.add('hidden');
+            gameOver.classList.add('hidden');
+            
+            // Clear feedback
+            gameFeedback.innerHTML = '';
+            
+            // Create compound queue - 5 molten and 5 aqueous in random order
+            const moltenCompounds = gameCompounds.filter(c => c.state === 'molten');
+            const aqueousCompounds = gameCompounds.filter(c => c.state === 'aqueous');
+            
+            // Randomly select 5 from each
+            const selectedMolten = moltenCompounds.sort(() => 0.5 - Math.random()).slice(0, 5);
+            const selectedAqueous = aqueousCompounds.sort(() => 0.5 - Math.random()).slice(0, 5);
+            
+            // Combine and shuffle for random order
+            gameCompoundQueue = [...selectedMolten, ...selectedAqueous].sort(() => 0.5 - Math.random());
+            
+            // Start first round
+            nextRound();
+            
+            // Start timer
+            startTimer();
+            
+            // Update button states
+            newGameBtn.disabled = true;
+            submitAnswerBtn.disabled = false;
+            nextRoundBtn.disabled = true;
+        }
+        
+        // Start the timer
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.parentElement.classList.remove('low');
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timerDisplay.textContent = timeRemaining;
+                
+                // Warning when time is low
+                if (timeRemaining <= 10) {
+                    timerDisplay.parentElement.classList.add('low');
+                }
+                
+                // End round if time runs out
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    checkAnswer(true); // Force check with timeout flag
+                }
+            }, 1000);
+        }
+        
+        // Reset timer for next round
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeRemaining = 60;
+            timerDisplay.textContent = timeRemaining;
+            timerDisplay.parentElement.classList.remove('low');
+        }
+        
+        // Move to next round
+        function nextRound() {
+            // Reset targets
+            resetDropTargets();
+            
+            // Clear feedback
+            gameFeedback.innerHTML = '';
+            
+            // Hide results
+            roundResults.classList.add('hidden');
+            
+            // Update round number
+            currentRound++;
+            currentRoundDisplay.textContent = currentRound;
+            
+            // Get next compound
+            currentCompound = gameCompoundQueue[currentRound - 1];
+            
+            // Update electrolyte card
+            electrolyteName.textContent = currentCompound.name;
+            electrolyteState.textContent = currentCompound.state.charAt(0).toUpperCase() + currentCompound.state.slice(1);
+            electrolyteState.className = `electrolyte-state ${currentCompound.state}`;
+            
+            // Update mini-beaker color based on electrolyte state
+            if (currentCompound.state === 'molten') {
+                miniSolution.style.backgroundColor = 'rgba(243, 156, 18, 0.3)'; // More orange for molten
+            } else {
+                miniSolution.style.backgroundColor = 'rgba(173, 216, 230, 0.3)'; // Blue for aqueous
+            }
+            
+            // Create product cards
+            createProductCards();
+            
+            // Update button states
+            submitAnswerBtn.disabled = false;
+            nextRoundBtn.disabled = true;
+            
+            // Reset timer
+            resetTimer();
+            startTimer();
+        }
+        
+        // Create product cards
+        function createProductCards() {
+            productsContainer.innerHTML = '';
+            
+            // Shuffle products for random order
+            const shuffledProducts = [...possibleProducts].sort(() => 0.5 - Math.random());
+            
+            // Create and add cards with animation delay
+            shuffledProducts.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.id = `product-${product.id}`;
+                card.style.backgroundColor = product.color;
+                card.setAttribute('draggable', 'true');
+                card.dataset.type = product.type;
+                card.dataset.id = product.id;
+                card.dataset.symbol = product.symbol;
+                
+                // Animation delay
+                card.style.animation = `cardPopIn 0.5s forwards ${index * 0.05}s`;
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.5)';
+                
+                // Card content
+                card.innerHTML = `
+                    <div class="product-symbol">${product.symbol}</div>
+                    <div class="product-name">${product.name}</div>
+                `;
+                
+                productsContainer.appendChild(card);
+                
+                // Add drag events
+                card.addEventListener('dragstart', drag);
             });
         }
         
+        // Reset drop targets
+        function resetDropTargets() {
+            cathodeTarget.innerHTML = '<div class="drop-label">Drop product here</div>';
+            cathodeTarget.className = 'drop-target';
+            anodeTarget.innerHTML = '<div class="drop-label">Drop product here</div>';
+            anodeTarget.className = 'drop-target';
+        }
+        
+        // Drag function
         function drag(e) {
             e.dataTransfer.setData('text', e.target.id);
         }
@@ -2440,75 +3703,165 @@
                 e.preventDefault();
                 target.classList.remove('hover');
                 
-                const ionId = e.dataTransfer.getData('text');
-                const ion = document.getElementById(ionId);
+                const productId = e.dataTransfer.getData('text');
+                const product = document.getElementById(productId);
                 
-                // Move the ion to the drop target
-                if (ion && (target.children.length === 0 || target.children[0].tagName !== 'DIV')) {
-                    target.innerHTML = '';
-                    target.appendChild(ion);
-                    ion.style.margin = '0 auto';
-                    ion.setAttribute('draggable', 'false');
+                // Only allow dropping if product type matches target and target is empty
+                if (product && product.dataset.type === target.dataset.accepts && 
+                    (!target.querySelector('.product-card'))) {
+                    
+                    // Remove drop label
+                    const label = target.querySelector('.drop-label');
+                    if (label) label.remove();
+                    
+                    // Clone the product card for the drop target
+                    const clone = product.cloneNode(true);
+                    clone.style.animation = 'none';
+                    clone.style.transform = 'none';
+                    clone.style.opacity = '1';
+                    clone.style.margin = '0 auto';
+                    clone.style.cursor = 'default';
+                    clone.setAttribute('draggable', 'false');
+                    
+                    target.appendChild(clone);
+                    
+                    // Hide the original product
+                    product.style.opacity = '0.3';
+                    product.setAttribute('draggable', 'false');
                 }
             });
         });
         
-        function checkGameAnswers() {
-            let correct = 0;
-            let checked = 0;
+        // Check answer
+        function checkAnswer(timeout = false) {
+            // Stop the timer
+            clearInterval(timerInterval);
             
-            // Check ions in cathode target
-            const cathodeIons = Array.from(cathodeTarget.children).filter(child => child.classList.contains('draggable'));
+            // Check if both targets have products
+            const cathodeProduct = cathodeTarget.querySelector('.product-card');
+            const anodeProduct = anodeTarget.querySelector('.product-card');
             
-            cathodeIons.forEach(ion => {
-                checked++;
-                const ionData = currentGameIons.find(i => i.id === ion.id);
-                
-                if (ionData && ionData.type === 'cation' && ionData.discharged) {
-                    correct++;
-                    ion.style.border = '2px solid #27ae60';
+            if (!cathodeProduct || !anodeProduct) {
+                if (timeout) {
+                    gameFeedback.innerHTML = `<div class="warning-box">Time's up! You must select products for both electrodes.</div>`;
+                    endRound(false, false);
                 } else {
-                    ion.style.border = '2px solid #e74c3c';
+                    gameFeedback.innerHTML = `<div class="warning-box">Please select products for both electrodes!</div>`;
+                    return; // Don't proceed if both aren't selected
                 }
-            });
-            
-            // Check ions in anode target
-            const anodeIons = Array.from(anodeTarget.children).filter(child => child.classList.contains('draggable'));
-            
-            anodeIons.forEach(ion => {
-                checked++;
-                const ionData = currentGameIons.find(i => i.id === ion.id);
-                
-                if (ionData && ionData.type === 'anion' && ionData.discharged) {
-                    correct++;
-                    ion.style.border = '2px solid #27ae60';
-                } else {
-                    ion.style.border = '2px solid #e74c3c';
-                }
-            });
-            
-            // Update score and feedback
-            gameScore = correct;
-            scoreDisplay.textContent = gameScore;
-            
-            if (checked < 10) {
-                gameFeedback.innerHTML = `<div class="warning-box">Please place all ions in the appropriate targets!</div>`;
             } else {
+                // Check if answers are correct
+                const cathodeCorrect = cathodeProduct.dataset.symbol === currentCompound.cathodeProduct;
+                const anodeCorrect = anodeProduct.dataset.symbol === currentCompound.anodeProduct;
+                
+                // Mark targets as correct or incorrect
+                cathodeTarget.classList.add(cathodeCorrect ? 'correct' : 'incorrect');
+                anodeTarget.classList.add(anodeCorrect ? 'correct' : 'incorrect');
+                
+                // Update score
+                if (cathodeCorrect) gameScore++;
+                if (anodeCorrect) gameScore++;
+                scoreDisplay.textContent = gameScore;
+                
+                // Show feedback
                 let feedbackMessage = '';
-                if (gameScore === 10) {
-                    feedbackMessage = '<div class="info-box" style="border-color: #27ae60;"><h3>Perfect Score! 🌟</h3><p>Outstanding! You really understand which ions are discharged at each electrode.</p></div>';
-                } else if (gameScore >= 7) {
-                    feedbackMessage = '<div class="info-box" style="border-color: #f39c12;"><h3>Good Job! 👍</h3><p>You have a good understanding. Review the ones you missed.</p></div>';
+                if (cathodeCorrect && anodeCorrect) {
+                    feedbackMessage = '<div class="info-box" style="border-color: #27ae60;"><h3>Perfect! ✓✓</h3><p>Both products are correct!</p></div>';
+                } else if (cathodeCorrect || anodeCorrect) {
+                    feedbackMessage = '<div class="info-box" style="border-color: #f39c12;"><h3>Partially Correct! ✓</h3><p>One product is correct.</p></div>';
                 } else {
-                    feedbackMessage = '<div class="info-box" style="border-color: #e74c3c;"><h3>Keep Practicing 📚</h3><p>You might need to review the tutorial section again. Remember:<ul><li>At the cathode: Hydrogen ions or less reactive metals get discharged</li><li>At the anode: Halide ions or hydroxide ions get discharged</li></ul></p></div>';
+                    feedbackMessage = '<div class="info-box" style="border-color: #e74c3c;"><h3>Incorrect ✗</h3><p>Neither product is correct.</p></div>';
                 }
                 
                 gameFeedback.innerHTML = feedbackMessage;
+                
+                // End the round
+                endRound(cathodeCorrect, anodeCorrect);
             }
         }
         
+        // End the round and show results
+        function endRound(cathodeCorrect, anodeCorrect) {
+            // Disable submit button and enable next round button
+            submitAnswerBtn.disabled = true;
+            
+            // Show detailed results
+            roundResults.classList.remove('hidden');
+            
+            let resultHTML = `
+                <div class="result-summary">
+                    <h4>${currentCompound.name} (${currentCompound.state})</h4>
+                    <div class="result-details">
+                        <div class="cathode-result">
+                            <p><strong>At the Cathode:</strong><br>
+                            Your answer: ${cathodeTarget.querySelector('.product-card')?.dataset.symbol || 'None'}<br>
+                            Correct answer: ${currentCompound.cathodeProduct}<br>
+                            ${cathodeCorrect ? '✓ Correct!' : '✗ Incorrect'}</p>
+                            <p><small>${currentCompound.cathodeReason}</small></p>
+                        </div>
+                        <div class="anode-result">
+                            <p><strong>At the Anode:</strong><br>
+                            Your answer: ${anodeTarget.querySelector('.product-card')?.dataset.symbol || 'None'}<br>
+                            Correct answer: ${currentCompound.anodeProduct}<br>
+                            ${anodeCorrect ? '✓ Correct!' : '✗ Incorrect'}</p>
+                            <p><small>${currentCompound.anodeReason}</small></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            roundDetails.innerHTML = resultHTML;
+            
+            // Check if game is over
+            if (currentRound >= 10) {
+                // Show game over screen after a short delay
+                setTimeout(() => {
+                    endGame();
+                }, 2000);
+            } else {
+                // Enable next round button
+                nextRoundBtn.disabled = false;
+            }
+        }
+        
+        // End the game and show final score
+        function endGame() {
+            // Hide round results
+            roundResults.classList.add('hidden');
+            
+            // Show game over screen
+            gameOver.classList.remove('hidden');
+            
+            // Update final score
+            const maxScore = 20; // 10 rounds, 2 points per round
+            const percentage = Math.round((gameScore / maxScore) * 100);
+            let gradeMessage = '';
+            
+            if (percentage >= 90) {
+                gradeMessage = 'Outstanding! You have mastered electrolysis principles!';
+            } else if (percentage >= 75) {
+                gradeMessage = 'Great job! You have a strong understanding of electrolysis.';
+            } else if (percentage >= 60) {
+                gradeMessage = 'Good effort! Review the principles that you missed.';
+            } else {
+                gradeMessage = 'Keep practicing! Review the tutorial section to improve your understanding.';
+            }
+            
+            finalScore.innerHTML = `
+                <p>Your final score: ${gameScore} out of ${maxScore} points (${percentage}%)</p>
+                <p>${gradeMessage}</p>
+            `;
+            
+            // Reset for new game
+            gameActive = false;
+            newGameBtn.disabled = false;
+        }
+        
+        // Event listeners
         newGameBtn.addEventListener('click', initGame);
-        checkGameBtn.addEventListener('click', checkGameAnswers);
+        submitAnswerBtn.addEventListener('click', () => checkAnswer(false));
+        nextRoundBtn.addEventListener('click', nextRound);
+        playAgainBtn.addEventListener('click', initGame);
         
         // Initialize everything
         window.addEventListener('load', () => {
@@ -2517,8 +3870,40 @@
                 section.style.display = index === 0 ? 'block' : 'none';
             });
             
-            // Initialize game
-            initGame();
+            // Initialize electrolysis game 
+            try {
+                // Check if all required elements exist
+                const gameElements = [
+                    'new-game', 'submit-answer', 'next-round', 'play-again',
+                    'products-container', 'cathode-target', 'anode-target', 
+                    'score', 'timer', 'current-round', 'game-feedback',
+                    'round-details', 'round-results', 'game-over', 'final-score'
+                ];
+                
+                const missingElements = gameElements.filter(id => !document.getElementById(id));
+                
+                if (missingElements.length > 0) {
+                    console.error('Missing game elements:', missingElements);
+                } else {
+                    // All elements exist, set up event listeners
+                    const newGameBtn = document.getElementById('new-game');
+                    const submitAnswerBtn = document.getElementById('submit-answer');
+                    const nextRoundBtn = document.getElementById('next-round');
+                    const playAgainBtn = document.getElementById('play-again');
+                    
+                    newGameBtn.addEventListener('click', initGame);
+                    submitAnswerBtn.addEventListener('click', () => checkAnswer(false));
+                    nextRoundBtn.addEventListener('click', nextRound);
+                    playAgainBtn.addEventListener('click', initGame);
+                    
+                    // Initial game setup 
+                    gameScore = 0;
+                    scoreDisplay.textContent = '0';
+                    document.querySelector('.electrolyte-name').textContent = 'Click "Start New Game" to begin';
+                }
+            } catch (error) {
+                console.error('Error initializing game:', error);
+            }
         });
     </script>
 </body>
