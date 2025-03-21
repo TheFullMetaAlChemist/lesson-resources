@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maxwell-Boltzmann Distribution Interactive Lesson</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #48cae4;
+            --accent: #e63946;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --success: #2ecc71;
+            --warning: #ffc107;
+            --danger: #e74c3c;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-100);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        h2 {
+            margin: 30px 0 15px 0;
+            color: var(--dark);
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+        
+        h3 {
+            margin: 20px 0 12px 0;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: var(--gray-700);
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.6s;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .intro-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .activity-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .activity-instructions {
+            width: 100%;
+        }
+        
+        .simulation-container {
+            width: 100%;
+            height: 650px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .simulation-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .prev-btn {
+            background-color: var(--gray-200);
+            color: var(--gray-700);
+        }
+        
+        .prev-btn:hover:not([disabled]) {
+            background-color: var(--gray-300);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .next-btn:hover:not([disabled]) {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+        }
+        
+        button:disabled {
+            background-color: var(--gray-300);
+            color: var(--gray-500);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        ol, ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: var(--gray-700);
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .key-points {
+            background-color: rgba(67, 97, 238, 0.05);
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: 50px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transition: width 0.5s ease;
+            border-radius: 50px;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+        
+        .question {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .question:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .options {
+            margin: 15px 0;
+        }
+        
+        .options label {
+            display: block;
+            margin: 12px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            background-color: var(--gray-100);
+            border: 1px solid var(--gray-300);
+        }
+        
+        .options label:hover {
+            background-color: var(--gray-200);
+            transform: translateX(5px);
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            display: none;
+            font-weight: 500;
+            animation: fadeIn 0.3s;
+        }
+        
+        .correct {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #1d8348;
+            border-left: 4px solid var(--success);
+        }
+        
+        .incorrect {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #922b21;
+            border-left: 4px solid var(--danger);
+        }
+        
+        #submit-quiz, #reset-quiz {
+            margin-top: 25px;
+            padding: 12px 30px;
+        }
+        
+        #reset-quiz {
+            margin-left: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .highlight {
+            background-color: rgba(255, 214, 10, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .note {
+            background-color: rgba(255, 193, 7, 0.1);
+            padding: 20px;
+            border-left: 4px solid var(--warning);
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .definition {
+            font-style: italic;
+            color: var(--gray-700);
+        }
+        
+        .equation {
+            text-align: center;
+            margin: 25px 0;
+            font-family: "Times New Roman", Times, serif;
+            font-style: italic;
+            font-size: 1.2em;
+            padding: 15px;
+            background-color: var(--gray-100);
+            border-radius: 8px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin: 20px 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .answer-toggle {
+            background-color: var(--gray-700);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .answer-toggle:hover {
+            background-color: var(--gray-800);
+        }
+        
+        .answers {
+            display: none;
+            padding: 20px;
+            background-color: var(--gray-100);
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--gray-600);
+            animation: fadeIn 0.5s;
+        }
+        
+        .quiz-container {
+            padding: 0 10px;
+        }
+        
+        #quiz-score {
+            text-align: center;
+            padding: 25px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.2) 100%);
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        #score {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .progress-step::before {
+            content: "";
+            height: 3px;
+            background-color: var(--gray-300);
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+        
+        .progress-step:first-child::before {
+            left: 50%;
+        }
+        
+        .progress-step:last-child::before {
+            right: 50%;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            position: relative;
+            z-index: 2;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .progress-step.completed .step-icon {
+            background-color: var(--success);
+        }
+        
+        .progress-step.active .step-icon {
+            background-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+        }
+        
+        .progress-step.completed::before {
+            background-color: var(--success);
+        }
+        
+        .step-label {
+            font-size: 12px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .progress-step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            .step-label {
+                display: none;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Maxwell-Boltzmann Distribution</h1>
+            <p>Interactive Learning Module for Chemistry Students</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="progress-step active" data-step="0">
+                <div class="step-icon">1</div>
+                <div class="step-label">Introduction</div>
+            </div>
+            <div class="progress-step" data-step="1">
+                <div class="step-icon">2</div>
+                <div class="step-label">Simulator</div>
+            </div>
+            <div class="progress-step" data-step="2">
+                <div class="step-icon">3</div>
+                <div class="step-label">Activity 1</div>
+            </div>
+            <div class="progress-step" data-step="3">
+                <div class="step-icon">4</div>
+                <div class="step-label">Activity 2</div>
+            </div>
+            <div class="progress-step" data-step="4">
+                <div class="step-icon">5</div>
+                <div class="step-label">Activity 3</div>
+            </div>
+            <div class="progress-step" data-step="5">
+                <div class="step-icon">6</div>
+                <div class="step-label">Activity 4</div>
+            </div>
+            <div class="progress-step" data-step="6">
+                <div class="step-icon">7</div>
+                <div class="step-label">Activity 5</div>
+            </div>
+            <div class="progress-step" data-step="7">
+                <div class="step-icon">8</div>
+                <div class="step-label">Summary</div>
+            </div>
+            <div class="progress-step" data-step="8">
+                <div class="step-icon">9</div>
+                <div class="step-label">Quiz</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+        
+        <!-- Introduction Screen -->
+        <div class="screen active" id="screen-0">
+            <div class="intro-screen">
+                <h2>Understanding the Maxwell-Boltzmann Distribution</h2>
+                <div class="key-points">
+                    <h3>Key Concepts You'll Learn:</h3>
+                    <p>• How molecular energies are distributed at different temperatures</p>
+                    <p>• Why reaction rates increase with temperature</p>
+                    <p>• How catalysts affect reaction rates</p>
+                    <p>• Using the Boltzmann distribution to explain chemical kinetics</p>
+                </div>
+                
+                <h3>The Maxwell-Boltzmann Distribution Explained</h3>
+                <p>The Maxwell-Boltzmann distribution describes how molecular energies are distributed in a system at thermal equilibrium. This fundamental concept in physical chemistry helps explain reaction rates and energy transfer.</p>
+                
+                <div class="card">
+                    <h3>Key Features of the Distribution</h3>
+                    <ul>
+                        <li><strong>Area Under the Curve:</strong> Represents the total number of molecules in the system</li>
+                        <li><strong>Distribution Shape:</strong> Asymmetric bell curve that peaks at lower energies with a long tail extending to higher energies</li>
+                        <li><strong>Temperature Effects:</strong> Higher temperature broadens the distribution and shifts the peak to higher energy values</li>
+                        <li><strong>Most Probable Energy:</strong> The energy possessed by the largest number of molecules (peak of the curve)</li>
+                        <li><strong>Average Energy:</strong> Always higher than the most probable energy due to the asymmetry of the distribution</li>
+                    </ul>
+                </div>
+                
+                <div class="equation">
+                    f(E) ∝ √E · e<sup>(-E/RT)</sup>
+                </div>
+                
+                <p>Where E is energy, R is the gas constant, and T is absolute temperature.</p>
+                
+                <div class="note">
+                    <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> The distribution explains why reaction rates increase with temperature - as temperature rises, more molecules have energy above the activation energy threshold required for reaction.</p>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Simulator Features <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Simulator Features Screen -->
+        <div class="screen" id="screen-1">
+            <h2>Maxwell-Boltzmann Simulator Features</h2>
+            
+            <p>Before we start our activities, let's understand how to use the simulator:</p>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <h3><i class="fas fa-sliders-h"></i> Interactive Features</h3>
+                    <ul>
+                        <li><strong>Temperature Slider:</strong> Adjust to see how temperature affects the distribution</li>
+                        <li><strong>Snapshot Button:</strong> Takes a "snapshot" of the current distribution curve for comparison</li>
+                        <li><strong>Toggle Buttons:</strong>
+                            <ul>
+                                <li><span class="highlight">Most Probable Energy:</span> Shows the energy possessed by the highest number of molecules (blue dot)</li>
+                                <li><span class="highlight">Average Energy:</span> Shows the mean energy of all molecules (red dot)</li>
+                                <li><span class="highlight">Activation Energy:</span> Shows the minimum energy needed for reaction (orange line and shaded area)</li>
+                                <li><span class="highlight">Catalyst:</span> Reduces activation energy threshold from 400 to 300 units</li>
+                            </ul>
+                        </li>
+                        <li><strong>Record Data:</strong> Captures the current distribution data in the table below</li>
+                    </ul>
+                    
+                    <div class="note">
+                        <p><i class="fas fa-info-circle"></i> <strong>Simulation Tip:</strong> The shaded orange area represents molecules with enough energy to react. This is key to understanding reaction rates!</p>
+                    </div>
+                    
+                    <h3><i class="fas fa-book-reader"></i> How to Use the Simulator</h3>
+                    <ol>
+                        <li>Adjust the temperature using the slider</li>
+                        <li>Toggle features on/off using the buttons on the right</li>
+                        <li>Take snapshots to compare distributions at different temperatures</li>
+                        <li>Record data to build a data table for analysis</li>
+                        <li>Observe how distribution changes affect reaction rates</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Activity 1 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Activity 1 Screen -->
+        <div class="screen" id="screen-2">
+            <h2>Activity 1: Understanding the Boltzmann Distribution Basics</h2>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <div class="card">
+                        <h3><i class="fas fa-tasks"></i> Instructions:</h3>
+                        <ol>
+                            <li>Set temperature to 100K</li>
+                            <li>Toggle on "Most Probable Energy" and "Average Energy"</li>
+                            <li>Take a snapshot of this distribution</li>
+                        </ol>
+                    </div>
+                    
+                    <h3><i class="fas fa-clipboard-check"></i> Observe and Record:</h3>
+                    <ul>
+                        <li>What is the most probable energy?</li>
+                        <li>How does the average energy compare to the most probable energy?</li>
+                        <li>Why is the average energy higher than the most probable energy?</li>
+                        <li>What does the area under the curve represent?</li>
+                    </ul>
+                    
+                    <div class="key-points">
+                        <h3>Key Learning Points:</h3>
+                        <p>• The distribution is <strong>asymmetric</strong> - not a normal distribution</p>
+                        <p>• The <strong>most probable energy</strong> is at the peak of the curve</p>
+                        <p>• The <strong>average energy</strong> is always higher than the most probable energy due to the long "tail" at high energies</p>
+                        <p>• The area under the curve represents the <strong>total number of molecules</strong> (50 in this simulation)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Activity 2 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Activity 2 Screen -->
+        <div class="screen" id="screen-3">
+            <h2>Activity 2: Temperature Effects on Molecular Energy Distribution</h2>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <div class="card">
+                        <h3><i class="fas fa-tasks"></i> Instructions:</h3>
+                        <ol>
+                            <li>Keep your 100K snapshot visible from Activity 1</li>
+                            <li>Increase temperature to 200K</li>
+                            <li>Take a snapshot at 200K</li>
+                            <li>Increase to 300K</li>
+                            <li>Take a snapshot at 300K</li>
+                            <li>Continue up to 500K in 100K increments, taking snapshots at each step</li>
+                        </ol>
+                    </div>
+                    
+                    <h3><i class="fas fa-clipboard-check"></i> Compare all curves and record:</h3>
+                    <ul>
+                        <li>How does the peak height change with temperature?</li>
+                        <li>How does the position of the peak (most probable energy) shift?</li>
+                        <li>What happens to the width of the distribution?</li>
+                        <li>Why do higher temperatures produce more high-energy molecules?</li>
+                    </ul>
+                    
+                    <div class="key-points">
+                        <h3>Key Learning Points:</h3>
+                        <p>• As temperature increases, the curve <strong>flattens and widens</strong></p>
+                        <p>• The peak (most probable energy) <strong>shifts right</strong> with increasing temperature</p>
+                        <p>• Higher temperatures create <strong>more high-energy molecules</strong> (larger area under the tail)</p>
+                        <p>• The total area under the curve remains constant (conservation of molecules)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Activity 3 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Activity 3 Screen -->
+        <div class="screen" id="screen-4">
+            <h2>Activity 3: Activation Energy and Reaction Rates</h2>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <div class="card">
+                        <h3><i class="fas fa-tasks"></i> Instructions:</h3>
+                        <ol>
+                            <li>Clear snapshots and set temperature to 100K</li>
+                            <li>Toggle on "Activation Energy"</li>
+                            <li>Take a snapshot and record data</li>
+                            <li>Increase temperature to 200K</li>
+                            <li>Take a snapshot and record data</li>
+                            <li>Continue increasing in 100K increments up to 500K</li>
+                            <li>Take snapshots and record data at each temperature</li>
+                            <li>Click "Record Data" at each temperature to save the values</li>
+                        </ol>
+                    </div>
+                    
+                    <h3><i class="fas fa-chart-line"></i> Analyze your data:</h3>
+                    <ul>
+                        <li>Calculate how much the reaction rate increases when temperature rises from 300K to 400K</li>
+                        <li>Calculate how much it increases from 400K to 500K</li>
+                        <li>Is the relationship between temperature and reaction rate linear or exponential?</li>
+                        <li>Explain why a small temperature increase can significantly increase reaction rate</li>
+                    </ul>
+                    
+                    <div class="key-points">
+                        <h3>Key Learning Points:</h3>
+                        <p>• The <strong>activation energy</strong> (orange line) is the minimum energy needed for a reaction</p>
+                        <p>• The <strong>shaded area</strong> represents molecules with enough energy to react</p>
+                        <p>• Reaction rate is <strong>proportional to this shaded area</strong></p>
+                        <p>• The relationship between temperature and reaction rate is <strong>exponential</strong>, not linear</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Activity 4 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Activity 4 Screen -->
+        <div class="screen" id="screen-5">
+            <h2>Activity 4: Understanding Catalyst Effects</h2>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <div class="card">
+                        <h3><i class="fas fa-tasks"></i> Instructions:</h3>
+                        <ol>
+                            <li>Clear snapshots and set temperature to 100K</li>
+                            <li>Toggle on "Activation Energy"</li>
+                            <li>Take a snapshot and record data (without catalyst)</li>
+                            <li>Toggle on "Catalyst"</li>
+                            <li>Without changing temperature, record new data (with catalyst)</li>
+                            <li>Repeat steps 1-5 for 200K, 300K, 400K, and 500K</li>
+                            <li>Click "Record Data" for each configuration</li>
+                        </ol>
+                    </div>
+                    
+                    <h3><i class="fas fa-table"></i> Create a table comparing reaction rates with and without catalyst at each temperature</h3>
+                    
+                    <h3><i class="fas fa-search"></i> Analyze:</h3>
+                    <ul>
+                        <li>How does the catalyst change the distribution curve? (It doesn't)</li>
+                        <li>Why does the reaction rate increase despite no change in the distribution?</li>
+                        <li>At which temperature is the catalyst effect most significant in terms of absolute increase in reaction rate?</li>
+                        <li>At which temperature is the catalyst effect most significant in terms of percentage increase?</li>
+                    </ul>
+                    
+                    <div class="key-points">
+                        <h3>Key Learning Points:</h3>
+                        <p>• Catalysts <strong>lower the activation energy</strong> (from 400 to 300 in this simulation)</p>
+                        <p>• Catalysts <strong>do not change</strong> the Maxwell-Boltzmann distribution</p>
+                        <p>• By lowering the activation energy threshold, <strong>more molecules</strong> have sufficient energy to react</p>
+                        <p>• The <strong>percentage increase</strong> in reaction rate is more dramatic at lower temperatures</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Activity 5 <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Activity 5 Screen -->
+        <div class="screen" id="screen-6">
+            <h2>Activity 5: Visualizing Temperature and Catalyst Interactions</h2>
+            
+            <div class="activity-container">
+                <div class="simulation-container">
+                    <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+                </div>
+                
+                <div class="activity-instructions">
+                    <div class="card">
+                        <h3><i class="fas fa-tasks"></i> Instructions:</h3>
+                        <ol>
+                            <li>Clear snapshots and set temperature to 100K</li>
+                            <li>Toggle on "Activation Energy" but turn "Catalyst" off</li>
+                            <li>Take a snapshot and label it "100K, No Catalyst"</li>
+                            <li>Without clearing the snapshot, toggle on "Catalyst"</li>
+                            <li>Take a snapshot and label it "100K, With Catalyst"</li>
+                            <li>Increase temperature to 500K (with catalyst still on)</li>
+                            <li>Take a snapshot and label it "500K, With Catalyst"</li>
+                            <li>Turn "Catalyst" off</li>
+                            <li>Take a snapshot and label it "500K, No Catalyst"</li>
+                            <li>Click "Record Data" for each configuration</li>
+                        </ol>
+                    </div>
+                    
+                    <h3><i class="fas fa-search-plus"></i> With all four distributions visible, analyze:</h3>
+                    <ul>
+                        <li>Compare the areas above the activation energy threshold in each case</li>
+                        <li>Which has a greater effect on reaction rate: raising temperature from 300K to 500K or adding a catalyst?</li>
+                        <li>Can a catalyst at low temperature produce a faster reaction than no catalyst at high temperature?</li>
+                    </ul>
+                    
+                    <div class="key-points">
+                        <h3>Key Learning Points:</h3>
+                        <p>• Both <strong>temperature and catalysts</strong> can increase reaction rates</p>
+                        <p>• They work through <strong>different mechanisms</strong>: temperature changes the distribution, catalysts lower the threshold</p>
+                        <p>• The <strong>combined effect</strong> of high temperature and a catalyst produces the fastest reactions</p>
+                        <p>• Industrial processes often use <strong>both approaches</strong> for optimal efficiency</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Next: Summary <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+        
+        <!-- Summary Screen -->
+        <div class="screen" id="screen-7">
+            <h2>Summary and Assessment</h2>
+            
+            <div class="simulation-container">
+                <iframe src="https://thefullmetaalchemist.github.io/Maxwell-Boltzmann-Simulation/" title="Maxwell-Boltzmann Simulation"></iframe>
+            </div>
+            
+            <div class="key-points">
+                <h3><i class="fas fa-star"></i> Key Learning Outcomes:</h3>
+                <p>• The Maxwell-Boltzmann distribution shows how molecular energies are distributed at a given temperature</p>
+                <p>• As temperature increases, the distribution broadens and shifts to higher energies</p>
+                <p>• Only molecules with energy ≥ activation energy can react</p>
+                <p>• Reaction rate is proportional to the fraction of molecules above the activation energy threshold</p>
+                <p>• This explains why reaction rates increase exponentially with temperature</p>
+                <p>• Catalysts lower the activation energy threshold without changing the energy distribution</p>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-tasks"></i> Assessment Task:</h3>
+                <p>Using the simulator, compare the effects of: (1) increasing temperature from 100K to 300K without a catalyst, and (2) using a catalyst at 100K. Discuss which approach has a greater effect on reaction rate and explain why in terms of the Maxwell-Boltzmann distribution.</p>
+                
+                <button class="answer-toggle" id="toggle-assessment-answer">
+                    <i class="fas fa-eye"></i> Show Sample Answer
+                </button>
+                
+                <div class="answers" id="assessment-answer">
+                    <h4>Sample Answer:</h4>
+                    <p>Increasing temperature from 100K to 300K has a more significant effect on reaction rate than adding a catalyst at 100K. At 100K, very few molecules have energies exceeding the activation energy threshold (400 units). When a catalyst is added, the threshold is lowered to 300 units, which increases the number of molecules that can react, but the total is still relatively small.</p>
+                    
+                    <p>In contrast, increasing temperature to 300K dramatically shifts the entire distribution curve to higher energies, significantly increasing the number of molecules with energies above 400 units (the original activation energy threshold). This occurs because temperature changes affect the entire distribution exponentially, especially at the high-energy tail.</p>
+                    
+                    <p>Quantitatively, the reaction rate at 100K with a catalyst might increase by 10-20 times compared to no catalyst at 100K, while increasing temperature from 100K to 300K without a catalyst can increase the reaction rate by 100-1000 times or more, depending on the exact activation energy value.</p>
+                    
+                    <p>The reason is fundamental to the Maxwell-Boltzmann distribution: the proportion of molecules with energy above a threshold increases exponentially with temperature, especially when that threshold is in the high-energy tail of the distribution.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3><i class="fas fa-question-circle"></i> Discussion Questions:</h3>
+                <ol>
+                    <li>Why does the proportion of molecules exceeding activation energy increase exponentially with temperature rather than linearly?</li>
+                    <li>Explain why catalysts are useful in industrial processes, using the Boltzmann distribution model.</li>
+                    <li>If you could either increase temperature by 100K or add a catalyst that reduces activation energy by 25%, which would increase reaction rate more? Does your answer depend on the starting temperature?</li>
+                    <li>Why do both the most probable energy and average energy increase with temperature, and why is average energy always higher?</li>
+                </ol>
+                
+                <button class="answer-toggle" id="toggle-discussion-answers">
+                    <i class="fas fa-eye"></i> Show Sample Answers
+                </button>
+                
+                <div class="answers" id="discussion-answers">
+                    <h4>Sample Answers:</h4>
+                    
+                    <p><strong>Question 1:</strong> The proportion of molecules exceeding activation energy increases exponentially with temperature rather than linearly because of the mathematical form of the Maxwell-Boltzmann distribution (f(E) ∝ √E · e<sup>(-E/RT)</sup>). The exponential term means that as temperature (T) increases, the probability of finding molecules at high energies increases exponentially. Additionally, activation energies are typically in the high-energy tail of the distribution, where small changes in temperature have exponentially larger effects on the number of molecules with sufficient energy.</p>
+                    
+                    <p><strong>Question 2:</strong> Catalysts are extremely useful in industrial processes because they allow reactions to proceed at lower temperatures while maintaining acceptable reaction rates. According to the Boltzmann distribution model, catalysts lower the activation energy threshold without changing the energy distribution itself. This means more molecules have sufficient energy to react even at lower temperatures.</p>
+                    
+                    <p>Lower operating temperatures provide several industrial advantages: reduced energy costs, less thermal stress on equipment, fewer side reactions, improved safety, and the ability to use less expensive construction materials. Catalysts effectively "shift" the reaction threshold to a region of the Maxwell-Boltzmann distribution where more molecules exist, without requiring energy-intensive heating.</p>
+                    
+                    <p><strong>Question 3:</strong> Whether increasing temperature by 100K or adding a catalyst that reduces activation energy by 25% has a greater effect on reaction rate depends critically on the starting temperature and the initial activation energy.</p>
+                    
+                    <p>At very low temperatures (e.g., 100K), adding a catalyst that reduces activation energy by 25% might increase the reaction rate more, because the distribution at low temperatures has very few molecules with high energy.</p>
+                    
+                    <p>At moderate to high temperatures (e.g., 300K or above), increasing temperature by 100K typically has a greater effect because the exponential relationship between temperature and the high-energy tail of the distribution becomes more significant.</p>
+                    
+                    <p>The starting temperature matters greatly because temperature affects the entire distribution, while catalysts only change the threshold. At higher starting temperatures, more molecules are already near the activation energy threshold, making temperature increases more effective.</p>
+                    
+                    <p><strong>Question 4:</strong> Both the most probable energy and average energy increase with temperature because higher temperatures give molecules more kinetic energy, shifting the entire distribution to higher energies. The mathematical relationship between temperature and these energy values is: the most probable energy is proportional to T, while the average energy is proportional to T as well.</p>
+                    
+                    <p>The average energy is always higher than the most probable energy because of the asymmetric shape of the Maxwell-Boltzmann distribution. The distribution has a long tail extending toward high energies (but cutting off at zero on the low end), which skews the average higher than the peak. Mathematically, this is a property of the distribution's form, where the average energy equals (3/2)RT while the most probable energy equals RT.</p>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" onclick="nextScreen()">Start Quiz <i class="fas fa-graduation-cap"></i></button>
+            </div>
+        </div>
+        
+        <!-- Quiz Screen -->
+        <div class="screen" id="screen-8">
+            <h2>Self-Assessment Quiz</h2>
+            
+            <div class="quiz-container">
+                <div id="quiz-score" class="key-points" style="display: none;">
+                    <h3><i class="fas fa-trophy"></i> Your Score: <span id="score">0</span>/10</h3>
+                    <div class="score-meter">
+                        <div class="score-bar" id="score-bar"></div>
+                    </div>
+                    <p id="score-feedback"></p>
+                </div>
+                
+                <form id="quiz-form">
+                    <div class="question">
+                        <h3>Question 1</h3>
+                        <p>Which of the following best describes the Maxwell-Boltzmann distribution?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="a"> A. A symmetrical distribution of molecular velocities</label>
+                            <label><input type="radio" name="q1" value="b"> B. A distribution showing how molecular energies are distributed at a specific temperature</label>
+                            <label><input type="radio" name="q1" value="c"> C. A graph showing how activation energy changes with temperature</label>
+                            <label><input type="radio" name="q1" value="d"> D. A representation of how reaction rates change with concentration</label>
+                        </div>
+                        <div class="feedback" id="feedback-q1"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 2</h3>
+                        <p>When temperature increases, what happens to the Maxwell-Boltzmann distribution?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="a"> A. The peak gets taller and narrower</label>
+                            <label><input type="radio" name="q2" value="b"> B. The curve shifts left and gets narrower</label>
+                            <label><input type="radio" name="q2" value="c"> C. The curve flattens, broadens, and the peak shifts to higher energy</label>
+                            <label><input type="radio" name="q2" value="d"> D. The area under the curve increases</label>
+                        </div>
+                        <div class="feedback" id="feedback-q2"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 3</h3>
+                        <p>Which of the following correctly describes the relationship between the most probable energy and the average energy in a Maxwell-Boltzmann distribution?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="a"> A. The most probable energy is always higher than the average energy</label>
+                            <label><input type="radio" name="q3" value="b"> B. The average energy is always higher than the most probable energy</label>
+                            <label><input type="radio" name="q3" value="c"> C. They are always equal</label>
+                            <label><input type="radio" name="q3" value="d"> D. Their relationship depends on the temperature</label>
+                        </div>
+                        <div class="feedback" id="feedback-q3"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 4</h3>
+                        <p>How does activation energy appear on a Maxwell-Boltzmann distribution curve?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="a"> A. As the peak of the curve</label>
+                            <label><input type="radio" name="q4" value="b"> B. As a vertical line marking a threshold on the energy axis</label>
+                            <label><input type="radio" name="q4" value="c"> C. As the area under the whole curve</label>
+                            <label><input type="radio" name="q4" value="d"> D. As the average energy value</label>
+                        </div>
+                        <div class="feedback" id="feedback-q4"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 5</h3>
+                        <p>What does the area under a Maxwell-Boltzmann distribution curve represent?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q5" value="a"> A. The activation energy of the reaction</label>
+                            <label><input type="radio" name="q5" value="b"> B. The total kinetic energy of all molecules</label>
+                            <label><input type="radio" name="q5" value="c"> C. The total number of molecules</label>
+                            <label><input type="radio" name="q5" value="d"> D. The rate of the reaction</label>
+                        </div>
+                        <div class="feedback" id="feedback-q5"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 6</h3>
+                        <p>Which of these statements correctly explains how a catalyst increases reaction rate in terms of the Maxwell-Boltzmann distribution?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q6" value="a"> A. It changes the shape of the distribution curve</label>
+                            <label><input type="radio" name="q6" value="b"> B. It increases the number of molecules with high energy</label>
+                            <label><input type="radio" name="q6" value="c"> C. It lowers the activation energy, allowing more molecules to react</label>
+                            <label><input type="radio" name="q6" value="d"> D. It increases the temperature of the reaction</label>
+                        </div>
+                        <div class="feedback" id="feedback-q6"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 7</h3>
+                        <p>Which statement best explains the effect of increasing temperature on reaction rate?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q7" value="a"> A. It causes molecules to move faster but doesn't affect the energy distribution</label>
+                            <label><input type="radio" name="q7" value="b"> B. It increases collision frequency but doesn't affect the energy of the molecules</label>
+                            <label><input type="radio" name="q7" value="c"> C. It significantly increases the proportion of molecules with energy greater than the activation energy</label>
+                            <label><input type="radio" name="q7" value="d"> D. It lowers the activation energy of the reaction</label>
+                        </div>
+                        <div class="feedback" id="feedback-q7"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 8</h3>
+                        <p>Why are reaction rates usually faster at higher temperatures?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q8" value="a"> A. Because the activation energy decreases as temperature increases</label>
+                            <label><input type="radio" name="q8" value="b"> B. Because the collision frequency increases slightly with temperature</label>
+                            <label><input type="radio" name="q8" value="c"> C. Because a significantly higher proportion of molecules have energy greater than the activation energy</label>
+                            <label><input type="radio" name="q8" value="d"> D. Because the reaction becomes more exothermic at higher temperatures</label>
+                        </div>
+                        <div class="feedback" id="feedback-q8"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 9</h3>
+                        <p>In a Maxwell-Boltzmann distribution, what does the shaded area above the activation energy threshold represent?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q9" value="a"> A. The heat of reaction</label>
+                            <label><input type="radio" name="q9" value="b"> B. The proportion of molecules with enough energy to react</label>
+                            <label><input type="radio" name="q9" value="c"> C. The energy released during the reaction</label>
+                            <label><input type="radio" name="q9" value="d"> D. The energy needed to start the reaction</label>
+                        </div>
+                        <div class="feedback" id="feedback-q9"></div>
+                    </div>
+                    
+                    <div class="question">
+                        <h3>Question 10</h3>
+                        <p>What factor has the largest influence on whether a molecule can react?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q10" value="a"> A. The velocity of the molecule</label>
+                            <label><input type="radio" name="q10" value="b"> B. The orientation of the molecule when it collides</label>
+                            <label><input type="radio" name="q10" value="c"> C. Whether the molecule has energy equal to or greater than the activation energy</label>
+                            <label><input type="radio" name="q10" value="d"> D. The frequency of collisions with other molecules</label>
+                        </div>
+                        <div class="feedback" id="feedback-q10"></div>
+                    </div>
+                    
+                    <div class="card" style="text-align: center; margin-top: 30px;">
+                        <button type="button" id="submit-quiz" class="next-btn"><i class="fas fa-check-circle"></i> Submit Answers</button>
+                        <button type="button" id="reset-quiz" class="prev-btn" style="display: none;"><i class="fas fa-redo"></i> Try Again</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="navigation">
+                <button class="prev-btn" onclick="prevScreen()"><i class="fas fa-arrow-left"></i> Previous</button>
+                <button class="next-btn" disabled>Finish <i class="fas fa-flag-checkered"></i></button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentScreen = 0;
+        const totalScreens = 9; // 0-indexed (includes intro, features, 5 activities, summary, quiz)
+        
+        function updateProgress() {
+            const progressPercent = (currentScreen / (totalScreens - 1)) * 100;
+            document.getElementById('progress').style.width = `${progressPercent}%`;
+            
+            // Update progress steps
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                if (index < currentScreen) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentScreen) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+        }
+        
+        function showScreen(screenNum) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show the current screen
+            document.getElementById(`screen-${screenNum}`).classList.add('active');
+            
+            // Update buttons
+            const prevBtn = document.querySelector(`#screen-${screenNum} .prev-btn`);
+            const nextBtn = document.querySelector(`#screen-${screenNum} .next-btn`);
+            
+            if (prevBtn) {
+                prevBtn.disabled = (screenNum === 0);
+            }
+            
+            if (nextBtn) {
+                // Only disable the next button on the last screen (quiz)
+                nextBtn.disabled = (screenNum === totalScreens - 1);
+            }
+            
+            updateProgress();
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        function nextScreen() {
+            if (currentScreen < totalScreens - 1) {
+                currentScreen++;
+                showScreen(currentScreen);
+            }
+        }
+        
+        function prevScreen() {
+            if (currentScreen > 0) {
+                currentScreen--;
+                showScreen(currentScreen);
+            }
+        }
+        
+        // Toggle answers functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleAssessmentBtn = document.getElementById('toggle-assessment-answer');
+            const assessmentAnswer = document.getElementById('assessment-answer');
+            
+            if (toggleAssessmentBtn) {
+                toggleAssessmentBtn.addEventListener('click', function() {
+                    if (assessmentAnswer.style.display === 'block') {
+                        assessmentAnswer.style.display = 'none';
+                        toggleAssessmentBtn.innerHTML = '<i class="fas fa-eye"></i> Show Sample Answer';
+                    } else {
+                        assessmentAnswer.style.display = 'block';
+                        toggleAssessmentBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Sample Answer';
+                    }
+                });
+            }
+            
+            const toggleDiscussionBtn = document.getElementById('toggle-discussion-answers');
+            const discussionAnswers = document.getElementById('discussion-answers');
+            
+            if (toggleDiscussionBtn) {
+                toggleDiscussionBtn.addEventListener('click', function() {
+                    if (discussionAnswers.style.display === 'block') {
+                        discussionAnswers.style.display = 'none';
+                        toggleDiscussionBtn.innerHTML = '<i class="fas fa-eye"></i> Show Sample Answers';
+                    } else {
+                        discussionAnswers.style.display = 'block';
+                        toggleDiscussionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Sample Answers';
+                    }
+                });
+            }
+        });
+        
+        // Quiz functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitQuizBtn = document.getElementById('submit-quiz');
+            const resetQuizBtn = document.getElementById('reset-quiz');
+            const quizForm = document.getElementById('quiz-form');
+            const quizScore = document.getElementById('quiz-score');
+            const scoreSpan = document.getElementById('score');
+            const scoreFeedback = document.getElementById('score-feedback');
+            const scoreBar = document.getElementById('score-bar');
+            
+            // Answer key
+            const answers = {
+                q1: 'b',
+                q2: 'c',
+                q3: 'b',
+                q4: 'b',
+                q5: 'c',
+                q6: 'c',
+                q7: 'c',
+                q8: 'c',
+                q9: 'b',
+                q10: 'c'
+            };
+            
+            // Feedback for each question
+            const feedbackText = {
+                q1: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! The Maxwell-Boltzmann distribution shows how energy is distributed among molecules at a specific temperature.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. The Maxwell-Boltzmann distribution shows how molecular energies are distributed at a specific temperature."
+                },
+                q2: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! As temperature increases, the curve flattens, broadens, and the peak shifts to higher energy values.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. As temperature increases, the distribution flattens and broadens, with the peak shifting to higher energy values."
+                },
+                q3: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! The average energy is always higher than the most probable energy due to the asymmetric shape of the distribution.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Due to the asymmetric shape of the distribution, the average energy is always higher than the most probable energy."
+                },
+                q4: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! Activation energy appears as a vertical line on the energy axis, marking the minimum energy needed for a reaction.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Activation energy appears as a vertical line marking a threshold on the energy axis."
+                },
+                q5: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! The area under the curve represents the total number of molecules in the system.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. The area under the curve represents the total number of molecules in the system."
+                },
+                q6: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! Catalysts increase reaction rates by lowering the activation energy threshold, not by changing the distribution itself.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Catalysts work by lowering the activation energy, allowing more molecules to react without changing the distribution itself."
+                },
+                q7: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! Higher temperatures significantly increase the proportion of molecules with energy above the activation energy threshold.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Higher temperatures significantly increase the proportion of molecules with energy greater than the activation energy."
+                },
+                q8: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! Higher temperatures significantly increase the proportion of molecules with energy above the activation energy threshold.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Reaction rates increase because a significantly higher proportion of molecules have energy greater than the activation energy at higher temperatures."
+                },
+                q9: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! The shaded area represents molecules with sufficient energy to overcome the activation energy barrier and react.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. The shaded area represents the proportion of molecules with enough energy to react."
+                },
+                q10: {
+                    correct: "<i class='fas fa-check-circle'></i> Correct! Whether a molecule has energy equal to or greater than the activation energy is the most important factor determining if it can react.",
+                    incorrect: "<i class='fas fa-times-circle'></i> Incorrect. Having energy equal to or greater than the activation energy is the most important factor determining whether a molecule can react."
+                }
+            };
+            
+            // Add style for score-meter
+            const style = document.createElement('style');
+            style.textContent = `
+                .score-meter {
+                    width: 100%;
+                    height: 10px;
+                    background-color: rgba(255, 255, 255, 0.3);
+                    border-radius: 50px;
+                    margin: 15px 0;
+                    overflow: hidden;
+                }
+                
+                .score-bar {
+                    height: 100%;
+                    background: linear-gradient(90deg, #ff9900 0%, #2ecc71 100%);
+                    border-radius: 50px;
+                    width: 0%;
+                    transition: width 1s ease;
+                }
+                
+                .highlight-answer {
+                    background-color: rgba(46, 204, 113, 0.2) !important;
+                    border-color: #2ecc71 !important;
+                    font-weight: 600;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Submit quiz
+            submitQuizBtn.addEventListener('click', function() {
+                let score = 0;
+                let answered = 0;
+                
+                // Check each question
+                for (let i = 1; i <= 10; i++) {
+                    const questionName = `q${i}`;
+                    const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                    const feedbackElement = document.getElementById(`feedback-${questionName}`);
+                    
+                    if (selectedOption) {
+                        answered++;
+                        const userAnswer = selectedOption.value;
+                        const correctAnswer = answers[questionName];
+                        
+                        feedbackElement.style.display = 'block';
+                        
+                        if (userAnswer === correctAnswer) {
+                            score++;
+                            feedbackElement.innerHTML = feedbackText[questionName].correct;
+                            feedbackElement.className = 'feedback correct';
+                        } else {
+                            feedbackElement.innerHTML = feedbackText[questionName].incorrect;
+                            feedbackElement.className = 'feedback incorrect';
+                        }
+                    } else {
+                        feedbackElement.style.display = 'block';
+                        feedbackElement.innerHTML = "<i class='fas fa-exclamation-circle'></i> No answer selected";
+                        feedbackElement.className = 'feedback incorrect';
+                    }
+                    
+                    // Highlight correct answers
+                    const correctLabel = document.querySelector(`input[name="${questionName}"][value="${answers[questionName]}"]`).parentNode;
+                    correctLabel.classList.add('highlight-answer');
+                }
+                
+                // Show score and feedback
+                scoreSpan.textContent = score;
+                
+                // Animate score bar
+                setTimeout(() => {
+                    scoreBar.style.width = `${score * 10}%`;
+                }, 100);
+                
+                // Give feedback based on score
+                if (score === 10) {
+                    scoreFeedback.innerHTML = "<i class='fas fa-award'></i> Perfect! You have an excellent understanding of the Maxwell-Boltzmann distribution and its applications.";
+                } else if (score >= 8) {
+                    scoreFeedback.innerHTML = "<i class='fas fa-thumbs-up'></i> Great job! You have a very good understanding of the concepts.";
+                } else if (score >= 6) {
+                    scoreFeedback.innerHTML = "<i class='fas fa-smile'></i> Good effort! Review the areas where you made mistakes.";
+                } else if (score >= 4) {
+                    scoreFeedback.innerHTML = "<i class='fas fa-user-graduate'></i> You're making progress, but you should revisit the key concepts.";
+                } else {
+                    scoreFeedback.innerHTML = "<i class='fas fa-book-reader'></i> You should spend more time with the simulation and review the theory.";
+                }
+                
+                quizScore.style.display = 'block';
+                submitQuizBtn.style.display = 'none';
+                resetQuizBtn.style.display = 'inline-block';
+                
+                // Scroll to top of quiz
+                document.getElementById('quiz-score').scrollIntoView({ behavior: 'smooth' });
+                
+                // Disable further selection of answers
+                const allRadioButtons = document.querySelectorAll('input[type="radio"]');
+                allRadioButtons.forEach(radio => {
+                    radio.disabled = true;
+                });
+            });
+            
+            // Reset quiz
+            resetQuizBtn.addEventListener('click', function() {
+                // Hide score and feedback
+                quizScore.style.display = 'none';
+                scoreBar.style.width = '0%';
+                
+                // Hide all feedback messages
+                const allFeedback = document.querySelectorAll('.feedback');
+                allFeedback.forEach(feedback => {
+                    feedback.style.display = 'none';
+                });
+                
+                // Remove highlight from correct answers
+                const allOptions = document.querySelectorAll('.options label');
+                allOptions.forEach(option => {
+                    option.classList.remove('highlight-answer');
+                });
+                
+                // Clear all selected options
+                quizForm.reset();
+                
+                // Enable all radio buttons
+                const allRadioButtons = document.querySelectorAll('input[type="radio"]');
+                allRadioButtons.forEach(radio => {
+                    radio.disabled = false;
+                });
+                
+                submitQuizBtn.style.display = 'inline-block';
+                resetQuizBtn.style.display = 'none';
+            });
+        });
+        
+        // Progress bar and indicator init
+        updateProgress();
+    </script>
+</body>
+</html>
