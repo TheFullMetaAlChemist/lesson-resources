@@ -1,25 +1,4 @@
-.round-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 10px 0 20px;
-        }
-        
-        .round-badge {
-            padding: 8px 15px;
-            border-radius: 20px;
-            background-color: var(--light);
-            color: var(--dark);
-            font-weight: bold;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-        
-        .round-badge.active {
-            background-color: var(--primary);
-            color: white;
-            opacity: 1;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -378,8 +357,7 @@
             border-radius: 10px;
         }
         
-        /* Animation and lab setup styles removed as we're using static image */
-        
+        /* Game styles */
         .definition-card {
             background-color: var(--primary);
             color: white;
@@ -434,10 +412,44 @@
             animation: shake 0.5s;
         }
         
+        .round-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0 20px;
+        }
+        
+        .round-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: var(--light);
+            color: var(--dark);
+            font-weight: bold;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .round-badge.active {
+            background-color: var(--primary);
+            color: white;
+            opacity: 1;
+        }
+        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
+        }
+        
+        @keyframes fire-pulse {
+            0% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0.9;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
         }
         
         .score-display {
@@ -472,7 +484,7 @@
                 flex-direction: column;
             }
             
-            .game-board {
+            .terms-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -763,9 +775,12 @@
                 
                 // Initialize lab questions when lab section is opened
                 if (sectionId === 'lab') {
-                    // Display the first lab question automatically
+                    // Reset and display the first lab question
                     currentLabQuestion = 0;
                     displayLabQuestion();
+                    labFeedback.className = 'feedback';
+                    labFeedback.textContent = '';
+                    nextLabQuestionBtn.disabled = true;
                 }
             });
         });
@@ -1290,6 +1305,129 @@
         // Initialize practice
         displayQuestion();
         
+        // Lab comprehension questions
+        const labQuestions = [
+            {
+                question: "What does the color change of anhydrous copper sulfate from white to blue indicate?",
+                options: [
+                    "The presence of carbon dioxide",
+                    "The presence of water",
+                    "The presence of oxygen",
+                    "The presence of carbon monoxide"
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "What causes limewater to turn cloudy in this experiment?",
+                options: [
+                    "Reaction with water vapor",
+                    "Reaction with oxygen",
+                    "Reaction with carbon dioxide",
+                    "Reaction with nitrogen"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "What is the chemical equation for the reaction between limewater and carbon dioxide?",
+                options: [
+                    "Ca(OH)₂ + CO₂ → CaCO₃ + H₂O",
+                    "NaOH + CO₂ → NaHCO₃",
+                    "H₂O + CO₂ → H₂CO₃",
+                    "CuSO₄ + 5H₂O → CuSO₄·5H₂O"
+                ],
+                correctAnswer: 0
+            },
+            {
+                question: "Why is the U-tube placed in an ice bath?",
+                options: [
+                    "To speed up the reaction",
+                    "To slow down the gas flow",
+                    "To condense water vapor produced during combustion",
+                    "To prevent the glass from cracking"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "Which of the following explains why we know complete combustion is occurring in this experiment?",
+                options: [
+                    "Only carbon dioxide is detected",
+                    "Only water is detected",
+                    "Both carbon dioxide and water are detected",
+                    "Neither carbon dioxide nor water is detected"
+                ],
+                correctAnswer: 2
+            }
+        ];
+        
+        let currentLabQuestion = 0;
+        const labQuestionContainer = document.getElementById('lab-question');
+        const labOptionsContainer = document.getElementById('lab-options');
+        const labFeedback = document.getElementById('lab-feedback');
+        const nextLabQuestionBtn = document.getElementById('next-lab-question');
+        
+        // Display a lab question
+        function displayLabQuestion() {
+            const question = labQuestions[currentLabQuestion];
+            
+            labQuestionContainer.textContent = question.question;
+            labOptionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.dataset.index = index;
+                
+                optionEl.addEventListener('click', () => {
+                    // Disable all options
+                    document.querySelectorAll('#lab-options .option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                    });
+                    
+                    const selectedIndex = parseInt(optionEl.dataset.index);
+                    const isCorrect = selectedIndex === question.correctAnswer;
+                    
+                    // Mark selected option
+                    optionEl.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    
+                    // If wrong, highlight the correct answer
+                    if (!isCorrect) {
+                        document.querySelectorAll('#lab-options .option')[question.correctAnswer].classList.add('correct');
+                    }
+                    
+                    // Show feedback
+                    labFeedback.textContent = isCorrect ? 
+                        'Correct! Well done.' : 
+                        `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+                    labFeedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    // Enable next question button
+                    nextLabQuestionBtn.disabled = false;
+                });
+                
+                labOptionsContainer.appendChild(optionEl);
+            });
+        }
+        
+        // Move to next lab question
+        nextLabQuestionBtn.addEventListener('click', () => {
+            currentLabQuestion++;
+            
+            if (currentLabQuestion < labQuestions.length) {
+                displayLabQuestion();
+                nextLabQuestionBtn.disabled = true;
+                labFeedback.className = 'feedback';
+                labFeedback.textContent = '';
+            } else {
+                // All questions answered
+                labQuestionContainer.textContent = 'Lab comprehension complete!';
+                labOptionsContainer.innerHTML = '';
+                labFeedback.textContent = 'You have completed all the lab comprehension questions.';
+                labFeedback.className = 'feedback correct';
+                nextLabQuestionBtn.disabled = true;
+            }
+        });
+        
         // Term Matching Game
         const gameTerms = [
             { term: "Complete Combustion", definition: "Reaction with sufficient oxygen producing CO₂ and H₂O" },
@@ -1480,143 +1618,6 @@
         restartGameBtn.addEventListener('click', () => {
             endGame();
             startGameBtn.click();
-        });
-        
-        // Initialize game
-        createGameCards();
-        
-        // Virtual Lab Questions
-        const labQuestionContainer = document.getElementById('lab-question');
-        const labOptionsContainer = document.getElementById('lab-options');
-        const labFeedback = document.getElementById('lab-feedback');
-        const nextLabQuestionBtn = document.getElementById('next-lab-question');
-        
-        // Lab comprehension questions
-        const labQuestions = [
-            {
-                question: "What does the color change of anhydrous copper sulfate from white to blue indicate?",
-                options: [
-                    "The presence of carbon dioxide",
-                    "The presence of water",
-                    "The presence of oxygen",
-                    "The presence of carbon monoxide"
-                ],
-                correctAnswer: 1
-            },
-            {
-                question: "What causes limewater to turn cloudy in this experiment?",
-                options: [
-                    "Reaction with water vapor",
-                    "Reaction with oxygen",
-                    "Reaction with carbon dioxide",
-                    "Reaction with nitrogen"
-                ],
-                correctAnswer: 2
-            },
-            {
-                question: "What is the chemical equation for the reaction between limewater and carbon dioxide?",
-                options: [
-                    "Ca(OH)₂ + CO₂ → CaCO₃ + H₂O",
-                    "NaOH + CO₂ → NaHCO₃",
-                    "H₂O + CO₂ → H₂CO₃",
-                    "CuSO₄ + 5H₂O → CuSO₄·5H₂O"
-                ],
-                correctAnswer: 0
-            },
-            {
-                question: "Why is the U-tube placed in an ice bath?",
-                options: [
-                    "To speed up the reaction",
-                    "To slow down the gas flow",
-                    "To condense water vapor produced during combustion",
-                    "To prevent the glass from cracking"
-                ],
-                correctAnswer: 2
-            },
-            {
-                question: "Which of the following explains why we know complete combustion is occurring in this experiment?",
-                options: [
-                    "Only carbon dioxide is detected",
-                    "Only water is detected",
-                    "Both carbon dioxide and water are detected",
-                    "Neither carbon dioxide nor water is detected"
-                ],
-                correctAnswer: 2
-            }
-        ];
-        
-        let currentLabQuestion = 0;
-        
-        // Display a lab question
-        function displayLabQuestion() {
-            const question = labQuestions[currentLabQuestion];
-            
-            labQuestionContainer.textContent = question.question;
-            labOptionsContainer.innerHTML = '';
-            
-            question.options.forEach((option, index) => {
-                const optionEl = document.createElement('div');
-                optionEl.className = 'option';
-                optionEl.textContent = option;
-                optionEl.dataset.index = index;
-                
-                optionEl.addEventListener('click', () => {
-                    // Disable all options
-                    document.querySelectorAll('#lab-options .option').forEach(opt => {
-                        opt.style.pointerEvents = 'none';
-                    });
-                    
-                    const selectedIndex = parseInt(optionEl.dataset.index);
-                    const isCorrect = selectedIndex === question.correctAnswer;
-                    
-                    // Mark selected option
-                    optionEl.classList.add(isCorrect ? 'correct' : 'incorrect');
-                    
-                    // If wrong, highlight the correct answer
-                    if (!isCorrect) {
-                        document.querySelectorAll('#lab-options .option')[question.correctAnswer].classList.add('correct');
-                    }
-                    
-                    // Show feedback
-                    labFeedback.textContent = isCorrect ? 
-                        'Correct! Well done.' : 
-                        `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
-                    labFeedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-                    
-                    // Enable next question button
-                    nextLabQuestionBtn.disabled = false;
-                });
-                
-                labOptionsContainer.appendChild(optionEl);
-            });
-        }
-        
-        // Move to next lab question
-        nextLabQuestionBtn.addEventListener('click', () => {
-            currentLabQuestion++;
-            
-            if (currentLabQuestion < labQuestions.length) {
-                displayLabQuestion();
-                nextLabQuestionBtn.disabled = true;
-                labFeedback.className = 'feedback';
-                labFeedback.textContent = '';
-            } else {
-                // All questions answered
-                labQuestionContainer.textContent = 'Lab comprehension complete!';
-                labOptionsContainer.innerHTML = '';
-                labFeedback.textContent = 'You have completed all the lab comprehension questions.';
-                labFeedback.className = 'feedback correct';
-                nextLabQuestionBtn.disabled = true;
-            }
-        });
-        
-        // Initialize the first question for the lab section when lab tab is clicked
-        document.querySelector('.nav-button[data-section="lab"]').addEventListener('click', function() {
-            currentLabQuestion = 0;
-            displayLabQuestion();
-            labFeedback.className = 'feedback';
-            labFeedback.textContent = '';
-            nextLabQuestionBtn.disabled = true;
         });
     </script>
 </body>
