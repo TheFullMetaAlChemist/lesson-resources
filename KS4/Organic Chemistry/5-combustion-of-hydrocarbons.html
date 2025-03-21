@@ -1,0 +1,1623 @@
+.round-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px 0 20px;
+        }
+        
+        .round-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: var(--light);
+            color: var(--dark);
+            font-weight: bold;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .round-badge.active {
+            background-color: var(--primary);
+            color: white;
+            opacity: 1;
+        }<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydrocarbon Combustion - Interactive GCSE Chemistry Lesson</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --highlight: #f39c12;
+            --yellow: #f1c40f;
+            --blue: #3498db;
+            --pink: #e84393;
+            --clear: rgba(236, 240, 241, 0.8);
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 5px solid var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        nav {
+            background-color: var(--primary);
+            padding: 10px 0;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .nav-button {
+            background-color: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-button:hover {
+            background-color: var(--highlight);
+        }
+        
+        .nav-button.active {
+            background-color: var(--secondary);
+        }
+        
+        .section {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 15px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .info-box {
+            background-color: var(--light);
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box {
+            background-color: #ffeaa7;
+            border-left: 5px solid var(--highlight);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .equation {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            background-color: var(--light);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .flex-item {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .animation-container {
+            width: 100%;
+            height: 300px;
+            background-color: var(--light);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid var(--dark);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: var(--dark);
+        }
+        
+        .slider-container {
+            width: 100%;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .slider {
+            width: 80%;
+            margin: 10px auto;
+        }
+        
+        .slider-value {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .question-container {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .option {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .option:hover {
+            border-color: var(--primary);
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: var(--secondary);
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--danger);
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--light);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .molecule {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 50%;
+            font-size: 14px;
+            transition: all 0.5s ease;
+        }
+        
+        .hydrocarbon {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .oxygen {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .co2 {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .h2o {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .co {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .carbon {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .fire {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #f39c12, #e74c3c, transparent);
+            border-radius: 50%;
+            opacity: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: fire-pulse 1s infinite alternate;
+        }
+        
+        /* Experiment Image Styles */
+        .experiment-image-container {
+            width: 100%;
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: white;
+        }
+        
+        #experiment-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .experiment-results {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--light);
+            border-radius: 5px;
+            border-left: 5px solid var(--primary);
+        }
+        
+        #lab-questions {
+            margin-top: 30px;
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        /* Animation and lab setup styles removed as we're using static image */
+        
+        .definition-card {
+            background-color: var(--primary);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .definition-text {
+            font-weight: bold;
+        }
+        
+        .terms-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .term-item {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .term-item:hover {
+            background-color: #d6eaf8;
+            border-color: var(--primary);
+        }
+        
+        .term-item.correct {
+            background-color: #d4edda;
+            border-color: var(--secondary);
+            pointer-events: none;
+        }
+        
+        .term-item.incorrect {
+            background-color: #f8d7da;
+            border-color: var(--danger);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .score-display {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: var(--danger);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: var(--dark);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Hydrocarbon Combustion</h1>
+            <p>Interactive GCSE Chemistry Lesson</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <div class="nav-container">
+                <button class="nav-button active" data-section="tutorial">Tutorial</button>
+                <button class="nav-button" data-section="lab">Virtual Lab</button>
+                <button class="nav-button" data-section="practice">Practice</button>
+                <button class="nav-button" data-section="game">Game</button>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="section active">
+            <h2>Understanding Hydrocarbon Combustion</h2>
+            
+            <div class="info-box">
+                <p><strong>Key Point:</strong> The combustion of hydrocarbon fuels releases energy. During combustion, the carbon and hydrogen in the fuels are oxidised. The complete combustion of a hydrocarbon produces carbon dioxide and water.</p>
+            </div>
+            
+            <h3>What are Hydrocarbons?</h3>
+            <p>Hydrocarbons are compounds made up of only carbon and hydrogen atoms. Common examples include methane (CH₄), propane (C₃H₈), and butane (C₄H₁₀).</p>
+            
+            <h3>Complete Combustion</h3>
+            <p>Complete combustion occurs when there is a sufficient supply of oxygen, leading to the production of carbon dioxide and water as the only products. This process releases the maximum amount of energy.</p>
+            
+            <div class="equation">
+                Hydrocarbon + Oxygen → Carbon Dioxide + Water + Energy
+            </div>
+            
+            <p>For example, methane (CH₄) undergoes complete combustion according to this equation:</p>
+            
+            <div class="equation">
+                CH₄ + 2O₂ → CO₂ + 2H₂O + Energy
+            </div>
+            
+            <h3>Complete Combustion Simulation</h3>
+            <p>Use the slider to adjust the amount of oxygen available for the combustion of methane. Notice how with sufficient oxygen, complete combustion occurs.</p>
+            
+            <div class="animation-container" id="complete-combustion">
+                <div class="fire"></div>
+                <!-- Molecules will be added here by JavaScript -->
+            </div>
+            
+            <div class="slider-container">
+                <label for="oxygen-slider">Oxygen Level: <span id="oxygen-value" class="slider-value">100%</span></label>
+                <input type="range" id="oxygen-slider" class="slider" min="0" max="100" value="100">
+            </div>
+            
+            <div class="controls">
+                <button id="start-complete">Start Reaction</button>
+                <button id="reset-complete">Reset</button>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>Observation:</strong> With sufficient oxygen (100%), all the carbon in methane is converted to carbon dioxide, and all the hydrogen is converted to water. The flame is blue, indicating complete combustion.</p>
+            </div>
+            
+            <h3>Incomplete Combustion</h3>
+            <p>Incomplete combustion occurs when there is an insufficient supply of oxygen. In this case, carbon monoxide and/or carbon (soot) may be produced instead of carbon dioxide.</p>
+            
+            <div class="equation">
+                Hydrocarbon + Insufficient Oxygen → Carbon Monoxide/Carbon + Water + Energy
+            </div>
+            
+            <p>For example, methane (CH₄) undergoes incomplete combustion according to these equations:</p>
+            
+            <div class="equation">
+                2CH₄ + 3O₂ → 2CO + 4H₂O + Energy
+            </div>
+            
+            <div class="equation">
+                CH₄ + O₂ → C + 2H₂O + Energy
+            </div>
+            
+            <div class="warning-box">
+                <p><strong>Warning:</strong> Incomplete combustion is less efficient, releasing less energy. It also produces carbon monoxide, which is toxic, and carbon (soot), which can cause air pollution.</p>
+            </div>
+            
+            <h3>Incomplete Combustion Simulation</h3>
+            <p>Adjust the oxygen level to see what happens when there is insufficient oxygen for complete combustion.</p>
+            
+            <div class="animation-container" id="incomplete-combustion">
+                <div class="fire"></div>
+                <!-- Molecules will be added here by JavaScript -->
+            </div>
+            
+            <div class="slider-container">
+                <label for="incomplete-oxygen-slider">Oxygen Level: <span id="incomplete-oxygen-value" class="slider-value">50%</span></label>
+                <input type="range" id="incomplete-oxygen-slider" class="slider" min="0" max="100" value="50">
+            </div>
+            
+            <div class="controls">
+                <button id="start-incomplete">Start Reaction</button>
+                <button id="reset-incomplete">Reset</button>
+            </div>
+            
+            <div class="info-box">
+                <p><strong>Observation:</strong> With insufficient oxygen (<50%), carbon monoxide and/or carbon (soot) are produced instead of carbon dioxide. The flame is yellow/orange, indicating incomplete combustion.</p>
+            </div>
+            
+            <h3>Comparing Complete and Incomplete Combustion</h3>
+            
+            <div class="flex-container">
+                <div class="flex-item">
+                    <h4>Complete Combustion</h4>
+                    <ul>
+                        <li>Sufficient oxygen supply</li>
+                        <li>Produces CO₂ and H₂O</li>
+                        <li>Maximum energy released</li>
+                        <li>Clean blue flame</li>
+                        <li>No soot produced</li>
+                    </ul>
+                </div>
+                <div class="flex-item">
+                    <h4>Incomplete Combustion</h4>
+                    <ul>
+                        <li>Insufficient oxygen supply</li>
+                        <li>Produces CO and/or C, plus H₂O</li>
+                        <li>Less energy released</li>
+                        <li>Yellow/orange flame</li>
+                        <li>Soot (carbon) produced</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h3>Real-World Applications</h3>
+            <p>Understanding the difference between complete and incomplete combustion is important for:</p>
+            <ul>
+                <li><strong>Efficiency of fuel use</strong> - Complete combustion ensures maximum energy extraction from fuels</li>
+                <li><strong>Safety in the home</strong> - Faulty gas appliances can lead to incomplete combustion, producing toxic carbon monoxide</li>
+                <li><strong>Environmental impact</strong> - Incomplete combustion contributes to air pollution through carbon particles (soot)</li>
+                <li><strong>Industrial processes</strong> - Controlling oxygen levels is crucial in many industrial applications</li>
+            </ul>
+        </section>
+        
+        <!-- Virtual Lab Section -->
+        <section id="lab" class="section">
+            <h2>Virtual Lab: Testing Products of Combustion</h2>
+            
+            <div class="info-box">
+                <p><strong>Objective:</strong> To demonstrate and identify the products of hydrocarbon combustion using a laboratory setup.</p>
+            </div>
+            
+            <h3>Experimental Setup</h3>
+            <p>In this virtual lab, we will examine a setup to detect the products of combustion - carbon dioxide and water. The apparatus includes:</p>
+            <ul>
+                <li>A Bunsen burner with natural gas supply</li>
+                <li>A U-tube placed in an ice bath containing anhydrous copper sulfate or cobalt chloride paper</li>
+                <li>A tube containing limewater</li>
+                <li>Connection to a water pump to draw the gases through the apparatus</li>
+            </ul>
+            
+            <!-- Lab is displayed as a static image instead of an animation -->
+            
+            <div class="experiment-image-container">
+                <img src="combustion-experiment.png" alt="Combustion experiment setup showing Bunsen burner, U-tube in ice bath, and limewater tube" id="experiment-image">
+            </div>
+            
+            <div class="experiment-results">
+                <p><strong>Results:</strong></p>
+                <ul>
+                    <li>The anhydrous copper sulfate turns from white to blue, indicating the presence of water (H₂O).</li>
+                    <li>The limewater turns cloudy/milky, indicating the presence of carbon dioxide (CO₂).</li>
+                    <li>This confirms that complete combustion of the hydrocarbon produces carbon dioxide and water.</li>
+                </ul>
+            </div>
+            
+            <h3>How It Works</h3>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <h4>Detecting Water (H₂O)</h4>
+                    <p>When hydrocarbons burn, water vapor is produced. In our setup:</p>
+                    <ul>
+                        <li>The U-tube is placed in an ice bath to cool the gas</li>
+                        <li>This causes water vapor to condense</li>
+                        <li>Anhydrous copper sulfate (white powder) turns blue when it comes into contact with water</li>
+                        <li>Alternatively, cobalt chloride paper changes from blue to pink when it detects water</li>
+                    </ul>
+                </div>
+                <div class="flex-item">
+                    <h4>Detecting Carbon Dioxide (CO₂)</h4>
+                    <p>When hydrocarbons burn, carbon dioxide is produced. In our setup:</p>
+                    <ul>
+                        <li>The gas passes through limewater (calcium hydroxide solution)</li>
+                        <li>If carbon dioxide is present, the limewater turns cloudy/milky</li>
+                        <li>This happens because calcium carbonate (CaCO₃) forms as a white precipitate</li>
+                        <li>The chemical equation is: Ca(OH)₂ + CO₂ → CaCO₃ + H₂O</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="question-container" id="lab-questions">
+                <h3>Lab Comprehension Questions</h3>
+                <div id="lab-question"></div>
+                <div class="options" id="lab-options"></div>
+                <div class="feedback" id="lab-feedback"></div>
+                <button id="next-lab-question" disabled>Next Question</button>
+            </div>
+            
+        </section>
+        
+        <!-- Practice Section -->
+        <section id="practice" class="section">
+            <h2>Practice Questions</h2>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="practice-progress"></div>
+            </div>
+            
+            <div id="question-container" class="question-container">
+                <!-- Questions will be dynamically added here -->
+            </div>
+            
+            <div class="controls">
+                <button id="next-question" disabled>Next Question</button>
+                <button id="restart-practice">Restart</button>
+            </div>
+        </section>
+        
+        <!-- Game Section -->
+        <section id="game" class="section">
+            <h2>Combustion Term Matching Game</h2>
+            
+            <div class="round-indicator">
+                <span class="round-badge active" id="round-1-badge">Round 1: Terms</span>
+                <span class="round-badge" id="round-2-badge">Round 2: Lab Experiment</span>
+            </div>
+            
+            <p id="game-instructions">Match the definition with the correct term. See how quickly you can complete all definitions!</p>
+            
+            <div class="score-display">
+                Score: <span id="score">0</span> | Correct: <span id="correct-count">0</span>/<span id="total-count">8</span>
+            </div>
+            
+            <div class="timer">
+                Time: <span id="time">0</span> seconds
+            </div>
+            
+            <div class="definition-card" id="definition-card">
+                <div class="definition-text" id="definition-text">
+                    Click "Start Game" to begin!
+                </div>
+            </div>
+            
+            <div class="terms-grid" id="terms-grid">
+                <!-- Terms will be dynamically added here -->
+            </div>
+            
+            <div class="controls">
+                <button id="start-game">Start Game</button>
+                <button id="restart-game">Restart Game</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>Interactive GCSE Chemistry Lesson - Hydrocarbon Combustion</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and sections
+                document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding section
+                button.classList.add('active');
+                const sectionId = button.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+                
+                // Initialize lab questions when lab section is opened
+                if (sectionId === 'lab') {
+                    // Display the first lab question automatically
+                    currentLabQuestion = 0;
+                    displayLabQuestion();
+                }
+            });
+        });
+        
+        // Complete Combustion Animation
+        const completeContainer = document.getElementById('complete-combustion');
+        const oxygenSlider = document.getElementById('oxygen-slider');
+        const oxygenValue = document.getElementById('oxygen-value');
+        const startCompleteBtn = document.getElementById('start-complete');
+        const resetCompleteBtn = document.getElementById('reset-complete');
+        
+        // Update oxygen value display
+        oxygenSlider.addEventListener('input', () => {
+            oxygenValue.textContent = `${oxygenSlider.value}%`;
+        });
+        
+        // Create molecules for complete combustion
+        function createCompleteMolecules() {
+            completeContainer.innerHTML = '<div class="fire"></div>';
+            
+            // Add methane molecule
+            const methane = document.createElement('div');
+            methane.className = 'molecule hydrocarbon';
+            methane.textContent = 'CH₄';
+            methane.style.left = '20%';
+            methane.style.top = '50%';
+            completeContainer.appendChild(methane);
+            
+            // Add oxygen molecules
+            const oxygen1 = document.createElement('div');
+            oxygen1.className = 'molecule oxygen';
+            oxygen1.textContent = 'O₂';
+            oxygen1.style.left = '40%';
+            oxygen1.style.top = '30%';
+            completeContainer.appendChild(oxygen1);
+            
+            const oxygen2 = document.createElement('div');
+            oxygen2.className = 'molecule oxygen';
+            oxygen2.textContent = 'O₂';
+            oxygen2.style.left = '40%';
+            oxygen2.style.top = '70%';
+            completeContainer.appendChild(oxygen2);
+        }
+        
+        // Start complete combustion animation
+        startCompleteBtn.addEventListener('click', () => {
+            const oxygenLevel = parseInt(oxygenSlider.value);
+            
+            // Show fire animation
+            const fire = completeContainer.querySelector('.fire');
+            fire.style.opacity = '1';
+            
+            // Get molecules
+            const methane = completeContainer.querySelector('.hydrocarbon');
+            const oxygens = completeContainer.querySelectorAll('.oxygen');
+            
+            // Move molecules to center for reaction
+            methane.style.left = '50%';
+            methane.style.top = '50%';
+            
+            oxygens.forEach(oxygen => {
+                oxygen.style.left = '50%';
+                oxygen.style.top = '50%';
+            });
+            
+            // After molecules combine
+            setTimeout(() => {
+                // Remove original molecules
+                methane.remove();
+                oxygens.forEach(oxygen => oxygen.remove());
+                
+                // Complete combustion products if oxygen is sufficient
+                if (oxygenLevel >= 80) {
+                    // Create CO2
+                    const co2 = document.createElement('div');
+                    co2.className = 'molecule co2';
+                    co2.textContent = 'CO₂';
+                    co2.style.left = '50%';
+                    co2.style.top = '50%';
+                    completeContainer.appendChild(co2);
+                    
+                    // Create H2O molecules
+                    const h2o1 = document.createElement('div');
+                    h2o1.className = 'molecule h2o';
+                    h2o1.textContent = 'H₂O';
+                    h2o1.style.left = '50%';
+                    h2o1.style.top = '50%';
+                    completeContainer.appendChild(h2o1);
+                    
+                    const h2o2 = document.createElement('div');
+                    h2o2.className = 'molecule h2o';
+                    h2o2.textContent = 'H₂O';
+                    h2o2.style.left = '50%';
+                    h2o2.style.top = '50%';
+                    completeContainer.appendChild(h2o2);
+                    
+                    // Move products apart
+                    setTimeout(() => {
+                        co2.style.left = '70%';
+                        co2.style.top = '30%';
+                        
+                        h2o1.style.left = '70%';
+                        h2o1.style.top = '50%';
+                        
+                        h2o2.style.left = '70%';
+                        h2o2.style.top = '70%';
+                    }, 500);
+                } else {
+                    // Incomplete combustion products for low oxygen
+                    const co = document.createElement('div');
+                    co.className = 'molecule co';
+                    co.textContent = 'CO';
+                    co.style.left = '50%';
+                    co.style.top = '50%';
+                    completeContainer.appendChild(co);
+                    
+                    const carbon = document.createElement('div');
+                    carbon.className = 'molecule carbon';
+                    carbon.textContent = 'C';
+                    carbon.style.left = '50%';
+                    carbon.style.top = '50%';
+                    completeContainer.appendChild(carbon);
+                    
+                    const h2o = document.createElement('div');
+                    h2o.className = 'molecule h2o';
+                    h2o.textContent = 'H₂O';
+                    h2o.style.left = '50%';
+                    h2o.style.top = '50%';
+                    completeContainer.appendChild(h2o);
+                    
+                    // Move products apart
+                    setTimeout(() => {
+                        co.style.left = '70%';
+                        co.style.top = '30%';
+                        
+                        carbon.style.left = '70%';
+                        carbon.style.top = '50%';
+                        
+                        h2o.style.left = '70%';
+                        h2o.style.top = '70%';
+                    }, 500);
+                }
+                
+                // Change fire color based on oxygen level
+                if (oxygenLevel >= 80) {
+                    fire.style.background = 'radial-gradient(circle, #3498db, #2980b9, transparent)';
+                } else {
+                    fire.style.background = 'radial-gradient(circle, #f39c12, #e74c3c, transparent)';
+                }
+            }, 1500);
+        });
+        
+        // Reset complete combustion animation
+        resetCompleteBtn.addEventListener('click', () => {
+            createCompleteMolecules();
+        });
+        
+        // Initialize complete combustion
+        createCompleteMolecules();
+        
+        // Incomplete Combustion Animation
+        const incompleteContainer = document.getElementById('incomplete-combustion');
+        const incompleteOxygenSlider = document.getElementById('incomplete-oxygen-slider');
+        const incompleteOxygenValue = document.getElementById('incomplete-oxygen-value');
+        const startIncompleteBtn = document.getElementById('start-incomplete');
+        const resetIncompleteBtn = document.getElementById('reset-incomplete');
+        
+        // Update incomplete oxygen value display
+        incompleteOxygenSlider.addEventListener('input', () => {
+            incompleteOxygenValue.textContent = `${incompleteOxygenSlider.value}%`;
+        });
+        
+        // Create molecules for incomplete combustion
+        function createIncompleteMolecules() {
+            incompleteContainer.innerHTML = '<div class="fire"></div>';
+            
+            // Add methane molecule
+            const methane = document.createElement('div');
+            methane.className = 'molecule hydrocarbon';
+            methane.textContent = 'CH₄';
+            methane.style.left = '20%';
+            methane.style.top = '50%';
+            incompleteContainer.appendChild(methane);
+            
+            // Add oxygen molecule (less oxygen for incomplete combustion)
+            const oxygen = document.createElement('div');
+            oxygen.className = 'molecule oxygen';
+            oxygen.textContent = 'O₂';
+            oxygen.style.left = '40%';
+            oxygen.style.top = '50%';
+            incompleteContainer.appendChild(oxygen);
+        }
+        
+        // Start incomplete combustion animation
+        startIncompleteBtn.addEventListener('click', () => {
+            const oxygenLevel = parseInt(incompleteOxygenSlider.value);
+            
+            // Show fire animation
+            const fire = incompleteContainer.querySelector('.fire');
+            fire.style.opacity = '1';
+            
+            // Get molecules
+            const methane = incompleteContainer.querySelector('.hydrocarbon');
+            const oxygen = incompleteContainer.querySelector('.oxygen');
+            
+            // Move molecules to center for reaction
+            methane.style.left = '50%';
+            methane.style.top = '50%';
+            
+            oxygen.style.left = '50%';
+            oxygen.style.top = '50%';
+            
+            // After molecules combine
+            setTimeout(() => {
+                // Remove original molecules
+                methane.remove();
+                oxygen.remove();
+                
+                if (oxygenLevel >= 80) {
+                    // With higher oxygen, tend toward complete combustion
+                    const co2 = document.createElement('div');
+                    co2.className = 'molecule co2';
+                    co2.textContent = 'CO₂';
+                    co2.style.left = '50%';
+                    co2.style.top = '50%';
+                    incompleteContainer.appendChild(co2);
+                    
+                    const h2o1 = document.createElement('div');
+                    h2o1.className = 'molecule h2o';
+                    h2o1.textContent = 'H₂O';
+                    h2o1.style.left = '50%';
+                    h2o1.style.top = '50%';
+                    incompleteContainer.appendChild(h2o1);
+                    
+                    const h2o2 = document.createElement('div');
+                    h2o2.className = 'molecule h2o';
+                    h2o2.textContent = 'H₂O';
+                    h2o2.style.left = '50%';
+                    h2o2.style.top = '50%';
+                    incompleteContainer.appendChild(h2o2);
+                    
+                    setTimeout(() => {
+                        co2.style.left = '70%';
+                        co2.style.top = '30%';
+                        
+                        h2o1.style.left = '70%';
+                        h2o1.style.top = '50%';
+                        
+                        h2o2.style.left = '70%';
+                        h2o2.style.top = '70%';
+                    }, 500);
+                } else if (oxygenLevel >= 40) {
+                    // Medium oxygen - produce CO
+                    const co = document.createElement('div');
+                    co.className = 'molecule co';
+                    co.textContent = 'CO';
+                    co.style.left = '50%';
+                    co.style.top = '50%';
+                    incompleteContainer.appendChild(co);
+                    
+                    const h2o1 = document.createElement('div');
+                    h2o1.className = 'molecule h2o';
+                    h2o1.textContent = 'H₂O';
+                    h2o1.style.left = '50%';
+                    h2o1.style.top = '50%';
+                    incompleteContainer.appendChild(h2o1);
+                    
+                    const h2o2 = document.createElement('div');
+                    h2o2.className = 'molecule h2o';
+                    h2o2.textContent = 'H₂O';
+                    h2o2.style.left = '50%';
+                    h2o2.style.top = '50%';
+                    incompleteContainer.appendChild(h2o2);
+                    
+                    setTimeout(() => {
+                        co.style.left = '70%';
+                        co.style.top = '30%';
+                        
+                        h2o1.style.left = '70%';
+                        h2o1.style.top = '50%';
+                        
+                        h2o2.style.left = '70%';
+                        h2o2.style.top = '70%';
+                    }, 500);
+                } else {
+                    // Low oxygen - produce Carbon (soot)
+                    const carbon = document.createElement('div');
+                    carbon.className = 'molecule carbon';
+                    carbon.textContent = 'C';
+                    carbon.style.left = '50%';
+                    carbon.style.top = '50%';
+                    incompleteContainer.appendChild(carbon);
+                    
+                    const h2o1 = document.createElement('div');
+                    h2o1.className = 'molecule h2o';
+                    h2o1.textContent = 'H₂O';
+                    h2o1.style.left = '50%';
+                    h2o1.style.top = '50%';
+                    incompleteContainer.appendChild(h2o1);
+                    
+                    const h2o2 = document.createElement('div');
+                    h2o2.className = 'molecule h2o';
+                    h2o2.textContent = 'H₂O';
+                    h2o2.style.left = '50%';
+                    h2o2.style.top = '50%';
+                    incompleteContainer.appendChild(h2o2);
+                    
+                    setTimeout(() => {
+                        carbon.style.left = '70%';
+                        carbon.style.top = '30%';
+                        
+                        h2o1.style.left = '70%';
+                        h2o1.style.top = '50%';
+                        
+                        h2o2.style.left = '70%';
+                        h2o2.style.top = '70%';
+                    }, 500);
+                }
+                
+                // Change fire color based on oxygen level
+                if (oxygenLevel >= 80) {
+                    fire.style.background = 'radial-gradient(circle, #3498db, #2980b9, transparent)';
+                } else if (oxygenLevel >= 40) {
+                    fire.style.background = 'radial-gradient(circle, #f39c12, #e74c3c, transparent)';
+                } else {
+                    fire.style.background = 'radial-gradient(circle, #e74c3c, #c0392b, transparent)';
+                }
+            }, 1500);
+        });
+        
+        // Reset incomplete combustion animation
+        resetIncompleteBtn.addEventListener('click', () => {
+            createIncompleteMolecules();
+        });
+        
+        // Initialize incomplete combustion
+        createIncompleteMolecules();
+        
+        // Practice Questions
+        const questions = [
+            {
+                question: "What are the products of complete combustion of hydrocarbons?",
+                options: [
+                    "Carbon dioxide and water",
+                    "Carbon monoxide and water",
+                    "Carbon dioxide and hydrogen",
+                    "Carbon and water"
+                ],
+                correctAnswer: 0
+            },
+            {
+                question: "Which of the following is a sign of incomplete combustion?",
+                options: [
+                    "Blue flame",
+                    "No visible smoke",
+                    "Yellow/orange flame",
+                    "Maximum energy release"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "What causes incomplete combustion?",
+                options: [
+                    "Too much oxygen",
+                    "Insufficient oxygen",
+                    "Too much fuel",
+                    "Low temperature"
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "Which of these is NOT produced during incomplete combustion of hydrocarbons?",
+                options: [
+                    "Carbon monoxide",
+                    "Carbon (soot)",
+                    "Carbon dioxide (as the only carbon compound)",
+                    "Water"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "Complete the equation for complete combustion of methane: CH₄ + 2O₂ → ____ + ____",
+                options: [
+                    "CO + 2H₂O",
+                    "CO₂ + 2H₂O",
+                    "C + 2H₂O",
+                    "CO₂ + 2H₂"
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "Why is carbon monoxide dangerous?",
+                options: [
+                    "It has a strong odor",
+                    "It is highly flammable",
+                    "It is toxic and prevents oxygen transport in the blood",
+                    "It damages the lungs directly"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "Which statement about energy release in combustion is TRUE?",
+                options: [
+                    "Incomplete combustion releases more energy than complete combustion",
+                    "Complete combustion releases more energy than incomplete combustion",
+                    "Both types of combustion release the same amount of energy",
+                    "Energy release depends only on the type of fuel, not the type of combustion"
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "What happens to the carbon atoms in a hydrocarbon during combustion?",
+                options: [
+                    "They are converted to carbon dioxide in complete combustion",
+                    "They remain unchanged during the reaction",
+                    "They are always converted to carbon monoxide",
+                    "They are converted to carbonic acid"
+                ],
+                correctAnswer: 0
+            },
+            {
+                question: "Balance this equation for incomplete combustion: CH₄ + ___ O₂ → CO + ___ H₂O",
+                options: [
+                    "1, 1",
+                    "1, 2",
+                    "1.5, 2",
+                    "2, 1"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "What is the term for the process where carbon and hydrogen in fuels react with oxygen?",
+                options: [
+                    "Reduction",
+                    "Oxidation",
+                    "Sublimation",
+                    "Fermentation"
+                ],
+                correctAnswer: 1
+            }
+        ];
+        
+        let currentQuestion = 0;
+        const questionContainer = document.getElementById('question-container');
+        const nextQuestionBtn = document.getElementById('next-question');
+        const restartPracticeBtn = document.getElementById('restart-practice');
+        const practiceProgress = document.getElementById('practice-progress');
+        
+        // Display a question
+        function displayQuestion() {
+            // Update progress bar
+            practiceProgress.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            const question = questions[currentQuestion];
+            
+            questionContainer.innerHTML = `
+                <h3>Question ${currentQuestion + 1} of ${questions.length}</h3>
+                <p>${question.question}</p>
+                <div class="options">
+                    ${question.options.map((option, index) => `
+                        <div class="option" data-index="${index}">${option}</div>
+                    `).join('')}
+                </div>
+                <div class="feedback"></div>
+            `;
+            
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    // Disable all options
+                    document.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'none');
+                    
+                    const selectedIndex = parseInt(option.getAttribute('data-index'));
+                    const isCorrect = selectedIndex === question.correctAnswer;
+                    
+                    // Mark selected option
+                    option.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    
+                    // If wrong, highlight the correct answer
+                    if (!isCorrect) {
+                        document.querySelectorAll('.option')[question.correctAnswer].classList.add('correct');
+                    }
+                    
+                    // Show feedback
+                    const feedback = document.querySelector('.feedback');
+                    feedback.textContent = isCorrect ? 
+                        'Correct! Well done.' : 
+                        `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+                    feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    
+                    // Enable next question button
+                    nextQuestionBtn.disabled = false;
+                });
+            });
+        }
+        
+        // Move to next question
+        nextQuestionBtn.addEventListener('click', () => {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+                nextQuestionBtn.disabled = true;
+            } else {
+                // All questions answered
+                questionContainer.innerHTML = `
+                    <h3>Practice Complete!</h3>
+                    <p>You have completed all the practice questions. Click "Restart" to try again.</p>
+                `;
+                nextQuestionBtn.disabled = true;
+                practiceProgress.style.width = '100%';
+            }
+        });
+        
+        // Restart practice
+        restartPracticeBtn.addEventListener('click', () => {
+            currentQuestion = 0;
+            displayQuestion();
+            nextQuestionBtn.disabled = true;
+        });
+        
+        // Initialize practice
+        displayQuestion();
+        
+        // Term Matching Game
+        const gameTerms = [
+            { term: "Complete Combustion", definition: "Reaction with sufficient oxygen producing CO₂ and H₂O" },
+            { term: "Incomplete Combustion", definition: "Reaction with insufficient oxygen producing CO and/or C" },
+            { term: "Carbon Dioxide", definition: "Product of complete combustion with chemical formula CO₂" },
+            { term: "Carbon Monoxide", definition: "Toxic product of incomplete combustion with formula CO" },
+            { term: "Oxidation", definition: "Process where carbon and hydrogen in fuels react with oxygen" },
+            { term: "Hydrocarbon", definition: "Compound containing only hydrogen and carbon atoms" },
+            { term: "Energy Release", definition: "Heat produced during combustion of hydrocarbon fuels" },
+            { term: "Soot", definition: "Carbon particles produced during incomplete combustion" }
+        ];
+        
+        // Lab experiment terms for the second round
+        const labTerms = [
+            { term: "Anhydrous Copper Sulfate", definition: "White powder that turns blue when it reacts with water from combustion" },
+            { term: "Limewater", definition: "Solution that turns cloudy when carbon dioxide bubbles through it" },
+            { term: "Calcium Carbonate", definition: "White precipitate formed when carbon dioxide reacts with limewater" },
+            { term: "Ice Bath", definition: "Used to cool gases and condense water vapor produced during combustion" },
+            { term: "Bunsen Burner", definition: "Used as a source of heat to burn the hydrocarbon fuel" },
+            { term: "Cobalt Chloride Paper", definition: "Changes from blue to pink when it detects water" },
+            { term: "Calcium Hydroxide", definition: "Chemical name for limewater used to test for carbon dioxide" },
+            { term: "U-tube", definition: "Contains indicators and allows gases to pass through during the experiment" }
+        ];
+        
+        const definitionCard = document.getElementById('definition-text');
+        const termsGrid = document.getElementById('terms-grid');
+        const startGameBtn = document.getElementById('start-game');
+        const restartGameBtn = document.getElementById('restart-game');
+        const scoreDisplay = document.getElementById('score');
+        const correctCountDisplay = document.getElementById('correct-count');
+        const totalCountDisplay = document.getElementById('total-count');
+        const timeDisplay = document.getElementById('time');
+        const gameInstructions = document.getElementById('game-instructions');
+        const round1Badge = document.getElementById('round-1-badge');
+        const round2Badge = document.getElementById('round-2-badge');
+        
+        let currentRound = 1;
+        let currentTerms = gameTerms;
+        let currentDefinitionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let gameTimer;
+        let gameTime = 0;
+        let gameActive = false;
+        let totalCorrectAnswers = 0;
+        
+        // Create the terms grid
+        function createTermsGrid() {
+            termsGrid.innerHTML = '';
+            
+            // Make a copy of the terms and shuffle them
+            const shuffledTerms = [...currentTerms].sort(() => Math.random() - 0.5);
+            
+            // Add each term to the grid
+            shuffledTerms.forEach(item => {
+                const termElement = document.createElement('div');
+                termElement.className = 'term-item';
+                termElement.textContent = item.term;
+                termElement.dataset.term = item.term;
+                
+                termElement.addEventListener('click', () => {
+                    if (!gameActive) return;
+                    
+                    const currentDefinition = currentTerms[currentDefinitionIndex];
+                    const isCorrect = item.term === currentDefinition.term;
+                    
+                    if (isCorrect) {
+                        // Mark as correct
+                        termElement.classList.add('correct');
+                        score += 10;
+                        correctCount++;
+                        totalCorrectAnswers++;
+                        scoreDisplay.textContent = score;
+                        correctCountDisplay.textContent = correctCount;
+                        
+                        // Move to next definition
+                        currentDefinitionIndex++;
+                        
+                        // Check if round is complete
+                        if (currentDefinitionIndex >= currentTerms.length) {
+                            if (currentRound === 1) {
+                                // Move to round 2
+                                startRound2();
+                            } else {
+                                // End the game
+                                endGame();
+                                alert(`Congratulations! You completed all rounds in ${gameTime} seconds with a score of ${score}`);
+                            }
+                        } else {
+                            // Show next definition
+                            showCurrentDefinition();
+                        }
+                    } else {
+                        // Mark as incorrect temporarily
+                        termElement.classList.add('incorrect');
+                        score = Math.max(0, score - 2); // Small penalty
+                        scoreDisplay.textContent = score;
+                        
+                        // Remove the incorrect class after a short delay
+                        setTimeout(() => {
+                            termElement.classList.remove('incorrect');
+                        }, 500);
+                    }
+                });
+                
+                termsGrid.appendChild(termElement);
+            });
+        }
+        
+        // Start Round 2
+        function startRound2() {
+            currentRound = 2;
+            currentTerms = labTerms;
+            currentDefinitionIndex = 0;
+            correctCount = 0;
+            
+            // Update UI for round 2
+            round1Badge.classList.remove('active');
+            round2Badge.classList.add('active');
+            gameInstructions.textContent = "Round 2: Match definitions about the combustion experiment with the correct terms!";
+            correctCountDisplay.textContent = correctCount;
+            totalCountDisplay.textContent = labTerms.length;
+            
+            // Create new terms grid and show first definition
+            createTermsGrid();
+            showCurrentDefinition();
+        }
+        
+        // Show the current definition
+        function showCurrentDefinition() {
+            if (currentDefinitionIndex < currentTerms.length) {
+                definitionCard.textContent = currentTerms[currentDefinitionIndex].definition;
+            }
+        }
+        
+        // Start the game timer
+        function startTimer() {
+            gameTime = 0;
+            timeDisplay.textContent = gameTime;
+            
+            gameTimer = setInterval(() => {
+                gameTime++;
+                timeDisplay.textContent = gameTime;
+            }, 1000);
+        }
+        
+        // End the game
+        function endGame() {
+            gameActive = false;
+            clearInterval(gameTimer);
+        }
+        
+        // Start the game
+        startGameBtn.addEventListener('click', () => {
+            // Reset game state
+            currentRound = 1;
+            currentTerms = gameTerms;
+            score = 0;
+            correctCount = 0;
+            totalCorrectAnswers = 0;
+            currentDefinitionIndex = 0;
+            
+            // Reset UI
+            round1Badge.classList.add('active');
+            round2Badge.classList.remove('active');
+            gameInstructions.textContent = "Round 1: Match the definition with the correct term. See how quickly you can complete all definitions!";
+            
+            // Update displays
+            scoreDisplay.textContent = score;
+            correctCountDisplay.textContent = correctCount;
+            totalCountDisplay.textContent = gameTerms.length;
+            
+            // Create the terms grid
+            createTermsGrid();
+            
+            // Start the timer
+            clearInterval(gameTimer);
+            startTimer();
+            
+            // Show the first definition
+            showCurrentDefinition();
+            
+            // Set game as active
+            gameActive = true;
+        });
+        
+        // Restart the game
+        restartGameBtn.addEventListener('click', () => {
+            endGame();
+            startGameBtn.click();
+        });
+        
+        // Initialize game
+        createGameCards();
+        
+        // Virtual Lab Questions
+        const labQuestionContainer = document.getElementById('lab-question');
+        const labOptionsContainer = document.getElementById('lab-options');
+        const labFeedback = document.getElementById('lab-feedback');
+        const nextLabQuestionBtn = document.getElementById('next-lab-question');
+        
+        // Lab comprehension questions
+        const labQuestions = [
+            {
+                question: "What does the color change of anhydrous copper sulfate from white to blue indicate?",
+                options: [
+                    "The presence of carbon dioxide",
+                    "The presence of water",
+                    "The presence of oxygen",
+                    "The presence of carbon monoxide"
+                ],
+                correctAnswer: 1
+            },
+            {
+                question: "What causes limewater to turn cloudy in this experiment?",
+                options: [
+                    "Reaction with water vapor",
+                    "Reaction with oxygen",
+                    "Reaction with carbon dioxide",
+                    "Reaction with nitrogen"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "What is the chemical equation for the reaction between limewater and carbon dioxide?",
+                options: [
+                    "Ca(OH)₂ + CO₂ → CaCO₃ + H₂O",
+                    "NaOH + CO₂ → NaHCO₃",
+                    "H₂O + CO₂ → H₂CO₃",
+                    "CuSO₄ + 5H₂O → CuSO₄·5H₂O"
+                ],
+                correctAnswer: 0
+            },
+            {
+                question: "Why is the U-tube placed in an ice bath?",
+                options: [
+                    "To speed up the reaction",
+                    "To slow down the gas flow",
+                    "To condense water vapor produced during combustion",
+                    "To prevent the glass from cracking"
+                ],
+                correctAnswer: 2
+            },
+            {
+                question: "Which of the following explains why we know complete combustion is occurring in this experiment?",
+                options: [
+                    "Only carbon dioxide is detected",
+                    "Only water is detected",
+                    "Both carbon dioxide and water are detected",
+                    "Neither carbon dioxide nor water is detected"
+                ],
+                correctAnswer: 2
+            }
+        ];
+        
+        let currentLabQuestion = 0;
+        
+        // Display a lab question
+        function displayLabQuestion() {
+            const question = labQuestions[currentLabQuestion];
+            
+            labQuestionContainer.textContent = question.question;
+            labOptionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option;
+                optionEl.dataset.index = index;
+                
+                optionEl.addEventListener('click', () => {
+                    // Disable all options
+                    document.querySelectorAll('#lab-options .option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                    });
+                    
+                    const selectedIndex = parseInt(optionEl.dataset.index);
+                    const isCorrect = selectedIndex === question.correctAnswer;
+                    
+                    // Mark selected option
+                    optionEl.classList.add(isCorrect ? 'correct' : 'incorrect');
+                    
+                    // If wrong, highlight the correct answer
+                    if (!isCorrect) {
+                        document.querySelectorAll('#lab-options .option')[question.correctAnswer].classList.add('correct');
+                    }
+                    
+                    // Show feedback
+                    labFeedback.textContent = isCorrect ? 
+                        'Correct! Well done.' : 
+                        `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}`;
+                    labFeedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+                    
+                    // Enable next question button
+                    nextLabQuestionBtn.disabled = false;
+                });
+                
+                labOptionsContainer.appendChild(optionEl);
+            });
+        }
+        
+        // Move to next lab question
+        nextLabQuestionBtn.addEventListener('click', () => {
+            currentLabQuestion++;
+            
+            if (currentLabQuestion < labQuestions.length) {
+                displayLabQuestion();
+                nextLabQuestionBtn.disabled = true;
+                labFeedback.className = 'feedback';
+                labFeedback.textContent = '';
+            } else {
+                // All questions answered
+                labQuestionContainer.textContent = 'Lab comprehension complete!';
+                labOptionsContainer.innerHTML = '';
+                labFeedback.textContent = 'You have completed all the lab comprehension questions.';
+                labFeedback.className = 'feedback correct';
+                nextLabQuestionBtn.disabled = true;
+            }
+        });
+        
+        // Initialize the first question for the lab section when lab tab is clicked
+        document.querySelector('.nav-button[data-section="lab"]').addEventListener('click', function() {
+            currentLabQuestion = 0;
+            displayLabQuestion();
+            labFeedback.className = 'feedback';
+            labFeedback.textContent = '';
+            nextLabQuestionBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
