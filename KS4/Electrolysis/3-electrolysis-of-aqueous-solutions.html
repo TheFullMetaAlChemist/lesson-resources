@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrolysis of Aqueous Solutions - Interactive GCSE Chemistry Lesson</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --cathode: #3498db;
+            --anode: #e74c3c;
+            --sodium: #f39c12;
+            --chloride: #27ae60;
+            --copper: #e67e22;
+            --sulfate: #9b59b6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        nav {
+            background-color: var(--primary);
+            padding: 0.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 1rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover, nav ul li a.active {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #218c54;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background-color: #d68910;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background-color: #c0392b;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .info-box {
+            background-color: #d6eaf8;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .warning-box {
+            background-color: #fef9e7;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card-header {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        /* Tutorial Section Styles */
+        .simulation-container {
+            border: 2px solid var(--dark);
+            border-radius: 8px;
+            height: 400px;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        
+        .beaker {
+            position: absolute;
+            width: 400px;
+            height: 350px;
+            border: 3px solid #95a5a6;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 25px;
+            background-color: rgba(173, 216, 230, 0.3);
+            overflow: hidden;
+        }
+        
+        .electrode {
+            position: absolute;
+            width: 10px;
+            height: 300px;
+            background-color: #333;
+            bottom: 50px;
+        }
+        
+        .electrode::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #333;
+            top: -20px;
+            left: -5px;
+        }
+        
+        .cathode {
+            left: 25%;
+            border: 2px solid var(--cathode);
+        }
+        
+        .anode {
+            right: 25%;
+            border: 2px solid var(--anode);
+        }
+        
+        .electrode-label {
+            position: absolute;
+            bottom: 10px;
+            font-weight: bold;
+            text-align: center;
+            width: 100px;
+        }
+        
+        .cathode-label {
+            left: calc(25% - 45px);
+            color: var(--cathode);
+        }
+        
+        .anode-label {
+            right: calc(25% - 45px);
+            color: var(--anode);
+        }
+        
+        .reaction-info {
+            position: absolute;
+            width: 150px;
+            background-color: rgba(255,255,255,0.85);
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 11px;
+            z-index: 20;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .cathode-info {
+            left: 10px;
+            top: 10px;
+        }
+        
+        .anode-info {
+            right: 10px;
+            top: 10px;
+        }
+        
+        .stage-indicator {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255,255,255,0.9);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            z-index: 30;
+        }
+        
+        .ion {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            font-weight: bold;
+            line-height: 24px;
+            transition: all 2s ease-in-out;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+        
+        .water-cation, .water-anion {
+            opacity: 0.8;
+            border: 1px solid #fff;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+        }
+        
+        .ion.cation {
+            z-index: 6;
+        }
+        
+        .ion.anion {
+            z-index: 7;
+        }
+        
+        .electron {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #f1c40f;
+            border-radius: 50%;
+            z-index: 4;
+            box-shadow: 0 0 3px #f39c12;
+            opacity: 0.8;
+            transition: all 0.8s ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        .discharging {
+            animation: pulse 1.5s infinite;
+            border: 2px solid #f1c40f;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        @keyframes bubble-rise {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-25px) translateX(5px) rotate(5deg); }
+            50% { transform: translateY(-50px) translateX(-5px) rotate(-5deg); }
+            75% { transform: translateY(-75px) translateX(5px) rotate(5deg); }
+            100% { transform: translateY(-100px) translateX(-5px) rotate(-5deg); }
+        }
+        
+        .controls {
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .solution-selector {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        
+        .reactions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+        
+        .reaction-box {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            margin: 0 0.5rem;
+        }
+        
+        /* Practice Section Styles */
+        .question-container {
+            margin-bottom: 2rem;
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .options-container {
+            margin: 1rem 0;
+        }
+        
+        .option {
+            display: block;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .option.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .option.correct {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .option.incorrect {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Virtual Lab Styles */
+        .lab-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .lab-controls {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .lab-simulation {
+            flex: 2;
+            min-width: 400px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        
+        .lab-solution {
+            margin-bottom: 1rem;
+        }
+        
+        .lab-prediction {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        /* Game Section Styles */
+        .game-container {
+            border: 3px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            background-color: #f8f9fa;
+            min-height: 500px;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .game-score {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .draggable {
+            padding: 0.5rem 1rem;
+            background-color: var(--light);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: move;
+            transition: all 0.3s;
+        }
+        
+        .draggable:hover {
+            background-color: #e3e3e3;
+        }
+        
+        .drop-target {
+            height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .drop-target.hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .drop-target.correct {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-color: var(--success);
+        }
+        
+        .drop-target.incorrect {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-color: var(--accent);
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 0.3rem 0;
+            }
+            
+            .flex-container {
+                flex-direction: column;
+            }
+            
+            .beaker {
+                width: 70%;
+            }
+            
+            .cathode {
+                left: 30%;
+            }
+            
+            .anode {
+                right: 30%;
+            }
+            
+            .cathode-label {
+                left: calc(30% - 45px);
+            }
+            
+            .anode-label {
+                right: calc(30% - 45px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">GCSE Chemistry</div>
+        <h1>Electrolysis of Aqueous Solutions</h1>
+        <p>Interactive Chemistry Lesson for GCSE Students</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#tutorial" class="nav-link active">Tutorial</a></li>
+            <li><a href="#practice" class="nav-link">Practice</a></li>
+            <li><a href="#virtual-lab" class="nav-link">Virtual Lab</a></li>
+            <li><a href="#game" class="nav-link">Game</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section id="tutorial">
+            <h2>Tutorial: Electrolysis of Aqueous Solutions</h2>
+            
+            <div class="info-box">
+                <p><strong>Electrolysis</strong> is the process of using electricity to break down ionic compounds. In this lesson, we'll focus on what happens when we electrolyse <strong>aqueous solutions</strong> (substances dissolved in water).</p>
+            </div>
+            
+            <h3>Key Principles</h3>
+            <p>When we electrolyse an aqueous solution:</p>
+            <ul>
+                <li>Positive ions (cations) move to the <strong>negative electrode (cathode)</strong></li>
+                <li>Negative ions (anions) move to the <strong>positive electrode (anode)</strong></li>
+                <li>The ions that are discharged (gain or lose electrons) depend on their <strong>reactivity</strong></li>
+                <li>Water molecules can also be broken down during the process</li>
+            </ul>
+            
+            <div class="warning-box">
+                <p><strong>Remember:</strong> In aqueous solutions, water molecules break down producing hydrogen ions (H<sup>+</sup>) and hydroxide ions (OH<sup>-</sup>), which can be discharged.</p>
+            </div>
+            
+            <h3>Interactive Simulation</h3>
+            <p>Watch what happens during electrolysis of different aqueous solutions. Select a solution and click "Start Simulation".</p>
+            
+            <div class="controls">
+                <select id="solution-selector" class="solution-selector">
+                    <option value="nacl">Sodium Chloride (NaCl)</option>
+                    <option value="cuso4">Copper Sulfate (CuSO₄)</option>
+                    <option value="kbr">Potassium Bromide (KBr)</option>
+                    <option value="mgso4">Magnesium Sulfate (MgSO₄)</option>
+                </select>
+                <button id="start-simulation" class="btn">Start Simulation</button>
+                <button id="reset-simulation" class="btn btn-warning">Reset</button>
+            </div>
+            
+            <div class="simulation-container">
+                <div class="beaker" id="simulation-beaker">
+                    <div class="electrode cathode"></div>
+                    <div class="electrode anode"></div>
+                    <div class="electrode-label cathode-label">Cathode (-)</div>
+                    <div class="electrode-label anode-label">Anode (+)</div>
+                    <!-- Ions will be added here dynamically -->
+                </div>
+            </div>
+            
+            <div class="reactions">
+                <div class="reaction-box">
+                    <h4>Cathode Reaction</h4>
+                    <p id="cathode-reaction">Select a solution and start simulation</p>
+                </div>
+                <div class="reaction-box">
+                    <h4>Anode Reaction</h4>
+                    <p id="anode-reaction">Select a solution and start simulation</p>
+                </div>
+            </div>
+            
+            <h3>What Gets Discharged?</h3>
+            
+            <div class="flex-container">
+                <div class="card">
+                    <div class="card-header">At the Cathode (Negative Electrode)</div>
+                    <p>The cathode attracts positive ions (cations). The ion that gets discharged depends on reactivity:</p>
+                    <ul>
+                        <li>If the metal is <strong>more reactive than hydrogen</strong>, then <strong>hydrogen</strong> is produced from the H<sup>+</sup> ions in water.</li>
+                        <li>If the metal is <strong>less reactive than hydrogen</strong>, then the <strong>metal</strong> is produced.</li>
+                    </ul>
+                    <div class="info-box">
+                        <p>When hydrogen is produced: 2H<sup>+</sup> + 2e<sup>-</sup> → H<sub>2</sub></p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">At the Anode (Positive Electrode)</div>
+                    <p>The anode attracts negative ions (anions). The ion that gets discharged depends on what's present:</p>
+                    <ul>
+                        <li>If <strong>halide ions</strong> (Cl<sup>-</sup>, Br<sup>-</sup>, I<sup>-</sup>) are present, the <strong>halogen</strong> is produced.</li>
+                        <li>Otherwise, <strong>oxygen</strong> is produced from the OH<sup>-</sup> ions in water.</li>
+                    </ul>
+                    <div class="info-box">
+                        <p>When oxygen is produced: 4OH<sup>-</sup> → O<sub>2</sub> + 2H<sub>2</sub>O + 4e<sup>-</sup></p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Examples of Electrolysis Outcomes</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 1.5rem 0; text-align: center;">
+                <thead>
+                    <tr style="background-color: var(--primary); color: white;">
+                        <th style="padding: 0.8rem; border: 1px solid #ddd;">Aqueous Solution</th>
+                        <th style="padding: 0.8rem; border: 1px solid #ddd;">Cathode Product</th>
+                        <th style="padding: 0.8rem; border: 1px solid #ddd;">Anode Product</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Sodium Chloride (NaCl)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Hydrogen (H<sub>2</sub>)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Chlorine (Cl<sub>2</sub>)</td>
+                    </tr>
+                    <tr style="background-color: #f8f9fa;">
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Copper Sulfate (CuSO<sub>4</sub>)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Copper (Cu)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Oxygen (O<sub>2</sub>)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Potassium Bromide (KBr)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Hydrogen (H<sub>2</sub>)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Bromine (Br<sub>2</sub>)</td>
+                    </tr>
+                    <tr style="background-color: #f8f9fa;">
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Magnesium Sulfate (MgSO<sub>4</sub>)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Hydrogen (H<sub>2</sub>)</td>
+                        <td style="padding: 0.8rem; border: 1px solid #ddd;">Oxygen (O<sub>2</sub>)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="info-box">
+                <p><strong>Summary:</strong> When electrolysing aqueous solutions with inert electrodes:</p>
+                <ol>
+                    <li>At the cathode: If metal is more reactive than hydrogen, hydrogen is produced; if less reactive, the metal is produced.</li>
+                    <li>At the anode: If halide ions are present, the halogen is produced; if not, oxygen is produced.</li>
+                </ol>
+            </div>
+        </section>
+        
+        <section id="practice">
+            <h2>Practice Questions</h2>
+            <p>Test your understanding with these practice questions.</p>
+            
+            <div id="quiz-container">
+                <div class="question-container">
+                    <h3>Question 1</h3>
+                    <p>What is produced at the cathode when an aqueous solution of sodium chloride (NaCl) is electrolysed?</p>
+                    <div class="options-container">
+                        <div class="option" data-correct="true">Hydrogen gas</div>
+                        <div class="option">Sodium metal</div>
+                        <div class="option">Chlorine gas</div>
+                        <div class="option">Oxygen gas</div>
+                    </div>
+                    <div class="feedback hidden"></div>
+                </div>
+                
+                <div class="question-container">
+                    <h3>Question 2</h3>
+                    <p>During the electrolysis of copper sulfate solution, which substance is deposited at the cathode?</p>
+                    <div class="options-container">
+                        <div class="option">Hydrogen</div>
+                        <div class="option" data-correct="true">Copper</div>
+                        <div class="option">Oxygen</div>
+                        <div class="option">Sulfur</div>
+                    </div>
+                    <div class="feedback hidden"></div>
+                </div>
+                
+                <div class="question-container">
+                    <h3>Question 3</h3>
+                    <p>When electrolysing an aqueous solution of potassium bromide (KBr), what is produced at the anode?</p>
+                    <div class="options-container">
+                        <div class="option">Hydrogen</div>
+                        <div class="option">Potassium</div>
+                        <div class="option" data-correct="true">Bromine</div>
+                        <div class="option">Oxygen</div>
+                    </div>
+                    <div class="feedback hidden"></div>
+                </div>
+                
+                <div class="question-container">
+                    <h3>Question 4</h3>
+                    <p>Why is hydrogen produced at the cathode when electrolysing aqueous sodium chloride, but not when electrolysing aqueous copper sulfate?</p>
+                    <div class="options-container">
+                        <div class="option">Sodium ions move faster than copper ions</div>
+                        <div class="option">Chloride ions affect the hydrogen production</div>
+                        <div class="option" data-correct="true">Sodium is more reactive than hydrogen, while copper is less reactive</div>
+                        <div class="option">The concentration of sodium chloride is usually higher</div>
+                    </div>
+                    <div class="feedback hidden"></div>
+                </div>
+                
+                <div class="question-container">
+                    <h3>Question 5</h3>
+                    <p>In the electrolysis of aqueous solutions, which ions are produced by the breakdown of water?</p>
+                    <div class="options-container">
+                        <div class="option">Na<sup>+</sup> and OH<sup>-</sup></div>
+                        <div class="option">OH<sup>-</sup> and Cl<sup>-</sup></div>
+                        <div class="option" data-correct="true">H<sup>+</sup> and OH<sup>-</sup></div>
+                        <div class="option">H<sup>+</sup> and O<sup>2-</sup></div>
+                    </div>
+                    <div class="feedback hidden"></div>
+                </div>
+                
+                <button id="check-answers" class="btn btn-accent">Check Answers</button>
+                <button id="reset-quiz" class="btn btn-warning">Reset Quiz</button>
+                <div id="quiz-results" class="hidden" style="margin-top: 1.5rem;"></div>
+            </div>
+        </section>
+        
+        <section id="virtual-lab">
+            <h2>Required Practical: Virtual Lab</h2>
+            <p>Investigate what happens when different aqueous solutions are electrolysed using inert electrodes.</p>
+            
+            <div class="info-box">
+                <p><strong>Hypothesis Development:</strong> Before running each experiment, predict what products will form at each electrode based on what you've learned, then test your hypothesis.</p>
+            </div>
+            
+            <div class="lab-container">
+                <div class="lab-controls">
+                    <h3>Select Solution</h3>
+                    <div class="lab-solution">
+                        <select id="lab-solution-selector" class="solution-selector">
+                            <option value="nacl">Sodium Chloride (NaCl)</option>
+                            <option value="cuso4">Copper Sulfate (CuSO₄)</option>
+                            <option value="kbr">Potassium Bromide (KBr)</option>
+                            <option value="mgso4">Magnesium Sulfate (MgSO₄)</option>
+                            <option value="agno3">Silver Nitrate (AgNO₃)</option>
+                            <option value="znbr2">Zinc Bromide (ZnBr₂)</option>
+                        </select>
+                    </div>
+                    
+                    <h3>Make Your Prediction</h3>
+                    <div class="lab-prediction">
+                        <p>What do you think will be produced at the:</p>
+                        <p><strong>Cathode:</strong></p>
+                        <select id="cathode-prediction" class="solution-selector">
+                            <option value="">Select your prediction</option>
+                            <option value="hydrogen">Hydrogen gas (H₂)</option>
+                            <option value="sodium">Sodium metal (Na)</option>
+                            <option value="potassium">Potassium metal (K)</option>
+                            <option value="copper">Copper metal (Cu)</option>
+                            <option value="magnesium">Magnesium metal (Mg)</option>
+                            <option value="silver">Silver metal (Ag)</option>
+                            <option value="zinc">Zinc metal (Zn)</option>
+                        </select>
+                        
+                        <p><strong>Anode:</strong></p>
+                        <select id="anode-prediction" class="solution-selector">
+                            <option value="">Select your prediction</option>
+                            <option value="oxygen">Oxygen gas (O₂)</option>
+                            <option value="chlorine">Chlorine gas (Cl₂)</option>
+                            <option value="bromine">Bromine gas (Br₂)</option>
+                        </select>
+                    </div>
+                    
+                    <button id="run-experiment" class="btn btn-success">Run Experiment</button>
+                    <button id="reset-lab" class="btn btn-warning">Reset Lab</button>
+                    
+                    <div id="lab-results" class="hidden" style="margin-top: 1.5rem; padding: 1rem; border-radius: 8px; background-color: #f8f9fa;">
+                        <h3>Experimental Results</h3>
+                        <div id="cathode-result"></div>
+                        <div id="anode-result"></div>
+                        <div id="prediction-accuracy" style="margin-top: 1rem;"></div>
+                    </div>
+                </div>
+                
+                <div class="lab-simulation" id="lab-beaker">
+                    <div class="beaker" style="width: 80%;">
+                        <div class="electrode cathode"></div>
+                        <div class="electrode anode"></div>
+                        <div class="electrode-label cathode-label">Cathode (-)</div>
+                        <div class="electrode-label anode-label">Anode (+)</div>
+                        <!-- Ions will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box" style="margin-top: 1.5rem;">
+                <h3>Observations & Conclusions</h3>
+                <p>When conducting electrolysis experiments, look for:</p>
+                <ul>
+                    <li>Gas bubbles at either electrode (may indicate hydrogen or oxygen)</li>
+                    <li>Color changes in the solution or at the electrodes</li>
+                    <li>Formation of solid deposits on the electrodes</li>
+                    <li>Changes in the color of indicators if added</li>
+                </ul>
+                <p>These observations help you identify the products and confirm your predictions!</p>
+            </div>
+        </section>
+        
+        <section id="game">
+            <h2>Electrolysis Game: Ion Sorting Challenge</h2>
+            <p>Test your understanding of electrolysis by dragging the ions to the correct electrode where they will be discharged.</p>
+            
+            <div class="game-header">
+                <div class="game-instructions">Drag each ion to the electrode where it will be discharged</div>
+                <div class="game-score">Score: <span id="score">0</span> / 10</div>
+            </div>
+            
+            <div class="game-container">
+                <div class="flex-container">
+                    <div class="card" style="flex: 1;">
+                        <div class="card-header">Cathode (Negative)</div>
+                        <div class="drop-target" id="cathode-target" data-accepts="cation">
+                            Drop positive ions here
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="flex: 1;">
+                        <div class="card-header">Anode (Positive)</div>
+                        <div class="drop-target" id="anode-target" data-accepts="anion">
+                            Drop negative ions here
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="ions-container" class="drag-container">
+                    <!-- Ions will be added here dynamically -->
+                </div>
+                
+                <div id="game-feedback" style="margin-top: 1rem; text-align: center; min-height: 50px;"></div>
+                
+                <button id="new-game" class="btn btn-success">New Game</button>
+                <button id="check-game" class="btn btn-accent">Check Answers</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2025 GCSE Chemistry Interactive Learning Resource</p>
+        <p>Created for educational purposes</p>
+    </footer>
+
+    <script>
+        // Navigation handling
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    l.classList.remove('active');
+                });
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Show the corresponding section
+                const targetId = this.getAttribute('href').substring(1);
+                document.querySelectorAll('main > section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(targetId).style.display = 'block';
+            });
+        });
+        
+        // Tutorial Section: Simulation
+        const simulationBeaker = document.getElementById('simulation-beaker');
+        const solutionSelector = document.getElementById('solution-selector');
+        const startSimulationBtn = document.getElementById('start-simulation');
+        const resetSimulationBtn = document.getElementById('reset-simulation');
+        const cathodeReaction = document.getElementById('cathode-reaction');
+        const anodeReaction = document.getElementById('anode-reaction');
+        
+        let simulationRunning = false;
+        let ions = [];
+        
+        // Solution data for simulations and labs
+        const solutionsData = {
+            nacl: {
+                name: 'Sodium Chloride (NaCl)',
+                cations: {
+                    symbol: 'Na+',
+                    color: '#f39c12',
+                    discharged: false
+                },
+                anions: {
+                    symbol: 'Cl-',
+                    color: '#27ae60',
+                    discharged: true
+                },
+                cathodeProduct: 'H₂',
+                anodeProduct: 'Cl₂',
+                cathodeReaction: '2H⁺ + 2e⁻ → H₂',
+                anodeReaction: '2Cl⁻ → Cl₂ + 2e⁻'
+            },
+            cuso4: {
+                name: 'Copper Sulfate (CuSO₄)',
+                cations: {
+                    symbol: 'Cu²⁺',
+                    color: '#e67e22',
+                    discharged: true
+                },
+                anions: {
+                    symbol: 'SO₄²⁻',
+                    color: '#9b59b6',
+                    discharged: false
+                },
+                cathodeProduct: 'Cu',
+                anodeProduct: 'O₂',
+                cathodeReaction: 'Cu²⁺ + 2e⁻ → Cu',
+                anodeReaction: '4OH⁻ → O₂ + 2H₂O + 4e⁻'
+            },
+            kbr: {
+                name: 'Potassium Bromide (KBr)',
+                cations: {
+                    symbol: 'K+',
+                    color: '#e74c3c',
+                    discharged: false
+                },
+                anions: {
+                    symbol: 'Br-',
+                    color: '#8e44ad',
+                    discharged: true
+                },
+                cathodeProduct: 'H₂',
+                anodeProduct: 'Br₂',
+                cathodeReaction: '2H⁺ + 2e⁻ → H₂',
+                anodeReaction: '2Br⁻ → Br₂ + 2e⁻'
+            },
+            mgso4: {
+                name: 'Magnesium Sulfate (MgSO₄)',
+                cations: {
+                    symbol: 'Mg²⁺',
+                    color: '#1abc9c',
+                    discharged: false
+                },
+                anions: {
+                    symbol: 'SO₄²⁻',
+                    color: '#9b59b6',
+                    discharged: false
+                },
+                cathodeProduct: 'H₂',
+                anodeProduct: 'O₂',
+                cathodeReaction: '2H⁺ + 2e⁻ → H₂',
+                anodeReaction: '4OH⁻ → O₂ + 2H₂O + 4e⁻'
+            },
+            agno3: {
+                name: 'Silver Nitrate (AgNO₃)',
+                cations: {
+                    symbol: 'Ag+',
+                    color: '#95a5a6',
+                    discharged: true
+                },
+                anions: {
+                    symbol: 'NO₃-',
+                    color: '#3498db',
+                    discharged: false
+                },
+                cathodeProduct: 'Ag',
+                anodeProduct: 'O₂',
+                cathodeReaction: 'Ag⁺ + e⁻ → Ag',
+                anodeReaction: '4OH⁻ → O₂ + 2H₂O + 4e⁻'
+            },
+            znbr2: {
+                name: 'Zinc Bromide (ZnBr₂)',
+                cations: {
+                    symbol: 'Zn²⁺',
+                    color: '#7f8c8d',
+                    discharged: true
+                },
+                anions: {
+                    symbol: 'Br-',
+                    color: '#8e44ad',
+                    discharged: true
+                },
+                cathodeProduct: 'Zn',
+                anodeProduct: 'Br₂',
+                cathodeReaction: 'Zn²⁺ + 2e⁻ → Zn',
+                anodeReaction: '2Br⁻ → Br₂ + 2e⁻'
+            }
+        };
+        
+        function createIons(solution) {
+            // Clear any existing ions
+            ions = [];
+            simulationBeaker.querySelectorAll('.ion, .electron, .reaction-info, .stage-indicator').forEach(el => el.remove());
+            
+            const solutionData = solutionsData[solution];
+            
+            // Add stage indicator
+            const stageIndicator = document.createElement('div');
+            stageIndicator.className = 'stage-indicator';
+            stageIndicator.textContent = 'Initial State: Solution';
+            stageIndicator.id = 'stage-indicator';
+            simulationBeaker.appendChild(stageIndicator);
+            
+            // Add electrode information
+            const cathodeInfo = document.createElement('div');
+            cathodeInfo.className = 'reaction-info cathode-info';
+            cathodeInfo.innerHTML = `<strong>Cathode (-)</strong><br>Attracts positive ions<br><br>`;
+            simulationBeaker.appendChild(cathodeInfo);
+            
+            const anodeInfo = document.createElement('div');
+            anodeInfo.className = 'reaction-info anode-info';
+            anodeInfo.innerHTML = `<strong>Anode (+)</strong><br>Attracts negative ions<br><br>`;
+            simulationBeaker.appendChild(anodeInfo);
+            
+            // Reduced number of ions for clarity - create fewer ions
+            const ionCount = 8; // Reduced from 15
+            const waterIonCount = 6; // Reduced from 10
+            
+            // Create main ions from the solution (fewer for clarity)
+            for (let i = 0; i < ionCount; i++) {
+                // Create main cation from the solution
+                const cation = document.createElement('div');
+                cation.className = 'ion cation';
+                cation.textContent = solutionData.cations.symbol;
+                cation.style.backgroundColor = solutionData.cations.color;
+                cation.style.color = 'white';
+                
+                // More spread out positioning
+                const left = 150 + (Math.random() * 100 - 50);
+                const top = 50 + Math.random() * 250;
+                cation.style.left = `${left}px`;
+                cation.style.top = `${top}px`;
+                
+                simulationBeaker.appendChild(cation);
+                ions.push({
+                    element: cation,
+                    type: 'cation',
+                    discharged: solutionData.cations.discharged,
+                    initialLeft: left,
+                    initialTop: top,
+                    isWater: false
+                });
+                
+                // Create main anion from the solution
+                const anion = document.createElement('div');
+                anion.className = 'ion anion';
+                anion.textContent = solutionData.anions.symbol;
+                anion.style.backgroundColor = solutionData.anions.color;
+                anion.style.color = 'white';
+                
+                // More spread out positioning
+                const left2 = 250 + (Math.random() * 100 - 50);
+                const top2 = 50 + Math.random() * 250;
+                anion.style.left = `${left2}px`;
+                anion.style.top = `${top2}px`;
+                
+                simulationBeaker.appendChild(anion);
+                ions.push({
+                    element: anion,
+                    type: 'anion',
+                    discharged: solutionData.anions.discharged,
+                    initialLeft: left2,
+                    initialTop: top2,
+                    isWater: false
+                });
+            }
+            
+            // Add H+ and OH- ions from water (fewer for clarity)
+            for (let i = 0; i < waterIonCount; i++) {
+                // Create H+ ion from water
+                const hIon = document.createElement('div');
+                hIon.className = 'ion water-cation';
+                hIon.textContent = 'H+';
+                hIon.style.backgroundColor = '#f1c40f';
+                hIon.style.color = 'black';
+                hIon.style.fontSize = '10px';
+                
+                // More spread out positioning
+                const hLeft = 150 + (Math.random() * 120 - 60);
+                const hTop = 50 + Math.random() * 250;
+                hIon.style.left = `${hLeft}px`;
+                hIon.style.top = `${hTop}px`;
+                
+                simulationBeaker.appendChild(hIon);
+                ions.push({
+                    element: hIon,
+                    type: 'cation',
+                    discharged: true, // H+ ions are always discharged at the cathode
+                    initialLeft: hLeft,
+                    initialTop: hTop,
+                    isWater: true,
+                    waterType: 'hydrogen'
+                });
+                
+                // Create OH- ion from water
+                const ohIon = document.createElement('div');
+                ohIon.className = 'ion water-anion';
+                ohIon.textContent = 'OH-';
+                ohIon.style.backgroundColor = '#3498db';
+                ohIon.style.color = 'white';
+                ohIon.style.fontSize = '9px';
+                
+                // More spread out positioning
+                const ohLeft = 250 + (Math.random() * 120 - 60);
+                const ohTop = 50 + Math.random() * 250;
+                ohIon.style.left = `${ohLeft}px`;
+                ohIon.style.top = `${ohTop}px`;
+                
+                simulationBeaker.appendChild(ohIon);
+                ions.push({
+                    element: ohIon,
+                    type: 'anion',
+                    discharged: true, // OH- ions can be discharged at the anode
+                    initialLeft: ohLeft,
+                    initialTop: ohTop,
+                    isWater: true,
+                    waterType: 'hydroxide'
+                });
+            }
+        }
+        
+        function runSimulation() {
+            if (simulationRunning) return;
+            
+            simulationRunning = true;
+            const solution = solutionSelector.value;
+            const solutionData = solutionsData[solution];
+            
+            cathodeReaction.textContent = solutionData.cathodeReaction;
+            anodeReaction.textContent = solutionData.anodeReaction;
+            
+            createIons(solution);
+            
+            // STAGE 1: Initial state - show ions in solution
+            const stageIndicator = document.getElementById('stage-indicator');
+            
+            // STAGE 2: Ion migration - after 3 seconds, ions begin moving to their respective electrodes
+            setTimeout(() => {
+                stageIndicator.textContent = 'Stage 1: Ion Migration';
+                stageIndicator.style.backgroundColor = '#f1c40f';
+                
+                // Update electrode info
+                document.querySelector('.cathode-info').innerHTML = `
+                    <strong>Cathode (-)</strong><br>
+                    Attracts positive ions<br>
+                    ${solutionData.cations.symbol} and H⁺<br>
+                `;
+                
+                document.querySelector('.anode-info').innerHTML = `
+                    <strong>Anode (+)</strong><br>
+                    Attracts negative ions<br>
+                    ${solutionData.anions.symbol} and OH⁻<br>
+                `;
+                
+                // Move ions towards their respective electrodes
+                ions.forEach(ion => {
+                    let targetLeft, targetTop;
+                    
+                    if (ion.type === 'cation') {
+                        // Cations move to the cathode (left side)
+                        if (ion.discharged) {
+                            // Discharged cations move to the cathode surface
+                            targetLeft = ion.isWater ? 110 : 100;
+                            targetTop = 100 + Math.random() * 150;
+                        } else {
+                            // Non-discharged cations still move towards cathode but stay in solution
+                            targetLeft = 120 + Math.random() * 30;
+                            targetTop = 50 + Math.random() * 250;
+                        }
+                    } else {
+                        // Anions move to the anode (right side)
+                        if (ion.discharged) {
+                            // Discharged anions move to the anode surface
+                            targetLeft = ion.isWater ? 290 : 300;
+                            targetTop = 100 + Math.random() * 150;
+                        } else {
+                            // Non-discharged anions still move towards anode but stay in solution
+                            targetLeft = 250 + Math.random() * 30;
+                            targetTop = 50 + Math.random() * 250;
+                        }
+                    }
+                    
+                    // Apply the movement
+                    ion.element.style.left = `${targetLeft}px`;
+                    ion.element.style.top = `${targetTop}px`;
+                });
+                
+                // STAGE 3: Electron transfer at electrodes
+                setTimeout(() => {
+                    stageIndicator.textContent = 'Stage 2: Electron Transfer';
+                    stageIndicator.style.backgroundColor = '#3498db';
+                    
+                    // Update electrode info with reactions
+                    document.querySelector('.cathode-info').innerHTML = `
+                        <strong>Cathode (Reduction)</strong><br>
+                        ${solutionData.cathodeReaction}<br>
+                        <small>Electrons are gained</small>
+                    `;
+                    
+                    document.querySelector('.anode-info').innerHTML = `
+                        <strong>Anode (Oxidation)</strong><br>
+                        ${solutionData.anodeReaction}<br>
+                        <small>Electrons are lost</small>
+                    `;
+                    
+                    // Show electron transfer at cathode
+                    if (solutionData.cathodeProduct === 'H₂') {
+                        // H+ ions are being discharged
+                        const hydrogenIons = ions.filter(ion => ion.isWater && ion.waterType === 'hydrogen');
+                        
+                        hydrogenIons.forEach((ion, index) => {
+                            if (index < 4) {
+                                ion.element.classList.add('discharging');
+                                
+                                // Show electrons moving to the hydrogen ions
+                                setTimeout(() => {
+                                    // Create electron
+                                    const electron = document.createElement('div');
+                                    electron.className = 'electron';
+                                    electron.style.left = '100px';
+                                    electron.style.top = `${parseInt(ion.element.style.top) + 10}px`;
+                                    simulationBeaker.appendChild(electron);
+                                    
+                                    // Move electron to the ion
+                                    setTimeout(() => {
+                                        electron.style.left = `${parseInt(ion.element.style.left)}px`;
+                                        
+                                        // Electron is absorbed
+                                        setTimeout(() => {
+                                            electron.remove();
+                                        }, 800);
+                                    }, 200);
+                                }, index * 500);
+                            }
+                        });
+                    } else {
+                        // Metal ions are being discharged
+                        const metalIons = ions.filter(ion => !ion.isWater && ion.type === 'cation' && ion.discharged);
+                        
+                        metalIons.forEach((ion, index) => {
+                            if (index < 4) {
+                                ion.element.classList.add('discharging');
+                                
+                                // Show electrons moving to the metal ions
+                                setTimeout(() => {
+                                    // Create electron
+                                    const electron = document.createElement('div');
+                                    electron.className = 'electron';
+                                    electron.style.left = '100px';
+                                    electron.style.top = `${parseInt(ion.element.style.top) + 10}px`;
+                                    simulationBeaker.appendChild(electron);
+                                    
+                                    // Move electron to the ion
+                                    setTimeout(() => {
+                                        electron.style.left = `${parseInt(ion.element.style.left)}px`;
+                                        
+                                        // Electron is absorbed
+                                        setTimeout(() => {
+                                            electron.remove();
+                                        }, 800);
+                                    }, 200);
+                                }, index * 500);
+                            }
+                        });
+                    }
+                    
+                    // Show electron transfer at anode
+                    if (solutionData.anodeProduct === 'O₂') {
+                        // OH- ions are being discharged
+                        const hydroxideIons = ions.filter(ion => ion.isWater && ion.waterType === 'hydroxide');
+                        
+                        hydroxideIons.forEach((ion, index) => {
+                            if (index < 4) {
+                                ion.element.classList.add('discharging');
+                                
+                                // Show electrons moving from the hydroxide ions to the anode
+                                setTimeout(() => {
+                                    // Create electron
+                                    const electron = document.createElement('div');
+                                    electron.className = 'electron';
+                                    electron.style.left = `${parseInt(ion.element.style.left)}px`;
+                                    electron.style.top = `${parseInt(ion.element.style.top) + 10}px`;
+                                    simulationBeaker.appendChild(electron);
+                                    
+                                    // Move electron to the anode
+                                    setTimeout(() => {
+                                        electron.style.left = '300px';
+                                        
+                                        // Electron is absorbed by anode
+                                        setTimeout(() => {
+                                            electron.remove();
+                                        }, 800);
+                                    }, 200);
+                                }, index * 500);
+                            }
+                        });
+                    } else {
+                        // Halide ions are being discharged
+                        const halideIons = ions.filter(ion => !ion.isWater && ion.type === 'anion' && ion.discharged);
+                        
+                        halideIons.forEach((ion, index) => {
+                            if (index < 4) {
+                                ion.element.classList.add('discharging');
+                                
+                                // Show electrons moving from the halide ions to the anode
+                                setTimeout(() => {
+                                    // Create electron
+                                    const electron = document.createElement('div');
+                                    electron.className = 'electron';
+                                    electron.style.left = `${parseInt(ion.element.style.left)}px`;
+                                    electron.style.top = `${parseInt(ion.element.style.top) + 10}px`;
+                                    simulationBeaker.appendChild(electron);
+                                    
+                                    // Move electron to the anode
+                                    setTimeout(() => {
+                                        electron.style.left = '300px';
+                                        
+                                        // Electron is absorbed by anode
+                                        setTimeout(() => {
+                                            electron.remove();
+                                        }, 800);
+                                    }, 200);
+                                }, index * 500);
+                            }
+                        });
+                    }
+                    
+                    // STAGE 4: Product formation
+                    setTimeout(() => {
+                        stageIndicator.textContent = 'Stage 3: Product Formation';
+                        stageIndicator.style.backgroundColor = '#2ecc71';
+                        
+                        // Create product bubbles/deposits
+                        createProducts(solution);
+                    }, 3000);
+                }, 3000);
+            }, 3000);
+        }
+        
+        function createProducts(solution) {
+            const solutionData = solutionsData[solution];
+            
+            // Update electrode info with final products
+            document.querySelector('.cathode-info').innerHTML = `
+                <strong>Cathode Product</strong><br>
+                ${solutionData.cathodeProduct === 'H₂' ? 'Hydrogen Gas (H₂)' : 
+                  `${solutionData.cathodeProduct} (Metal)`}<br>
+                <small>${solutionData.cathodeReaction}</small>
+            `;
+            
+            document.querySelector('.anode-info').innerHTML = `
+                <strong>Anode Product</strong><br>
+                ${solutionData.anodeProduct === 'O₂' ? 'Oxygen Gas (O₂)' : 
+                  solutionData.anodeProduct === 'Cl₂' ? 'Chlorine Gas (Cl₂)' :
+                  'Bromine Gas (Br₂)'}<br>
+                <small>${solutionData.anodeReaction}</small>
+            `;
+            
+            // Cathode products (H2 bubbles or metal deposit)
+            if (solutionData.cathodeProduct === 'H₂') {
+                // Show the hydrogen ions combining to form H2
+                const hydrogenIons = ions.filter(ion => ion.isWater && ion.waterType === 'hydrogen' && ion.element.classList.contains('discharging'));
+                
+                if (hydrogenIons.length >= 2) {
+                    // Get positions of two hydrogen ions to show them combining
+                    const h1 = hydrogenIons[0];
+                    const h2 = hydrogenIons[1];
+                    
+                    // Remove the discharging class
+                    h1.element.classList.remove('discharging');
+                    h2.element.classList.remove('discharging');
+                    
+                    // Move the two hydrogen ions together
+                    const combineX = parseInt(h1.element.style.left) - 5;
+                    const combineY = parseInt(h1.element.style.top) - 5;
+                    
+                    h1.element.style.transition = 'all 1s ease-in-out';
+                    h2.element.style.transition = 'all 1s ease-in-out';
+                    
+                    h1.element.style.left = `${combineX}px`;
+                    h1.element.style.top = `${combineY}px`;
+                    
+                    h2.element.style.left = `${combineX + 10}px`;
+                    h2.element.style.top = `${combineY}px`;
+                    
+                    // After they come together, create H2 molecule and make them disappear
+                    setTimeout(() => {
+                        h1.element.style.opacity = '0';
+                        h2.element.style.opacity = '0';
+                        
+                        // Create H2 molecule
+                        const h2Molecule = document.createElement('div');
+                        h2Molecule.className = 'ion';
+                        h2Molecule.textContent = 'H₂';
+                        h2Molecule.style.backgroundColor = '#f1c40f';
+                        h2Molecule.style.color = 'black';
+                        h2Molecule.style.left = `${combineX + 5}px`;
+                        h2Molecule.style.top = `${combineY}px`;
+                        h2Molecule.style.fontWeight = 'bold';
+                        h2Molecule.style.boxShadow = '0 0 8px rgba(241, 196, 15, 0.6)';
+                        simulationBeaker.appendChild(h2Molecule);
+                        
+                        // Start the bubble animation
+                        setTimeout(() => {
+                            h2Molecule.style.animation = 'bubble-rise 3s forwards';
+                            
+                            // Remove the bubble when animation completes
+                            setTimeout(() => {
+                                h2Molecule.style.opacity = '0';
+                                setTimeout(() => h2Molecule.remove(), 1000);
+                            }, 2500);
+                        }, 500);
+                    }, 1000);
+                }
+                
+                // Create more hydrogen bubbles
+                setTimeout(() => {
+                    createBubbles('cathode', 'H₂');
+                }, 2000);
+            } else {
+                // Metal deposition - more visible metal build-up
+                const metalIons = ions.filter(ion => !ion.isWater && ion.type === 'cation' && ion.discharged && ion.element.classList.contains('discharging'));
+                
+                if (metalIons.length > 0) {
+                    // Remove discharging class
+                    metalIons.forEach(ion => {
+                        ion.element.classList.remove('discharging');
+                    });
+                    
+                    // Animate metal ions moving to the electrode surface and becoming metal atoms
+                    metalIons.forEach((ion, index) => {
+                        // Position exactly at electrode
+                        const finalX = 100;
+                        const finalY = 100 + index * 30;
+                        
+                        ion.element.style.transition = 'all 1.5s ease-in-out';
+                        ion.element.style.left = `${finalX}px`;
+                        ion.element.style.top = `${finalY}px`;
+                        
+                        // Change appearance to show metal deposition
+                        setTimeout(() => {
+                            ion.element.style.borderRadius = '0';
+                            ion.element.style.width = '15px';
+                            ion.element.style.height = '15px';
+                            ion.element.textContent = '';
+                            ion.element.style.opacity = '0.9';
+                            ion.element.style.boxShadow = '0 0 5px rgba(255,255,255,0.5)';
+                            
+                            // After a while, make it part of the metal deposit
+                            setTimeout(() => {
+                                ion.element.style.opacity = '0';
+                                createMetalDeposit(solutionData.cathodeProduct);
+                            }, 1000);
+                        }, 1500);
+                    });
+                }
+            }
+            
+            // Anode products
+            if (solutionData.anodeProduct === 'O₂') {
+                // Show the hydroxide ions combining to form O2 and water
+                const hydroxideIons = ions.filter(ion => ion.isWater && ion.waterType === 'hydroxide' && ion.element.classList.contains('discharging'));
+                
+                if (hydroxideIons.length >= 4) {
+                    // Get positions of four hydroxide ions
+                    const oh1 = hydroxideIons[0];
+                    const oh2 = hydroxideIons[1];
+                    const oh3 = hydroxideIons[2];
+                    const oh4 = hydroxideIons[3];
+                    
+                    // Remove discharging class
+                    [oh1, oh2, oh3, oh4].forEach(oh => {
+                        oh.element.classList.remove('discharging');
+                    });
+                    
+                    // Move the hydroxide ions together
+                    const combineX = parseInt(oh1.element.style.left) - 10;
+                    const combineY = parseInt(oh1.element.style.top) - 10;
+                    
+                    [oh1, oh2, oh3, oh4].forEach((oh, i) => {
+                        oh.element.style.transition = 'all 1s ease-in-out';
+                        oh.element.style.left = `${combineX + (i%2)*10}px`;
+                        oh.element.style.top = `${combineY + Math.floor(i/2)*10}px`;
+                    });
+                    
+                    // After they come together, create O2 molecule and water
+                    setTimeout(() => {
+                        [oh1, oh2, oh3, oh4].forEach(oh => {
+                            oh.element.style.opacity = '0';
+                        });
+                        
+                        // Create O2 molecule
+                        const o2Molecule = document.createElement('div');
+                        o2Molecule.className = 'ion';
+                        o2Molecule.textContent = 'O₂';
+                        o2Molecule.style.backgroundColor = '#3498db';
+                        o2Molecule.style.color = 'white';
+                        o2Molecule.style.left = `${combineX + 5}px`;
+                        o2Molecule.style.top = `${combineY + 5}px`;
+                        o2Molecule.style.fontWeight = 'bold';
+                        o2Molecule.style.boxShadow = '0 0 8px rgba(52, 152, 219, 0.6)';
+                        simulationBeaker.appendChild(o2Molecule);
+                        
+                        // Start the bubble animation
+                        setTimeout(() => {
+                            o2Molecule.style.animation = 'bubble-rise 3s forwards';
+                            
+                            // Remove the bubble when animation completes
+                            setTimeout(() => {
+                                o2Molecule.style.opacity = '0';
+                                setTimeout(() => o2Molecule.remove(), 1000);
+                            }, 2500);
+                        }, 500);
+                    }, 1000);
+                }
+                
+                // Create more oxygen bubbles
+                setTimeout(() => {
+                    createBubbles('anode', 'O₂');
+                }, 2000);
+            } else {
+                // Halide gas formation (Cl2 or Br2)
+                const halideIons = ions.filter(ion => !ion.isWater && ion.type === 'anion' && ion.discharged && ion.element.classList.contains('discharging'));
+                
+                if (halideIons.length >= 2) {
+                    // Get positions of two halide ions
+                    const x1 = halideIons[0];
+                    const x2 = halideIons[1];
+                    
+                    // Remove discharging class
+                    x1.element.classList.remove('discharging');
+                    x2.element.classList.remove('discharging');
+                    
+                    // Move the two halide ions together
+                    const combineX = parseInt(x1.element.style.left) - 5;
+                    const combineY = parseInt(x1.element.style.top) - 5;
+                    
+                    x1.element.style.transition = 'all 1s ease-in-out';
+                    x2.element.style.transition = 'all 1s ease-in-out';
+                    
+                    x1.element.style.left = `${combineX}px`;
+                    x1.element.style.top = `${combineY}px`;
+                    
+                    x2.element.style.left = `${combineX + 10}px`;
+                    x2.element.style.top = `${combineY}px`;
+                    
+                    // After they come together, create X2 molecule
+                    setTimeout(() => {
+                        x1.element.style.opacity = '0';
+                        x2.element.style.opacity = '0';
+                        
+                        // Create halogen molecule
+                        const x2Molecule = document.createElement('div');
+                        x2Molecule.className = 'ion';
+                        x2Molecule.textContent = solutionData.anodeProduct;
+                        x2Molecule.style.backgroundColor = solutionData.anions.color;
+                        x2Molecule.style.color = 'white';
+                        x2Molecule.style.left = `${combineX + 5}px`;
+                        x2Molecule.style.top = `${combineY}px`;
+                        x2Molecule.style.fontWeight = 'bold';
+                        x2Molecule.style.boxShadow = `0 0 8px ${solutionData.anions.color}`;
+                        simulationBeaker.appendChild(x2Molecule);
+                        
+                        // Start the bubble animation
+                        setTimeout(() => {
+                            x2Molecule.style.animation = 'bubble-rise 3s forwards';
+                            
+                            // Remove the bubble when animation completes
+                            setTimeout(() => {
+                                x2Molecule.style.opacity = '0';
+                                setTimeout(() => x2Molecule.remove(), 1000);
+                            }, 2500);
+                        }, 500);
+                    }, 1000);
+                }
+                
+                // Create more halogen bubbles
+                setTimeout(() => {
+                    createBubbles('anode', solutionData.anodeProduct);
+                }, 2000);
+            }
+            
+            // Add final stage indicator after products form
+            setTimeout(() => {
+                const stageIndicator = document.getElementById('stage-indicator');
+                stageIndicator.textContent = 'Completed Electrolysis';
+                stageIndicator.style.backgroundColor = '#e74c3c';
+            }, 5000);
+        }
+        
+        function createBubbles(electrode, gas) {
+            const isAnode = electrode === 'anode';
+            const electrodeX = isAnode ? 300 : 100;
+            
+            // Fewer bubbles for clarity
+            for (let i = 0; i < 5; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'ion bubble';
+                
+                // Set color based on gas type
+                bubble.style.backgroundColor = gas === 'O₂' ? '#3498db' : 
+                                              gas === 'Cl₂' ? '#27ae60' : 
+                                              gas === 'Br₂' ? '#8e44ad' : '#f1c40f';
+                
+                // Size for gas bubbles
+                bubble.style.width = '20px';
+                bubble.style.height = '20px';
+                bubble.style.fontSize = '10px';
+                bubble.style.opacity = '0.9';
+                bubble.style.border = '1px solid rgba(255,255,255,0.6)';
+                bubble.style.boxShadow = '0 0 5px rgba(255,255,255,0.5)';
+                bubble.textContent = gas;
+                
+                // Position bubbles at the electrode
+                const randomOffset = Math.random() * 30 - 15;
+                bubble.style.left = `${electrodeX + randomOffset}px`;
+                
+                // Stack bubbles at electrode, with slight variation
+                bubble.style.top = `${280 - i * 40 + (Math.random() * 10 - 5)}px`;
+                
+                simulationBeaker.appendChild(bubble);
+                
+                // Add a slight delay before bubbles start rising
+                setTimeout(() => {
+                    // Create animation for bubble rising
+                    bubble.style.animation = 'bubble-rise 4s forwards';
+                    
+                    // Remove bubble after animation completes
+                    setTimeout(() => {
+                        bubble.style.opacity = '0';
+                        setTimeout(() => bubble.remove(), 500);
+                    }, 3500);
+                }, 500 + i * 300);
+            }
+        }
+        
+        function createMetalDeposit(metal) {
+            // Create metal deposit on cathode with gradual growth
+            const deposit = document.createElement('div');
+            deposit.style.position = 'absolute';
+            deposit.style.width = '14px';
+            deposit.style.height = '0px'; // Start with no height
+            deposit.style.left = '98px';
+            deposit.style.bottom = '50px';
+            deposit.style.borderRadius = '0';
+            
+            // Set color based on metal type
+            if (metal === 'Cu') {
+                deposit.style.backgroundColor = '#e67e22';
+                deposit.style.boxShadow = '0 0 10px rgba(230, 126, 34, 0.5)';
+            } else if (metal === 'Ag') {
+                deposit.style.backgroundColor = '#95a5a6';
+                deposit.style.boxShadow = '0 0 10px rgba(149, 165, 166, 0.5)';
+            } else if (metal === 'Zn') {
+                deposit.style.backgroundColor = '#7f8c8d';
+                deposit.style.boxShadow = '0 0 10px rgba(127, 140, 141, 0.5)';
+            }
+            
+            deposit.style.zIndex = '5';
+            deposit.style.transition = 'height 3s ease-out, opacity 1s ease-in-out';
+            deposit.style.opacity = '0';
+            
+            simulationBeaker.appendChild(deposit);
+            
+            // Fade in and grow the deposit gradually
+            setTimeout(() => {
+                deposit.style.opacity = '1';
+                // Grow upward from the bottom
+                deposit.style.height = '100px';
+                
+                // Add a metal label
+                const metalLabel = document.createElement('div');
+                metalLabel.style.position = 'absolute';
+                metalLabel.style.bottom = '15px';
+                metalLabel.style.left = '98px';
+                metalLabel.style.color = 'white';
+                metalLabel.style.fontSize = '10px';
+                metalLabel.style.fontWeight = 'bold';
+                metalLabel.style.textShadow = '0 0 3px black';
+                metalLabel.style.zIndex = '6';
+                metalLabel.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                metalLabel.style.padding = '2px 5px';
+                metalLabel.style.borderRadius = '3px';
+                metalLabel.style.opacity = '0';
+                metalLabel.style.transition = 'opacity 1s ease-in-out';
+                metalLabel.textContent = metal;
+                
+                simulationBeaker.appendChild(metalLabel);
+                
+                setTimeout(() => {
+                    metalLabel.style.opacity = '1';
+                }, 1000);
+            }, 100);
+        }
+        
+        function resetSimulation() {
+            simulationRunning = false;
+            
+            // Remove all ions and products
+            simulationBeaker.querySelectorAll('.ion').forEach(ion => ion.remove());
+            simulationBeaker.querySelectorAll('div:not(.electrode, .electrode-label)').forEach(el => {
+                if (!el.classList.contains('beaker')) {
+                    el.remove();
+                }
+            });
+            
+            cathodeReaction.textContent = 'Select a solution and start simulation';
+            anodeReaction.textContent = 'Select a solution and start simulation';
+            
+            // Add a brief reset message
+            const resetMsg = document.createElement('div');
+            resetMsg.textContent = 'Simulation reset. Select a solution and click Start.';
+            resetMsg.style.position = 'absolute';
+            resetMsg.style.top = '50%';
+            resetMsg.style.left = '50%';
+            resetMsg.style.transform = 'translate(-50%, -50%)';
+            resetMsg.style.color = '#3498db';
+            resetMsg.style.fontWeight = 'bold';
+            resetMsg.style.textAlign = 'center';
+            resetMsg.style.zIndex = '10';
+            simulationBeaker.appendChild(resetMsg);
+            
+            // Fade out after 3 seconds
+            setTimeout(() => {
+                resetMsg.style.transition = 'opacity 1s ease';
+                resetMsg.style.opacity = '0';
+                setTimeout(() => resetMsg.remove(), 1000);
+            }, 3000);
+        }
+        
+        startSimulationBtn.addEventListener('click', runSimulation);
+        resetSimulationBtn.addEventListener('click', resetSimulation);
+        
+        // Practice Section: Quiz
+        const checkAnswersBtn = document.getElementById('check-answers');
+        const resetQuizBtn = document.getElementById('reset-quiz');
+        const quizResults = document.getElementById('quiz-results');
+        
+        function checkAnswers() {
+            let correctCount = 0;
+            let totalQuestions = 0;
+            
+            document.querySelectorAll('.question-container').forEach(questionContainer => {
+                totalQuestions++;
+                const options = questionContainer.querySelectorAll('.option');
+                const feedback = questionContainer.querySelector('.feedback');
+                
+                let selectedOption = null;
+                let correctOption = null;
+                
+                options.forEach(option => {
+                    if (option.classList.contains('selected')) {
+                        selectedOption = option;
+                    }
+                    if (option.dataset.correct === 'true') {
+                        correctOption = option;
+                    }
+                });
+                
+                if (selectedOption) {
+                    if (selectedOption.dataset.correct === 'true') {
+                        selectedOption.classList.add('correct');
+                        feedback.classList.add('correct');
+                        feedback.textContent = 'Correct! Well done.';
+                        correctCount++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                        correctOption.classList.add('correct');
+                        feedback.classList.add('incorrect');
+                        feedback.textContent = `Incorrect. The correct answer is: ${correctOption.textContent}`;
+                    }
+                    
+                    feedback.classList.remove('hidden');
+                } else {
+                    feedback.classList.add('incorrect');
+                    feedback.textContent = 'Please select an answer.';
+                    feedback.classList.remove('hidden');
+                }
+            });
+            
+            // Show overall result
+            quizResults.classList.remove('hidden');
+            quizResults.innerHTML = `<div class="info-box">
+                <h3>Quiz Results</h3>
+                <p>You scored ${correctCount} out of ${totalQuestions}!</p>
+                <p>${correctCount === totalQuestions ? 'Excellent work! You understand electrolysis well.' : 
+                   correctCount >= totalQuestions / 2 ? 'Good effort! Review the areas you missed.' : 
+                   'You might need more practice. Review the tutorial and try again.'}</p>
+            </div>`;
+        }
+        
+        function resetQuiz() {
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            document.querySelectorAll('.feedback').forEach(feedback => {
+                feedback.classList.add('hidden');
+                feedback.textContent = '';
+                feedback.classList.remove('correct', 'incorrect');
+            });
+            
+            quizResults.classList.add('hidden');
+        }
+        
+        // Option selection
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Deselect other options in the same question
+                const questionContainer = this.closest('.question-container');
+                questionContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Select this option
+                this.classList.add('selected');
+            });
+        });
+        
+        checkAnswersBtn.addEventListener('click', checkAnswers);
+        resetQuizBtn.addEventListener('click', resetQuiz);
+        
+        // Virtual Lab Section
+        const labSolutionSelector = document.getElementById('lab-solution-selector');
+        const cathodePrediction = document.getElementById('cathode-prediction');
+        const anodePrediction = document.getElementById('anode-prediction');
+        const runExperimentBtn = document.getElementById('run-experiment');
+        const resetLabBtn = document.getElementById('reset-lab');
+        const labResults = document.getElementById('lab-results');
+        const cathodeResult = document.getElementById('cathode-result');
+        const anodeResult = document.getElementById('anode-result');
+        const predictionAccuracy = document.getElementById('prediction-accuracy');
+        const labBeaker = document.getElementById('lab-beaker');
+        
+        function runLabExperiment() {
+            // Make sure predictions are made
+            if (!cathodePrediction.value || !anodePrediction.value) {
+                alert('Please make predictions for both electrodes before running the experiment.');
+                return;
+            }
+            
+            // Get the selected solution data
+            const solution = labSolutionSelector.value;
+            const solutionData = solutionsData[solution];
+            
+            // Create the lab simulation
+            labBeaker.querySelectorAll('.ion, div:not(.electrode, .electrode-label, .beaker)').forEach(el => el.remove());
+            
+            // Add experiment indicators
+            const experimentLabel = document.createElement('div');
+            experimentLabel.style.position = 'absolute';
+            experimentLabel.style.top = '10px';
+            experimentLabel.style.left = '50%';
+            experimentLabel.style.transform = 'translateX(-50%)';
+            experimentLabel.style.fontSize = '14px';
+            experimentLabel.style.fontWeight = 'bold';
+            experimentLabel.style.zIndex = '20';
+            experimentLabel.style.padding = '5px 10px';
+            experimentLabel.style.backgroundColor = 'rgba(255,255,255,0.8)';
+            experimentLabel.style.borderRadius = '4px';
+            experimentLabel.textContent = `Electrolysis of ${solutionData.name}`;
+            labBeaker.appendChild(experimentLabel);
+            
+            createIons(solution);
+            
+            // Simulate ion movement and reaction
+            setTimeout(() => {
+                // Move ions towards their respective electrodes
+                ions.forEach(ion => {
+                    let targetLeft, targetTop;
+                    
+                    // Apply more realistic ion movement with proper visibility
+                    if (ion.type === 'cation') {
+                        if (ion.discharged) {
+                            // Discharged cations move to the cathode surface
+                            targetLeft = '30%';
+                            targetTop = 100 + Math.random() * 150;
+                        } else {
+                            // Non-discharged cations still move towards cathode but stay in solution
+                            targetLeft = '35%';
+                            targetTop = 50 + Math.random() * 250;
+                        }
+                    } else {
+                        if (ion.discharged) {
+                            // Discharged anions move to the anode surface
+                            targetLeft = '70%';
+                            targetTop = 100 + Math.random() * 150;
+                        } else {
+                            // Non-discharged anions move towards anode but remain visible
+                            targetLeft = '65%';
+                            targetTop = 50 + Math.random() * 250;
+                        }
+                    }
+                    
+                    // Ensure water ions (H+ and OH-) are properly visible
+                    if (ion.isWater) {
+                        if (ion.waterType === 'hydrogen' && solutionData.cathodeProduct === 'H₂') {
+                            // H+ ions move to cathode when they will be discharged
+                            targetLeft = '30%';
+                            targetTop = 50 + Math.random() * 250;
+                        } else if (ion.waterType === 'hydroxide' && solutionData.anodeProduct === 'O₂') {
+                            // OH- ions move to anode when they will be discharged
+                            targetLeft = '70%';
+                            targetTop = 50 + Math.random() * 250;
+                        } else {
+                            // Otherwise they just move around randomly but stay visible
+                            targetLeft = 35 + Math.random() * 30 + '%';
+                            targetTop = 50 + Math.random() * 250;
+                        }
+                    }
+                    
+                    // Apply the movement
+                    ion.element.style.left = targetLeft;
+                    ion.element.style.top = `${targetTop}px`;
+                });
+                
+                // Show products after ions move
+                setTimeout(() => {
+                    // Check if predictions were correct
+                    const cathodeCorrect = mapPredictionToProduct(cathodePrediction.value) === solutionData.cathodeProduct;
+                    const anodeCorrect = mapPredictionToProduct(anodePrediction.value) === solutionData.anodeProduct;
+                    
+                    // Display results
+                    labResults.classList.remove('hidden');
+                    cathodeResult.innerHTML = `<p><strong>Cathode (-) Product:</strong> ${solutionData.cathodeProduct}${solutionData.cathodeProduct === 'Cu' || solutionData.cathodeProduct === 'Ag' || solutionData.cathodeProduct === 'Zn' ? ' (metal deposit)' : ' gas (bubbles)'}</p>`;
+                    anodeResult.innerHTML = `<p><strong>Anode (+) Product:</strong> ${solutionData.anodeProduct} gas (bubbles)</p>`;
+                    
+                    // Add more detailed explanation
+                    cathodeResult.innerHTML += `<p><small>${solutionData.cathodeReaction}</small></p>`;
+                    anodeResult.innerHTML += `<p><small>${solutionData.anodeReaction}</small></p>`;
+                    
+                    // Check prediction accuracy
+                    let accuracyMessage = '';
+                    if (cathodeCorrect && anodeCorrect) {
+                        accuracyMessage = '<p style="color: #27ae60;"><strong>Excellent!</strong> Both predictions were correct. You understand the principles of electrolysis well!</p>';
+                    } else if (cathodeCorrect || anodeCorrect) {
+                        accuracyMessage = '<p style="color: #f39c12;"><strong>Good effort!</strong> One prediction was correct. Review the principles to improve your understanding.</p>';
+                    } else {
+                        accuracyMessage = '<p style="color: #e74c3c;"><strong>Keep practicing!</strong> Both predictions were incorrect. Review the tutorial section.</p>';
+                    }
+                    
+                    // Add an explanation of why these products formed
+                    if (!cathodeCorrect) {
+                        if (solutionData.cathodeProduct === 'H₂') {
+                            accuracyMessage += `<p><small>Remember: ${solutionData.cations.symbol} is more reactive than hydrogen, so hydrogen gas forms at the cathode.</small></p>`;
+                        } else {
+                            accuracyMessage += `<p><small>Remember: ${solutionData.cations.symbol} is less reactive than hydrogen, so the metal is deposited at the cathode.</small></p>`;
+                        }
+                    }
+                    
+                    if (!anodeCorrect) {
+                        if (solutionData.anodeProduct === 'O₂') {
+                            accuracyMessage += `<p><small>Remember: When no halide ions are present, oxygen gas forms at the anode from hydroxide ions.</small></p>`;
+                        } else {
+                            accuracyMessage += `<p><small>Remember: When halide ions are present, they are discharged at the anode instead of hydroxide ions.</small></p>`;
+                        }
+                    }
+                    
+                    predictionAccuracy.innerHTML = accuracyMessage;
+                    
+                    // Highlight electrodes with visual cues when correct
+                    const cathode = labBeaker.querySelector('.cathode');
+                    const anode = labBeaker.querySelector('.anode');
+                    
+                    // Add product label at the top of each electrode
+                    const createProductLabel = (electrode, product, isCorrect) => {
+                        const existingLabel = labBeaker.querySelector(`.${electrode}-product-label`);
+                        if (existingLabel) existingLabel.remove();
+                        
+                        const label = document.createElement('div');
+                        label.className = `${electrode}-product-label`;
+                        label.style.position = 'absolute';
+                        label.style.top = '50px';
+                        label.style.width = '100px';
+                        label.style.textAlign = 'center';
+                        label.style.padding = '5px';
+                        label.style.borderRadius = '5px';
+                        label.style.fontWeight = 'bold';
+                        label.style.fontSize = '14px';
+                        label.style.zIndex = '25';
+                        
+                        // Position label above electrode
+                        if (electrode === 'cathode') {
+                            label.style.left = '30%';
+                            label.style.transform = 'translateX(-50%)';
+                        } else {
+                            label.style.right = '30%';
+                            label.style.transform = 'translateX(50%)';
+                        }
+                        
+                        // Set label style based on correctness
+                        if (isCorrect) {
+                            label.style.backgroundColor = 'rgba(46, 204, 113, 0.9)';
+                            label.style.color = 'white';
+                            label.style.boxShadow = '0 0 10px rgba(46, 204, 113, 0.5)';
+                            label.textContent = product;
+                            label.style.animation = 'pulse 2s infinite';
+                        } else {
+                            label.style.backgroundColor = 'rgba(231, 76, 60, 0.9)';
+                            label.style.color = 'white';
+                            label.textContent = product;
+                        }
+                        
+                        labBeaker.appendChild(label);
+                    };
+                    
+                    // Create product labels
+                    createProductLabel('cathode', solutionData.cathodeProduct, cathodeCorrect);
+                    createProductLabel('anode', solutionData.anodeProduct, anodeCorrect);
+                    
+                    // Add glowing effect to electrodes with correct predictions
+                    if (cathodeCorrect) {
+                        cathode.style.boxShadow = solutionData.cathodeProduct === 'H₂' 
+                            ? '0 0 15px #f1c40f' // Yellow glow for hydrogen
+                            : '0 0 15px #e67e22'; // Orange/copper glow for metals
+                    }
+                    
+                    if (anodeCorrect) {
+                        anode.style.boxShadow = solutionData.anodeProduct === 'O₂'
+                            ? '0 0 15px #3498db' // Blue glow for oxygen
+                            : solutionData.anodeProduct === 'Cl₂' 
+                                ? '0 0 15px #27ae60' // Green glow for chlorine
+                                : '0 0 15px #8e44ad'; // Purple glow for bromine
+                    }
+                    
+                    // Create enhanced product visualizations
+                    createEnhancedProducts(solution, cathodeCorrect, anodeCorrect);
+                }, 1500);
+            }, 500);
+        }
+        
+        function mapPredictionToProduct(prediction) {
+            switch (prediction) {
+                case 'hydrogen': return 'H₂';
+                case 'oxygen': return 'O₂';
+                case 'chlorine': return 'Cl₂';
+                case 'bromine': return 'Br₂';
+                case 'sodium': return 'Na';
+                case 'potassium': return 'K';
+                case 'copper': return 'Cu';
+                case 'magnesium': return 'Mg';
+                case 'silver': return 'Ag';
+                case 'zinc': return 'Zn';
+                default: return '';
+            }
+        }
+        
+        function createEnhancedProducts(solution, cathodeCorrect, anodeCorrect) {
+            const solutionData = solutionsData[solution];
+            
+            // Function to create larger, more visible bubbles for gas products
+            function createEnhancedBubbles(electrode, gas, isCorrect) {
+                const isAnode = electrode === 'anode';
+                const electrodeX = isAnode ? '70%' : '30%';
+                const bubbleCount = isCorrect ? 8 : 3; // More bubbles if prediction correct
+                const bubbleSize = isCorrect ? 30 : 15; // Larger bubbles if prediction correct
+                const animationDuration = isCorrect ? 6 : 4; // Slower, more visible animation if correct
+                
+                // Set color based on gas type
+                const bubbleColor = gas === 'O₂' ? '#3498db' : 
+                                  gas === 'Cl₂' ? '#27ae60' : 
+                                  gas === 'Br₂' ? '#8e44ad' : '#f1c40f';
+                
+                // Create bubbles at staggered intervals
+                for (let i = 0; i < bubbleCount; i++) {
+                    setTimeout(() => {
+                        const bubble = document.createElement('div');
+                        bubble.className = 'ion bubble';
+                        
+                        // Style the bubble
+                        bubble.style.backgroundColor = bubbleColor;
+                        bubble.style.width = `${bubbleSize}px`;
+                        bubble.style.height = `${bubbleSize}px`;
+                        bubble.style.fontSize = isCorrect ? '16px' : '10px';
+                        bubble.style.lineHeight = `${bubbleSize}px`;
+                        bubble.style.fontWeight = 'bold';
+                        bubble.style.opacity = '0.9';
+                        bubble.style.border = '2px solid rgba(255,255,255,0.6)';
+                        bubble.style.boxShadow = `0 0 10px ${bubbleColor}`;
+                        bubble.textContent = gas;
+                        
+                        // Position bubbles
+                        const randomOffset = (Math.random() * 40 - 20);
+                        bubble.style.left = `calc(${electrodeX} + ${randomOffset}px)`;
+                        bubble.style.top = `${280 - i * 30}px`;
+                        
+                        // Add bubble to beaker
+                        labBeaker.appendChild(bubble);
+                        
+                        // Create enhanced rising animation
+                        setTimeout(() => {
+                            // Custom animation for correct predictions
+                            if (isCorrect) {
+                                bubble.style.transition = `top ${animationDuration}s ease-out, left ${animationDuration}s ease-in-out`;
+                                
+                                // Zigzag path for more visibility
+                                const endLeft = `calc(${electrodeX} + ${randomOffset + (Math.random() * 60 - 30)}px)`;
+                                bubble.style.left = endLeft;
+                                bubble.style.top = '50px'; // Rise to top
+                                
+                                // Add pulsing effect for more visibility
+                                bubble.style.animation = 'pulse 1.5s infinite';
+                            } else {
+                                // Simple rise for incorrect predictions
+                                bubble.style.transition = `top ${animationDuration}s ease-out`;
+                                bubble.style.top = '100px';
+                            }
+                            
+                            // Remove bubble after animation
+                            setTimeout(() => {
+                                bubble.style.opacity = '0';
+                                setTimeout(() => bubble.remove(), 1000);
+                            }, animationDuration * 800);
+                        }, 200);
+                    }, i * 600); // Stagger bubble creation
+                }
+            }
+            
+            // Function to create enhanced metal deposit visualization
+            function createEnhancedMetalDeposit(metal, isCorrect) {
+                const deposit = document.createElement('div');
+                deposit.className = 'metal-deposit';
+                deposit.style.position = 'absolute';
+                deposit.style.width = isCorrect ? '20px' : '10px';
+                deposit.style.height = '0';
+                deposit.style.left = 'calc(30% - 5px)';
+                deposit.style.bottom = '50px';
+                deposit.style.borderRadius = '2px';
+                deposit.style.zIndex = '10';
+                
+                // Set metal properties
+                if (metal === 'Cu') {
+                    deposit.style.backgroundColor = '#e67e22';
+                    deposit.style.boxShadow = isCorrect ? '0 0 15px rgba(230, 126, 34, 0.8)' : '0 0 5px rgba(230, 126, 34, 0.5)';
+                } else if (metal === 'Ag') {
+                    deposit.style.backgroundColor = '#bdc3c7';
+                    deposit.style.boxShadow = isCorrect ? '0 0 15px rgba(189, 195, 199, 0.8)' : '0 0 5px rgba(189, 195, 199, 0.5)';
+                } else if (metal === 'Zn') {
+                    deposit.style.backgroundColor = '#7f8c8d';
+                    deposit.style.boxShadow = isCorrect ? '0 0 15px rgba(127, 140, 141, 0.8)' : '0 0 5px rgba(127, 140, 141, 0.5)';
+                }
+                
+                // Add to beaker
+                labBeaker.appendChild(deposit);
+                
+                // Animate growth
+                setTimeout(() => {
+                    deposit.style.transition = `height ${isCorrect ? 5 : 3}s ease-out`;
+                    deposit.style.height = isCorrect ? '150px' : '80px'; // taller deposit if correct
+                    
+                    // Add reflective shine effect if correct
+                    if (isCorrect) {
+                        setTimeout(() => {
+                            const shine = document.createElement('div');
+                            shine.style.position = 'absolute';
+                            shine.style.width = '5px';
+                            shine.style.height = '80px';
+                            shine.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+                            shine.style.left = '5px';
+                            shine.style.top = '10px';
+                            shine.style.borderRadius = '2px';
+                            shine.style.transform = 'rotate(15deg)';
+                            shine.style.opacity = '0';
+                            shine.style.transition = 'opacity 1s ease-in-out';
+                            
+                            deposit.appendChild(shine);
+                            
+                            setTimeout(() => {
+                                shine.style.opacity = '0.7';
+                            }, 100);
+                        }, 1000);
+                    }
+                }, 500);
+                
+                // Add metal label
+                const label = document.createElement('div');
+                label.style.position = 'absolute';
+                label.style.bottom = '15px';
+                label.style.left = 'calc(30% - 10px)';
+                label.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                label.style.color = 'white';
+                label.style.padding = '3px 8px';
+                label.style.borderRadius = '3px';
+                label.style.fontSize = '12px';
+                label.style.fontWeight = 'bold';
+                label.textContent = metal;
+                label.style.zIndex = '11';
+                
+                if (isCorrect) {
+                    label.style.animation = 'pulse 2s infinite';
+                }
+                
+                labBeaker.appendChild(label);
+            }
+            
+            // Create products based on what's produced in the reaction
+            if (solutionData.cathodeProduct === 'H₂') {
+                // Hydrogen gas at cathode
+                createEnhancedBubbles('cathode', 'H₂', cathodeCorrect);
+            } else {
+                // Metal deposit at cathode
+                createEnhancedMetalDeposit(solutionData.cathodeProduct, cathodeCorrect);
+            }
+            
+            // Always gas at anode
+            createEnhancedBubbles('anode', solutionData.anodeProduct, anodeCorrect);
+            
+            // Add celebration animation if both predictions are correct
+            if (cathodeCorrect && anodeCorrect) {
+                setTimeout(() => {
+                    // Create a success banner
+                    const successBanner = document.createElement('div');
+                    successBanner.style.position = 'absolute';
+                    successBanner.style.top = '50%';
+                    successBanner.style.left = '50%';
+                    successBanner.style.transform = 'translate(-50%, -50%)';
+                    successBanner.style.backgroundColor = 'rgba(46, 204, 113, 0.9)';
+                    successBanner.style.color = 'white';
+                    successBanner.style.padding = '15px 30px';
+                    successBanner.style.borderRadius = '10px';
+                    successBanner.style.fontSize = '24px';
+                    successBanner.style.fontWeight = 'bold';
+                    successBanner.style.zIndex = '30';
+                    successBanner.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.8)';
+                    successBanner.textContent = 'Correct Prediction! ✓';
+                    successBanner.style.opacity = '0';
+                    successBanner.style.transition = 'opacity 1s ease-in-out';
+                    
+                    labBeaker.appendChild(successBanner);
+                    
+                    setTimeout(() => {
+                        successBanner.style.opacity = '1';
+                        
+                        // Add a pulse animation
+                        successBanner.style.animation = 'pulse 2s infinite';
+                        
+                        // Remove after a few seconds
+                        setTimeout(() => {
+                            successBanner.style.opacity = '0';
+                            setTimeout(() => successBanner.remove(), 1000);
+                        }, 3000);
+                    }, 100);
+                }, 1500);
+            }
+        }
+        
+        function resetLab() {
+            // Reset predictions
+            cathodePrediction.value = '';
+            anodePrediction.value = '';
+            
+            // Hide results
+            labResults.classList.add('hidden');
+            
+            // Clear beaker and reset electrode styles
+            labBeaker.querySelectorAll('.ion, div:not(.electrode, .electrode-label, .beaker)').forEach(el => el.remove());
+            labBeaker.querySelector('.cathode').style.boxShadow = 'none';
+            labBeaker.querySelector('.anode').style.boxShadow = 'none';
+        }
+        
+        runExperimentBtn.addEventListener('click', runLabExperiment);
+        resetLabBtn.addEventListener('click', resetLab);
+        
+        // Game Section
+        const ionsContainer = document.getElementById('ions-container');
+        const cathodeTarget = document.getElementById('cathode-target');
+        const anodeTarget = document.getElementById('anode-target');
+        const scoreDisplay = document.getElementById('score');
+        const gameFeedback = document.getElementById('game-feedback');
+        const newGameBtn = document.getElementById('new-game');
+        const checkGameBtn = document.getElementById('check-game');
+        
+        // Game data
+        const gameIons = [
+            { id: 'na', symbol: 'Na⁺', name: 'Sodium ion', type: 'cation', discharged: false, color: '#f39c12' },
+            { id: 'cl', symbol: 'Cl⁻', name: 'Chloride ion', type: 'anion', discharged: true, color: '#27ae60' },
+            { id: 'cu', symbol: 'Cu²⁺', name: 'Copper(II) ion', type: 'cation', discharged: true, color: '#e67e22' },
+            { id: 'so4', symbol: 'SO₄²⁻', name: 'Sulfate ion', type: 'anion', discharged: false, color: '#9b59b6' },
+            { id: 'k', symbol: 'K⁺', name: 'Potassium ion', type: 'cation', discharged: false, color: '#e74c3c' },
+            { id: 'br', symbol: 'Br⁻', name: 'Bromide ion', type: 'anion', discharged: true, color: '#8e44ad' },
+            { id: 'h', symbol: 'H⁺', name: 'Hydrogen ion', type: 'cation', discharged: true, color: '#f1c40f' },
+            { id: 'oh', symbol: 'OH⁻', name: 'Hydroxide ion', type: 'anion', discharged: true, color: '#3498db' },
+            { id: 'mg', symbol: 'Mg²⁺', name: 'Magnesium ion', type: 'cation', discharged: false, color: '#1abc9c' },
+            { id: 'i', symbol: 'I⁻', name: 'Iodide ion', type: 'anion', discharged: true, color: '#d35400' },
+            { id: 'ag', symbol: 'Ag⁺', name: 'Silver ion', type: 'cation', discharged: true, color: '#95a5a6' },
+            { id: 'no3', symbol: 'NO₃⁻', name: 'Nitrate ion', type: 'anion', discharged: false, color: '#3498db' },
+            { id: 'zn', symbol: 'Zn²⁺', name: 'Zinc ion', type: 'cation', discharged: true, color: '#7f8c8d' },
+            { id: 'fe2', symbol: 'Fe²⁺', name: 'Iron(II) ion', type: 'cation', discharged: true, color: '#795548' },
+            { id: 'fe3', symbol: 'Fe³⁺', name: 'Iron(III) ion', type: 'cation', discharged: true, color: '#d84315' }
+        ];
+        
+        let gameScore = 0;
+        let currentGameIons = [];
+        
+        function initGame() {
+            // Reset game state
+            gameScore = 0;
+            scoreDisplay.textContent = '0';
+            ionsContainer.innerHTML = '';
+            cathodeTarget.innerHTML = 'Drop positive ions here';
+            cathodeTarget.className = 'drop-target';
+            anodeTarget.innerHTML = 'Drop negative ions here';
+            anodeTarget.className = 'drop-target';
+            gameFeedback.innerHTML = '';
+            
+            // Select 10 random ions for the game
+            const shuffled = [...gameIons].sort(() => 0.5 - Math.random());
+            currentGameIons = shuffled.slice(0, 10);
+            
+            // Create draggable ions
+            currentGameIons.forEach(ion => {
+                const ionElement = document.createElement('div');
+                ionElement.id = ion.id;
+                ionElement.className = 'draggable';
+                ionElement.setAttribute('draggable', 'true');
+                ionElement.style.backgroundColor = ion.color;
+                ionElement.style.color = 'white';
+                ionElement.innerHTML = `<strong>${ion.symbol}</strong> (${ion.name})`;
+                ionElement.dataset.type = ion.type;
+                ionElement.dataset.discharged = ion.discharged;
+                
+                ionsContainer.appendChild(ionElement);
+                
+                // Add drag events
+                ionElement.addEventListener('dragstart', drag);
+            });
+            
+            // Reset drop targets
+            [cathodeTarget, anodeTarget].forEach(target => {
+                target.innerHTML = target === cathodeTarget ? 'Drop positive ions here' : 'Drop negative ions here';
+                target.className = 'drop-target';
+            });
+        }
+        
+        function drag(e) {
+            e.dataTransfer.setData('text', e.target.id);
+        }
+        
+        // Set up drop targets
+        [cathodeTarget, anodeTarget].forEach(target => {
+            target.addEventListener('dragover', e => {
+                e.preventDefault();
+                target.classList.add('hover');
+            });
+            
+            target.addEventListener('dragleave', () => {
+                target.classList.remove('hover');
+            });
+            
+            target.addEventListener('drop', e => {
+                e.preventDefault();
+                target.classList.remove('hover');
+                
+                const ionId = e.dataTransfer.getData('text');
+                const ion = document.getElementById(ionId);
+                
+                // Move the ion to the drop target
+                if (ion && (target.children.length === 0 || target.children[0].tagName !== 'DIV')) {
+                    target.innerHTML = '';
+                    target.appendChild(ion);
+                    ion.style.margin = '0 auto';
+                    ion.setAttribute('draggable', 'false');
+                }
+            });
+        });
+        
+        function checkGameAnswers() {
+            let correct = 0;
+            let checked = 0;
+            
+            // Check ions in cathode target
+            const cathodeIons = Array.from(cathodeTarget.children).filter(child => child.classList.contains('draggable'));
+            
+            cathodeIons.forEach(ion => {
+                checked++;
+                const ionData = currentGameIons.find(i => i.id === ion.id);
+                
+                if (ionData && ionData.type === 'cation' && ionData.discharged) {
+                    correct++;
+                    ion.style.border = '2px solid #27ae60';
+                } else {
+                    ion.style.border = '2px solid #e74c3c';
+                }
+            });
+            
+            // Check ions in anode target
+            const anodeIons = Array.from(anodeTarget.children).filter(child => child.classList.contains('draggable'));
+            
+            anodeIons.forEach(ion => {
+                checked++;
+                const ionData = currentGameIons.find(i => i.id === ion.id);
+                
+                if (ionData && ionData.type === 'anion' && ionData.discharged) {
+                    correct++;
+                    ion.style.border = '2px solid #27ae60';
+                } else {
+                    ion.style.border = '2px solid #e74c3c';
+                }
+            });
+            
+            // Update score and feedback
+            gameScore = correct;
+            scoreDisplay.textContent = gameScore;
+            
+            if (checked < 10) {
+                gameFeedback.innerHTML = `<div class="warning-box">Please place all ions in the appropriate targets!</div>`;
+            } else {
+                let feedbackMessage = '';
+                if (gameScore === 10) {
+                    feedbackMessage = '<div class="info-box" style="border-color: #27ae60;"><h3>Perfect Score! 🌟</h3><p>Outstanding! You really understand which ions are discharged at each electrode.</p></div>';
+                } else if (gameScore >= 7) {
+                    feedbackMessage = '<div class="info-box" style="border-color: #f39c12;"><h3>Good Job! 👍</h3><p>You have a good understanding. Review the ones you missed.</p></div>';
+                } else {
+                    feedbackMessage = '<div class="info-box" style="border-color: #e74c3c;"><h3>Keep Practicing 📚</h3><p>You might need to review the tutorial section again. Remember:<ul><li>At the cathode: Hydrogen ions or less reactive metals get discharged</li><li>At the anode: Halide ions or hydroxide ions get discharged</li></ul></p></div>';
+                }
+                
+                gameFeedback.innerHTML = feedbackMessage;
+            }
+        }
+        
+        newGameBtn.addEventListener('click', initGame);
+        checkGameBtn.addEventListener('click', checkGameAnswers);
+        
+        // Initialize everything
+        window.addEventListener('load', () => {
+            // Make the first section visible and hide others
+            document.querySelectorAll('main > section').forEach((section, index) => {
+                section.style.display = index === 0 ? 'block' : 'none';
+            });
+            
+            // Initialize game
+            initGame();
+        });
+    </script>
+</body>
+</html>
