@@ -1,0 +1,2837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Calculations: The Tabular Method</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --tertiary-color: #e74c3c;
+            --background-color: #f9f9f9;
+            --text-color: #333;
+            --card-background: #fff;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin: 25px 0 15px;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 20px 0 10px;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chemical-equation {
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+
+        .tabular-method {
+            margin: 30px 0;
+        }
+
+        .tabular-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            table-layout: fixed;
+        }
+
+        .tabular-grid th, .tabular-grid td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tabular-grid th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tabular-grid th:first-child {
+            width: 150px;
+            background-color: #f2f2f2;
+            color: var(--text-color);
+            text-align: left;
+        }
+        
+        .tabular-grid .inactive-column {
+            background-color: #f2f2f2;
+            color: #999;
+        }
+
+        .tabular-grid tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .tabular-grid .editable {
+            background-color: #ffffe0;
+        }
+
+        .tabular-grid .calculated {
+            background-color: #e8f4f8;
+        }
+
+        .tabular-grid .highlighted {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+
+        .tabular-grid input {
+            width: 90%;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .tabular-grid input.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .tabular-grid input.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-container {
+            margin: 20px 0;
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .step-title:hover {
+            color: var(--primary-color);
+        }
+
+        .step-content {
+            margin-left: 20px;
+            padding: 10px;
+            border-left: 2px solid var(--primary-color);
+            display: none;
+        }
+
+        .step-content.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .check-btn, .reset-btn, .hint-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .check-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .check-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .reset-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .reset-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        .hint-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .hint-btn:hover {
+            background-color: #e67e22;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.success {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .feedback.error {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .hint-text {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .arrow-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .arrow {
+            width: 20px;
+            height: 20px;
+            padding: 5px;
+            margin: 0 auto;
+        }
+        
+        .instruction-box {
+            background-color: #e8f4f8;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .nav-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .mode-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .mode-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .tab-container {
+            margin: 20px 0;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .example-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .example-tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            margin-right: 5px;
+        }
+
+        .example-tab.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .example-content {
+            display: none;
+        }
+
+        .example-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .calculator-wrapper {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            transition: none;
+            user-select: none;
+        }
+        
+        .calculator-wrapper.dragging {
+            cursor: grabbing;
+        }
+        
+        .calculator {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            width: 280px;
+            display: none;
+        }
+        
+        .calculator.visible {
+            display: block;
+        }
+        
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .calculator-title {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .calculator-controls span {
+            cursor: pointer;
+            margin-left: 10px;
+            color: #777;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .calculator-controls span:hover {
+            color: var(--primary-color);
+        }
+        
+        .calculator-display {
+            width: 100%;
+            height: 50px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: right;
+            font-size: 1.5rem;
+            padding: 5px 10px;
+            overflow: hidden;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        .calculator-button {
+            height: 45px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .calculator-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculator-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .calculator-button.number {
+            background-color: #fff;
+            color: #333;
+        }
+        
+        .calculator-button.operator {
+            background-color: #f1f1f1;
+            color: var(--primary-color);
+        }
+        
+        .calculator-button.equals {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .calculator-button.clear {
+            background-color: var(--tertiary-color);
+            color: white;
+        }
+        
+        .calculator-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 999;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .calculator-toggle:hover {
+            transform: scale(1.05);
+            background-color: #2980b9;
+        }
+        
+        .calculator-minimized {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .calculator-minimized.visible {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chemistry Calculations: The Tabular Method</h1>
+        <p>An interactive lesson for solving stoichiometry problems</p>
+    </header>
+
+    <!-- Introduction Page -->
+    <div id="intro-page" class="page active">
+        <div class="container">
+            <div class="card">
+                <h2>Introduction to the Tabular Method</h2>
+                <p>Welcome to this interactive lesson on using the tabular method for chemical calculations. The tabular method is a systematic approach to solving stoichiometry problems in chemistry.</p>
+                
+                <div class="info-box">
+                    <h3>What is the Tabular Method?</h3>
+                    <p>The tabular method is an organized way of setting up and solving stoichiometry problems. It involves creating a table with rows for different properties (mass, moles, etc.) and columns for each substance in the reaction.</p>
+                    <p>This structured approach helps you:</p>
+                    <ul>
+                        <li>Keep track of all the information in complex reactions</li>
+                        <li>Convert between different units systematically</li>
+                        <li>Apply the correct stoichiometric ratios</li>
+                        <li>Avoid common calculation errors</li>
+                    </ul>
+                </div>
+
+                <h3>How to Use This Interactive Lesson</h3>
+                <p>This lesson has two main modes:</p>
+                <ol>
+                    <li><strong>Tutorial Mode:</strong> Learn the tabular method with step-by-step worked examples at beginner, intermediate, and advanced levels.</li>
+                    <li><strong>Practice Mode:</strong> Test your skills with interactive practice problems at different difficulty levels.</li>
+                </ol>
+
+                <div class="instruction-box">
+                    <h3>The Tabular Method in 4 Steps:</h3>
+                    <ol>
+                        <li>Set up a table with substances across the top and properties (mass, Mr, moles, ratio) down the side</li>
+                        <li>Fill in the known values (given in the problem)</li>
+                        <li>Calculate moles for the substance you have data for using: Moles = Mass ÷ Mr</li>
+                        <li>Use mole ratios from the balanced equation to find moles of the target substance, then convert to mass using: Mass = Moles × Mr</li>
+                    </ol>
+                </div>
+
+                <div class="mode-buttons">
+                    <button id="goto-tutorial" class="mode-btn">Tutorial Mode</button>
+                    <button id="goto-practice" class="mode-btn">Practice Mode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Page -->
+    <div id="tutorial-page" class="page">
+        <div class="container">
+            <div class="card">
+                <h2>Tutorial Mode: Worked Examples</h2>
+                <p class="subtitle">Learn the tabular method through guided examples at different difficulty levels.</p>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="beginner-tab">Beginner</div>
+                        <div class="tab" data-tab="intermediate-tab">Intermediate</div>
+                        <div class="tab" data-tab="advanced-tab">Advanced</div>
+                    </div>
+                    
+                    <!-- Beginner Examples Tab -->
+                    <div id="beginner-tab" class="tab-content active">
+                        <h3>Beginner Examples: Simple 1:1 Ratios</h3>
+                        <p>These examples involve simple substances with straightforward 1:1 mole ratios.</p>
+                        
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="beginner-1">Example 1: Mg + O₂ → MgO</div>
+                            <div class="example-tab" data-example="beginner-2">Example 2: HCl + NaOH → NaCl + H₂O</div>
+                        </div>
+                        
+                        <!-- Beginner Example 1 -->
+                        <div id="beginner-1" class="example-content active">
+                            <h3>Beginner Example 1: Magnesium Oxide Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2Mg + O₂ → 2MgO, calculate how many grams of magnesium oxide (MgO) can be produced from 24 g of magnesium (Mg).</p>
+                            
+                            <div class="chemical-equation">2Mg + O₂ → 2MgO</div>
+                            
+                            <div class="instruction-box">
+                                <p>This is a beginner example dealing with a simple metal-oxygen reaction. We'll apply the tabular method to track the relationship between Mg and MgO.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing only on the substances involved in our calculation (Mg and MgO):</p>
+                                
+                                <table class="tabular-grid" id="beginner-1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Mg</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>MgO</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>24</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="b1-mass-mgo" data-correct="40"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>24</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td>40</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="b1-moles-mg" data-correct="1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="b1-moles-mgo" data-correct="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="b1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="b1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="b1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="b1-feedback" class="feedback"></div>
+                                <div id="b1-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of Mg
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For Mg: Moles = 24 g ÷ 24 g/mol = 1 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of MgO
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of Mg:MgO is 2:2 (or 1:1 simplified)</p>
+                                    <p>So, Moles of MgO = Moles of Mg × (Ratio of MgO ÷ Ratio of Mg)</p>
+                                    <p>Moles of MgO = 1 mol × (2 ÷ 2) = 1 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of MgO
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For MgO: Mass = 1 mol × 40 g/mol = 40 g</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Example 2 -->
+                        <div id="beginner-2" class="example-content">
+                            <h3>Beginner Example 2: Acid-Base Neutralization</h3>
+                            <p><strong>Question:</strong> In the reaction: HCl + NaOH → NaCl + H₂O, calculate how many grams of sodium chloride (NaCl) can be produced from 7.3 g of sodium hydroxide (NaOH).</p>
+                            
+                            <div class="chemical-equation">HCl + NaOH → NaCl + H₂O</div>
+                            
+                            <div class="instruction-box">
+                                <p>This is a beginner example involving a simple acid-base neutralization reaction. We'll apply the tabular method to track the relationship between NaOH and NaCl.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing only on the substances involved in our calculation (NaOH and NaCl):</p>
+                                
+                                <table class="tabular-grid" id="beginner-2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th style="background-color: #f2f2f2; color: #999;">HCl</th>
+                                        <th>NaOH</th>
+                                        <th>NaCl</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td>7.3</td>
+                                        <td><input type="text" id="b2-mass-nacl" data-correct="10.7"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">36.5</td>
+                                        <td>40</td>
+                                        <td>58.5</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="b2-moles-naoh" data-correct="0.1825"></td>
+                                        <td><input type="text" id="b2-moles-nacl" data-correct="0.1825"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="b2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="b2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="b2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="b2-feedback" class="feedback"></div>
+                                <div id="b2-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of NaOH
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For NaOH: Moles = 7.3 g ÷ 40 g/mol = 0.1825 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of NaCl
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of NaOH:NaCl is 1:1</p>
+                                    <p>So, Moles of NaCl = Moles of NaOH × (Ratio of NaCl ÷ Ratio of NaOH)</p>
+                                    <p>Moles of NaCl = 0.1825 mol × (1 ÷ 1) = 0.1825 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of NaCl
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For NaCl: Mass = 0.1825 mol × 58.5 g/mol = 10.68 g</p>
+                                    <p>Rounding to 1 decimal place: 10.7 g</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Intermediate Examples Tab -->
+                    <div id="intermediate-tab" class="tab-content">
+                        <h3>Intermediate Examples: Not 1:1 Ratios</h3>
+                        <p>These examples involve simple substances but with more complex mole ratios.</p>
+                        
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="intermediate-1">Example 1: 2Mg + O₂ → 2MgO</div>
+                            <div class="example-tab" data-example="intermediate-2">Example 2: 2Al + 3Cl₂ → 2AlCl₃</div>
+                        </div>
+                        
+                        <!-- Intermediate Example 1 -->
+                        <div id="intermediate-1" class="example-content active">
+                            <h3>Intermediate Example 1: Magnesium Oxide Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2Mg + O₂ → 2MgO, calculate how many grams of oxygen (O₂) are needed to react completely with 36 g of magnesium.</p>
+                            
+                            <div class="chemical-equation">2Mg + O₂ → 2MgO</div>
+                            
+                            <div class="instruction-box">
+                                <p>This intermediate example introduces a reaction with a 2:1 ratio. We'll apply the tabular method to determine how much oxygen is needed.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing on Mg and O₂:</p>
+                                
+                                <table class="tabular-grid" id="intermediate-1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Mg</th>
+                                        <th>O₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">MgO</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>36</td>
+                                        <td><input type="text" id="i1-mass-o2" data-correct="24"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>24</td>
+                                        <td>32</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">40</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="i1-moles-mg" data-correct="1.5"></td>
+                                        <td><input type="text" id="i1-moles-o2" data-correct="0.75"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="i1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="i1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="i1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="i1-feedback" class="feedback"></div>
+                                <div id="i1-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of Mg
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For Mg: Moles = 36 g ÷ 24 g/mol = 1.5 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of O₂
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of Mg:O₂ is 2:1</p>
+                                    <p>So, Moles of O₂ = Moles of Mg × (Ratio of O₂ ÷ Ratio of Mg)</p>
+                                    <p>Moles of O₂ = 1.5 mol × (1 ÷ 2) = 0.75 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of O₂
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For O₂: Mass = 0.75 mol × 32 g/mol = 24 g</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Intermediate Example 2 -->
+                        <div id="intermediate-2" class="example-content">
+                            <h3>Intermediate Example 2: Aluminum Chloride Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2Al + 3Cl₂ → 2AlCl₃, calculate how many grams of aluminum chloride (AlCl₃) can be produced from 10.8 g of aluminum.</p>
+                            
+                            <div class="chemical-equation">2Al + 3Cl₂ → 2AlCl₃</div>
+                            
+                            <div class="instruction-box">
+                                <p>This intermediate example deals with a more complex ratio (2:3:2). We'll apply the tabular method to track the relationship between Al and AlCl₃.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing on Al and AlCl₃:</p>
+                                
+                                <table class="tabular-grid" id="intermediate-2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Al</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">Cl₂</th>
+                                        <th>AlCl₃</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>10.8</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="i2-mass-alcl3" data-correct="53.3"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>27</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">71</td>
+                                        <td>133.5</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="i2-moles-al" data-correct="0.4"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="i2-moles-alcl3" data-correct="0.4"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">3</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="i2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="i2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="i2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="i2-feedback" class="feedback"></div>
+                                <div id="i2-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of Al
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For Al: Moles = 10.8 g ÷ 27 g/mol = 0.4 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of AlCl₃
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of Al:AlCl₃ is 2:2 (or 1:1 simplified)</p>
+                                    <p>So, Moles of AlCl₃ = Moles of Al × (Ratio of AlCl₃ ÷ Ratio of Al)</p>
+                                    <p>Moles of AlCl₃ = 0.4 mol × (2 ÷ 2) = 0.4 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of AlCl₃
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For AlCl₃: Mass = 0.4 mol × 133.5 g/mol = 53.4 g</p>
+                                    <p>Rounded to one decimal place: 53.3 g</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Examples Tab -->
+                    <div id="advanced-tab" class="tab-content">
+                        <h3>Advanced Examples: Complex Substances and Ratios</h3>
+                        <p>These examples involve more complex substances and challenging stoichiometric ratios.</p>
+                        
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="advanced-1">Example 1: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O</div>
+                            <div class="example-tab" data-example="advanced-2">Example 2: 4NH₃ + 5O₂ → 4NO + 6H₂O</div>
+                        </div>
+                        
+                        <!-- Advanced Example 1 -->
+                        <div id="advanced-1" class="example-content active">
+                            <h3>Advanced Example 1: Glucose Combustion</h3>
+                            <p><strong>Question:</strong> In the reaction: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O, calculate how many grams of carbon dioxide (CO₂) are produced when 18 g of glucose (C₆H₁₂O₆) is completely combusted.</p>
+                            
+                            <div class="chemical-equation">C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O</div>
+                            
+                            <div class="instruction-box">
+                                <p>This advanced example deals with the combustion of glucose, involving a complex organic compound and multiple products. We'll apply the tabular method to determine the mass of CO₂ produced.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing on C₆H₁₂O₆ and CO₂:</p>
+                                
+                                <table class="tabular-grid" id="advanced-1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>C₆H₁₂O₆</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>CO₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>18</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="a1-mass-co2" data-correct="26.4"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>180</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td>44</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="a1-moles-glucose" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="a1-moles-co2" data-correct="0.6"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">6</td>
+                                        <td>6</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">6</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="a1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="a1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="a1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="a1-feedback" class="feedback"></div>
+                                <div id="a1-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of C₆H₁₂O₆
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For C₆H₁₂O₆: Moles = 18 g ÷ 180 g/mol = 0.1 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of CO₂
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of C₆H₁₂O₆:CO₂ is 1:6</p>
+                                    <p>So, Moles of CO₂ = Moles of C₆H₁₂O₆ × (Ratio of CO₂ ÷ Ratio of C₆H₁₂O₆)</p>
+                                    <p>Moles of CO₂ = 0.1 mol × (6 ÷ 1) = 0.6 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of CO₂
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For CO₂: Mass = 0.6 mol × 44 g/mol = 26.4 g</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Example 2 -->
+                        <div id="advanced-2" class="example-content">
+                            <h3>Advanced Example 2: Ammonia Oxidation</h3>
+                            <p><strong>Question:</strong> In the reaction: 4NH₃ + 5O₂ → 4NO + 6H₂O, calculate how many grams of water (H₂O) can be produced from 68 g of ammonia (NH₃).</p>
+                            
+                            <div class="chemical-equation">4NH₃ + 5O₂ → 4NO + 6H₂O</div>
+                            
+                            <div class="instruction-box">
+                                <p>This is an advanced example dealing with a more complex reaction where the mole ratios aren't 1:1. We'll apply the tabular method to track the relationship between NH₃ and H₂O.</p>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Set up the table</h3>
+                                <p>Create a table focusing only on the substances involved in our calculation (NH₃ and H₂O):</p>
+                                
+                                <table class="tabular-grid" id="advanced-2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>NH₃</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">NO</th>
+                                        <th>H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>68</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="a2-mass-h2o" data-correct="108"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>17</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">30</td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="a2-moles-nh3" data-correct="4"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="a2-moles-h2o" data-correct="6"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">5</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">4</td>
+                                        <td>6</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="a2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="a2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="a2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="a2-feedback" class="feedback"></div>
+                                <div id="a2-hint-text" class="hint-text"></div>
+                            </div>
+                            
+                            <div class="step-container">
+                                <div class="step-title" data-step="1">
+                                    <span>▶</span> Step 1: Calculate the moles of NH₃
+                                </div>
+                                <div class="step-content" data-step="1">
+                                    <p>To calculate moles, use the formula: <strong>Moles = Mass ÷ Relative formula mass</strong></p>
+                                    <p>For NH₃: Moles = 68 g ÷ 17 g/mol = 4 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="2">
+                                    <span>▶</span> Step 2: Use the mole ratio to find moles of H₂O
+                                </div>
+                                <div class="step-content" data-step="2">
+                                    <p>From the chemical equation, the ratio of NH₃:H₂O is 4:6 (or 2:3 simplified)</p>
+                                    <p>So, Moles of H₂O = Moles of NH₃ × (Ratio of H₂O ÷ Ratio of NH₃)</p>
+                                    <p>Moles of H₂O = 4 mol × (6 ÷ 4) = 4 mol × 1.5 = 6 mol</p>
+                                </div>
+                                
+                                <div class="step-title" data-step="3">
+                                    <span>▶</span> Step 3: Calculate the mass of H₂O
+                                </div>
+                                <div class="step-content" data-step="3">
+                                    <p>To calculate mass, use the formula: <strong>Mass = Moles × Relative formula mass</strong></p>
+                                    <p>For H₂O: Mass = 6 mol × 18 g/mol = 108 g</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button id="tutorial-to-main" class="nav-btn">Back to Main</button>
+                    <button id="tutorial-to-practice" class="nav-btn">Go to Practice</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Practice Page -->
+    <div id="practice-page" class="page">
+        <div class="container">
+            <div class="card">
+                <h2>Practice Mode: Test Your Skills</h2>
+                <p class="subtitle">Apply what you've learned by solving problems at different difficulty levels.</p>
+                
+                <div class="tab-container">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="beginner-practice">Beginner</div>
+                        <div class="tab" data-tab="intermediate-practice">Intermediate</div>
+                        <div class="tab" data-tab="advanced-practice">Advanced</div>
+                    </div>
+                    
+                    <!-- Beginner Practice Tab -->
+                    <div id="beginner-practice" class="tab-content active">
+                        <h3>Beginner Practice Questions</h3>
+                        <p>Complete these practice questions to test your understanding of basic reactions with simple ratios.</p>
+                        
+                        <!-- Beginner Practice Questions -->
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="practice-b1">Question 1: 2Na + Cl₂ → 2NaCl</div>
+                            <div class="example-tab" data-example="practice-b2">Question 2: Ca + 2H₂O → Ca(OH)₂ + H₂</div>
+                            <div class="example-tab" data-example="practice-b3">Question 3: Zn + 2HCl → ZnCl₂ + H₂</div>
+                            <div class="example-tab" data-example="practice-b4">Question 4: 2K + Br₂ → 2KBr</div>
+                            <div class="example-tab" data-example="practice-b5">Question 5: H₂ + F₂ → 2HF</div>
+                        </div>
+                        
+                        <!-- Beginner Practice Question 1 -->
+                        <div id="practice-b1" class="example-content active">
+                            <h3>Beginner Practice Question 1: Sodium Chloride Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2Na + Cl₂ → 2NaCl, calculate how many grams of sodium chloride (NaCl) can be produced from 23 g of sodium (Na).</p>
+                            
+                            <div class="chemical-equation">2Na + Cl₂ → 2NaCl</div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-b1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Na</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">Cl₂</th>
+                                        <th>NaCl</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>23</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb1-mass-nacl" data-correct="58.5"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>23</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">71</td>
+                                        <td>58.5</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pb1-moles-na" data-correct="1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb1-moles-nacl" data-correct="1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pb1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pb1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pb1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pb1-feedback" class="feedback"></div>
+                                <div id="pb1-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Practice Question 2 -->
+                        <div id="practice-b2" class="example-content">
+                            <h3>Beginner Practice Question 2: Calcium Hydroxide Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: Ca + 2H₂O → Ca(OH)₂ + H₂, calculate how many grams of calcium hydroxide (Ca(OH)₂) can be produced from 4 g of calcium (Ca).</p>
+                            
+                            <div class="chemical-equation">Ca + 2H₂O → Ca(OH)₂ + H₂</div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-b2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Ca</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                        <th>Ca(OH)₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb2-mass-caoh2" data-correct="7.4"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>40</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                        <td>74</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pb2-moles-ca" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb2-moles-caoh2" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pb2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pb2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pb2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pb2-feedback" class="feedback"></div>
+                                <div id="pb2-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Practice Question 3 -->
+                        <div id="practice-b3" class="example-content">
+                            <h3>Beginner Practice Question 3: Zinc Chloride Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: Zn + 2HCl → ZnCl₂ + H₂, calculate how many grams of zinc chloride (ZnCl₂) can be produced from 6.5 g of zinc (Zn).</p>
+                            
+                            <div class="chemical-equation">Zn + 2HCl → ZnCl₂ + H₂</div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-b3-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Zn</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">HCl</th>
+                                        <th>ZnCl₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>6.5</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb3-mass-zncl2" data-correct="13.6"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>65.4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">36.5</td>
+                                        <td>136.3</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pb3-moles-zn" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb3-moles-zncl2" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pb3-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pb3-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pb3-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pb3-feedback" class="feedback"></div>
+                                <div id="pb3-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Practice Question 4 -->
+                        <div id="practice-b4" class="example-content">
+                            <h3>Beginner Practice Question 4: Potassium Bromide Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2K + Br₂ → 2KBr, calculate how many grams of bromine (Br₂) are needed to react completely with 7.8 g of potassium (K).</p>
+                            
+                            <div class="chemical-equation">2K + Br₂ → 2KBr</div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-b4-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>K</th>
+                                        <th>Br₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">KBr</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>7.8</td>
+                                        <td><input type="text" id="pb4-mass-br2" data-correct="16"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td>39</td>
+                                        <td>160</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">119</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pb4-moles-k" data-correct="0.2"></td>
+                                        <td><input type="text" id="pb4-moles-br2" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pb4-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pb4-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pb4-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pb4-feedback" class="feedback"></div>
+                                <div id="pb4-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Beginner Practice Question 5 -->
+                        <div id="practice-b5" class="example-content">
+                            <h3>Beginner Practice Question 5: Hydrogen Fluoride Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: H₂ + F₂ → 2HF, calculate how many grams of hydrogen fluoride (HF) can be produced from 3.8 g of fluorine (F₂).</p>
+                            
+                            <div class="chemical-equation">H₂ + F₂ → 2HF</div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-b5-table">
+                                    <tr>
+                                        <th></th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂</th>
+                                        <th>F₂</th>
+                                        <th>HF</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td>3.8</td>
+                                        <td><input type="text" id="pb5-mass-hf" data-correct="4"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td>38</td>
+                                        <td>20</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pb5-moles-f2" data-correct="0.1"></td>
+                                        <td><input type="text" id="pb5-moles-hf" data-correct="0.2"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                        <td>1</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pb5-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pb5-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pb5-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pb5-feedback" class="feedback"></div>
+                                <div id="pb5-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Intermediate Practice Tab -->
+                    <div id="intermediate-practice" class="tab-content">
+                        <h3>Intermediate Practice Questions</h3>
+                        <p>Complete these practice questions to test your understanding of reactions with non-1:1 ratios.</p>
+                        
+                        <!-- Intermediate Practice Questions -->
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="practice-i1">Question 1: 2H₂ + O₂ → 2H₂O</div>
+                            <div class="example-tab" data-example="practice-i2">Question 2: N₂ + 3H₂ → 2NH₃</div>
+                            <div class="example-tab" data-example="practice-i3">Question 3: 4Fe + 3O₂ → 2Fe₂O₃</div>
+                            <div class="example-tab" data-example="practice-i4">Question 4: 2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O</div>
+                            <div class="example-tab" data-example="practice-i5">Question 5: 4NH₃ + 5O₂ → 4NO + 6H₂O</div>
+                        </div>
+                        
+                        <!-- Intermediate Practice Question 1 -->
+                        <div id="practice-i1" class="example-content active">
+                            <h3>Intermediate Practice Question 1: Water Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 2H₂ + O₂ → 2H₂O, calculate how many grams of oxygen (O₂) are needed to react completely with 4 g of hydrogen (H₂).</p>
+                            
+                            <div class="chemical-equation">2H₂ + O₂ → 2H₂O</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>H: 1.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-i1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>H₂</th>
+                                        <th>O₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>4</td>
+                                        <td><input type="text" id="pi1-mass-o2" data-correct="32"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pi1-mr-h2" data-correct="2"></td>
+                                        <td><input type="text" id="pi1-mr-o2" data-correct="32"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pi1-moles-h2" data-correct="2"></td>
+                                        <td><input type="text" id="pi1-moles-o2" data-correct="1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pi1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pi1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pi1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pi1-feedback" class="feedback"></div>
+                                <div id="pi1-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Intermediate Practice Question 2 -->
+                        <div id="practice-i2" class="example-content">
+                            <h3>Intermediate Practice Question 2: Ammonia Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: N₂ + 3H₂ → 2NH₃, calculate how many grams of ammonia (NH₃) can be produced from 7 g of nitrogen (N₂).</p>
+                            
+                            <div class="chemical-equation">N₂ + 3H₂ → 2NH₃</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>N: 14.0</li>
+                                    <li>H: 1.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-i2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>N₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂</th>
+                                        <th>NH₃</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>7</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi2-mass-nh3" data-correct="8.5"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pi2-mr-n2" data-correct="28"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td><input type="text" id="pi2-mr-nh3" data-correct="17"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pi2-moles-n2" data-correct="0.25"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi2-moles-nh3" data-correct="0.5"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">3</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pi2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pi2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pi2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pi2-feedback" class="feedback"></div>
+                                <div id="pi2-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Intermediate Practice Question 3 -->
+                        <div id="practice-i3" class="example-content">
+                            <h3>Intermediate Practice Question 3: Iron Oxide Formation</h3>
+                            <p><strong>Question:</strong> In the reaction: 4Fe + 3O₂ → 2Fe₂O₃, calculate how many grams of iron(III) oxide (Fe₂O₃) can be produced from 11.2 g of iron (Fe).</p>
+                            
+                            <div class="chemical-equation">4Fe + 3O₂ → 2Fe₂O₃</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>Fe: 56.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-i3-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Fe</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>Fe₂O₃</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>11.2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi3-mass-fe2o3" data-correct="16"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pi3-mr-fe" data-correct="56"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td><input type="text" id="pi3-mr-fe2o3" data-correct="160"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pi3-moles-fe" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi3-moles-fe2o3" data-correct="0.1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">3</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pi3-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pi3-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pi3-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pi3-feedback" class="feedback"></div>
+                                <div id="pi3-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Intermediate Practice Question 4 -->
+                        <div id="practice-i4" class="example-content">
+                            <h3>Intermediate Practice Question 4: Ethane Combustion</h3>
+                            <p><strong>Question:</strong> In the reaction: 2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O, calculate how many grams of carbon dioxide (CO₂) are produced when 3 g of ethane (C₂H₆) is completely burned.</p>
+                            
+                            <div class="chemical-equation">2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>C: 12.0</li>
+                                    <li>H: 1.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-i4-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>C₂H₆</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>CO₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>3</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi4-mass-co2" data-correct="8.8"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pi4-mr-c2h6" data-correct="30"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td><input type="text" id="pi4-mr-co2" data-correct="44"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pi4-moles-c2h6" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi4-moles-co2" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">7</td>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">6</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pi4-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pi4-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pi4-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pi4-feedback" class="feedback"></div>
+                                <div id="pi4-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Intermediate Practice Question 5 -->
+                        <div id="practice-i5" class="example-content">
+                            <h3>Intermediate Practice Question 5: Ammonia Oxidation</h3>
+                            <p><strong>Question:</strong> In the reaction: 4NH₃ + 5O₂ → 4NO + 6H₂O, calculate how many grams of nitrogen monoxide (NO) are produced when 8.5 g of ammonia (NH₃) is oxidized.</p>
+                            
+                            <div class="chemical-equation">4NH₃ + 5O₂ → 4NO + 6H₂O</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>N: 14.0</li>
+                                    <li>H: 1.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-i5-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>NH₃</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>NO</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>8.5</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi5-mass-no" data-correct="15"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pi5-mr-nh3" data-correct="17"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td><input type="text" id="pi5-mr-no" data-correct="30"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pi5-moles-nh3" data-correct="0.5"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pi5-moles-no" data-correct="0.5"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">5</td>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">6</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pi5-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pi5-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pi5-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pi5-feedback" class="feedback"></div>
+                                <div id="pi5-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Advanced Practice Tab -->
+                    <div id="advanced-practice" class="tab-content">
+                        <h3>Advanced Practice Questions</h3>
+                        <p>Complete these practice questions to test your understanding of complex reactions with challenging substances and ratios.</p>
+                        
+                        <!-- Advanced Practice Questions -->
+                        <div class="example-tabs">
+                            <div class="example-tab active" data-example="practice-a1">Question 1: 2KClO₃ → 2KCl + 3O₂</div>
+                            <div class="example-tab" data-example="practice-a2">Question 2: 2C₈H₁₈ + 25O₂ → 16CO₂ + 18H₂O</div>
+                            <div class="example-tab" data-example="practice-a3">Question 3: 4C₅H₉N + 29O₂ → 20CO₂ + 18H₂O + 2N₂</div>
+                            <div class="example-tab" data-example="practice-a4">Question 4: Fe₂O₃ + 3CO → 2Fe + 3CO₂</div>
+                            <div class="example-tab" data-example="practice-a5">Question 5: 2Al + Fe₂O₃ → 2Fe + Al₂O₃</div>
+                        </div>
+                        
+                        <!-- Advanced Practice Question 1 -->
+                        <div id="practice-a1" class="example-content active">
+                            <h3>Advanced Practice Question 1: Potassium Chlorate Decomposition</h3>
+                            <p><strong>Question:</strong> In the reaction: 2KClO₃ → 2KCl + 3O₂, calculate how many grams of oxygen gas (O₂) are produced when 24.5 g of potassium chlorate (KClO₃) decomposes.</p>
+                            
+                            <div class="chemical-equation">2KClO₃ → 2KCl + 3O₂</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>K: 39.1</li>
+                                    <li>Cl: 35.5</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-a1-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>KClO₃</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">KCl</th>
+                                        <th>O₂</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>24.5</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa1-mass-o2" data-correct="9.6"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pa1-mr-kclo3" data-correct="122.5"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">74.5</td>
+                                        <td><input type="text" id="pa1-mr-o2" data-correct="32"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pa1-moles-kclo3" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa1-moles-o2" data-correct="0.3"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td>3</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pa1-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pa1-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pa1-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pa1-feedback" class="feedback"></div>
+                                <div id="pa1-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Practice Question 2 -->
+                        <div id="practice-a2" class="example-content">
+                            <h3>Advanced Practice Question 2: Octane Combustion</h3>
+                            <p><strong>Question:</strong> In the reaction: 2C₈H₁₈ + 25O₂ → 16CO₂ + 18H₂O, calculate how many grams of carbon dioxide (CO₂) are produced when 22.8 g of octane (C₈H₁₈) is completely combusted.</p>
+                            
+                            <div class="chemical-equation">2C₈H₁₈ + 25O₂ → 16CO₂ + 18H₂O</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>C: 12.0</li>
+                                    <li>H: 1.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-a2-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>C₈H₁₈</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th>CO₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>22.8</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa2-mass-co2" data-correct="70.4"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pa2-mr-c8h18" data-correct="114"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td><input type="text" id="pa2-mr-co2" data-correct="44"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pa2-moles-c8h18" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa2-moles-co2" data-correct="1.6"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">25</td>
+                                        <td>16</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pa2-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pa2-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pa2-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pa2-feedback" class="feedback"></div>
+                                <div id="pa2-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Practice Question 3 -->
+                        <div id="practice-a3" class="example-content">
+                            <h3>Advanced Practice Question 3: Pyridine Combustion</h3>
+                            <p><strong>Question:</strong> In the reaction: 4C₅H₅N + 29O₂ → 20CO₂ + 10H₂O + 2N₂, calculate how many grams of nitrogen gas (N₂) are produced when 15.8 g of pyridine (C₅H₅N) is completely combusted.</p>
+                            
+                            <div class="chemical-equation">4C₅H₅N + 29O₂ → 20CO₂ + 10H₂O + 2N₂</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>C: 12.0</li>
+                                    <li>H: 1.0</li>
+                                    <li>N: 14.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-a3-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>C₅H₅N</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">O₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">CO₂</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">H₂O</th>
+                                        <th>N₂</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>15.8</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa3-mass-n2" data-correct="2.8"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pa3-mr-c5h5n" data-correct="79"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">32</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">44</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">18</td>
+                                        <td><input type="text" id="pa3-mr-n2" data-correct="28"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pa3-moles-c5h5n" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa3-moles-n2" data-correct="0.1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">29</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">20</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">10</td>
+                                        <td>2</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pa3-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pa3-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pa3-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pa3-feedback" class="feedback"></div>
+                                <div id="pa3-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Practice Question 4 -->
+                        <div id="practice-a4" class="example-content">
+                            <h3>Advanced Practice Question 4: Iron Extraction</h3>
+                            <p><strong>Question:</strong> In the reaction: Fe₂O₃ + 3CO → 2Fe + 3CO₂, calculate how many grams of iron (Fe) can be extracted from 16 g of iron(III) oxide (Fe₂O₃).</p>
+                            
+                            <div class="chemical-equation">Fe₂O₃ + 3CO → 2Fe + 3CO₂</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>Fe: 56.0</li>
+                                    <li>O: 16.0</li>
+                                    <li>C: 12.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-a4-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Fe₂O₃</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">CO</th>
+                                        <th>Fe</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">CO₂</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>16</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa4-mass-fe" data-correct="11.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pa4-mr-fe2o3" data-correct="160"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">28</td>
+                                        <td><input type="text" id="pa4-mr-fe" data-correct="56"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">44</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pa4-moles-fe2o3" data-correct="0.1"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa4-moles-fe" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">3</td>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">3</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pa4-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pa4-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pa4-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pa4-feedback" class="feedback"></div>
+                                <div id="pa4-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Practice Question 5 -->
+                        <div id="practice-a5" class="example-content">
+                            <h3>Advanced Practice Question 5: Thermite Reaction</h3>
+                            <p><strong>Question:</strong> In the reaction: 2Al + Fe₂O₃ → 2Fe + Al₂O₃, calculate how many grams of aluminum oxide (Al₂O₃) can be produced from 5.4 g of aluminum (Al).</p>
+                            
+                            <div class="chemical-equation">2Al + Fe₂O₃ → 2Fe + Al₂O₃</div>
+                            
+                            <div class="info-box">
+                                <h3>Atomic Masses for Your Calculations:</h3>
+                                <ul>
+                                    <li>Al: 27.0</li>
+                                    <li>Fe: 56.0</li>
+                                    <li>O: 16.0</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="tabular-method">
+                                <h3>Complete the table</h3>
+                                <p>Fill in the missing values in the table to calculate your answer:</p>
+                                
+                                <table class="tabular-grid" id="practice-a5-table">
+                                    <tr>
+                                        <th></th>
+                                        <th>Al</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">Fe₂O₃</th>
+                                        <th style="background-color: #f2f2f2; color: #999;">Fe</th>
+                                        <th>Al₂O₃</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Mass (g)</th>
+                                        <td>5.4</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa5-mass-al2o3" data-correct="10.2"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Relative formula mass (Mr)</th>
+                                        <td><input type="text" id="pa5-mr-al" data-correct="27"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">160</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">56</td>
+                                        <td><input type="text" id="pa5-mr-al2o3" data-correct="102"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Moles (n)</th>
+                                        <td><input type="text" id="pa5-moles-al" data-correct="0.2"></td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">n/a</td>
+                                        <td><input type="text" id="pa5-moles-al2o3" data-correct="0.1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ratio from equation</th>
+                                        <td>2</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">1</td>
+                                        <td style="background-color: #f2f2f2; color: #999;">2</td>
+                                        <td>1</td>
+                                    </tr>
+                                </table>
+                                
+                                <div>
+                                    <button id="pa5-check-btn" class="check-btn">Check Answers</button>
+                                    <button id="pa5-reset-btn" class="reset-btn">Reset</button>
+                                    <button id="pa5-hint-btn" class="hint-btn">Show Hint</button>
+                                </div>
+                                
+                                <div id="pa5-feedback" class="feedback"></div>
+                                <div id="pa5-hint-text" class="hint-text"></div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="nav-buttons">
+                    <button id="practice-to-main" class="nav-btn">Back to Main</button>
+                    <button id="practice-to-tutorial" class="nav-btn">Go to Tutorial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calculator HTML -->
+    <div class="calculator-toggle" id="calculator-toggle">
+        <i>🧮</i>
+    </div>
+    
+    <div class="calculator-wrapper">
+        <div class="calculator" id="calculator">
+            <div class="calculator-header">
+                <div class="calculator-title">Calculator</div>
+                <div class="calculator-controls">
+                    <span id="minimize-calculator">_</span>
+                    <span id="close-calculator">×</span>
+                </div>
+            </div>
+            <div class="calculator-display" id="calculator-display">0</div>
+            <div class="calculator-buttons">
+                <button class="calculator-button clear" data-action="clear">C</button>
+                <button class="calculator-button operator" data-action="backspace">⌫</button>
+                <button class="calculator-button operator" data-action="percent">%</button>
+                <button class="calculator-button operator" data-action="divide">÷</button>
+                
+                <button class="calculator-button number" data-number="7">7</button>
+                <button class="calculator-button number" data-number="8">8</button>
+                <button class="calculator-button number" data-number="9">9</button>
+                <button class="calculator-button operator" data-action="multiply">×</button>
+                
+                <button class="calculator-button number" data-number="4">4</button>
+                <button class="calculator-button number" data-number="5">5</button>
+                <button class="calculator-button number" data-number="6">6</button>
+                <button class="calculator-button operator" data-action="subtract">-</button>
+                
+                <button class="calculator-button number" data-number="1">1</button>
+                <button class="calculator-button number" data-number="2">2</button>
+                <button class="calculator-button number" data-number="3">3</button>
+                <button class="calculator-button operator" data-action="add">+</button>
+                
+                <button class="calculator-button number" data-number="0">0</button>
+                <button class="calculator-button number" data-number=".">.</button>
+                <button class="calculator-button operator" data-action="negative">±</button>
+                <button class="calculator-button equals" data-action="calculate">=</button>
+            </div>
+        </div>
+        
+        <div class="calculator-minimized" id="calculator-minimized">
+            <i>🧮</i>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation buttons
+            document.getElementById('goto-tutorial').addEventListener('click', function() {
+                showPage('tutorial-page');
+            });
+            
+            document.getElementById('goto-practice').addEventListener('click', function() {
+                showPage('practice-page');
+            });
+            
+            document.getElementById('tutorial-to-main').addEventListener('click', function() {
+                showPage('intro-page');
+            });
+            
+            document.getElementById('tutorial-to-practice').addEventListener('click', function() {
+                showPage('practice-page');
+            });
+            
+            document.getElementById('practice-to-main').addEventListener('click', function() {
+                showPage('intro-page');
+            });
+            
+            document.getElementById('practice-to-tutorial').addEventListener('click', function() {
+                showPage('tutorial-page');
+            });
+            
+            // Page navigation function
+            function showPage(pageId) {
+                document.querySelectorAll('.page').forEach(function(page) {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                window.scrollTo(0, 0);
+            }
+            
+            // Tab navigation
+            document.querySelectorAll('.tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Set active tab
+                    const tabs = this.parentElement.querySelectorAll('.tab');
+                    tabs.forEach(function(t) {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show active content
+                    const tabContents = this.closest('.tab-container').querySelectorAll('.tab-content');
+                    tabContents.forEach(function(content) {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Example tabs navigation
+            document.querySelectorAll('.example-tab').forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    
+                    // Set active example tab
+                    const tabs = this.parentElement.querySelectorAll('.example-tab');
+                    tabs.forEach(function(t) {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Show active example content
+                    const tabContent = this.closest('.tab-content');
+                    const exampleContents = tabContent.querySelectorAll('.example-content');
+                    exampleContents.forEach(function(content) {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(exampleId).classList.add('active');
+                });
+            });
+            
+            // Step toggles
+            document.querySelectorAll('.step-title').forEach(function(title) {
+                title.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const arrow = this.querySelector('span');
+                    
+                    if (content.classList.contains('visible')) {
+                        content.classList.remove('visible');
+                        arrow.textContent = '▶';
+                    } else {
+                        content.classList.add('visible');
+                        arrow.textContent = '▼';
+                    }
+                });
+            });
+            
+            // Check answer function
+            function checkAnswers(tableId, feedbackId) {
+                const table = document.getElementById(tableId);
+                const feedbackDiv = document.getElementById(feedbackId);
+                
+                if (!table || !feedbackDiv) return;
+                
+                const inputs = table.querySelectorAll('input');
+                let allCorrect = true;
+                
+                inputs.forEach(function(input) {
+                    const userAnswer = parseFloat(input.value);
+                    const correctAnswer = parseFloat(input.getAttribute('data-correct'));
+                    
+                    if (isNaN(userAnswer)) {
+                        input.classList.add('incorrect');
+                        input.classList.remove('correct');
+                        allCorrect = false;
+                    } else {
+                        // Allow wider tolerance for practice problems
+                        const percentDiff = Math.abs((userAnswer - correctAnswer) / correctAnswer) * 100;
+                        
+                        if (percentDiff <= 10) { // 10% tolerance
+                            input.classList.add('correct');
+                            input.classList.remove('incorrect');
+                        } else {
+                            input.classList.add('incorrect');
+                            input.classList.remove('correct');
+                            allCorrect = false;
+                        }
+                    }
+                });
+                
+                if (allCorrect) {
+                    feedbackDiv.textContent = "Excellent work! All your answers are correct.";
+                    feedbackDiv.className = "feedback success";
+                } else {
+                    feedbackDiv.textContent = "Some answers need correction. Try again or check the hints.";
+                    feedbackDiv.className = "feedback error";
+                }
+                
+                feedbackDiv.style.display = 'block';
+            }
+            
+            // Reset function
+            function resetTable(tableId, feedbackId, hintId) {
+                const table = document.getElementById(tableId);
+                const feedbackDiv = document.getElementById(feedbackId);
+                const hintDiv = document.getElementById(hintId);
+                
+                if (!table) return;
+                
+                const inputs = table.querySelectorAll('input');
+                
+                inputs.forEach(function(input) {
+                    input.value = '';
+                    input.classList.remove('correct', 'incorrect');
+                });
+                
+                if (feedbackDiv) feedbackDiv.style.display = 'none';
+                if (hintDiv) hintDiv.style.display = 'none';
+            }
+            
+            // Show hint function
+            function showHint(hintId, content) {
+                const hintDiv = document.getElementById(hintId);
+                if (!hintDiv) return;
+                
+                hintDiv.innerHTML = content;
+                hintDiv.style.display = 'block';
+            }
+            
+            // Setup all check buttons
+            function setupChecks(prefix, tableId) {
+                const checkBtn = document.getElementById(`${prefix}-check-btn`);
+                const resetBtn = document.getElementById(`${prefix}-reset-btn`);
+                const hintBtn = document.getElementById(`${prefix}-hint-btn`);
+                
+                if (checkBtn) {
+                    checkBtn.addEventListener('click', function() {
+                        checkAnswers(tableId, `${prefix}-feedback`);
+                    });
+                }
+                
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', function() {
+                        resetTable(tableId, `${prefix}-feedback`, `${prefix}-hint-text`);
+                    });
+                }
+                
+                if (hintBtn) {
+                    hintBtn.addEventListener('click', function() {
+                        let content = '';
+                        
+                        // Custom hint content based on the question
+                        if (prefix === 'b1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of Mg: 24 g ÷ 24 g/mol = 1 mol</li>
+                                    <li>The ratio Mg:MgO is 1:1</li>
+                                    <li>Mass of MgO = 1 mol × 40 g/mol = 40 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'b2') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of NaOH: 7.3 g ÷ 40 g/mol = 0.1825 mol</li>
+                                    <li>The ratio NaOH:NaCl is 1:1</li>
+                                    <li>Mass of NaCl = 0.1825 mol × 58.5 g/mol = 10.7 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'i1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of Mg: 36 g ÷ 24 g/mol = 1.5 mol</li>
+                                    <li>The ratio Mg:O₂ is 2:1, so O₂ = 1.5 mol × (1÷2) = 0.75 mol</li>
+                                    <li>Mass of O₂ = 0.75 mol × 32 g/mol = 24 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'i2') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of Al: 10.8 g ÷ 27 g/mol = 0.4 mol</li>
+                                    <li>The ratio Al:AlCl₃ is 1:1</li>
+                                    <li>Mass of AlCl₃ = 0.4 mol × 133.5 g/mol = 53.4 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'a1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of C₆H₁₂O₆: 18 g ÷ 180 g/mol = 0.1 mol</li>
+                                    <li>The ratio C₆H₁₂O₆:CO₂ is 1:6</li>
+                                    <li>Moles of CO₂ = 0.1 mol × 6 = 0.6 mol</li>
+                                    <li>Mass of CO₂ = 0.6 mol × 44 g/mol = 26.4 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'a2') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of NH₃: 68 g ÷ 17 g/mol = 4 mol</li>
+                                    <li>The ratio NH₃:H₂O is 4:6 (or 2:3)</li>
+                                    <li>Moles of H₂O = 4 mol × (6÷4) = 6 mol</li>
+                                    <li>Mass of H₂O = 6 mol × 18 g/mol = 108 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'pb1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>Calculate moles of Na: 23 g ÷ 23 g/mol = 1 mol</li>
+                                    <li>The ratio Na:NaCl is 2:2 (or 1:1)</li>
+                                    <li>Moles of NaCl = 1 mol</li>
+                                    <li>Mass of NaCl = 1 mol × 58.5 g/mol = 58.5 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'pi1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>H₂ molecular mass = 2 × 1 = 2 g/mol</li>
+                                    <li>O₂ molecular mass = 2 × 16 = 32 g/mol</li>
+                                    <li>Calculate moles of H₂: 4 g ÷ 2 g/mol = 2 mol</li>
+                                    <li>The ratio H₂:O₂ is 2:1</li>
+                                    <li>Moles of O₂ = 2 mol × (1÷2) = 1 mol</li>
+                                    <li>Mass of O₂ = 1 mol × 32 g/mol = 32 g</li>
+                                </ol>
+                            `;
+                        } else if (prefix === 'pa1') {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>KClO₃ formula mass = 39.1 + 35.5 + 3(16) = 122.5 g/mol</li>
+                                    <li>O₂ formula mass = 32 g/mol</li>
+                                    <li>Calculate moles of KClO₃: 24.5 g ÷ 122.5 g/mol = 0.2 mol</li>
+                                    <li>The ratio KClO₃:O₂ is 2:3</li>
+                                    <li>Moles of O₂ = 0.2 mol × (3÷2) = 0.3 mol</li>
+                                    <li>Mass of O₂ = 0.3 mol × 32 g/mol = 9.6 g</li>
+                                </ol>
+                            `;
+                        } else {
+                            content = `
+                                <p><strong>Hints:</strong></p>
+                                <ol>
+                                    <li>First calculate moles using: Moles = Mass ÷ Mr</li>
+                                    <li>Then use the ratio to find moles of the target substance</li>
+                                    <li>Finally, calculate mass using: Mass = Moles × Mr</li>
+                                </ol>
+                            `;
+                        }
+                        
+                        showHint(`${prefix}-hint-text`, content);
+                    });
+                }
+            }
+            
+            // Setup all buttons for tutorial examples and practice questions
+            setupChecks('b1', 'beginner-1-table');
+            setupChecks('b2', 'beginner-2-table');
+            setupChecks('i1', 'intermediate-1-table');
+            setupChecks('i2', 'intermediate-2-table');
+            setupChecks('a1', 'advanced-1-table');
+            setupChecks('a2', 'advanced-2-table');
+            
+            // Setup all buttons for practice questions
+            setupChecks('pb1', 'practice-b1-table');
+            setupChecks('pb2', 'practice-b2-table');
+            setupChecks('pb3', 'practice-b3-table');
+            setupChecks('pb4', 'practice-b4-table');
+            setupChecks('pb5', 'practice-b5-table');
+            setupChecks('pi1', 'practice-i1-table');
+            setupChecks('pi2', 'practice-i2-table');
+            setupChecks('pi3', 'practice-i3-table');
+            setupChecks('pi4', 'practice-i4-table');
+            setupChecks('pi5', 'practice-i5-table');
+            setupChecks('pa1', 'practice-a1-table');
+            setupChecks('pa2', 'practice-a2-table');
+            setupChecks('pa3', 'practice-a3-table');
+            setupChecks('pa4', 'practice-a4-table');
+            setupChecks('pa5', 'practice-a5-table');
+            
+            // Calculator functionality
+            const calculator = document.getElementById('calculator');
+            const calculatorDisplay = document.getElementById('calculator-display');
+            const calculatorToggle = document.getElementById('calculator-toggle');
+            const minimizeCalculator = document.getElementById('minimize-calculator');
+            const closeCalculator = document.getElementById('close-calculator');
+            const calculatorMinimized = document.getElementById('calculator-minimized');
+            
+            let displayValue = '0';
+            let firstOperand = null;
+            let waitingForSecondOperand = false;
+            let operator = null;
+            
+            // Show calculator
+            calculatorToggle.addEventListener('click', function() {
+                calculator.classList.add('visible');
+                calculatorToggle.style.display = 'none';
+            });
+            
+            // Minimize calculator
+            minimizeCalculator.addEventListener('click', function() {
+                calculator.classList.remove('visible');
+                calculatorMinimized.classList.add('visible');
+            });
+            
+            // Show calculator from minimized
+            calculatorMinimized.addEventListener('click', function() {
+                calculator.classList.add('visible');
+                calculatorMinimized.classList.remove('visible');
+            });
+            
+            // Close calculator
+            closeCalculator.addEventListener('click', function() {
+                calculator.classList.remove('visible');
+                calculatorMinimized.classList.remove('visible');
+                calculatorToggle.style.display = 'flex';
+            });
+            
+            // Calculator display update
+            function updateDisplay() {
+                calculatorDisplay.textContent = displayValue;
+            }
+            
+            // Calculator button event handlers
+            document.querySelectorAll('.calculator-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    if (button.classList.contains('number')) {
+                        const digit = button.getAttribute('data-number');
+                        if (digit === '.') {
+                            inputDecimal();
+                        } else {
+                            inputDigit(digit);
+                        }
+                    } else if (button.classList.contains('operator')) {
+                        const action = button.getAttribute('data-action');
+                        
+                        if (action === 'add') handleOperator('+');
+                        else if (action === 'subtract') handleOperator('-');
+                        else if (action === 'multiply') handleOperator('×');
+                        else if (action === 'divide') handleOperator('÷');
+                        else if (action === 'percent') handlePercentage();
+                        else if (action === 'negative') toggleSign();
+                        else if (action === 'backspace') handleBackspace();
+                    } else if (button.classList.contains('clear')) {
+                        resetCalculator();
+                    } else if (button.classList.contains('equals')) {
+                        calculate();
+                    }
+                });
+            });
+            
+            // Calculator input functions
+            function inputDigit(digit) {
+                if (waitingForSecondOperand) {
+                    displayValue = digit;
+                    waitingForSecondOperand = false;
+                } else {
+                    displayValue = displayValue === '0' ? digit : displayValue + digit;
+                }
+                updateDisplay();
+            }
+            
+            function inputDecimal() {
+                if (waitingForSecondOperand) {
+                    displayValue = '0.';
+                    waitingForSecondOperand = false;
+                } else if (!displayValue.includes('.')) {
+                    displayValue += '.';
+                }
+                updateDisplay();
+            }
+            
+            function resetCalculator() {
+                displayValue = '0';
+                firstOperand = null;
+                waitingForSecondOperand = false;
+                operator = null;
+                updateDisplay();
+            }
+            
+            function calculate() {
+                if (!operator || waitingForSecondOperand) return;
+                
+                const secondOperand = parseFloat(displayValue);
+                
+                if (operator === '+') {
+                    displayValue = (firstOperand + secondOperand).toString();
+                } else if (operator === '-') {
+                    displayValue = (firstOperand - secondOperand).toString();
+                } else if (operator === '×') {
+                    displayValue = (firstOperand * secondOperand).toString();
+                } else if (operator === '÷') {
+                    if (secondOperand === 0) {
+                        displayValue = 'Error';
+                    } else {
+                        displayValue = (firstOperand / secondOperand).toString();
+                    }
+                }
+                
+                // Reset for next calculation
+                firstOperand = parseFloat(displayValue);
+                operator = null;
+                waitingForSecondOperand = true;
+                updateDisplay();
+            }
+            
+            function handleOperator(nextOperator) {
+                const inputValue = parseFloat(displayValue);
+                
+                if (operator && waitingForSecondOperand) {
+                    operator = nextOperator;
+                    return;
+                }
+                
+                if (firstOperand === null) {
+                    firstOperand = inputValue;
+                } else if (operator) {
+                    calculate();
+                }
+                
+                operator = nextOperator;
+                waitingForSecondOperand = true;
+            }
+            
+            function handlePercentage() {
+                const currentValue = parseFloat(displayValue);
+                displayValue = (currentValue / 100).toString();
+                updateDisplay();
+            }
+            
+            function toggleSign() {
+                const currentValue = parseFloat(displayValue);
+                displayValue = (-1 * currentValue).toString();
+                updateDisplay();
+            }
+            
+            function handleBackspace() {
+                if (displayValue.length === 1 || (displayValue.length === 2 && displayValue.startsWith('-'))) {
+                    displayValue = '0';
+                } else {
+                    displayValue = displayValue.slice(0, -1);
+                }
+                updateDisplay();
+            }
+            
+            // Initialize calculator display
+            updateDisplay();
+            
+            // Make calculator draggable
+            const calculatorWrapper = document.querySelector('.calculator-wrapper');
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            // Touch event handlers
+            calculatorWrapper.addEventListener('mousedown', dragStart);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('mousemove', drag);
+            
+            // For mobile devices
+            calculatorWrapper.addEventListener('touchstart', dragStart);
+            document.addEventListener('touchend', dragEnd);
+            document.addEventListener('touchmove', drag);
+            
+            function dragStart(e) {
+                if (e.type === 'touchstart') {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+                
+                if (e.target.closest('.calculator-header') && !e.target.closest('.calculator-controls')) {
+                    isDragging = true;
+                    calculatorWrapper.classList.add('dragging');
+                }
+            }
+            
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                
+                isDragging = false;
+                calculatorWrapper.classList.remove('dragging');
+            }
+            
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    
+                    if (e.type === 'touchmove') {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+                    
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    
+                    calculatorWrapper.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
