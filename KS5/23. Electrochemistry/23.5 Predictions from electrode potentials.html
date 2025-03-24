@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrode Potentials - A-Level Chemistry</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #1557b0;
+            --secondary: #34a853;
+            --accent: #ea4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #dadce0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        nav {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-tabs li {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .nav-tabs li a {
+            display: block;
+            padding: 1rem;
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tabs li a:hover {
+            background-color: rgba(26, 115, 232, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-tabs li a.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        section {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        section.active {
+            display: block;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .tutorial-section, .simulation-section, .practice-section, .game-section {
+            margin-bottom: 3rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2d8e46;
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background-color: #d33426;
+        }
+        
+        .dropdown {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 4px;
+            border: 1px solid var(--light-gray);
+            margin-bottom: 1rem;
+        }
+        
+        /* Simulation Styles */
+        #simulation-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .electrode-container {
+            flex: 1;
+            min-width: 300px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: #f5f5f5;
+        }
+        
+        .voltmeter {
+            width: 200px;
+            height: 200px;
+            background-color: #333;
+            border-radius: 50%;
+            position: relative;
+            margin: 2rem auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voltmeter-display {
+            width: 160px;
+            height: 100px;
+            background-color: #eee;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .voltmeter-reading {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .voltmeter-unit {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .electrode-animation {
+            height: 240px;
+            width: 100%;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            margin: 1rem 0;
+            position: relative;
+            background-color: #f9f9f9;
+            overflow: hidden;
+        }
+        
+        .beaker {
+            position: absolute;
+            width: 80%;
+            height: 70%;
+            bottom: 10px;
+            left: 10%;
+            border: 3px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            background-color: rgba(173, 216, 230, 0.3);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Solution label */
+        .solution-label {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            width: 70%;
+        }
+        
+        .electrode {
+            position: absolute;
+            width: 20px;
+            height: 150px;
+            bottom: 20px;
+            background-color: #666;
+            z-index: 2;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+        }
+        
+        .left-electrode {
+            left: 30%;
+        }
+        
+        .right-electrode {
+            right: 30%;
+        }
+        
+        .electrode-label {
+            position: absolute;
+            top: 5px;
+            font-size: 0.8rem;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .left-electrode-label {
+            left: 30%;
+            transform: translateX(-50%);
+        }
+        
+        .right-electrode-label {
+            right: 30%;
+            transform: translateX(50%);
+        }
+        
+        .ion {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+            z-index: 1;
+            opacity: 0.8;
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+        }
+        
+        .ion.positive {
+            background-color: #ff6b6b;
+        }
+        
+        .ion.negative {
+            background-color: #4285f4;
+        }
+        
+        .electron {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4285f4;
+            z-index: 3;
+            box-shadow: 0 0 4px #4285f4;
+        }
+        
+        .salt-bridge {
+            position: absolute;
+            width: 100%;
+            height: 15px;
+            background-color: rgba(230, 230, 230, 0.7);
+            top: 60px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            z-index: 3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .salt-bridge-label {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #666;
+        }
+        
+        .complete-cell-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        #simulation-container {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            margin: 2rem 0;
+        }
+        
+        .cell-notation {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #f5f5f5;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0.5rem 0 1rem 0;
+        }
+        
+        .circuit-wire {
+            height: 4px;
+            background-color: #333;
+            position: relative;
+        }
+        
+        .top-wire {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .bottom-wire {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        
+        #electron-flow {
+            position: relative;
+            height: 20px;
+            width: 100%;
+        }
+        
+        .flowing-electron {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4285f4;
+            z-index: 3;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: flow 3s linear infinite;
+        }
+        
+        /* Practice Section Styles */
+        .question-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            margin: 1rem 0;
+        }
+        
+        .option {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .option:hover {
+            background-color: rgba(26, 115, 232, 0.1);
+        }
+        
+        .option.selected {
+            background-color: rgba(26, 115, 232, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .option.correct {
+            background-color: rgba(52, 168, 83, 0.2);
+            border-color: var(--secondary);
+        }
+        
+        .option.wrong {
+            background-color: rgba(234, 67, 53, 0.2);
+            border-color: var(--accent);
+        }
+        
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .feedback.correct {
+            display: block;
+            background-color: rgba(52, 168, 83, 0.1);
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .feedback.wrong {
+            display: block;
+            background-color: rgba(234, 67, 53, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Game Section Styles */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .game-card {
+            aspect-ratio: 3/4;
+            background-color: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .game-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .game-card-front, .game-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .game-card-front {
+            background-color: var(--primary);
+        }
+        
+        .game-card-back {
+            background-color: white;
+            color: var(--dark);
+            transform: rotateY(180deg);
+            border: 2px solid var(--primary);
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .game-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .game-timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .equation {
+            background-color: #f5f5f5;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-2 {
+            margin-bottom: 2rem;
+        }
+        
+        .highlight {
+            background-color: yellow;
+            padding: 0 0.3rem;
+        }
+        
+        .note {
+            background-color: rgba(26, 115, 232, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            border: 1px solid var(--light-gray);
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .simulation-container {
+                flex-direction: column;
+            }
+            
+            .game-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Electrode Potentials</h1>
+        <p>Interactive A-Level Chemistry Guide</p>
+    </header>
+    
+    <div class="container">
+        <nav>
+            <ul class="nav-tabs">
+                <li><a href="#tutorial" class="active" onclick="changeTab('tutorial')">Tutorial</a></li>
+                <li><a href="#simulation" onclick="changeTab('simulation')">Simulation Lab</a></li>
+                <li><a href="#practice" onclick="changeTab('practice')">Practice</a></li>
+                <li><a href="#game" onclick="changeTab('game')">Game Zone</a></li>
+            </ul>
+        </nav>
+        
+        <!-- TUTORIAL SECTION -->
+        <section id="tutorial" class="active">
+            <h2>Understanding Electrode Potentials</h2>
+            
+            <div class="card">
+                <h3>What are Electrode Potentials?</h3>
+                <p>Electrode potentials are a measure of a half-cell's ability to gain or lose electrons when compared to a standard hydrogen electrode. The more positive the electrode potential, the greater the tendency of the half-cell to gain electrons (be reduced).</p>
+                
+                <div class="note">
+                    <p><strong>Key Concept:</strong> Electrode potentials allow us to predict the direction of electron flow in electrochemical cells and determine whether a redox reaction is feasible.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Standard Electrode (Redox) Potential (E<sup>o</sup>)</h3>
+                <p>A standard electrode potential is measured under standard conditions:</p>
+                <ul>
+                    <li>Temperature: 298K (25°C)</li>
+                    <li>Pressure: 100 kPa (1 atmosphere)</li>
+                    <li>Concentration: 1 mol dm<sup>-3</sup> for all solutions</li>
+                </ul>
+                <p>All measurements are made relative to the Standard Hydrogen Electrode (SHE), which is arbitrarily assigned a value of 0.00 V.</p>
+                
+                <h4 class="mt-3">The Standard Hydrogen Electrode (SHE)</h4>
+                <p>The SHE consists of:</p>
+                <ul>
+                    <li>A platinum electrode coated with platinum black</li>
+                    <li>Immersed in a 1.0 mol dm<sup>-3</sup> H<sup>+</sup> solution</li>
+                    <li>H<sub>2</sub> gas at 100 kPa bubbled over the electrode</li>
+                </ul>
+                
+                <p>The half-equation for the SHE is:</p>
+                <div class="equation">
+                    2H<sup>+</sup>(aq) + 2e<sup>-</sup> ⇌ H<sub>2</sub>(g)      E<sup>o</sup> = 0.00 V
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Measuring Electrode Potentials</h3>
+                <p>To measure an electrode potential, we set up a cell with:</p>
+                <ul>
+                    <li>The half-cell of interest</li>
+                    <li>The standard hydrogen electrode</li>
+                    <li>A salt bridge to complete the circuit</li>
+                    <li>A high-resistance voltmeter</li>
+                </ul>
+                
+                <h4>Example: Measuring the Cu<sup>2+</sup>/Cu electrode potential</h4>
+                <p>We set up a cell with:</p>
+                <ul>
+                    <li>A copper electrode in 1.0 mol dm<sup>-3</sup> Cu<sup>2+</sup> solution</li>
+                    <li>The standard hydrogen electrode</li>
+                </ul>
+                
+                <p>The half-equation for the copper half-cell is:</p>
+                <div class="equation">
+                    Cu<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Cu(s)      E<sup>o</sup> = +0.34 V
+                </div>
+                
+                <p>The positive value indicates that Cu<sup>2+</sup> ions have a greater tendency to accept electrons than H<sup>+</sup> ions.</p>
+            </div>
+            
+            <div class="card">
+                <h3>Types of Electrode Systems</h3>
+                
+                <h4>1. Metal/Metal Ion Electrodes</h4>
+                <p>These consist of a metal in contact with a solution of its ions.</p>
+                <p>Example: Zn/Zn<sup>2+</sup>, Cu/Cu<sup>2+</sup>, Ag/Ag<sup>+</sup></p>
+                <div class="equation">
+                    M<sup>n+</sup>(aq) + ne<sup>-</sup> ⇌ M(s)
+                </div>
+                
+                <h4>2. Non-Metal Electrodes</h4>
+                <p>For non-metals like chlorine, we use an inert electrode (usually platinum) in contact with the non-metal and its ions.</p>
+                <p>Example: Pt|Cl<sub>2</sub>/Cl<sup>-</sup></p>
+                <div class="equation">
+                    Cl<sub>2</sub>(g) + 2e<sup>-</sup> ⇌ 2Cl<sup>-</sup>(aq)      E<sup>o</sup> = +1.36 V
+                </div>
+                
+                <h4>3. Ions in Different Oxidation States</h4>
+                <p>These involve the same element in different oxidation states. An inert platinum electrode is used.</p>
+                <p>Example: Fe<sup>3+</sup>/Fe<sup>2+</sup></p>
+                <div class="equation">
+                    Fe<sup>3+</sup>(aq) + e<sup>-</sup> ⇌ Fe<sup>2+</sup>(aq)      E<sup>o</sup> = +0.77 V
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Calculating Standard Cell Potentials</h3>
+                <p>The standard cell potential (E<sup>o</sup><sub>cell</sub>) is the difference between the electrode potentials of the two half-cells:</p>
+                <div class="equation">
+                    E<sup>o</sup><sub>cell</sub> = E<sup>o</sup><sub>cathode</sub> - E<sup>o</sup><sub>anode</sub>
+                </div>
+                
+                <p>Where:</p>
+                <ul>
+                    <li>Cathode: the electrode where reduction occurs (gain of electrons)</li>
+                    <li>Anode: the electrode where oxidation occurs (loss of electrons)</li>
+                </ul>
+                
+                <h4>Example:</h4>
+                <p>For a cell composed of Zn/Zn<sup>2+</sup> and Cu/Cu<sup>2+</sup>:</p>
+                <p>At the anode: Zn(s) → Zn<sup>2+</sup>(aq) + 2e<sup>-</sup>      E<sup>o</sup> = -0.76 V</p>
+                <p>At the cathode: Cu<sup>2+</sup>(aq) + 2e<sup>-</sup> → Cu(s)      E<sup>o</sup> = +0.34 V</p>
+                <p>E<sup>o</sup><sub>cell</sub> = +0.34 V - (-0.76 V) = +1.10 V</p>
+            </div>
+            
+            <div class="card">
+                <h3>Predicting Reaction Feasibility</h3>
+                <p>We can use standard cell potentials to predict whether a reaction will be feasible:</p>
+                <ul>
+                    <li>If E<sup>o</sup><sub>cell</sub> is positive, the reaction is thermodynamically feasible</li>
+                    <li>If E<sup>o</sup><sub>cell</sub> is negative, the reaction is thermodynamically not feasible</li>
+                </ul>
+                
+                <h4>Limitations of Using E<sup>o</sup> Values</h4>
+                <p>However, there are limitations to using E<sup>o</sup> values to predict feasibility:</p>
+                
+                <h5>1. Kinetic Barriers</h5>
+                <p>Even if a reaction is thermodynamically feasible (positive E<sup>o</sup><sub>cell</sub>), it may be too slow to be practically useful due to kinetic barriers.</p>
+                
+                <h5>2. Concentration Effects</h5>
+                <p>Standard electrode potentials apply only under standard conditions (1 mol dm<sup>-3</sup> concentrations). Non-standard concentrations will affect the actual cell potential according to the Nernst equation.</p>
+                
+                <p>For a general half-equation: aA + ne<sup>-</sup> ⇌ bB</p>
+                <div class="equation">
+                    E = E<sup>o</sup> - (RT/nF) ln([B]<sup>b</sup>/[A]<sup>a</sup>)
+                </div>
+                
+                <p>This equation shows that decreasing the concentration of products or increasing the concentration of reactants will make the electrode potential more positive.</p>
+            </div>
+            
+            <div class="card">
+                <h3>Electrochemical Series</h3>
+                <p>The electrochemical series is a list of electrode potentials arranged in order of increasing electrode potential values.</p>
+                
+                <table>
+                    <tr>
+                        <th>Half-equation</th>
+                        <th>E<sup>o</sup> (V)</th>
+                    </tr>
+                    <tr>
+                        <td>Li<sup>+</sup>(aq) + e<sup>-</sup> ⇌ Li(s)</td>
+                        <td>-3.04</td>
+                    </tr>
+                    <tr>
+                        <td>K<sup>+</sup>(aq) + e<sup>-</sup> ⇌ K(s)</td>
+                        <td>-2.92</td>
+                    </tr>
+                    <tr>
+                        <td>Na<sup>+</sup>(aq) + e<sup>-</sup> ⇌ Na(s)</td>
+                        <td>-2.71</td>
+                    </tr>
+                    <tr>
+                        <td>Mg<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Mg(s)</td>
+                        <td>-2.37</td>
+                    </tr>
+                    <tr>
+                        <td>Al<sup>3+</sup>(aq) + 3e<sup>-</sup> ⇌ Al(s)</td>
+                        <td>-1.66</td>
+                    </tr>
+                    <tr>
+                        <td>Zn<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Zn(s)</td>
+                        <td>-0.76</td>
+                    </tr>
+                    <tr>
+                        <td>Fe<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Fe(s)</td>
+                        <td>-0.44</td>
+                    </tr>
+                    <tr>
+                        <td>Pb<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Pb(s)</td>
+                        <td>-0.13</td>
+                    </tr>
+                    <tr>
+                        <td>2H<sup>+</sup>(aq) + 2e<sup>-</sup> ⇌ H<sub>2</sub>(g)</td>
+                        <td>0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Cu<sup>2+</sup>(aq) + 2e<sup>-</sup> ⇌ Cu(s)</td>
+                        <td>+0.34</td>
+                    </tr>
+                    <tr>
+                        <td>Fe<sup>3+</sup>(aq) + e<sup>-</sup> ⇌ Fe<sup>2+</sup>(aq)</td>
+                        <td>+0.77</td>
+                    </tr>
+                    <tr>
+                        <td>Ag<sup>+</sup>(aq) + e<sup>-</sup> ⇌ Ag(s)</td>
+                        <td>+0.80</td>
+                    </tr>
+                    <tr>
+                        <td>Cl<sub>2</sub>(g) + 2e<sup>-</sup> ⇌ 2Cl<sup>-</sup>(aq)</td>
+                        <td>+1.36</td>
+                    </tr>
+                    <tr>
+                        <td>F<sub>2</sub>(g) + 2e<sup>-</sup> ⇌ 2F<sup>-</sup>(aq)</td>
+                        <td>+2.87</td>
+                    </tr>
+                </table>
+                
+                <div class="note">
+                    <p><strong>Reading the Table:</strong></p>
+                    <ul>
+                        <li>The more negative the E<sup>o</sup> value, the stronger the reducing agent (species on right of equation)</li>
+                        <li>The more positive the E<sup>o</sup> value, the stronger the oxidizing agent (species on left of equation)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mb-2">
+                <button class="btn" onclick="changeTab('simulation')">Proceed to Simulation</button>
+            </div>
+        </section>
+        
+        <!-- SIMULATION SECTION -->
+        <section id="simulation">
+            <h2>Interactive Electrode Simulation Lab</h2>
+            
+            <div class="card">
+                <h3>Build Your Own Electrochemical Cell</h3>
+                <p>Select electrodes to build a cell and see how different combinations affect the cell potential.</p>
+                
+                <div class="electrode-selection">
+                    <div class="row">
+                        <div class="col">
+                            <label for="left-electrode"><strong>Left Electrode:</strong></label>
+                            <select id="left-electrode" class="dropdown">
+                                <option value="Zn|Zn2+">Zinc (Zn/Zn²⁺) E° = -0.76V</option>
+                                <option value="Cu|Cu2+">Copper (Cu/Cu²⁺) E° = +0.34V</option>
+                                <option value="Ag|Ag+">Silver (Ag/Ag⁺) E° = +0.80V</option>
+                                <option value="Fe|Fe2+">Iron (Fe/Fe²⁺) E° = -0.44V</option>
+                                <option value="Mg|Mg2+">Magnesium (Mg/Mg²⁺) E° = -2.37V</option>
+                                <option value="H2|H+">Hydrogen (H₂/H⁺) E° = 0.00V</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label for="right-electrode"><strong>Right Electrode:</strong></label>
+                            <select id="right-electrode" class="dropdown">
+                                <option value="Cu|Cu2+">Copper (Cu/Cu²⁺) E° = +0.34V</option>
+                                <option value="Zn|Zn2+">Zinc (Zn/Zn²⁺) E° = -0.76V</option>
+                                <option value="Ag|Ag+">Silver (Ag/Ag⁺) E° = +0.80V</option>
+                                <option value="Fe|Fe2+">Iron (Fe/Fe²⁺) E° = -0.44V</option>
+                                <option value="Mg|Mg2+">Magnesium (Mg/Mg²⁺) E° = -2.37V</option>
+                                <option value="H2|H+">Hydrogen (H₂/H⁺) E° = 0.00V</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="build-cell" class="btn">Build Cell</button>
+                </div>
+                
+                <div class="complete-cell-container">
+                <div id="simulation-container">
+                    <div class="electrode-container">
+                        <h4 id="left-electrode-name">Zinc (Zn/Zn²⁺)</h4>
+                        <div class="electrode-animation" id="left-animation">
+                            <div class="beaker"></div>
+                            <div class="electrode left-electrode"></div>
+                            <div class="electrode-label left-electrode-label" id="left-electrode-symbol">Zn</div>
+                            <div class="solution-label" id="left-solution-label">Zn²⁺ (1.00 M)</div>
+                            <!-- Ions will be added dynamically with JavaScript -->
+                        </div>
+                        <p id="left-electrode-equation">Zn(s) → Zn²⁺(aq) + 2e⁻</p>
+                        <p id="left-electrode-potential">Eᵒ = -0.76V</p>
+                    </div>
+                    
+                    <div class="voltmeter-container">
+                        <div class="circuit-wire top-wire"></div>
+                        <div class="voltmeter">
+                            <div class="voltmeter-display">
+                                <div class="voltmeter-reading" id="cell-potential">1.10</div>
+                                <div class="voltmeter-unit">Volts</div>
+                            </div>
+                        </div>
+                        <div class="circuit-wire bottom-wire"></div>
+                        <div id="electron-flow"></div>
+                    </div>
+                    
+                    <div class="electrode-container">
+                        <h4 id="right-electrode-name">Copper (Cu/Cu²⁺)</h4>
+                        <div class="electrode-animation" id="right-animation">
+                            <div class="beaker"></div>
+                            <div class="electrode right-electrode"></div>
+                            <div class="electrode-label right-electrode-label" id="right-electrode-symbol">Cu</div>
+                            <div class="solution-label" id="right-solution-label">Cu²⁺ (1.00 M)</div>
+                            <!-- Ions will be added dynamically with JavaScript -->
+                        </div>
+                        <p id="right-electrode-equation">Cu²⁺(aq) + 2e⁻ → Cu(s)</p>
+                        <p id="right-electrode-potential">Eᵒ = +0.34V</p>
+                    </div>
+                </div>
+                
+                <div class="cell-info-container">
+                    <div class="text-center">
+                        <p><strong>Cell Notation:</strong></p>
+                        <p id="cell-notation" class="cell-notation">Zn|Zn²⁺||Cu²⁺|Cu</p>
+                        <p><strong>Cell Reaction:</strong></p>
+                        <p id="cell-reaction">Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)</p>
+                        <p id="reaction-feasibility" class="mt-2">This reaction is thermodynamically feasible (spontaneous).</p>
+                        <p id="electron-flow-direction" class="mt-2">Electrons flow from left to right in the external circuit.</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+            
+            <div class="card">
+                <h3>Concentration Effects on Cell Potential</h3>
+                <p>Adjust the concentrations of the ions to see how this affects the cell potential.</p>
+                
+                <div class="row">
+                    <div class="col">
+                        <label for="left-ion-concentration">Left Ion Concentration (mol dm⁻³):</label>
+                        <input type="range" id="left-ion-concentration" min="0.01" max="2" step="0.01" value="1" class="slider">
+                        <span id="left-concentration-value">1.00</span>
+                    </div>
+                    
+                    <div class="col">
+                        <label for="right-ion-concentration">Right Ion Concentration (mol dm⁻³):</label>
+                        <input type="range" id="right-ion-concentration" min="0.01" max="2" step="0.01" value="1" class="slider">
+                        <span id="right-concentration-value">1.00</span>
+                    </div>
+                </div>
+                
+                <div class="equation">
+                    <p>Nernst Equation: E = Eᵒ - (RT/nF)ln([Products]/[Reactants])</p>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <p><strong>Adjusted Cell Potential:</strong> <span id="adjusted-potential">1.10</span> V</p>
+                    <div id="concentration-explanation" class="note mt-3">
+                        <p><strong>Effect of Concentration:</strong> According to Le Châtelier's principle, increasing the concentration of reactants or decreasing the concentration of products will drive the reaction further right, making the cell potential more positive. Conversely, increasing product concentration or decreasing reactant concentration will make the cell potential less positive.</p>
+                        <p id="specific-conc-effect">When Cu²⁺ concentration increases, the reduction of Cu²⁺ is favored, making the cell potential more positive.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mb-2">
+                <button class="btn" onclick="changeTab('practice')">Proceed to Practice Questions</button>
+            </div>
+        </section>
+        
+        <!-- PRACTICE SECTION -->
+        <section id="practice">
+            <h2>Practice Questions</h2>
+            
+            <div id="practice-container">
+                <!-- Question 1 -->
+                <div class="question-card" id="question-1">
+                    <h3>Question 1: Electrode Potentials and Feasibility</h3>
+                    <p>Given these two half-cells:</p>
+                    <p>Zn²⁺(aq) + 2e⁻ ⇌ Zn(s), E° = -0.76 V</p>
+                    <p>Cu²⁺(aq) + 2e⁻ ⇌ Cu(s), E° = +0.34 V</p>
+                    <p>Which reaction is thermodynamically feasible?</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(1, 1)">A) Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)</div>
+                        <div class="option" onclick="checkAnswer(1, 2)">B) Cu(s) + Zn²⁺(aq) → Cu²⁺(aq) + Zn(s)</div>
+                        <div class="option" onclick="checkAnswer(1, 3)">C) Both reactions are feasible</div>
+                        <div class="option" onclick="checkAnswer(1, 4)">D) Neither reaction is feasible</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-1"></div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="question-card" id="question-2">
+                    <h3>Question 2: Calculating Cell Potential</h3>
+                    <p>Calculate the cell potential (E°cell) for a cell made from these half-cells:</p>
+                    <p>Ag⁺(aq) + e⁻ ⇌ Ag(s), E° = +0.80 V</p>
+                    <p>Fe²⁺(aq) + 2e⁻ ⇌ Fe(s), E° = -0.44 V</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(2, 1)">A) +0.36 V</div>
+                        <div class="option" onclick="checkAnswer(2, 2)">B) +1.24 V</div>
+                        <div class="option" onclick="checkAnswer(2, 3)">C) -1.24 V</div>
+                        <div class="option" onclick="checkAnswer(2, 4)">D) -0.36 V</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-2"></div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="question-card" id="question-3">
+                    <h3>Question 3: Analyzing Cell Notation</h3>
+                    <p>For the cell: Ni|Ni²⁺||Ag⁺|Ag</p>
+                    <p>Given: Ni²⁺(aq) + 2e⁻ ⇌ Ni(s), E° = -0.25 V</p>
+                    <p>Given: Ag⁺(aq) + e⁻ ⇌ Ag(s), E° = +0.80 V</p>
+                    <p>Which is the correct overall cell reaction as written from left to right?</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(3, 1)">A) Ni(s) + 2Ag⁺(aq) → Ni²⁺(aq) + 2Ag(s)</div>
+                        <div class="option" onclick="checkAnswer(3, 2)">B) 2Ag(s) + Ni²⁺(aq) → 2Ag⁺(aq) + Ni(s)</div>
+                        <div class="option" onclick="checkAnswer(3, 3)">C) Ni²⁺(aq) + 2Ag(s) → Ni(s) + 2Ag⁺(aq)</div>
+                        <div class="option" onclick="checkAnswer(3, 4)">D) Ni²⁺(aq) + 2e⁻ → Ni(s)</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-3"></div>
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="question-card" id="question-4">
+                    <h3>Question 4: Cell Potential and Feasibility</h3>
+                    <p>For the cell: Pb|Pb²⁺||H⁺|H₂|Pt</p>
+                    <p>Given: Pb²⁺(aq) + 2e⁻ ⇌ Pb(s), E° = -0.13 V</p>
+                    <p>Given: 2H⁺(aq) + 2e⁻ ⇌ H₂(g), E° = 0.00 V</p>
+                    <p>Calculate the cell potential and determine if the reaction as written (from left to right) is feasible.</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(4, 1)">A) E°cell = +0.13 V, Reaction is feasible</div>
+                        <div class="option" onclick="checkAnswer(4, 2)">B) E°cell = -0.13 V, Reaction is not feasible</div>
+                        <div class="option" onclick="checkAnswer(4, 3)">C) E°cell = +0.13 V, Reaction is not feasible</div>
+                        <div class="option" onclick="checkAnswer(4, 4)">D) E°cell = -0.13 V, Reaction is feasible</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-4"></div>
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="question-card" id="question-5">
+                    <h3>Question 5: Determining Reaction Direction</h3>
+                    <p>For the cell: Mg|Mg²⁺||Fe²⁺|Fe</p>
+                    <p>Given: Mg²⁺(aq) + 2e⁻ ⇌ Mg(s), E° = -2.37 V</p>
+                    <p>Given: Fe²⁺(aq) + 2e⁻ ⇌ Fe(s), E° = -0.44 V</p>
+                    <p>What is the standard cell potential, and in which direction will the reaction proceed?</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(5, 1)">A) E°cell = +1.93 V, Fe²⁺ will oxidize Mg</div>
+                        <div class="option" onclick="checkAnswer(5, 2)">B) E°cell = -1.93 V, Mg will oxidize Fe²⁺</div>
+                        <div class="option" onclick="checkAnswer(5, 3)">C) E°cell = +1.93 V, Mg will oxidize Fe²⁺</div>
+                        <div class="option" onclick="checkAnswer(5, 4)">D) E°cell = -1.93 V, Fe²⁺ will oxidize Mg</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-5"></div>
+                </div>
+                
+                <!-- Question 6 -->
+                <div class="question-card" id="question-6">
+                    <h3>Question 6: Electrode Potentials and Cell Construction</h3>
+                    <p>You have the following half-cells:</p>
+                    <p>Half-cell 1: Zn²⁺(aq) + 2e⁻ ⇌ Zn(s), E° = -0.76 V</p>
+                    <p>Half-cell 2: Ag⁺(aq) + e⁻ ⇌ Ag(s), E° = +0.80 V</p>
+                    <p>If you connect these half-cells to create a galvanic cell, what will be the cell potential?</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(6, 1)">A) -0.04 V</div>
+                        <div class="option" onclick="checkAnswer(6, 2)">B) +0.04 V</div>
+                        <div class="option" onclick="checkAnswer(6, 3)">C) +1.56 V</div>
+                        <div class="option" onclick="checkAnswer(6, 4)">D) -1.56 V</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-6"></div>
+                </div>
+                
+                <!-- Question 7 -->
+                <div class="question-card" id="question-7">
+                    <h3>Question 7: Applying Cell Notation</h3>
+                    <p>For the cell notation: Pt|H₂|H⁺||Cu²⁺|Cu</p>
+                    <p>Given: 2H⁺(aq) + 2e⁻ ⇌ H₂(g), E° = 0.00 V</p>
+                    <p>Given: Cu²⁺(aq) + 2e⁻ ⇌ Cu(s), E° = +0.34 V</p>
+                    <p>Which statement is correct?</p>
+                    
+                    <div class="options">
+                        <div class="option" onclick="checkAnswer(7, 1)">A) E°cell = -0.34 V, the reaction as written is not feasible</div>
+                        <div class="option" onclick="checkAnswer(7, 2)">B) E°cell = +0.34 V, the reaction as written is feasible</div>
+                        <div class="option" onclick="checkAnswer(7, 3)">C) E°cell = +0.34 V, Cu²⁺ will be oxidized</div>
+                        <div class="option" onclick="checkAnswer(7, 4)">D) E°cell = -0.34 V, H₂ will be oxidized</div>
+                    </div>
+                    
+                    <div class="feedback" id="feedback-7"></div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn" id="check-all">Check All Answers</button>
+                    <button class="btn btn-secondary" id="reset-practice">Reset</button>
+                </div>
+            </div>
+            
+            <div class="text-center mb-2">
+                <button class="btn" onclick="changeTab('game')">Proceed to Game</button>
+            </div>
+        </section>
+        
+        <!-- GAME SECTION -->
+        <section id="game">
+            <h2>Electrode Potentials Game Zone</h2>
+            
+            <div class="card">
+                <h3>Cell Potential Calculator Challenge</h3>
+                <p>Calculate the cell potential for 10 different electrochemical cells and determine the feasible reactions. See how quickly you can correctly solve all 10!</p>
+                
+                <div class="calculator-challenge">
+                    <div class="game-controls">
+                        <div class="game-score">Questions Correct: <span id="calc-score">0</span>/10</div>
+                        <div class="game-timer">Time: <span id="calc-timer">0</span>s</div>
+                        <button class="btn" id="start-calc-game">Start Challenge</button>
+                    </div>
+                    
+                    <div id="calc-question" style="display: none;">
+                        <div class="cell-question-container">
+                            <p><strong>Cell Diagram:</strong> <span id="cell-diagram" class="cell-notation">Zn|Zn²⁺||Cu²⁺|Cu</span></p>
+                            <p><strong>LEFT Half-Cell:</strong> <span id="calc-electrode1">Zn²⁺(aq) + 2e⁻ ⇌ Zn(s), E° = -0.76 V</span></p>
+                            <p><strong>RIGHT Half-Cell:</strong> <span id="calc-electrode2">Cu²⁺(aq) + 2e⁻ ⇌ Cu(s), E° = +0.34 V</span></p>
+                            
+                            <div class="mt-3">
+                                <p><strong>Calculate the standard cell potential (E°cell):</strong></p>
+                                <input type="number" id="calc-answer" step="0.01" placeholder="Enter answer in volts" class="dropdown">
+                                <button class="btn" id="submit-calc">Submit Cell Potential</button>
+                            </div>
+                            
+                            <div class="mt-3" id="reaction-question" style="display: none;">
+                                <p><strong>Which reaction is feasible?</strong></p>
+                                <div class="options reaction-options">
+                                    <div class="option" id="reaction-option1" onclick="selectReaction(1)">A) Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)</div>
+                                    <div class="option" id="reaction-option2" onclick="selectReaction(2)">B) Cu(s) + Zn²⁺(aq) → Cu²⁺(aq) + Zn(s)</div>
+                                </div>
+                                <button class="btn" id="submit-reaction" onclick="submitReaction()">Submit Reaction</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="calc-feedback" class="feedback"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Tab switching
+        function changeTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update nav tabs
+            document.querySelectorAll('.nav-tabs a').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelector(`.nav-tabs a[href="#${tabId}"]`).classList.add('active');
+        }
+        
+        // Store electrode data
+        const electrodeData = {
+            "Zn|Zn2+": {
+                name: "Zinc (Zn/Zn²⁺)",
+                potential: -0.76,
+                color: "#A8A8A8", // Silver/gray color for zinc
+                oxidationEquation: "Zn(s) → Zn²⁺(aq) + 2e⁻",
+                reductionEquation: "Zn²⁺(aq) + 2e⁻ → Zn(s)",
+                electrons: 2
+            },
+            "Cu|Cu2+": {
+                name: "Copper (Cu/Cu²⁺)",
+                potential: 0.34,
+                color: "#B87333", // Copper color
+                oxidationEquation: "Cu(s) → Cu²⁺(aq) + 2e⁻",
+                reductionEquation: "Cu²⁺(aq) + 2e⁻ → Cu(s)",
+                electrons: 2
+            },
+            "Ag|Ag+": {
+                name: "Silver (Ag/Ag⁺)",
+                potential: 0.80,
+                color: "#C0C0C0", // Silver color
+                oxidationEquation: "Ag(s) → Ag⁺(aq) + e⁻",
+                reductionEquation: "Ag⁺(aq) + e⁻ → Ag(s)",
+                electrons: 1
+            },
+            "Fe|Fe2+": {
+                name: "Iron (Fe/Fe²⁺)",
+                potential: -0.44,
+                color: "#8B4513", // Brown color for iron
+                oxidationEquation: "Fe(s) → Fe²⁺(aq) + 2e⁻",
+                reductionEquation: "Fe²⁺(aq) + 2e⁻ → Fe(s)",
+                electrons: 2
+            },
+            "Mg|Mg2+": {
+                name: "Magnesium (Mg/Mg²⁺)",
+                potential: -2.37,
+                color: "#EEEEEE", // Light gray for magnesium
+                oxidationEquation: "Mg(s) → Mg²⁺(aq) + 2e⁻",
+                reductionEquation: "Mg²⁺(aq) + 2e⁻ → Mg(s)",
+                electrons: 2
+            },
+            "H2|H+": {
+                name: "Hydrogen (H₂/H⁺)",
+                potential: 0.00,
+                color: "#FFFFFF", // White/clear for hydrogen
+                oxidationEquation: "H₂(g) → 2H⁺(aq) + 2e⁻",
+                reductionEquation: "2H⁺(aq) + 2e⁻ → H₂(g)",
+                electrons: 2
+            }
+        };
+        
+        // Simulation Functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up initial cell
+            updateCell();
+            
+            // Build cell button
+            document.getElementById('build-cell').addEventListener('click', updateCell);
+            
+            // Concentration sliders
+            const leftConcentrationSlider = document.getElementById('left-ion-concentration');
+            const rightConcentrationSlider = document.getElementById('right-ion-concentration');
+            
+            leftConcentrationSlider.addEventListener('input', function() {
+                document.getElementById('left-concentration-value').textContent = parseFloat(this.value).toFixed(2);
+                updateAdjustedPotential();
+            });
+            
+            rightConcentrationSlider.addEventListener('input', function() {
+                document.getElementById('right-concentration-value').textContent = parseFloat(this.value).toFixed(2);
+                updateAdjustedPotential();
+            });
+            
+            // Set up practice section
+            document.getElementById('check-all').addEventListener('click', checkAllAnswers);
+            document.getElementById('reset-practice').addEventListener('click', resetPractice);
+            
+            // Set up calculator challenge
+            document.getElementById('start-calc-game').addEventListener('click', startCalcGame);
+            document.getElementById('submit-calc').addEventListener('click', checkCalcAnswer);
+            
+            // Add event listener for Enter key on calculator answer
+            document.getElementById('calc-answer').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkCalcAnswer();
+                }
+            });
+        });
+
+        function updateCell() {
+            const leftElectrodeKey = document.getElementById('left-electrode').value;
+            const rightElectrodeKey = document.getElementById('right-electrode').value;
+            
+            const leftElectrode = electrodeData[leftElectrodeKey];
+            const rightElectrode = electrodeData[rightElectrodeKey];
+            
+            // Update left electrode display
+            document.getElementById('left-electrode-name').textContent = leftElectrode.name;
+            document.querySelector('.left-electrode').style.backgroundColor = leftElectrode.color;
+            document.getElementById('left-electrode-equation').textContent = leftElectrode.oxidationEquation;
+            document.getElementById('left-electrode-potential').textContent = `E° = ${leftElectrode.potential.toFixed(2)}V`;
+            
+            // Update symbol and solution labels
+            const leftSymbol = leftElectrode.name.split(' ')[0].split('/')[0];
+            document.getElementById('left-electrode-symbol').textContent = leftSymbol;
+            
+            let leftIonCharge = "²⁺";
+            if (leftElectrodeKey === "Ag|Ag+") {
+                leftIonCharge = "⁺";
+            } else if (leftElectrodeKey === "H2|H+") {
+                leftIonCharge = "⁺";
+            }
+            
+            document.getElementById('left-solution-label').textContent = `${leftSymbol}${leftIonCharge} (1.00 M)`;
+            
+            // Update right electrode display
+            document.getElementById('right-electrode-name').textContent = rightElectrode.name;
+            document.querySelector('.right-electrode').style.backgroundColor = rightElectrode.color;
+            document.getElementById('right-electrode-equation').textContent = rightElectrode.reductionEquation;
+            document.getElementById('right-electrode-potential').textContent = `E° = ${rightElectrode.potential.toFixed(2)}V`;
+            
+            // Update symbol and solution labels
+            const rightSymbol = rightElectrode.name.split(' ')[0].split('/')[0];
+            document.getElementById('right-electrode-symbol').textContent = rightSymbol;
+            
+            let rightIonCharge = "²⁺";
+            if (rightElectrodeKey === "Ag|Ag+") {
+                rightIonCharge = "⁺";
+            } else if (rightElectrodeKey === "H2|H+") {
+                rightIonCharge = "⁺";
+            }
+            
+            document.getElementById('right-solution-label').textContent = `${rightSymbol}${rightIonCharge} (1.00 M)`;
+            
+            // Add salt bridge
+            addSaltBridge();
+            
+            // Add ions to solutions
+            addIons('left-animation', leftElectrodeKey);
+            addIons('right-animation', rightElectrodeKey);
+            
+            // Calculate cell potential by convention (right - left)
+            const cellPotential = rightElectrode.potential - leftElectrode.potential;
+            document.getElementById('cell-potential').textContent = cellPotential.toFixed(2);
+            
+            // Update cell notation
+            let leftIon, rightIon, leftSymbolNotation, rightSymbolNotation;
+            
+            // Set correct ion charges and symbols based on the electrode type
+            if (leftElectrodeKey === "Ag|Ag+") {
+                leftIon = "Ag⁺";
+                leftSymbolNotation = "Ag";
+            } else if (leftElectrodeKey === "H2|H+") {
+                leftIon = "H⁺";
+                leftSymbolNotation = "H₂";
+            } else {
+                leftIon = leftElectrode.name.split(' ')[0].split('/')[0] + "²⁺";
+                leftSymbolNotation = leftElectrode.name.split(' ')[0].split('/')[0];
+            }
+            
+            if (rightElectrodeKey === "Ag|Ag+") {
+                rightIon = "Ag⁺";
+                rightSymbolNotation = "Ag";
+            } else if (rightElectrodeKey === "H2|H+") {
+                rightIon = "H⁺";
+                rightSymbolNotation = "H₂";
+            } else {
+                rightIon = rightElectrode.name.split(' ')[0].split('/')[0] + "²⁺";
+                rightSymbolNotation = rightElectrode.name.split(' ')[0].split('/')[0];
+            }
+            
+            let cellNotation = `${leftSymbolNotation}|${leftIon}||${rightIon}|${rightSymbolNotation}`;
+            
+            // Special cases for hydrogen, chlorine, etc.
+            if (leftElectrodeKey === "H2|H+") {
+                cellNotation = `Pt|${leftSymbolNotation}|${leftIon}||${rightIon}|${rightSymbolNotation}`;
+            }
+            if (rightElectrodeKey === "H2|H+") {
+                cellNotation = `${leftSymbolNotation}|${leftIon}||${rightIon}|${rightSymbolNotation}|Pt`;
+            }
+            
+            document.getElementById('cell-notation').textContent = cellNotation;
+            
+            // Check if electrodes are identical
+            const identicalElectrodes = leftElectrodeKey === rightElectrodeKey;
+            
+            // Determine which way the reaction goes (feasibility)
+            let cellReaction;
+            const electronFlowElem = document.getElementById('electron-flow-direction');
+            
+            if (identicalElectrodes) {
+                // Identical electrodes - no reaction
+                cellReaction = "No net reaction (identical electrodes)";
+                electronFlowElem.textContent = "No electron flow (identical electrodes)";
+            } else if (cellPotential > 0) {
+                // Right electrode has higher potential, so left is oxidized and right is reduced
+                cellReaction = leftElectrode.oxidationEquation.split('→')[0].trim() + ' + ' + 
+                           rightElectrode.reductionEquation.split('→')[0].trim() + ' → ' + 
+                           leftElectrode.oxidationEquation.split('→')[1].trim() + ' + ' + 
+                           rightElectrode.reductionEquation.split('→')[1].trim();
+                
+                electronFlowElem.textContent = "Electrons flow from left to right in the external circuit.";
+            } else {
+                // Left electrode has higher potential, so right is oxidized and left is reduced
+                cellReaction = rightElectrode.oxidationEquation.split('→')[0].trim() + ' + ' + 
+                           leftElectrode.reductionEquation.split('→')[0].trim() + ' → ' + 
+                           rightElectrode.oxidationEquation.split('→')[1].trim() + ' + ' + 
+                           leftElectrode.reductionEquation.split('→')[1].trim();
+                
+                electronFlowElem.textContent = "Electrons flow from right to left in the external circuit.";
+            }
+            
+            document.getElementById('cell-reaction').textContent = cellReaction;
+            
+            // Update feasibility message based on convention
+            const feasibilityElem = document.getElementById('reaction-feasibility');
+            if (identicalElectrodes) {
+                feasibilityElem.textContent = "The electrodes are identical, so the system is in equilibrium.";
+                feasibilityElem.style.color = "#1a73e8";
+            } else if (cellPotential > 0) {
+                feasibilityElem.textContent = "This reaction is thermodynamically feasible (spontaneous).";
+                feasibilityElem.style.color = "#34a853";
+            } else if (cellPotential < 0) {
+                feasibilityElem.textContent = "This reaction is thermodynamically not feasible (non-spontaneous).";
+                feasibilityElem.style.color = "#ea4335";
+            } else {
+                feasibilityElem.textContent = "This reaction is in equilibrium.";
+                feasibilityElem.style.color = "#1a73e8";
+            }
+            
+            // Reset concentration sliders
+            document.getElementById('left-ion-concentration').value = 1;
+            document.getElementById('right-ion-concentration').value = 1;
+            document.getElementById('left-concentration-value').textContent = "1.00";
+            document.getElementById('right-concentration-value').textContent = "1.00";
+            
+            // Update adjusted potential
+            updateAdjustedPotential();
+            
+            // Animate the electron flow - direction depends on cell potential
+            // Only animate if electrodes are different
+            if (!identicalElectrodes) {
+                animateCircuitElectronFlow(cellPotential > 0);
+                animateElectronFlow(cellPotential > 0);
+            } else {
+                // Clear any existing electron animations
+                clearElectronAnimations();
+            }
+        }
+        
+        function addSaltBridge() {
+            // Remove existing salt bridge if any
+            const existingSaltBridge = document.querySelector('.salt-bridge');
+            if (existingSaltBridge) {
+                existingSaltBridge.remove();
+            }
+            
+            const existingSaltBridgeLabel = document.querySelector('.salt-bridge-label');
+            if (existingSaltBridgeLabel) {
+                existingSaltBridgeLabel.remove();
+            }
+            
+            // Add salt bridge to both half-cells
+            const leftAnimation = document.getElementById('left-animation');
+            const rightAnimation = document.getElementById('right-animation');
+            
+            const saltBridge = document.createElement('div');
+            saltBridge.className = 'salt-bridge';
+            leftAnimation.appendChild(saltBridge);
+            
+            const saltBridgeRight = document.createElement('div');
+            saltBridgeRight.className = 'salt-bridge';
+            rightAnimation.appendChild(saltBridgeRight);
+            
+            // Add salt bridge label
+            const saltBridgeLabel = document.createElement('div');
+            saltBridgeLabel.className = 'salt-bridge-label';
+            saltBridgeLabel.textContent = 'Salt bridge (KNO₃)';
+            leftAnimation.appendChild(saltBridgeLabel);
+            
+            const saltBridgeLabelRight = document.createElement('div');
+            saltBridgeLabelRight.className = 'salt-bridge-label';
+            saltBridgeLabelRight.textContent = 'Salt bridge (KNO₃)';
+            rightAnimation.appendChild(saltBridgeLabelRight);
+        }
+        
+        function addIons(containerId, electrodeKey) {
+            // Clear existing ions
+            const container = document.getElementById(containerId);
+            const existingIons = container.querySelectorAll('.ion');
+            existingIons.forEach(ion => ion.remove());
+            
+            // Get beaker dimensions
+            const beaker = container.querySelector('.beaker');
+            const beakerRect = beaker.getBoundingClientRect();
+            
+            // Determine ion charge and symbol
+            let charge = '+';
+            let symbol = '';
+            
+            if (electrodeKey === "Zn|Zn2+") {
+                charge = '+';
+                symbol = 'Zn²⁺';
+            } else if (electrodeKey === "Cu|Cu2+") {
+                charge = '+';
+                symbol = 'Cu²⁺';
+            } else if (electrodeKey === "Ag|Ag+") {
+                charge = '+';
+                symbol = 'Ag⁺';
+            } else if (electrodeKey === "Fe|Fe2+") {
+                charge = '+';
+                symbol = 'Fe²⁺';
+            } else if (electrodeKey === "Mg|Mg2+") {
+                charge = '+';
+                symbol = 'Mg²⁺';
+            } else if (electrodeKey === "H2|H+") {
+                charge = '+';
+                symbol = 'H⁺';
+            }
+            
+            // Add positive ions
+            for (let i = 0; i < 10; i++) {
+                const ion = document.createElement('div');
+                ion.className = 'ion positive';
+                ion.textContent = symbol;
+                
+                // Random position within beaker
+                const top = Math.floor(beaker.offsetTop + 20 + Math.random() * (beaker.offsetHeight - 40));
+                const left = Math.floor(beaker.offsetLeft + 20 + Math.random() * (beaker.offsetWidth - 40));
+                
+                ion.style.top = `${top}px`;
+                ion.style.left = `${left}px`;
+                
+                container.appendChild(ion);
+            }
+            
+            // Add negative ions (electrolyte)
+            for (let i = 0; i < 5; i++) {
+                const ion = document.createElement('div');
+                ion.className = 'ion negative';
+                ion.textContent = 'NO₃⁻';
+                
+                // Random position within beaker
+                const top = Math.floor(beaker.offsetTop + 20 + Math.random() * (beaker.offsetHeight - 40));
+                const left = Math.floor(beaker.offsetLeft + 20 + Math.random() * (beaker.offsetWidth - 40));
+                
+                ion.style.top = `${top}px`;
+                ion.style.left = `${left}px`;
+                
+                container.appendChild(ion);
+            }
+        }
+        
+        function clearElectronAnimations() {
+            // Clear flowing electrons
+            const electronFlowContainer = document.getElementById('electron-flow');
+            electronFlowContainer.innerHTML = '';
+            
+            // Remove existing style
+            const existingStyle = document.getElementById('electron-flow-style');
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // Clear electrons in animations
+            document.querySelectorAll('.electron').forEach(e => e.remove());
+        }
+        
+        function updateAdjustedPotential() {
+            const leftElectrodeKey = document.getElementById('left-electrode').value;
+            const rightElectrodeKey = document.getElementById('right-electrode').value;
+            
+            const leftElectrode = electrodeData[leftElectrodeKey];
+            const rightElectrode = electrodeData[rightElectrodeKey];
+            
+            const leftConcentration = parseFloat(document.getElementById('left-ion-concentration').value);
+            const rightConcentration = parseFloat(document.getElementById('right-ion-concentration').value);
+            
+            // By convention, cell potential is Eᵒ(right) - Eᵒ(left)
+            const standardCellPotential = rightElectrode.potential - leftElectrode.potential;
+            
+            // For the Nernst equation, we need to determine if the conventional cell reaction is spontaneous
+            let electronNumber, concentrationFactor;
+            let specificEffect = "";
+            
+            if (standardCellPotential > 0) {
+                // Right electrode is cathode (reduction), left is anode (oxidation)
+                electronNumber = Math.max(leftElectrode.electrons, rightElectrode.electrons);
+                // Q = [products]/[reactants] = [left ion]^x/[right ion]^y where x,y are stoichiometric coefficients
+                concentrationFactor = (0.059 / electronNumber) * Math.log(leftConcentration / rightConcentration);
+                
+                // Update specific explanation
+                if (leftConcentration > 1.0) {
+                    if (leftElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Increasing the Ag⁺ ion concentration (oxidation product) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    } else if (leftElectrodeKey === "H2|H+") {
+                        specificEffect = `Increasing the H⁺ ion concentration (oxidation product) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    } else {
+                        specificEffect = `Increasing the ${leftElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (oxidation product) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    }
+                } else if (leftConcentration < 1.0) {
+                    if (leftElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Decreasing the Ag⁺ ion concentration (oxidation product) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    } else if (leftElectrodeKey === "H2|H+") {
+                        specificEffect = `Decreasing the H⁺ ion concentration (oxidation product) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    } else {
+                        specificEffect = `Decreasing the ${leftElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (oxidation product) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    }
+                } else if (rightConcentration > 1.0) {
+                    if (rightElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Increasing the Ag⁺ ion concentration (reduction reactant) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    } else if (rightElectrodeKey === "H2|H+") {
+                        specificEffect = `Increasing the H⁺ ion concentration (reduction reactant) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    } else {
+                        specificEffect = `Increasing the ${rightElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (reduction reactant) makes the cell potential more positive by shifting the equilibrium to the right.`;
+                    }
+                } else if (rightConcentration < 1.0) {
+                    if (rightElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Decreasing the Ag⁺ ion concentration (reduction reactant) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    } else if (rightElectrodeKey === "H2|H+") {
+                        specificEffect = `Decreasing the H⁺ ion concentration (reduction reactant) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    } else {
+                        specificEffect = `Decreasing the ${rightElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (reduction reactant) makes the cell potential less positive by shifting the equilibrium to the left.`;
+                    }
+                }
+            } else {
+                // Left electrode is cathode (reduction), right is anode (oxidation)
+                electronNumber = Math.max(leftElectrode.electrons, rightElectrode.electrons);
+                // Q = [products]/[reactants] = [right ion]^x/[left ion]^y
+                concentrationFactor = (0.059 / electronNumber) * Math.log(rightConcentration / leftConcentration);
+                
+                // Update specific explanation
+                if (rightConcentration > 1.0) {
+                    if (rightElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Increasing the Ag⁺ ion concentration (oxidation product) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    } else if (rightElectrodeKey === "H2|H+") {
+                        specificEffect = `Increasing the H⁺ ion concentration (oxidation product) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    } else {
+                        specificEffect = `Increasing the ${rightElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (oxidation product) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    }
+                } else if (rightConcentration < 1.0) {
+                    if (rightElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Decreasing the Ag⁺ ion concentration (oxidation product) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    } else if (rightElectrodeKey === "H2|H+") {
+                        specificEffect = `Decreasing the H⁺ ion concentration (oxidation product) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    } else {
+                        specificEffect = `Decreasing the ${rightElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (oxidation product) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    }
+                } else if (leftConcentration > 1.0) {
+                    if (leftElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Increasing the Ag⁺ ion concentration (reduction reactant) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    } else if (leftElectrodeKey === "H2|H+") {
+                        specificEffect = `Increasing the H⁺ ion concentration (reduction reactant) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    } else {
+                        specificEffect = `Increasing the ${leftElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (reduction reactant) makes the cell potential less negative by shifting the equilibrium to the right.`;
+                    }
+                } else if (leftConcentration < 1.0) {
+                    if (leftElectrodeKey === "Ag|Ag+") {
+                        specificEffect = `Decreasing the Ag⁺ ion concentration (reduction reactant) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    } else if (leftElectrodeKey === "H2|H+") {
+                        specificEffect = `Decreasing the H⁺ ion concentration (reduction reactant) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    } else {
+                        specificEffect = `Decreasing the ${leftElectrode.name.split(' ')[0].split('/')[0]}²⁺ ion concentration (reduction reactant) makes the cell potential more negative by shifting the equilibrium to the left.`;
+                    }
+                }
+            }
+            
+            // Calculate adjusted cell potential
+            // In the standard form: E = Eᵒ - (RT/nF)ln(Q)
+            const adjustedPotential = standardCellPotential - concentrationFactor;
+            
+            document.getElementById('adjusted-potential').textContent = adjustedPotential.toFixed(2);
+            document.getElementById('specific-conc-effect').textContent = specificEffect;
+            
+            // Update voltmeter display
+            document.getElementById('cell-potential').textContent = adjustedPotential.toFixed(2);
+            
+            // Update feasibility based on adjusted potential
+            const feasibilityElem = document.getElementById('reaction-feasibility');
+            if (adjustedPotential > 0) {
+                feasibilityElem.textContent = "This reaction is thermodynamically feasible (spontaneous).";
+                feasibilityElem.style.color = "#34a853";
+            } else if (adjustedPotential < 0) {
+                feasibilityElem.textContent = "This reaction is thermodynamically not feasible (non-spontaneous).";
+                feasibilityElem.style.color = "#ea4335";
+            } else {
+                feasibilityElem.textContent = "This reaction is in equilibrium.";
+                feasibilityElem.style.color = "#1a73e8";
+            }
+            
+            // Update electron flow direction based on adjusted potential
+            const electronFlowElem = document.getElementById('electron-flow-direction');
+            if (adjustedPotential > 0) {
+                electronFlowElem.textContent = "Electrons flow from left to right in the external circuit.";
+            } else {
+                electronFlowElem.textContent = "Electrons flow from right to left in the external circuit.";
+            }
+            
+            // Update electron animation
+            animateCircuitElectronFlow(adjustedPotential > 0);
+            animateElectronFlow(adjustedPotential > 0);
+        }
+        
+        function animateElectronFlow(leftToRight) {
+            // Remove any existing electrons
+            document.querySelectorAll('.electron').forEach(e => e.remove());
+            
+            // Create new electrons and animate them
+            const leftAnimation = document.getElementById('left-animation');
+            const rightAnimation = document.getElementById('right-animation');
+            
+            // Determine the source and target based on direction
+            const sourceEl = leftToRight ? leftAnimation : rightAnimation;
+            const targetEl = leftToRight ? rightAnimation : leftAnimation;
+            
+            // Create electrons
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const electron = document.createElement('div');
+                    electron.className = 'electron';
+                    
+                    // Set starting position
+                    if (leftToRight) {
+                        electron.style.left = '30%';
+                        electron.style.top = `${100 + i * 20}px`;
+                    } else {
+                        electron.style.right = '30%';
+                        electron.style.top = `${100 + i * 20}px`;
+                    }
+                    
+                    sourceEl.appendChild(electron);
+                    
+                    // Animation
+                    let pos = 0;
+                    const id = setInterval(frame, 10);
+                    
+                    function frame() {
+                        if (pos >= 100) {
+                            clearInterval(id);
+                            electron.remove();
+                        } else {
+                            pos++;
+                            if (leftToRight) {
+                                electron.style.left = `${30 + pos * 0.4}%`;
+                            } else {
+                                electron.style.right = `${30 + pos * 0.4}%`;
+                            }
+                        }
+                    }
+                }, i * 200);
+            }
+        }
+        
+        function animateCircuitElectronFlow(leftToRight) {
+            // Clear current electrons
+            const electronFlowContainer = document.getElementById('electron-flow');
+            electronFlowContainer.innerHTML = '';
+            
+            // Remove any existing animation style
+            const existingStyle = document.getElementById('electron-flow-style');
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // Add CSS animation
+            const style = document.createElement('style');
+            style.id = 'electron-flow-style';
+            if (leftToRight) {
+                style.textContent = `
+                    @keyframes flow {
+                        from { left: 0; }
+                        to { left: 100%; }
+                    }
+                `;
+            } else {
+                style.textContent = `
+                    @keyframes flow {
+                        from { right: 0; }
+                        to { right: 100%; }
+                    }
+                `;
+            }
+            document.head.appendChild(style);
+            
+            // Create electrons in circuit
+            for (let i = 0; i < 5; i++) {
+                const electron = document.createElement('div');
+                electron.className = 'flowing-electron';
+                
+                if (leftToRight) {
+                    electron.style.left = `${i * 20}%`;
+                    electron.style.animationDelay = `${i * 0.5}s`;
+                } else {
+                    electron.style.right = `${i * 20}%`;
+                    electron.style.animationDelay = `${i * 0.5}s`;
+                }
+                
+                electronFlowContainer.appendChild(electron);
+            }
+        }
+        
+        // Practice Section Functions
+        const answers = {
+            1: 1, // A) Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)
+            2: 2, // B) +1.24 V
+            3: 1, // A) Ni(s) + 2Ag⁺(aq) → Ni²⁺(aq) + 2Ag(s)
+            4: 1, // A) E°cell = +0.13 V, Reaction is feasible
+            5: 1, // A) E°cell = +1.93 V, Fe²⁺ will oxidize Mg
+            6: 3, // C) +1.56 V
+            7: 2  // B) E°cell = +0.34 V, the reaction as written is feasible
+        };
+        
+        const explanations = {
+            1: "When determining feasibility, we need to find which electrode has the higher reduction potential. Cu²⁺/Cu has a more positive reduction potential (+0.34 V) than Zn²⁺/Zn (-0.76 V), so Cu²⁺ will be reduced (gain electrons) and Zn will be oxidized (lose electrons). The feasible reaction is Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s), with E°cell = +0.34 V - (-0.76 V) = +1.10 V.",
+            
+            2: "For a galvanic cell, the half-reaction with the more positive reduction potential occurs at the cathode, and the half-reaction with the more negative potential occurs at the anode. Since Ag⁺/Ag (+0.80 V) has a more positive potential than Fe²⁺/Fe (-0.44 V), the cell potential is: E°cell = E°cathode - E°anode = +0.80 V - (-0.44 V) = +1.24 V.",
+            
+            3: "In cell notation (Ni|Ni²⁺||Ag⁺|Ag), the overall reaction proceeds from left to right. Since Ag⁺/Ag (+0.80 V) has a more positive potential than Ni²⁺/Ni (-0.25 V), the silver half-cell will be the cathode (reduction) and nickel will be the anode (oxidation). The balanced reaction is: Ni(s) + 2Ag⁺(aq) → Ni²⁺(aq) + 2Ag(s). Note that the stoichiometry must be balanced (2 silver ions are needed for every nickel atom).",
+            
+            4: "For the cell Pb|Pb²⁺||H⁺|H₂|Pt, we calculate the cell potential as E°cell = E°(right) - E°(left) = 0.00 V - (-0.13 V) = +0.13 V. The reaction as written (from left to right) would be Pb(s) → Pb²⁺(aq) + 2e⁻ (oxidation) and 2H⁺(aq) + 2e⁻ → H₂(g) (reduction), giving the overall reaction Pb(s) + 2H⁺(aq) → Pb²⁺(aq) + H₂(g). Since the cell potential is positive (+0.13 V), this reaction is thermodynamically feasible.",
+            
+            5: "For the cell Mg|Mg²⁺||Fe²⁺|Fe, the cell potential is E°cell = E°(right) - E°(left) = -0.44 V - (-2.37 V) = +1.93 V. Since this is positive, the reaction is feasible. The Fe²⁺ will oxidize Mg to Mg²⁺, and Fe²⁺ will be reduced to Fe. The reaction proceeds as: Mg(s) + Fe²⁺(aq) → Mg²⁺(aq) + Fe(s).",
+            
+            6: "To calculate the cell potential of a galvanic cell, we determine which half-cell has the higher reduction potential (that will be the cathode) and which has the lower potential (that will be the anode). Since Ag⁺/Ag (+0.80 V) has a higher potential than Zn²⁺/Zn (-0.76 V), silver will be reduced and zinc will be oxidized. The cell potential is E°cell = E°cathode - E°anode = +0.80 V - (-0.76 V) = +1.56 V.",
+            
+            7: "In the cell notation Pt|H₂|H⁺||Cu²⁺|Cu, the cell potential is E°cell = E°(right) - E°(left) = +0.34 V - 0.00 V = +0.34 V. Since this is positive, the reaction as written (from left to right in the cell notation) is feasible. The reaction would be: H₂(g) + Cu²⁺(aq) → 2H⁺(aq) + Cu(s)."
+        };
+        
+        function checkAnswer(questionNum, answerNum) {
+            const options = document.querySelectorAll(`#question-${questionNum} .option`);
+            const feedback = document.getElementById(`feedback-${questionNum}`);
+            
+            // Clear previous selections
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+            
+            // Mark selected option
+            options[answerNum - 1].classList.add('selected');
+            
+            const correctAnswer = answers[questionNum];
+            
+            if (answerNum === correctAnswer) {
+                options[answerNum - 1].classList.add('correct');
+                feedback.textContent = "Correct! " + explanations[questionNum];
+                feedback.classList.add('correct');
+                feedback.classList.remove('wrong');
+            } else {
+                options[answerNum - 1].classList.add('wrong');
+                options[correctAnswer - 1].classList.add('correct');
+                feedback.textContent = "Incorrect. " + explanations[questionNum];
+                feedback.classList.add('wrong');
+                feedback.classList.remove('correct');
+            }
+            
+            feedback.style.display = 'block';
+        }
+        
+        function checkAllAnswers() {
+            for (let i = 1; i <= 7; i++) {
+                const selectedOption = document.querySelector(`#question-${i} .option.selected`);
+                if (selectedOption) {
+                    const answerNum = Array.from(selectedOption.parentNode.children).indexOf(selectedOption) + 1;
+                    checkAnswer(i, answerNum);
+                } else {
+                    // If no option is selected, show the correct answer
+                    const correctOption = document.querySelectorAll(`#question-${i} .option`)[answers[i] - 1];
+                    correctOption.classList.add('correct');
+                    
+                    const feedback = document.getElementById(`feedback-${i}`);
+                    feedback.textContent = "You didn't select an answer. " + explanations[i];
+                    feedback.classList.add('wrong');
+                    feedback.classList.remove('correct');
+                    feedback.style.display = 'block';
+                }
+            }
+        }
+        
+        function resetPractice() {
+            for (let i = 1; i <= 7; i++) {
+                const options = document.querySelectorAll(`#question-${i} .option`);
+                options.forEach(option => {
+                    option.classList.remove('selected', 'correct', 'wrong');
+                });
+                
+                const feedback = document.getElementById(`feedback-${i}`);
+                feedback.textContent = '';
+                feedback.style.display = 'none';
+                feedback.classList.remove('correct', 'wrong');
+            }
+        }
+        
+        // Calculator Challenge Game
+        let calcTimer;
+        let calcTimeRemaining = 60;
+        let calcScore = 0;
+        let currentCalcQuestion;
+        let selectedReaction = null;
+        
+        const calcElectrodes = [
+            { name: "Zn²⁺(aq) + 2e⁻ ⇌ Zn(s)", symbol: "Zn", potential: -0.76, charge: "²⁺", electrons: 2 },
+            { name: "Cu²⁺(aq) + 2e⁻ ⇌ Cu(s)", symbol: "Cu", potential: 0.34, charge: "²⁺", electrons: 2 },
+            { name: "Ag⁺(aq) + e⁻ ⇌ Ag(s)", symbol: "Ag", potential: 0.80, charge: "⁺", electrons: 1 },
+            { name: "2H⁺(aq) + 2e⁻ ⇌ H₂(g)", symbol: "H₂", potential: 0.00, charge: "⁺", electrons: 2 },
+            { name: "Fe²⁺(aq) + 2e⁻ ⇌ Fe(s)", symbol: "Fe", potential: -0.44, charge: "²⁺", electrons: 2 },
+            { name: "Mg²⁺(aq) + 2e⁻ ⇌ Mg(s)", symbol: "Mg", potential: -2.37, charge: "²⁺", electrons: 2 },
+            { name: "Cl₂(g) + 2e⁻ ⇌ 2Cl⁻(aq)", symbol: "Cl₂", potential: 1.36, charge: "⁻", electrons: 2 },
+            { name: "Fe³⁺(aq) + e⁻ ⇌ Fe²⁺(aq)", symbol: "Fe³⁺|Fe²⁺", potential: 0.77, charge: "³⁺", electrons: 1 }
+        ];
+        
+        function startCalcGame() {
+            // Reset game
+            calcTimeRemaining = 60;
+            calcScore = 0;
+            document.getElementById('calc-score').textContent = '0';
+            document.getElementById('calc-timer').textContent = '60';
+            
+            // Show question
+            document.getElementById('calc-question').style.display = 'block';
+            document.getElementById('start-calc-game').disabled = true;
+            
+            // Hide reaction question initially
+            document.getElementById('reaction-question').style.display = 'none';
+            document.getElementById('submit-reaction').style.display = 'none';
+            
+            // Clear feedback
+            document.getElementById('calc-feedback').textContent = '';
+            document.getElementById('calc-feedback').className = 'feedback';
+            
+            // Generate first question
+            generateCalcQuestion();
+            
+            // Start timer
+            calcTimer = setInterval(updateCalcTimer, 1000);
+        }
+        
+        function generateCalcQuestion() {
+            // Reset selected reaction
+            selectedReaction = null;
+            
+            // Select two random electrodes
+            const leftIndex = Math.floor(Math.random() * calcElectrodes.length);
+            let rightIndex;
+            do {
+                rightIndex = Math.floor(Math.random() * calcElectrodes.length);
+            } while (rightIndex === leftIndex);
+            
+            const leftElectrode = calcElectrodes[leftIndex];
+            const rightElectrode = calcElectrodes[rightIndex];
+            
+            // Display the electrodes
+            document.getElementById('calc-electrode1').textContent = 
+                `${leftElectrode.name}, E° = ${leftElectrode.potential.toFixed(2)} V`;
+            document.getElementById('calc-electrode2').textContent = 
+                `${rightElectrode.name}, E° = ${rightElectrode.potential.toFixed(2)} V`;
+            
+            // Display cell diagram
+            let cellDiagram;
+            if (leftElectrode.symbol === "H₂") {
+                cellDiagram = `Pt|${leftElectrode.symbol}|H${leftElectrode.charge}||${rightElectrode.symbol}${rightElectrode.charge}|${rightElectrode.symbol}`;
+            } else if (leftElectrode.symbol === "Cl₂") {
+                cellDiagram = `Pt|${leftElectrode.symbol}|Cl${leftElectrode.charge}||${rightElectrode.symbol}${rightElectrode.charge}|${rightElectrode.symbol}`;
+            } else if (leftElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                cellDiagram = `Pt|Fe³⁺,Fe²⁺||${rightElectrode.symbol}${rightElectrode.charge}|${rightElectrode.symbol}`;
+            } else {
+                cellDiagram = `${leftElectrode.symbol}|${leftElectrode.symbol}${leftElectrode.charge}||${rightElectrode.symbol}${rightElectrode.charge}|${rightElectrode.symbol}`;
+            }
+            
+            if (rightElectrode.symbol === "H₂") {
+                cellDiagram = `${leftElectrode.symbol}|${leftElectrode.symbol}${leftElectrode.charge}||H${rightElectrode.charge}|${rightElectrode.symbol}|Pt`;
+            } else if (rightElectrode.symbol === "Cl₂") {
+                cellDiagram = `${leftElectrode.symbol}|${leftElectrode.symbol}${leftElectrode.charge}||Cl${rightElectrode.charge}|${rightElectrode.symbol}|Pt`;
+            } else if (rightElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                cellDiagram = `${leftElectrode.symbol}|${leftElectrode.symbol}${leftElectrode.charge}||Fe³⁺,Fe²⁺|Pt`;
+            }
+            
+            document.getElementById('cell-diagram').textContent = cellDiagram;
+            
+            // Calculate the correct answer (cell potential)
+            const cellPotential = rightElectrode.potential - leftElectrode.potential;
+            
+            // Determine feasible reaction
+            let reaction1, reaction2;
+            
+            // Generate balanced reactions
+            const lcm = findLCM(leftElectrode.electrons, rightElectrode.electrons);
+            const leftCoefficient = lcm / leftElectrode.electrons;
+            const rightCoefficient = lcm / rightElectrode.electrons;
+            
+            // Left to right reaction (left oxidation, right reduction)
+            if (leftElectrode.symbol === "H₂") {
+                reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(g) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}${rightElectrode.charge}(aq) → ${leftCoefficient > 1 ? 2*leftCoefficient : 2}H⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(s)`;
+            } else if (leftElectrode.symbol === "Cl₂") {
+                reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(g) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}${rightElectrode.charge}(aq) → ${leftCoefficient > 1 ? 2*leftCoefficient : 2}Cl⁻(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(s)`;
+            } else if (leftElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                // For Fe³⁺/Fe²⁺ pair, the oxidation is Fe²⁺(aq) → Fe³⁺(aq) + e⁻
+                if (rightElectrode.symbol === "H₂") {
+                    reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}Fe²⁺(aq) + ${rightCoefficient > 1 ? 2*rightCoefficient : 2}H⁺(aq) → ${leftCoefficient > 1 ? leftCoefficient : ""}Fe³⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}H₂(g)`;
+                } else if (rightElectrode.symbol === "Cl₂") {
+                    reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}Fe²⁺(aq) + ${rightCoefficient > 1 ? 2*rightCoefficient : 2}Cl⁻(aq) → ${leftCoefficient > 1 ? leftCoefficient : ""}Fe³⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}Cl₂(g)`;
+                } else if (rightElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                    reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}Fe²⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}Fe³⁺(aq) → ${leftCoefficient > 1 ? leftCoefficient : ""}Fe³⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}Fe²⁺(aq)`;
+                } else {
+                    reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}Fe²⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}${rightElectrode.charge}(aq) → ${leftCoefficient > 1 ? leftCoefficient : ""}Fe³⁺(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(s)`;
+                }
+            } else {
+                reaction1 = `${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(s) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}${rightElectrode.charge}(aq) → ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}${leftElectrode.charge}(aq) + ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(s)`;
+            }
+            
+            // Right to left reaction (right oxidation, left reduction)
+            if (rightElectrode.symbol === "H₂") {
+                reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(g) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}${leftElectrode.charge}(aq) → ${rightCoefficient > 1 ? 2*rightCoefficient : 2}H⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(s)`;
+            } else if (rightElectrode.symbol === "Cl₂") {
+                reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(g) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}${leftElectrode.charge}(aq) → ${rightCoefficient > 1 ? 2*rightCoefficient : 2}Cl⁻(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(s)`;
+            } else if (rightElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                // For Fe³⁺/Fe²⁺ pair, the oxidation is Fe²⁺(aq) → Fe³⁺(aq) + e⁻
+                if (leftElectrode.symbol === "H₂") {
+                    reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}Fe²⁺(aq) + ${leftCoefficient > 1 ? 2*leftCoefficient : 2}H⁺(aq) → ${rightCoefficient > 1 ? rightCoefficient : ""}Fe³⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}H₂(g)`;
+                } else if (leftElectrode.symbol === "Cl₂") {
+                    reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}Fe²⁺(aq) + ${leftCoefficient > 1 ? 2*leftCoefficient : 2}Cl⁻(aq) → ${rightCoefficient > 1 ? rightCoefficient : ""}Fe³⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}Cl₂(g)`;
+                } else if (leftElectrode.symbol === "Fe³⁺|Fe²⁺") {
+                    reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}Fe²⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}Fe³⁺(aq) → ${rightCoefficient > 1 ? rightCoefficient : ""}Fe³⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}Fe²⁺(aq)`;
+                } else {
+                    reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}Fe²⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}${leftElectrode.charge}(aq) → ${rightCoefficient > 1 ? rightCoefficient : ""}Fe³⁺(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(s)`;
+                }
+            } else {
+                reaction2 = `${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}(s) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}${leftElectrode.charge}(aq) → ${rightCoefficient > 1 ? rightCoefficient : ""}${rightElectrode.symbol}${rightElectrode.charge}(aq) + ${leftCoefficient > 1 ? leftCoefficient : ""}${leftElectrode.symbol}(s)`;
+            }
+            
+            // Determine correct reaction based on cell potential
+            const feasibleReaction = cellPotential > 0 ? 1 : 2;
+            
+            // Store current question data
+            currentCalcQuestion = {
+                leftElectrode,
+                rightElectrode,
+                cellPotential,
+                reaction1,
+                reaction2,
+                feasibleReaction
+            };
+            
+            // Clear previous reaction options and prepare for cell potential input
+            document.getElementById('reaction-question').style.display = 'none';
+            document.getElementById('submit-reaction').style.display = 'none';
+            document.querySelectorAll('.reaction-options .option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'wrong');
+            });
+            
+            // Update reaction options
+            document.getElementById('reaction-option1').textContent = `A) ${reaction1}`;
+            document.getElementById('reaction-option2').textContent = `B) ${reaction2}`;
+            
+            // Clear the input for cell potential
+            document.getElementById('calc-answer').value = '';
+            document.getElementById('calc-answer').focus();
+        }
+        
+        function findLCM(a, b) {
+            return (a * b) / findGCD(a, b);
+        }
+        
+        function findGCD(a, b) {
+            return b === 0 ? a : findGCD(b, a % b);
+        }
+        
+        function checkCalcAnswer() {
+            // Get the user's answer for cell potential
+            const userAnswer = parseFloat(document.getElementById('calc-answer').value).toFixed(2);
+            const correctAnswer = currentCalcQuestion.cellPotential.toFixed(2);
+            
+            const feedback = document.getElementById('calc-feedback');
+            
+            if (userAnswer === correctAnswer) {
+                feedback.textContent = "Correct cell potential! Now select the feasible reaction.";
+                feedback.className = 'feedback correct';
+                
+                // Now show the reaction selection part
+                document.getElementById('reaction-question').style.display = 'block';
+                document.getElementById('submit-reaction').style.display = 'block';
+                
+                // Disable the cell potential input and submit button
+                document.getElementById('calc-answer').disabled = true;
+                document.getElementById('submit-calc').disabled = true;
+            } else {
+                feedback.textContent = `Incorrect. The correct cell potential is ${correctAnswer} V. Remember, E°cell = E°(right) - E°(left)`;
+                feedback.className = 'feedback wrong';
+            }
+        }
+        
+        function selectReaction(reactionNum) {
+            selectedReaction = reactionNum;
+            
+            // Update UI to show selected reaction
+            document.querySelectorAll('.reaction-options .option').forEach((option, index) => {
+                option.classList.remove('selected');
+                if (index + 1 === reactionNum) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // Enable the submit button
+            document.getElementById('submit-reaction').style.display = 'inline-block';
+        }
+        
+        function submitReaction() {
+            if (selectedReaction === null) {
+                // Give feedback if no reaction is selected
+                const feedback = document.getElementById('calc-feedback');
+                feedback.textContent = "Please select a reaction first.";
+                feedback.className = 'feedback wrong';
+                return;
+            }
+            
+            const feedback = document.getElementById('calc-feedback');
+            const correctReaction = currentCalcQuestion.feasibleReaction;
+            
+            if (selectedReaction === correctReaction) {
+                calcScore++;
+                document.getElementById('calc-score').textContent = calcScore;
+                
+                feedback.textContent = "Correct! That is the feasible reaction.";
+                feedback.className = 'feedback correct';
+                
+                // Generate new question after brief delay
+                setTimeout(function() {
+                    // Reset for next question
+                    document.getElementById('calc-answer').disabled = false;
+                    document.getElementById('submit-calc').disabled = false;
+                    generateCalcQuestion();
+                    feedback.textContent = '';
+                    feedback.className = 'feedback';
+                }, 1500);
+            } else {
+                const correctOption = document.getElementById(`reaction-option${correctReaction}`);
+                const selectedOption = document.getElementById(`reaction-option${selectedReaction}`);
+                
+                selectedOption.classList.add('wrong');
+                correctOption.classList.add('correct');
+                
+                feedback.textContent = `Incorrect. The feasible reaction is option ${correctReaction === 1 ? 'A' : 'B'}.`;
+                feedback.className = 'feedback wrong';
+                
+                // Generate new question after brief delay
+                setTimeout(function() {
+                    // Reset for next question
+                    document.getElementById('calc-answer').disabled = false;
+                    document.getElementById('submit-calc').disabled = false;
+                    generateCalcQuestion();
+                    feedback.textContent = '';
+                    feedback.className = 'feedback';
+                }, 2500);
+            }
+        }
+        
+        function updateCalcTimer() {
+            calcTimeRemaining--;
+            document.getElementById('calc-timer').textContent = calcTimeRemaining;
+            
+            if (calcTimeRemaining <= 0) {
+                endCalcGame();
+            }
+        }
+        
+        function endCalcGame() {
+            clearInterval(calcTimer);
+            
+            document.getElementById('calc-question').style.display = 'none';
+            document.getElementById('start-calc-game').disabled = false;
+            
+            const feedback = document.getElementById('calc-feedback');
+            feedback.textContent = `Game over! Your final score is ${calcScore}.`;
+            feedback.className = 'feedback';
+        }
+    </script>
+</body>
+</html>
