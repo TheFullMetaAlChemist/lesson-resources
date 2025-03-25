@@ -1,0 +1,2917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemAssist: Metals and Water Reactions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+:root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --secondary-light: #34d399;
+            --secondary-dark: #059669;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --accent-dark: #d97706;
+            --background: #f8fafc;
+            --dark: #1e293b;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --gray: #64748b;
+            --shadow: rgba(15, 23, 42, 0.08);
+            --shadow-darker: rgba(15, 23, 42, 0.16);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.7;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px var(--shadow), 0 4px 10px var(--shadow-darker);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header p {
+            font-size: 18px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin: 25px 0 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+        
+        h2 i {
+            margin-right: 12px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: var(--dark);
+            margin: 20px 0 12px;
+            font-size: 18px;
+        }
+        
+        .intro {
+            padding: 25px;
+            background-color: rgba(37, 99, 235, 0.05);
+            border-left: 5px solid var(--primary);
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .nav-container {
+            background-color: var(--light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+        
+        .task-buttons {
+            display: flex;
+            overflow-x: auto;
+            padding: 15px 20px;
+            gap: 12px;
+            justify-content: flex-start;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--light);
+        }
+        
+        .task-buttons::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .task-buttons::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+        
+        .task-buttons::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 20px;
+        }
+        
+        .task-button {
+            background-color: var(--white);
+            border: 2px solid var(--primary-light);
+            color: var(--primary);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .task-button:hover {
+            background-color: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px var(--shadow-darker);
+        }
+        
+        .task-button.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary-dark);
+        }
+        
+        .quiz-button {
+            background-color: var(--accent);
+            color: var(--white);
+            border-color: var(--accent-dark);
+        }
+        
+        .quiz-button:hover {
+            background-color: var(--accent-dark);
+        }
+        
+        .quiz-button.active {
+            background-color: var(--accent-dark);
+            color: var(--white);
+            border-color: var(--accent-dark);
+        }
+        
+        .game-button {
+            background-color: #8b5cf6;
+            color: var(--white);
+            border-color: #7c3aed;
+        }
+        
+        .game-button:hover {
+            background-color: #7c3aed;
+        }
+        
+        .game-button.active {
+            background-color: #7c3aed;
+            color: var(--white);
+            border-color: #6d28d9;
+        }
+        
+        .quiz-banner {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--accent-light), var(--accent));
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .quiz-banner:hover {
+            transform: translateY(-5px);
+        }
+        
+        .quiz-icon {
+            font-size: 40px;
+            color: white;
+            margin-right: 20px;
+        }
+        
+        .quiz-banner-text {
+            flex: 1;
+        }
+        
+        .quiz-banner-text h3 {
+            color: white;
+            margin: 0 0 5px 0;
+            font-size: 20px;
+        }
+        
+        .quiz-banner-text p {
+            color: white;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .quiz-banner-button {
+            background-color: white;
+            color: var(--accent-dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .quiz-banner-button:hover {
+            background-color: var(--accent-dark);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Game Banner Styling - matching quiz banner but with purple colors */
+        .game-banner {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .game-banner:hover {
+            transform: translateY(-5px);
+        }
+        
+        .game-icon {
+            font-size: 40px;
+            color: white;
+            margin-right: 20px;
+        }
+        
+        .game-banner-text {
+            flex: 1;
+        }
+        
+        .game-banner-text h3 {
+            color: white;
+            margin: 0 0 5px 0;
+            font-size: 20px;
+        }
+        
+        .game-banner-text p {
+            color: white;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .game-banner-button {
+            background-color: white;
+            color: #7c3aed;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .game-banner-button:hover {
+            background-color: #7c3aed;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .floating-quiz-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-quiz-button:hover {
+            background-color: var(--accent-dark);
+            transform: scale(1.1);
+        }
+        
+        /* Floating Game Button */
+        .floating-game-button {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background-color: #8b5cf6;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .floating-game-button:hover {
+            background-color: #7c3aed;
+            transform: scale(1.1);
+        }
+        
+        /* Game styles */
+        .game-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px var(--shadow);
+            padding: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-title {
+            font-size: 24px;
+            color: #7c3aed;
+            margin-bottom: 10px;
+        }
+        
+        .game-description {
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+        }
+        
+        .game-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-option-group {
+            display: flex;
+            background-color: #f8f9fa;
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .game-option {
+            padding: 10px 20px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .game-option.active {
+            background-color: #7c3aed;
+            color: white;
+        }
+        
+        .game-option:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        
+        .start-game-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(109, 40, 217, 0.3);
+        }
+        
+        .start-game-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(109, 40, 217, 0.4);
+        }
+        
+        .task-content {
+            padding: 25px;
+            display: none;
+            line-height: 1.7;
+        }
+        
+        .task-content p {
+            margin-bottom: 15px;
+        }
+        
+        .task-content ul, .task-content ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .task-content li {
+            margin-bottom: 8px;
+        }
+        
+        .active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hint-box {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .example-box {
+            background-color: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .fact-box {
+            background-color: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid #8b5cf6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        
+        .fact-box::before {
+            content: "⭐";
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background-color: #8b5cf6;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .toggler {
+            background-color: var(--light);
+            border: none;
+            border-radius: 8px;
+            color: var(--dark);
+            padding: 12px 20px;
+            cursor: pointer;
+            margin: 15px 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+        
+        .toggler:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .toggler i {
+            margin-right: 10px;
+            transition: transform 0.2s ease;
+        }
+        
+        .toggler.active i {
+            transform: rotate(90deg);
+        }
+        
+        .toggle-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 5px;
+            background-color: var(--white);
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .img-placeholder {
+            background-color: #e2e8f0;
+            border: 2px dashed #cbd5e1;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            color: var(--gray);
+            font-style: italic;
+            border-radius: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        table, th, td {
+            border: 1px solid #e2e8f0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-light);
+            color: var(--white);
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .level-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-left: 12px;
+            color: var(--white);
+        }
+        
+        .beginning {
+            background-color: var(--primary);
+        }
+        
+        .working-towards {
+            background-color: var(--secondary);
+        }
+        
+        .expected {
+            background-color: var(--accent);
+        }
+        
+        .exceeding {
+            background-color: #ef4444;
+        }
+        
+        .excelling {
+            background-color: #8b5cf6;
+        }
+        
+        footer {
+            padding: 25px;
+            text-align: center;
+            background-color: var(--light);
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        /* Reactivity Series Animation Styles */
+        .reactivity-series {
+            display: flex;
+            flex-direction: column;
+            margin: 30px 0;
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .metal-step {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .metal-step:hover {
+            transform: translateX(10px);
+        }
+        
+        .metal-step::before {
+            content: "";
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background-color: #64748b;
+        }
+        
+        .metal-symbol {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        
+        .most-reactive {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+        
+        .very-reactive {
+            background: linear-gradient(90deg, #f97316, #fb923c);
+        }
+        
+        .reactive {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+        
+        .moderate {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+        
+        .low-reactive {
+            background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+        }
+        
+        .unreactive {
+            background: linear-gradient(90deg, #6366f1, #818cf8);
+        }
+        
+        /* Reaction Animation */
+        .reaction-container {
+            width: 100%;
+            height: 200px;
+            background-color: #cffafe;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid #67e8f9;
+        }
+        
+        .metal {
+            position: absolute;
+            width: 50px;
+            height: 25px;
+            background-color: #94a3b8;
+            border-radius: 4px;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: rise 3s infinite ease-out;
+            opacity: 0;
+        }
+        
+        @keyframes rise {
+            0% { transform: translateY(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-120px); opacity: 0; }
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin: 10px auto;
+            }
+            
+            header {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .task-content {
+                padding: 15px;
+            }
+            
+            .task-button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+            
+            .metal-step {
+                padding: 8px 10px;
+            }
+            
+            .metal-symbol {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+
+        /* Game styles - Updated */
+        .game-interface {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        #gameBoard {
+            width: 100%;
+            height: 300px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .race-track {
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(#e9ecef 20%, transparent 20%, transparent 80%, #e9ecef 80%);
+            background-size: 100% 25%;
+            position: relative;
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 5%;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                #000,
+                #000 10px,
+                #fff 10px,
+                #fff 20px
+            );
+            z-index: 5;
+        }
+
+        .finish-line::before {
+            content: "FINISH";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            writing-mode: vertical-rl;
+            font-weight: bold;
+            color: #7c3aed;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .question-area {
+            width: 100%;
+            display: none;
+        }
+
+        .question-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .player-turn {
+            font-weight: bold;
+            color: #3b82f6;
+        }
+
+        .player-turn.player2 {
+            color: #ef4444;
+        }
+
+        .question-difficulty {
+            background-color: #7c3aed;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .question-difficulty.easy {
+            background-color: #10b981;
+        }
+
+        .question-difficulty.medium {
+            background-color: #f59e0b;
+        }
+
+        .question-difficulty.hard {
+            background-color: #ef4444;
+        }
+
+        .reaction-zone {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+
+        .reaction-zone i {
+            color: #7c3aed;
+        }
+
+        .player {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .player.player1 {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .player.player2 {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+        }
+
+        .chemical-element {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            transform: rotate(10deg);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .answer-option {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .answer-option:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .answer-option.selected {
+            background-color: #7c3aed;
+            color: white;
+            border-color: #6d28d9;
+        }
+
+        .submit-answer {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .submit-answer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(109, 40, 217, 0.4);
+        }
+
+        .submit-answer:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .result-message.correct {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            color: #064e3b;
+        }
+
+        .result-message.incorrect {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            color: #7f1d1d;
+        }
+
+        .winner-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 200;
+            text-align: center;
+            display: none;
+            min-width: 320px;
+        }
+
+        .winner-title {
+            font-size: 28px;
+            background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .winner-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .play-again-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .play-again-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(109, 40, 217, 0.4);
+        }
+
+        .bubble-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .reaction-bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: float 3s ease-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .game-interface {
+                flex-direction: column;
+            }
+            
+            #gameBoard {
+                height: 250px;
+            }
+        }
+
+        /* Color classes for elements */
+        .element-na {
+            background: linear-gradient(135deg, #ff9800, #ed8c01);
+        }
+
+        .element-k {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        }
+
+        .element-ca {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
+
+        .element-mg {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+        }
+
+        .element-fe {
+            background: linear-gradient(135deg, #795548, #5d4037);
+        }
+
+        .element-cu {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+        }
+
+        /* Progress path for tracking player movement */
+        .progress-path {
+            position: absolute;
+            top: 50%;
+            height: 4px;
+            background-color: rgba(124, 58, 237, 0.2);
+            z-index: 2;
+        }
+
+        .progress-path.player1-path {
+            top: 40%;
+        }
+
+        .progress-path.player2-path {
+            top: 60%;
+        }
+
+        /* Quiz styles */
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px var(--shadow);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .question-card {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .question-card.correct {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .question-card.incorrect {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+        }
+        
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .option-label:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .option-input {
+            margin-right: 10px;
+        }
+        
+        .submit-quiz {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-quiz:hover {
+            background-color: var(--accent-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+        
+        .quiz-result {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-score {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .retry-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .feedback-text {
+            margin-top: 10px;
+            font-style: italic;
+            color: var(--gray);
+            display: none;
+        }
+        
+        .question-card.correct .feedback-text,
+        .question-card.incorrect .feedback-text {
+            display: block;
+        }
+        
+        .progress-container {
+            height: 10px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes dance {
+            0% { transform: translateX(-50%) rotate(-2deg); }
+            100% { transform: translateX(-50%) rotate(2deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-flask"></i> ChemAssist: Metals and Water</h1>
+            <p>Your interactive chemistry learning companion</p>
+        </header>
+        
+        <div class="intro">
+            <p>Welcome to ChemAssist! This tool will help you complete your Metals and Water Reactions worksheet. Think of it as having a chemistry expert right by your side, ready to help when you need it.</p>
+            <p>Simply click on any task button below to get specific guidance, examples, and interesting facts that will help you solve the problems on your worksheet. Remember - we're here to guide you, not to give you the answers!</p>
+            <div class="quiz-banner">
+                <i class="fas fa-question-circle quiz-icon"></i>
+                <div class="quiz-banner-text">
+                    <h3>Test Your Knowledge!</h3>
+                    <p>Ready to check what you've learned? Take our interactive 10-question quiz.</p>
+                </div>
+                <button class="quiz-banner-button" onclick="showTask('quiz')">Start Quiz</button>
+            </div>
+            
+            <div class="game-banner">
+                <i class="fas fa-gamepad game-icon"></i>
+                <div class="game-banner-text">
+                    <h3>Chemistry Race Challenge!</h3>
+                    <p>Race through the reactivity series in our fun interactive game! Choose solo or 2-player mode.</p>
+                </div>
+                <button class="game-banner-button" onclick="showTask('game')">Play Game</button>
+            </div>
+        </div>
+        
+        <div class="nav-container">
+            <div class="task-buttons">
+                <button class="task-button" onclick="showTask('task1')"><i class="fas fa-puzzle-piece"></i> Task 1: Match Up</button>
+                <button class="task-button" onclick="showTask('task2')"><i class="fas fa-fill-drip"></i> Task 2: Fill Blanks</button>
+                <button class="task-button" onclick="showTask('task3')"><i class="fas fa-pen-fancy"></i> Task 3: Equations</button>
+                <button class="task-button" onclick="showTask('task4')"><i class="fas fa-sort-amount-down"></i> Task 4: Reactivity</button>
+                <button class="task-button" onclick="showTask('task5')"><i class="fas fa-check-double"></i> Task 5: True/False</button>
+                <button class="task-button" onclick="showTask('task6')"><i class="fas fa-search"></i> Task 6: Identify</button>
+                <button class="task-button" onclick="showTask('task7')"><i class="fas fa-lightbulb"></i> Task 7: Predict</button>
+                <button class="task-button" onclick="showTask('task8')"><i class="fas fa-flask"></i> Task 8: Design</button>
+                <button class="task-button" onclick="showTask('task9')"><i class="fas fa-brain"></i> Task 9: Problem</button>
+                <button class="task-button" onclick="showTask('extension')"><i class="fas fa-book"></i> Extension</button>
+            </div>
+        </div>
+        
+        <div id="task1" class="task-content">
+            <h2><i class="fas fa-puzzle-piece"></i> Task 1: Match Up <span class="level-indicator beginning">Beginning</span></h2>
+            <p>In this task, you need to match each chemistry term with its correct definition. This helps you understand the key vocabulary related to metals and water reactions.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Think about what we learned in class about the reactivity series and what happens when certain metals react with water.</p>
+                <p>When metals react with water, they typically produce two things: a metal compound and a gas. Can you remember which gas bubbles up during these reactions?</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>If you've ever seen a fizzy antacid tablet dropped in water, you're actually witnessing a chemical reaction that produces gas bubbles - similar to what happens when reactive metals are placed in water!</p>
+                <p>Another example is the emergency flares that some car kits include - these often contain reactive metals like magnesium that can burn even when wet.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The alkali metals (like potassium and sodium) are so reactive with water that they have to be stored under oil to prevent them from reacting with moisture in the air!</p>
+                <p>When sodium reacts with water, the hydrogen gas produced can actually ignite due to the heat of the reaction - creating a small flame on the water's surface!</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task1-help')"><i class="fas fa-chevron-right"></i> Show Key Terms Explained</button>
+            <div id="task1-help" class="toggle-content">
+                <h3>Key Terms:</h3>
+                <ul>
+                    <li><strong>Reactivity series</strong> - This is like a league table that ranks metals from most reactive to least reactive. It helps us predict how metals will behave in different situations.</li>
+                    <li><strong>Metal hydroxide</strong> - This is a compound that forms when a metal reacts with water. It has the metal plus OH (hydroxide). For example, sodium + water produces sodium hydroxide (NaOH).</li>
+                    <li><strong>Hydrogen</strong> - This is a gas that's produced when metals react with water. It's the lightest element and highly flammable.</li>
+                    <li><strong>Potassium</strong> - This is a very reactive metal from Group 1 of the periodic table. It reacts vigorously with water and can even catch fire during the reaction.</li>
+                </ul>
+            </div>
+            
+            <!-- Reactivity Series Animation -->
+            <h3>The Reactivity Series:</h3>
+            <div class="reactivity-series">
+                <div class="metal-step most-reactive">
+                    <div class="metal-symbol">K</div>
+                    <span>Potassium - Extremely reactive with water, catches fire</span>
+                </div>
+                <div class="metal-step very-reactive">
+                    <div class="metal-symbol">Na</div>
+                    <span>Sodium - Very reactive with water, melts into a ball</span>
+                </div>
+                <div class="metal-step reactive">
+                    <div class="metal-symbol">Ca</div>
+                    <span>Calcium - Reacts readily with cold water</span>
+                </div>
+                <div class="metal-step moderate">
+                    <div class="metal-symbol">Mg</div>
+                    <span>Magnesium - Reacts with steam but not cold water</span>
+                </div>
+                <div class="metal-step low-reactive">
+                    <div class="metal-symbol">Fe</div>
+                    <span>Iron - Reacts slowly with steam</span>
+                </div>
+                <div class="metal-step unreactive">
+                    <div class="metal-symbol">Cu</div>
+                    <span>Copper - Unreactive with water</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="task2" class="task-content">
+            <h2><i class="fas fa-fill-drip"></i> Task 2: Fill in the Blanks <span class="level-indicator working-towards">Working Towards</span></h2>
+            <p>This task asks you to complete sentences using the correct scientific terms about metal reactions with water. This helps check your understanding of key concepts.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Look carefully at the words in the box. Think about which word makes the most sense in each blank space.</p>
+                <p>Remember what we observed in the demonstrations of metals reacting with water - which ones reacted quickly (vigorously) and which ones didn't react at all?</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>Did you know that the Statue of Liberty is covered in copper? Despite being exposed to rain for over 130 years, it hasn't dissolved or reacted with the water. This is because copper is very unreactive with water, making it perfect for water pipes and outdoor structures.</p>
+                <p>On the other hand, if a piece of sodium fell into the ocean, it would react violently, producing hydrogen gas and sodium hydroxide (which is used in drain cleaners!).</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The reactivity of metals with water was discovered partly by accident! In 1807, Sir Humphry Davy isolated potassium by using electricity to separate it from its compounds. When he accidentally dropped some in water, he was surprised by the violent reaction - the metal caught fire and skated across the water's surface!</p>
+            </div>
+            
+            <!-- Reaction Animation -->
+            <h3>Metal + Water Reaction:</h3>
+            <div class="reaction-container" id="reactionAnimation">
+                <div class="metal" id="metalPiece"></div>
+                <!-- Bubbles added by JavaScript -->
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task2-help')"><i class="fas fa-chevron-right"></i> Show Word Meanings</button>
+            <div id="task2-help" class="toggle-content">
+                <ul>
+                    <li><strong>Hydrogen</strong> - A gas produced when metals react with water. It's colorless and highly flammable.</li>
+                    <li><strong>Hydroxide</strong> - Part of the compound formed when metals react with water (e.g., sodium hydroxide). Has the chemical formula OH-.</li>
+                    <li><strong>Steam</strong> - Water in its gas state, created by heating water above 100°C.</li>
+                    <li><strong>Unreactive</strong> - Describes a substance that does not react or reacts very slowly with other substances.</li>
+                    <li><strong>Vigorously</strong> - Describes a reaction that happens quickly and with a lot of energy, often producing bubbles, heat, or light.</li>
+                    <li><strong>Reactivity series</strong> - A list showing how reactive different metals are, arranged from most to least reactive.</li>
+                    <li><strong>Bubbles</strong> - These form when a gas is produced in a reaction. In metal-water reactions, the bubbles contain hydrogen gas.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="task3" class="task-content">
+            <h2><i class="fas fa-pen-fancy"></i> Task 3: Word Equations <span class="level-indicator working-towards">Working Towards</span></h2>
+            <p>In this task, you need to write word equations for the reactions of different metals with water. This helps you understand the pattern of chemical reactions.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>All these reactions follow a similar pattern:</p>
+                <p>Metal + Water → Metal Hydroxide + Hydrogen</p>
+                <p>Just replace "Metal" with the specific metal name in each equation (potassium, calcium, etc.).</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>Scientists use the reaction between aluminum and water to propel some underwater vehicles! Aluminum reacts with water to produce hydrogen gas, which can be used as fuel.</p>
+                <p>Another real-world application: hydrogen produced from metal-water reactions can be used in fuel cells to generate electricity with zero pollution - only water is produced as a by-product!</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The hydrogen gas produced when metals react with water is the same element that makes up about 75% of the universe! It's the fuel that powers our sun through nuclear fusion.</p>
+                <p>The extremely reactive metal caesium reacts so violently with water that it can cause an explosion! Scientists have to handle it with extreme care.</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task3-help')"><i class="fas fa-chevron-right"></i> Show Reaction Patterns</button>
+            <div id="task3-help" class="toggle-content">
+                <p>The pattern for the reactions in this task is:</p>
+                <ol>
+                    <li>For reactions with liquid water: Metal + Water → Metal Hydroxide + Hydrogen
+                        <ul>
+                            <li>Example: Potassium + Water → Potassium Hydroxide + Hydrogen</li>
+                            <li>Example: Calcium + Water → Calcium Hydroxide + Hydrogen</li>
+                        </ul>
+                    </li>
+                    <li>For reactions with steam (water vapor): Metal + Steam → Metal Oxide + Hydrogen
+                        <ul>
+                            <li>Example: Magnesium + Steam → Magnesium Oxide + Hydrogen</li>
+                            <li>Example: Iron + Steam → Iron Oxide + Hydrogen</li>
+                        </ul>
+                    </li>
+                </ol>
+                <p>Notice that with steam, we get a metal oxide (not a hydroxide). This is because at high temperatures, metal hydroxides break down to form metal oxides.</p>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Word equation diagram (word_equation.jpg)
+            </div>
+        </div>
+        
+        <div id="task4" class="task-content">
+            <h2><i class="fas fa-sort-amount-down"></i> Task 4: Ordering Reactivity <span class="level-indicator expected">Expected</span></h2>
+            <p>Here you need to place metals in order from most reactive with water to least reactive. This helps you understand the reactivity series concept.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Think about which metals react with cold water and which need steam to react.</p>
+                <p>The more reactive a metal is, the more vigorously it reacts with water.</p>
+                <p>Group 1 metals (alkali metals like potassium and sodium) are the most reactive with water.</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>Engineers use the reactivity series when designing water pipes. They choose metals like copper that are low on the reactivity series because they won't react with the water flowing through them.</p>
+                <p>In contrast, in naval engineering, sacrificial anodes made of more reactive metals like zinc are attached to ship hulls to protect them from corrosion in seawater - the zinc corrodes instead of the hull!</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>Gold is so unreactive that gold artifacts from ancient civilizations (over 3000 years old) still look shiny today! This is why gold is used for jewelry and currency.</p>
+                <p>If you look at the periodic table, metals generally become more reactive as you move down Group 1 and Group 2. This is because the outer electrons are farther from the nucleus and more easily given away in reactions.</p>
+            </div>
+            
+            <!-- Reactivity Series Animation (same as in Task 1) -->
+            <h3>The Reactivity Series:</h3>
+            <div class="reactivity-series">
+                <div class="metal-step most-reactive">
+                    <div class="metal-symbol">K</div>
+                    <span>Potassium - Extremely reactive with water, catches fire</span>
+                </div>
+                <div class="metal-step very-reactive">
+                    <div class="metal-symbol">Na</div>
+                    <span>Sodium - Very reactive with water, melts into a ball</span>
+                </div>
+                <div class="metal-step reactive">
+                    <div class="metal-symbol">Ca</div>
+                    <span>Calcium - Reacts readily with cold water</span>
+                </div>
+                <div class="metal-step moderate">
+                    <div class="metal-symbol">Mg</div>
+                    <span>Magnesium - Reacts with steam but not cold water</span>
+                </div>
+                <div class="metal-step low-reactive">
+                    <div class="metal-symbol">Fe</div>
+                    <span>Iron - Reacts slowly with steam</span>
+                </div>
+                <div class="metal-step unreactive">
+                    <div class="metal-symbol">Cu</div>
+                    <span>Copper - Unreactive with water</span>
+                </div>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task4-help')"><i class="fas fa-chevron-right"></i> Show Reactivity Information</button>
+            <div id="task4-help" class="toggle-content">
+                <h3>Metal Reactivity with Water:</h3>
+                <ul>
+                    <li><strong>Potassium</strong> - Reacts violently with cold water, may catch fire, floats and moves around rapidly</li>
+                    <li><strong>Sodium</strong> - Reacts vigorously with cold water, melts into a silvery ball that moves around</li>
+                    <li><strong>Calcium</strong> - Reacts readily with cold water, producing bubbles of hydrogen</li>
+                    <li><strong>Iron</strong> - Does not react with cold water, but reacts slowly with steam to form iron oxide</li>
+                    <li><strong>Copper</strong> - Does not react with water or steam at all</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="task5" class="task-content">
+            <h2><i class="fas fa-check-double"></i> Task 5: True or False <span class="level-indicator expected">Expected</span></h2>
+            <p>For this task, you need to decide if statements about metal reactions with water are true or false. This tests your deeper understanding of the concepts.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Think about what we've learned about the reactivity series and which metals react with water.</p>
+                <p>Remember that some metals only react with steam (hot water vapor), not with cold water.</p>
+                <p>If a statement is false, make sure you can explain why it's incorrect and what the correct statement would be.</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>The fact that some metals react with water and others don't is important in everyday life. Water taps are often made of brass (a copper alloy) because it doesn't react with water. If they were made of sodium, they would burst into flames when you turned them on!</p>
+                <p>Ancient shipwrecks made of iron or steel rust away underwater over time because these metals can react with water, while gold coins found in the same shipwrecks remain intact for centuries.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The Titanic is being slowly "eaten" at the bottom of the Atlantic Ocean because the iron in its hull reacts with dissolved oxygen in the water, forming rust. Scientists estimate it will completely disappear within 100-200 years!</p>
+                <p>During the Hindenburg disaster in 1937, it was actually the reaction of aluminum components with the atmosphere (after the initial hydrogen fire) that caused much of the destruction - a demonstration of metal reactivity with oxygen.</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task5-help')"><i class="fas fa-chevron-right"></i> Show Key Facts</button>
+            <div id="task5-help" class="toggle-content">
+                <h3>Key Facts About Metals and Water:</h3>
+                <ul>
+                    <li><strong>NOT all metals react with cold water.</strong> Only the most reactive metals (like potassium, sodium, and calcium) react with cold water.</li>
+                    <li><strong>Copper does NOT react with steam.</strong> It's too unreactive to react with water in any form.</li>
+                    <li><strong>Sodium DOES produce hydrogen gas</strong> when it reacts with water. The reaction produces sodium hydroxide and hydrogen gas.</li>
+                    <li><strong>The reactivity series is the same</strong> for reactions with water and oxygen. Metals that are reactive with one tend to be reactive with the other.</li>
+                    <li><strong>Magnesium does NOT react vigorously with cold water.</strong> It only reacts with steam (water vapor at high temperature).</li>
+                </ul>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Metal reactions comparison (metal_reactions.jpg)
+            </div>
+        </div>
+        
+        <div id="task6" class="task-content">
+            <h2><i class="fas fa-search"></i> Task 6: Identify and Explain <span class="level-indicator expected">Expected</span></h2>
+            <p>In this task, you need to use observations to identify metals and explain their behavior with water. This tests your ability to apply your knowledge.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Use what you know about the reactivity series to match the observations with specific metals.</p>
+                <p>Remember that some metals don't react with water at all, some react with steam, and others react with cold water.</p>
+                <p>Think about the specific signs of reaction (bubbles, disappearance, etc.) and what they tell you about the metal's reactivity.</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>Forensic scientists can sometimes identify unknown metal samples by testing their reactivity with various substances, including water. This is similar to what you're doing in this task!</p>
+                <p>In space exploration, engineers have to be careful about which metals they use in their spacecraft. When the Apollo 13 oxygen tank exploded, it was partly due to unexpected chemical reactions involving the metals in the tank.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The alkali metals (Group 1) were all discovered by Sir Humphry Davy in the early 1800s using electricity to separate them from their compounds - a process called electrolysis.</p>
+                <p>Some metals, like aluminum, appear to be unreactive with water but are actually highly reactive. Aluminum quickly forms a protective oxide layer that prevents further reaction - making it perfect for drink cans!</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task6-help')"><i class="fas fa-chevron-right"></i> Show Metal Reaction Chart</button>
+            <div id="task6-help" class="toggle-content">
+                <table>
+                    <tr>
+                        <th>Metal</th>
+                        <th>Reaction with Cold Water</th>
+                        <th>Reaction with Steam</th>
+                        <th>Observations</th>
+                    </tr>
+                    <tr>
+                        <td>Potassium</td>
+                        <td>Very vigorous, catches fire</td>
+                        <td>Too reactive to test</td>
+                        <td>Floats, moves rapidly, produces flame, disappears quickly</td>
+                    </tr>
+                    <tr>
+                        <td>Sodium</td>
+                        <td>Vigorous, melts to a ball</td>
+                        <td>Too reactive to test</td>
+                        <td>Floats, moves around, produces hydrogen bubbles, disappears</td>
+                    </tr>
+                    <tr>
+                        <td>Calcium</td>
+                        <td>Moderate, bubbles of hydrogen</td>
+                        <td>Vigorous</td>
+                        <td>Sinks, produces steady bubbles, gradually disappears</td>
+                    </tr>
+                    <tr>
+                        <td>Magnesium</td>
+                        <td>Very slow/no visible reaction</td>
+                        <td>Reacts to form magnesium oxide</td>
+                        <td>No reaction in cold water; in steam, forms white powder (MgO)</td>
+                    </tr>
+                    <tr>
+                        <td>Iron</td>
+                        <td>No reaction</td>
+                        <td>Slow reaction to form iron oxide</td>
+                        <td>No reaction in cold water; in steam, slowly forms black powder (Fe₃O₄)</td>
+                    </tr>
+                    <tr>
+                        <td>Copper</td>
+                        <td>No reaction</td>
+                        <td>No reaction</td>
+                        <td>No visible change in water or steam</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Metal identification flow chart (metal_identification.jpg)
+            </div>
+        </div>
+        
+        <div id="task7" class="task-content">
+            <h2><i class="fas fa-lightbulb"></i> Task 7: Predict and Explain <span class="level-indicator exceeding">Exceeding</span></h2>
+            <p>For this task, you need to predict what will happen in different scenarios and explain your reasoning. This tests your ability to apply your knowledge to new situations.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Use your knowledge of the reactivity series to predict how each metal will behave.</p>
+                <p>Think about:</p>
+                <ul>
+                    <li>Will the metal react with water?</li>
+                    <li>How quickly will it react?</li>
+                    <li>What will you observe (bubbles, movement, color changes)?</li>
+                    <li>What products will form?</li>
+                </ul>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>When the Hindenburg airship caught fire in 1937, it was filled with hydrogen gas - the same gas produced when reactive metals like sodium interact with water. Understanding these reactions helps engineers design safer systems today.</p>
+                <p>Your predictions in this task are similar to what chemical engineers do when designing new metal alloys for specific environments - they need to predict how the metals will behave when exposed to water, air, and other substances.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>Scientists are working on ways to use reactive metals like magnesium and aluminum to produce hydrogen gas from water as a clean fuel source!</p>
+                <p>During World War II, soldiers were given emergency water purification kits that used the reaction between calcium and water to generate heat to kill bacteria!</p>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Sodium reaction with water (sodium_water.jpg)
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task7-help')"><i class="fas fa-chevron-right"></i> Show Prediction Examples</button>
+            <div id="task7-help" class="toggle-content">
+                <h3>Example: Prediction for Calcium in Water</h3>
+                <p><strong>Prediction:</strong> The calcium will sink to the bottom of the water and start producing bubbles of hydrogen gas. The reaction will be slower than sodium but still clearly visible.</p>
+                <p><strong>Explanation:</strong> Calcium is less reactive than sodium but still reactive enough to react with cold water. The reaction produces calcium hydroxide and hydrogen gas. The bubbles are the hydrogen gas being released. The reaction is exothermic but not enough to make the metal melt or catch fire.</p>
+                
+                <h3>Thinking Process for Your Predictions:</h3>
+                <ol>
+                    <li>Identify where the metal is in the reactivity series</li>
+                    <li>Determine if it reacts with cold water, only with steam, or not at all</li>
+                    <li>Think about specific observations that would be seen (bubbles, movement, heat, etc.)</li>
+                    <li>Consider the products formed (metal hydroxide/oxide and hydrogen)</li>
+                    <li>Explain why these reactions occur based on the metal's properties</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div id="task8" class="task-content">
+            <h2><i class="fas fa-flask"></i> Task 8: Experimental Design <span class="level-indicator exceeding">Exceeding</span></h2>
+            <p>This task asks you to design an experiment to determine where nickel belongs in the reactivity series. This tests your scientific thinking and practical knowledge.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>To design your experiment, think about:</p>
+                <ul>
+                    <li>What equipment will you need to safely test reactions with both cold water and steam?</li>
+                    <li>What safety precautions are essential when working with reactive metals and steam?</li>
+                    <li>What observations will help you determine nickel's reactivity compared to other metals?</li>
+                    <li>How will you make your experiment fair and reliable?</li>
+                </ul>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>The experimental process you're designing is similar to how scientists at NASA test materials for space missions. Before sending materials into space, they need to know exactly how they'll react to different conditions.</p>
+                <p>Similarly, when archaeologists discover ancient metal artifacts, they often conduct reactivity tests to identify the metals without damaging the artifacts - just like you're designing tests for nickel.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>Nickel is actually used in many common coins, including the U.S. nickel and the UK 5p and 10p coins!</p>
+                <p>Nickel was once considered a "bad luck" metal by miners because its ore looked like copper ore but didn't produce copper when processed - they didn't realize it was a valuable metal in its own right!</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task8-help')"><i class="fas fa-chevron-right"></i> Show Experimental Guidelines</button>
+            <div id="task8-help" class="toggle-content">
+                <h3>Experimental Design Components:</h3>
+                <ol>
+                    <li><strong>Equipment:</strong>
+                        <ul>
+                            <li>Test tubes and test tube rack</li>
+                            <li>Beakers for water</li>
+                            <li>Bunsen burner or heating device for producing steam</li>
+                            <li>Tongs for handling metals</li>
+                            <li>Nickel samples and samples of metals with known reactivity</li>
+                            <li>Safety equipment: goggles, heat-resistant gloves, lab coat</li>
+                        </ul>
+                    </li>
+                    <li><strong>Procedure:</strong>
+                        <ul>
+                            <li>Test 1: Place nickel in cold water and observe for several minutes</li>
+                            <li>Test 2: Heat water to produce steam and expose nickel to the steam</li>
+                            <li>Test 3: Compare nickel's reactions to those of other metals (e.g., magnesium, iron)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Observations:</strong> Look for bubbles, color changes, speed of reaction</li>
+                    <li><strong>Data collection:</strong> Create a table to record observations systematically</li>
+                    <li><strong>Safety:</strong> Wear eye protection, handle hot equipment with care, ensure proper ventilation</li>
+                    <li><strong>Analysis:</strong> Compare nickel's behavior to metals of known reactivity to place it appropriately in the series</li>
+                </ol>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Laboratory setup for testing metal reactivity (lab_setup.jpg)
+            </div>
+        </div>
+        
+        <div id="task9" class="task-content">
+            <h2><i class="fas fa-brain"></i> Task 9: Problem Solving <span class="level-indicator excelling">Excelling</span></h2>
+            <p>In this advanced task, you need to analyze data about metal reactivity to place tin in the reactivity series. This tests your analytical thinking and ability to interpret data.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>Look carefully at the pattern of reactions in the table.</p>
+                <p>Compare tin's reaction with dilute acid to the reactions of other metals.</p>
+                <p>Consider how a metal's reaction with acid relates to its position in the reactivity series.</p>
+                <p>Remember that more reactive metals react more vigorously with acids.</p>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Example</h3>
+                <p>Materials scientists use reactivity data like this when developing protective coatings for metals. Tin is often used as a coating on steel food cans because it's less reactive than iron and protects the can from rusting.</p>
+                <p>Archaeologists use their knowledge of the reactivity series to help preserve ancient metal artifacts. By understanding how different metals react with air and water, they can create the right conditions to prevent deterioration.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>Tin has been used by humans for over 5,000 years! Bronze, one of the first metal alloys made by humans, is a mixture of copper and tin.</p>
+                <p>Tin undergoes a strange transformation at very cold temperatures (below 13.2°C) called "tin pest" - it slowly crumbles into a gray powder! This is thought to have contributed to the failure of Napoleon's Russian campaign when the tin buttons on soldiers' uniforms crumbled in the winter cold.</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('task9-help')"><i class="fas fa-chevron-right"></i> Show Analysis Strategy</button>
+            <div id="task9-help" class="toggle-content">
+                <h3>Strategy for Analysis:</h3>
+                <ol>
+                    <li>Look at the data for how each metal reacts with acid, water, and steam.</li>
+                    <li>Arrange the metals in order of reactivity based on their reactions with acid:
+                        <ul>
+                            <li>Magnesium (bubbles vigorously)</li>
+                            <li>Zinc (bubbles steadily)</li>
+                            <li>Iron (bubbles slowly)</li>
+                            <li>Tin (bubbles slowly)</li>
+                            <li>Lead (very slow reaction)</li>
+                            <li>Copper (no reaction)</li>
+                        </ul>
+                    </li>
+                    <li>Note that tin bubbles slowly in acid - similar to iron but faster than lead.</li>
+                    <li>Based on this, tin would likely be placed between iron and lead in the reactivity series.</li>
+                    <li>Check if this makes sense based on the periodic table - tin (Sn) is below lead (Pb) in Group 14, which generally supports this placement.</li>
+                </ol>
+                <p>Remember: In the reactivity series, the general order is:</p>
+                <p>Magnesium > Zinc > Iron > Tin > Lead > Copper</p>
+                <p>But always use the specific evidence provided in your task to make your final decision.</p>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Metal reactivity comparison chart (reactivity_comparison.jpg)
+            </div>
+        </div>
+        
+        <div id="game" class="task-content">
+            <h2><i class="fas fa-gamepad"></i> Game: Reactive Metals Race <span class="level-indicator exceeding">Fun Challenge</span></h2>
+            <p>Test your knowledge of metals and water reactions in this exciting racing game! Answer questions correctly to move forward and be the first to reach the finish line!</p>
+            
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-title">Reactive Metals Race</div>
+                    <div class="game-description">Race your way through the reactivity series by answering questions about metals and water reactions. The more questions you answer correctly, the faster you'll reach the finish line!</div>
+                </div>
+                
+                <div class="game-options">
+                    <div class="game-option-group">
+                        <button class="game-option active" data-mode="solo" onclick="setGameMode('solo')">Solo Mode</button>
+                        <button class="game-option" data-mode="2-player" onclick="setGameMode('2-player')">2-Player Mode</button>
+                    </div>
+                    
+                    <div class="game-option-group">
+                        <button class="game-option active" data-difficulty="easy" onclick="setGameDifficulty('easy')">Easy</button>
+                        <button class="game-option" data-difficulty="medium" onclick="setGameDifficulty('medium')">Medium</button>
+                        <button class="game-option" data-difficulty="hard" onclick="setGameDifficulty('hard')">Hard</button>
+                    </div>
+                </div>
+                
+                <button class="start-game-btn" id="startGameBtn" onclick="startGame()">Start Game</button>
+                
+                <div class="game-interface">
+                    <div id="gameBoard">
+                        <div class="race-track">
+                            <!-- Players, reaction zones, and elements will be added dynamically -->
+                            <div class="finish-line"></div>
+                        </div>
+                        
+                        <div class="bubble-animation" id="bubbleAnimation">
+                            <!-- Bubbles will be added dynamically during animations -->
+                        </div>
+                    </div>
+                    
+                    <div class="question-area" id="questionArea">
+                        <div class="question-container" id="questionContainer">
+                            <div class="question-header">
+                                <span id="playerTurn" class="player-turn">Player 1's Turn</span>
+                                <span class="question-difficulty" id="questionDifficulty">Easy</span>
+                            </div>
+                            <div class="question-content">
+                                <div class="question-title" id="questionTitle">Answer this question to move forward!</div>
+                                <div class="answer-options" id="answerOptions">
+                                    <!-- Answer options will be added dynamically -->
+                                </div>
+                            </div>
+                            
+                            <button class="submit-answer" id="submitAnswer" onclick="checkAnswer()">Submit Answer</button>
+                            
+                            <div class="result-message" id="resultMessage">
+                                <!-- Result message will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="winner-popup" id="winnerPopup">
+                    <div class="winner-title">Congratulations!</div>
+                    <div class="winner-message" id="winnerMessage">
+                        <!-- Winner message will be shown here -->
+                    </div>
+                    <button class="play-again-btn" id="playAgainBtn" onclick="playAgain()">Play Again</button>
+                </div>
+                
+                <div class="game-status" id="gameStatus">
+                    <!-- Game status messages will appear here -->
+                </div>
+                
+                <div class="game-controls">
+                    <button class="game-control-btn" id="resetGameBtn" onclick="resetGame()">Reset Game</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="quiz" class="task-content">
+            <h2><i class="fas fa-question-circle"></i> Quiz: Test Your Knowledge <span class="level-indicator expected">10 Marks</span></h2>
+            <p>Test your understanding of metals and water reactions with this 10-question quiz. Your progress will be saved automatically!</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="quizProgress"></div>
+            </div>
+            
+            <div class="quiz-container" id="quizContainer">
+                <!-- Question 1 -->
+                <div class="question-card" id="q1">
+                    <div class="question-text">1. Which metal is the most reactive with water?</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="a" class="option-input"> a) Iron
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="b" class="option-input"> b) Potassium
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="c" class="option-input"> c) Copper
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q1" value="d" class="option-input"> d) Calcium
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q1"></div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="question-card" id="q2">
+                    <div class="question-text">2. What gas is produced when metals react with water?</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="a" class="option-input"> a) Oxygen
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="b" class="option-input"> b) Carbon dioxide
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="c" class="option-input"> c) Hydrogen
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q2" value="d" class="option-input"> d) Nitrogen
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q2"></div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="question-card" id="q3">
+                    <div class="question-text">3. When sodium reacts with water, what is produced along with hydrogen gas?</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="a" class="option-input"> a) Sodium oxide
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="b" class="option-input"> b) Sodium carbonate
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="c" class="option-input"> c) Sodium hydroxide
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q3" value="d" class="option-input"> d) Sodium chloride
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q3"></div>
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="question-card" id="q4">
+                    <div class="question-text">4. Which of these metals will NOT react with cold water?</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="a" class="option-input"> a) Sodium
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="b" class="option-input"> b) Potassium
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="c" class="option-input"> c) Calcium
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q4" value="d" class="option-input"> d) Magnesium
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q4"></div>
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="question-card" id="q5">
+                    <div class="question-text">5. Metals that don't react with cold water might still react with:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="a" class="option-input"> a) Salt water
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="b" class="option-input"> b) Steam
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="c" class="option-input"> c) Sugar solution
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q5" value="d" class="option-input"> d) Oil
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q5"></div>
+                </div>
+                
+                <!-- Question 6 -->
+                <div class="question-card" id="q6">
+                    <div class="question-text">6. The reactivity series lists metals in order of their:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="a" class="option-input"> a) Density
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="b" class="option-input"> b) Melting point
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="c" class="option-input"> c) Reactivity
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q6" value="d" class="option-input"> d) Atomic number
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q6"></div>
+                </div>
+                
+                <!-- Question 7 -->
+                <div class="question-card" id="q7">
+                    <div class="question-text">7. Copper pipes are used for water because copper:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="a" class="option-input"> a) Is cheap
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="b" class="option-input"> b) Is colorful
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="c" class="option-input"> c) Is unreactive with water
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q7" value="d" class="option-input"> d) Kills bacteria
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q7"></div>
+                </div>
+                
+                <!-- Question 8 -->
+                <div class="question-card" id="q8">
+                    <div class="question-text">8. When calcium reacts with water, you can observe:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="a" class="option-input"> a) A purple flame
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="b" class="option-input"> b) Bubbles of hydrogen gas
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="c" class="option-input"> c) The water turning green
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q8" value="d" class="option-input"> d) The calcium melting completely
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q8"></div>
+                </div>
+                
+                <!-- Question 9 -->
+                <div class="question-card" id="q9">
+                    <div class="question-text">9. Iron will react with:</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="a" class="option-input"> a) Cold water
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="b" class="option-input"> b) Steam
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="c" class="option-input"> c) Neither water nor steam
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q9" value="d" class="option-input"> d) Both water and steam
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q9"></div>
+                </div>
+                
+                <!-- Question 10 -->
+                <div class="question-card" id="q10">
+                    <div class="question-text">10. What compound is formed when magnesium reacts with steam?</div>
+                    <div class="options-container">
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="a" class="option-input"> a) Magnesium hydroxide
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="b" class="option-input"> b) Magnesium oxide
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="c" class="option-input"> c) Magnesium carbonate
+                        </label>
+                        <label class="option-label">
+                            <input type="radio" name="q10" value="d" class="option-input"> d) Magnesium chloride
+                        </label>
+                    </div>
+                    <div class="feedback-text" id="feedback-q10"></div>
+                </div>
+                
+                <button class="submit-quiz" id="submitQuiz">Submit Answers</button>
+                
+                <div class="quiz-result" id="quizResult">
+                    <h3>Your Score</h3>
+                    <div class="result-score" id="resultScore">0/10</div>
+                    <p id="resultMessage">Keep practicing!</p>
+                    <button class="retry-button" id="retryQuiz">Try Again</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="extension" class="task-content">
+            <h2><i class="fas fa-book"></i> Extension Activity: Research Project</h2>
+            <p>This activity asks you to research one of four topics and create a one-page report. This develops your research skills and deeper understanding of chemistry concepts.</p>
+            
+            <div class="hint-box">
+                <h3><i class="fas fa-lightbulb"></i> Hint</h3>
+                <p>For your research:</p>
+                <ul>
+                    <li>Use reliable sources like textbooks, educational websites, or science journals.</li>
+                    <li>Take notes as you research, organizing information into main points.</li>
+                    <li>Include scientific explanations that show you understand the chemistry involved.</li>
+                    <li>Find at least two interesting facts not covered in class.</li>
+                    <li>Consider using diagrams or illustrations to help explain the concepts.</li>
+                </ul>
+            </div>
+            
+            <div class="example-box">
+                <h3><i class="fas fa-flask"></i> Real-World Application</h3>
+                <p>Research projects like this one help develop skills that real scientists use every day. When NASA engineers designed the space shuttle, they had to research how different metals would react in space conditions. Their research helped them choose titanium for many components because it's strong but relatively unreactive.</p>
+                <p>Similarly, medical researchers study metal reactivity when designing implants like hip replacements or dental fillings, as these metals need to be unreactive with the fluids in our bodies.</p>
+            </div>
+            
+            <div class="fact-box">
+                <h3><i class="fas fa-star"></i> Did You Know?</h3>
+                <p>The Nobel Prize medal is made of gold because gold is so unreactive it won't tarnish over time - ensuring the medal stays shiny for generations!</p>
+                <p>The reactivity of aluminum was once considered so valuable that aluminum was more expensive than gold in the 1800s! Napoleon III even had a set of aluminum cutlery that was only used for the most honored guests, while everyone else had to use gold cutlery.</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('extension-topic1')"><i class="fas fa-chevron-right"></i> Topic 1: Alkali Metals Stored in Oil</button>
+            <div id="extension-topic1" class="toggle-content">
+                <h3>Research Direction: Why are alkali metals stored in oil?</h3>
+                <p>Some useful search terms:</p>
+                <ul>
+                <li>Alkali metal reactivity with air</li>
+                    <li>Storage of sodium and potassium</li>
+                    <li>Group 1 metals properties</li>
+                    <li>Mineral oil storage of reactive metals</li>
+                </ul>
+                <p>Key questions to explore:</p>
+                <ul>
+                    <li>What happens when alkali metals are exposed to air?</li>
+                    <li>Why is water not suitable for storing these metals?</li>
+                    <li>What properties make oil a good storage medium?</li>
+                    <li>What would happen if we didn't store them properly?</li>
+                </ul>
+                <p>Interesting fact to get you started: Sodium is so reactive that it will even react with the moisture in your skin, causing chemical burns and potentially igniting! This is why scientists handle it with special tools and never with bare hands.</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('extension-topic2')"><i class="fas fa-chevron-right"></i> Topic 2: Metal Reactivity and the Periodic Table</button>
+            <div id="extension-topic2" class="toggle-content">
+                <h3>Research Direction: Metal Reactivity and the Periodic Table</h3>
+                <p>Some useful search terms:</p>
+                <ul>
+                    <li>Periodic trends in metal reactivity</li>
+                    <li>Group 1 and 2 reactivity with water</li>
+                    <li>Electron configuration and metal reactivity</li>
+                    <li>Trends in electropositive character</li>
+                </ul>
+                <p>Key questions to explore:</p>
+                <ul>
+                    <li>How does reactivity change as you move down Group 1?</li>
+                    <li>How does reactivity compare between Group 1 and Group 2 metals?</li>
+                    <li>What atomic properties determine how reactive a metal is with water?</li>
+                    <li>Can you predict reactivity based on position in the periodic table?</li>
+                </ul>
+                <p>Interesting fact to get you started: Francium, at the bottom of Group 1, is predicted to be the most reactive metal of all - but it's so radioactive that it decays before scientists can fully study its chemical properties!</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('extension-topic3')"><i class="fas fa-chevron-right"></i> Topic 3: Discovery of Hydrogen</button>
+            <div id="extension-topic3" class="toggle-content">
+                <h3>Research Direction: The Discovery of Hydrogen</h3>
+                <p>Some useful search terms:</p>
+                <ul>
+                    <li>Henry Cavendish hydrogen discovery</li>
+                    <li>Early experiments with hydrogen gas</li>
+                    <li>Properties and uses of hydrogen</li>
+                    <li>Hydrogen in the universe</li>
+                </ul>
+                <p>Key questions to explore:</p>
+                <ul>
+                    <li>Who discovered hydrogen and how?</li>
+                    <li>What unusual properties does hydrogen have?</li>
+                    <li>How did scientists learn to collect and study this gas?</li>
+                    <li>What are some modern uses of hydrogen?</li>
+                    <li>Why is hydrogen important in the universe?</li>
+                </ul>
+                <p>Interesting fact to get you started: Hydrogen is the lightest element and can actually escape Earth's atmosphere and drift into space because Earth's gravity isn't strong enough to hold it!</p>
+            </div>
+            
+            <button class="toggler" onclick="toggleContent('extension-topic4')"><i class="fas fa-chevron-right"></i> Topic 4: Rusting and Prevention</button>
+            <div id="extension-topic4" class="toggle-content">
+                <h3>Research Direction: Rusting and Prevention</h3>
+                <p>Some useful search terms:</p>
+                    <li>Chemistry of rusting process</li>
+                    <li>Role of water and oxygen in corrosion</li>
+                    <li>Rust prevention methods</li>
+                    <li>Galvanization and sacrificial protection</li>
+                </ul>
+                <p>Key questions to explore:</p>
+                <ul>
+                    <li>What chemical reaction occurs during rusting?</li>
+                    <li>Why do some environments cause faster rusting?</li>
+                    <li>What different methods exist for preventing rusting?</li>
+                    <li>How do sacrificial metals protect iron from rusting?</li>
+                    <li>What are the economic impacts of metal corrosion?</li>
+                </ul>
+                <p>Interesting fact to get you started: Rust (iron oxide) takes up more space than the original iron, which is why rusted objects often appear "swollen" - this expansion can actually crack concrete when reinforcing steel bars rust inside it!</p>
+                <p>For your research:</p>
+                <ul>
+                    <li><strong>Galvanization</strong> involves coating iron with zinc. Research how this protects the iron.</li>
+                    <li><strong>Alloying</strong> means mixing metals together. Find out how stainless steel prevents rusting.</li>
+                    <li><strong>Painting</strong> creates a physical barrier. Investigate why some paints work better than others.</li>
+                    <li><strong>Cathodic protection</strong> uses sacrificial metals. Explore how this is used to protect underwater structures.</li>
+                </ul>
+                <p>Try to include diagrams showing the electrochemical process of rusting in your report, and examples of rust prevention methods used in everyday life!</p>
+            </div>
+            
+            <div class="img-placeholder">
+                Image placeholder: Research project template (research_template.jpg)
+            </div>
+        </div>
+        
+        <footer>
+            <p>ChemAssist Learning Tool | Year 7 Metals and Water Reactions | Created for ATU Chemistry</p>
+            <p><i class="fas fa-atom"></i> Making chemistry come alive! <a href="#" onclick="showTask('quiz'); return false;" class="footer-quiz-link">Take the Quiz</a> <a href="#" onclick="showTask('game'); return false;" class="footer-game-link">Play the Game</a></p>
+        </footer>
+    </div>
+
+    <button class="floating-quiz-button" onclick="showTask('quiz')" title="Take Quiz">
+        <i class="fas fa-question-circle"></i>
+    </button>
+    
+    <button class="floating-game-button" onclick="showTask('game')" title="Play Game">
+        <i class="fas fa-gamepad"></i>
+    </button>
+
+    <script>
+        // Expanded game questions with more educational content
+        const gameQuestions = {
+            easy: [
+                {
+                    question: "Which metal is the most reactive with water?",
+                    options: ["Iron", "Potassium", "Copper", "Zinc"],
+                    correct: 1,
+                    explanation: "Potassium is a Group 1 metal and is extremely reactive with water - it even catches fire when it reacts!"
+                },
+                {
+                    question: "What gas is produced when metals react with water?",
+                    options: ["Oxygen", "Carbon Dioxide", "Hydrogen", "Nitrogen"],
+                    correct: 2,
+                    explanation: "The reaction between metals and water produces hydrogen gas, which can be observed as bubbles."
+                },
+                {
+                    question: "Copper pipes are often used for water systems because copper:",
+                    options: ["Is cheap", "Is colorful", "Is unreactive with water", "Conducts electricity well"],
+                    correct: 2,
+                    explanation: "Copper is low in the reactivity series and doesn't react with water, making it ideal for water pipes."
+                },
+                {
+                    question: "Which metal would produce bubbles the fastest when placed in water?",
+                    options: ["Magnesium", "Sodium", "Iron", "Gold"],
+                    correct: 1,
+                    explanation: "Sodium reacts vigorously with water, producing hydrogen gas bubbles rapidly."
+                },
+                {
+                    question: "In the reactivity series, metals that react with cold water are considered:",
+                    options: ["Unreactive", "Moderately reactive", "Highly reactive", "Noble metals"],
+                    correct: 2,
+                    explanation: "Metals that react with cold water are at the higher end of the reactivity series and are considered highly reactive."
+                }
+            ],
+            medium: [
+                {
+                    question: "When sodium reacts with water, what is produced along with hydrogen gas?",
+                    options: ["Sodium oxide", "Sodium hydroxide", "Sodium chloride", "Sodium carbonate"],
+                    correct: 1,
+                    explanation: "Sodium + Water → Sodium Hydroxide + Hydrogen. The metal hydroxide is always formed in this type of reaction."
+                },
+                {
+                    question: "The reactivity series lists metals in order of their:",
+                    options: ["Density", "Melting point", "Reactivity", "Atomic number"],
+                    correct: 2,
+                    explanation: "The reactivity series ranks metals from most reactive to least reactive based on how easily they give away electrons."
+                },
+                {
+                    question: "Iron will react with:",
+                    options: ["Cold water", "Steam", "Neither water nor steam", "Both water and steam"],
+                    correct: 1,
+                    explanation: "Iron doesn't react with cold water but will react with hot steam to form iron oxide and hydrogen."
+                },
+                {
+                    question: "When calcium reacts with cold water, it produces:",
+                    options: ["Calcium oxide and hydrogen", "Calcium chloride and oxygen", "Calcium hydroxide and hydrogen", "Calcium hydroxide and oxygen"],
+                    correct: 2,
+                    explanation: "The reaction is: Calcium + Water → Calcium Hydroxide + Hydrogen"
+                },
+                {
+                    question: "Which of these metals would NOT react with water under any conditions?",
+                    options: ["Magnesium", "Zinc", "Calcium", "Gold"],
+                    correct: 3,
+                    explanation: "Gold is so unreactive that it doesn't react with water or steam, which is why gold artifacts can survive for thousands of years underwater."
+                }
+            ],
+            hard: [
+                {
+                    question: "What compound is formed when magnesium reacts with steam?",
+                    options: ["Magnesium hydroxide", "Magnesium oxide", "Magnesium carbonate", "Magnesium chloride"],
+                    correct: 1,
+                    explanation: "Magnesium + Steam → Magnesium Oxide + Hydrogen. At high temperatures, metal hydroxides break down to form oxides."
+                },
+                {
+                    question: "Which of these is NOT true about potassium's reaction with water?",
+                    options: ["It produces hydrogen gas", "It catches fire", "It forms potassium hydroxide", "It produces a blue flame"],
+                    correct: 3,
+                    explanation: "Potassium reacts violently with water producing a lilac (purple) flame, not blue. The flame color is characteristic of the metal."
+                },
+                {
+                    question: "When calcium reacts with water, the rate of reaction is:",
+                    options: ["Faster than sodium", "Slower than sodium but faster than magnesium", "Slower than magnesium", "The same as potassium"],
+                    correct: 1,
+                    explanation: "Reactivity decreases down Group 2, so calcium reacts slower than sodium but faster than magnesium, which barely reacts with cold water."
+                },
+                {
+                    question: "What observation would tell you that a metal is reacting with water?",
+                    options: ["The metal turning black", "The water turning acidic", "Bubbles of gas forming", "The water freezing"],
+                    correct: 2,
+                    explanation: "Bubbles of hydrogen gas are a clear sign of a metal-water reaction. The more reactive the metal, the more vigorous the bubbling."
+                },
+                {
+                    question: "In the equation 'Metal + Water → Metal Hydroxide + Hydrogen', what is being oxidized?",
+                    options: ["The metal", "The water", "The hydroxide", "The hydrogen"],
+                    correct: 0,
+                    explanation: "The metal is being oxidized because it loses electrons. The hydrogen in water is being reduced to hydrogen gas."
+                }
+            ]
+        };
+
+        // Initialize game variables
+        let gameMode = 'solo';
+        let gameDifficulty = 'easy';
+        let currentPlayer = 1;
+        let player1Position = 0;
+        let player2Position = 0;
+        let gameInProgress = false;
+        let selectedAnswer = null;
+        let currentQuestion = null;
+        let winThreshold = 85; // Percentage of progress needed to win (adjusted to account for the finish line)
+
+        // Set game mode function
+        function setGameMode(mode) {
+            gameMode = mode;
+            
+            // Update UI
+            document.querySelectorAll('.game-option[data-mode]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.game-option[data-mode="${mode}"]`).classList.add('active');
+        }
+
+        // Set game difficulty function
+        function setGameDifficulty(difficulty) {
+            gameDifficulty = difficulty;
+            
+            // Update UI
+            document.querySelectorAll('.game-option[data-difficulty]').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.game-option[data-difficulty="${difficulty}"]`).classList.add('active');
+            
+            // Update the difficulty label
+            const difficultyLabel = document.getElementById('questionDifficulty');
+            if (difficultyLabel) {
+                difficultyLabel.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+                difficultyLabel.className = 'question-difficulty ' + difficulty;
+            }
+        }
+
+        // Function to start the game
+        function startGame() {
+            // Show game board and question area
+            const gameBoard = document.getElementById('gameBoard');
+            const questionArea = document.getElementById('questionArea');
+            
+            if (gameBoard && questionArea) {
+                gameBoard.style.display = 'block';
+                questionArea.style.display = 'block';
+                
+                // Initialize the race track
+                setupRaceTrack();
+                
+                // Show status message
+                updateGameStatus();
+                
+                gameInProgress = true;
+                
+                // Set up the initial question
+                showQuestion();
+                
+                // Update player turn indicator
+                updatePlayerTurn();
+                
+                // Disable the start button
+                document.getElementById('startGameBtn').disabled = true;
+                document.getElementById('startGameBtn').style.opacity = 0.5;
+            }
+        }
+
+        // Function to update game status
+        function updateGameStatus() {
+            const gameStatus = document.getElementById('gameStatus');
+            if (gameStatus) {
+                if (gameMode === 'solo') {
+                    gameStatus.textContent = "Answer questions correctly to advance toward the finish line!";
+                } else {
+                    gameStatus.textContent = `Player ${currentPlayer}'s turn. Answer correctly to move forward!`;
+                }
+            }
+        }
+
+        // Function to update player turn indicator
+        function updatePlayerTurn() {
+            const playerTurn = document.getElementById('playerTurn');
+            if (playerTurn) {
+                if (gameMode === 'solo') {
+                    playerTurn.textContent = "Your Turn";
+                    playerTurn.className = "player-turn player1";
+                } else {
+                    playerTurn.textContent = `Player ${currentPlayer}'s Turn`;
+                    playerTurn.className = `player-turn player${currentPlayer}`;
+                }
+            }
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            // Reset player positions
+            player1Position = 0;
+            player2Position = 0;
+            currentPlayer = 1;
+            
+            // Clear the race track
+            const raceTrack = document.querySelector('.race-track');
+            if (raceTrack) {
+                // Remove players, paths, and reaction zones, but keep the track itself
+                const elements = raceTrack.querySelectorAll('.player, .reaction-zone, .chemical-element, .progress-path');
+                elements.forEach(element => element.remove());
+            }
+            
+            // Reset result message
+            const resultMessage = document.getElementById('resultMessage');
+            if (resultMessage) {
+                resultMessage.style.display = 'none';
+            }
+            
+            // Reset game progress
+            gameInProgress = false;
+            
+            // Enable the start button
+            document.getElementById('startGameBtn').disabled = false;
+            document.getElementById('startGameBtn').style.opacity = 1;
+            
+            // Hide game board and question area
+            document.getElementById('gameBoard').style.display = 'none';
+            document.getElementById('questionArea').style.display = 'none';
+            
+            // Update game status
+            const gameStatus = document.getElementById('gameStatus');
+            if (gameStatus) {
+                gameStatus.textContent = '';
+            }
+            
+            // Update player turn
+            updatePlayerTurn();
+        }
+
+        // Play again function
+        function playAgain() {
+            document.getElementById('winnerPopup').style.display = 'none';
+            resetGame();
+            startGame();
+        }
+
+        // Function to set up the race track
+        function setupRaceTrack() {
+            const raceTrack = document.querySelector('.race-track');
+            if (!raceTrack) return;
+            
+            // Clear previous elements
+            const existingElements = raceTrack.querySelectorAll('.player, .reaction-zone, .chemical-element, .progress-path');
+            existingElements.forEach(element => element.remove());
+            
+            // Add progress paths
+            const player1Path = document.createElement('div');
+            player1Path.className = 'progress-path player1-path';
+            player1Path.style.left = '10%';
+            player1Path.style.width = '80%';
+            raceTrack.appendChild(player1Path);
+            
+            if (gameMode === '2-player') {
+                const player2Path = document.createElement('div');
+                player2Path.className = 'progress-path player2-path';
+                player2Path.style.left = '10%';
+                player2Path.style.width = '80%';
+                raceTrack.appendChild(player2Path);
+            }
+            
+            // Add player(s)
+            const player1 = document.createElement('div');
+            player1.className = 'player player1';
+            player1.textContent = gameMode === 'solo' ? 'YOU' : 'P1';
+            player1.style.left = '10%';
+            player1.style.top = '40%';
+            raceTrack.appendChild(player1);
+            
+            if (gameMode === '2-player') {
+                const player2 = document.createElement('div');
+                player2.className = 'player player2';
+                player2.textContent = 'P2';
+                player2.style.left = '10%';
+                player2.style.top = '60%';
+                raceTrack.appendChild(player2);
+            }
+            
+            // Add reaction zones (checkpoints)
+            const checkpoints = 5;
+            for (let i = 1; i <= checkpoints; i++) {
+                const zone = document.createElement('div');
+                zone.className = 'reaction-zone';
+                zone.style.left = `${10 + (i * 75 / checkpoints)}%`;
+                zone.style.top = '40%';
+                zone.innerHTML = `<i class="fas fa-flask"></i>`;
+                raceTrack.appendChild(zone);
+                
+                if (gameMode === '2-player') {
+                    const zone2 = document.createElement('div');
+                    zone2.className = 'reaction-zone';
+                    zone2.style.left = `${10 + (i * 75 / checkpoints)}%`;
+                    zone2.style.top = '60%';
+                    zone2.innerHTML = `<i class="fas fa-flask"></i>`;
+                    raceTrack.appendChild(zone2);
+                }
+            }
+            
+            // Add some decorative elements (metal symbols)
+            const metals = ['Na', 'K', 'Ca', 'Mg', 'Fe', 'Cu'];
+            const metalClasses = ['element-na', 'element-k', 'element-ca', 'element-mg', 'element-fe', 'element-cu'];
+            
+            for (let i = 0; i < metals.length; i++) {
+                const element = document.createElement('div');
+                element.className = `chemical-element ${metalClasses[i]}`;
+                element.textContent = metals[i];
+                element.style.left = `${20 + Math.random() * 60}%`;
+                element.style.top = `${10 + Math.random() * 80}%`;
+                element.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+                raceTrack.appendChild(element);
+            }
+        }
+
+        // Function to show a question
+        function showQuestion() {
+            // Select a random question based on difficulty
+            const questions = gameQuestions[gameDifficulty];
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            currentQuestion = questions[randomIndex];
+            
+            // Get the question elements
+            const questionTitle = document.getElementById('questionTitle');
+            const answerOptions = document.getElementById('answerOptions');
+            const resultMessage = document.getElementById('resultMessage');
+            const submitButton = document.getElementById('submitAnswer');
+            
+            if (!questionTitle || !answerOptions || !resultMessage || !submitButton) return;
+            
+            // Reset the question
+            selectedAnswer = null;
+            resultMessage.style.display = 'none';
+            resultMessage.className = 'result-message';
+            submitButton.disabled = true;
+            
+            // Set question text
+            questionTitle.textContent = currentQuestion.question;
+            
+            // Clear previous options
+            answerOptions.innerHTML = '';
+            
+            // Add answer options
+            currentQuestion.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'answer-option';
+                optionDiv.textContent = option;
+                optionDiv.dataset.index = index;
+                optionDiv.onclick = function() {
+                    // Deselect all options
+                    document.querySelectorAll('.answer-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Select this option
+                    this.classList.add('selected');
+                    selectedAnswer = index;
+                    
+                    // Enable submit button
+                    submitButton.disabled = false;
+                };
+                
+                answerOptions.appendChild(optionDiv);
+            });
+        }
+
+        // Function to check the answer
+        function checkAnswer() {
+            if (selectedAnswer === null) return;
+            
+            const resultMessage = document.getElementById('resultMessage');
+            if (!resultMessage) return;
+            
+            const submitButton = document.getElementById('submitAnswer');
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+            
+            const isCorrect = selectedAnswer === currentQuestion.correct;
+            
+            // Show result message with explanation
+            resultMessage.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
+            resultMessage.innerHTML = isCorrect ? 
+                `<strong>Correct!</strong> ${currentQuestion.explanation}` : 
+                `<strong>Incorrect.</strong> The correct answer is: ${currentQuestion.options[currentQuestion.correct]}. ${currentQuestion.explanation}`;
+            resultMessage.style.display = 'block';
+            
+            // Move player forward if correct
+            if (isCorrect) {
+                movePlayer();
+            }
+            
+            // Switch turns if in 2-player mode after a delay
+            setTimeout(() => {
+                // Check if someone won
+                if (checkWinner()) {
+                    return;
+                }
+                
+                if (gameMode === '2-player') {
+                    currentPlayer = currentPlayer === 1 ? 2 : 1;
+                    updatePlayerTurn();
+                    updateGameStatus();
+                }
+                
+                // Show next question
+                showQuestion();
+            }, 3000);
+        }
+
+        // Function to move the player
+        function movePlayer() {
+            const playerToMove = currentPlayer;
+            const progressIncrement = 15; // Percentage to move forward
+            
+            if (playerToMove === 1) {
+                player1Position += progressIncrement;
+                const player1Element = document.querySelector('.player.player1');
+                if (player1Element) {
+                    player1Element.style.left = `${10 + player1Position}%`;
+                }
+            } else {
+                player2Position += progressIncrement;
+                const player2Element = document.querySelector('.player.player2');
+                if (player2Element) {
+                    player2Element.style.left = `${10 + player2Position}%`;
+                }
+            }
+            
+            // Create bubble animation effect
+            createBubbleEffect(playerToMove);
+        }
+
+        // Function to create bubble effect for player movement
+        function createBubbleEffect(playerNum) {
+            const bubbleAnimation = document.getElementById('bubbleAnimation');
+            if (!bubbleAnimation) return;
+            
+            const player = document.querySelector(`.player.player${playerNum}`);
+            if (!player) return;
+            
+            const playerRect = player.getBoundingClientRect();
+            const bubbleCount = 12;
+            
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'reaction-bubble';
+                const size = 5 + Math.random() * 15;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                const playerPos = player.getBoundingClientRect();
+                const bubblesPos = bubbleAnimation.getBoundingClientRect();
+                
+                bubble.style.left = `${playerPos.left - bubblesPos.left + playerPos.width/2 + (Math.random() * 30 - 15)}px`;
+                bubble.style.top = `${playerPos.top - bubblesPos.top + playerPos.height/2 + (Math.random() * 20 - 10)}px`;
+                
+                // Randomize animation
+                bubble.style.animationDuration = `${1 + Math.random() * 2}s`;
+                bubble.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                bubbleAnimation.appendChild(bubble);
+                
+                // Remove bubble after animation completes
+                setTimeout(() => {
+                    if (bubble.parentNode === bubbleAnimation) {
+                        bubbleAnimation.removeChild(bubble);
+                    }
+                }, 3500);
+            }
+        }
+
+        // Function to check if there's a winner
+        function checkWinner() {
+            if (player1Position >= winThreshold) {
+                showWinner(1);
+                return true;
+            }
+            
+            if (gameMode === '2-player' && player2Position >= winThreshold) {
+                showWinner(2);
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Function to display winner
+        function showWinner(playerNum) {
+            const winnerPopup = document.getElementById('winnerPopup');
+            const winnerMessage = document.getElementById('winnerMessage');
+            
+            if (!winnerPopup || !winnerMessage) return;
+            
+            winnerMessage.textContent = gameMode === 'solo' ? 
+                "You've successfully completed the Reactive Metals Race! Your knowledge of chemistry has propelled you to victory!" : 
+                `Player ${playerNum} wins the Reactive Metals Race! Their chemistry knowledge was superior!`;
+            
+            winnerPopup.style.display = 'block';
+        }
+        
+        // Function to show selected task
+        function showTask(taskId) {
+            // Update active button class
+            const buttons = document.querySelectorAll('.task-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Find the button that corresponds to the current task and add active class
+            const activeButton = Array.from(buttons).find(button => {
+                return button.onclick.toString().includes(`'${taskId}'`);
+            });
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            
+            // Hide all task contents
+            const allTasks = document.querySelectorAll('.task-content');
+            allTasks.forEach(task => {
+                task.classList.remove('active');
+            });
+            
+            // Show the selected task
+            document.getElementById(taskId).classList.add('active');
+            
+            // Scroll to the content with smooth behavior
+            document.getElementById(taskId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Reset all togglers
+            const togglers = document.querySelectorAll('.toggler');
+            togglers.forEach(toggler => {
+                toggler.classList.remove('active');
+            });
+            
+            const toggleContents = document.querySelectorAll('.toggle-content');
+            toggleContents.forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Start reaction animation if viewing Task 2
+            if (taskId === 'task2') {
+                startReactionAnimation();
+            }
+        }
+        
+        // Function to toggle content visibility
+        function toggleContent(contentId) {
+            const content = document.getElementById(contentId);
+            const toggler = document.querySelector(`[onclick="toggleContent('${contentId}')"]`);
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                toggler.classList.remove('active');
+            } else {
+                content.style.display = 'block';
+                toggler.classList.add('active');
+            }
+        }
+        
+        // Animation for the reaction container
+        function startReactionAnimation() {
+            const container = document.getElementById('reactionAnimation');
+            if (!container) return;
+            
+            // Clear existing bubbles
+            const existingBubbles = container.querySelectorAll('.bubble');
+            existingBubbles.forEach(bubble => bubble.remove());
+            
+            // Create new bubbles
+            for (let i = 0; i < 15; i++) {
+                createBubble();
+            }
+            
+            // Make the metal piece "dance" a bit
+            const metal = document.getElementById('metalPiece');
+            if (metal) {
+                metal.style.animation = 'none';
+                setTimeout(() => {
+                    metal.style.animation = 'dance 2s infinite alternate';
+                }, 10);
+            }
+        }
+        
+        // Create a single bubble for the reaction animation
+        function createBubble() {
+            const container = document.getElementById('reactionAnimation');
+            if (!container) return;
+            
+            const metal = document.getElementById('metalPiece');
+            if (!metal) return;
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            
+            // Random bubble properties
+            const size = Math.random() * 15 + 5;
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            
+            // Position bubble near the metal
+            const metalRect = metal.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const startX = metal.offsetLeft + Math.random() * metal.offsetWidth;
+            const startY = metal.offsetTop + metal.offsetHeight / 2;
+            
+            bubble.style.left = `${startX}px`;
+            bubble.style.bottom = `${containerRect.height - startY}px`;
+            
+            // Random animation duration and delay
+            const duration = Math.random() * 2 + 2;
+            const delay = Math.random() * 2;
+            bubble.style.animation = `rise ${duration}s ${delay}s infinite ease-out`;
+            
+            container.appendChild(bubble);
+        }
+        
+        // Show first task by default when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            showTask('task1');
+        });
+    </script>
+</body>
+</html>
+                            <input type="radio" name="q10" value="d" class="option-input"> d) Magnesium
