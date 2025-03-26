@@ -110,7 +110,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.95em;
-            transition: background-color 0.3s ease, transform 0.1s ease;
+            transition: background-color 0.3s ease, transform 0.1s ease, opacity 0.3s ease; /* Added opacity transition */
             margin-top: 10px;
             margin-right: 10px;
             vertical-align: middle; /* Align buttons better */
@@ -124,9 +124,23 @@
         }
         button:disabled { /* Style for disabled buttons */
             background-color: #cccccc;
+            color: #666666; /* Darker text on disabled */
             cursor: not-allowed;
             transform: none;
+            opacity: 0.7; /* Slightly fade disabled buttons */
         }
+        /* Specific styling for disabled game options */
+        button.game-option:disabled {
+            background-color: #cccccc; /* Default disabled color */
+            opacity: 0.7;
+        }
+        button.game-option.correct-answer:disabled { /* Style for correct answer highlight */
+             background-color: #28a745 !important; /* Force green */
+             color: white !important;
+             opacity: 1 !important; /* Fully opaque */
+             border-color: #28a745 !important;
+        }
+
 
         .feedback {
             margin-top: 15px;
@@ -145,6 +159,15 @@
         .feedback.info { /* For general info feedback */
              background-color: #fff3cd; color: #856404; border-color: #ffeeba; display: block;
         }
+        .interactive-check select {
+            padding: 8px;
+            margin-right: 5px;
+            min-width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            vertical-align: middle;
+        }
+
 
         /* --- Specific Section Styles --- */
 
@@ -228,12 +251,20 @@
          .photon.green { background: radial-gradient(circle, white 10%, #00ff00 70%); box-shadow: 0 0 8px #00ff00; }
 
          .annotation {
-            position: absolute; background: rgba(255, 255, 255, 0.8); padding: 5px 8px; border-radius: 4px; font-size: 0.9em; opacity: 0; transition: opacity 0.5s ease; text-align: left;
+            position: absolute; background: rgba(255, 255, 255, 0.8); padding: 5px 8px; border-radius: 4px; font-size: 0.9em; opacity: 0; transition: opacity 0.5s ease; text-align: left; z-index: 10; /* Ensure annotations are visible */
          }
          #annotation-heat { top: 10%; left: 5%; }
          #annotation-jump { top: 10%; right: 5%; }
          #annotation-fall { bottom: 10%; right: 5%; }
          #annotation-emit { bottom: 10%; left: 5%; }
+
+        #fes-atomic-animation select {
+            padding: 8px;
+            margin-left: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            vertical-align: middle;
+        }
 
         /* Animation Keyframes */
         @keyframes pulse-heat {
@@ -241,9 +272,6 @@
              50% { opacity: 0.8; transform: scale(1.1); }
              100% { opacity: 0; transform: scale(1); } /* Fade out heat symbol */
         }
-
-        /* Keyframes for electron jump - NOW CONTROLLED BY JS CLASS TOGGLE */
-        /* No keyframe needed, just transition on .electron */
 
         @keyframes emit-light {
             0% { opacity: 1; transform: translate(72.5px, -35px) scale(1); } /* Start near excited pos */
@@ -275,7 +303,7 @@
         @media (max-width: 768px) {
             body { padding: 0;} /* Remove body padding */
              .container { border-radius: 0; margin: 0; max-width: 100%; box-shadow: none; }
-            .tab-nav { flex-direction: row; overflow-x: auto; /* Allow horizontal scroll if needed */ }
+            .tab-nav { flex-direction: row; overflow-x: auto; white-space: nowrap; /* Prevent wrapping */ justify-content: flex-start; /* Align tabs left */}
             .tab-button { flex-grow: 0; /* Don't force fill */ flex-shrink: 0; /* Don't shrink */}
              .tab-content { padding: 20px 15px;}
              .advantages-grid { grid-template-columns: 1fr; /* Stack cards */ }
@@ -299,6 +327,8 @@
              .electron { width: 10px; height: 10px; transform: translate(-50%, -35px);} /* Adjust initial pos */
              .photon { width: 8px; height: 8px;}
              .annotation { font-size: 0.8em;}
+             .interactive-check select { width: calc(100% - 130px); } /* Adjust select width */
+             #fes-atomic-animation select { width: calc(100% - 180px); } /* Adjust select width */
          }
 
     </style>
@@ -334,7 +364,7 @@
             <div class="interactive-check">
                 <h3>Quick Check</h3>
                 <p>Which of the following best describes an instrumental method?</p>
-                <select id="intro-q1" style="padding: 5px; margin-right: 5px; min-width: 200px;">
+                <select id="intro-q1">
                     <option value="">-- Select an answer --</option>
                     <option value="incorrect">Adding acid to a carbonate to see if it fizzes.</option>
                     <option value="correct">Using a machine that passes light through a sample to identify a metal.</option>
@@ -380,7 +410,7 @@
              <div class="interactive-check" style="margin-top: 25px;">
                 <h3>Quick Check</h3>
                 <p>A food safety lab needs to check for a tiny trace of a banned pesticide in hundreds of samples daily. Why is an instrumental method the best choice?</p>
-                <select id="adv-q1" style="padding: 5px; margin-right: 5px; min-width: 200px;">
+                <select id="adv-q1">
                     <option value="">-- Select an answer --</option>
                     <option value="incorrect">Because instrumental methods are cheaper to set up.</option>
                     <option value="incorrect">Because simple chemical tests are more sensitive.</option>
@@ -426,7 +456,7 @@
                     <div id="annotation-emit" class="annotation">Photon of specific energy (light) emitted</div>
                 </div>
                 <button class="button" id="play-atomic-animation">Play Animation</button>
-                 <select id="photon-color-select" style="padding: 5px; margin-left: 10px;">
+                 <select id="photon-color-select">
                      <option value="red">Emit Red Light (e.g., Li)</option>
                      <option value="yellow">Emit Yellow Light (e.g., Na)</option>
                      <option value="green">Emit Green Light (e.g., Cu)</option>
@@ -463,7 +493,7 @@
 
         </div>
 
-        <!-- Interpreting Results Tab -->
+        <!-- Interpreting Results Tab --- CORRECTED VERSION --- -->
         <div id="results" class="tab-content">
             <h1>Interpreting Flame Emission Spectra</h1>
             <p>The real power of FES comes from analysing the line spectrum produced. This allows for both qualitative (what's there?) and quantitative (how much?) analysis.</p>
@@ -478,13 +508,14 @@
             <p>If lines matching multiple reference spectra are found, it indicates the presence of a mixture of those metals.</p>
 
             <h2>Example Comparison</h2>
-            <p>Below are simplified reference line spectra for Lithium (Li), Sodium (Na), and Potassium (K), along with a spectrum from an 'Unknown Sample'.</p>
+            <p>Below are simplified reference line spectra for Lithium (Li), Sodium (Na), and Potassium (K), along with a spectrum from an 'Unknown Sample'. In real spectra, intensity (brightness) indicates concentration.</p>
 
             <div class="spectra-comparison">
                 <!-- Reference Spectra -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
                     <div class="spectrum-display">
                         <h4>Reference: Lithium (Li)</h4>
+                        <!-- Reference lines are shown at full intensity (opacity 1) -->
                         <div class="line-spectrum"><div class="spectrum-line line-li-1"></div></div>
                     </div>
                     <div class="spectrum-display">
@@ -504,17 +535,21 @@
                     <h4>Unknown Sample Spectrum</h4>
                     <div class="line-spectrum">
                         <!-- Lines matching Sodium and Lithium -->
-                        <div class="spectrum-line line-na-1" style="height: 100%;"></div>
-                        <div class="spectrum-line line-na-2" style="height: 100%;"></div>
-                        <div class="spectrum-line line-li-1" style="height: 60%; opacity: 0.8;"></div> <!-- Lower intensity Li line -->
+                        <!-- Sodium lines shown at full opacity (higher intensity/concentration) -->
+                        <div class="spectrum-line line-na-1" style="opacity: 1;"></div>
+                        <div class="spectrum-line line-na-2" style="opacity: 1;"></div>
+                        <!-- Lithium line shown with lower opacity to represent lower intensity/concentration -->
+                        <div class="spectrum-line line-li-1" style="opacity: 0.6;"></div>
+                        <!-- REMOVED incorrect style="height: 60%;" -->
                     </div>
+                     <p style="font-size: 0.9em; margin-top: 10px; text-align: center;">(Note: Lower opacity visually represents lower intensity/concentration)</p>
                 </div>
             </div>
 
             <div class="interactive-check" style="margin-top: 25px;">
                 <h3>Identify the Metal(s)</h3>
                 <p>Based on the comparison above, which metal(s) are present in the Unknown Sample?</p>
-                <select id="res-q1" style="padding: 5px; margin-right: 5px; min-width: 200px;">
+                <select id="res-q1">
                     <option value="">-- Select an answer --</option>
                     <option value="incorrect">Only Lithium</option>
                     <option value="incorrect">Only Sodium</option>
@@ -524,14 +559,16 @@
                 </select>
                 <button class="button" onclick="checkAnswer('res-q1', 'correct', 'res-f1')">Check Answer</button>
                 <div id="res-f1" class="feedback"></div>
-                <p id="res-f1-extra" style="display: none; margin-top: 10px; font-style: italic;">Correct! The lines in the unknown spectrum match the positions of the lines for both Sodium (strong yellow doublet) and Lithium (red line). Note the Lithium line is shown shorter/fainter, suggesting a lower concentration than Sodium.</p>
+                <!-- CORRECTED Explanation Text -->
+                <p id="res-f1-extra" style="display: none; margin-top: 10px; font-style: italic;">Correct! The lines in the unknown spectrum match the positions (wavelengths) of the lines for both Sodium (yellow doublet) and Lithium (red line). The Lithium line appears fainter (lower opacity), suggesting it is present at a lower concentration than Sodium.</p>
             </div>
 
             <h2>Measuring Concentration (Quantitative Analysis)</h2>
-            <p>The <strong>intensity</strong> (brightness or measured signal strength) of a spectral line is directly related to the <strong>concentration</strong> of the metal ion that produced it. More ions in the flame mean more photons emitted at that wavelength, leading to a stronger signal.</p>
+            <p>The <strong>intensity</strong> (brightness or measured signal strength) of a spectral line is directly related to the <strong>concentration</strong> of the metal ion that produced it. More ions in the flame mean more photons emitted at that wavelength, leading to a stronger signal (a more intense line).</p>
             <p>To find the exact concentration, chemists typically use a <strong>calibration curve</strong>. They prepare standard solutions with known concentrations of the metal, run them through the FES instrument, and plot a graph of line intensity vs. concentration. The intensity reading from the unknown sample can then be compared to this graph to determine its concentration.</p>
 
         </div>
+        <!-- End of Interpreting Results Tab -->
 
         <!-- Quiz Tab -->
         <div id="quiz" class="tab-content">
@@ -683,6 +720,9 @@
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
+                // Only switch if not already active (optional optimization)
+                if (button.classList.contains('active')) return;
+
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
                 button.classList.add('active');
@@ -696,8 +736,11 @@
             const selectElement = document.getElementById(selectId);
             const feedbackElement = document.getElementById(feedbackId);
             const selectedValue = selectElement.value;
+            const extraInfoElement = document.getElementById(feedbackId + '-extra'); // e.g., res-f1-extra
 
             feedbackElement.style.display = 'block'; // Ensure feedback is visible
+            if (extraInfoElement) extraInfoElement.style.display = 'none'; // Hide extra info initially
+
             if (selectedValue === "") {
                  feedbackElement.textContent = "Please select an answer.";
                  feedbackElement.className = 'feedback info';
@@ -707,17 +750,12 @@
             if (selectedValue === correctAnswer) {
                 feedbackElement.textContent = "Correct! Well done.";
                 feedbackElement.className = 'feedback correct';
-                if (feedbackId === 'res-f1') {
-                    const extraInfo = document.getElementById('res-f1-extra');
-                    if(extraInfo) extraInfo.style.display = 'block';
+                if (extraInfoElement) { // Show extra explanation if it exists and answer is correct
+                    extraInfoElement.style.display = 'block';
                 }
             } else {
                 feedbackElement.textContent = "Not quite. Check the information again.";
                 feedbackElement.className = 'feedback incorrect';
-                 if (feedbackId === 'res-f1') {
-                     const extraInfo = document.getElementById('res-f1-extra');
-                     if(extraInfo) extraInfo.style.display = 'none';
-                 }
             }
         }
 
@@ -750,6 +788,9 @@
                  lineClasses.forEach(lineClass => {
                      const lineDiv = document.createElement('div');
                      lineDiv.className = `spectrum-line ${lineClass}`;
+                     // Ensure full height by default
+                     lineDiv.style.height = '100%';
+                     lineDiv.style.opacity = '1'; // Default to full opacity unless overridden
                      spectrumElement.appendChild(lineDiv);
                  });
              }
@@ -770,83 +811,99 @@
             emit: document.getElementById('annotation-emit')
         };
         let isAnimating = false;
+        let animationTimeoutIds = []; // Store timeout IDs to clear them
 
-        function resetAtomicAnimation() {
-            electron.style.transition = 'none'; // Disable transition for reset
+        function clearAnimationTimeouts() {
+             animationTimeoutIds.forEach(id => clearTimeout(id));
+             animationTimeoutIds = [];
+        }
+
+        function resetAtomicAnimation(immediate = false) {
+            clearAnimationTimeouts(); // Clear any pending steps
+            electron.style.transition = immediate ? 'none' : 'transform 0.8s ease-in-out'; // Disable transition only for immediate reset
             electron.style.transform = 'translate(-50%, -50px)'; // Reset position (level 1)
             photon.style.animation = 'none';
             photon.style.opacity = '0';
             heatSymbol.style.animation = 'none';
             heatSymbol.style.opacity = '0';
             Object.values(annotations).forEach(anno => anno.style.opacity = '0');
-            // Force reflow/repaint before re-enabling transitions/animations
-            void electron.offsetWidth;
-            void photon.offsetWidth;
-            void heatSymbol.offsetWidth;
-            electron.style.transition = 'transform 0.8s ease-in-out'; // Re-enable
+
+            // Force reflow/repaint needed if transitions were disabled
+             if(immediate) {
+                void electron.offsetWidth;
+                void photon.offsetWidth;
+                void heatSymbol.offsetWidth;
+                // Re-enable transition after reflow if needed, though typically not if resetting before playing
+                 electron.style.transition = 'transform 0.8s ease-in-out';
+             }
+
             isAnimating = false;
             playButton.disabled = false;
             playButton.textContent = "Play Animation";
         }
 
         playButton.addEventListener('click', () => {
-            if (isAnimating) return;
+            if (isAnimating) {
+                 resetAtomicAnimation(true); // Allow immediate reset if clicked while animating
+                 return;
+            };
             isAnimating = true;
-            playButton.disabled = true;
+            playButton.disabled = true; // Keep disabled during animation
             playButton.textContent = "Animating...";
 
-            resetAtomicAnimation(); // Ensure clean start
+            resetAtomicAnimation(true); // Ensure clean start, immediately
 
             // Set photon color based on dropdown
             const selectedColor = photonColorSelect.value;
             photon.className = `photon ${selectedColor}`; // Set class for color/styling
 
             // Sequence the animation steps using timeouts
-            setTimeout(() => { // 1. Show heat input
+            animationTimeoutIds.push(setTimeout(() => { // 1. Show heat input
                 heatSymbol.style.animation = 'pulse-heat 1.5s ease-out forwards';
                 heatSymbol.style.animationPlayState = 'running';
                 annotations.heat.style.opacity = '1';
-            }, 100);
+            }, 100));
 
-            setTimeout(() => { // 2. Electron jumps up (to level 3 example)
+            animationTimeoutIds.push(setTimeout(() => { // 2. Electron jumps up (to level 3 example)
                 annotations.heat.style.opacity = '0';
-                electron.style.transform = 'translate(85px, -85px)'; // Move to ~level 3 position (adjust coords as needed)
+                electron.style.transform = 'translate(85px, -85px)'; // Move to ~level 3 position
                 annotations.jump.style.opacity = '1';
-            }, 800); // Start jump slightly before heat fades
+            }, 800));
 
-            setTimeout(() => { // 3. Electron falls back (to level 1)
+            animationTimeoutIds.push(setTimeout(() => { // 3. Electron falls back (to level 1)
                 annotations.jump.style.opacity = '0';
-                 // Position photon near excited electron just before fall
-                photon.style.transform = 'translate(72.5px, -35px)'; // Adjust start point if needed
-                 // Use a different transition for the fall if desired, or same as jump
+                 photon.style.transform = 'translate(72.5px, -35px)'; // Position photon near excited electron
                 electron.style.transform = 'translate(-50%, -50px)'; // Back to level 1
                 annotations.fall.style.opacity = '1';
-            }, 2000); // After jump completes
+            }, 2000));
 
-            setTimeout(() => { // 4. Photon emitted
+            animationTimeoutIds.push(setTimeout(() => { // 4. Photon emitted
                  annotations.fall.style.opacity = '0';
                  photon.style.animation = 'emit-light 1s ease-out forwards';
                  photon.style.animationPlayState = 'running';
                  annotations.emit.style.opacity = '1';
-            }, 2200); // Shortly after fall starts
+            }, 2200));
 
-             setTimeout(() => { // 5. Clean up annotations and reset button
+             animationTimeoutIds.push(setTimeout(() => { // 5. Clean up annotations and reset button state
                  annotations.emit.style.opacity = '0';
-                 resetAtomicAnimation(); // Reset for next play
-            }, 3500); // After photon animation likely finishes
+                 isAnimating = false; // Mark as finished
+                 playButton.disabled = false;
+                 playButton.textContent = "Play Animation";
+                 // Don't call full reset here, let it sit in the final state until next play
+            }, 3500));
         });
-         // Initialize animation state
-         resetAtomicAnimation();
+         // Initialize animation state on load
+         window.addEventListener('load', () => resetAtomicAnimation(true));
+
 
         // --- Quiz Logic ---
         const quizForm = document.getElementById('quiz-form');
         const quizResultDiv = document.getElementById('quiz-result');
-        // Updated for 10 questions
         const correctAnswers = {
             q1: 'correct', q2: 'correct', q3: 'correct', q4: 'correct', q5: 'correct',
             q6: 'correct', q7: 'correct', q8: 'correct', q9: 'correct', q10: 'correct'
         };
-        const totalQuestions = 10; // Updated total
+        const totalQuestions = 10;
 
         function submitQuiz() {
             let score = 0;
@@ -855,12 +912,33 @@
 
             for (let i = 1; i <= totalQuestions; i++) {
                 const qName = `q${i}`;
-                const selectedAnswer = quizForm.elements[qName].value;
+                const questionRadios = quizForm.elements[qName];
                 const feedbackDiv = document.getElementById(`${qName}-feedback`);
+                let selectedValue = null;
 
-                if (selectedAnswer) {
-                    feedbackDiv.style.display = 'block'; // Show feedback area
-                    if (selectedAnswer === correctAnswers[qName]) {
+                // Find the checked value for the radio group
+                 if (questionRadios) { // Check if the element exists
+                     if (questionRadios.value) { // Single element case (shouldn't happen with radios but safe check)
+                         selectedValue = questionRadios.value;
+                     } else if (questionRadios.length) { // RadioNodeList case
+                         for(const radio of questionRadios) {
+                             if (radio.checked) {
+                                 selectedValue = radio.value;
+                                 break;
+                             }
+                         }
+                     }
+                 } else {
+                     console.error(`Quiz question element not found for name: ${qName}`);
+                     allAnswered = false; // Treat missing question as unanswered
+                     continue; // Skip to next question
+                 }
+
+
+                feedbackDiv.style.display = 'block'; // Show feedback area
+
+                if (selectedValue) {
+                    if (selectedValue === correctAnswers[qName]) {
                         score++;
                         feedbackDiv.textContent = "Correct!";
                         feedbackDiv.style.color = 'green';
@@ -872,17 +950,17 @@
                     allAnswered = false;
                     feedbackDiv.textContent = "Please select an answer.";
                     feedbackDiv.style.color = 'orange';
-                    feedbackDiv.style.display = 'block'; // Show feedback area
                 }
             }
 
             if (allAnswered) {
                 quizResultDiv.textContent = `Your Score: ${score} out of ${totalQuestions}`;
-                quizResultDiv.style.color = (score / totalQuestions) >= 0.7 ? 'green' : 'red'; // Color score based on performance
+                quizResultDiv.style.color = (score / totalQuestions) >= 0.7 ? 'green' : 'red';
             } else {
                  quizResultDiv.textContent = `Please answer all questions before submitting.`;
                  quizResultDiv.style.color = 'orange';
             }
+            quizResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); // Scroll to show result
         }
 
         // --- Game Logic ---
@@ -901,21 +979,20 @@
 
         function startGame() {
             optionsLocked = false;
-            nextSpectrumBtn.disabled = true; // Disable 'Next' until answer is checked
+            nextSpectrumBtn.disabled = true;
             gameFeedbackDiv.textContent = '';
             gameFeedbackDiv.className = 'feedback'; // Reset feedback style
             gameOptionsDiv.innerHTML = ''; // Clear previous buttons
 
             // --- Improved Selection Logic ---
-            let possibleMetals = gameMetals.filter(metal => metal !== lastGameMetalKey); // Exclude last metal
-            if (possibleMetals.length === 0) { // If only one metal left (or in case of small pool)
-                possibleMetals = gameMetals; // Fallback to full list
+            let possibleMetals = gameMetals.filter(metal => metal !== lastGameMetalKey);
+            if (possibleMetals.length === 0) {
+                possibleMetals = [...gameMetals]; // Use a copy to avoid modifying original
             }
             currentGameMetalKey = possibleMetals[Math.floor(Math.random() * possibleMetals.length)];
-            lastGameMetalKey = currentGameMetalKey; // Remember for next round
-            // --- End Improvement ---
+            lastGameMetalKey = currentGameMetalKey;
 
-            // Display its spectrum
+            // Display its spectrum using the general function
             updateSpectrumDisplay(gameSpectrumDisplay, metalData[currentGameMetalKey].lines);
 
             // Create shuffled answer buttons
@@ -926,9 +1003,15 @@
                 const button = document.createElement('button');
                 button.textContent = metalData[metalKey].name; // Show full name
                 button.className = 'button game-option';
+                // Use dataset to store the key, compare keys instead of text content
+                button.dataset.metalKey = metalKey;
                 button.onclick = () => checkGameAnswer(metalKey);
                 gameOptionsDiv.appendChild(button);
             });
+             // Ensure the 'Next' button is visible and ready
+             nextSpectrumBtn.style.display = 'inline-block';
+             nextSpectrumBtn.textContent = 'Next Spectrum';
+
         }
 
         function checkGameAnswer(selectedMetalKey) {
@@ -949,22 +1032,29 @@
             }
             gameScoreDiv.textContent = `Score: ${gameScore} / ${gameAttempts}`;
 
-            // Highlight correct button and disable all
+            // Disable all buttons and highlight the correct one
             document.querySelectorAll('.game-option').forEach(btn => {
                 btn.disabled = true;
-                 // Check button text content against the *name* of the correct metal
-                 if (btn.textContent === correctMetalName) {
-                     btn.style.backgroundColor = '#28a745'; // Green highlight for correct one
-                     btn.style.borderColor = '#28a745';
+                 // Compare the button's stored metal key with the correct key
+                 if (btn.dataset.metalKey === currentGameMetalKey) {
+                    // Apply a specific class for the correct answer styling via CSS
+                     btn.classList.add('correct-answer');
                  } else {
-                     btn.style.opacity = '0.7'; // Fade incorrect ones slightly
+                     // Optionally fade incorrect buttons more
+                     btn.style.opacity = '0.6';
                  }
             });
             nextSpectrumBtn.disabled = false; // Enable 'Next' button
         }
 
-        // Initialize Game on load
-        window.addEventListener('load', startGame);
+        // Initialize Game on first load
+        window.addEventListener('load', () => {
+            startGame();
+            // Also set default flame on load if not already done
+            setFlame('Default');
+            // And reset atomic animation visual state
+            resetAtomicAnimation(true);
+        });
 
     </script>
 
