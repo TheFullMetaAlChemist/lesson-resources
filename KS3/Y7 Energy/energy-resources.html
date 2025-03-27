@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KS3 Physics: Energy Resources - Final Version</title>
+    <style>
+        /* --- Basic Reset & Body Styling --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background-color: #f0f4f8; color: #333; padding: 20px; }
+
+        /* --- Main Container --- */
+        .container { max-width: 1150px; margin: auto; background: #fff; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); overflow: hidden; }
+
+        /* --- Header --- */
+        header { background-color: #0077cc; color: #fff; padding: 20px; text-align: center; border-bottom: 5px solid #005fa3; }
+        header h1 { margin-bottom: 5px; font-size: 2.5em; }
+        header h2 { font-size: 1.2em; font-weight: normal; }
+
+        /* --- Navigation Tabs --- */
+        nav ul { list-style: none; display: flex; background-color: #e2e6ea; padding: 0; border-bottom: 1px solid #ccc;}
+        nav ul li { flex: 1; text-align: center; }
+        nav ul li button { display: block; width: 100%; padding: 15px 10px; background: none; border: none; border-bottom: 4px solid transparent; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s; color: #333; font-weight: bold;}
+        nav ul li button:hover { background-color: #d1d8de; }
+        nav ul li button.active { background-color: #fff; color: #0077cc; border-bottom: 4px solid #0077cc; }
+
+        /* --- Section Styling --- */
+        .content-section { display: none; padding: 30px; animation: fadeIn 0.5s ease-in-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Tutorial Specifics --- */
+        #tutorial h3 { color: #0077cc; margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .learning-objectives { background-color: #e7f3fe; border-left: 5px solid #0077cc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .learning-objectives h4 { margin-top: 0; color: #005fa3; }
+        .learning-objectives ul { list-style: disc; margin-left: 20px; }
+        .key-term { font-weight: bold; color: #d9534f; }
+
+        /* --- Checkpoints --- */
+        .checkpoint { background-color: #fffbe6; border: 1px solid #ffe58f; border-left: 5px solid #ffc107; padding: 20px; margin: 30px 0; border-radius: 5px; }
+        .checkpoint label { font-weight: bold; margin-bottom: 10px; display: block;}
+        .checkpoint input[type="text"], .checkpoint select { width: 100%; max-width: 400px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-right: 10px; margin-bottom: 10px; }
+        .checkpoint button { padding: 8px 15px; background-color: #ffc107; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .checkpoint button:hover { background-color: #e0a800; }
+        .checkpoint-feedback { font-size: 0.9em; margin-top: 10px; font-weight: bold; min-height: 20px; }
+        .gated-content.hidden { display: none; }
+        .correct-text { color: green; }
+        .incorrect-text { color: red; }
+
+        /* --- Image Placeholder & Explanation Styling --- */
+        .image-container { border: 1px solid #ccc; padding: 15px; margin: 20px auto; background-color: #f8f9fa; border-radius: 8px; text-align: center; max-width: 600px; }
+        .image-container img { max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 15px; border: 1px solid #ddd; background-color: #fff; }
+        .explanation-button { padding: 8px 15px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s; }
+        .explanation-button:hover { background-color: #5a6268; }
+        .explanation-content { display: none; margin-top: 15px; padding: 15px; background-color: #e9ecef; border-radius: 4px; text-align: left; border: 1px solid #ced4da; }
+        .explanation-content ol { padding-left: 25px; }
+        .explanation-content li { margin-bottom: 8px; }
+
+        /* --- Renewable Resource Tabs Styling --- */
+        .resource-tabs { display: flex; flex-wrap: wrap; margin: 20px 0; background-color: #e9ecef; border-radius: 6px; padding: 5px; border: 1px solid #ced4da;}
+        .resource-tabs button { padding: 10px 15px; cursor: pointer; border: none; background: none; font-size: 0.95em; flex-grow: 1; border-radius: 4px; transition: background-color 0.3s, color 0.3s; color: #495057; font-weight: 500; margin: 2px;}
+        .resource-tabs button:hover { background-color: #dee2e6; }
+        .resource-tabs button.active { font-weight: bold; color: #fff; background-color: #007bff; }
+        .resource-content { display: none; padding: 20px; border: 1px solid #e9ecef; border-top: none; border-radius: 0 0 6px 6px; background-color: #fff; min-height: 300px; animation: fadeIn 0.4s; }
+        .resource-content.active { display: block; }
+        .resource-layout { display: flex; flex-wrap: wrap; gap: 25px; align-items: flex-start;}
+        .resource-text { flex: 3; min-width: 300px;}
+        .resource-image-section { flex: 2; min-width: 250px;}
+
+        /* --- Advantages & Disadvantages List Markers --- */
+        .advantages, .disadvantages { list-style: none; margin-top: 10px; padding-left: 5px; }
+        .advantages li::before { content: '✅ '; color: green; font-weight: bold; margin-right: 5px; }
+        .disadvantages li::before { content: '❌ '; color: red; font-weight: bold; margin-right: 5px;}
+        .advantages li, .disadvantages li { margin-bottom: 5px; padding-left: 5px;}
+
+        /* --- Practice Quiz Styles --- */
+        #practice-quiz { } .quiz-question { background: #f9f9f9; border: 1px solid #eee; padding: 15px 20px; margin-bottom: 20px; border-radius: 5px; } .quiz-question p { font-weight: bold; margin-bottom: 10px; } .quiz-options label { display: block; margin-bottom: 8px; font-weight: normal; cursor: pointer; padding: 5px 8px; border-radius: 3px; transition: background-color 0.2s; } .quiz-options label:hover { background-color: #eef; } .quiz-options input[type="radio"] { margin-right: 10px; vertical-align: middle;} #quiz-feedback { margin-top: 20px; padding: 15px; background-color: #e7f3fe; border: 1px solid #bce8f1; border-radius: 5px; text-align: center; } #quiz-feedback h4 { margin-top: 0; margin-bottom: 10px; color: #005fa3; } .quiz-question .feedback { font-size: 0.9em; margin-top: 5px; font-style: italic; } .quiz-options label.correct { background-color: #d4edda !important; border-left: 4px solid green; } .quiz-options label.incorrect { background-color: #f8d7da !important; border-left: 4px solid red; }
+
+        /* --- Game Section Styles --- */
+        #game { text-align: center; }
+        .game-selector { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 15px;}
+        .game-selector button { padding: 10px 15px; margin: 0 5px; font-size: 1em; cursor: pointer; background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 5px; transition: background-color 0.3s, color 0.3s, border-color 0.3s;}
+        .game-selector button.active { background-color: #0077cc; color: white; border-color: #005fa3; }
+        .game-area { display: none; } .game-area.active { display: block; padding: 25px 0;}
+        #game-intro, #game-intro-adv, #game-intro-seq { margin-bottom: 25px; font-size: 1.1em; color: #333;}
+        .reset-game-btn { margin-top: 30px; padding: 8px 15px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;}
+        .reset-game-btn:hover { background-color: #c82333; }
+        .check-game-btn { padding: 10px 20px; margin-top: 15px; background-color: #0077cc; color: white; border:none; border-radius: 5px; cursor: pointer; font-size: 1em;}
+        .check-game-btn:hover { background-color: #005fa3; }
+
+        /* Game 1 & 2: Matching Cards */
+        .game-container { display: flex; flex-wrap: wrap; /* Allow wrapping on smaller screens */ justify-content: space-around; margin-top: 20px; min-height: 350px; gap: 20px;}
+        .game-column { width: 100%; max-width: 400px; /* Adjust max width */ display: flex; flex-direction: column; gap: 10px; }
+        .game-card { border: 1px solid #ccc; padding: 12px; border-radius: 5px; cursor: pointer; background-color: #f0f4f8; transition: background-color 0.3s, transform 0.2s, opacity 0.3s; text-align: center; font-size: 0.95em; min-height: 60px; display:flex; align-items: center; justify-content: center;}
+        .game-card:hover { background-color: #e2e6ea; transform: translateY(-2px); }
+        .game-card.selected { background-color: #0077cc; color: white; border-color: #005fa3; transform: scale(1.03); }
+        .game-card.matched { background-color: #d4edda; border-color: #c3e6cb; color: #155724; cursor: default; opacity: 0.7; transform: scale(0.95); }
+        .game-card.incorrect-match { background-color: #f8d7da; animation: shake 0.5s; }
+        #game-feedback-1, #game-feedback-2 { margin-top: 10px; margin-bottom: 20px; font-weight: bold; min-height: 40px; color: #333; font-size: 1.1em; }
+        #game1-score-display, #game2-score-display { font-weight: normal; color: #555; display: block; margin-top: 5px; }
+        #game1-complete-message, #game2-complete-message { animation: popIn 0.5s ease-out; }
+
+        /* Game 3: Sequencing */
+        .sequence-game-container { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 30px; max-width: 900px; margin: auto; }
+        .sequence-game-list-area { flex: 1; min-width: 300px;}
+        .sequence-item { border: 1px solid #ccc; background-color: #fff; padding: 10px 15px; margin-bottom: 8px; cursor: grab; user-select: none; display: flex; justify-content: space-between; align-items: center; border-radius: 4px; transition: background-color 0.3s, border-left 0.3s;}
+        .sequence-item span.handle { font-weight: bold; margin-right: 10px; cursor: grab; color: #aaa; }
+        .sequence-item.dragging { opacity: 0.4; background-color: #ddd; }
+        .sequence-item.correct { border-left: 5px solid green; background-color: #e9f7ea; }
+        .sequence-item.incorrect { border-left: 5px solid red; background-color: #fdecea; }
+        #game-feedback-3 { margin-top: 15px; font-weight: bold; min-height: 20px; font-size: 1.1em; }
+        .house-animation-area { flex-shrink: 0; width: 200px; text-align: center; margin-top: 20px; }
+        .house-graphic { width: 150px; height: 150px; background-color: #ffe4c4; border: 2px solid #8b4513; margin: 20px auto; position: relative; border-radius: 5px; }
+        .roof { width: 0; height: 0; border-left: 75px solid transparent; border-right: 75px solid transparent; border-bottom: 50px solid #a0522d; position: absolute; top: -50px; left: 0; }
+        .lightbulb { font-size: 3em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #555; transition: color 0.5s, text-shadow 0.5s; }
+        .lightbulb.on { color: #ffeb3b; text-shadow: 0 0 30px gold; animation: lightPulse 1s infinite alternate; }
+
+        /* Common Animation Keyframes */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes lightPulse { from { text-shadow: 0 0 20px gold; } to { text-shadow: 0 0 40px yellow; } }
+
+        /* --- Footer --- */
+        footer { text-align: center; margin-top: 30px; padding: 15px; font-size: 0.9em; color: #777; background-color: #e2e6ea; border-top: 1px solid #ccc; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header><h1>3.1.2 Energy Resources</h1><h2>KS3 Physics - Explanations & Games</h2></header>
+
+        <nav>
+            <ul>
+                <li><button id="nav-tutorial" class="tab-button active" onclick="showSection('tutorial')">Tutorial</button></li>
+                <li><button id="nav-practice" class="tab-button" onclick="showSection('practice')">Practice Quiz</button></li>
+                <li><button id="nav-game" class="tab-button" onclick="showSection('game')">Games</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!-- ==================== Tutorial Section ==================== -->
+            <section id="tutorial" class="content-section active">
+                <h2>Introduction to Energy Resources</h2>
+                 <div class="learning-objectives"><h4>Learning Objectives</h4><p>After this section...</p><ul><li>Describe common energy resources.</li><li>Explain key advantages/disadvantages.</li><li>Describe energy transfers in power generation.</li></ul></div>
+                <p>Energy powers our world. We get this energy from various <span class="key-term">energy resources</span> found on Earth.</p>
+
+                <!-- --- Fossil Fuels Section --- -->
+                <div id="fossil-fuels-content"><h3>Fossil Fuels</h3><p>Coal, oil, and natural gas (<span class="key-term">fossil fuels</span>) formed from the remains of ancient organisms over millions of years.</p><p>They are <span class="key-term">non-renewable</span> because they are consumed vastly faster than they can ever form. Their supply is limited.</p><p><strong>Problems:</strong> Burning them releases large amounts of <span class="key-term">carbon dioxide</span> (CO₂), the main <span class="key-term">greenhouse gas</span> driving <span class="key-term">climate change</span>, plus other pollutants (e.g., sulfur dioxide causing acid rain).</p></div>
+
+                <!-- --- Checkpoint 1 --- -->
+                <div class="checkpoint" id="checkpoint1"><label for="cp1-q1">Checkpoint: Why are fossil fuels 'non-renewable'?</label><input type="text" id="cp1-q1" placeholder="E.g., They will run out..."><button onclick="checkCheckpoint('cp1', 'power-station-section')">Check & Continue</button><div class="checkpoint-feedback" id="cp1-feedback"></div></div>
+
+                <!-- --- Power Station Section (Hidden) --- -->
+                <div id="power-station-section" class="gated-content hidden">
+                     <h3>Thermal Power Station Operation</h3>
+                     <p>This is how many power stations work, especially those using fossil fuels.</p>
+                    <div class="image-container">
+                        <img src="images/power_station.png" alt="Diagram of a Thermal Power Station">
+                        <button class="explanation-button" onclick="toggleExplanation('ps-explanation', this)">Show Explanation</button>
+                        <div class="explanation-content" id="ps-explanation"><h4>How it Works (Step-by-Step):</h4><ol><li><strong>Fuel Delivery & Combustion:</strong> Fuel (e.g., coal) is burned in a furnace (boiler) to release thermal energy.</li><li><strong>Boiling Water:</strong> Heat boils water into high-pressure steam.</li><li><strong>Turbine Spins:</strong> Steam rushes past turbine blades, making them spin rapidly (kinetic energy).</li><li><strong>Generator Action:</strong> The spinning turbine turns a generator, converting kinetic energy into electrical energy.</li><li><strong>Cooling & Recycling:</strong> Used steam is cooled back into water and pumped back to the boiler.</li><li><strong>Transmission:</strong> Electricity voltage is increased and sent through power lines.</li></ol><strong>Energy Transfer Summary:</strong> Chemical → Thermal → Kinetic → Electrical</div>
+                    </div>
+                 </div>
+
+                 <!-- --- Checkpoint 2 (Hidden) --- -->
+                 <div class="checkpoint gated-content hidden" id="checkpoint2"><label for="cp2-q1">Checkpoint: Which component converts spinning energy into electricity?</label><select id="cp2-q1"><option value="">-- Select --</option><option value="boiler">Boiler</option><option value="turbine">Turbine</option><option value="generator" data-correct="true">Generator</option><option value="cooling">Cooling Tower</option></select><button onclick="checkCheckpoint('cp2', 'renewables-section')">Check & Continue</button><div class="checkpoint-feedback" id="cp2-feedback"></div></div>
+
+                 <!-- --- Renewable Energy Section (Hidden, Full Content) --- -->
+                 <div id="renewables-section" class="gated-content hidden">
+                     <h3>Renewable Energy Resources</h3><p><span class="key-term">Renewable</span> resources won't run out or can be replaced quickly.</p>
+                     <div class="resource-tabs">
+                          <button class="resource-tab-button active" onclick="showResource('wind')">Wind</button><button class="resource-tab-button" onclick="showResource('solar')">Solar</button><button class="resource-tab-button" onclick="showResource('hydro')">Hydro</button><button class="resource-tab-button" onclick="showResource('geo')">Geothermal</button><button class="resource-tab-button" onclick="showResource('biomass')">Biomass</button><button class="resource-tab-button" onclick="showResource('tidal')">Tidal</button><button class="resource-tab-button" onclick="showResource('wave')">Wave</button>
+                     </div>
+
+                     <!-- Wind -->
+                     <div id="resource-wind" class="resource-content active">
+                         <div class="resource-layout">
+                             <div class="resource-text"><h4>Wind Power</h4><p>Uses wind's kinetic energy to turn turbine blades connected to a generator.</p><ul class="advantages"><li>Resource (wind) is free.</li><li>No polluting gases produced during operation.</li></ul><ul class="disadvantages"><li>Wind is intermittent/unreliable.</li><li>Can be considered visually intrusive or noisy by some.</li></ul></div>
+                             <div class="resource-image-section"><div class="image-container"><img src="images/wind_power.png" alt="Wind Turbines"><button class="explanation-button" onclick="toggleExplanation('wind-explanation', this)">Show Explanation</button><div class="explanation-content" id="wind-explanation"><h4>How it Works:</h4><ol><li>Wind blows, pushing blades.</li><li>Blades rotate a shaft.</li><li>Shaft spins a generator → electricity.</li><li>Electricity sent to grid.</li></ol></div></div></div>
+                         </div>
+                     </div>
+                     <!-- Solar -->
+                     <div id="resource-solar" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Solar Power (PV)</h4><p>Photovoltaic (PV) cells convert sunlight directly into electricity.</p><ul class="advantages"><li>Resource (sunlight) is free.</li><li>No operational emissions.</li><li>Scalable (roofs to farms).</li></ul><ul class="disadvantages"><li>Needs daylight & clear weather (intermittent).</li><li>Large farms need significant land.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/solar_power.png" alt="Solar Panels"><button class="explanation-button" onclick="toggleExplanation('solar-explanation', this)">Show Explanation</button><div class="explanation-content" id="solar-explanation"><h4>How it Works:</h4><ol><li>Sunlight hits PV cells.</li><li>Electrons flow → Direct Current (DC).</li><li>Inverter changes DC to AC.</li></ol></div></div></div> </div> </div>
+                     <!-- Hydro -->
+                     <div id="resource-hydro" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Hydroelectric Power (HEP)</h4><p>Uses potential energy of water stored behind a dam.</p><ul class="advantages"><li>Reliable & controllable output.</li><li>No fuel costs/operational emissions.</li></ul><ul class="disadvantages"><li>Expensive to build dams.</li><li>Floods large areas (habitat loss).</li><li>Impacts river ecosystems.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/hydro_power.png" alt="Hydroelectric Dam"><button class="explanation-button" onclick="toggleExplanation('hydro-explanation', this)">Show Explanation</button><div class="explanation-content" id="hydro-explanation"><h4>How it Works:</h4><ol><li>Dam holds reservoir high up.</li><li>Water flows down pipes (penstocks).</li><li>Flowing water spins turbines.</li><li>Turbines drive generators → electricity.</li><li>Water flows out below dam.</li></ol></div></div></div> </div> </div>
+                     <!-- Geothermal -->
+                     <div id="resource-geo" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Geothermal Power</h4><p>Uses heat from hot rocks deep within the Earth.</p><ul class="advantages"><li>Very reliable, continuous power.</li><li>Low operational emissions.</li></ul><ul class="disadvantages"><li>Only feasible in specific geological areas.</li><li>High drilling costs.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/geothermal_power.png" alt="Geothermal Power Plant"><button class="explanation-button" onclick="toggleExplanation('geo-explanation', this)">Show Explanation</button><div class="explanation-content" id="geo-explanation"><h4>How it Works:</h4><ol><li>Cold water pumped down to hot rocks.</li><li>Water heats to high-pressure steam.</li><li>Steam rises through another well.</li><li>Steam drives turbines → electricity.</li><li>Steam often cooled & reused.</li></ol></div></div></div> </div> </div>
+                     <!-- Biomass -->
+                     <div id="resource-biomass" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Biomass Power</h4><p>Energy from burning organic matter (wood, crops, waste).</p><ul class="advantages"><li>Uses waste materials.</li><li>Can be stored & used on demand.</li><li>Potentially 'carbon neutral' with regrowth.</li></ul><ul class="disadvantages"><li>Burning releases CO₂ & pollutants.</li><li>Needs land/resources if growing crops.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/biomass_power.png" alt="Biomass Power Concept"><button class="explanation-button" onclick="toggleExplanation('biomass-explanation', this)">Show Explanation</button><div class="explanation-content" id="biomass-explanation"><h4>How it Works (Typical):</h4><ol><li>Biomass fuel collected.</li><li>Fuel burned in furnace/boiler.</li><li>Heat boils water → steam.</li><li>Steam drives turbines → electricity.</li></ol></div></div></div> </div> </div>
+                      <!-- Tidal -->
+                     <div id="resource-tidal" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Tidal Power</h4><p>Uses energy from the predictable rise and fall of sea levels (tides).</p><ul class="advantages"><li>Highly predictable source.</li><li>No fuel costs/operational emissions.</li></ul><ul class="disadvantages"><li>Very high cost for barrages.</li><li>Limited suitable locations.</li><li>Impacts estuary ecosystems.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/tidal_power.png" alt="Tidal Barrage Concept"><button class="explanation-button" onclick="toggleExplanation('tidal-explanation', this)">Show Explanation</button><div class="explanation-content" id="tidal-explanation"><h4>How it Works (Barrage):</h4><ol><li>Barrage built across estuary.</li><li>Tide comes in → flows through turbines → electricity.</li><li>Gates trap water at high tide.</li><li>Tide goes out → water flows out through turbines → electricity.</li></ol></div></div></div> </div> </div>
+                     <!-- Wave -->
+                     <div id="resource-wave" class="resource-content"> <div class="resource-layout"> <div class="resource-text"><h4>Wave Power</h4><p>Captures energy from the motion of ocean surface waves.</p><ul class="advantages"><li>Huge potential energy available.</li><li>No operational emissions.</li></ul><ul class="disadvantages"><li>Waves are irregular/unpredictable.</li><li>Devices must survive harsh conditions.</li><li>Still relatively expensive/experimental.</li></ul></div> <div class="resource-image-section"><div class="image-container"><img src="images/wave_power.png" alt="Wave Power Device Concept"><button class="explanation-button" onclick="toggleExplanation('wave-explanation', this)">Show Explanation</button><div class="explanation-content" id="wave-explanation"><h4>How it Works (Example - Buoy):</h4><ol><li>Floating device moves with waves.</li><li>Motion drives a generator.</li><li>Electricity sent to shore via cable.</li><li>(Many designs exist).</li></ol></div></div></div> </div> </div>
+                 </div>
+
+                 <!-- --- Making Decisions Section (Expanded) --- -->
+                 <div id="decisions-section" class="gated-content hidden">
+                     <h3>Making Decisions About Energy Resources</h3>
+                     <p>Choosing which energy resources to use isn't simple. Societies and governments must weigh several factors:</p>
+                     <ul>
+                         <li><strong>Environmental Impact:</strong> Does it produce greenhouse gases (like CO₂)? Does it cause air or water pollution? Does building it destroy habitats (like flooding valleys for dams)? Does it use a lot of land?</li>
+                         <li><strong>Cost:</strong> How expensive is it to build the power station or install the technology (e.g., solar panels, wind farms)? Are there ongoing fuel costs? How much does maintenance cost?</li>
+                         <li><strong>Reliability:</strong> Can it generate electricity consistently, 24/7? Or is it <span class="key-term">intermittent</span>, meaning it only works when the conditions are right (like wind blowing or sun shining)? How predictable is the output?</li>
+                         <li><strong>Location Constraints:</strong> Can this resource be used anywhere, or only in specific geographic locations (e.g., geothermal near volcanic activity, tidal in estuaries with large tidal ranges, wind in windy areas)?</li>
+                         <li><strong>Public Opinion:</strong> Do local communities support the construction of new power plants or wind farms nearby? Are there concerns about noise or visual impact?</li>
+                         <li><strong>Energy Security:</strong> Does using this resource reduce reliance on importing fuels from other countries?</li>
+                         <li><strong>Efficiency & Technology:</strong> How efficient is the process at converting the resource's energy into useful electricity? Is the technology well-developed or still experimental?</li>
+                     </ul>
+                     <p>Often, the best approach involves using a <span class="key-term">mix of different energy resources</span> to balance these factors. Additionally, improving <span class="key-term">energy efficiency</span> (using less energy in homes, transport, and industry) is crucial to reduce the overall demand.</p>
+                 </div>
+            </section>
+
+            <!-- ==================== Practice Section (Quiz) ==================== -->
+            <section id="practice" class="content-section">
+                 <h2>Practice Quiz</h2>
+                 <form id="practice-quiz">
+                      <!-- Quiz Questions 1-10 HTML -->
+                      <div class="quiz-question" id="q1"><p>1. Which is non-renewable?</p><div class="quiz-options"><label><input type="radio" name="q1" value="a"> Wind</label><label><input type="radio" name="q1" value="b" data-correct="true"> Coal</label><label><input type="radio" name="q1" value="c"> Solar</label><label><input type="radio" name="q1" value="d"> Hydro</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q2"><p>2. Main greenhouse gas from burning fossil fuels?</p><div class="quiz-options"><label><input type="radio" name="q2" value="a"> Oxygen</label><label><input type="radio" name="q2" value="b"> Sulfur Dioxide</label><label><input type="radio" name="q2" value="c" data-correct="true"> Carbon Dioxide</label><label><input type="radio" name="q2" value="d"> Nitrogen</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q3"><p>3. What directly spins the turbine in a thermal power station?</p><div class="quiz-options"><label><input type="radio" name="q3" value="a" data-correct="true"> Steam</label><label><input type="radio" name="q3" value="b"> Burning Fuel</label><label><input type="radio" name="q3" value="c"> Generator</label><label><input type="radio" name="q3" value="d"> Water</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q4"><p>4. Which part makes electricity from spinning?</p><div class="quiz-options"><label><input type="radio" name="q4" value="a"> Boiler</label><label><input type="radio" name="q4" value="b"> Turbine</label><label><input type="radio" name="q4" value="c" data-correct="true"> Generator</label><label><input type="radio" name="q4" value="d"> Pylon</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q5"><p>5. Which uses Earth's internal heat?</p><div class="quiz-options"><label><input type="radio" name="q5" value="a"> Solar</label><label><input type="radio" name="q5" value="b"> Hydro</label><label><input type="radio" name="q5" value="c" data-correct="true"> Geothermal</label><label><input type="radio" name="q5" value="d"> Biomass</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q6"><p>6. Key disadvantage of both wind AND solar?</p><div class="quiz-options"><label><input type="radio" name="q6" value="a"> High CO2 emissions</label><label><input type="radio" name="q6" value="b" data-correct="true"> Unreliable / Intermittent source</label><label><input type="radio" name="q6" value="c"> Needs large dams</label><label><input type="radio" name="q6" value="d"> Uses finite fuel</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q7"><p>7. Which often involves a barrage across an estuary?</p><div class="quiz-options"><label><input type="radio" name="q7" value="a"> Wave</label><label><input type="radio" name="q7" value="b"> Geothermal</label><label><input type="radio" name="q7" value="c" data-correct="true"> Tidal</label><label><input type="radio" name="q7" value="d"> Biomass</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q8"><p>8. Energy stored in fuels like coal?</p><div class="quiz-options"><label><input type="radio" name="q8" value="a" data-correct="true"> Chemical</label><label><input type="radio" name="q8" value="b"> Kinetic</label><label><input type="radio" name="q8" value="c"> Nuclear</label><label><input type="radio" name="q8" value="d"> Electrical</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q9"><p>9. A major advantage of HEP (dams)?</p><div class="quiz-options"><label><input type="radio" name="q9" value="a"> Cheap to build</label><label><input type="radio" name="q9" value="b" data-correct="true"> Reliable & controllable output</label><label><input type="radio" name="q9" value="c"> Works anywhere</label><label><input type="radio" name="q9" value="d"> No environmental impact</label></div><div class="feedback"></div></div>
+                      <div class="quiz-question" id="q10"><p>10. Biomass is potentially 'carbon neutral' if...</p><div class="quiz-options"><label><input type="radio" name="q10" value="a"> Burned without smoke</label><label><input type="radio" name="q10" value="b"> It produces biogas</label><label><input type="radio" name="q10" value="c" data-correct="true"> Regrowth absorbs the CO2 released</label><label><input type="radio" name="q10" value="d"> Used instead of oil</label></div><div class="feedback"></div></div>
+
+                     <button type="button" onclick="checkQuiz()" style="padding: 12px 25px; font-size: 1.1em; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; display: block; margin: 20px auto;">Check My Answers</button>
+                 </form>
+                 <div id="quiz-feedback" style="display: none;"><h4>Quiz Results</h4><p id="quiz-score"></p></div>
+            </section>
+
+            <!-- ==================== Game Section ==================== -->
+            <section id="game" class="content-section">
+                 <h2>Energy Games Zone</h2>
+                 <div class="game-selector">
+                     <button id="game-selector-1" class="active" onclick="showGame('game-area-1')">Game 1: Matching</button>
+                     <button id="game-selector-2" onclick="showGame('game-area-2')">Game 2: Pros & Cons</button>
+                     <button id="game-selector-3" onclick="showGame('game-area-3')">Game 3: Sequence</button>
+                 </div>
+
+                 <!-- Game Area 1: Resource Matching -->
+                 <div id="game-area-1" class="game-area active">
+                     <h3 id="game-intro">Match the Resource with its Key Description.</h3>
+                     <div id="game-feedback-1"><span id="game1-score-display">Pairs Matched: 0 / 0</span></div>
+                     <div class="game-container">
+                         <div id="game-col-1" class="game-column"></div> <div id="game-col-2" class="game-column"></div>
+                     </div>
+                     <button class="reset-game-btn" onclick="setupGame1()">Reset Game 1</button>
+                 </div>
+
+                 <!-- Game Area 2: Pro/Con Matching -->
+                  <div id="game-area-2" class="game-area">
+                      <h3 id="game-intro-adv">Match the Resource with its Pro/Con statement.</h3>
+                      <div id="game-feedback-2"><span id="game2-score-display">Pairs Matched: 0 / 0</span></div>
+                      <div class="game-container">
+                           <div id="game2-col-1" class="game-column"> <!-- Resources --> </div>
+                           <div id="game2-col-2" class="game-column"> <!-- Pro/Con Statements --> </div>
+                      </div>
+                      <button class="reset-game-btn" onclick="setupGame2()">Reset Game 2</button>
+                  </div>
+
+                 <!-- Game Area 3: Sequencing -->
+                 <div id="game-area-3" class="game-area">
+                      <h3 id="game-intro-seq">Drag the Power Station Stages into the correct order.</h3>
+                      <div class="sequence-game-container">
+                          <div class="sequence-game-list-area">
+                              <ul id="game-sequence-list" style="list-style: none; padding: 0;"></ul>
+                              <button class="check-game-btn" onclick="checkGameSequence()">Check Order</button>
+                              <div id="game-feedback-3"></div>
+                          </div>
+                          <div class="house-animation-area"><h4>Output</h4><div class="house-graphic"><div class="roof"></div><span id="game-lightbulb" class="lightbulb">💡</span></div></div>
+                      </div>
+                      <button class="reset-game-btn" onclick="setupSequenceGame()">Reset Game 3</button>
+                 </div>
+            </section>
+        </main>
+
+         <footer>KS3 Physics Lesson - Energy Resources | Final Version</footer>
+    </div>
+
+    <script>
+        // --- Global Variables & Setup ---
+        let currentSection = 'tutorial'; let currentResource = 'wind'; let draggedItem = null;
+        let game1SelectedCards = { col1: null, col2: null }; let game1MatchedPairs = 0; let game1TotalPairs = 0; let game1Data = [];
+        let game2SelectedCards = { col1: null, col2: null }; let game2MatchedPairs = 0; let game2TotalPairs = 0; let game2Data = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showSection('tutorial'); showResource('wind');
+            document.querySelectorAll('.gated-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('checkpoint2')?.classList.add('hidden');
+            setupGame1(); setupGame2(); setupSequenceGame();
+            setupSequenceDragDrop('game-sequence-list');
+            showGame('game-area-1');
+        });
+
+        // --- Navigation & Tutorial Flow ---
+        function showSection(sectionId) { document.getElementById(currentSection)?.classList.remove('active'); document.getElementById('nav-' + currentSection)?.classList.remove('active'); const newSection = document.getElementById(sectionId); if (newSection) { newSection.classList.add('active'); document.getElementById('nav-' + sectionId)?.classList.add('active'); currentSection = sectionId; } else { console.error("Section not found:", sectionId); return; } if (sectionId === 'game') { showGame('game-area-1'); } }
+        function checkCheckpoint(checkpointId, nextContentId) { const feedbackEl = document.getElementById(`${checkpointId}-feedback`); const nextContentEl = document.getElementById(nextContentId); const currentCheckpointEl = document.getElementById(checkpointId); const nextCheckpointEl = document.getElementById('checkpoint2'); let isCorrect = false; feedbackEl.textContent = ''; feedbackEl.className = 'checkpoint-feedback'; if (checkpointId === 'cp1') { const answer = document.getElementById('cp1-q1').value.trim().toLowerCase(); if (answer.includes('long') || answer.includes('million') || answer.includes('fast') || answer.includes('replace') || answer.includes('finite') || answer.includes('run out') || answer.includes('cannot make more') || answer.includes('use quicker than made')) { isCorrect = true; } } else if (checkpointId === 'cp2') { const select = document.getElementById('cp2-q1'); if (select.options[select.selectedIndex].dataset.correct === 'true') { isCorrect = true; } } if (isCorrect) { feedbackEl.textContent = 'Correct! Proceeding...'; feedbackEl.classList.add('correct-text'); setTimeout(() => { if(currentCheckpointEl) currentCheckpointEl.style.display = 'none'; if(nextContentEl) nextContentEl.classList.remove('hidden'); if (checkpointId === 'cp1' && nextCheckpointEl) { nextCheckpointEl.classList.remove('hidden'); } else if (checkpointId === 'cp2') { document.getElementById('decisions-section')?.classList.remove('hidden'); document.getElementById('renewables-section')?.classList.remove('hidden');} }, 300); } else { feedbackEl.textContent = 'Not quite right. Please review and try again.'; feedbackEl.classList.add('incorrect-text'); } }
+        function showResource(resourceId) { const currentActiveContent = document.getElementById('resource-' + currentResource); const currentActiveButton = document.querySelector(`.resource-tabs button[onclick="showResource('${currentResource}')"]`); if(currentActiveContent) currentActiveContent.classList.remove('active'); if(currentActiveButton) currentActiveButton.classList.remove('active'); const newActiveContent = document.getElementById('resource-' + resourceId); const newActiveButton = document.querySelector(`.resource-tabs button[onclick="showResource('${resourceId}')"]`); if(newActiveContent) newActiveContent.classList.add('active'); if(newActiveButton) newActiveButton.classList.add('active'); currentResource = resourceId; }
+        function toggleExplanation(elementId, button) { const content = document.getElementById(elementId); if (content) { if (content.style.display === 'block') { content.style.display = 'none'; button.textContent = 'Show Explanation'; } else { content.style.display = 'block'; button.textContent = 'Hide Explanation'; } } }
+
+        // --- Practice Quiz Logic ---
+        function checkQuiz() { const form = document.getElementById('practice-quiz'); const feedbackDiv = document.getElementById('quiz-feedback'); const scoreEl = document.getElementById('quiz-score'); let score = 0; const totalQuestions = 10; form.querySelectorAll('.quiz-options label').forEach(label => { label.classList.remove('correct', 'incorrect'); }); form.querySelectorAll('.quiz-question .feedback').forEach(fb => fb.textContent = ''); for (let i = 1; i <= totalQuestions; i++) { const qDiv = document.getElementById(`q${i}`); const radios = form.elements[`q${i}`]; const fbEl = qDiv.querySelector('.feedback'); let uAns=null, cAns=null, selLab=null; for(const r of radios){const l=r.closest('label'); if(r.checked){uAns=r.value; selLab=l;} if(r.dataset.correct === 'true'){cAns=r.value;}} if(uAns===null){fbEl.textContent = 'Select an answer.'; fbEl.className = 'feedback incorrect-text';} else if(uAns===cAns){score++; selLab.classList.add('correct'); fbEl.textContent = 'Correct!'; fbEl.className = 'feedback correct-text';} else {selLab.classList.add('incorrect'); fbEl.textContent = `Incorrect. Correct: ${cAns.toUpperCase()}.`; fbEl.className = 'feedback incorrect-text'; const cRad = qDiv.querySelector(`input[value="${cAns}"]`); if(cRad) cRad.closest('label').classList.add('correct');}} scoreEl.textContent = `Score: ${score}/${totalQuestions}.`; feedbackDiv.style.display = 'block'; feedbackDiv.scrollIntoView({ behavior: 'smooth', block: 'end' }); }
+
+        // --- Game Section Logic ---
+        function showGame(gameAreaId) { document.querySelectorAll('.game-area').forEach(area => area.classList.remove('active')); document.querySelectorAll('.game-selector button').forEach(btn => btn.classList.remove('active')); const targetArea = document.getElementById(gameAreaId); const targetButton = document.querySelector(`.game-selector button[onclick="showGame('${gameAreaId}')"]`); if(targetArea) targetArea.classList.add('active'); if(targetButton) targetButton.classList.add('active'); if (gameAreaId === 'game-area-1') setupGame1(); else if (gameAreaId === 'game-area-2') setupGame2(); else if (gameAreaId === 'game-area-3') setupSequenceGame(); }
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+        function createGameCard(itemData, clickHandler) { const card = document.createElement('div'); card.classList.add('game-card'); card.textContent = itemData.text; card.dataset.id = itemData.id; card.dataset.column = itemData.col; card.onclick = clickHandler; return card; }
+
+        // --- Game 1: Matching ---
+        function setupGame1() { game1Data = [ { id: 1, resource: 'Fossil Fuels', feature: 'Non-renewable, produces CO2' }, { id: 2, resource: 'Wind', feature: 'Uses moving air, intermittent' }, { id: 3, resource: 'Solar (PV)', feature: 'Uses sunlight, needs daylight' }, { id: 4, resource: 'Hydroelectric', feature: 'Uses falling water from dams' }, { id: 5, resource: 'Geothermal', feature: 'Uses Earth\'s internal heat' }, { id: 6, resource: 'Biomass', feature: 'Burns plants/waste, needs land' }, { id: 7, resource: 'Tidal', feature: 'Uses tides, affects estuaries' }, { id: 8, resource: 'Wave', feature: 'Uses sea waves, experimental' }, ]; const col1 = document.getElementById('game-col-1'); const col2 = document.getElementById('game-col-2'); const feedback = document.getElementById('game-feedback-1'); const scoreDisplay = document.getElementById('game1-score-display'); if (!col1 || !col2 || !feedback || !scoreDisplay) { console.error("Game 1 elements not found!"); return; } col1.innerHTML = ''; col2.innerHTML = ''; feedback.innerHTML = ''; game1MatchedPairs = 0; game1TotalPairs = game1Data.length; scoreDisplay.textContent = `Pairs Matched: 0 / ${game1TotalPairs}`; game1SelectedCards = { col1: null, col2: null }; let resources = game1Data.map(item => ({ id: item.id, text: item.resource, col: '1' })); let features = game1Data.map(item => ({ id: item.id, text: item.feature, col: '2' })); shuffleArray(features); resources.forEach(item => col1.appendChild(createGameCard(item, handleGame1Click))); features.forEach(item => col2.appendChild(createGameCard(item, handleGame1Click))); }
+        function handleGame1Click(event) { handleGameMatchClick(event, game1SelectedCards, 'game-feedback-1', 'game1-score-display', game1MatchedPairs, game1TotalPairs, () => { game1MatchedPairs++; }, setupGame1); }
+
+        // --- Game 2: Pro/Con Matching ---
+        function setupGame2() { game2Data = [ { id: 10, resource: 'Wind', statement: 'PRO: No fuel cost / CON: Unreliable' }, { id: 11, resource: 'Solar', statement: 'PRO: No fuel cost / CON: Needs daylight' }, { id: 12, resource: 'Hydroelectric', statement: 'PRO: Reliable output / CON: Floods habitats' }, { id: 13, resource: 'Geothermal', statement: 'PRO: Very reliable / CON: Location specific' }, { id: 14, resource: 'Fossil Fuels', statement: 'PRO: Established tech / CON: Produces CO2' }, { id: 15, resource: 'Biomass', statement: 'PRO: Uses waste / CON: Needs land area' }, { id: 16, resource: 'Tidal', statement: 'PRO: Predictable / CON: High cost & few sites' }, ]; const col1 = document.getElementById('game2-col-1'); const col2 = document.getElementById('game2-col-2'); const feedback = document.getElementById('game-feedback-2'); const scoreDisplay = document.getElementById('game2-score-display'); if (!col1 || !col2 || !feedback || !scoreDisplay) { console.error("Game 2 elements not found!"); return; } col1.innerHTML = ''; col2.innerHTML = ''; feedback.innerHTML = ''; game2MatchedPairs = 0; game2TotalPairs = game2Data.length; scoreDisplay.textContent = `Pairs Matched: 0 / ${game2TotalPairs}`; game2SelectedCards = { col1: null, col2: null }; let resources = game2Data.map(item => ({ id: item.id, text: item.resource, col: '1' })); let statements = game2Data.map(item => ({ id: item.id, text: item.statement, col: '2' })); shuffleArray(statements); resources.forEach(item => col1.appendChild(createGameCard(item, handleGame2Click))); statements.forEach(item => col2.appendChild(createGameCard(item, handleGame2Click))); }
+        function handleGame2Click(event) { handleGameMatchClick(event, game2SelectedCards, 'game-feedback-2', 'game2-score-display', game2MatchedPairs, game2TotalPairs, () => { game2MatchedPairs++; }, setupGame2); }
+
+        // Generic Handler for Matching Games (Game 1 & Game 2)
+        function handleGameMatchClick(event, selectedCards, feedbackId, scoreId, matchedPairs, totalPairs, scoreIncrementFn, resetFn) {
+            const clickedCard = event.target.closest('.game-card');
+            if (!clickedCard || clickedCard.classList.contains('matched')) return; // Ignore clicks on matched cards
+
+            const column = clickedCard.dataset.column;
+            const feedback = document.getElementById(feedbackId);
+            const scoreDisplay = document.getElementById(scoreId);
+            const gameArea = clickedCard.closest('.game-area');
+            gameArea.querySelectorAll('.incorrect-match').forEach(c => c.classList.remove('incorrect-match'));
+
+            const currentSelectionInColumn = selectedCards[`col${column}`];
+
+            // --- Selection Logic ---
+            if (currentSelectionInColumn === clickedCard) { // Deselect
+                clickedCard.classList.remove('selected');
+                selectedCards[`col${column}`] = null;
+            } else { // Select
+                if (currentSelectionInColumn) { currentSelectionInColumn.classList.remove('selected'); }
+                clickedCard.classList.add('selected');
+                selectedCards[`col${column}`] = clickedCard;
+            }
+
+            // --- Match Checking Logic ---
+            if (selectedCards.col1 && selectedCards.col2) {
+                if (selectedCards.col1.dataset.id === selectedCards.col2.dataset.id) {
+                    // Correct Match
+                    feedback.innerHTML = '<span style="color: green;">Correct Match! ✔️</span>';
+                    selectedCards.col1.classList.add('matched');
+                    selectedCards.col2.classList.add('matched');
+                    selectedCards.col1.classList.remove('selected');
+                    selectedCards.col2.classList.remove('selected');
+                    selectedCards.col1.onclick = null; // Disable clicks on matched cards
+                    selectedCards.col2.onclick = null;
+
+                    scoreIncrementFn(); // Update the specific game's counter
+                    // Read the updated counter value for display
+                    let currentScore = scoreId === 'game1-score-display' ? game1MatchedPairs : game2MatchedPairs;
+                    scoreDisplay.textContent = `Pairs Matched: ${currentScore} / ${totalPairs}`;
+
+                    // Reset selection state for the next pair
+                    selectedCards.col1 = null;
+                    selectedCards.col2 = null;
+
+                    if (currentScore === totalPairs) {
+                        feedback.innerHTML = `<span id="${scoreId.replace('score-display', 'complete-message')}">🎉 All Pairs Matched! Well Done! 🎉</span>`;
+                    }
+                } else {
+                    // Incorrect Match
+                    feedback.innerHTML = '<span style="color: red;">Incorrect Match. Try again. ❌</span>';
+                    selectedCards.col1.classList.add('incorrect-match');
+                    selectedCards.col2.classList.add('incorrect-match');
+                    // Deselect after animation
+                    setTimeout(() => {
+                        // Check if cards still exist and have the classes before removing
+                        if(selectedCards.col1) selectedCards.col1.classList.remove('selected', 'incorrect-match');
+                        if(selectedCards.col2) selectedCards.col2.classList.remove('selected', 'incorrect-match');
+                         // Reset selection state after incorrect attempt
+                        selectedCards.col1 = null;
+                        selectedCards.col2 = null;
+                    }, 800);
+                }
+            } else {
+                 feedback.textContent = ''; // Clear feedback if only one selected
+            }
+        }
+
+
+        // --- Game 3: Sequencing ---
+        const sequenceGameData = [ { id: 1, text: 'Chemical energy stored in fuel' }, { id: 2, text: 'Fuel burns (Thermal energy)' }, { id: 3, text: 'Water -> Steam (Thermal energy)' }, { id: 4, text: 'Steam turns turbine (Kinetic energy)' }, { id: 5, text: 'Turbine spins' }, { id: 6, text: 'Turbine turns generator' }, { id: 7, text: 'Generator -> Electrical energy' }, { id: 8, text: 'Electricity transmitted' } ]; const correctGameOrder = ["1", "2", "3", "4", "5", "6", "7", "8"];
+        function setupSequenceGame() { const list = document.getElementById('game-sequence-list'); const lightbulb = document.getElementById('game-lightbulb'); const feedbackEl = document.getElementById('game-feedback-3'); if(!list || !lightbulb || !feedbackEl) { console.error("Game 3 elements missing"); return; } list.innerHTML = ''; feedbackEl.textContent = ''; lightbulb.classList.remove('on'); let itemsToShuffle = [...sequenceGameData]; shuffleArray(itemsToShuffle); itemsToShuffle.forEach(itemData => { const listItem = document.createElement('li'); listItem.classList.add('sequence-item'); listItem.draggable = true; listItem.dataset.id = itemData.id; listItem.innerHTML = `<span class="handle">☰</span> ${itemData.text}`; list.appendChild(listItem); }); list.querySelectorAll('.sequence-item').forEach(item => item.classList.remove('correct', 'incorrect')); }
+        function setupSequenceDragDrop(listId) { const list = document.getElementById(listId); if (!list) return; list.removeEventListener('dragstart', handleDragStart); list.removeEventListener('dragend', handleDragEnd); list.removeEventListener('dragover', handleDragOver); list.addEventListener('dragstart', handleDragStart); list.addEventListener('dragend', handleDragEnd); list.addEventListener('dragover', handleDragOver); }
+        function handleDragStart(e) { if (e.target.classList.contains('sequence-item')) { draggedItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); } } function handleDragEnd(e) { if (draggedItem && e.target.classList.contains('sequence-item')) { e.target.classList.remove('dragging'); draggedItem = null; } } function handleDragOver(e) { e.preventDefault(); const list = e.target.closest('ul'); if(!list) return; const afterElement = getDragAfterElement(list, e.clientY); const currentDragged = list.querySelector('.dragging'); if (currentDragged) { if (afterElement == null) { list.appendChild(currentDragged); } else { list.insertBefore(currentDragged, afterElement); } } }
+        function getDragAfterElement(container, y) { const draggableElements = [...container.querySelectorAll('.sequence-item:not(.dragging)')]; return draggableElements.reduce((closest, child) => { const box = child.getBoundingClientRect(); const offset = y - box.top - box.height / 2; if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; } else { return closest; } }, { offset: Number.NEGATIVE_INFINITY }).element; }
+        function checkGameSequence() { const listItems = document.querySelectorAll('#game-sequence-list .sequence-item'); const feedbackEl = document.getElementById('game-feedback-3'); const lightbulb = document.getElementById('game-lightbulb'); let currentOrder = []; let isCorrect = true; listItems.forEach((item, index) => { const itemId = item.dataset.id; currentOrder.push(itemId); item.classList.remove('correct', 'incorrect'); if (itemId !== correctGameOrder[index]) { isCorrect = false; item.classList.add('incorrect'); } else { item.classList.add('correct'); } }); if (isCorrect) { feedbackEl.textContent = '✅ Correct Sequence! Power ON!'; feedbackEl.className = 'correct-text'; if (lightbulb) lightbulb.classList.add('on'); } else { feedbackEl.textContent = '❌ Incorrect sequence. Review highlighted steps.'; feedbackEl.className = 'incorrect-text'; if (lightbulb) lightbulb.classList.remove('on'); } }
+
+    </script>
+
+</body>
+</html>
