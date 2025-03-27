@@ -3,845 +3,1321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KS3 Physics: Food and Fuels v3</title>
+    <title>KS3 Physics: Energy and Power (Enhanced + Game Levels)</title>
     <style>
-        /* Basic Reset & Body Styling */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        /* Basic Reset & Body Style */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --primary-color: #005c97;
+            --secondary-color: #363795;
+            --accent-color: #f39c12;
+            --light-bg: #f0f4f8;
+            --dark-text: #333;
+            --medium-text: #555;
+            --light-text: #fff;
+            --info-border: #17a2b8;
+            --success-border: #28a745;
+            --warning-border: #ffc107;
+            --danger-border: #dc3545;
+            --grey-border: #ced4da;
         }
-
-        html {
-             scroll-behavior: smooth; /* Smooth scrolling if needed */
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            background-color: #f0f4f8;
-            color: #333;
-            padding-bottom: 70px; /* Increased Space for footer + calc toggle */
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            padding-bottom: 50px;
+            padding-top: 60px; /* Space for fixed header/toolbar */
         }
 
-        /* Main Container */
+        /* Container */
         .container {
             max-width: 1000px;
             margin: 20px auto;
             background-color: #fff;
-            border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             overflow: hidden;
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 4px solid #004085;
-        }
-
-        header h1 { margin-bottom: 5px; font-size: 2.5em; }
-        header h2 { font-weight: normal; font-size: 1.2em; }
-
-        /* Main Navigation Tabs */
-        .tab-nav { display: flex; background-color: #e9ecef; border-bottom: 1px solid #dee2e6; }
-        .tab-button { flex-grow: 1; padding: 15px 20px; cursor: pointer; background-color: #e9ecef; border: none; border-right: 1px solid #dee2e6; font-size: 1.1em; color: #495057; transition: background-color 0.3s, color 0.3s; text-align: center; }
-        .tab-button:last-child { border-right: none; }
-        .tab-button:hover { background-color: #d4dadf; }
-        .tab-button.active { background-color: #007bff; color: #fff; font-weight: bold; }
-
-        /* Tab Content Area */
-        .tab-content { padding: 25px; display: none; }
-        .tab-content.active { display: block; }
-
-        /* Tutorial Sub-Tabs */
-        .tutorial-sub-nav { display: flex; flex-wrap: wrap; background-color: #f8f9fa; margin-bottom: 20px; border-radius: 5px; border: 1px solid #dee2e6; padding: 5px; }
-        .tutorial-sub-button { padding: 8px 15px; cursor: pointer; background-color: transparent; border: none; border-radius: 4px; font-size: 0.95em; color: #007bff; margin: 2px; transition: background-color 0.3s, color 0.3s; }
-        .tutorial-sub-button:hover { background-color: #e2e6ea; }
-        .tutorial-sub-button.active { background-color: #007bff; color: #fff; font-weight: bold; }
-        .tutorial-sub-content { display: none; padding-top: 10px; border-top: 1px solid #eee; margin-top: -1px; }
-        .tutorial-sub-content.active { display: block; }
-
-        /* General Content Styling */
-        h3 { color: #0056b3; margin-top: 20px; margin-bottom: 10px; border-bottom: 2px solid #e0e0e0; padding-bottom: 5px; }
-        h4 { color: #0067cc; margin-top: 15px; margin-bottom: 8px; }
-        h5 { color: #333; margin-top: 10px; margin-bottom: 5px; font-size: 1.1em; }
-        p, ul, li { margin-bottom: 10px; }
-        ul { margin-left: 20px; }
-        code { background-color: #f1f1f1; padding: 2px 5px; border-radius: 3px; font-family: monospace; }
-        strong { color: #0056b3; }
-        .highlight-box { background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin: 15px 0; border-radius: 4px; }
-        .highlight-box.fact { background-color: #fffbe7; border-left: 4px solid #ffcc00; }
-
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-
-        /* Interactive Elements */
-        button, .sim-button, .menu-check-button, .calc-toggle-button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.3s; margin: 5px; }
-        button:hover, .sim-button:hover, .menu-check-button:hover, .calc-toggle-button:hover { background-color: #0056b3; }
-        button:disabled, .sim-button:disabled, .menu-check-button:disabled { background-color: #cccccc; cursor: not-allowed; }
-        .reveal-answer { color: #007bff; cursor: pointer; text-decoration: underline; margin-left: 10px; }
-        .answer-hidden { font-style: italic; color: #777; }
-        .answer-shown { font-weight: bold; color: #28a745; }
-        input[type="text"], input[type="number"], select { padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; min-width: 100px; }
-
-        /* Simulation Styles */
-        .simulation-container { display: flex; gap: 20px; align-items: flex-start; margin-top: 20px; flex-wrap: wrap; }
-        .sim-controls { flex: 1; min-width: 200px; }
-        .sim-visuals { flex: 2; min-width: 350px; background-color: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px solid #dee2e6; position: relative; height: 370px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-        #sim-stand { width: 100px; height: 250px; border-left: 5px solid #555; border-bottom: 5px solid #555; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; justify-content: center; }
-        #sim-tube { width: 50px; height: 150px; border: 3px solid #add8e6; border-top: none; background: linear-gradient(to top, #6495ed 50%, transparent 50%); position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); border-radius: 0 0 15px 15px; overflow: hidden; }
-        #sim-thermometer { width: 10px; height: 130px; background-color: #eee; border: 1px solid #bbb; border-radius: 5px 5px 0 0; position: absolute; bottom: 105px; left: calc(50% + 10px); transform: translateX(-50%); z-index: 10; }
-        #sim-thermo-liquid { width: 4px; height: 20%; background-color: red; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); border-radius: 2px; transition: height 1s ease-out; }
-        #sim-thermo-bulb { width: 10px; height: 10px; background-color: red; border-radius: 50%; position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); }
-        #sim-food { width: 40px; height: 30px; background-color: #deb887; position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); text-align: center; line-height: 30px; font-size: 0.8em; color: #fff; border-radius: 3px; z-index: 5; }
-        #sim-flame { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 30px solid orange; position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.5s; z-index: 6; }
-        #sim-flame.burning { opacity: 0.9; animation: flicker 0.2s infinite alternate; }
-        @keyframes flicker { 0% { border-bottom-color: orange; transform: translateX(-50%) scaleY(1) scaleX(1); } 50% { border-bottom-color: yellow; transform: translateX(-45%) scaleY(0.95) scaleX(1.05); } 100% { border-bottom-color: orangered; transform: translateX(-55%) scaleY(1.05) scaleX(0.95); } }
-        #sim-results { position: absolute; top: 10px; right: 10px; background: rgba(255, 255, 255, 0.85); padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; font-size: 0.9em; text-align: right; box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 20; }
-        #sim-results table { margin: 0; width: auto; }
-        #sim-results td { padding: 3px 5px; border: none; }
-        #sim-results td:first-child { font-weight: bold; padding-right: 10px; }
-
-        /* Practice Section */
-        .question { background-color: #f9f9f9; border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
-        .question p { margin-bottom: 8px; }
-        .feedback { margin-top: 10px; font-weight: bold; padding: 8px; border-radius: 4px; display: none; }
-        .feedback.correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
-        .feedback.incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
-        .word-bank { background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 10px; font-size: 0.9em; border: 1px dashed #ccc; }
-        .word-bank strong { color: #333; }
-        .word-bank code { background-color: #e0e0e0; }
-
-        /* Game Section */
-        .game-container { display: flex; gap: 20px; flex-wrap: wrap; }
-        .game-status, .game-actions { flex: 1; min-width: 280px; /* Wider for more buttons */ background-color: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #dee2e6; }
-        #energy-bar-container { width: 100%; height: 30px; background-color: #e9ecef; border-radius: 15px; overflow: hidden; margin: 10px 0; border: 1px solid #ccc; }
-        #energy-bar { height: 100%; width: 50%; background-color: #28a745; border-radius: 15px 0 0 15px; transition: width 0.5s ease-in-out, background-color 0.5s; text-align: right; color: white; font-size: 0.8em; line-height: 30px; padding-right: 5px; }
-        #game-message { margin-top: 10px; font-weight: bold; min-height: 20px; }
-        .game-buttons button { display: block; width: calc(50% - 10px); /* Two columns */ margin: 5px; float: left; font-size: 0.9em; padding: 8px 10px; }
-         .game-buttons::after { content:""; display:table; clear:both; } /* Clear float */
-        .game-note { font-size: 0.9em; color: #666; margin-top: 0px; margin-bottom: 10px; clear: both; padding-top: 5px; }
-        .game-explanation { clear: both; margin-top: 20px; padding: 15px; background-color: #fffbe7; border: 1px solid #ffeeba; border-radius: 5px; font-size: 0.95em; }
-        .game-explanation h5 { margin-top: 0; color: #856404; }
-
-        /* Menu Planner Section */
-        .menu-planner-container { display: flex; gap: 30px; flex-wrap: wrap; }
-        .menu-controls, .menu-summary { flex: 1; min-width: 280px; }
-        #menu-food-options button { background-color: #e7f3ff; color: #0056b3; border: 1px solid #b8daff; padding: 5px 10px; margin: 3px; font-size: 0.9em; cursor: pointer; border-radius: 4px; transition: background-color 0.2s, transform 0.1s; }
-        #menu-food-options button:hover { background-color: #cce5ff; }
-        #menu-food-options button.selected { background-color: #007bff; color: white; border-color: #0056b3; font-weight: bold; transform: scale(1.05); }
-        #menu-food-options button span { font-size: 0.85em; color: #555; }
-        #menu-food-options button.selected span { color: #eee; }
-        #selected-menu-items { list-style: none; padding-left: 0; max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background-color: #fdfdfd; }
-        #selected-menu-items li { margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px dashed #eee; }
-        #selected-menu-items li:last-child { border-bottom: none; }
-        #menu-total-kj, #menu-target-kj { font-weight: bold; }
-        #menu-feedback { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
-
-         /* Floating Calculator Styles */
-        #calculator {
+        /* Header Toolbar (Fixed) */
+        .header-toolbar {
             position: fixed;
-            bottom: 60px; /* Above footer/toggle */
-            right: 20px;
-            width: 260px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--light-text);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             z-index: 1000;
-            display: none; /* Hidden by default */
-            overflow: hidden; /* Important for minimize */
-            transition: height 0.3s ease;
-        }
-        #calculator.minimized {
-            height: 35px; /* Just enough for header */
-        }
-        #calc-header {
-            padding: 5px 10px;
-            cursor: move;
-            background-color: #d0d0d0;
-            border-bottom: 1px solid #ccc;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 35px;
         }
-        #calc-header span { font-weight: bold; font-size: 0.9em; }
-        #calc-controls button {
-            background: #aaa;
+        .header-toolbar h1 {
+            margin: 0;
+            font-size: 1.5em; /* Smaller for toolbar */
+            font-weight: 600;
+        }
+        .toolbar-buttons button {
+            background-color: var(--accent-color);
+            color: var(--dark-text);
+            border: none;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .toolbar-buttons button:hover {
+            background-color: #e68a00;
+        }
+
+        /* Main Navigation */
+        nav.main-nav {
+            background-color: #e9ecef;
+            padding: 10px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--grey-border);
+        }
+        nav.main-nav button {
+            background-color: #6c757d;
             color: white;
             border: none;
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-size: 0.8em;
-            line-height: 1;
+            padding: 12px 25px;
+            margin: 0 10px;
             cursor: pointer;
-            margin-left: 4px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
-         #calc-controls button:hover { background: #888; }
-        #calc-body { padding: 10px; }
-        #calc-display {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            font-size: 1.2em;
+        nav.main-nav button:hover { background-color: #5a6268; }
+        nav.main-nav button.active {
+            background-color: var(--primary-color);
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        /* Main Content Area */
+        main { padding: 25px 30px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Tutorial Section Tabs */
+        .tutorial-tabs { display: flex; border-bottom: 2px solid var(--grey-border); margin-bottom: 20px; flex-wrap: wrap; }
+        .tutorial-tabs button { background: none; border: none; padding: 10px 15px; cursor: pointer; font-size: 1em; color: var(--medium-text); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.3s ease, border-color 0.3s ease; }
+        .tutorial-tabs button:hover { color: var(--primary-color); }
+        .tutorial-tabs button.active { color: var(--primary-color); border-bottom-color: var(--primary-color); font-weight: bold; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; } /* Only one active at a time */
+        .tab-content.active { display: block; }
+
+        /* General Content Styling */
+        h2 { color: var(--primary-color); margin-top: 20px; margin-bottom: 15px; border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; font-size: 1.8em; }
+        h3 { color: var(--secondary-color); margin-top: 15px; margin-bottom: 10px; font-size: 1.4em; }
+        p, ul, ol { margin-bottom: 15px; }
+        ul, ol { margin-left: 25px; }
+        strong { color: var(--danger-border); }
+        code, .formula { background-color: #e9ecef; padding: 3px 6px; border-radius: 4px; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; color: #c7254e; font-size: 0.95em; }
+        .formula { display: block; padding: 15px; margin: 15px 0; text-align: center; font-size: 1.1em; border: 1px solid var(--grey-border); }
+
+        /* Interactive Elements & Boxes */
+        .info-box, .worked-example, .checkpoint, .guided-practice, .simulation, .game-area, .practice-question, .fantastic-fact, .key-words {
+            background-color: #f8f9fa; border: 1px solid var(--grey-border); padding: 15px 20px; margin: 20px 0; border-radius: 5px;
+        }
+        .info-box { border-left: 5px solid var(--info-border); }
+        .worked-example { border-left: 5px solid var(--success-border); background-color: #eaf6ec; }
+        .checkpoint { border-left: 5px solid var(--warning-border); background-color: #fff9e6; }
+        .guided-practice { border-left: 5px solid #fd7e14; background-color: #fff3e0; } /* Orange */
+        .simulation { border-left: 5px solid #6f42c1; } /* Purple */
+        .game-area { border-left: 5px solid #e83e8c; } /* Pink */
+        .practice-question { border-left: 5px solid #6c757d; } /* Grey */
+        .fantastic-fact { border-left-color: var(--primary-color); background-color: #e7f5ff; }
+        .key-words { border-left-color: var(--warning-border); background-color: #fffbeb; }
+
+        .info-box h4, .worked-example h4, .checkpoint h4, .guided-practice h4, .simulation h4, .game-area h4, .practice-question h4, .fantastic-fact h4, .key-words h4 {
+            margin-top: 0; margin-bottom: 10px; font-size: 1.2em; color: var(--dark-text);
+        }
+        .fantastic-fact h4 { color: #0056b3; font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 1.3em; }
+        .key-words h4 { color: #856404; }
+         .key-words span { display: inline-block; background-color: #e9ecef; padding: 3px 8px; margin: 3px; border-radius: 4px; font-weight: bold; }
+
+        /* Buttons */
+        button.check-button, button.sim-button, button.game-button, button.practice-submit-button, button.hint-button, button.reveal-equations-button {
+            background-color: #007bff; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 0.95em; transition: background-color 0.3s ease; margin-top: 10px; margin-right: 5px; vertical-align: middle;
+        }
+        button.check-button:hover, button.sim-button:hover, button.game-button:hover, button.practice-submit-button:hover, button.hint-button:hover, button.reveal-equations-button:hover { background-color: #0056b3; }
+        button.hint-button { background-color: #ffc107; color: var(--dark-text); }
+        button.hint-button:hover { background-color: #e0a800; }
+
+        /* Feedback & Hints */
+        .answer-feedback, .hint-content { margin-top: 10px; padding: 10px; border-radius: 4px; font-weight: bold; }
+        .answer-feedback.correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .answer-feedback.incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .hint-content { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; font-weight: normal; }
+        .hidden { display: none; }
+
+        /* Images */
+        img.content-image { max-width: 80%; height: auto; display: block; margin: 15px auto; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        figcaption { text-align: center; font-style: italic; color: #6c757d; font-size: 0.9em; margin-top: -5px; margin-bottom: 15px; }
+
+        /* Input Fields */
+        input[type="text"], input[type="number"] { padding: 8px; margin: 5px 5px 5px 0; border: 1px solid var(--grey-border); border-radius: 4px; font-size: 1em; width: 100px; }
+        textarea { width: 90%; padding: 8px; margin-top: 5px; border: 1px solid var(--grey-border); border-radius: 4px; font-size: 1em; }
+
+        /* Practice Section */
+        .practice-question ol { list-style-type: lower-alpha; }
+        #practice-results { margin-top: 25px; }
+
+        /* Game Section */
+        #game-timer, #game-score { font-weight: bold; font-size: 1.1em; }
+        #game-level { font-weight: bold; font-size: 1.1em; margin-left: 15px; } /* Style for level display */
+        #game-question { margin: 15px 0; font-size: 1.1em; }
+        .game-options button { display: block; width: 100%; margin: 8px 0; padding: 12px; font-size: 1em; text-align: left; }
+        #game-feedback { margin-top: 15px; font-weight: bold; }
+
+        /* Floating Calculator & Equations Panel */
+        #calculator, #equations-panel {
+            position: fixed;
+            background-color: #f1f3f5;
+            border: 1px solid #adb5bd;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1010;
+            transition: width 0.3s, height 0.3s, opacity 0.3s;
+            overflow: hidden;
+        }
+        #calculator {
+            bottom: 20px;
+            right: 20px;
+            width: 260px;
+            user-select: none; /* Prevent text selection during drag */
+        }
+        #equations-panel {
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            padding: 15px;
+        }
+        .calc-header, .equations-header {
+            background-color: #6c757d;
+            color: white;
+            padding: 5px 10px;
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .calc-header:active { cursor: grabbing; }
+        .calc-display {
+            background-color: #e9ecef;
+            color: var(--dark-text);
+            font-size: 1.5em;
+            padding: 10px;
             text-align: right;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
+            border-bottom: 1px solid #adb5bd;
+            min-height: 50px;
+            word-wrap: break-word;
         }
         .calc-buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
+            gap: 1px;
+            background-color: #adb5bd; /* For grid gaps */
         }
         .calc-buttons button {
-            padding: 10px;
-            font-size: 1em;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: none;
+            padding: 15px 0;
+            font-size: 1.1em;
             cursor: pointer;
-            color: #333;
-             margin: 0; /* Override general button margin */
+            transition: background-color 0.2s;
         }
-        .calc-buttons button:hover { background-color: #d0d0d0; }
-        .calc-buttons button.operator { background-color: #ffae42; color: white; } /* Orange */
-        .calc-buttons button.operator:hover { background-color: #ff8c00; }
-        .calc-buttons button.equals { background-color: #007bff; color: white; grid-column: span 2; } /* Blue */
-        .calc-buttons button.equals:hover { background-color: #0056b3; }
-        .calc-buttons button.clear { background-color: #dc3545; color: white; } /* Red */
-        .calc-buttons button.clear:hover { background-color: #c82333; }
+        .calc-buttons button:hover { background-color: #e2e6ea; }
+        .calc-buttons button.operator { background-color: #dee2e6; color: var(--primary-color); font-weight: bold; }
+        .calc-buttons button.equals { background-color: var(--accent-color); grid-column: span 2; color: var(--dark-text); font-weight: bold;}
+        .calc-buttons button.clear { background-color: #ffc107; color: var(--dark-text); }
+        .calc-minimize-btn, .equations-close-btn { background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0 5px;}
+        #calculator.minimized { width: 60px; height: 40px; overflow: hidden; }
+        #calculator.minimized .calc-display, #calculator.minimized .calc-buttons { display: none; }
+        #calculator.minimized .calc-header { cursor: pointer; } /* Allow clicking header to maximize */
 
-         /* Calculator Toggle Button */
-         .calc-toggle-button {
-             position: fixed;
-             bottom: 15px;
-             right: 20px;
-             z-index: 1001; /* Above calculator when closed */
-             font-size: 0.9em;
-             padding: 8px 12px;
-         }
+        #equations-panel ul { list-style: none; padding: 0; margin: 10px 0 0 0; }
+        #equations-panel li { margin-bottom: 8px; font-size: 1em; }
 
-
-         /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px;
-            font-size: 0.9em;
-            color: #777;
-             background-color: #e9ecef;
-             border-top: 1px solid #dee2e6;
-             position: fixed;
-             bottom: 0;
-             left: 0;
-             width: 100%;
-             z-index: 999; /* Below calculator */
-        }
-
+        /* Helper classes */
+        .text-center { text-align: center; }
+        .icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;}
     </style>
 </head>
 <body>
-    <!-- Calculator Toggle Button -->
-    <button id="calc-toggle" class="calc-toggle-button" onclick="toggleCalculator()">Show Calculator</button>
 
-    <!-- Calculator Element -->
-    <div id="calculator">
-        <div id="calc-header">
-            <span>Calculator</span>
-            <div id="calc-controls">
-                <button id="calc-minimize" onclick="minimizeCalculator()">_</button>
-                <button id="calc-close" onclick="closeCalculator()">X</button>
-            </div>
-        </div>
-        <div id="calc-body">
-            <input type="text" id="calc-display" readonly>
-            <div class="calc-buttons">
-                <button onclick="calcClear()">C</button>
-                <button onclick="calcInput('/')" class="operator">/</button>
-                <button onclick="calcInput('*')" class="operator">*</button>
-                <button onclick="calcInput('-')" class="operator">-</button>
-
-                <button onclick="calcInput('7')">7</button>
-                <button onclick="calcInput('8')">8</button>
-                <button onclick="calcInput('9')">9</button>
-                <button onclick="calcInput('+')" class="operator" style="grid-row: span 2;">+</button>
-
-                <button onclick="calcInput('4')">4</button>
-                <button onclick="calcInput('5')">5</button>
-                <button onclick="calcInput('6')">6</button>
-
-
-                <button onclick="calcInput('1')">1</button>
-                <button onclick="calcInput('2')">2</button>
-                <button onclick="calcInput('3')">3</button>
-                <button onclick="calcEquals()" class="equals" style="grid-row: span 2;">=</button>
-
-                <button onclick="calcInput('0')" style="grid-column: span 2;">0</button>
-                <button onclick="calcInput('.')">.</button>
-
-            </div>
+    <!-- Fixed Toolbar -->
+    <div class="header-toolbar">
+        <h1>Energy & Power</h1>
+        <div class="toolbar-buttons">
+            <button id="toggle-equations">Equations</button>
+            <button id="toggle-calculator">Calculator</button>
         </div>
     </div>
 
-    <div class="container">
-        <header>
-            <h1>3.1.1 Food and Fuels</h1>
-            <h2>An Interactive KS3 Physics Lesson</h2>
-        </header>
+    <!-- Floating Equations Panel (Initially Hidden) -->
+    <div id="equations-panel" class="hidden">
+        <div class="equations-header">
+            <span>Key Equations</span>
+            <button class="equations-close-btn" title="Close Equations">×</button>
+        </div>
+        <ul>
+            <li><strong>Power (W)</strong> = Energy (J) / Time (s)</li>
+            <li><strong>Energy (J)</strong> = Power (W) × Time (s)</li>
+            <li>1 kW = 1000 W</li>
+            <li>1 kJ = 1000 J</li>
+            <li>1 hour = 3600 s = 60 minutes</li>
+            <li><strong>Energy (kWh)</strong> = Power (kW) × Time (hours)</li>
+            <li><strong>Cost</strong> = Energy (kWh) × Price (per kWh)</li>
+            <li><strong>Cost</strong> = Power (kW) × Time (hours) × Price (per kWh)</li>
+        </ul>
+    </div>
 
-        <nav class="tab-nav">
-            <button class="tab-button active" onclick="openTab(event, 'tutorial')">Tutorial</button>
-            <button class="tab-button" onclick="openTab(event, 'practice')">Practice</button>
-            <button class="tab-button" onclick="openTab(event, 'game')">Game</button>
+    <!-- Floating Calculator (Initially Hidden) -->
+    <div id="calculator" class="hidden">
+        <div class="calc-header">
+            <span>Calculator</span>
+            <button class="calc-minimize-btn" title="Minimize/Maximize">_</button>
+        </div>
+        <div class="calc-display" id="calcDisplay">0</div>
+        <div class="calc-buttons">
+            <button onclick="calcClear()">AC</button>
+            <button onclick="calcInput('/')" class="operator">/</button>
+            <button onclick="calcInput('*')" class="operator">*</button>
+            <button onclick="calcBackspace()">DEL</button>
+
+            <button onclick="calcInput('7')">7</button>
+            <button onclick="calcInput('8')">8</button>
+            <button onclick="calcInput('9')">9</button>
+            <button onclick="calcInput('-')" class="operator">-</button>
+
+            <button onclick="calcInput('4')">4</button>
+            <button onclick="calcInput('5')">5</button>
+            <button onclick="calcInput('6')">6</button>
+            <button onclick="calcInput('+')" class="operator">+</button>
+
+            <button onclick="calcInput('1')">1</button>
+            <button onclick="calcInput('2')">2</button>
+            <button onclick="calcInput('3')">3</button>
+            <button onclick="calcEquals()" class="equals">=</button>
+
+            <button onclick="calcInput('0')" style="grid-column: span 2;">0</button>
+            <button onclick="calcInput('.')">.</button>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <!-- Main Navigation moved below fixed header -->
+        <nav class="main-nav">
+            <button id="nav-tutorial" class="active">Tutorial</button>
+            <button id="nav-practice">Practice Questions</button>
+            <button id="nav-game">Game: Power Quiz</button>
         </nav>
 
-        <!-- Tutorial Section -->
-        <section id="tutorial" class="tab-content active">
-            <h3>Tutorial Sections</h3>
-            <nav class="tutorial-sub-nav">
-                <button class="tutorial-sub-button active" onclick="openSubTab(event, 'intro')">Introduction & Units</button>
-                <button class="tutorial-sub-button" onclick="openSubTab(event, 'food-fuels')">Energy in Food & Fuels</button>
-                <button class="tutorial-sub-button" onclick="openSubTab(event, 'simulation')">Simulation</button>
-                <button class="tutorial-sub-button" onclick="openSubTab(event, 'needs')">Energy Needs & Activities</button>
-                <button class="tutorial-sub-button" onclick="openSubTab(event, 'menu-planner')">Daily Menu Planner</button>
-            </nav>
+        <main id="content-area">
 
-            <!-- Sub-Tab: Introduction & Units -->
-            <div id="intro" class="tutorial-sub-content active">
-                 <!-- Content same as before -->
-                 <h4>Learning Objectives</h4>
-                 <p>After this lesson, you should be able to:</p>
-                 <ul>
-                     <li>State the unit of energy content of food.</li>
-                     <li>Compare the energy values of different foods and fuels.</li>
-                     <li>Compare the energy in foods and fuels with the energy needed for different activities.</li>
-                      <li>Plan a simple menu based on energy requirements.</li>
-                 </ul>
-                 <h4>Why Do We Need Energy?</h4>
-                 <p>What did you have for breakfast? You need energy from food to do many things, including walking, breathing, keeping warm, and even reading this! Your brain needs energy to work constantly.</p>
-                 <h4>How Much Energy? Units of Energy</h4>
-                 <p>Different foods and fuels are stores of different amounts of <strong>chemical energy</strong>. Energy is measured in <strong>joules (J)</strong>. One joule is a very small amount of energy, so we often use <strong>kilojoules (kJ)</strong>.</p>
-                 <div class="highlight-box"><strong>Key Conversion:</strong> 1 kJ = 1000 J</div>
-                 <p><strong>Question A:</strong> State the unit of energy often used for food.
-                     <span class="reveal-answer" onclick="revealAnswer(this, 'Kilojoules (kJ)')">(Click to reveal)</span><span class="answer-hidden"></span></p>
-            </div>
+            <!-- Tutorial Section -->
+            <section id="tutorial-section" class="content-section active">
+                <h2>Tutorial: Understanding Energy and Power</h2>
 
-            <!-- Sub-Tab: Energy in Food & Fuels -->
-            <div id="food-fuels" class="tutorial-sub-content">
-                <!-- Content same as before -->
-                <h4>Energy in Food</h4>
-                 <p>Food labels tell you how much energy is in the store associated with that food. The amount of energy stored in different foods varies greatly.</p>
-                 <h5>Energy (kJ) per 100 g</h5>
-                 <table><thead><tr><th>Food</th><th>Energy (kJ) per 100 g</th></tr></thead><tbody><tr><td>Apple</td><td>200</td></tr><tr><td>Banana</td><td>340</td></tr><tr><td>Peas</td><td>250</td></tr><tr><td>Chips</td><td>1000</td></tr><tr><td>Cooked Beef</td><td>1000</td></tr><tr><td>Chocolate</td><td>1500</td></tr><tr><td>Bread (Slice)</td><td>~350</td></tr><tr><td>Milk (200ml)</td><td>~500</td></tr><tr><td>Yogurt (Pot)</td><td>~400</td></tr><tr><td>Chicken Breast (100g)</td><td>~650</td></tr><tr><td>Rice (Cooked, 100g)</td><td>~550</td></tr><tr><td>Salad (Mixed, 100g)</td><td>~100</td></tr></tbody></table>
-                 <p>When you choose which foods to eat, you need to consider the nutritional value (like vitamins, fibre, protein) as well as the energy content.</p>
-                 <h4>How Much Energy in Fuels?</h4>
-                  <p>Coal, oil, wood, and natural gas are <strong>fuels</strong>. Like food, they are stores of chemical energy...</p>
-                  <div class="highlight-box"><p>A lump of coal might store around <strong>3000 kJ</strong> of energy... which is the same amount as two 100g bars of chocolate!</p></div>
-                  <p><strong>Question B:</strong> Name three fuels. <span class="reveal-answer" onclick="revealAnswer(this, 'Coal, Oil, Wood (or Natural Gas)')">(Click to reveal)</span><span class="answer-hidden"></span></p>
-            </div>
+                 <div class="info-box">
+                    <h4>Learning Objectives</h4>
+                     <p>After this section you will be able to:</p>
+                    <ul>
+                        <li>Define power and state its units (W, kW).</li>
+                        <li>Define energy and state its units (J, kJ, kWh).</li>
+                        <li>Calculate power given energy and time.</li>
+                        <li>Calculate energy in kWh given power and time.</li>
+                        <li>Calculate the cost of using electrical appliances.</li>
+                        <li>Compare energy usage and suggest ways to save energy.</li>
+                    </ul>
+                </div>
 
-             <!-- Sub-Tab: Simulation -->
-            <div id="simulation" class="tutorial-sub-content">
-                 <!-- Content same as before -->
-                 <h4>Experiment Simulation: Measuring Energy in Food</h4>
-                 <p>We can estimate the amount of energy stored in food by burning it and using the heat released to warm up water...</p>
-                 <div class="simulation-container">
-                     <div class="sim-controls">
-                         <h5>1. Select Food:</h5><select id="food-selector"><option value="apple" data-energy="1">Apple (low energy)</option><option value="banana" data-energy="2">Banana</option><option value="chips" data-energy="5">Chips</option><option value="chocolate" data-energy="8">Chocolate (high energy)</option><option value="marshmallow" data-energy="7">Marshmallow</option></select>
-                         <h5>2. Burn Food:</h5><button id="burn-button" class="sim-button" onclick="runSimulation()">Burn Food Sample</button><button id="reset-button" class="sim-button" onclick="resetSimulation()" disabled>Reset</button>
-                         <h5>Explanation:</h5><p>The burning food releases heat energy...</p>
-                     </div>
-                     <div class="sim-visuals">
-                         <div id="sim-results"><table><tr><td>Initial Temp:</td><td><span id="initial-temp">20</span>°C</td></tr><tr><td>Final Temp:</td><td><span id="final-temp">--</span>°C</td></tr><tr><td>Temp Change:</td><td><span id="temp-change">--</span>°C</td></tr></table></div>
-                         <div id="sim-stand"><div id="sim-tube"></div><div id="sim-thermometer"><div id="sim-thermo-liquid"></div><div id="sim-thermo-bulb"></div></div><div id="sim-food">Food</div><div id="sim-flame"></div></div>
-                     </div>
+                <div class="tutorial-tabs">
+                    <button class="tab-link active" data-tab="tab-intro">Introduction</button>
+                    <button class="tab-link" data-tab="tab-power">What is Power?</button>
+                    <button class="tab-link" data-tab="tab-units">Units (kW, kJ)</button>
+                    <button class="tab-link" data-tab="tab-kwh">Energy (kWh)</button>
+                    <button class="tab-link" data-tab="tab-cost">Calculating Cost</button>
+                    <button class="tab-link" data-tab="tab-saving">Saving Energy</button>
+                </div>
+
+                <!-- Tab Content: Introduction -->
+                <div id="tab-intro" class="tab-content active">
+                    <h3>Welcome!</h3>
+                    <p>Have you ever wondered why some microwave ovens cook popcorn faster than others, or what your electricity bill is actually charging you for? This lesson explores <strong>energy</strong> and <strong>power</strong>, two fundamental concepts in physics that explain how appliances work and how we measure their energy use.</p>
+                    <p>Energy makes things happen, and power tells us how quickly that energy is used or transferred.</p>
+
+                    <div class="fantastic-fact">
+                        <h4>Fantastic Fact!</h4>
+                        <p>When you make popcorn, you are boiling water! The water inside the popcorn kernel turns to steam and expands rapidly, causing the kernel to explode into the fluffy snack we enjoy.</p>
+                        <!-- Image: images/popcorn.jpg -->
+                        <img src="images/popcorn.jpg" alt="Popcorn popping" class="content-image" style="max-width: 200px;">
+                        <figcaption>Heating transfers energy to the water inside the kernel.</figcaption>
+                    </div>
+                     <!-- Image: images/power_station.jpg -->
+                     <figure>
+                        <img src="images/power_station.jpg" alt="Power station generating electricity" class="content-image">
+                        <figcaption>Power stations generate the electrical energy used in our homes.</figcaption>
+                    </figure>
+                </div>
+
+                <!-- Tab Content: What is Power? -->
+                <div id="tab-power" class="tab-content">
+                    <h3>What is Power?</h3>
+                    <p>Appliances like microwave ovens, kettles, and light bulbs have a <strong>power rating</strong>. This rating tells you how much energy the appliance transfers (or uses) every second.</p>
+                    <p>Power is the <strong>rate</strong> at which energy is transferred.</p>
+                    <p>The unit of power is the <strong>Watt (W)</strong>. A higher wattage means more energy is transferred per second.</p>
+                     <!-- Image: images/appliance_rating.jpg -->
+                     <figure>
+                        <img src="images/appliance_rating.jpg" alt="Appliance power rating label showing 2000 W" class="content-image">
+                        <figcaption>This appliance has a power rating of 2000 W.</figcaption>
+                    </figure>
+
+                    <h4>Calculating Power</h4>
+                    <p>You can calculate power if you know the energy transferred and the time taken:</p>
+                    <p class="formula">Power (W) = Energy (J) / Time (s)</p>
+                    <p>Where Energy is measured in <strong>Joules (J)</strong> and Time is measured in <strong>seconds (s)</strong>. A Watt is therefore equivalent to one Joule per second (J/s).</p>
+
+                    <div class="worked-example">
+                        <h4>Worked Example 1: Power Calculation</h4>
+                        <p>A light bulb transfers 3000 Joules of energy in 60 seconds. What is its power rating?</p>
+                        <p>Power = Energy / Time</p>
+                        <p>Power = 3000 J / 60 s</p>
+                        <p>Power = 50 W</p>
+                        <p><strong>Answer:</strong> The power rating of the light bulb is 50 W.</p>
+                    </div>
+
+                    <div class="checkpoint" id="cp1">
+                        <h4>Checkpoint 1: Kettle Power</h4>
+                        <p>An electric kettle transfers 180,000 Joules of energy in 90 seconds. What is its power rating in Watts (W)?</p>
+                        <label>Power = <input type="number" id="cp1-ans"> W</label>
+                        <button class="check-button" data-question="cp1" data-correct="2000">Check</button>
+                        <button class="hint-button" data-question="cp1">Hint</button>
+                        <div class="hint-content hidden">Use the formula: Power (W) = Energy (J) / Time (s).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                     <div class="checkpoint" id="cp2">
+                        <h4>Checkpoint 2: Hairdryer Energy</h4>
+                        <p>A hairdryer has a power rating of 1500 W. How much energy (in Joules) does it transfer in 2 minutes?</p>
+                        <label>Energy = <input type="number" id="cp2-ans"> J</label>
+                        <button class="check-button" data-question="cp2" data-correct="180000">Check</button>
+                         <button class="hint-button" data-question="cp2">Hint</button>
+                        <div class="hint-content hidden">First, convert the time to seconds (2 minutes = ? seconds). Then rearrange the power formula: Energy (J) = Power (W) × Time (s).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                    <div class="checkpoint" id="cp3">
+                        <h4>Checkpoint 3: Time Calculation</h4>
+                        <p>A 60 W lamp transfers 3600 J of energy. How long was it switched on for, in seconds?</p>
+                        <label>Time = <input type="number" id="cp3-ans"> s</label>
+                        <button class="check-button" data-question="cp3" data-correct="60">Check</button>
+                         <button class="hint-button" data-question="cp3">Hint</button>
+                        <div class="hint-content hidden">Rearrange the power formula to find time: Time (s) = Energy (J) / Power (W).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Units (kW, kJ) -->
+                 <div id="tab-units" class="tab-content">
+                    <h3>Bigger Units: Kilowatts and Kilojoules</h3>
+                     <p>Watts (W) and Joules (J) are often quite small units for everyday appliances.</p>
+                     <p>We frequently use prefixes like 'kilo' which means '1000'.</p>
+                     <p class="formula">1 kilowatt (kW) = 1000 watts (W)</p>
+                     <p class="formula">1 kilojoule (kJ) = 1000 joules (J)</p>
+                     <p>To convert Watts to Kilowatts, you <strong>divide by 1000</strong>.</p>
+                     <p>To convert Kilowatts to Watts, you <strong>multiply by 1000</strong>.</p>
+                     <p>The same applies for Joules and Kilojoules.</p>
+
+                    <div class="worked-example">
+                        <h4>Worked Example 2: Unit Conversion</h4>
+                        <p>a) Convert 2500 W to kW.</p>
+                        <p>2500 W / 1000 = 2.5 kW</p>
+                        <p>b) Convert 0.8 kW to W.</p>
+                        <p>0.8 kW × 1000 = 800 W</p>
+                        <p>c) Convert 150,000 J to kJ.</p>
+                        <p>150,000 J / 1000 = 150 kJ</p>
+                    </div>
+
+                    <div class="checkpoint" id="cp4">
+                        <h4>Checkpoint 4: W to kW</h4>
+                        <p>Convert 120 W to kW.</p>
+                        <label>Power = <input type="number" step="0.01" id="cp4-ans"> kW</label>
+                        <button class="check-button" data-question="cp4" data-correct="0.12">Check</button>
+                         <button class="hint-button" data-question="cp4">Hint</button>
+                        <div class="hint-content hidden">To convert W to kW, divide by 1000.</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                     <div class="checkpoint" id="cp5">
+                        <h4>Checkpoint 5: kW to W</h4>
+                        <p>Convert 3.5 kW to W.</p>
+                        <label>Power = <input type="number" id="cp5-ans"> W</label>
+                        <button class="check-button" data-question="cp5" data-correct="3500">Check</button>
+                         <button class="hint-button" data-question="cp5">Hint</button>
+                        <div class="hint-content hidden">To convert kW to W, multiply by 1000.</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                    <div class="checkpoint" id="cp6">
+                        <h4>Checkpoint 6: J to kJ</h4>
+                        <p>An appliance uses 45,000 J of energy. How much is this in kJ?</p>
+                        <label>Energy = <input type="number" id="cp6-ans"> kJ</label>
+                        <button class="check-button" data-question="cp6" data-correct="45">Check</button>
+                         <button class="hint-button" data-question="cp6">Hint</button>
+                        <div class="hint-content hidden">To convert J to kJ, divide by 1000.</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                      <div class="checkpoint" id="cp7">
+                        <h4>Checkpoint 7: Power in kW</h4>
+                        <p>An oven transfers 6,000,000 J (6000 kJ) of energy in 30 minutes (1800 seconds). What is its power in kW?</p>
+                        <p>(Calculate power in W first, then convert)</p>
+                        <label>Power = <input type="number" step="0.01" id="cp7-ans"> kW</label>
+                        <button class="check-button" data-question="cp7" data-correct="3.33">Check</button>
+                        <button class="hint-button" data-question="cp7">Hint</button>
+                        <div class="hint-content hidden">1. Find power in W: Power = Energy(J) / Time(s). <br> 2. Convert power from W to kW by dividing by 1000. (Watch for rounding if needed!)</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                </div>
+
+                 <!-- Tab Content: Energy (kWh) -->
+                 <div id="tab-kwh" class="tab-content">
+                    <h3>The Kilowatt-Hour (kWh)</h3>
+                    <p>Joules are too small for measuring household energy consumption over long periods. Electricity companies use a larger unit: the <strong>kilowatt-hour (kWh)</strong>.</p>
+                    <p><strong>One kilowatt-hour (1 kWh) is the amount of energy transferred by a 1 kW appliance running for 1 hour.</strong></p>
+                    <p>This is the 'unit' of energy you pay for on your electricity bill.</p>
+
+                     <!-- Image: images/electricity_meter.jpg -->
+                     <figure>
+                        <img src="images/electricity_meter.jpg" alt="Electricity meter showing energy usage in kWh" class="content-image">
+                        <figcaption>An electricity meter measures the total energy used in kilowatt-hours (kWh).</figcaption>
+                    </figure>
+
+                    <h4>Calculating Energy in kWh</h4>
+                     <p>You can calculate the energy used in kWh using this formula:</p>
+                    <p class="formula">Energy (kWh) = Power (kW) × Time (hours)</p>
+                    <p><strong>Important:</strong> For this formula:</p>
+                    <ul>
+                        <li>Power *must* be in <strong>kilowatts (kW)</strong>.</li>
+                        <li>Time *must* be in <strong>hours (h)</strong>.</li>
+                    </ul>
+                    <p>You might need to convert units first!</p>
+                    <ul>
+                        <li>Watts to Kilowatts: Divide by 1000</li>
+                        <li>Minutes to Hours: Divide by 60</li>
+                    </ul>
+
+                    <div class="worked-example">
+                        <h4>Worked Example 3: Energy Calculation in kWh</h4>
+                        <p>A 150 W television is left on for 4 hours. How much energy does it use in kWh?</p>
+                        <p>1. Convert Power to kW: 150 W / 1000 = 0.15 kW</p>
+                        <p>2. Time is already in hours: 4 h</p>
+                        <p>3. Use the formula: Energy (kWh) = Power (kW) × Time (h)</p>
+                        <p>Energy = 0.15 kW × 4 h = 0.6 kWh</p>
+                        <p><strong>Answer:</strong> The television uses 0.6 kWh of energy.</p>
+                    </div>
+
+                     <div class="worked-example">
+                        <h4>Worked Example 4: Energy Calculation with Time Conversion</h4>
+                        <p>A 2000 W hair dryer is used for 15 minutes. How much energy does it use in kWh?</p>
+                        <p>1. Convert Power to kW: 2000 W / 1000 = 2 kW</p>
+                        <p>2. Convert Time to hours: 15 minutes / 60 = 0.25 h</p>
+                        <p>3. Use the formula: Energy (kWh) = Power (kW) × Time (h)</p>
+                        <p>Energy = 2 kW × 0.25 h = 0.5 kWh</p>
+                        <p><strong>Answer:</strong> The hair dryer uses 0.5 kWh of energy.</p>
+                    </div>
+
+                    <div class="checkpoint" id="cp8">
+                        <h4>Checkpoint 8: Heater Energy</h4>
+                        <p>A 3 kW electric heater is used for 5 hours. How much energy does it use in kWh?</p>
+                        <label>Energy = <input type="number" id="cp8-ans"> kWh</label>
+                        <button class="check-button" data-question="cp8" data-correct="15">Check</button>
+                         <button class="hint-button" data-question="cp8">Hint</button>
+                        <div class="hint-content hidden">Use Energy (kWh) = Power (kW) × Time (h). Units are already correct.</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                    <div class="checkpoint" id="cp9">
+                        <h4>Checkpoint 9: Laptop Energy (W to kW)</h4>
+                        <p>A laptop charger uses 50 W of power. If it's used for 6 hours, how much energy does it consume in kWh?</p>
+                         <label>Energy = <input type="number" step="0.01" id="cp9-ans"> kWh</label>
+                        <button class="check-button" data-question="cp9" data-correct="0.3">Check</button>
+                         <button class="hint-button" data-question="cp9">Hint</button>
+                        <div class="hint-content hidden">1. Convert Power from W to kW (divide by 1000). <br> 2. Use Energy (kWh) = Power (kW) × Time (h).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                     <div class="checkpoint" id="cp10">
+                        <h4>Checkpoint 10: Microwave Energy (Minutes to Hours)</h4>
+                        <p>A 900 W microwave oven is used for 10 minutes. How much energy does it use in kWh?</p>
+                         <label>Energy = <input type="number" step="0.01" id="cp10-ans"> kWh</label>
+                        <button class="check-button" data-question="cp10" data-correct="0.15">Check</button>
+                         <button class="hint-button" data-question="cp10">Hint</button>
+                        <div class="hint-content hidden">1. Convert Power from W to kW. <br> 2. Convert Time from minutes to hours (divide by 60). <br> 3. Use Energy (kWh) = Power (kW) × Time (h).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                </div>
+
+                <!-- Tab Content: Calculating Cost -->
+                 <div id="tab-cost" class="tab-content">
+                    <h3>What Are You Paying For? Calculating Cost</h3>
+                    <p>When you pay your electricity bill, you are paying for the amount of <strong>energy</strong> you have used, measured in kilowatt-hours (kWh). The electricity company charges a certain price for each kWh (unit) consumed. This price is often given in pence (p).</p>
+
+                    <h4>The Cost Formula</h4>
+                    <p>To calculate the cost of using an appliance, you need to know:</p>
+                    <ol>
+                        <li>The energy used in kWh (which depends on Power in kW and Time in hours).</li>
+                        <li>The price of electricity per kWh.</li>
+                    </ol>
+                    <p class="formula">Cost = Energy used (kWh) × Price (per kWh)</p>
+                    <p>Combining with the energy formula, you get:</p>
+                    <p class="formula">Cost = Power (kW) × Time (hours) × Price (per kWh)</p>
+                     <p>The cost will be in the same unit as the price (e.g., if price is in pence, cost is in pence).</p>
+
+                    <div class="worked-example">
+                        <h4>Worked Example 5: Calculating Cost</h4>
+                        <p>Suppose you use a 2.5 kW oven for 2 hours. Each kWh costs 10p.</p>
+                        <p><strong>Method 1: Calculate Energy First</strong></p>
+                        <p>1. Energy = Power (kW) × Time (h) = 2.5 kW × 2 h = 5 kWh</p>
+                        <p>2. Cost = Energy (kWh) × Price (p/kWh) = 5 kWh × 10 p/kWh = 50p</p>
+                        <p><strong>Method 2: Combined Formula</strong></p>
+                        <p>Cost = Power (kW) × Time (h) × Price (p/kWh)</p>
+                        <p>Cost = 2.5 kW × 2 h × 10 p/kWh = 50p</p>
+                        <p><strong>Answer:</strong> It costs 50p to use the oven for 2 hours.</p>
+                    </div>
+
+                    <div class="guided-practice" id="gp1">
+                        <h4>Guided Practice 1: Shower Cost</h4>
+                        <p>A powerful electric shower has a power rating of 10 kW. Electricity costs 20p per kWh.</p>
+                        <p>a) How much energy (in kWh) does it use in 15 minutes?</p>
+                         <label>Energy = <input type="number" step="0.1" id="gp1a-ans"> kWh</label>
+                        <button class="check-button" data-question="gp1a" data-correct="2.5">Check (a)</button>
+                        <button class="hint-button" data-question="gp1a">Hint (a)</button>
+                        <div class="hint-content hidden">Convert 15 minutes to hours (15/60 = 0.25 h). Use Energy = Power (kW) x Time (h).</div>
+                        <div class="answer-feedback hidden"></div>
+
+                        <p>b) How much does it cost to use the shower for 15 minutes?</p>
+                        <label>Cost = <input type="number" id="gp1b-ans"> p</label>
+                        <button class="check-button" data-question="gp1b" data-correct="50">Check (b)</button>
+                        <button class="hint-button" data-question="gp1b">Hint (b)</button>
+                        <div class="hint-content hidden">Use Cost = Energy (kWh) x Price (p/kWh). Use your answer from part (a).</div>
+                        <div class="answer-feedback hidden"></div>
+
+                        <p>c) If a family uses the shower for a total of 45 minutes per day, what is the daily cost?</p>
+                        <label>Daily Cost = <input type="number" id="gp1c-ans"> p</label>
+                        <button class="check-button" data-question="gp1c" data-correct="150">Check (c)</button>
+                         <button class="hint-button" data-question="gp1c">Hint (c)</button>
+                        <div class="hint-content hidden">1. Find daily time in hours (45/60 = 0.75 h). <br> 2. Find daily energy: Energy = 10 kW x 0.75 h. <br> 3. Find daily cost: Cost = Daily Energy x 20 p/kWh. (Alternatively, notice 45 mins is 3 x 15 mins, so cost is 3 x answer b).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                     <div class="checkpoint" id="cp11">
+                        <h4>Checkpoint 11: TV Cost (W, hours)</h4>
+                        <p>A 100 W TV is watched for 5 hours. Electricity costs 18p per kWh. Calculate the cost in pence.</p>
+                         <label>Cost = <input type="number" step="0.1" id="cp11-ans"> p</label>
+                        <button class="check-button" data-question="cp11" data-correct="9">Check</button>
+                         <button class="hint-button" data-question="cp11">Hint</button>
+                        <div class="hint-content hidden">1. Convert power to kW (100 W = ? kW). <br> 2. Use Cost = Power (kW) × Time (h) × Price (p/kWh).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                     <div class="checkpoint" id="cp12">
+                        <h4>Checkpoint 12: Games Console Cost (W, minutes)</h4>
+                        <p>A games console uses 150 W. It's played for 90 minutes. Electricity costs 22p per kWh. Calculate the cost in pence.</p>
+                         <label>Cost = <input type="number" step="0.01" id="cp12-ans"> p</label>
+                        <button class="check-button" data-question="cp12" data-correct="4.95">Check</button>
+                         <button class="hint-button" data-question="cp12">Hint</button>
+                        <div class="hint-content hidden">1. Convert power to kW (150 W = ? kW). <br> 2. Convert time to hours (90 mins = ? h). <br> 3. Use Cost = Power (kW) × Time (h) × Price (p/kWh).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+
+                </div>
+
+                <!-- Tab Content: Saving Energy -->
+                 <div id="tab-saving" class="tab-content">
+                    <h3>Saving Energy (and Money!)</h3>
+                    <p>Understanding power and energy helps you make choices to reduce your electricity bills and help the environment by using less energy, which often comes from burning fossil fuels.</p>
+                    <p>Ways to save energy relate directly to the cost formula: Cost = <strong>Power (kW)</strong> × <strong>Time (hours)</strong> × Price (per kWh)</p>
+                    <p>You can save money by reducing the <strong>Power</strong> or the <strong>Time</strong>.</p>
+                    <ul>
+                        <li><strong>Use lower power appliances:</strong> Choose appliances with a lower Wattage (or higher energy efficiency rating) for the same job. Modern LED light bulbs are a great example.</li>
+                         <!-- Image: images/bulb_comparison.jpg -->
+                         <figure>
+                            <img src="images/bulb_comparison.jpg" alt="Comparison of light bulbs showing different power usage for similar brightness" class="content-image">
+                            <figcaption>The bulb on the right is just as bright but uses much less power (10 W vs 61 W).</figcaption>
+                        </figure>
+                        <li><strong>Use appliances for less time:</strong> Turn things off when not needed! Shorter showers, turning off lights, not leaving devices on standby.</li>
+                        <li><strong>Improve Insulation:</strong> This doesn't reduce appliance power, but it reduces the *time* your heating needs to be on to maintain temperature. Good insulation (loft, walls, windows) slows down heat transfer to the surroundings.</li>
+                         <!-- Image: images/thermal_house.jpg -->
+                         <figure>
+                            <img src="images/thermal_house.jpg" alt="Thermal image of houses showing heat loss" class="content-image">
+                            <figcaption>This thermal image shows areas of heat loss (brighter colours) from houses. Better insulation reduces this.</figcaption>
+                        </figure>
+                    </ul>
+
+                     <div class="checkpoint" id="cp13">
+                        <h4>Checkpoint 13: Bulb Savings</h4>
+                        <p>A room has one 60 W incandescent bulb, used for 4 hours a day. It's replaced with a 10 W LED bulb providing the same light.</p>
+                        <p>a) How much energy (in kWh) does the 60 W bulb use per day?</p>
+                        <label>Energy (60W) = <input type="number" step="0.01" id="cp13a-ans"> kWh</label>
+                        <button class="check-button" data-question="cp13a" data-correct="0.24">Check (a)</button>
+                        <div class="answer-feedback hidden"></div>
+
+                        <p>b) How much energy (in kWh) does the 10 W bulb use per day?</p>
+                         <label>Energy (10W) = <input type="number" step="0.01" id="cp13b-ans"> kWh</label>
+                        <button class="check-button" data-question="cp13b" data-correct="0.04">Check (b)</button>
+                         <div class="answer-feedback hidden"></div>
+
+                        <p>c) If electricity costs 25p per kWh, how much money is saved per day by using the LED bulb?</p>
+                         <label>Saving = <input type="number" step="0.1" id="cp13c-ans"> p</label>
+                        <button class="check-button" data-question="cp13c" data-correct="5">Check (c)</button>
+                         <button class="hint-button" data-question="cp13c">Hint (c)</button>
+                        <div class="hint-content hidden">1. Find the energy saved per day (answer a - answer b). <br> 2. Calculate the cost saving: Saving = Energy Saved (kWh) x Price (p/kWh).</div>
+                        <div class="answer-feedback hidden"></div>
+                    </div>
+                </div>
+
+                 <div class="key-words">
+                    <h4>Key Words</h4>
+                    <span>Watt (W)</span> <span>Power</span> <span>Kilowatt (kW)</span>
+                    <span>Joule (J)</span> <span>Energy</span> <span>Kilojoule (kJ)</span>
+                    <span>Kilowatt-hour (kWh)</span> <span>Rate</span> <span>Cost</span>
+                    <span>Unit</span> <span>Efficiency</span> <span>Insulation</span>
+                </div>
+
+            </section>
+
+            <!-- Practice Section -->
+            <section id="practice-section" class="content-section">
+                <h2>Practice Questions</h2>
+                <p>Test your understanding. Use the calculator if needed. Check your answers as you go or at the end.</p>
+
+                 <div class="practice-question" id="pq1">
+                    <h4>Question 1: Definitions</h4>
+                    <p>a) What is power? <input type="text" id="pq1a-ans" size="30"></p>
+                    <p>b) What is the standard unit of power? <input type="text" id="pq1b-ans" size="10"></p>
+                    <p>c) What unit do electricity companies use to measure energy? <input type="text" id="pq1c-ans" size="15"></p>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq1')">Check Q1</button>
+                     <button class="hint-button" data-question="pq1">Hint Q1</button>
+                     <div class="hint-content hidden">a) Think about speed/rate. b) Symbol W. c) Symbol kWh.</div>
+                    <div class="answer-feedback hidden"></div>
                  </div>
-            </div>
 
-             <!-- Sub-Tab: Energy Needs & Activities -->
-            <div id="needs" class="tutorial-sub-content">
-                 <!-- Content same as before -->
-                 <h4>How Much Energy Do You Need Each Day?</h4>
-                 <p>You need different amounts of energy depending on what you do each day...</p><ul><li>Sleeping: ~300 kJ per hour</li><li>Working (e.g., school): ~600 kJ per hour</li><li>Relaxing (e.g., watching TV): ~360 kJ per hour</li><li>Playing (e.g., football): ~3600 kJ per hour</li></ul>
-                  <div class="highlight-box fact"><strong>Fantastic Fact:</strong> An average adult man needs about 12,000 kJ per day...</div>
-                 <h4>Energy Cost of Activities</h4><p>There is an energy cost to everything that you do...</p>
-                 <table><thead><tr><th>Activity</th><th>Energy (kJ) for each minute of activity</th></tr></thead><tbody><tr><td>Sitting</td><td>6</td></tr><tr><td>Standing</td><td>7</td></tr><tr><td>Washing, dressing</td><td>15</td></tr><tr><td>Walking slowly</td><td>13</td></tr><tr><td>Cycling</td><td>25</td></tr><tr><td>Running</td><td>60</td></tr><tr><td>Swimming</td><td>73</td></tr></tbody></table>
-                 <h4>Energy Balance</h4><p><strong>Energy balance</strong> means the energy you take in from food equals the energy you use...</p>
-            </div>
-
-            <!-- Sub-Tab: Menu Planner -->
-            <div id="menu-planner" class="tutorial-sub-content">
-                <!-- Content same as before -->
-                <h4>Daily Menu Planner</h4><p>Different people need different amounts of energy each day...</p>
-                <div class="menu-planner-container">
-                    <div class="menu-controls">
-                        <h5>1. Choose a Profile:</h5><select id="menu-profile-select" onchange="handleProfileChange()"><option value="">-- Select Profile --</option><option value="office_worker">Office Worker (Sedentary)</option><option value="teen_active">Active Teenager (Growing & Active)</option><option value="athlete">Athlete (High Activity)</option></select>
-                        <p>Target Daily Energy: <strong id="menu-target-kj">---</strong> kJ</p>
-                        <h5>2. Select Foods for the Day:</h5><div id="menu-food-options"></div>
-                    </div>
-                    <div class="menu-summary">
-                        <h5>3. Your Selected Menu:</h5><ul id="selected-menu-items"><li><i>No items selected yet.</i></li></ul>
-                        <p>Total Menu Energy: <strong id="menu-total-kj">0</strong> kJ</p>
-                        <h5>4. Check Your Menu:</h5><button class="menu-check-button" onclick="checkMenu()">Check Menu</button><div id="menu-feedback"></div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- Practice Section -->
-        <section id="practice" class="tab-content">
-             <h3>Test Your Knowledge</h3>
-             <p>Answer the following questions based on the tutorial.</p>
-
-             <div class="question" id="q1">
-                 <p><strong>Question 1:</strong> Complete the sentences using words from the word bank:</p>
-                 <div class="word-bank">
-                    <strong>Word Bank:</strong> <code>food</code>, <code>fuels</code>, <code>kilojoules (kJ)</code>, <code>breathing</code>, <code>grow</code>, <code>Joules (J)</code>, <code>heat</code>, <code>move</code>, <code>fat</code>
+                 <div class="practice-question" id="pq2">
+                    <h4>Question 2: Conversions</h4>
+                    <p>a) Convert 3800 W to kW: <input type="number" step="0.1" id="pq2a-ans"> kW</p>
+                    <p>b) Convert 0.05 kW to W: <input type="number" id="pq2b-ans"> W</p>
+                    <p>c) Convert 120 minutes to hours: <input type="number" id="pq2c-ans"> h</p>
+                     <p>d) Convert 45 minutes to hours: <input type="number" step="0.01" id="pq2d-ans"> h</p>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq2')">Check Q2</button>
+                    <button class="hint-button" data-question="pq2">Hint Q2</button>
+                     <div class="hint-content hidden">a) W to kW: /1000. b) kW to W: *1000. c/d) mins to hours: /60.</div>
+                    <div class="answer-feedback hidden"></div>
                  </div>
-                 <p>Energy is stored in <input type="text" id="q1a" size="10"> and <input type="text" id="q1b" size="10">. The amount of energy stored is measured in <input type="text" id="q1c" size="10">. When you are asleep, your body needs energy for keeping warm and <input type="text" id="q1d" size="15">. Children need more energy than adults to allow them to <input type="text" id="q1e" size="10">.</p>
-                 <button onclick="checkQ1()">Check Answer</button>
-                 <div class="feedback" id="f1"></div>
-             </div>
 
-             <div class="question" id="q2">
-                  <!-- Content same as before -->
-                 <p><strong>Question 2:</strong> Chips contain 1000 kJ per 100g. Cycling uses 25 kJ per minute. How many minutes to cycle off 200 g of chips?</p>
-                 <p>Energy in 200g chips = <input type="number" id="q2a" size="6"> kJ</p>
-                 <p>Time = Energy / Rate = <span id="q2a-display">?</span> / 25 kJ/min = <input type="number" id="q2b" size="6"> minutes</p>
-                 <button onclick="checkQ2()">Check Answer</button><div class="feedback" id="f2"></div><div id="q2-hint" style="font-size: 0.9em; color: #555; margin-top: 5px; display: none;">Hint: Total energy in 200g? Then time = Energy / Rate.</div>
-             </div>
+                 <div class="practice-question" id="pq3">
+                    <h4>Question 3: Energy Calculation (kWh)</h4>
+                    <p>A 1.8 kW kettle takes 5 minutes to boil. How much energy does it use in kWh?</p>
+                     <label>Energy = <input type="number" step="0.01" id="pq3-ans"> kWh</label>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq3')">Check Q3</button>
+                    <button class="hint-button" data-question="pq3">Hint Q3</button>
+                    <div class="hint-content hidden">1. Ensure power is in kW (it is). 2. Convert time to hours (5 / 60 = ?). 3. Use Energy = Power x Time.</div>
+                    <div class="answer-feedback hidden"></div>
+                 </div>
 
-              <div class="question" id="q3">
-                   <!-- Content same as before -->
-                 <p><strong>Question 3:</strong> Which activity uses the MOST energy per minute?</p>
-                 <select id="q3a"><option value="">-- Select --</option><option value="sitting">Sitting</option><option value="walking">Walking slowly</option><option value="running">Running</option><option value="swimming">Swimming</option></select>
-                 <button onclick="checkQ3()">Check Answer</button><div class="feedback" id="f3"></div>
-             </div>
+                 <div class="practice-question" id="pq4">
+                    <h4>Question 4: Cost Calculation</h4>
+                    <p>Using the kettle from Q3 (1.8 kW, 5 minutes use), calculate the cost if electricity is 30p per kWh.</p>
+                     <label>Cost = <input type="number" step="0.01" id="pq4-ans"> p</label>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq4')">Check Q4</button>
+                     <button class="hint-button" data-question="pq4">Hint Q4</button>
+                    <div class="hint-content hidden">Use the energy calculated in Q3. Cost = Energy (kWh) x Price (p/kWh).</div>
+                    <div class="answer-feedback hidden"></div>
+                 </div>
 
-              <div class="question" id="q4">
-                   <!-- Content same as before -->
-                 <p><strong>Question 4:</strong> In the simulation, which food causes the largest temperature rise?</p>
-                 <select id="q4a"><option value="">-- Select --</option><option value="apple">Apple</option><option value="banana">Banana</option><option value="chips">Chips</option><option value="chocolate">Chocolate</option></select>
-                 <button onclick="checkQ4()">Check Answer</button><div class="feedback" id="f4"></div>
-             </div>
-
-             <div class="question" id="q5">
-                  <!-- Content same as before -->
-                 <p><strong>Question 5:</strong> 100g chocolate = 1500 kJ. Running = 60 kJ/min at 150 m/min. How far to run to burn off 50 g of chocolate?</p>
-                 <p>Energy in 50g chocolate = <input type="number" id="q5a" size="6"> kJ</p>
-                 <p>Time needed = <span id="q5a-display">?</span> / 60 kJ/min = <input type="number" id="q5b" size="6"> minutes</p>
-                  <p>Distance = <span id="q5b-display">?</span> min x 150 m/min = <input type="number" id="q5c" size="6"> metres</p>
-                 <button onclick="checkQ5()">Check Answer</button><div class="feedback" id="f5"></div><div id="q5-hint" style="font-size: 0.9em; color: #555; margin-top: 5px; display: none;">Hint: Energy in 50g? Time = Energy / Rate? Distance = Time x Speed?</div>
-             </div>
-        </section>
-
-        <!-- Game Section -->
-        <section id="game" class="tab-content">
-            <h3>Game: Energy Balance Challenge</h3>
-            <p>Try to manage your energy intake (eating) and expenditure (activities) over 10 hours. Keep your energy levels in the green zone (40%-70%)!</p>
-
-            <div class="game-container">
-                <div class="game-status">
-                    <h4>Current Status</h4>
-                    <p>Energy Level: <span id="energy-level-value">6000</span> kJ</p>
-                    <div id="energy-bar-container"><div id="energy-bar"></div></div>
-                    <p>Time Elapsed: <span id="game-time">0</span> hours</p>
-                    <div id="game-message">Keep your energy balanced!</div>
-                     <button onclick="resetGame()">Restart Game</button>
+                <div class="practice-question" id="pq5">
+                    <h4>Question 5: Comparing Costs</h4>
+                    <p>Device A: 1200 W used for 30 minutes.</p>
+                    <p>Device B: 80 W used for 4 hours.</p>
+                    <p>Electricity costs 20p per kWh.</p>
+                    <p>a) Calculate the cost of using Device A: <input type="number" step="0.1" id="pq5a-ans"> p</p>
+                    <p>b) Calculate the cost of using Device B: <input type="number" step="0.1" id="pq5b-ans"> p</p>
+                     <p>c) Which device cost more to run for its specified time? Device <input type="text" id="pq5c-ans" size="3"></p>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq5')">Check Q5</button>
+                    <button class="hint-button" data-question="pq5">Hint Q5</button>
+                    <div class="hint-content hidden">Calculate cost for each device separately. Remember unit conversions! <br> Device A: 1.2 kW, 0.5 h. <br> Device B: 0.08 kW, 4 h.</div>
+                    <div class="answer-feedback hidden"></div>
                 </div>
-                <div class="game-actions">
-                    <h4>Actions (Each action takes 1 hour)</h4>
-                     <p class="game-note"><i>(Note: Each hour also includes a ~<span id="basal-rate-display">300</span> kJ background energy burn)</i></p>
-                    <div class="game-buttons">
-                        <button onclick="gameAction('eat_apple')">Eat Apple (+200 kJ)</button>
-                        <button onclick="gameAction('eat_salad')">Eat Salad (+100 kJ)</button>
-                        <button onclick="gameAction('eat_fruit_salad')">Eat Fruit Salad (+400 kJ)</button>
-                        <button onclick="gameAction('eat_pasta')">Eat Pasta (+2000 kJ)</button>
-                        <button onclick="gameAction('eat_chocolate')">Eat Chocolate (+1500 kJ)</button>
-                        <button onclick="gameAction('eat_pizza')">Eat Pizza (+1200 kJ)</button>
-                        <button onclick="gameAction('eat_crisps')">Eat Crisps (+600 kJ)</button>
 
-                        <button onclick="gameAction('relax')">Relax (-360 kJ)</button>
-                        <button onclick="gameAction('light_walk')">Light Walk (-500 kJ)</button>
-                        <button onclick="gameAction('work')">School Work (-600 kJ)</button>
-                        <button onclick="gameAction('studying')">Studying (-400 kJ)</button>
-                        <button onclick="gameAction('cycling')">Cycling (-1500 kJ)</button>
-                        <button onclick="gameAction('play_football')">Play Football (-3600 kJ)</button>
-                        <button onclick="gameAction('swimming')">Swimming (-4400 kJ)</button>
+                 <div class="practice-question" id="pq6">
+                    <h4>Question 6: Energy Saving</h4>
+                    <p>Suggest two different ways a household could reduce their electricity bill, based on the physics concepts learned.</p>
+                    <textarea id="pq6-ans" rows="3" placeholder="1. Use appliances that...
+2. Use appliances for..."></textarea>
+                    <button class="check-button" onclick="checkPracticeQuestion('pq6')">Check Q6</button>
+                     <!-- No specific correct answer, just check if reasonable suggestions -->
+                    <div class="answer-feedback hidden"></div>
+                </div>
+
+                <hr style="margin: 30px 0;">
+                <button class="practice-submit-button" id="check-all-practice-btn">Check All Practice Questions</button>
+                <div id="practice-results" style="margin-top: 20px;"></div>
+
+            </section>
+
+            <!-- Game Section -->
+            <section id="game-section" class="content-section">
+                 <h2>Game: Power Quiz Challenge!</h2>
+                <p>Test your knowledge through multiple levels! Answer questions as quickly as you can.</p>
+                <div class="game-area">
+                    <div id="game-intro">
+                        <button class="game-button" id="start-game-btn">Start Game</button>
+                    </div>
+                    <div id="game-play" class="hidden">
+                        <div> <!-- Header Div for Timer, Score, Level -->
+                            Time Left: <span id="game-timer">75</span>s | Score: <span id="game-score">0</span>
+                            <!-- Level span will be added here by JS -->
+                        </div>
+                        <div id="game-question" style="margin-top: 15px;">Question appears here...</div>
+                        <div class="game-options">
+                            <button class="game-button option" id="optionA"></button>
+                            <button class="game-button option" id="optionB"></button>
+                            <button class="game-button option" id="optionC"></button>
+                            <button class="game-button option" id="optionD"></button>
+                        </div>
+                        <div id="game-feedback"></div>
+                    </div>
+                    <div id="game-over" class="hidden text-center">
+                        <h3>Game Over!</h3> <!-- Message updated by JS -->
+                        <p>Your final score: <strong id="final-score">0</strong></p>
+                        <button class="game-button" id="restart-game-btn">Play Again</button>
                     </div>
                 </div>
-            </div>
-            <div class="game-explanation">
-                <h5>Beyond Kilojoules: Why Just Eating Chocolate Isn't Healthy!</h5>
-                <p>While foods like chocolate, chips, and pizza provide a lot of energy (kJ), they often lack other important things your body needs. A healthy diet isn't just about getting enough energy, it's about getting the *right kind* of energy and nutrients.</p>
-                <ul>
-                    <li><strong>Nutrients:</strong> Fruits, vegetables, lean meats, and whole grains provide vitamins, minerals, and fibre essential for growth, repair, and fighting illness. High-energy 'junk' foods often lack these.</li>
-                    <li><strong>Fibre:</strong> Important for digestion. Found in fruits, vegetables, and whole grains, but often low in processed foods.</li>
-                    <li><strong>Sugar & Fat:</strong> While needed in moderation, too much sugar (common in sweets, fizzy drinks) and unhealthy fats (common in fried foods, pastries) can lead to health problems like weight gain, tooth decay, and heart issues later in life.</li>
-                </ul>
-                <p><strong>The Goal:</strong> Aim for a balanced diet with plenty of variety, getting energy from different sources alongside essential nutrients.</p>
-            </div>
+            </section>
 
-        </section>
-
-    </div> <!-- End Container -->
-
-    <footer>
-       KS3 Physics | Food and Fuels Interactive Lesson v3
-    </footer>
+        </main>
+    </div>
 
     <script>
-        // --- Main Tab Navigation ---
-        function openTab(evt, tabName) {
-            // ... (same as v2) ...
-            var i, tabcontent, tabbuttons;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
-            tabbuttons = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tabbuttons.length; i++) tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-            document.getElementById(tabName).style.display = "block";
-            evt.currentTarget.className += " active";
-            if (tabName === 'tutorial') {
-                 const allSubContents = document.querySelectorAll('.tutorial-sub-content'); allSubContents.forEach(content => content.classList.remove('active'));
-                 const allSubButtons = document.querySelectorAll('.tutorial-sub-button'); allSubButtons.forEach(button => button.classList.remove('active'));
-                 if(document.getElementById('intro')) document.getElementById('intro').classList.add('active');
-                 const firstSubButton = document.querySelector('.tutorial-sub-nav .tutorial-sub-button'); if(firstSubButton) firstSubButton.classList.add('active');
-                 if(!document.getElementById('menu-food-options').hasChildNodes()) { populateFoodOptions(); handleProfileChange();} // Lazy load menu options
-            }
-            if (tabName === 'game') resetGame();
-        }
-
-         // --- Tutorial Sub-Tab Navigation ---
-        function openSubTab(evt, subTabName) {
-            // ... (same as v2) ...
-            var i, subTabContent, subTabButtons;
-            subTabContent = document.getElementsByClassName("tutorial-sub-content");
-            for (i = 0; i < subTabContent.length; i++) { subTabContent[i].style.display = "none"; subTabContent[i].classList.remove("active"); }
-            subTabButtons = document.getElementsByClassName("tutorial-sub-button");
-            for (i = 0; i < subTabButtons.length; i++) subTabButtons[i].className = subTabButtons[i].className.replace(" active", "");
-            const currentSubTab = document.getElementById(subTabName);
-            if(currentSubTab) { currentSubTab.style.display = "block"; currentSubTab.classList.add("active"); }
-            evt.currentTarget.className += " active";
-             // Populate menu options if switching to planner and not already done
-            if(subTabName === 'menu-planner' && !document.getElementById('menu-food-options').hasChildNodes()){
-                 populateFoodOptions();
-                 handleProfileChange();
-            }
-        }
-
-        // --- Tutorial: Reveal Answer ---
-        function revealAnswer(element, answer) { /* ... (same as v2) ... */
-            const answerSpan = element.nextElementSibling; if(!answerSpan) return;
-            if (answerSpan.classList.contains('answer-hidden')) { answerSpan.textContent = `Answer: ${answer}`; answerSpan.classList.remove('answer-hidden'); answerSpan.classList.add('answer-shown'); element.textContent = '(Hide Answer)'; }
-            else { answerSpan.textContent = ''; answerSpan.classList.remove('answer-shown'); answerSpan.classList.add('answer-hidden'); element.textContent = '(Click to reveal)'; }
-        }
-
-        // --- Tutorial: Simulation ---
-        const initialTemp = 20; let simRunning = false;
-        const foodSelector = document.getElementById('food-selector'); const burnButton = document.getElementById('burn-button'); const resetButton = document.getElementById('reset-button');
-        const initialTempDisplay = document.getElementById('initial-temp'); const finalTempDisplay = document.getElementById('final-temp'); const tempChangeDisplay = document.getElementById('temp-change');
-        const thermoLiquid = document.getElementById('sim-thermo-liquid'); const simFood = document.getElementById('sim-food'); const simFlame = document.getElementById('sim-flame');
-        const foodEnergyFactors = { apple: 1, banana: 2, chips: 5, chocolate: 8, marshmallow: 7 };
-        const foodColors = { apple: '#90EE90', banana: '#FFEA00', chips: '#FFD700', chocolate: '#7B3F00', marshmallow: '#FFFFFF' };
-        function updateFoodVisual() { /* ... (same as v2) ... */
-            if(!foodSelector || !simFood) return;
-            const selectedFood = foodSelector.value; simFood.textContent = selectedFood.charAt(0).toUpperCase() + selectedFood.slice(1); simFood.style.backgroundColor = foodColors[selectedFood] || '#deb887'; simFood.style.color = (selectedFood === 'marshmallow' || selectedFood === 'banana' || selectedFood === 'chips') ? '#333' : '#fff';
-        }
-        if (foodSelector) foodSelector.addEventListener('change', updateFoodVisual);
-        function runSimulation() { /* ... (same as v2 - check elements exist) ... */
-            if (simRunning || !burnButton || !resetButton || !foodSelector || !finalTempDisplay || !tempChangeDisplay || !thermoLiquid || !simFlame) return;
-            simRunning = true; burnButton.disabled = true; resetButton.disabled = true; foodSelector.disabled = true;
-            const selectedFood = foodSelector.value; const energyFactor = parseFloat(foodSelector.options[foodSelector.selectedIndex].getAttribute('data-energy')); const validEnergyFactor = isNaN(energyFactor) ? 1 : energyFactor;
-            const maxTempRise = 3 + validEnergyFactor * 5; const finalTemp = initialTemp + maxTempRise;
-            simFlame.classList.add('burning'); const initialHeight = 20; const finalHeight = Math.min(95, initialHeight + maxTempRise * 1.5); thermoLiquid.style.height = finalHeight + '%';
-            setTimeout(() => { finalTempDisplay.textContent = finalTemp.toFixed(1); tempChangeDisplay.textContent = maxTempRise.toFixed(1); simFlame.classList.remove('burning'); resetButton.disabled = false; simRunning = false; }, 2500);
-        }
-        function resetSimulation() { /* ... (same as v2 - check elements exist) ... */
-            if(initialTempDisplay) initialTempDisplay.textContent = initialTemp; if(finalTempDisplay) finalTempDisplay.textContent = '--'; if(tempChangeDisplay) tempChangeDisplay.textContent = '--';
-            if(thermoLiquid) thermoLiquid.style.height = '20%'; if(burnButton) burnButton.disabled = false; if(resetButton) resetButton.disabled = true; if(foodSelector) foodSelector.disabled = false;
-            if(simFlame) simFlame.classList.remove('burning'); updateFoodVisual();
-        }
-
-        // --- Tutorial: Menu Planner ---
-        const profiles = { office_worker: { name: "Office Worker (Sedentary)", targetKJ: 9000 }, teen_active: { name: "Active Teenager (Growing & Active)", targetKJ: 11000 }, athlete: { name: "Athlete (High Activity)", targetKJ: 14000 } };
-        const menuFoods = { apple: { name: "Apple", kj: 350 }, banana: { name: "Banana", kj: 400 }, bread_slice: { name: "Bread (2 sl)", kj: 700 }, cereal_bowl: { name: "Cereal+Milk", kj: 1200 }, yogurt: { name: "Yogurt", kj: 400 }, milk_glass: { name: "Milk", kj: 500 }, orange_juice: { name: "OJ", kj: 450 }, sandwich_ham: { name: "Ham Sandwich", kj: 1500 }, sandwich_cheese: { name: "Cheese Sandwich", kj: 1800 }, salad_chicken: { name: "Chicken Salad", kj: 1400 }, pasta_tomato: { name: "Pasta+Sauce", kj: 2000 }, chicken_rice_veg: { name: "Chicken Meal", kj: 2500 }, beef_potatoes: { name: "Beef Meal", kj: 2800 }, fish_chips: { name: "Fish & Chips", kj: 3500 }, pizza_slice: { name: "Pizza (2 sl)", kj: 2400 }, chocolate_bar: { name: "Choc Bar (50g)", kj: 1100 }, crisps_bag: { name: "Crisps", kj: 600 }, fizzy_drink: { name: "Fizzy Drink", kj: 600 } };
-        let selectedProfile = null; let selectedFoodItems = {}; let currentMenuTotalKJ = 0;
-        const foodOptionsContainer = document.getElementById('menu-food-options'); const selectedMenuItemsList = document.getElementById('selected-menu-items'); const menuTotalKJDisplay = document.getElementById('menu-total-kj'); const menuTargetKJDisplay = document.getElementById('menu-target-kj'); const menuFeedbackDisplay = document.getElementById('menu-feedback'); const profileSelect = document.getElementById('menu-profile-select');
-        function populateFoodOptions() { /* ... (same as v2) ... */
-             if (!foodOptionsContainer) return; foodOptionsContainer.innerHTML = '';
-             for (const key in menuFoods) { const food = menuFoods[key]; const button = document.createElement('button'); button.dataset.key = key; button.innerHTML = `${food.name} <span>(${food.kj} kJ)</span>`; button.onclick = () => toggleFoodItem(key); foodOptionsContainer.appendChild(button); }
-        }
-        function handleProfileChange() { /* ... (same as v2) ... */
-             if (!profileSelect || !menuTargetKJDisplay || !menuFeedbackDisplay) return; const selectedValue = profileSelect.value; selectedProfile = profiles[selectedValue];
-             if (selectedProfile) { menuTargetKJDisplay.textContent = selectedProfile.targetKJ; } else { menuTargetKJDisplay.textContent = '---'; }
-             selectedFoodItems = {}; updateMenuDisplay(); menuFeedbackDisplay.style.display = 'none';
-             if(foodOptionsContainer){ const buttons = foodOptionsContainer.querySelectorAll('button'); buttons.forEach(btn => btn.classList.remove('selected')); }
-        }
-        function toggleFoodItem(key) { /* ... (same as v2) ... */
-             if (!menuFoods[key] || !foodOptionsContainer) return; const food = menuFoods[key]; const button = foodOptionsContainer.querySelector(`button[data-key="${key}"]`);
-             if (selectedFoodItems[key]) { delete selectedFoodItems[key]; if(button) button.classList.remove('selected'); }
-             else { selectedFoodItems[key] = 1; if(button) button.classList.add('selected'); }
-             updateMenuDisplay();
-        }
-        function updateMenuDisplay() { /* ... (same as v2) ... */
-             if(!selectedMenuItemsList || !menuTotalKJDisplay) return; currentMenuTotalKJ = 0; selectedMenuItemsList.innerHTML = '';
-             if (Object.keys(selectedFoodItems).length === 0) { selectedMenuItemsList.innerHTML = '<li><i>No items selected yet.</i></li>'; }
-             else { for (const key in selectedFoodItems) { if (selectedFoodItems[key] > 0) { const food = menuFoods[key]; const listItem = document.createElement('li'); listItem.textContent = `${food.name} (${food.kj} kJ)`; selectedMenuItemsList.appendChild(listItem); currentMenuTotalKJ += food.kj; } } }
-             menuTotalKJDisplay.textContent = currentMenuTotalKJ;
-        }
-        function checkMenu() { /* ... (same as v2) ... */
-            if (!menuFeedbackDisplay) return;
-            if (!selectedProfile) { menuFeedbackDisplay.textContent = 'Please select a profile first.'; menuFeedbackDisplay.style.backgroundColor = '#fff3cd'; menuFeedbackDisplay.style.color = '#856404'; menuFeedbackDisplay.style.display = 'block'; return; }
-            const target = selectedProfile.targetKJ; const total = currentMenuTotalKJ; const lowerBound = target * 0.9; const upperBound = target * 1.1;
-            let feedbackText = ''; let bgColor = ''; let textColor = '';
-            if (total === 0) { feedbackText = 'Your menu is empty!'; bgColor = '#f8d7da'; textColor = '#721c24'; }
-            else if (total < lowerBound) { feedbackText = `Your menu total (${total} kJ) is quite low vs target (${target} kJ). Need more energy!`; bgColor = '#fff3cd'; textColor = '#856404'; }
-            else if (total > upperBound) { feedbackText = `Your menu total (${total} kJ) is quite high vs target (${target} kJ). Excess energy.`; bgColor = '#fff3cd'; textColor = '#856404'; }
-            else { feedbackText = `Great job! Menu total (${total} kJ) is well-matched to target (${target} kJ).`; bgColor = '#d4edda'; textColor = '#155724'; }
-            menuFeedbackDisplay.textContent = feedbackText; menuFeedbackDisplay.style.backgroundColor = bgColor; menuFeedbackDisplay.style.color = textColor; menuFeedbackDisplay.style.display = 'block';
-        }
-
-        // --- Practice Questions ---
-        function showFeedback(id, isCorrect, message) { /* ... (same as v2) ... */
-            const feedbackEl = document.getElementById(id); if(!feedbackEl) return; feedbackEl.textContent = message; feedbackEl.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect'); feedbackEl.style.display = 'block';
-        }
-        function checkQ1() { /* ... (same as v2, but checking against new word bank) ... */
-             const a = document.getElementById('q1a').value.trim().toLowerCase(); const b = document.getElementById('q1b').value.trim().toLowerCase(); const c = document.getElementById('q1c').value.trim().toLowerCase(); const d = document.getElementById('q1d').value.trim().toLowerCase(); const e = document.getElementById('q1e').value.trim().toLowerCase();
-             const correctA = ['food', 'foods'].includes(a); const correctB = ['fuel', 'fuels'].includes(b); const correctAB = (correctA && correctB) || (['fuel', 'fuels'].includes(a) && ['food', 'foods'].includes(b));
-             const correctC = ['kj', 'kilojoules', 'kilojoule', 'kilojoules (kj)'].includes(c); const correctD = ['breathing', 'digestion', 'processes', 'functioning'].includes(d); const correctE = ['grow', 'growth'].includes(e);
-             if (correctAB && correctC && correctD && correctE) { showFeedback('f1', true, 'Correct!'); }
-             else { let errorMsg = "Not quite right. Check: "; if (!correctAB) errorMsg += "Energy stores, "; if (!correctC) errorMsg += "Unit, "; if (!correctD) errorMsg += "Asleep need, "; if (!correctE) errorMsg += "Children need."; showFeedback('f1', false, errorMsg.slice(0, -2) + '. Use the word bank.'); }
-        }
-        function checkQ2() { /* ... (same as v2) ... */ }
-        if(document.getElementById('q2a')) document.getElementById('q2a').addEventListener('input', () => { if(document.getElementById('q2a-display')) document.getElementById('q2a-display').textContent = document.getElementById('q2a').value || '?'; });
-        function checkQ3() { /* ... (same as v2) ... */ }
-        function checkQ4() { /* ... (same as v2) ... */ }
-        function checkQ5() { /* ... (same as v2) ... */ }
-        if(document.getElementById('q5a')) document.getElementById('q5a').addEventListener('input', () => { if(document.getElementById('q5a-display')) document.getElementById('q5a-display').textContent = document.getElementById('q5a').value || '?'; });
-        if(document.getElementById('q5b')) document.getElementById('q5b').addEventListener('input', () => { if(document.getElementById('q5b-display')) document.getElementById('q5b-display').textContent = document.getElementById('q5b').value || '?'; });
-
-        // --- Game Logic ---
-        let currentEnergy = 6000; const maxEnergy = 12000; let gameTime = 0; const basalRate = 300;
-        const energyActions = { // Expanded list
-            eat_apple: { change: 200, message: "Ate an apple." },          eat_salad: { change: 100, message: "Ate a salad." },
-            eat_fruit_salad: { change: 400, message: "Ate fruit salad." }, eat_pasta: { change: 2000, message: "Ate pasta." },
-            eat_chocolate: { change: 1500, message: "Ate chocolate." },    eat_pizza: { change: 1200, message: "Ate pizza." },
-            eat_crisps: { change: 600, message: "Ate crisps." },
-            relax: { change: -360, message: "Relaxed." },                  light_walk: { change: -500, message: "Went for a walk." },
-            work: { change: -600, message: "Did school work." },           studying: { change: -400, message: "Studied." },
-            cycling: { change: -1500, message: "Cycled." },                play_football: { change: -3600, message: "Played football." },
-            swimming: { change: -4400, message: "Went swimming." }
-        };
-        const energyLevelValueEl = document.getElementById('energy-level-value'); const energyBarEl = document.getElementById('energy-bar'); const gameTimeEl = document.getElementById('game-time'); const gameMessageEl = document.getElementById('game-message'); const basalRateDisplayEl = document.getElementById('basal-rate-display');
-        function updateGameDisplay() { /* ... (same as v2) ... */
-             currentEnergy = Math.max(0, currentEnergy); const energyPercent = Math.min(100, (currentEnergy / maxEnergy) * 100);
-             if(energyLevelValueEl) energyLevelValueEl.textContent = Math.round(currentEnergy) + " kJ";
-             if(energyBarEl) { energyBarEl.style.width = energyPercent + '%'; energyBarEl.textContent = Math.round(energyPercent) + '%';
-                 if (energyPercent < 20) energyBarEl.style.backgroundColor = '#dc3545'; else if (energyPercent < 40) energyBarEl.style.backgroundColor = '#ffc107'; else if (energyPercent <= 70) energyBarEl.style.backgroundColor = '#28a745'; else if (energyPercent <= 90) energyBarEl.style.backgroundColor = '#ffc107'; else energyBarEl.style.backgroundColor = '#dc3545';
-             }
-             if(gameTimeEl) gameTimeEl.textContent = gameTime + " hours";
-             if (gameTime < 10 && gameMessageEl) {
-                 let statusMsg = "";
-                  if (energyPercent < 20) statusMsg = "Critically low!"; else if (energyPercent < 40) statusMsg = "Feeling tired!"; else if (energyPercent <= 70) statusMsg = "Balanced."; else if (energyPercent <= 90) statusMsg = "Feeling full."; else statusMsg = "Too much energy!";
-                  // Only update if the message isn't showing the action result
-                  if (!gameMessageEl.textContent.includes('kJ')) gameMessageEl.textContent = statusMsg;
-             }
-             if(basalRateDisplayEl) basalRateDisplayEl.textContent = basalRate;
-        }
-         function gameAction(actionKey) { /* ... (minor change to message display) ... */
-             if (gameTime >= 10 || !energyActions[actionKey] || !gameMessageEl) return; const action = energyActions[actionKey];
-             const netChange = action.change - basalRate;
-             currentEnergy += netChange;
-             gameTime++;
-             // Display action message + net change briefly
-             gameMessageEl.textContent = `${action.message} (Net: ${netChange >= 0 ? '+' : ''}${netChange} kJ)`;
-             updateGameDisplay();
-             if (gameTime >= 10) endGame();
-             else {
-                 // Revert to status message after a delay
-                 setTimeout(() => {
-                     if (gameTime < 10) updateGameDisplay(); // Update based on current state
-                 }, 2000); // Show action result for 2 seconds
-             }
-         }
-         function endGame() { /* ... (same as v2) ... */
-              const finalPercent = (currentEnergy / maxEnergy) * 100; let finalMessage = "Game Over! "; let msgColor = '#333';
-              if (finalPercent >= 40 && finalPercent <= 70) { finalMessage += "Balanced energy! 👍"; msgColor = 'green'; }
-              else if (finalPercent < 40) { finalMessage += "Ended too low. 😟"; msgColor = 'red'; }
-              else { finalMessage += "Ended too high. 😬"; msgColor = 'orange'; }
-              if(gameMessageEl) { gameMessageEl.textContent = finalMessage; gameMessageEl.style.color = msgColor; }
-              document.querySelectorAll('.game-buttons button').forEach(btn => btn.disabled = true);
-         }
-         function resetGame() { /* ... (same as v2) ... */
-             currentEnergy = 6000; gameTime = 0;
-             if(gameMessageEl) { gameMessageEl.textContent = "Keep your energy balanced!"; gameMessageEl.style.color = '#333'; }
-             document.querySelectorAll('.game-buttons button').forEach(btn => btn.disabled = false);
-             updateGameDisplay();
-         }
-
-        // --- Calculator Logic ---
+        // --- Global Elements ---
+        const contentArea = document.getElementById('content-area');
         const calculator = document.getElementById('calculator');
-        const calcDisplay = document.getElementById('calc-display');
-        const calcToggleButton = document.getElementById('calc-toggle');
-        const minimizeButton = document.getElementById('calc-minimize');
-        let calcVisible = false;
-        let calcMinimized = false;
-        let operand1 = '';
-        let operand2 = '';
-        let currentOperator = null;
-        let shouldResetDisplay = false;
+        const equationsPanel = document.getElementById('equations-panel');
+        const calcDisplay = document.getElementById('calcDisplay');
 
-        function toggleCalculator() {
-            calcVisible = !calcVisible;
-            calculator.style.display = calcVisible ? 'block' : 'none';
-            calcToggleButton.textContent = calcVisible ? 'Hide Calculator' : 'Show Calculator';
-            // If showing, ensure it's not minimized
-            if (calcVisible && calcMinimized) {
-                restoreCalculator();
-            }
-        }
-        function closeCalculator() {
-            calcVisible = false;
-            calculator.style.display = 'none';
-            calcToggleButton.textContent = 'Show Calculator';
-        }
-        function minimizeCalculator() {
-            calcMinimized = true;
-            calculator.classList.add('minimized');
-            minimizeButton.textContent = '[]'; // Change icon to restore symbol
-            minimizeButton.onclick = restoreCalculator;
-        }
-        function restoreCalculator() {
-            calcMinimized = false;
-            calculator.classList.remove('minimized');
-            minimizeButton.textContent = '_'; // Change icon back to minimize
-            minimizeButton.onclick = minimizeCalculator;
-        }
+        // --- Main Navigation ---
+        const mainNavButtons = document.querySelectorAll('.main-nav button');
+        const contentSections = document.querySelectorAll('.content-section');
+        mainNavButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                mainNavButtons.forEach(btn => btn.classList.remove('active'));
+                contentSections.forEach(section => section.classList.remove('active'));
+                button.classList.add('active');
+                const sectionId = button.id.replace('nav-', '') + '-section';
+                document.getElementById(sectionId)?.classList.add('active');
+            });
+        });
 
-        // Dragging functionality
-        let isDragging = false;
-        let offsetX, offsetY;
-        const calcHeader = document.getElementById('calc-header');
-
-        if(calcHeader) {
-            calcHeader.addEventListener('mousedown', (e) => {
-                // Prevent dragging if clicking on buttons inside header
-                if (e.target.tagName === 'BUTTON') return;
-                isDragging = true;
-                offsetX = e.clientX - calculator.offsetLeft;
-                offsetY = e.clientY - calculator.offsetTop;
-                calculator.style.cursor = 'grabbing'; // Indicate dragging
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('mouseup', onMouseUp);
-                e.preventDefault(); // Prevent text selection during drag
+        // --- Tutorial Tab Navigation ---
+        const tutorialTabsContainer = document.querySelector('.tutorial-tabs');
+        if (tutorialTabsContainer) {
+            const tutorialTabLinks = tutorialTabsContainer.querySelectorAll('.tab-link');
+            const tutorialTabContents = contentArea.querySelectorAll('#tutorial-section .tab-content');
+            tutorialTabLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetTab = link.getAttribute('data-tab');
+                    tutorialTabLinks.forEach(l => l.classList.remove('active'));
+                    tutorialTabContents.forEach(c => c.classList.remove('active')); // Hide all first
+                    link.classList.add('active');
+                    document.getElementById(targetTab)?.classList.add('active'); // Show target
+                });
             });
         }
 
-        function onMouseMove(e) {
-            if (!isDragging) return;
-            let newX = e.clientX - offsetX;
-            let newY = e.clientY - offsetY;
-
-            // Basic boundary check (optional)
-            newX = Math.max(0, Math.min(newX, window.innerWidth - calculator.offsetWidth));
-            newY = Math.max(0, Math.min(newY, window.innerHeight - calculator.offsetHeight));
-
-            calculator.style.left = newX + 'px';
-            calculator.style.top = newY + 'px';
-        }
-
-        function onMouseUp() {
-            if(isDragging) {
-                isDragging = false;
-                calculator.style.cursor = 'move'; // Reset cursor
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
+        // --- Hints ---
+        contentArea.addEventListener('click', function(event) {
+            if (event.target.classList.contains('hint-button')) {
+                const questionId = event.target.getAttribute('data-question');
+                const hintDiv = event.target.closest('.checkpoint, .guided-practice, .practice-question')?.querySelector(`.hint-content`);
+                if (hintDiv) {
+                    hintDiv.classList.toggle('hidden');
+                    event.target.textContent = hintDiv.classList.contains('hidden') ? 'Show Hint' : 'Hide Hint';
+                }
             }
-        }
+        });
 
-        // Calculator Input & Operations
+
+        // --- Checkpoint & Guided Practice Checking ---
+         contentArea.addEventListener('click', function(event) {
+            if (event.target.classList.contains('check-button') && !event.target.hasAttribute('onclick')) { // Avoid conflict with practice section buttons
+                const button = event.target;
+                 const container = button.closest('.checkpoint, .guided-practice'); // Ensure it's CP or GP
+                 if (!container) return;
+
+                const questionId = button.getAttribute('data-question');
+                const correctAnswer = button.getAttribute('data-correct');
+                const inputElement = container.querySelector(`#${questionId}-ans`);
+                const feedbackDiv = container.querySelector('.answer-feedback');
+
+                if (!inputElement || !feedbackDiv) return;
+
+                const userAnswer = inputElement.value.trim();
+                let isCorrect = false;
+
+                 if (userAnswer !== "" && correctAnswer !== null && !isNaN(userAnswer) && !isNaN(correctAnswer)) {
+                    // Use tolerance for floating point numbers
+                    isCorrect = Math.abs(parseFloat(userAnswer) - parseFloat(correctAnswer)) < 0.01;
+                } else if (typeof correctAnswer === 'string') {
+                    // Case-insensitive string comparison
+                     isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                }
+
+
+                feedbackDiv.classList.remove('hidden', 'correct', 'incorrect');
+                if (isCorrect) {
+                    feedbackDiv.textContent = 'Correct!';
+                    feedbackDiv.classList.add('correct');
+                    inputElement.style.backgroundColor = '#d4edda';
+                } else {
+                    feedbackDiv.textContent = `Incorrect. Check calculation/units. Expected: ${correctAnswer}`;
+                    feedbackDiv.classList.add('incorrect');
+                    inputElement.style.backgroundColor = '#f8d7da';
+                }
+            }
+        });
+
+
+        // --- Practice Question Checking Logic ---
+         const practiceQuestionData = {
+             pq1: { a: "the rate at which energy is transferred", b: "watt", c: "kilowatt-hour" },
+             pq2: { a: "3.8", b: "50", c: "2", d: "0.75" },
+             pq3: { ans: "0.15" }, // 1.8 * (5/60)
+             pq4: { ans: "4.5" }, // 0.15 * 30
+             pq5: { a: "12", b: "6.4", c: "a"}, // A: 1.2*0.5*20=12. B: 0.08*4*20=6.4
+             pq6: { ans: "subjective" } // Check for reasonable input
+         };
+
+         function checkPracticeQuestion(questionId) {
+            const questionDiv = document.getElementById(questionId);
+             if (!questionDiv) return; // Exit if question div not found
+            const feedbackDiv = questionDiv.querySelector('.answer-feedback');
+            const data = practiceQuestionData[questionId];
+            let allPartsCorrect = true;
+             let hasSubjective = false;
+
+            if (!feedbackDiv || !data) return; // Exit if feedback or data missing
+
+            feedbackDiv.innerHTML = ''; // Clear previous feedback
+            feedbackDiv.classList.remove('hidden', 'correct', 'incorrect');
+
+            for (const part in data) {
+                const input = questionDiv.querySelector(`#${questionId}${part}-ans`);
+                const correctAnswer = data[part];
+
+                if (correctAnswer === "subjective") {
+                    hasSubjective = true;
+                    const userAnswer = input ? input.value.trim() : '';
+                    if (userAnswer.length < 10) { // Basic check for some content
+                         allPartsCorrect = false;
+                         feedbackDiv.innerHTML += ` Part (${part}): Please provide a more detailed answer.`;
+                         if(input) input.style.backgroundColor = '#f8d7da';
+                    } else {
+                         // For subjective, just acknowledge input without marking strictly correct/incorrect
+                         feedbackDiv.innerHTML += ` Part (${part}): Answer noted.`;
+                         if(input) input.style.backgroundColor = '#e2e6ea'; // Neutral background
+                    }
+                    continue; // Move to next part
+                }
+
+                 if (!input) continue; // Skip if input not found for objective parts
+
+                // Normalize both user answer and correct answer for comparison
+                const userAnswer = input.value.trim().toLowerCase().replace(/[^a-z0-9.-]/g, '');
+                const correctNorm = String(correctAnswer).toLowerCase().replace(/[^a-z0-9.-]/g, '');
+
+
+                let isPartCorrect = false;
+                 // Check if both are valid numbers for numeric comparison
+                 if (userAnswer !== "" && correctNorm !== "" && !isNaN(userAnswer) && !isNaN(correctNorm)) {
+                    isPartCorrect = Math.abs(parseFloat(userAnswer) - parseFloat(correctNorm)) < 0.01;
+                } else {
+                     // Otherwise, perform string comparison
+                     isPartCorrect = userAnswer === correctNorm;
+                }
+
+
+                if (!isPartCorrect) {
+                    allPartsCorrect = false;
+                    feedbackDiv.innerHTML += ` Part (${part}) incorrect (Expected '${correctAnswer}').`;
+                    input.style.backgroundColor = '#f8d7da';
+                } else {
+                     input.style.backgroundColor = '#d4edda';
+                }
+            }
+
+             feedbackDiv.classList.remove('hidden'); // Ensure feedback is visible
+            if (allPartsCorrect && !hasSubjective) {
+                 feedbackDiv.innerHTML = 'Correct!';
+                 feedbackDiv.classList.add('correct');
+            } else if (!allPartsCorrect) {
+                 feedbackDiv.classList.add('incorrect'); // Add main incorrect class if any part failed
+            } else if (allPartsCorrect && hasSubjective) {
+                // All objective parts correct, subjective part noted
+                feedbackDiv.classList.add('correct'); // Still mark overall as checked/correct context
+            }
+         }
+
+         const checkAllPracticeBtn = document.getElementById('check-all-practice-btn');
+         if(checkAllPracticeBtn) {
+             checkAllPracticeBtn.addEventListener('click', () => {
+                Object.keys(practiceQuestionData).forEach(id => checkPracticeQuestion(id));
+                 // Optionally provide summary feedback
+                 const practiceResultsDiv = document.getElementById('practice-results');
+                 if (practiceResultsDiv) practiceResultsDiv.textContent = "All questions checked. Review feedback above.";
+            });
+         }
+
+
+        // --- Calculator Logic ---
+        let calcCurrentInput = '0';
+        let calcOperator = null;
+        let calcPreviousInput = null;
+        let resetDisplay = false;
+
         function calcInput(value) {
-            if (calcDisplay.value === '0' || shouldResetDisplay) {
-                calcDisplay.value = value;
-                shouldResetDisplay = false;
+            if (!calcDisplay) return;
+            if (calcDisplay.textContent === 'Error') calcClear();
+            if (resetDisplay) {
+                calcDisplay.textContent = '';
+                resetDisplay = false;
+            }
+
+            if (calcDisplay.textContent === '0' && value !== '.') {
+                calcDisplay.textContent = value;
             } else {
-                // Prevent multiple decimal points
-                if (value === '.' && calcDisplay.value.includes('.')) return;
-                calcDisplay.value += value;
+                if (value === '.' && calcDisplay.textContent.includes('.')) return;
+                // Limit display length to prevent overflow (optional)
+                if (calcDisplay.textContent.length < 16) {
+                    calcDisplay.textContent += value;
+                }
             }
         }
 
         function calcClear() {
-            calcDisplay.value = '0';
-            operand1 = '';
-            operand2 = '';
-            currentOperator = null;
-            shouldResetDisplay = false;
+             if (!calcDisplay) return;
+            calcDisplay.textContent = '0';
+            calcCurrentInput = '0';
+            calcOperator = null;
+            calcPreviousInput = null;
+            resetDisplay = false;
         }
 
-        function setOperator(operator) {
-            if (currentOperator !== null && !shouldResetDisplay) {
-                // If an operator exists and we haven't just calculated, perform previous calc first
-                calcEquals();
-            }
-            operand1 = calcDisplay.value;
-            currentOperator = operator;
-            shouldResetDisplay = true; // Ready for next number
+        function calcBackspace() {
+             if (!calcDisplay) return;
+             if (calcDisplay.textContent === 'Error') calcClear();
+             if (resetDisplay) return;
+             if (calcDisplay.textContent.length > 1) {
+                 calcDisplay.textContent = calcDisplay.textContent.slice(0, -1);
+             } else {
+                 calcDisplay.textContent = '0';
+             }
         }
 
         function calcEquals() {
-            if (currentOperator === null || shouldResetDisplay) return; // Nothing to calculate or waiting for second operand
-            if (operand1 === '') return; // Should not happen if operator is set, but safety check
+             if (!calcDisplay) return;
+             if (calcDisplay.textContent === 'Error') return;
+             try {
+                 // Basic sanitization - better than nothing, but still relies on eval's risks
+                 const expression = calcDisplay.textContent.replace(/[^-()\d/*+.]/g, '');
+                 if (!expression) { calcDisplay.textContent = '0'; return; } // Handle empty after sanitize
 
-            operand2 = calcDisplay.value;
-            let result;
-            const num1 = parseFloat(operand1);
-            const num2 = parseFloat(operand2);
-
-            switch (currentOperator) {
-                case '+': result = num1 + num2; break;
-                case '-': result = num1 - num2; break;
-                case '*': result = num1 * num2; break;
-                case '/':
-                    if (num2 === 0) {
-                        result = 'Error'; // Handle division by zero
-                    } else {
-                        result = num1 / num2;
-                    }
-                    break;
-                default: return;
-            }
-
-            calcDisplay.value = result;
-            operand1 = result.toString(); // Store result for chained operations
-            currentOperator = null; // Reset operator after calculation
-            shouldResetDisplay = true; // Display resets on next number input
+                 let result = eval(expression);
+                 // Handle potential floating point issues and NaN/Infinity
+                 if (isNaN(result) || !isFinite(result)) {
+                     calcDisplay.textContent = 'Error';
+                 } else {
+                     result = parseFloat(result.toFixed(10)); // Limit precision
+                     calcDisplay.textContent = String(result).slice(0, 16); // Limit display length
+                 }
+                 resetDisplay = true;
+                 calcOperator = null;
+                 calcPreviousInput = null;
+             } catch (e) {
+                 calcDisplay.textContent = 'Error';
+             }
         }
 
-         // Assign setOperator to operator buttons correctly
-        document.querySelectorAll('.calc-buttons button.operator').forEach(button => {
-            button.onclick = () => setOperator(button.textContent);
+
+        // --- Calculator UI & Dragging ---
+        const toggleCalcButton = document.getElementById('toggle-calculator');
+        const calcMinimizeButton = document.querySelector('.calc-minimize-btn');
+        const calcHeader = document.querySelector('.calc-header');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        if(toggleCalcButton && calculator) {
+            toggleCalcButton.addEventListener('click', () => {
+                calculator.classList.toggle('hidden');
+                if (!calculator.classList.contains('hidden')) {
+                    calculator.classList.remove('minimized');
+                }
+            });
+        }
+
+        if(calcMinimizeButton && calculator) {
+            calcMinimizeButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent header drag start
+                calculator.classList.toggle('minimized');
+            });
+        }
+
+         if(calcHeader && calculator) {
+             calcHeader.addEventListener('click', () => {
+                 if (calculator.classList.contains('minimized')) {
+                      calculator.classList.remove('minimized');
+                 }
+             });
+            calcHeader.addEventListener('mousedown', (e) => {
+                if (calculator.classList.contains('minimized')) return;
+                isDragging = true;
+                offsetX = e.clientX - calculator.offsetLeft;
+                offsetY = e.clientY - calculator.offsetTop;
+                calculator.style.cursor = 'grabbing';
+                e.preventDefault(); // Prevent text selection
+            });
+         }
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging || !calculator) return;
+            let newX = e.clientX - offsetX;
+            let newY = e.clientY - offsetY;
+
+            // Boundary checks
+            const maxX = window.innerWidth - calculator.offsetWidth;
+            const maxY = window.innerHeight - calculator.offsetHeight;
+            newX = Math.max(0, Math.min(newX, maxX < 0 ? 0 : maxX)); // Handle small screens
+            newY = Math.max(0, Math.min(newY, maxY < 0 ? 0 : maxY));
+
+            calculator.style.left = `${newX}px`;
+            calculator.style.top = `${newY}px`;
+            calculator.style.bottom = 'auto'; // Override CSS position if dragged
+            calculator.style.right = 'auto';
         });
 
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                if(calculator) calculator.style.cursor = 'grab';
+            }
+        });
 
-        // --- Initial Setup ---
+        // --- Equations Panel ---
+         const toggleEquationsButton = document.getElementById('toggle-equations');
+         const closeEquationsButton = document.querySelector('.equations-close-btn');
+
+         if(toggleEquationsButton && equationsPanel) {
+             toggleEquationsButton.addEventListener('click', () => {
+                 equationsPanel.classList.toggle('hidden');
+             });
+         }
+         if(closeEquationsButton && equationsPanel) {
+             closeEquationsButton.addEventListener('click', () => {
+                  equationsPanel.classList.add('hidden');
+             });
+         }
+
+
+        // --- Multi-Level Game Logic ---
+
+        const gameLevels = [
+            // Level 1: Basic Definitions & Conversions
+            [
+                { q: "What is the standard unit of Power?", o: ["Joule (J)", "Kilowatt-hour (kWh)", "Watt (W)", "Volt (V)"], a: "Watt (W)" },
+                { q: "1 Kilowatt (kW) is equal to how many Watts (W)?", o: ["10 W", "100 W", "1000 W", "0.1 W"], a: "1000 W" },
+                { q: "What quantity does 'kWh' measure?", o: ["Power", "Time", "Energy", "Cost"], a: "Energy" },
+                { q: "Convert 2500 W to kW.", o: ["2.5 kW", "25 kW", "0.25 kW", "250 kW"], a: "2.5 kW" },
+                { q: "Power is the _____ at which energy is transferred.", o: ["amount", "rate", "cost", "unit"], a: "rate" }
+            ],
+            // Level 2: Simple Calculations (kWh, Cost)
+            [
+                { q: "A 2 kW heater runs for 3 hours. Energy used?", o: ["2 kWh", "3 kWh", "5 kWh", "6 kWh"], a: "6 kWh" },
+                { q: "A 50 W lamp is on for 10 hours. Energy used?", o: ["0.05 kWh", "0.5 kWh", "5 kWh", "500 kWh"], a: "0.5 kWh" },
+                { q: "Time = 30 minutes. Convert to hours:", o: ["0.3 h", "0.5 h", "30 h", "1/2 h"], a: "0.5 h" },
+                { q: "If 1 kWh costs 10p, what is the cost of using 5 kWh?", o: ["5p", "10p", "50p", "£5"], a: "50p" },
+                { q: "Energy (kWh) = Power (kW) x _____", o: ["Cost (p/kWh)", "Time (hours)", "Time (seconds)", "Joules"], a: "Time (hours)" }
+            ],
+            // Level 3: Multi-step Calculations & Concepts
+            [
+                { q: "A 1500 W kettle is used for 6 minutes. Energy used in kWh?", o: ["0.15 kWh", "1.5 kWh", "9 kWh", "90 kWh"], a: "0.15 kWh" }, // 1.5kW * (6/60)h
+                { q: "Device uses 0.4 kWh. Cost at 20p/kWh?", o: ["4p", "8p", "20p", "40p"], a: "8p" }, // 0.4 * 20
+                { q: "Which saves more energy? A) Using 100W bulb for 1hr B) Using 50W bulb for 3hrs", o: ["A", "B", "Same", "Not enough info"], a: "A" }, // A=0.1kWh, B=0.15kWh
+                { q: "Cost = Power (kW) x Time (h) x _____", o: ["Energy (kWh)", "Price (p/kWh)", "Time (s)", "Joules"], a: "Price (p/kWh)" },
+                { q: "To reduce electricity cost, you should use appliances with ____ power for ____ time.", o: ["higher, less", "lower, less", "lower, more", "higher, more"], a: "lower, less" }
+            ]
+        ];
+
+        const startGameBtn = document.getElementById('start-game-btn');
+        const restartGameBtn = document.getElementById('restart-game-btn');
+        const gameIntroDiv = document.getElementById('game-intro');
+        const gamePlayDiv = document.getElementById('game-play');
+        const gameOverDiv = document.getElementById('game-over');
+        const gameTimerSpan = document.getElementById('game-timer');
+        const gameScoreSpan = document.getElementById('game-score');
+        const gameLevelSpan = document.createElement('span'); // Create span for level display
+              gameLevelSpan.id = 'game-level';
+        const gamePlayHeader = gamePlayDiv?.querySelector('div:first-child'); // Get the first div inside game-play
+              if (gamePlayHeader) gamePlayHeader.appendChild(gameLevelSpan); // Add level display
+
+        const gameQuestionDiv = document.getElementById('game-question');
+        const gameOptionBtns = document.querySelectorAll('.game-options button');
+        const gameFeedbackDiv = document.getElementById('game-feedback');
+        const finalScoreSpan = document.getElementById('final-score');
+        const gameOverMessage = gameOverDiv?.querySelector('h3'); // Get h3 for custom message
+
+        let currentLevelIndex = 0;
+        let currentQuestionIndex = 0; // Question index *within* the current level
+        let score = 0;
+        let timer = 75; // Adjust as needed for total questions
+        let timerInterval;
+        let gameActive = false;
+
+        function startGame() {
+            currentLevelIndex = 0;
+            currentQuestionIndex = 0;
+            score = 0;
+            timer = 75; // Reset timer
+            gameActive = true;
+            gameIntroDiv?.classList.add('hidden');
+            gameOverDiv?.classList.add('hidden');
+            gamePlayDiv?.classList.remove('hidden');
+            if(gameScoreSpan) gameScoreSpan.textContent = score;
+            if(gameTimerSpan) gameTimerSpan.textContent = timer;
+            if(gameFeedbackDiv) gameFeedbackDiv.textContent = '';
+            loadLevel(); // Start by loading the first level
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (!gameActive) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+                timer--;
+                if(gameTimerSpan) gameTimerSpan.textContent = timer;
+                if (timer <= 0) {
+                    endGame(false); // Ran out of time
+                }
+            }, 1000);
+        }
+
+        function loadLevel() {
+             if (!gameActive) return;
+
+            if (currentLevelIndex >= gameLevels.length) {
+                endGame(true); // Completed all levels
+                return;
+            }
+            currentQuestionIndex = 0; // Reset question index for the new level
+            if(gameLevelSpan) gameLevelSpan.textContent = `| Level: ${currentLevelIndex + 1}`; // Update UI
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+             if (!gameActive || currentLevelIndex >= gameLevels.length || !gameQuestionDiv || gameOptionBtns.length < 4) return; // Safety checks
+
+            const currentLevelQuestions = gameLevels[currentLevelIndex];
+            if (currentQuestionIndex >= currentLevelQuestions.length) {
+                currentLevelIndex++; // Level complete, move to next level index
+                loadLevel(); // Attempt to load the next level
+                return;
+            }
+
+            const qData = currentLevelQuestions[currentQuestionIndex];
+            gameQuestionDiv.textContent = `Q${currentQuestionIndex + 1}: ${qData.q}`;
+            // Assign options safely
+            for(let i=0; i < 4; i++) {
+                if(gameOptionBtns[i]) gameOptionBtns[i].textContent = qData.o[i] || ''; // Assign option or empty string
+            }
+            gameOptionBtns.forEach(btn => { btn.disabled = false; btn.style.backgroundColor = ''; });
+            if(gameFeedbackDiv) gameFeedbackDiv.textContent = '';
+        }
+
+        function selectAnswer(event) {
+             if (!gameActive || currentLevelIndex >= gameLevels.length || currentQuestionIndex >= gameLevels[currentLevelIndex].length) return;
+
+            const selectedButton = event.target;
+            const selectedAnswer = selectedButton.textContent;
+            const correctAnswer = gameLevels[currentLevelIndex][currentQuestionIndex].a;
+            gameOptionBtns.forEach(btn => btn.disabled = true); // Disable after selection
+
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                if(gameScoreSpan) gameScoreSpan.textContent = score;
+                selectedButton.style.backgroundColor = '#28a745'; // Green
+                if(gameFeedbackDiv) gameFeedbackDiv.textContent = "Correct!";
+                if(gameFeedbackDiv) gameFeedbackDiv.style.color = '#155724';
+            } else {
+                selectedButton.style.backgroundColor = '#dc3545'; // Red
+                if(gameFeedbackDiv) gameFeedbackDiv.textContent = `Incorrect. Answer: ${correctAnswer}`;
+                 if(gameFeedbackDiv) gameFeedbackDiv.style.color = '#721c24';
+                 // Highlight correct answer
+                 gameOptionBtns.forEach(btn => { if (btn.textContent === correctAnswer) { btn.style.backgroundColor = '#28a745'; } });
+            }
+            currentQuestionIndex++; // Move to the next question index
+
+            // Load next question or next level after a delay
+            setTimeout(() => {
+                 if (gameActive) loadQuestion(); // loadQuestion handles moving to next level if needed
+            }, 1500); // 1.5 second delay
+        }
+
+        function endGame(completedAll) {
+            gameActive = false;
+            clearInterval(timerInterval);
+            gamePlayDiv?.classList.add('hidden');
+            gameOverDiv?.classList.remove('hidden');
+            if(finalScoreSpan) finalScoreSpan.textContent = score;
+            if (gameOverMessage) {
+                 gameOverMessage.textContent = completedAll ? "Congratulations! All Levels Completed!" : "Time's Up!";
+            }
+        }
+
+        // Add event listeners safely
+        if(startGameBtn) startGameBtn.addEventListener('click', startGame);
+        if(restartGameBtn) restartGameBtn.addEventListener('click', startGame);
+        gameOptionBtns.forEach(button => { button.addEventListener('click', selectAnswer); });
+
+
+        // --- Initialize view ---
+        // Ensure the page starts with the tutorial section visible
         document.addEventListener('DOMContentLoaded', () => {
-             openTab({ currentTarget: document.querySelector('.tab-button.active') }, 'tutorial');
-             resetSimulation();
-             resetGame();
-             // Don't populate menu initially, do it when tab is opened
-             // populateFoodOptions(); handleProfileChange();
-             calcClear(); // Ensure calculator display is '0'
+             const initialNavButton = document.getElementById('nav-tutorial');
+             if (initialNavButton && typeof initialNavButton.click === 'function') {
+                  initialNavButton.click(); // Simulate click to set initial state
+             } else {
+                 // Fallback if click simulation fails
+                 mainNavButtons.forEach(btn => btn.classList.remove('active'));
+                 contentSections.forEach(section => section.classList.remove('active'));
+                 document.getElementById('nav-tutorial')?.classList.add('active');
+                 document.getElementById('tutorial-section')?.classList.add('active');
+                 document.getElementById('tab-intro')?.classList.add('active'); // Ensure first tab is active
+                 document.querySelector('.tutorial-tabs .tab-link')?.classList.add('active');
+             }
         });
 
     </script>
