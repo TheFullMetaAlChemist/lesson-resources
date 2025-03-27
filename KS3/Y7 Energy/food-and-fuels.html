@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KS3 Physics: Food and Fuels v2</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f4f8;
+            color: #333;
+            padding-bottom: 50px; /* Space for footer */
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #004085;
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+         header h2 {
+            font-weight: normal;
+            font-size: 1.2em;
+        }
+
+        /* Main Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            background-color: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab-button {
+            flex-grow: 1;
+            padding: 15px 20px;
+            cursor: pointer;
+            background-color: #e9ecef;
+            border: none;
+            border-right: 1px solid #dee2e6;
+            font-size: 1.1em;
+            color: #495057;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+        }
+
+        .tab-button:last-child {
+            border-right: none;
+        }
+
+        .tab-button:hover {
+            background-color: #d4dadf;
+        }
+
+        .tab-button.active {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Tab Content Area */
+        .tab-content {
+            padding: 25px;
+            display: none; /* Hidden by default */
+        }
+
+        .tab-content.active {
+            display: block; /* Shown when active */
+        }
+
+        /* Tutorial Sub-Tabs */
+        .tutorial-sub-nav {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            background-color: #f8f9fa;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+        }
+
+        .tutorial-sub-button {
+            padding: 8px 15px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+             border-radius: 4px;
+            font-size: 0.95em;
+            color: #007bff;
+            margin: 2px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tutorial-sub-button:hover {
+             background-color: #e2e6ea;
+        }
+
+        .tutorial-sub-button.active {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .tutorial-sub-content {
+            display: none; /* Hidden by default */
+            padding-top: 10px;
+             border-top: 1px solid #eee;
+             margin-top: -1px; /* Overlap border */
+        }
+
+        .tutorial-sub-content.active {
+            display: block; /* Shown when active */
+        }
+
+
+        /* General Content Styling */
+        h3 {
+            color: #0056b3;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+         h4 {
+            color: #0067cc;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+         h5 {
+             color: #333;
+             margin-top: 10px;
+             margin-bottom: 5px;
+             font-size: 1.1em;
+         }
+
+        p, ul, li {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            margin-left: 20px;
+        }
+
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        strong {
+            color: #0056b3;
+        }
+
+        .highlight-box {
+            background-color: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .highlight-box.fact {
+             background-color: #fffbe7;
+            border-left: 4px solid #ffcc00;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Interactive Elements */
+        button, .sim-button, .menu-check-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        button:hover, .sim-button:hover, .menu-check-button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled, .sim-button:disabled, .menu-check-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .reveal-answer {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 10px;
+        }
+        .answer-hidden {
+            font-style: italic;
+            color: #777;
+        }
+        .answer-shown {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        input[type="text"], input[type="number"], select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 100px;
+        }
+
+        /* Simulation Specific Styles */
+        .simulation-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sim-controls {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .sim-visuals {
+            flex: 2;
+            min-width: 350px; /* Slightly wider for results box */
+            background-color: #f8f9fa;
+            padding: 10px; /* Reduced padding */
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            height: 370px; /* Slightly taller */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end; /* Align items at the bottom */
+        }
+
+        #sim-stand {
+            width: 100px;
+            height: 250px;
+            border-left: 5px solid #555;
+            border-bottom: 5px solid #555;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+        }
+
+        #sim-tube {
+            width: 50px;
+            height: 150px;
+            border: 3px solid #add8e6;
+            border-top: none;
+            background: linear-gradient(to top, #6495ed 50%, transparent 50%); /* Water level */
+            position: absolute;
+            bottom: 100px; /* Position above the food */
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 15px 15px; /* Rounded bottom */
+            overflow: hidden; /* For potential future effects */
+        }
+
+        #sim-thermometer {
+            width: 10px;
+            height: 130px;
+            background-color: #eee;
+            border: 1px solid #bbb;
+            border-radius: 5px 5px 0 0;
+            position: absolute;
+            bottom: 105px; /* Inside tube */
+            left: calc(50% + 10px); /* Offset slightly */
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+         #sim-thermo-liquid {
+            width: 4px;
+            height: 20%; /* Initial temp representation */
+            background-color: red;
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+            transition: height 1s ease-out; /* Animate rise */
+        }
+        #sim-thermo-bulb {
+             width: 10px;
+             height: 10px;
+             background-color: red;
+             border-radius: 50%;
+             position: absolute;
+             bottom: 0px;
+             left: 50%;
+             transform: translateX(-50%);
+        }
+
+        #sim-food {
+            width: 40px;
+            height: 30px;
+            background-color: #deb887; /* Generic food color */
+            position: absolute;
+            bottom: 40px; /* Below the tube */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            line-height: 30px;
+            font-size: 0.8em;
+            color: #fff;
+            border-radius: 3px;
+             z-index: 5;
+        }
+
+        #sim-flame {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid orange;
+            position: absolute;
+            bottom: 65px; /* Under the food, touching it */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0; /* Hidden initially */
+            transition: opacity 0.5s;
+            z-index: 6;
+        }
+        #sim-flame.burning {
+            opacity: 0.9;
+            animation: flicker 0.2s infinite alternate;
+        }
+
+        @keyframes flicker {
+             0% { border-bottom-color: orange; transform: translateX(-50%) scaleY(1) scaleX(1); }
+             50% { border-bottom-color: yellow; transform: translateX(-45%) scaleY(0.95) scaleX(1.05); }
+             100% { border-bottom-color: orangered; transform: translateX(-55%) scaleY(1.05) scaleX(0.95); }
+        }
+
+        #sim-results {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 0.9em;
+            text-align: right;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 20;
+        }
+         #sim-results table { margin: 0; width: auto; }
+         #sim-results td { padding: 3px 5px; border: none; }
+         #sim-results td:first-child { font-weight: bold; padding-right: 10px; }
+
+
+        /* Practice Section */
+        .question {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .question p {
+            margin-bottom: 8px;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 4px;
+            display: none; /* Hidden initially */
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+
+        /* Game Section */
+        .game-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .game-status, .game-actions {
+            flex: 1;
+            min-width: 250px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        #energy-bar-container {
+            width: 100%;
+            height: 30px;
+            background-color: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        #energy-bar {
+            height: 100%;
+            width: 50%; /* Start at 50% */
+            background-color: #28a745; /* Green */
+            border-radius: 15px 0 0 15px;
+            transition: width 0.5s ease-in-out, background-color 0.5s;
+            text-align: right;
+            color: white;
+            font-size: 0.8em;
+            line-height: 30px;
+            padding-right: 5px;
+        }
+        #game-message {
+            margin-top: 10px;
+            font-weight: bold;
+            min-height: 20px;
+        }
+        .game-buttons button {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .game-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        /* Menu Planner Section */
+        .menu-planner-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .menu-controls, .menu-summary {
+            flex: 1;
+            min-width: 280px;
+        }
+        #menu-food-options button {
+            background-color: #e7f3ff;
+            color: #0056b3;
+            border: 1px solid #b8daff;
+            padding: 5px 10px;
+            margin: 3px;
+            font-size: 0.9em;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        #menu-food-options button:hover {
+            background-color: #cce5ff;
+        }
+        #menu-food-options button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+         #menu-food-options button span {
+             font-size: 0.85em;
+             color: #555;
+         }
+          #menu-food-options button.selected span {
+              color: #eee;
+          }
+
+        #selected-menu-items {
+            list-style: none;
+            padding-left: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+             margin-bottom: 10px;
+             background-color: #fdfdfd;
+        }
+        #selected-menu-items li {
+            margin-bottom: 5px;
+             padding-bottom: 5px;
+             border-bottom: 1px dashed #eee;
+        }
+         #selected-menu-items li:last-child {
+             border-bottom: none;
+         }
+
+        #menu-total-kj, #menu-target-kj {
+            font-weight: bold;
+        }
+        #menu-feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            display: none; /* Hidden initially */
+        }
+
+
+         /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            font-size: 0.9em;
+            color: #777;
+             background-color: #e9ecef;
+             border-top: 1px solid #dee2e6;
+             position: fixed;
+             bottom: 0;
+             left: 0;
+             width: 100%;
+             z-index: 100;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>3.1.1 Food and Fuels</h1>
+            <h2>An Interactive KS3 Physics Lesson</h2>
+        </header>
+
+        <nav class="tab-nav">
+            <button class="tab-button active" onclick="openTab(event, 'tutorial')">Tutorial</button>
+            <button class="tab-button" onclick="openTab(event, 'practice')">Practice</button>
+            <button class="tab-button" onclick="openTab(event, 'game')">Game</button>
+        </nav>
+
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="tab-content active">
+            <h3>Tutorial Sections</h3>
+            <nav class="tutorial-sub-nav">
+                <button class="tutorial-sub-button active" onclick="openSubTab(event, 'intro')">Introduction & Units</button>
+                <button class="tutorial-sub-button" onclick="openSubTab(event, 'food-fuels')">Energy in Food & Fuels</button>
+                <button class="tutorial-sub-button" onclick="openSubTab(event, 'simulation')">Simulation</button>
+                <button class="tutorial-sub-button" onclick="openSubTab(event, 'needs')">Energy Needs & Activities</button>
+                <button class="tutorial-sub-button" onclick="openSubTab(event, 'menu-planner')">Daily Menu Planner</button>
+            </nav>
+
+            <!-- Sub-Tab: Introduction & Units -->
+            <div id="intro" class="tutorial-sub-content active">
+                <h4>Learning Objectives</h4>
+                 <p>After this lesson, you should be able to:</p>
+                 <ul>
+                     <li>State the unit of energy content of food.</li>
+                     <li>Compare the energy values of different foods and fuels.</li>
+                     <li>Compare the energy in foods and fuels with the energy needed for different activities.</li>
+                      <li>Plan a simple menu based on energy requirements.</li>
+                 </ul>
+
+                 <h4>Why Do We Need Energy?</h4>
+                 <p>What did you have for breakfast? You need energy from food to do many things, including walking, breathing, keeping warm, and even reading this! Your brain needs energy to work constantly.</p>
+
+                 <h4>How Much Energy? Units of Energy</h4>
+                 <p>Different foods and fuels are stores of different amounts of <strong>chemical energy</strong>. Energy is measured in <strong>joules (J)</strong>. One joule is a very small amount of energy, so we often use <strong>kilojoules (kJ)</strong>.</p>
+                 <div class="highlight-box">
+                     <strong>Key Conversion:</strong> 1 kJ = 1000 J
+                 </div>
+                 <p><strong>Question A:</strong> State the unit of energy often used for food.
+                     <span class="reveal-answer" onclick="revealAnswer(this, 'Kilojoules (kJ)')">(Click to reveal)</span>
+                     <span class="answer-hidden"></span>
+                 </p>
+            </div>
+
+            <!-- Sub-Tab: Energy in Food & Fuels -->
+            <div id="food-fuels" class="tutorial-sub-content">
+                <h4>Energy in Food</h4>
+                 <p>Food labels tell you how much energy is in the store associated with that food. The amount of energy stored in different foods varies greatly.</p>
+                 <h5>Energy (kJ) per 100 g</h5>
+                 <table>
+                     <thead>
+                         <tr><th>Food</th><th>Energy (kJ) per 100 g</th></tr>
+                     </thead>
+                     <tbody>
+                         <tr><td>Apple</td><td>200</td></tr>
+                         <tr><td>Banana</td><td>340</td></tr>
+                         <tr><td>Peas</td><td>250</td></tr>
+                         <tr><td>Chips</td><td>1000</td></tr>
+                         <tr><td>Cooked Beef</td><td>1000</td></tr>
+                         <tr><td>Chocolate</td><td>1500</td></tr>
+                         <!-- Add more if needed from other sources -->
+                         <tr><td>Bread (Slice)</td><td>~350</td></tr>
+                         <tr><td>Milk (200ml)</td><td>~500</td></tr>
+                         <tr><td>Yogurt (Pot)</td><td>~400</td></tr>
+                         <tr><td>Chicken Breast (100g)</td><td>~650</td></tr>
+                         <tr><td>Rice (Cooked, 100g)</td><td>~550</td></tr>
+                         <tr><td>Salad (Mixed, 100g)</td><td>~100</td></tr>
+                     </tbody>
+                 </table>
+                 <p>When you choose which foods to eat, you need to consider the nutritional value (like vitamins, fibre, protein) as well as the energy content.</p>
+
+                 <h4>How Much Energy in Fuels?</h4>
+                  <p>Coal, oil, wood, and natural gas are <strong>fuels</strong>. Like food, they are stores of chemical energy. People use the energy in fuels to heat their houses or cook their food. Electrical appliances need an electric current to work. When you burn fuel in a power station, it produces a current that makes your microwave or hair straighteners work.</p>
+                  <div class="highlight-box">
+                      <p>A lump of coal might store around <strong>3000 kJ</strong> of energy... which is the same amount as two 100g bars of chocolate!</p>
+                  </div>
+                  <p><strong>Question B:</strong> Name three fuels.
+                     <span class="reveal-answer" onclick="revealAnswer(this, 'Coal, Oil, Wood (or Natural Gas)')">(Click to reveal)</span>
+                     <span class="answer-hidden"></span>
+                 </p>
+            </div>
+
+             <!-- Sub-Tab: Simulation -->
+            <div id="simulation" class="tutorial-sub-content">
+                 <h4>Experiment Simulation: Measuring Energy in Food</h4>
+                 <p>We can estimate the amount of energy stored in food by burning it and using the heat released to warm up water (this is called calorimetry). The bigger the temperature rise of the water, the more energy the food contained.</p>
+                 <div class="simulation-container">
+                     <div class="sim-controls">
+                         <h5>1. Select Food:</h5>
+                         <select id="food-selector">
+                             <option value="apple" data-energy="1">Apple (low energy)</option>
+                             <option value="banana" data-energy="2">Banana</option>
+                             <option value="chips" data-energy="5">Chips</option>
+                             <option value="chocolate" data-energy="8">Chocolate (high energy)</option>
+                             <option value="marshmallow" data-energy="7">Marshmallow</option>
+                         </select>
+                         <h5>2. Burn Food:</h5>
+                         <button id="burn-button" class="sim-button" onclick="runSimulation()">Burn Food Sample</button>
+                         <button id="reset-button" class="sim-button" onclick="resetSimulation()" disabled>Reset</button>
+                         <h5>Explanation:</h5>
+                         <p>The burning food releases heat energy, which transfers to the water in the test tube, causing its temperature to rise. We measure this temperature change.</p>
+                     </div>
+                     <div class="sim-visuals">
+                         <div id="sim-results">
+                            <table>
+                                <tr><td>Initial Temp:</td><td><span id="initial-temp">20</span>°C</td></tr>
+                                <tr><td>Final Temp:</td><td><span id="final-temp">--</span>°C</td></tr>
+                                <tr><td>Temp Change:</td><td><span id="temp-change">--</span>°C</td></tr>
+                            </table>
+                         </div>
+                         <div id="sim-stand">
+                             <div id="sim-tube"></div>
+                             <div id="sim-thermometer">
+                                 <div id="sim-thermo-liquid"></div>
+                                 <div id="sim-thermo-bulb"></div>
+                             </div>
+                             <div id="sim-food">Food</div>
+                             <div id="sim-flame"></div>
+                         </div>
+                     </div>
+                 </div>
+            </div>
+
+             <!-- Sub-Tab: Energy Needs & Activities -->
+            <div id="needs" class="tutorial-sub-content">
+                 <h4>How Much Energy Do You Need Each Day?</h4>
+                 <p>You need different amounts of energy depending on what you do each day. Even when you are asleep, your body needs energy for keeping warm and for processes like breathing and digestion (this is called your basal metabolic rate).</p>
+                 <ul>
+                     <li>Sleeping: ~300 kJ per hour</li>
+                     <li>Working (e.g., school): ~600 kJ per hour</li>
+                     <li>Relaxing (e.g., watching TV): ~360 kJ per hour</li>
+                     <li>Playing (e.g., football): ~3600 kJ per hour</li>
+                 </ul>
+                  <div class="highlight-box fact">
+                     <strong>Fantastic Fact:</strong> An average adult man needs about 12,000 kJ per day. The same man walking to the North Pole would need about 27,000 kJ per day! Factors like age, size, gender, and activity level affect daily needs.
+                  </div>
+
+                 <h4>Energy Cost of Activities</h4>
+                 <p>There is an energy cost to everything that you do. While you are growing, you need energy for your bones, muscles, and brain to grow too.</p>
+                  <table>
+                     <thead>
+                         <tr><th>Activity</th><th>Energy (kJ) for each minute of activity</th></tr>
+                     </thead>
+                     <tbody>
+                         <tr><td>Sitting</td><td>6</td></tr>
+                         <tr><td>Standing</td><td>7</td></tr>
+                         <tr><td>Washing, dressing</td><td>15</td></tr>
+                         <tr><td>Walking slowly</td><td>13</td></tr>
+                         <tr><td>Cycling</td><td>25</td></tr>
+                         <tr><td>Running</td><td>60</td></tr>
+                         <tr><td>Swimming</td><td>73</td></tr>
+                     </tbody>
+                 </table>
+
+                 <h4>Energy Balance</h4>
+                 <p><strong>Energy balance</strong> means the energy you take in from food equals the energy you use through activity and basic body functions. </p>
+                 <ul>
+                     <li>If you take in <strong>more</strong> energy than you need, your body stores the excess, often as fat.</li>
+                     <li>If you take in <strong>less</strong> energy than you need, your body uses its stored energy reserves.</li>
+                 </ul>
+                 <p>Children and teenagers need more energy relative to their size than adults because they are growing, which requires a lot of energy.</p>
+            </div>
+
+            <!-- Sub-Tab: Menu Planner -->
+            <div id="menu-planner" class="tutorial-sub-content">
+                <h4>Daily Menu Planner</h4>
+                <p>Different people need different amounts of energy each day. Let's try planning a day's food intake for different profiles.</p>
+
+                <div class="menu-planner-container">
+                    <div class="menu-controls">
+                        <h5>1. Choose a Profile:</h5>
+                        <select id="menu-profile-select" onchange="handleProfileChange()">
+                            <option value="">-- Select Profile --</option>
+                            <option value="office_worker">Office Worker (Sedentary)</option>
+                            <option value="teen_active">Active Teenager (Growing & Active)</option>
+                            <option value="athlete">Athlete (High Activity)</option>
+                        </select>
+                        <p>Target Daily Energy: <strong id="menu-target-kj">---</strong> kJ</p>
+
+                        <h5>2. Select Foods for the Day:</h5>
+                        <div id="menu-food-options">
+                            <!-- Food options will be populated by JS -->
+                        </div>
+                    </div>
+                    <div class="menu-summary">
+                        <h5>3. Your Selected Menu:</h5>
+                        <ul id="selected-menu-items">
+                            <li><i>No items selected yet.</i></li>
+                        </ul>
+                        <p>Total Menu Energy: <strong id="menu-total-kj">0</strong> kJ</p>
+
+                        <h5>4. Check Your Menu:</h5>
+                        <button class="menu-check-button" onclick="checkMenu()">Check Menu</button>
+                        <div id="menu-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="tab-content">
+             <!-- Practice questions remain the same as before -->
+             <h3>Test Your Knowledge</h3>
+             <p>Answer the following questions based on the tutorial.</p>
+
+             <div class="question" id="q1">
+                 <p><strong>Question 1:</strong> Complete the sentences:</p>
+                 <p>Energy is stored in <input type="text" id="q1a" size="10"> and <input type="text" id="q1b" size="10">. The amount of energy stored is measured in <input type="text" id="q1c" size="10">. When you are asleep, your body needs energy for keeping warm and <input type="text" id="q1d" size="15">. Children need more energy than adults to allow them to <input type="text" id="q1e" size="10">.</p>
+                 <button onclick="checkQ1()">Check Answer</button>
+                 <div class="feedback" id="f1"></div>
+             </div>
+
+             <div class="question" id="q2">
+                 <p><strong>Question 2:</strong> Look at the table 'Energy (kJ) per 100 g'. Chips contain 1000 kJ per 100g. Cycling uses 25 kJ per minute. How many minutes would you need to cycle for to work off the energy from eating 200 g of chips?</p>
+                 <p>Energy in 200g chips = <input type="number" id="q2a" size="6"> kJ</p>
+                 <p>Time = Energy / Energy per minute = <span id="q2a-display">?</span> / 25 kJ/min = <input type="number" id="q2b" size="6"> minutes</p>
+                 <button onclick="checkQ2()">Check Answer</button>
+                 <div class="feedback" id="f2"></div>
+                  <div id="q2-hint" style="font-size: 0.9em; color: #555; margin-top: 5px; display: none;">Hint: First calculate the total energy in 200g of chips. Then divide this by the energy used per minute of cycling.</div>
+             </div>
+
+              <div class="question" id="q3">
+                 <p><strong>Question 3:</strong> Which of these activities uses the MOST energy per minute?</p>
+                 <select id="q3a">
+                     <option value="">-- Select --</option>
+                     <option value="sitting">Sitting</option>
+                     <option value="walking">Walking slowly</option>
+                     <option value="running">Running</option>
+                     <option value="swimming">Swimming</option>
+                 </select>
+                 <button onclick="checkQ3()">Check Answer</button>
+                 <div class="feedback" id="f3"></div>
+             </div>
+
+              <div class="question" id="q4">
+                 <p><strong>Question 4:</strong> In the food burning simulation, which food type would cause the largest temperature rise in the water, indicating it stores the most energy per gram?</p>
+                 <select id="q4a">
+                     <option value="">-- Select --</option>
+                     <option value="apple">Apple</option>
+                     <option value="banana">Banana</option>
+                     <option value="chips">Chips</option>
+                     <option value="chocolate">Chocolate</option>
+                 </select>
+                 <button onclick="checkQ4()">Check Answer</button>
+                 <div class="feedback" id="f4"></div>
+             </div>
+
+             <div class="question" id="q5">
+                 <p><strong>Question 5:</strong> A 100g bar of chocolate contains 1500 kJ of energy. Running uses 60 kJ per minute and you can run at 150 metres per minute. How far would you need to run to burn off the energy in 50 g of chocolate?</p>
+                 <p>Energy in 50g chocolate = <input type="number" id="q5a" size="6"> kJ</p>
+                 <p>Time needed = Energy / Energy per minute = <span id="q5a-display">?</span> / 60 kJ/min = <input type="number" id="q5b" size="6"> minutes</p>
+                  <p>Distance = Time x Speed = <span id="q5b-display">?</span> min x 150 m/min = <input type="number" id="q5c" size="6"> metres</p>
+                 <button onclick="checkQ5()">Check Answer</button>
+                 <div class="feedback" id="f5"></div>
+                 <div id="q5-hint" style="font-size: 0.9em; color: #555; margin-top: 5px; display: none;">Hint: Calculate energy in 50g. Calculate time needed to burn it off running. Calculate distance using time and speed.</div>
+             </div>
+        </section>
+
+        <!-- Game Section -->
+        <section id="game" class="tab-content">
+            <h3>Game: Energy Balance Challenge</h3>
+            <p>Try to manage your energy intake (eating) and expenditure (activities) over a simulated period. Keep your energy levels in the green zone (40%-70%)!</p>
+            <p>Goal: End with energy between 40% and 70% after 10 hours.</p>
+
+            <div class="game-container">
+                <div class="game-status">
+                    <h4>Current Status</h4>
+                    <p>Energy Level: <span id="energy-level-value">6000</span> kJ</p>
+                    <div id="energy-bar-container">
+                        <div id="energy-bar"></div>
+                    </div>
+                    <p>Time Elapsed: <span id="game-time">0</span> hours</p>
+                    <div id="game-message">Keep your energy balanced!</div>
+                     <button onclick="resetGame()">Restart Game</button>
+                </div>
+                <div class="game-actions">
+                    <h4>Actions (Each action takes 1 hour)</h4>
+                     <p class="game-note"><i>(Note: Each hour also includes a ~<span id="basal-rate-display">300</span> kJ background energy burn)</i></p>
+                    <div class="game-buttons">
+                        <button onclick="gameAction('eat_apple')">Eat Apple (+200 kJ)</button>
+                        <button onclick="gameAction('eat_chocolate')">Eat Chocolate (+1500 kJ)</button>
+                        <button onclick="gameAction('relax')">Relax (-360 kJ)</button>
+                        <button onclick="gameAction('work')">Do School Work (-600 kJ)</button>
+                        <button onclick="gameAction('play_football')">Play Football (-3600 kJ)</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div> <!-- End Container -->
+
+    <footer>
+       KS3 Physics | Food and Fuels Interactive Lesson v2
+    </footer>
+
+    <script>
+        // --- Main Tab Navigation ---
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+
+            // If opening tutorial, ensure first sub-tab is shown
+            if (tabName === 'tutorial') {
+                 // Deactivate all sub-contents first
+                 const allSubContents = document.querySelectorAll('.tutorial-sub-content');
+                 allSubContents.forEach(content => content.classList.remove('active'));
+                 // Deactivate all sub-buttons first
+                 const allSubButtons = document.querySelectorAll('.tutorial-sub-button');
+                 allSubButtons.forEach(button => button.classList.remove('active'));
+
+                 // Activate the first ones
+                 document.getElementById('intro').classList.add('active');
+                 document.querySelector('.tutorial-sub-nav .tutorial-sub-button').classList.add('active'); // Activate the first button
+            }
+             // If opening game, ensure it's reset
+            if (tabName === 'game') {
+                resetGame();
+            }
+            // If opening tutorial, ensure menu planner is initialized
+            if (tabName === 'tutorial') {
+                populateFoodOptions();
+                handleProfileChange(); // To set initial state if needed
+            }
+        }
+
+         // --- Tutorial Sub-Tab Navigation ---
+        function openSubTab(evt, subTabName) {
+            var i, subTabContent, subTabButtons;
+
+            // Get all elements with class="tutorial-sub-content" and hide them
+            subTabContent = document.getElementsByClassName("tutorial-sub-content");
+            for (i = 0; i < subTabContent.length; i++) {
+                subTabContent[i].style.display = "none";
+                subTabContent[i].classList.remove("active");
+            }
+
+            // Get all elements with class="tutorial-sub-button" and remove the class "active"
+            subTabButtons = document.getElementsByClassName("tutorial-sub-button");
+            for (i = 0; i < subTabButtons.length; i++) {
+                subTabButtons[i].className = subTabButtons[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            const currentSubTab = document.getElementById(subTabName);
+            currentSubTab.style.display = "block";
+            currentSubTab.classList.add("active");
+            evt.currentTarget.className += " active";
+        }
+
+
+        // --- Tutorial: Reveal Answer ---
+        function revealAnswer(element, answer) {
+            const answerSpan = element.nextElementSibling;
+            if (answerSpan.classList.contains('answer-hidden')) {
+                answerSpan.textContent = `Answer: ${answer}`;
+                answerSpan.classList.remove('answer-hidden');
+                answerSpan.classList.add('answer-shown');
+                element.textContent = '(Hide Answer)';
+            } else {
+                answerSpan.textContent = '';
+                answerSpan.classList.remove('answer-shown');
+                answerSpan.classList.add('answer-hidden');
+                element.textContent = '(Click to reveal)';
+            }
+        }
+
+        // --- Tutorial: Simulation ---
+        const initialTemp = 20;
+        let simRunning = false;
+        const foodSelector = document.getElementById('food-selector');
+        const burnButton = document.getElementById('burn-button');
+        const resetButton = document.getElementById('reset-button');
+        const initialTempDisplay = document.getElementById('initial-temp');
+        const finalTempDisplay = document.getElementById('final-temp');
+        const tempChangeDisplay = document.getElementById('temp-change');
+        const thermoLiquid = document.getElementById('sim-thermo-liquid');
+        const simFood = document.getElementById('sim-food');
+        const simFlame = document.getElementById('sim-flame');
+
+        const foodEnergyFactors = {
+            apple: 1, banana: 2, chips: 5, chocolate: 8, marshmallow: 7
+        };
+         const foodColors = {
+            apple: '#90EE90', banana: '#FFEA00', chips: '#FFD700', chocolate: '#7B3F00', marshmallow: '#FFFFFF'
+        };
+
+        function updateFoodVisual() {
+            const selectedFood = foodSelector.value;
+            simFood.textContent = selectedFood.charAt(0).toUpperCase() + selectedFood.slice(1);
+            simFood.style.backgroundColor = foodColors[selectedFood] || '#deb887';
+            simFood.style.color = (selectedFood === 'marshmallow' || selectedFood === 'banana' || selectedFood === 'chips') ? '#333' : '#fff';
+        }
+        if (foodSelector) {
+             foodSelector.addEventListener('change', updateFoodVisual);
+        }
+
+
+        function runSimulation() {
+            if (simRunning) return;
+            simRunning = true;
+            burnButton.disabled = true;
+            resetButton.disabled = true;
+            foodSelector.disabled = true;
+
+            const selectedFood = foodSelector.value;
+            const energyFactor = parseFloat(foodSelector.options[foodSelector.selectedIndex].getAttribute('data-energy'));
+            // Ensure energyFactor is a number, default to 1 if not found
+             const validEnergyFactor = isNaN(energyFactor) ? 1 : energyFactor;
+            const maxTempRise = 3 + validEnergyFactor * 5; // Base rise + energy dependent rise
+            const finalTemp = initialTemp + maxTempRise;
+
+            simFlame.classList.add('burning'); // Show flame
+
+            // Animate thermometer
+            const initialHeight = 20; // %
+            const finalHeight = Math.min(95, initialHeight + maxTempRise * 1.5); // Scale rise for visual effect, cap below 100%
+            thermoLiquid.style.height = finalHeight + '%';
+
+            // Simulate delay for burning/heating
+            setTimeout(() => {
+                finalTempDisplay.textContent = finalTemp.toFixed(1);
+                tempChangeDisplay.textContent = maxTempRise.toFixed(1);
+                simFlame.classList.remove('burning'); // Hide flame
+                resetButton.disabled = false;
+                simRunning = false; // Allow reset
+            }, 2500); // 2.5 second burn time
+        }
+
+        function resetSimulation() {
+            initialTempDisplay.textContent = initialTemp;
+            finalTempDisplay.textContent = '--';
+            tempChangeDisplay.textContent = '--';
+            thermoLiquid.style.height = '20%';
+            if (burnButton) burnButton.disabled = false;
+            if (resetButton) resetButton.disabled = true;
+            if (foodSelector) foodSelector.disabled = false;
+            simFlame.classList.remove('burning');
+            updateFoodVisual();
+        }
+
+
+        // --- Tutorial: Menu Planner ---
+        const profiles = {
+            office_worker: { name: "Office Worker (Sedentary)", targetKJ: 9000 },
+            teen_active: { name: "Active Teenager (Growing & Active)", targetKJ: 11000 },
+            athlete: { name: "Athlete (High Activity)", targetKJ: 14000 }
+        };
+
+        // Use kJ values per typical serving, not always 100g
+        const menuFoods = {
+            apple: { name: "Apple (1 medium)", kj: 350 },
+            banana: { name: "Banana (1 medium)", kj: 400 },
+            bread_slice: { name: "Bread (2 slices)", kj: 700 },
+            cereal_bowl: { name: "Cereal with Milk (1 bowl)", kj: 1200 },
+            yogurt: { name: "Yogurt (1 pot)", kj: 400 },
+            milk_glass: { name: "Milk (1 glass)", kj: 500 },
+            orange_juice: { name: "Orange Juice (1 glass)", kj: 450 },
+            sandwich_ham: { name: "Ham Sandwich", kj: 1500 },
+            sandwich_cheese: { name: "Cheese Sandwich", kj: 1800 },
+            salad_chicken: { name: "Chicken Salad", kj: 1400 },
+            pasta_tomato: { name: "Pasta with Tomato Sauce", kj: 2000 },
+            chicken_rice_veg: { name: "Chicken, Rice & Veg", kj: 2500 },
+            beef_potatoes: { name: "Beef with Potatoes", kj: 2800 },
+            fish_chips: { name: "Fish and Chips", kj: 3500 },
+            pizza_slice: { name: "Pizza (2 slices)", kj: 2400 },
+            chocolate_bar: { name: "Chocolate Bar (50g)", kj: 1100 },
+            crisps_bag: { name: "Crisps (1 bag)", kj: 600 },
+            fizzy_drink: { name: "Fizzy Drink (can)", kj: 600 }
+        };
+
+        let selectedProfile = null;
+        let selectedFoodItems = {}; // Store selected food keys and their counts
+        let currentMenuTotalKJ = 0;
+
+        const foodOptionsContainer = document.getElementById('menu-food-options');
+        const selectedMenuItemsList = document.getElementById('selected-menu-items');
+        const menuTotalKJDisplay = document.getElementById('menu-total-kj');
+        const menuTargetKJDisplay = document.getElementById('menu-target-kj');
+        const menuFeedbackDisplay = document.getElementById('menu-feedback');
+        const profileSelect = document.getElementById('menu-profile-select');
+
+        function populateFoodOptions() {
+            if (!foodOptionsContainer) return;
+            foodOptionsContainer.innerHTML = ''; // Clear existing options
+            for (const key in menuFoods) {
+                const food = menuFoods[key];
+                const button = document.createElement('button');
+                button.dataset.key = key;
+                button.innerHTML = `${food.name} <span>(${food.kj} kJ)</span>`;
+                button.onclick = () => toggleFoodItem(key);
+                foodOptionsContainer.appendChild(button);
+            }
+        }
+
+        function handleProfileChange() {
+             if (!profileSelect) return;
+            const selectedValue = profileSelect.value;
+            selectedProfile = profiles[selectedValue];
+            if (selectedProfile) {
+                menuTargetKJDisplay.textContent = selectedProfile.targetKJ;
+            } else {
+                menuTargetKJDisplay.textContent = '---';
+            }
+            // Reset menu when profile changes
+             selectedFoodItems = {};
+             updateMenuDisplay();
+             menuFeedbackDisplay.style.display = 'none';
+             // Reset button styles
+             const buttons = foodOptionsContainer.querySelectorAll('button');
+             buttons.forEach(btn => btn.classList.remove('selected'));
+        }
+
+        function toggleFoodItem(key) {
+            if (!menuFoods[key]) return;
+
+            const food = menuFoods[key];
+            const button = foodOptionsContainer.querySelector(`button[data-key="${key}"]`);
+
+             if (selectedFoodItems[key]) {
+                 // Remove item
+                 delete selectedFoodItems[key];
+                 if(button) button.classList.remove('selected');
+             } else {
+                 // Add item
+                 selectedFoodItems[key] = 1; // Store '1' to indicate presence, could be count later
+                 if(button) button.classList.add('selected');
+             }
+
+            updateMenuDisplay();
+        }
+
+
+        function updateMenuDisplay() {
+            currentMenuTotalKJ = 0;
+            selectedMenuItemsList.innerHTML = ''; // Clear list
+
+            if (Object.keys(selectedFoodItems).length === 0) {
+                selectedMenuItemsList.innerHTML = '<li><i>No items selected yet.</i></li>';
+            } else {
+                for (const key in selectedFoodItems) {
+                     if (selectedFoodItems[key] > 0) { // Check if item is selected
+                        const food = menuFoods[key];
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${food.name} (${food.kj} kJ)`;
+                        selectedMenuItemsList.appendChild(listItem);
+                        currentMenuTotalKJ += food.kj;
+                     }
+                }
+            }
+            menuTotalKJDisplay.textContent = currentMenuTotalKJ;
+        }
+
+
+        function checkMenu() {
+            if (!selectedProfile) {
+                menuFeedbackDisplay.textContent = 'Please select a profile first.';
+                menuFeedbackDisplay.style.backgroundColor = '#fff3cd'; // Warning yellow
+                menuFeedbackDisplay.style.color = '#856404';
+                menuFeedbackDisplay.style.display = 'block';
+                return;
+            }
+
+            const target = selectedProfile.targetKJ;
+            const total = currentMenuTotalKJ;
+            const lowerBound = target * 0.9; // Allow 10% below
+            const upperBound = target * 1.1; // Allow 10% above
+
+            let feedbackText = '';
+            let bgColor = '';
+            let textColor = '';
+
+            if (total === 0) {
+                feedbackText = 'Your menu is empty!';
+                bgColor = '#f8d7da'; // Light red
+                textColor = '#721c24';
+            } else if (total < lowerBound) {
+                feedbackText = `Your menu total (${total} kJ) is quite low compared to the target (${target} kJ). You might need more energy!`;
+                bgColor = '#fff3cd'; // Warning yellow
+                textColor = '#856404';
+            } else if (total > upperBound) {
+                feedbackText = `Your menu total (${total} kJ) is quite high compared to the target (${target} kJ). This might lead to excess energy storage.`;
+                bgColor = '#fff3cd'; // Warning yellow
+                textColor = '#856404';
+            } else {
+                feedbackText = `Great job! Your menu total (${total} kJ) is well-matched to the target (${target} kJ).`;
+                bgColor = '#d4edda'; // Success green
+                textColor = '#155724';
+            }
+
+            menuFeedbackDisplay.textContent = feedbackText;
+            menuFeedbackDisplay.style.backgroundColor = bgColor;
+            menuFeedbackDisplay.style.color = textColor;
+            menuFeedbackDisplay.style.display = 'block';
+        }
+
+
+        // --- Practice Questions --- (Functions remain the same)
+        function showFeedback(id, isCorrect, message) {
+            const feedbackEl = document.getElementById(id);
+            feedbackEl.textContent = message;
+            feedbackEl.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+            feedbackEl.style.display = 'block'; // Ensure it's visible
+        }
+
+        function checkQ1() {
+            const a = document.getElementById('q1a').value.trim().toLowerCase();
+            const b = document.getElementById('q1b').value.trim().toLowerCase();
+            const c = document.getElementById('q1c').value.trim().toLowerCase();
+            const d = document.getElementById('q1d').value.trim().toLowerCase();
+            const e = document.getElementById('q1e').value.trim().toLowerCase();
+            const correctA = ['food', 'foods'].includes(a);
+            const correctB = ['fuel', 'fuels'].includes(b);
+            const correctAB = (correctA && correctB) || (['fuel', 'fuels'].includes(a) && ['food', 'foods'].includes(b));
+            const correctC = ['kj', 'kilojoules', 'kilojoule'].includes(c);
+            const correctD = ['breathing', 'digestion', 'processes', 'functioning'].includes(d); // Added 'functioning'
+            const correctE = ['grow', 'growth'].includes(e);
+
+            if (correctAB && correctC && correctD && correctE) {
+                showFeedback('f1', true, 'Correct! Energy is stored in food and fuels, measured in kJ. The body needs energy even at rest, and children need extra for growth.');
+            } else {
+                 let errorMsg = "Not quite right. Check: ";
+                 if (!correctAB) errorMsg += "Energy stores (food/fuels), ";
+                 if (!correctC) errorMsg += "Unit (kJ), ";
+                 if (!correctD) errorMsg += "Reason for energy use when asleep, ";
+                 if (!correctE) errorMsg += "Why children need more energy.";
+                showFeedback('f1', false, errorMsg.slice(0, -2) + '.');
+            }
+        }
+         function checkQ2() { /* ... same as before ... */
+             const energy100g = 1000;
+             const cyclingRate = 25;
+             const weight = 200;
+             const totalEnergy = (weight / 100) * energy100g;
+             const timeNeeded = totalEnergy / cyclingRate;
+             const userEnergy = parseFloat(document.getElementById('q2a').value);
+             const userTime = parseFloat(document.getElementById('q2b').value);
+             if(document.getElementById('q2a-display')) document.getElementById('q2a-display').textContent = userEnergy || '?';
+             let correctEnergy = Math.abs(userEnergy - totalEnergy) < 0.1;
+             let correctTime = Math.abs(userTime - timeNeeded) < 0.1;
+             if(document.getElementById('q2-hint')) document.getElementById('q2-hint').style.display = 'block';
+             if (correctEnergy && correctTime) {
+                 showFeedback('f2', true, `Correct! 200g of chips is ${totalEnergy} kJ. Cycling at 25 kJ/min requires ${timeNeeded} minutes.`);
+             } else if (!correctEnergy && correctTime) {
+                  showFeedback('f2', false, `Check your calculation for the total energy in 200g of chips. It should be ${totalEnergy} kJ.`);
+             } else if (correctEnergy && !correctTime) {
+                 showFeedback('f2', false, `You calculated the total energy correctly (${totalEnergy} kJ), but check the time calculation (Energy / Rate).`);
+                  if(document.getElementById('q2b')) document.getElementById('q2b').focus();
+             } else {
+                 showFeedback('f2', false, `Check both calculations. Energy in 200g chips = (200/100) * 1000 kJ. Time = Total Energy / 25.`);
+                 if(document.getElementById('q2a')) document.getElementById('q2a').focus();
+             }
+         }
+         if(document.getElementById('q2a')) document.getElementById('q2a').addEventListener('input', () => {
+             if(document.getElementById('q2a-display')) document.getElementById('q2a-display').textContent = document.getElementById('q2a').value || '?';
+         });
+        function checkQ3() { /* ... same as before ... */
+              const answer = document.getElementById('q3a').value;
+              if (answer === 'swimming') {
+                  showFeedback('f3', true, 'Correct! Swimming uses the most energy per minute (73 kJ/min) according to the table.');
+              } else if (answer === '') {
+                   showFeedback('f3', false, 'Please select an activity.');
+              } else {
+                  showFeedback('f3', false, 'Incorrect. Look at the "Energy (kJ) for each minute of activity" table again.');
+              }
+        }
+         function checkQ4() { /* ... same as before ... */
+              const answer = document.getElementById('q4a').value;
+              if (answer === 'chocolate') {
+                  showFeedback('f4', true, 'Correct! Chocolate has the highest energy value per 100g (1500 kJ) in the table, suggesting it would release the most heat when burned.');
+              } else if (answer === '') {
+                   showFeedback('f4', false, 'Please select a food type.');
+              } else {
+                  showFeedback('f4', false, 'Incorrect. Consider which food has the highest energy content per 100g in the table.');
+              }
+         }
+        function checkQ5() { /* ... same as before ... */
+             const energy100g = 1500;
+             const runningRate = 60;
+             const speed = 150;
+             const weight = 50;
+             const totalEnergy = (weight / 100) * energy100g;
+             const timeNeeded = totalEnergy / runningRate;
+             const distanceNeeded = timeNeeded * speed;
+             const userEnergy = parseFloat(document.getElementById('q5a').value);
+             const userTime = parseFloat(document.getElementById('q5b').value);
+             const userDistance = parseFloat(document.getElementById('q5c').value);
+             if(document.getElementById('q5a-display')) document.getElementById('q5a-display').textContent = userEnergy || '?';
+             if(document.getElementById('q5b-display')) document.getElementById('q5b-display').textContent = userTime || '?';
+             let correctEnergy = Math.abs(userEnergy - totalEnergy) < 0.1;
+             let correctTime = Math.abs(userTime - timeNeeded) < 0.1;
+             let correctDistance = Math.abs(userDistance - distanceNeeded) < 1;
+             if(document.getElementById('q5-hint')) document.getElementById('q5-hint').style.display = 'block';
+             if (correctEnergy && correctTime && correctDistance) {
+                 showFeedback('f5', true, `Excellent! 50g chocolate is ${totalEnergy} kJ. Running takes ${timeNeeded.toFixed(1)} mins, covering ${distanceNeeded.toFixed(0)} metres.`);
+             } else {
+                 let errorMsg = "Check your steps: ";
+                 if (!correctEnergy) errorMsg += "Energy in 50g chocolate? ";
+                 if (!correctTime) errorMsg += "Time = Energy / Rate? ";
+                 if (!correctDistance) errorMsg += "Distance = Time x Speed? ";
+                 showFeedback('f5', false, errorMsg);
+                  if (!correctEnergy && document.getElementById('q5a')) document.getElementById('q5a').focus();
+                  else if (!correctTime && document.getElementById('q5b')) document.getElementById('q5b').focus();
+                  else if (!correctDistance && document.getElementById('q5c')) document.getElementById('q5c').focus();
+             }
+        }
+         if(document.getElementById('q5a')) document.getElementById('q5a').addEventListener('input', () => {
+             if(document.getElementById('q5a-display')) document.getElementById('q5a-display').textContent = document.getElementById('q5a').value || '?';
+         });
+          if(document.getElementById('q5b')) document.getElementById('q5b').addEventListener('input', () => {
+             if(document.getElementById('q5b-display')) document.getElementById('q5b-display').textContent = document.getElementById('q5b').value || '?';
+         });
+
+
+        // --- Game Logic ---
+        let currentEnergy = 6000;
+        const maxEnergy = 12000;
+        let gameTime = 0;
+        const basalRate = 300;
+
+        const energyActions = {
+            eat_apple: { change: 200, message: "Ate an apple. (+200 kJ)" },
+            eat_chocolate: { change: 1500, message: "Ate chocolate! (+1500 kJ)" },
+            relax: { change: -360, message: "Relaxed for an hour. (-360 kJ)" },
+            work: { change: -600, message: "Did school work. (-600 kJ)" },
+            play_football: { change: -3600, message: "Played football! (-3600 kJ)" }
+        };
+
+        const energyLevelValueEl = document.getElementById('energy-level-value');
+        const energyBarEl = document.getElementById('energy-bar');
+        const gameTimeEl = document.getElementById('game-time');
+        const gameMessageEl = document.getElementById('game-message');
+        const basalRateDisplayEl = document.getElementById('basal-rate-display');
+
+
+        function updateGameDisplay() {
+            currentEnergy = Math.max(0, currentEnergy);
+            const energyPercent = Math.min(100, (currentEnergy / maxEnergy) * 100);
+
+            if(energyLevelValueEl) energyLevelValueEl.textContent = Math.round(currentEnergy) + " kJ";
+            if(energyBarEl) {
+                energyBarEl.style.width = energyPercent + '%';
+                energyBarEl.textContent = Math.round(energyPercent) + '%';
+                 // Change bar color
+                if (energyPercent < 20) energyBarEl.style.backgroundColor = '#dc3545'; // Red Low
+                else if (energyPercent < 40) energyBarEl.style.backgroundColor = '#ffc107'; // Yellow Low
+                else if (energyPercent <= 70) energyBarEl.style.backgroundColor = '#28a745'; // Green Good
+                else if (energyPercent <= 90) energyBarEl.style.backgroundColor = '#ffc107'; // Yellow High
+                else energyBarEl.style.backgroundColor = '#dc3545'; // Red High
+            }
+            if(gameTimeEl) gameTimeEl.textContent = gameTime + " hours";
+
+            // Update status message based on energy level *unless* game is over
+             if (gameTime < 10 && gameMessageEl) {
+                  if (energyPercent < 20) gameMessageEl.textContent = "Energy critically low!";
+                  else if (energyPercent < 40) gameMessageEl.textContent = "Feeling tired, need energy!";
+                  else if (energyPercent <= 70) gameMessageEl.textContent = "Energy levels are balanced.";
+                  else if (energyPercent <= 90) gameMessageEl.textContent = "Feeling full, maybe exercise?";
+                  else gameMessageEl.textContent = "Too much energy stored!";
+             }
+
+            if(basalRateDisplayEl) basalRateDisplayEl.textContent = basalRate; // Update display just in case
+        }
+
+         function gameAction(actionKey) {
+             if (gameTime >= 10 || !energyActions[actionKey]) return;
+
+             const action = energyActions[actionKey];
+             currentEnergy += action.change;
+             currentEnergy -= basalRate; // Apply basal metabolic rate loss AFTER action
+
+             gameTime++;
+             // Update message immediately for action feedback
+             if(gameMessageEl) gameMessageEl.textContent = action.message + ` (Net effect includes -${basalRate} kJ burn)`;
+
+             updateGameDisplay(); // Update visuals based on new energy level
+
+             if (gameTime >= 10) {
+                  endGame();
+             }
+         }
+
+         function endGame() {
+             const finalPercent = (currentEnergy / maxEnergy) * 100;
+             let finalMessage = "Game Over! ";
+             let msgColor = '#333';
+             if (finalPercent >= 40 && finalPercent <= 70) {
+                 finalMessage += "You balanced your energy well! 👍";
+                  msgColor = 'green';
+             } else if (finalPercent < 40) {
+                  finalMessage += "You ended with too little energy. 😟";
+                  msgColor = 'red';
+             } else { // > 70
+                 finalMessage += "You ended with too much excess energy. 😬";
+                  msgColor = 'orange';
+             }
+             if(gameMessageEl) {
+                 gameMessageEl.textContent = finalMessage;
+                 gameMessageEl.style.color = msgColor;
+             }
+             document.querySelectorAll('.game-buttons button').forEach(btn => btn.disabled = true);
+         }
+
+         function resetGame() {
+             currentEnergy = 6000;
+             gameTime = 0;
+             if(gameMessageEl) {
+                 gameMessageEl.textContent = "Keep your energy balanced!";
+                 gameMessageEl.style.color = '#333';
+             }
+             document.querySelectorAll('.game-buttons button').forEach(btn => btn.disabled = false);
+             updateGameDisplay();
+         }
+
+        // --- Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // Ensure the first tab and sub-tab are displayed on load
+             openTab({ currentTarget: document.querySelector('.tab-button.active') }, 'tutorial');
+             resetSimulation();
+             resetGame();
+             populateFoodOptions(); // Populate menu planner options
+             handleProfileChange(); // Set initial menu state
+        });
+
+    </script>
+
+</body>
+</html>
