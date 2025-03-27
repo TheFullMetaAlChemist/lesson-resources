@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChemQuest Adventure! - Enhanced Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <style>
+        /* --- Variables & Base Styles --- */
+        :root {
+            --bg-color: #eaf2f8; /* Lighter background */
+            --board-bg: #d4e6f1;
+            --square-bg: #ffffff;
+            --square-border: #b8cfe0;
+            --accent-color: #3498db; /* Slightly different blue */
+            --accent-darker: #2980b9;
+            --text-color: #2c3e50; /* Darker text */
+            --player1-color: #e74c3c; /* Red */
+            --player2-color: #2ecc71; /* Green */
+            --player3-color: #9b59b6; /* Purple */
+            --start-color: #a9dfbf;
+            --finish-color: #fdebd0;
+            --question-color: #aed6f1;
+            --penalty-color: #f5b7b1;
+            --bonus-color: #a2d9ce;
+            --mystery-color: #d7bde2;
+            --rollagain-color: #fcf3cf;
+            --missturn-color: #d5dbdb;
+            --shortcut-color: #aed6f1; /* Consistent with question? Maybe slightly diff */
+
+            --square-size: 65px; /* Slightly smaller for bigger board */
+            --grid-cols: 10;
+            --grid-rows: 6;
+            --gap-size: 5px;
+            --board-padding: 15px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-color);
+            /* Subtle background pattern */
+            background-image: linear-gradient(45deg, #f5faff 25%, transparent 25%),
+                              linear-gradient(-45deg, #f5faff 25%, transparent 25%),
+                              linear-gradient(45deg, transparent 75%, #f5faff 75%),
+                              linear-gradient(-45deg, transparent 75%, #f5faff 75%);
+            background-size: 20px 20px;
+            color: var(--text-color);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-family: 'Permanent Marker', cursive; /* Fun title font */
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- Game Board Layout --- */
+        #game-board-container {
+             position: relative;
+             margin-bottom: 25px;
+             padding: 8px; /* Slightly larger padding */
+             background: linear-gradient(145deg, #e1f5fe, #b3e5fc); /* Lighter blue gradient */
+             border-radius: 18px;
+             box-shadow: 6px 6px 18px rgba(0, 0, 0, 0.15),
+                         -6px -6px 18px rgba(255, 255, 255, 0.9);
+             /* Ensure container can be scrolled if needed on small screens */
+             max-width: 100%;
+             overflow: hidden; /* Hide potential overflow from positioning */
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-cols), var(--square-size));
+            grid-template-rows: repeat(var(--grid-rows), var(--square-size));
+            gap: var(--gap-size);
+            border: none;
+            background-color: var(--board-bg);
+            padding: var(--board-padding);
+            border-radius: 12px; /* Inner radius */
+            /* Calculate width/height based on CSS variables */
+            width: calc(var(--grid-cols) * var(--square-size) + (var(--grid-cols) - 1) * var(--gap-size) + 2 * var(--board-padding));
+            height: calc(var(--grid-rows) * var(--square-size) + (var(--grid-rows) - 1) * var(--gap-size) + 2 * var(--board-padding));
+        }
+
+        /* --- Square Styling --- */
+        .square {
+            border: 1px solid var(--square-border);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px; /* Base font size for text */
+            position: relative;
+            background-color: var(--square-bg);
+            text-align: center;
+            overflow: hidden;
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.05),
+                        inset -2px -2px 4px rgba(255,255,255,0.6);
+            cursor: default; /* Indicate not directly clickable */
+        }
+
+        /* Highlight effect for landed square */
+        .square.landed-highlight {
+            animation: landHighlight 0.8s ease-out;
+        }
+        @keyframes landHighlight {
+            0%, 100% { box-shadow: inset 2px 2px 4px rgba(0,0,0,0.05), inset -2px -2px 4px rgba(255,255,255,0.6); transform: scale(1); }
+            50% { box-shadow: 0 0 15px 5px rgba(52, 152, 219, 0.5); transform: scale(1.05); }
+        }
+
+
+        .square:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Specific Square Types - Backgrounds */
+        .square.start { background-color: var(--start-color); }
+        .square.finish { background-color: var(--finish-color); font-weight: bold;}
+        .square.question { background-color: var(--question-color); }
+        .square.penalty { background-color: var(--penalty-color); }
+        .square.bonus { background-color: var(--bonus-color); }
+        .square.mystery { background-color: var(--mystery-color); }
+        .square.roll-again { background-color: var(--rollagain-color); }
+        .square.miss-turn { background-color: var(--missturn-color); }
+        .square.shortcut { background: repeating-linear-gradient(45deg, #aed6f1, #aed6f1 8px, #d6eaf8 8px, #d6eaf8 16px); }
+
+
+        /* Icons & Text within Squares */
+        .square .icon {
+            font-size: 20px; /* Adjusted for smaller squares */
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .square .text {
+            font-size: 9px; /* Adjusted for smaller squares */
+            line-height: 1.1;
+            font-weight: 600;
+            max-width: 95%;
+        }
+        .square.start .text, .square.finish .text { font-size: 11px; }
+        /* Plain number squares */
+        .square.normal {
+            font-size: 16px;
+            font-weight: 600;
+            color: #7f8c8d; /* Greyish number */
+        }
+
+        /* --- Player Piece Styling --- */
+        .player {
+            position: absolute;
+            width: 24px; /* Adjusted */
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.9); /* Slightly stronger border */
+            box-shadow: 0 3px 6px rgba(0,0,0,0.35);
+            transition: top 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                        left 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+                        transform 0.3s ease-out,
+                        box-shadow 0.3s ease; /* Added shadow transition */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        }
+
+        #player1 { background-color: var(--player1-color); }
+        #player2 { background-color: var(--player2-color); }
+        #player3 { background-color: var(--player3-color); }
+
+        /* Active Player Pulse */
+        .player.active-player {
+            animation: pulse 1.5s infinite ease-in-out;
+            box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8), 0 3px 6px rgba(0,0,0,0.35);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) translate(var(--offset-x, 0), var(--offset-y, 0)); } /* Use CSS vars for offset */
+            50% { transform: scale(1.15) translate(var(--offset-x, 0), var(--offset-y, 0)); }
+        }
+
+
+        /* --- Controls Area --- */
+        #controls {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.1), -4px -4px 12px rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 20px;
+            min-width: 380px;
+            max-width: 90%;
+        }
+
+        #controls button#roll-dice-btn {
+            padding: 14px 30px;
+            font-size: 18px;
+            font-weight: 700; /* Bolder */
+            cursor: pointer;
+            background: linear-gradient(145deg, var(--accent-color), var(--accent-darker));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.2);
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+        }
+        #controls button#roll-dice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 4px 10px rgba(0,0,0,0.25);
+            background: linear-gradient(145deg, #4db8ff, #3a8dde); /* Lighter on hover */
+        }
+        #controls button#roll-dice-btn:active {
+            transform: translateY(0px);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        #controls button#roll-dice-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Dice Result Display */
+        #dice-result {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 5px 0 10px 0;
+            min-height: 30px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Space between icons and text */
+        }
+        #dice-result .dice-icon {
+             font-size: 24px;
+             line-height: 1;
+             color: var(--accent-darker);
+        }
+
+        #status {
+            font-size: 18px; /* Larger status */
+            color: var(--text-color);
+            font-weight: 600;
+            min-height: 26px;
+            margin-bottom: 5px;
+        }
+
+         #info {
+             font-size: 15px;
+             color: #555; /* Slightly darker info */
+             min-height: 22px;
+             margin-top: 8px;
+             font-style: italic;
+         }
+
+        /* --- Question Modal Styling --- */
+        #question-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7); /* Darker backdrop */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.35s ease-in-out;
+        }
+        #question-modal.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        #question-content {
+            background-color: #fefefe; /* Brighter white */
+            margin: auto;
+            padding: 35px 40px;
+            border: none;
+            width: 90%;
+            max-width: 600px; /* Slightly wider modal */
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            text-align: center;
+            transform: scale(0.9) translateY(10px); /* Start smaller and lower */
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), /* Overshoot effect */
+                        opacity 0.3s ease-out;
+             opacity: 0;
+        }
+        #question-modal.visible #question-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        #question-text {
+            margin-bottom: 30px;
+            font-size: 20px;
+            line-height: 1.5;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        #answer-options button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 12px 0;
+            font-size: 17px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            background-color: #f8f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: left;
+            transition: all 0.25s ease;
+        }
+         #answer-options button:hover {
+             background-color: #eef3f7;
+             border-color: #c0d6e4;
+             transform: translateY(-1px);
+         }
+         #answer-options button.selected {
+             background-color: var(--question-color);
+             border-color: var(--accent-color);
+             font-weight: 600;
+             box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+         }
+
+        #feedback {
+            margin-top: 25px;
+            font-weight: 700;
+            min-height: 28px;
+            font-size: 19px;
+        }
+        #feedback.correct { color: #27ae60; }
+        #feedback.incorrect { color: #e74c3c; }
+
+        #submit-answer-btn {
+             display: none;
+             margin-top: 30px;
+             padding: 14px 35px;
+             font-size: 18px;
+             font-weight: 600;
+             cursor: pointer;
+             background-color: var(--accent-color);
+             color: white;
+             border: none;
+             border-radius: 10px;
+             transition: background-color 0.2s ease, transform 0.1s ease;
+         }
+         #submit-answer-btn:hover {
+              background-color: var(--accent-darker);
+              transform: translateY(-1px);
+         }
+         #submit-answer-btn:disabled {
+             background-color: #bdc3c7;
+             cursor: not-allowed;
+             transform: none;
+         }
+
+    </style>
+</head>
+<body>
+
+    <h1>ChemQuest Adventure! 🧪</h1>
+
+    <div id="game-board-container">
+        <div id="game-board">
+            <!-- Squares generated by JS -->
+        </div>
+        <div id="player1" class="player">1</div>
+        <div id="player2" class="player">2</div>
+        <div id="player3" class="player">3</div>
+    </div>
+
+    <div id="controls">
+        <div id="status">Player 1's Turn</div>
+        <div id="dice-result">Roll the dice!</div>
+        <div id="info"></div>
+        <button id="roll-dice-btn">Roll Dice</button>
+    </div>
+
+    <div id="question-modal">
+         <div id="question-content">
+            <div id="question-text">Question placeholder?</div>
+            <div id="answer-options"></div>
+            <button id="submit-answer-btn">Submit Answer</button>
+            <div id="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- Game Configuration ---
+        const boardSize = 60; // <<<< INCREASED BOARD SIZE
+        const numPlayers = 3;
+        const MOVE_ANIMATION_DURATION = 650; // ms
+        const FEEDBACK_DELAY_SHORT = 1600; // ms
+        const FEEDBACK_DELAY_LONG = 2800; // ms
+        const MYSTERY_MSG_DELAY = 2000; // ms
+
+        // --- Square Distribution (Adjusted for 60 squares) ---
+        const questionSquares = [3, 7, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58];
+        const penaltySquares = { 9: -2, 21: -3, 35: -4, 47: -3, 56: -5 }; // More penalties
+        const bonusSquares = { 5: 3, 14: 2, 25: 4, 31: 3, 41: 5, 51: 4 }; // More bonuses
+        const missTurnSquares = [11, 29, 45, 54];
+        const rollAgainSquares = [6, 18, 36, 50];
+        const mysterySquares = [4, 10, 19, 26, 34, 42, 49, 57]; // More mystery squares
+        const shortcutSquares = { 8: 16, 23: 32, 39: 46, 52: 59 }; // Added more shortcuts
+
+        // --- Chemistry Questions (Keep your existing array) ---
+        const questions = [ /* PASTE YOUR QUESTIONS ARRAY HERE */
+            // ... (Your questions remain the same) ...
+             // Signs of Chemical Reaction
+            { question: "Which is NOT usually a sign of a chemical reaction?", options: ["Gas produced", "Colour change", "Melting", "Temperature change"], correctAnswer: "Melting", topic: "Signs of Reaction" },
+            { question: "Bubbles forming when two liquids are mixed might indicate:", options: ["Freezing", "A gas is being produced", "Condensation", "Evaporation"], correctAnswer: "A gas is being produced", topic: "Signs of Reaction" },
+            { question: "A solid forming when two solutions are mixed is called a:", options: ["Gas", "Liquid", "Precipitate", "Solvent"], correctAnswer: "Precipitate", topic: "Signs of Reaction" },
+            { question: "Feeling a test tube get hot during a reaction means it is:", options: ["Endothermic", "Exothermic", "Neutral", "Physical"], correctAnswer: "Exothermic", topic: "Signs of Reaction" },
+
+            // Elements and Compounds
+            { question: "What is the smallest part of an element?", options: ["Molecule", "Compound", "Atom", "Mixture"], correctAnswer: "Atom", topic: "Elements/Compounds" },
+            { question: "Which of these is an element?", options: ["Water (H₂O)", "Salt (NaCl)", "Oxygen (O₂)", "Carbon Dioxide (CO₂)"], correctAnswer: "Oxygen (O₂)", topic: "Elements/Compounds" },
+            { question: "A substance made of two or more different types of atoms chemically joined together is a:", options: ["Element", "Mixture", "Compound", "Solution"], correctAnswer: "Compound", topic: "Elements/Compounds" },
+            { question: "H₂O represents a molecule of:", options: ["Hydrogen", "Oxygen", "Water", "Helium"], correctAnswer: "Water", topic: "Elements/Compounds" },
+
+            // Metal Reactions (Oxygen, Acid, Water)
+            { question: "What gas is needed for a metal to rust or burn?", options: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Hydrogen"], correctAnswer: "Oxygen", topic: "Metal + Oxygen" },
+            { question: "When magnesium burns in air, what compound is formed?", options: ["Magnesium Carbonate", "Magnesium Oxide", "Magnesium Chloride", "Magnesium Hydroxide"], correctAnswer: "Magnesium Oxide", topic: "Metal + Oxygen" },
+            { question: "What gas is produced when a reactive metal (like zinc) reacts with an acid (like HCl)?", options: ["Oxygen", "Carbon Dioxide", "Chlorine", "Hydrogen"], correctAnswer: "Hydrogen", topic: "Metal + Acid" },
+            { question: "Complete the word equation: Zinc + Hydrochloric Acid -> ?", options: ["Zinc Hydroxide + Carbon", "Zinc Oxide + Water", "Zinc Chloride + Hydrogen", "Zinc + Water + Chlorine"], correctAnswer: "Zinc Chloride + Hydrogen", topic: "Metal + Acid" },
+            { question: "Which metal reacts vigorously with cold water?", options: ["Copper", "Gold", "Potassium", "Iron"], correctAnswer: "Potassium", topic: "Metal + Water" },
+            { question: "What are the products when sodium reacts with water?", options: ["Sodium Oxide + Hydrogen", "Sodium Hydroxide + Oxygen", "Sodium Hydroxide + Hydrogen", "Sodium Chloride + Water"], correctAnswer: "Sodium Hydroxide + Hydrogen", topic: "Metal + Water" },
+            { question: "Some metals don't react with water or steam. This means they are:", options: ["Very reactive", "Unreactive", "Corrosive", "Magnetic"], correctAnswer: "Unreactive", topic: "Metal + Water" },
+
+            // Properties of Metals and Non-metals
+            { question: "Which property is typical of MOST metals?", options: ["Dull", "Poor conductor of heat", "Brittle", "Good conductor of electricity"], correctAnswer: "Good conductor of electricity", topic: "Properties" },
+            { question: "Which of these is generally NOT a property of non-metals?", options: ["Shiny (lustrous)", "Low melting point", "Poor conductor of electricity", "Brittle (if solid)"], correctAnswer: "Shiny (lustrous)", topic: "Properties" },
+            { question: "The ability of a metal to be drawn into wires is called:", options: ["Malleability", "Ductility", "Conductivity", "Sonorous"], correctAnswer: "Ductility", topic: "Properties" },
+            { question: "Which element is a non-metal but conducts electricity?", options: ["Sulfur", "Carbon (graphite form)", "Iodine", "Phosphorus"], correctAnswer: "Carbon (graphite form)", topic: "Properties" },
+            { question: "Metals are typically found on which side of the periodic table?", options: ["Right", "Left", "Top", "Bottom"], correctAnswer: "Left", topic: "Properties" },
+        ];
+
+
+        // --- Game State Variables ---
+        let playerPositions = Array(numPlayers).fill(0);
+        let playerStates = Array(numPlayers).fill(null).map(() => ({ skipTurn: false }));
+        let currentPlayerIndex = 0;
+        let gameActive = true;
+        let currentQuestionData = null;
+        let selectedAnswer = null;
+        let diceRolledThisTurn = false;
+        let lastLandedSquareElement = null; // For removing highlight
+
+        // --- DOM Element References ---
+        const gameBoardContainer = document.getElementById('game-board-container');
+        const gameBoard = document.getElementById('game-board');
+        const playerElements = Array.from({ length: numPlayers }, (_, i) => document.getElementById(`player${i + 1}`));
+        const statusDisplay = document.getElementById('status');
+        const diceResultDisplay = document.getElementById('dice-result');
+        const infoDisplay = document.getElementById('info');
+        const rollDiceBtn = document.getElementById('roll-dice-btn');
+        const questionModal = document.getElementById('question-modal');
+        const questionText = document.getElementById('question-text');
+        const answerOptionsContainer = document.getElementById('answer-options');
+        const feedbackDisplay = document.getElementById('feedback');
+        const submitAnswerBtn = document.getElementById('submit-answer-btn');
+
+
+        // --- Core Functions ---
+
+        /** Creates the game board squares */
+        function createBoard() {
+            gameBoard.innerHTML = '';
+            const cols = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--grid-cols')); // Get cols from CSS var
+
+            for (let i = 1; i <= boardSize; i++) {
+                const square = document.createElement('div');
+                square.id = `square-${i}`;
+                square.classList.add('square');
+                square.dataset.squareNum = i;
+
+                let type = 'normal';
+                let icon = '';
+                let text = '';
+
+                // Determine square type, icon, and text based on configuration
+                if (i === 1) { type = 'start'; icon = '🏁'; text = 'Start'; }
+                else if (i === boardSize) { type = 'finish'; icon = '🏆'; text = 'FINISH!'; }
+                else if (questionSquares.includes(i)) { type = 'question'; icon = '🧪'; text = 'Quiz!'; }
+                else if (penaltySquares.hasOwnProperty(i)) { type = 'penalty'; icon = '⏪'; text = `-${Math.abs(penaltySquares[i])}`; }
+                else if (bonusSquares.hasOwnProperty(i)) { type = 'bonus'; icon = '⏩'; text = `+${bonusSquares[i]}`; }
+                else if (missTurnSquares.includes(i)) { type = 'miss-turn'; icon = '⏳'; text = 'Miss Turn'; }
+                else if (rollAgainSquares.includes(i)) { type = 'roll-again'; icon = '🎲'; text = 'Roll Again'; }
+                else if (mysterySquares.includes(i)) { type = 'mystery'; icon = '❓'; text = 'Mystery'; }
+                else if (shortcutSquares.hasOwnProperty(i)) { type = 'shortcut'; icon = '🚀'; text = `Warp!`; }
+                else { text = i; } // Normal square number
+
+                square.classList.add(type);
+
+                // Add icon/text elements
+                if (icon) {
+                    const iconSpan = document.createElement('span');
+                    iconSpan.classList.add('icon');
+                    iconSpan.textContent = icon;
+                    square.appendChild(iconSpan);
+                }
+                if (text && type !== 'normal') {
+                    const textSpan = document.createElement('span');
+                    textSpan.classList.add('text');
+                    textSpan.textContent = text;
+                    square.appendChild(textSpan);
+                } else if (type === 'normal') {
+                    square.textContent = text;
+                }
+
+                // Grid Positioning (Snake Pattern)
+                const row = Math.floor((i - 1) / cols);
+                let col;
+                if (row % 2 === 0) { col = (i - 1) % cols; }
+                else { col = cols - 1 - ((i - 1) % cols); }
+                square.style.gridRow = row + 1;
+                square.style.gridColumn = col + 1;
+
+                gameBoard.appendChild(square);
+            }
+            requestAnimationFrame(updatePlayerPositionsUI);
+        }
+
+        /** Updates player token positions ON THE BOARD */
+        function updatePlayerPositionsUI() {
+            if (!gameBoardContainer || !gameBoard) return;
+             // Get board position relative to viewport, only once if possible
+            const boardRect = gameBoardContainer.getBoundingClientRect();
+
+            const occupiedSquares = {};
+
+            playerPositions.forEach((pos, index) => {
+                const playerElement = playerElements[index];
+                 if (!playerElement) return;
+
+                let targetLeft = 0;
+                let targetTop = 0;
+                const playerWidth = playerElement.offsetWidth;
+                const playerHeight = playerElement.offsetHeight;
+
+                let targetSquare;
+                if (pos <= 0) { // Off-board near start
+                    targetSquare = gameBoard.querySelector('#square-1');
+                    if (targetSquare) {
+                        const squareRect = targetSquare.getBoundingClientRect();
+                        targetLeft = squareRect.left - boardRect.left - playerWidth / 2 + (index * (playerWidth * 0.7)); // Slightly closer offset
+                        targetTop = squareRect.bottom - boardRect.top + 6; // Bit further below
+                    }
+                } else { // On the board
+                    targetSquare = gameBoard.querySelector(`#square-${pos}`);
+                    if (targetSquare) {
+                        const squareRect = targetSquare.getBoundingClientRect();
+                        targetLeft = squareRect.left - boardRect.left + (squareRect.width / 2) - (playerWidth / 2);
+                        targetTop = squareRect.top - boardRect.top + (squareRect.height / 2) - (playerHeight / 2);
+
+                        if (!occupiedSquares[pos]) occupiedSquares[pos] = [];
+                        occupiedSquares[pos].push(index);
+                    } else { console.error(`Target square ${pos} not found!`); }
+                }
+
+                playerElement.style.left = `${targetLeft}px`;
+                playerElement.style.top = `${targetTop}px`;
+                // Reset transform (offset handled later)
+                 // Also store offsets in CSS variables for the pulse animation
+                 playerElement.style.setProperty('--offset-x', '0px');
+                 playerElement.style.setProperty('--offset-y', '0px');
+                 playerElement.style.transform = 'translate(0, 0)';
+                 playerElement.dataset.currentPos = pos.toString();
+            });
+
+             // Apply offsets for shared squares
+            Object.keys(occupiedSquares).forEach(pos => {
+                const playersOnSquare = occupiedSquares[pos];
+                if (playersOnSquare.length > 1) {
+                    const angleStep = 360 / playersOnSquare.length;
+                    const radius = 6; // Offset radius
+                    playersOnSquare.forEach((playerIndex, i) => {
+                         const element = playerElements[playerIndex];
+                         if (element) {
+                            // Circular offset pattern
+                            const angle = (angleStep * i) * (Math.PI / 180); // angle in radians
+                            const offsetX = Math.round(Math.cos(angle) * radius);
+                            const offsetY = Math.round(Math.sin(angle) * radius);
+                            // Store offsets in CSS variables and apply transform
+                             element.style.setProperty('--offset-x', `${offsetX}px`);
+                             element.style.setProperty('--offset-y', `${offsetY}px`);
+                             element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                         }
+                    });
+                }
+             });
+        }
+
+        /** Gets Unicode dice character for a number */
+        function getDiceIcon(value) {
+            const icons = ['\u2680', '\u2681', '\u2682', '\u2683', '\u2684', '\u2685']; // 1 to 6
+            return icons[value - 1] || '';
+        }
+
+        /** Rolls a standard 6-sided die */
+        function rollDice() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        /** Handles the dice roll button click */
+        function handleRollDice() {
+            if (!gameActive || diceRolledThisTurn) return;
+
+            if (playerStates[currentPlayerIndex].skipTurn) {
+                updateStatus(`Player ${currentPlayerIndex + 1} skips their turn!`);
+                infoDisplay.textContent = `Turn skipped due to landing on square ${playerPositions[currentPlayerIndex]}.`;
+                playerStates[currentPlayerIndex].skipTurn = false;
+                setTimeout(endTurn, FEEDBACK_DELAY_SHORT);
+                return;
+            }
+
+            diceRolledThisTurn = true;
+            rollDiceBtn.disabled = true;
+            infoDisplay.textContent = 'Rolling...'; // Clear previous info
+
+            const diceValue = rollDice();
+            // Show dice icons + number
+            diceResultDisplay.innerHTML = `
+                <span class="dice-icon">${getDiceIcon(diceValue)}</span>
+                Rolled a ${diceValue}!
+            `;
+
+            processMove(currentPlayerIndex, diceValue);
+        }
+
+        /** Processes a player's move and subsequent actions */
+        async function processMove(playerIndex, steps) {
+            if (!gameActive) return;
+
+            infoDisplay.textContent = `Player ${playerIndex + 1} moves ${steps} spaces...`;
+            let currentPos = playerPositions[playerIndex];
+            let newPos = currentPos + steps;
+
+            // Animate Move
+            playerPositions[playerIndex] = Math.min(newPos, boardSize);
+            updatePlayerPositionsUI();
+            await delay(MOVE_ANIMATION_DURATION);
+
+            // Highlight landed square
+            highlightSquare(playerPositions[playerIndex]);
+
+
+            if (newPos >= boardSize) {
+                playerPositions[playerIndex] = boardSize;
+                updatePlayerPositionsUI(); // Final position update
+                await delay(100);
+                gameOver(playerIndex);
+                return;
+            }
+
+            await checkLandedSquare(playerIndex, playerPositions[playerIndex]);
+        }
+
+        /** Adds/Removes highlight class from a square */
+        function highlightSquare(squareNum) {
+             if (lastLandedSquareElement) {
+                 lastLandedSquareElement.classList.remove('landed-highlight');
+             }
+             if (squareNum > 0) {
+                 const currentSquare = gameBoard.querySelector(`#square-${squareNum}`);
+                 if (currentSquare) {
+                     currentSquare.classList.add('landed-highlight');
+                     lastLandedSquareElement = currentSquare;
+                     // Remove highlight after animation duration
+                     setTimeout(() => {
+                         currentSquare.classList.remove('landed-highlight');
+                         if (lastLandedSquareElement === currentSquare) {
+                             lastLandedSquareElement = null;
+                         }
+                     }, 800); // Match animation duration in CSS
+                 }
+             }
+        }
+
+
+         /** Checks the type of square landed on and triggers actions */
+         async function checkLandedSquare(playerIndex, landedPos) {
+             if (!gameActive) return;
+
+             let requiresTurnEnd = true; // Assume turn ends unless specified otherwise
+             let statusMessage = `Player ${playerIndex + 1} landed on square ${landedPos}.`; // Base message
+
+             if (questionSquares.includes(landedPos)) {
+                statusMessage += " It's Quiz Time!";
+                requiresTurnEnd = false;
+                askQuestion();
+             } else if (penaltySquares.hasOwnProperty(landedPos)) {
+                 const penalty = penaltySquares[landedPos];
+                 statusMessage += ` Penalty! Moving back ${Math.abs(penalty)} spaces.`;
+                 requiresTurnEnd = false; // applyRelativeMove will handle turn end
+                 await delay(500); // Short pause before moving back
+                 await applyRelativeMove(playerIndex, penalty);
+             } else if (bonusSquares.hasOwnProperty(landedPos)) {
+                 const bonus = bonusSquares[landedPos];
+                 statusMessage += ` Bonus! Moving forward ${bonus} spaces.`;
+                 requiresTurnEnd = false; // applyRelativeMove will handle turn end
+                 await delay(500);
+                 await applyRelativeMove(playerIndex, bonus);
+             } else if (missTurnSquares.includes(landedPos)) {
+                 statusMessage += ` Oh no, Miss a Turn!`;
+                 infoDisplay.textContent = `Player ${playerIndex + 1} will skip their next turn.`;
+                 playerStates[playerIndex].skipTurn = true;
+             } else if (rollAgainSquares.includes(landedPos)) {
+                 statusMessage += ` Lucky! Roll Again!`;
+                 infoDisplay.textContent = `Roll the dice again, Player ${playerIndex + 1}!`;
+                 requiresTurnEnd = false;
+                 diceRolledThisTurn = false; // Allow re-roll
+                 rollDiceBtn.disabled = false;
+             } else if (mysterySquares.includes(landedPos)) {
+                 statusMessage += ` A Mystery Square! What will happen?`;
+                 requiresTurnEnd = false; // Mystery action handles turn end
+                 await handleMysterySquare(playerIndex);
+             } else if (shortcutSquares.hasOwnProperty(landedPos)) {
+                const destination = shortcutSquares[landedPos];
+                statusMessage += ` Found a Shortcut to square ${destination}!`;
+                requiresTurnEnd = false; // applyAbsoluteMove handles turn end
+                await delay(500);
+                await applyAbsoluteMove(playerIndex, destination);
+            } else {
+                 // Landed on a normal square
+                 statusMessage += " Just a normal space.";
+                 infoDisplay.textContent = ""; // Clear info if it was just a normal move
+            }
+
+             updateStatus(statusMessage); // Update status after determining action
+
+             if (requiresTurnEnd) {
+                 endTurn();
+             }
+         }
+
+        /** Helper for relative moves (bonus/penalty) */
+        async function applyRelativeMove(playerIndex, steps) {
+            let currentPos = playerPositions[playerIndex];
+            let newPos = Math.max(1, Math.min(boardSize, currentPos + steps));
+
+            if (newPos !== currentPos) {
+                infoDisplay.textContent = `Moving from ${currentPos} to ${newPos}...`;
+                playerPositions[playerIndex] = newPos;
+                updatePlayerPositionsUI();
+                await delay(MOVE_ANIMATION_DURATION);
+                highlightSquare(newPos);
+                // Check the *new* square landed on
+                await checkLandedSquare(playerIndex, newPos);
+            } else {
+                 infoDisplay.textContent = `Couldn't move ${steps > 0 ? 'further' : 'back'} (at edge).`;
+                 await delay(FEEDBACK_DELAY_SHORT / 2); // Shorter delay if no move
+                 endTurn();
+            }
+        }
+
+         /** Helper for absolute moves (shortcuts) */
+        async function applyAbsoluteMove(playerIndex, destinationPos) {
+            let currentPos = playerPositions[playerIndex];
+            let newPos = Math.max(1, Math.min(boardSize, destinationPos));
+
+            if (newPos !== currentPos) {
+                 infoDisplay.textContent = `Warping from ${currentPos} to ${newPos}!`;
+                playerPositions[playerIndex] = newPos;
+                updatePlayerPositionsUI();
+                await delay(MOVE_ANIMATION_DURATION);
+                 highlightSquare(newPos);
+                // Check the *new* square landed on
+                await checkLandedSquare(playerIndex, newPos);
+            } else {
+                 infoDisplay.textContent = `Already at destination ${newPos}.`;
+                 await delay(FEEDBACK_DELAY_SHORT / 2);
+                 endTurn();
+            }
+        }
+
+
+        /** Handles random events for Mystery Squares */
+        async function handleMysterySquare(playerIndex) {
+            // Find player furthest behind (excluding current player)
+            let furthestPlayerIndex = -1;
+            let minPos = boardSize + 1;
+            for(let i=0; i<numPlayers; i++) {
+                if (i !== playerIndex && playerPositions[i] < minPos) {
+                    minPos = playerPositions[i];
+                    furthestPlayerIndex = i;
+                }
+            }
+
+            const outcomes = [
+                { text: "Cosmic Winds push you forward 3 spaces!", action: () => applyRelativeMove(playerIndex, 3) },
+                { text: "Slippery substance! Go back 2 spaces.", action: () => applyRelativeMove(playerIndex, -2) },
+                { text: "Sudden inspiration! Roll again.", action: () => {
+                        infoDisplay.textContent = "Roll the dice again!"; diceRolledThisTurn = false; rollDiceBtn.disabled = false; } },
+                { text: "Lab cleanup duty! Miss your next turn.", action: () => {
+                        infoDisplay.textContent = `Player ${playerIndex + 1} will skip next turn.`; playerStates[playerIndex].skipTurn = true; endTurn(); } },
+                { text: "Found an old textbook! +2 spaces.", action: () => applyRelativeMove(playerIndex, 2) },
+                { text: "Minor lab explosion! Back 3 spaces.", action: () => applyRelativeMove(playerIndex, -3) },
+                // New outcome: Swap with furthest player if applicable
+                ...(furthestPlayerIndex !== -1 && playerPositions[playerIndex] > playerPositions[furthestPlayerIndex] ? // Only add if swap is possible and meaningful
+                    [{
+                        text: `Quantum Entanglement! Swap places with Player ${furthestPlayerIndex + 1}!`,
+                        action: async () => {
+                            const currentPos = playerPositions[playerIndex];
+                            const otherPos = playerPositions[furthestPlayerIndex];
+                            infoDisplay.textContent = `Swapping Player ${playerIndex + 1} (sq ${currentPos}) and Player ${furthestPlayerIndex + 1} (sq ${otherPos})...`;
+                            // Move both players simultaneously in data
+                            playerPositions[playerIndex] = otherPos;
+                            playerPositions[furthestPlayerIndex] = currentPos;
+                            // Animate both
+                            updatePlayerPositionsUI();
+                            await delay(MOVE_ANIMATION_DURATION + 100); // Slightly longer delay for swap
+                            highlightSquare(otherPos); // Highlight current player's new square
+                            // Current player's turn ends after the swap
+                            endTurn();
+                        }
+                    }] : [])
+            ];
+
+            const randomIndex = Math.floor(Math.random() * outcomes.length);
+            const selectedOutcome = outcomes[randomIndex];
+
+            infoDisplay.textContent = `Mystery Event: ${selectedOutcome.text}`;
+            await delay(MYSTERY_MSG_DELAY);
+
+            await selectedOutcome.action();
+        }
+
+        /** Displays the question modal */
+        function askQuestion() {
+            // Find a random question
+            const questionIndex = Math.floor(Math.random() * questions.length);
+            currentQuestionData = questions[questionIndex];
+            selectedAnswer = null; // Reset selection
+
+            // Populate modal
+            questionText.textContent = currentQuestionData.question;
+            answerOptionsContainer.innerHTML = ''; // Clear previous options
+            feedbackDisplay.textContent = '';
+            feedbackDisplay.className = 'feedback'; // Reset color class
+            submitAnswerBtn.style.display = 'none';
+            submitAnswerBtn.disabled = true;
+
+            // Create answer buttons
+            currentQuestionData.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                // Add event listener to handle selection
+                button.addEventListener('click', () => handleOptionSelect(button));
+                answerOptionsContainer.appendChild(button);
+            });
+
+            // Show modal with transition
+            questionModal.classList.add('visible');
+        }
+
+
+         /** Handles selecting an answer option */
+         function handleOptionSelect(buttonElement) {
+             // Visually deselect previous button
+             if (selectedAnswer) {
+                 selectedAnswer.classList.remove('selected');
+             }
+             // Select new button
+             buttonElement.classList.add('selected');
+             selectedAnswer = buttonElement; // Store the button element itself
+
+             // Enable and show submit button
+             submitAnswerBtn.style.display = 'inline-block';
+             submitAnswerBtn.disabled = false;
+         }
+
+        /** Checks the submitted answer */
+        async function checkAnswer() {
+             if (!selectedAnswer || !currentQuestionData) return;
+             submitAnswerBtn.disabled = true; // Prevent multi-click
+
+             const playerAnswerText = selectedAnswer.textContent;
+             const correctAnswer = currentQuestionData.correctAnswer;
+             const isCorrect = playerAnswerText === correctAnswer;
+
+             if (isCorrect) {
+                 feedbackDisplay.textContent = "✅ Correct! Well done!";
+                 feedbackDisplay.className = 'feedback correct';
+                 await delay(FEEDBACK_DELAY_SHORT);
+                 questionModal.classList.remove('visible');
+                 endTurn(); // Correct answer, just end turn
+             } else {
+                 feedbackDisplay.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}`;
+                 feedbackDisplay.className = 'feedback incorrect';
+                 await delay(FEEDBACK_DELAY_LONG);
+                 questionModal.classList.remove('visible');
+                 // Apply penalty move for wrong answer
+                 await applyRelativeMove(currentPlayerIndex, -2); // e.g., move back 2 spaces
+             }
+         }
+
+         /** Ends the current player's turn and switches */
+         function endTurn() {
+             if (!gameActive) return;
+
+             // Remove active class from current player token
+             playerElements[currentPlayerIndex]?.classList.remove('active-player');
+
+             // Cycle to next player
+             currentPlayerIndex = (currentPlayerIndex + 1) % numPlayers;
+
+             // Add active class to new current player token
+             playerElements[currentPlayerIndex]?.classList.add('active-player');
+
+             // Prepare for next turn
+             diceRolledThisTurn = false;
+             rollDiceBtn.disabled = false;
+             updateStatus(`Player ${currentPlayerIndex + 1}'s Turn`);
+             diceResultDisplay.textContent = 'Roll the dice!'; // Reset dice display
+
+             // Update info display based on whether the *next* player will skip
+             if (playerStates[currentPlayerIndex].skipTurn) {
+                 infoDisplay.textContent = `Player ${currentPlayerIndex + 1} will skip this turn.`;
+             } else {
+                 infoDisplay.textContent = ''; // Clear info otherwise
+             }
+         }
+
+
+        /** Updates the main status message */
+        function updateStatus(message) {
+            statusDisplay.textContent = message;
+        }
+
+        /** Declares winner and ends game */
+        function gameOver(winnerIndex) {
+            gameActive = false;
+            updateStatus(`🎉 Player ${winnerIndex + 1} is the ChemQuest Champion! 🎉`);
+            diceResultDisplay.textContent = "Game Over!";
+            infoDisplay.textContent = "Excellent revision!";
+            rollDiceBtn.disabled = true;
+            questionModal.classList.remove('visible');
+            // Remove active class from winner
+             playerElements[winnerIndex]?.classList.remove('active-player');
+            // Maybe add a winner animation later?
+        }
+
+        /** Utility function for delays */
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        /** Initializes the game */
+        function initGame() {
+            playerPositions.fill(0);
+            playerStates = Array.from({ length: numPlayers }, () => ({ skipTurn: false }));
+            currentPlayerIndex = 0;
+            gameActive = true;
+            diceRolledThisTurn = false;
+            lastLandedSquareElement = null;
+
+            createBoard(); // This calls updatePlayerPositionsUI internally via requestAnimationFrame
+
+            updateStatus(`Player ${currentPlayerIndex + 1}'s Turn`);
+            diceResultDisplay.textContent = 'Roll the dice!';
+            infoDisplay.textContent = '';
+            rollDiceBtn.disabled = false;
+            questionModal.classList.remove('visible');
+
+            // Set initial active player highlight
+            playerElements.forEach((el, index) => {
+                el?.classList.toggle('active-player', index === currentPlayerIndex);
+            });
+        }
+
+        // --- Event Listeners ---
+        rollDiceBtn.addEventListener('click', handleRollDice);
+        submitAnswerBtn.addEventListener('click', checkAnswer);
+        // Optional: Close modal if clicking backdrop
+        questionModal.addEventListener('click', (event) => {
+            if (event.target === questionModal) {
+                // questionModal.classList.remove('visible'); // Or prevent closing
+            }
+        });
+
+        // --- Start Game ---
+        document.addEventListener('DOMContentLoaded', initGame);
+        window.addEventListener('resize', updatePlayerPositionsUI); // Re-calculate positions on resize
+
+    </script>
+
+</body>
+</html>
