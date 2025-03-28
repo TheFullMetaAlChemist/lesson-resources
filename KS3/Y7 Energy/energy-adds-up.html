@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Stores & Conservation - KS3 Physics Lesson</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; background-color: #eef5f9; color: #333; }
+
+        /* Main Container */
+        .container { max-width: 1100px; margin: 2.5vh auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; overflow: hidden; min-height: 95vh; }
+
+        /* Header */
+        header { background-color: #0077cc; color: #fff; padding: 15px 30px; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        header h1 { margin: 0; font-size: 2em; }
+
+        /* Main Navigation */
+        nav { background-color: #005a9e; padding: 0 30px; flex-shrink: 0; }
+        nav ul { list-style: none; display: flex; }
+        nav ul li a { display: block; padding: 12px 20px; color: #fff; text-decoration: none; transition: background-color 0.3s ease, border-bottom 0.3s ease; border-bottom: 3px solid transparent; font-weight: 500;}
+        nav ul li a:hover { background-color: #004b80; }
+        nav ul li a.active-nav { background-color: #004b80; border-bottom: 3px solid #ffc107; }
+
+        /* Screen Content Area */
+        .content-area { padding: 25px 30px; flex-grow: 1; overflow-y: auto; scroll-behavior: smooth; }
+
+        /* Main Screens */
+        .main-screen { display: none; }
+        .main-screen.active-screen { display: block; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Section Styling */
+        section { margin-bottom: 30px; padding: 20px; background-color: #f9f9fa; border: 1px solid #e1e4e8; border-radius: 6px; }
+        h2 { color: #005a9e; margin-bottom: 20px; border-bottom: 2px solid #0077cc; padding-bottom: 8px; font-size: 1.8em; font-weight: 600;}
+        h3 { color: #0066b2; margin-top: 20px; margin-bottom: 12px; font-size: 1.4em; font-weight: 600;}
+        p { margin-bottom: 10px; }
+        ul, ol { margin-left: 25px; margin-bottom: 10px; }
+        li { margin-bottom: 5px; }
+        strong { color: #333; font-weight: 600; }
+
+        /* Tutorial Tabs */
+        .tab-container { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ccc; flex-wrap: wrap; }
+        .tab-button { padding: 10px 18px; cursor: pointer; border: 1px solid #ccc; border-bottom: none; background-color: #eee; margin-right: 5px; margin-bottom: -1px; border-radius: 5px 5px 0 0; transition: background-color 0.3s ease, color 0.3s ease; font-weight: 500;}
+        .tab-button:hover { background-color: #e0e0e0; }
+        .tab-button.active { background-color: #fff; border-bottom: 1px solid #fff; position: relative; top: 1px; font-weight: bold; color: #0077cc; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; border-radius: 0 0 5px 5px; background-color: #fff; animation: fadeIn 0.4s; }
+        .tab-content.active { display: block; }
+        .example-box { display: flex; gap: 20px; margin-top: 15px; align-items: stretch; flex-wrap: wrap;}
+        .before-after { flex: 1; min-width: 250px; border: 1px solid #d1e7fd; padding: 15px; border-radius: 5px; background-color: #f0f8ff; margin-bottom: 10px; }
+        .before-after h4 { margin-top: 0; color: #005a9e; border-bottom: 1px solid #bce0fd; padding-bottom: 5px; margin-bottom: 10px; }
+        .checkpoint { background-color: #fffadf; border: 1px dashed #f0c36d; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .checkpoint label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .checkpoint select { padding: 6px; margin: 0 5px 5px 0; border: 1px solid #ccc; border-radius: 4px; min-width: 110px; }
+        .checkpoint button { padding: 8px 15px; background-color: #ff9900; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: 500;}
+        .checkpoint button:hover { background-color: #e68a00; }
+        .feedback { margin-top: 10px; font-style: italic; font-weight: bold; min-height: 1.2em; display: flex; align-items: center; gap: 5px;}
+        .feedback img { width: 16px; height: 16px; vertical-align: middle; }
+        .feedback.correct { color: #155724; }
+        .feedback.incorrect { color: #721c24; }
+
+        /* --- Simulation General Styling --- */
+        .simulation-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-around; }
+        .simulation-box { border: 1px solid #ccc; border-radius: 8px; padding: 20px; background-color: #fff; width: 100%; max-width: 480px; display: flex; flex-direction: column;}
+        @media (min-width: 1024px) { .simulation-box { width: 47%; } }
+        .simulation-box h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; text-align: center;}
+        .sim-canvas-area { height: 280px; background-color: #e9f5ff; border: 1px solid #b3d9ff; padding: 10px; position: relative; border-radius: 5px; margin-bottom: 15px; overflow: hidden; flex-grow: 1;}
+        .sim-controls { text-align: center; margin-top: 15px; }
+        .sim-controls button { padding: 9px 18px; margin: 0 8px; cursor: pointer; background-color: #0077cc; color: white; border: none; border-radius: 5px; font-size: 0.95em; font-weight: 500;}
+        .sim-controls button:hover { background-color: #005a9e; }
+        .energy-bars-display { display: flex; justify-content: space-around; align-items: flex-end; height: 100px; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 15px; }
+        .energy-bar-container { text-align: center; width: 65px; font-size: 0.8em; display: flex; flex-direction: column-reverse; align-items: center;}
+        .energy-bar { width: 35px; background-color: #007bff; margin-bottom: 5px; height: 0; transition: height 0.2s ease-out; border-radius: 3px 3px 0 0; position: relative; }
+        .energy-bar .value { position: absolute; top: -18px; left: 0; width: 100%; font-size: 0.9em; color: #333; font-weight: bold; }
+        /* Energy Bar Colors */
+        #gpe-bar, #bungee-gpe-bar { background-color: #28a745; }
+        #ke-bar, #bungee-ke-bar { background-color: #ffc107; }
+        #te-bar, #te-soup-bar, #te-surr-bar, #torch-te-bar, #bungee-te-bar { background-color: #dc3545; }
+        #epe-bar, #bungee-epe-bar { background-color: #6f42c1; }
+        #chem-bar, #torch-chem-bar { background-color: #fd7e14; }
+        #light-bar { background-color: #fff352; border: 1px solid #e9d700; } /* Light energy */
+
+        /* --- Specific Simulation Styles --- */
+
+        /* Bouncing Ball */
+        #sim-ball { position: absolute; width: 30px; height: 30px; background-color: #e74c3c; border-radius: 50%; bottom: 10px; left: 50%; transform: translateX(-50%); }
+
+        /* Stove */
+        #sim-stove-base { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 70px; height: 30px; background-color: #3498db; border-radius: 3px; border: 1px solid #2980b9;}
+        #sim-stove-pot { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); width: 60px; height: 50px; background-color: #bdc3c7; border: 2px solid #7f8c8d; border-radius: 5px 5px 0 0; }
+        #sim-stove-lid { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); width: 65px; height: 10px; background-color: #95a5a6; border-radius: 3px; }
+        #sim-stove-flame { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 40px solid orange; opacity: 0; transition: opacity 0.5s; }
+        #sim-stove-flame.on { opacity: 0.9; animation: flicker 0.2s infinite alternate; }
+        @keyframes flicker { 0% { border-bottom-color: #f39c12; transform: scaleY(1) translateX(-50%); } 100% { border-bottom-color: #f1c40f; transform: scaleY(0.9) translateX(-50%);} }
+
+        /* Torch */
+        #sim-torch-body { position: absolute; width: 80px; height: 40px; background: #7f8c8d; border-radius: 5px; left: 50%; top: 50%; transform: translate(-50%, -50%); border: 2px solid #34495e; }
+        #sim-torch-bulb { position: absolute; width: 25px; height: 25px; background: #f0f0f0; border-radius: 50%; left: 75px; top: 50%; transform: translateY(-50%); border: 1px solid #bdc3c7; transition: background-color 0.3s; }
+        #sim-torch-bulb.on { background: #fffbe6; box-shadow: 0 0 10px #ffec8b; }
+        #sim-torch-beam { position: absolute; left: 95px; top: 50%; transform: translateY(-50%); width: 0; height: 0; border-top: 40px solid transparent; border-bottom: 40px solid transparent; border-left: 120px solid rgba(255, 255, 150, 0.6); opacity: 0; transition: opacity 0.4s; }
+        #sim-torch-beam.on { opacity: 1; }
+
+        /* Bungee Jumper */
+        #bungee-platform { position: absolute; top: 0; left: 0; width: 100%; height: 20px; background-color: #8d6e63; border-bottom: 3px solid #5d4037; }
+        #bungee-cord { position: absolute; width: 4px; background-color: #e74c3c; top: 20px; left: 50%; transform: translateX(-50%); height: 0; transform-origin: top center; }
+        #bungee-jumper { position: absolute; width: 20px; height: 30px; background-color: #3498db; border-radius: 3px; top: 20px; left: 50%; transform: translateX(-50%); }
+
+        /* Practice Questions */
+        .practice-question { margin-bottom: 25px; padding: 20px; border: 1px solid #d1d5da; border-radius: 6px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .practice-question p { margin-bottom: 12px; }
+        .practice-question .question-text { font-weight: bold; color: #333; font-size: 1.1em; margin-bottom: 15px;}
+        .practice-question select { padding: 8px; margin: 0 5px; border: 1px solid #ccc; border-radius: 4px; min-width: 110px; background-color: #f8f9fa; }
+        .practice-question .gap-fill-input { padding: 7px; margin: 0 5px; border: 1px solid #ccc; border-radius: 4px; width: 130px; text-align: center; background-color: #f0f8ff; font-weight: 500;}
+        .practice-question button { margin-top: 15px; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-weight: 500;}
+        .practice-question button:hover { background-color: #218838; }
+        .word-bank { background-color: #e9ecef; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 0.9em; border: 1px solid #ced4da;}
+        .word-bank strong { display: block; margin-bottom: 5px; color: #495057;}
+        .word-bank span { display: inline-block; margin: 3px 5px; padding: 4px 8px; background-color: #fff; border: 1px solid #adb5bd; border-radius: 10px; font-weight: 500;}
+
+        /* Games */
+        .game-container { margin-bottom: 30px; padding: 20px; border: 1px solid #d1d5da; border-radius: 6px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .game-instructions { margin-bottom: 15px; background-color: #f8f9fa; padding: 10px; border-radius: 4px; border-left: 4px solid #007bff;}
+        .game-feedback { margin-top: 15px; text-align: center; font-size: 1.1em; font-weight: bold; min-height: 1.5em; padding: 8px; border-radius: 4px;}
+        .game-feedback.correct { background-color: #d4edda; color: #155724;}
+        .game-feedback.incorrect { background-color: #f8d7da; color: #721c24;}
+        .game-button { margin-top: 15px; padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-weight: 500;}
+        .game-button:hover { background-color: #5a6268; }
+
+        /* Match Game */
+        #match-game-area { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+        .match-game-column { flex: 1; min-width: 300px; padding: 15px; border: 1px dashed #ccc; border-radius: 5px; min-height: 300px; background-color: #f8f9fa; }
+        .match-game-column h4 { text-align: center; margin-bottom: 15px; color: #005a9e; }
+        .match-game-item { background-color: #fff; padding: 10px 12px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; transition: all 0.2s ease-in-out; text-align: center; font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+        .match-game-item:hover { background-color: #f0f0f0; transform: translateY(-2px); box-shadow: 0 3px 5px rgba(0,0,0,0.1);}
+        .match-game-item.selected { background-color: #ffeeba; border-color: #ffc107; transform: scale(1.03); box-shadow: 0 3px 5px rgba(0,0,0,0.1);}
+        .match-game-item.matched-example { background-color: #e2e3e5; border-color: #adb5bd; cursor: default; opacity: 0.6; text-decoration: line-through; }
+        .match-game-item.completed-store { background-color: #d1e7dd; border-color: #a3cfbb; cursor: default; font-weight: bold; color: #0f5132; box-shadow: none; }
+        .match-game-item.incorrect-match { background-color: #f8d7da; border-color: #f5c6cb; animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } }
+
+        /* Flow Game */
+        #flow-game-area { display: flex; gap: 20px; flex-wrap: wrap; }
+        #flow-game-options { width: 100%; max-width: 220px; border: 1px solid #ccc; padding: 15px; background-color: #f8f9fa; border-radius: 5px; }
+        #flow-game-options h4 { text-align: center; margin-bottom: 10px; color: #005a9e; border-bottom: 1px solid #ddd; padding-bottom: 5px;}
+        /* New: Sub-sections for flow game options */
+        .flow-options-section { margin-bottom: 15px; }
+        .flow-options-section h5 { font-size: 0.95em; color: #333; margin-bottom: 8px; text-align: center; background-color: #e0e0e0; padding: 3px; border-radius: 3px;}
+
+        #flow-game-scenarios { flex: 1; min-width: 300px;}
+        .flow-scenario { margin-bottom: 25px; padding: 20px; border: 1px solid #b3d9ff; background-color: #e7f3ff; border-radius: 5px; }
+        .flow-scenario h5 { margin-bottom: 15px; text-align: center; font-size: 1.2em; color: #0056b3;}
+        .flow-diagram { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .draggable-item { background-color: #fff; padding: 8px 12px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 20px; cursor: grab; text-align: center; font-size: 0.9em; font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.1);}
+        .draggable-item:active { cursor: grabbing; opacity: 0.6; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+        .drop-zone { border: 2px dashed #aaa; min-width: 120px; height: 40px; padding: 0 10px; display: flex; align-items: center; justify-content: center; background-color: #fff; border-radius: 4px; transition: background-color 0.2s, border-color 0.2s; font-style: italic; color: #888; font-size: 0.9em; text-align: center;}
+        .drop-zone.drag-over { background-color: #e9ecef; border-color: #007bff; }
+        .drop-zone.correct { border: 2px solid #28a745; background-color: #d4edda; font-style: normal; color: #155724; font-weight: bold; cursor: default;}
+        .drop-zone.incorrect { border: 2px solid #dc3545; background-color: #f8d7da; animation: shake 0.5s; }
+        .flow-arrow { font-size: 1.6em; color: #555; margin: 0 5px;}
+
+        /* Utility Classes */
+        .highlight { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; font-weight: bold; color: #594a0a;}
+        .image-caption { text-align: center; font-style: italic; color: #555; margin-top: 5px; font-size: 0.9em; }
+        img.inline-img { max-width: 100%; height: auto; border-radius: 5px; margin: 10px auto; display: block; box-shadow: 0 1px 4px rgba(0,0,0,0.1); max-height: 200px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>3.2.1 Energy Adds Up</h1>
+            <div style="font-size: 0.8em; text-align: right;">Big Idea: Energy 3<br>KS3 Physics</div>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#" id="nav-tutorial" class="active-nav" onclick="showScreen('tutorial-screen', event)">Tutorial</a></li>
+                <li><a href="#" id="nav-simulations" onclick="showScreen('simulation-screen', event)">Simulations</a></li>
+                <li><a href="#" id="nav-practice" onclick="showScreen('practice-screen', event)">Practice</a></li>
+                <li><a href="#" id="nav-games" onclick="showScreen('games-screen', event)">Games</a></li>
+            </ul>
+        </nav>
+
+        <div class="content-area">
+
+            <!-- ========================== -->
+            <!-- ==   TUTORIAL SCREEN    == -->
+            <!-- ========================== -->
+            <div id="tutorial-screen" class="main-screen active-screen">
+                <h2>Tutorial: Learning the Basics</h2>
+                <!-- Tab Buttons -->
+                <div class="tab-container">
+                    <button class="tab-button active" onclick="openTutorialTab(event, 'tab-intro')">Introduction</button>
+                    <button class="tab-button" onclick="openTutorialTab(event, 'tab-conservation')">Conservation Law</button>
+                    <button class="tab-button" onclick="openTutorialTab(event, 'tab-stores')">Energy Stores</button>
+                    <button class="tab-button" onclick="openTutorialTab(event, 'tab-transfer')">Energy Transfers</button>
+                    <button class="tab-button" onclick="openTutorialTab(event, 'tab-examples')">Real-World Examples</button>
+                </div>
+
+                <!-- Tab Content: Introduction -->
+                <div id="tab-intro" class="tab-content active">
+                    <h3>What is Energy?</h3>
+                    <p>Energy is a bit like money. You can have it in different forms (like cash, bank account, or owning something valuable), and you can move it around or change its form, but the total amount stays the same unless you spend it (transfer it away) or earn more (transfer it in).</p>
+                    <p>In physics, energy is the quantity needed to make something happen - to do work or cause change. It's needed to get jobs done.</p>
+                    <h3>Learning Objectives</h3>
+                    <p>After this lesson, you should be able to:</p>
+                    <ul>
+                        <li>Use a model of energy transfer between stores to describe how jobs get done.</li>
+                        <li>Describe how the energy of an object depends on its speed, temperature, height, or whether it is stretched or compressed.</li>
+                        <li>Show how energy is transferred between stores in real-life examples.</li>
+                        <li>State and apply the principle of conservation of energy.</li>
+                    </ul>
+                </div>
+
+                <!-- Tab Content: Conservation Law -->
+                <div id="tab-conservation" class="tab-content">
+                     <h3>The Law of Conservation of Energy</h3>
+                     <p>This is a very important rule in physics! It states that:</p>
+                     <p><span class="highlight">Energy cannot be created or destroyed, only transferred from one store to another, or dissipated (spread out, usually as thermal energy).</span></p>
+                     <p>Think back to the money analogy. If you start with £10 and don't spend any or receive any, you still have £10. The total amount is conserved. If you buy a £3 snack, you now have £7, and the shop has £3. The energy (money) was transferred, not destroyed. The total amount (£10) is still accounted for.</p>
+                     <p>This means the total energy in a closed system (where energy doesn't enter or leave) always stays the same, even if it changes forms.</p>
+                     <div class="checkpoint">
+                        <label>Checkpoint A: Complete the law of conservation of energy:</label>
+                         Energy cannot be <select id="cp1_a"><option value="">...</option><option value="created">created</option><option value="moved">moved</option><option value="used">used</option></select>
+                         or <select id="cp1_b"><option value="">...</option><option value="destroyed">destroyed</option><option value="lost">lost</option><option value="made">made</option></select>,
+                         only <select id="cp1_c"><option value="">...</option><option value="transferred">transferred</option><option value="changed">changed</option><option value="dissipated">dissipated</option></select>
+                         between stores.
+                         <button onclick="checkCheckpoint('cp1', ['created', 'destroyed', 'transferred'])">Check</button>
+                         <div id="feedback_cp1" class="feedback"></div>
+                     </div>
+                </div>
+
+                <!-- Tab Content: Energy Stores -->
+                <div id="tab-stores" class="tab-content">
+                    <h3>Where is Energy Stored?</h3>
+                    <p>Energy isn't just floating around; it's associated with objects and systems in different ways. We call these the main <span class="highlight">energy stores</span>.</p>
+                    <ul>
+                        <li><strong>Chemical Energy Store:</strong> Energy stored in the bonds between atoms. Found in food, fuels (like gas, coal, wood), and batteries. Released during chemical reactions.</li>
+                        <li><strong>Thermal Energy Store:</strong> Energy related to the temperature of an object. The hotter it is, the more energy its particles have, and the more energy is in its thermal store.</li>
+                        <li><strong>Kinetic Energy Store:</strong> The energy of moving objects. Depends on the object's mass and its speed (faster/heavier means more kinetic energy).</li>
+                        <li><strong>Gravitational Potential Energy (GPE) Store:</strong> Energy stored by an object due to its position in a gravitational field (usually its height above a reference point). Depends on mass, height, and gravitational field strength.</li>
+                        <li><strong>Elastic Potential Energy (EPE) Store:</strong> Energy stored when an object is stretched, squashed, or twisted and can return to its original shape. Found in springs, elastic bands, trampolines etc.</li>
+                        <li><em>(Other stores exist, like Nuclear and Magnetic, but these five are key for now).</em></li>
+                    </ul>
+                    <div class="checkpoint">
+                       <label>Checkpoint B: Match the item to its main energy store:</label>
+                       A stretched spring: <select id="cp2_a"><option value="">...</option><option value="Kinetic">Kinetic</option><option value="Elastic Potential">Elastic Potential</option><option value="Chemical">Chemical</option><option value="GPE">GPE</option></select><br>
+                       A moving car: <select id="cp2_b"><option value="">...</option><option value="Thermal">Thermal</option><option value="GPE">GPE</option><option value="Kinetic">Kinetic</option><option value="Elastic Potential">Elastic Potential</option></select><br>
+                       A battery: <select id="cp2_c"><option value="">...</option><option value="Chemical">Chemical</option><option value="Electrical">Electrical</option><option value="Thermal">Thermal</option><option value="Kinetic">Kinetic</option></select><br>
+                       An apple hanging high on a tree: <select id="cp2_d"><option value="">...</option><option value="Chemical">Chemical</option><option value="GPE">GPE</option><option value="Kinetic">Kinetic</option><option value="Thermal">Thermal</option></select>
+                       <button onclick="checkCheckpoint('cp2', ['Elastic Potential', 'Kinetic', 'Chemical', 'GPE'])">Check</button>
+                       <div id="feedback_cp2" class="feedback"></div>
+                    </div>
+                </div>
+
+                 <!-- Tab Content: Energy Transfers -->
+                <div id="tab-transfer" class="tab-content">
+                    <h3>How Does Energy Move?</h3>
+                    <p>Energy moves from one store to another via <span class="highlight">energy transfer pathways</span>. The main ways energy can be transferred are:</p>
+                    <ul>
+                        <li><strong>Mechanically:</strong> When a force acts on an object and causes it to move (or changes its potential energy). Examples: Pushing a box, a falling object, sound waves travelling.</li>
+                        <li><strong>Electrically:</strong> When electric charges (current) move due to a potential difference (voltage). Examples: Power lines carrying energy, energy transfer inside circuits.</li>
+                        <li><strong>By Heating:</strong> Energy transfer due to a temperature difference between objects. Moves from hotter to colder regions via conduction, convection, or thermal radiation. Examples: A radiator warming a room, a hot drink cooling down.</li>
+                        <li><strong>By Radiation:</strong> Energy transferred as electromagnetic waves (like light, infrared, microwaves, radio waves) or sound waves. Examples: Light from the Sun or a lamp, heat radiating from a fire, microwaves cooking food.</li>
+                    </ul>
+                     <p>Often, during energy transfers, some energy is transferred 'wastefully' to the thermal energy store of the surroundings, making them warmer. This energy isn't destroyed, but it's <span class="highlight">dissipated</span> and becomes less useful.</p>
+                     <div class="checkpoint">
+                        <label>Checkpoint C: Choose the main energy transfer pathway:</label>
+                        Sun warming the Earth: <select id="cp3_a"><option value="">...</option><option value="Heating">Heating</option><option value="Radiation">Radiation</option><option value="Mechanically">Mechanically</option><option value="Electrically">Electrically</option></select><br>
+                        A motor lifting a weight: <select id="cp3_b"><option value="">...</option><option value="Electrically">Electrically</option><option value="Heating">Heating</option><option value="Mechanically">Mechanically</option><option value="Radiation">Radiation</option></select><br>
+                        Using a kettle to boil water: <select id="cp3_c"><option value="">...</option><option value="Electrically">Electrically</option><option value="Heating">Heating</option><option value="Mechanically">Mechanically</option><option value="Radiation">Radiation</option></select>
+                        <button onclick="checkCheckpoint('cp3', ['Radiation', 'Mechanically', 'Heating'])">Check</button>
+                        <div id="feedback_cp3" class="feedback"></div>
+                     </div>
+                </div>
+
+                <!-- Tab Content: Examples (UPDATED) -->
+                <div id="tab-examples" class="tab-content">
+                    <h3>Energy Transfers in Action</h3>
+                    <p>Let's look at how energy stores change in some real-world situations, applying the conservation of energy principle (Total energy before = Total energy after). These match the simulations!</p>
+
+                    <h4>Example 1: Bouncing Ball</h4>
+                     <p>A ball is dropped and bounces, but not as high each time.</p>
+                     <div class="example-box">
+                       <div class="before-after">
+                           <h4>Before (Ball held high, stationary)</h4>
+                           <ul>
+                               <li>Have: Ball lifted up, Cooler ball & surroundings</li>
+                                <li>Thinking about energy: Max energy in <span class="highlight">Gravitational Potential Energy (GPE)</span> store. Minimal kinetic and thermal energy.</li>
+                           </ul>
+                       </div>
+                        <div class="before-after">
+                           <h4>After (Top of first bounce)</h4>
+                           <ul>
+                               <li>Have: Ball lower down, momentarily stationary, Slightly warmer ball & surroundings</li>
+                               <li>Thinking about energy: Less energy in GPE store (lower height). Kinetic energy is zero at the peak. More energy in the <span class="highlight">Thermal</span> store of the ball and surroundings (due to air resistance and energy loss in the bounce itself).</li>
+                           </ul>
+                       </div>
+                   </div>
+                     <p><strong>Energy Transfer Pathways:</strong> Mechanical work (gravity doing work), Mechanical work (during bounce deformation), Heating, Sound waves.</p>
+                     <p><strong>Summary (during fall):</strong> GPE store <strong>decreases</strong>, Kinetic store <strong>increases</strong>. Some increase in Thermal store (air resistance).</p>
+                     <p><strong>Summary (during bounce):</strong> Kinetic store → Elastic Potential store → Kinetic store. Significant increase in Thermal store (deformation, sound).</p>
+                     <p><strong>Overall:</strong> With each bounce, some energy is dissipated to the thermal store, so the maximum GPE (and height) reached on subsequent bounces decreases.</p>
+
+                    <hr style="margin: 25px 0;">
+
+                    <h4>Example 2: Camping Stove</h4>
+                    <p>A camping stove burns gas (a fuel) to heat soup.</p>
+                     <img src="images/campfire.jpg" alt="Camping stove heating soup" class="inline-img" style="max-width: 250px;" onerror="this.style.display='none'">
+                    <div class="example-box">
+                        <div class="before-after">
+                            <h4>Before</h4>
+                            <ul>
+                                <li>Have: Unburnt fuel (gas) & oxygen, Cold soup & surroundings</li>
+                                <li>Thinking about energy: More energy in the <span class="highlight">chemical</span> store of the fuel. Less energy in the <span class="highlight">thermal</span> store of the soup and surroundings.</li>
+                            </ul>
+                        </div>
+                        <div class="before-after">
+                            <h4>After</h4>
+                            <ul>
+                                <li>Have: Less fuel, More carbon dioxide & water (products), Hot soup & slightly hotter surroundings</li>
+                                <li>Thinking about energy: Less energy in the chemical store. More energy in the <span class="highlight">thermal</span> store of the soup and surroundings.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><strong>Energy Transfer Pathway:</strong> Mainly by <span class="highlight">Heating</span> (conduction, convection, radiation from flame to pot and soup).</p>
+                    <p><strong>Summary:</strong> Chemical store (fuel) <strong>decreases</strong>. Thermal store (soup + surroundings) <strong>increases</strong>.</p>
+
+                     <hr style="margin: 25px 0;">
+
+                    <h4>Example 3: Battery Torch</h4>
+                    <p>A torch uses a battery to produce light.</p>
+                    <div class="example-box">
+                        <div class="before-after">
+                            <h4>Before (Switched Off)</h4>
+                            <ul>
+                                <li>Have: Battery with stored chemical energy, cool bulb.</li>
+                                <li>Thinking about energy: Energy mainly in the <span class="highlight">chemical</span> store of the battery. Low thermal energy.</li>
+                            </ul>
+                        </div>
+                        <div class="before-after">
+                            <h4>After (Switched On for a while)</h4>
+                            <ul>
+                                <li>Have: Battery with less chemical energy, glowing bulb (producing light), warm bulb and casing.</li>
+                                <li>Thinking about energy: Less energy in chemical store. Energy transferred as light (useful). Increase in the <span class="highlight">thermal</span> store of the bulb and surroundings (wasted).</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><strong>Energy Transfer Pathways:</strong> <span class="highlight">Electrically</span> (energy transferred through the circuit wires), <span class="highlight">Radiation</span> (light and infrared/heat from the bulb).</p>
+                    <p><strong>Summary:</strong> Chemical store (battery) <strong>decreases</strong>. Energy is transferred electrically. Light is emitted. Thermal store (bulb/surroundings) <strong>increases</strong>.</p>
+
+                     <hr style="margin: 25px 0;">
+
+                    <h4>Example 4: Bungee Jumper</h4>
+                    <p>A person jumps from a platform attached to a bungee cord.</p>
+                    <div class="example-box">
+                        <div class="before-after">
+                            <h4>Before (At the top)</h4>
+                            <ul>
+                                <li>Have: Jumper stationary at maximum height.</li>
+                                <li>Thinking about energy: Maximum energy in <span class="highlight">Gravitational Potential Energy (GPE)</span> store. Zero KE and EPE (cord slack). Low thermal energy.</li>
+                            </ul>
+                        </div>
+                        <div class="before-after">
+                            <h4>After (Oscillating/Coming to rest)</h4>
+                            <ul>
+                                <li>Have: Jumper moving up and down, cord stretching and contracting, air and cord warming slightly.</li>
+                                <li>Thinking about energy: Energy transfers between <span class="highlight">GPE</span>, <span class="highlight">Kinetic</span>, and <span class="highlight">Elastic Potential Energy (EPE)</span> stores. With each oscillation, energy is dissipated, increasing the <span class="highlight">Thermal</span> store of the cord, air, and jumper. Eventually, all initial GPE becomes thermal energy as the jumper comes to rest.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p><strong>Energy Transfer Pathways:</strong> <span class="highlight">Mechanically</span> (work done by gravity, work done by elastic cord tension), <span class="highlight">Heating</span> (due to air resistance and internal friction/damping within the cord).</p>
+                    <p><strong>Summary:</strong> GPE ↔ KE ↔ EPE, with continuous dissipation to the Thermal store until oscillations cease.</p>
+
+                </div>
+
+            </div> <!-- End Tutorial Screen -->
+
+            <!-- ========================== -->
+            <!-- ==  SIMULATIONS SCREEN  == -->
+            <!-- ========================== -->
+            <div id="simulation-screen" class="main-screen">
+                <h2>Energy Transfer Simulations</h2>
+                <p style="text-align: center; margin-bottom: 25px;">Watch how energy moves between different stores in these examples. Note that the total energy should remain constant!</p>
+                <div class="simulation-container">
+
+                    <!-- Bouncing Ball Sim -->
+                    <div class="simulation-box">
+                        <h3>Bouncing Ball</h3>
+                        <div class="sim-canvas-area" id="ball-sim-canvas">
+                            <div id="sim-ball"></div>
+                        </div>
+                        <div class="energy-bars-display" id="ball-energy-bars">
+                            <div class="energy-bar-container">GPE<div class="energy-bar" id="gpe-bar"><span class="value">0%</span></div></div>
+                            <div class="energy-bar-container">Kinetic<div class="energy-bar" id="ke-bar"><span class="value">0%</span></div></div>
+                            <div class="energy-bar-container">Elastic<div class="energy-bar" id="epe-bar"><span class="value">0%</span></div></div>
+                            <div class="energy-bar-container">Thermal<div class="energy-bar" id="te-bar"><span class="value">0%</span></div></div>
+                        </div>
+                        <div class="sim-controls">
+                            <button onclick="startBallSimulation()">Drop Ball</button>
+                            <button onclick="resetBallSimulation()">Reset</button>
+                        </div>
+                    </div>
+
+                     <!-- Camping Stove Sim -->
+                     <div class="simulation-box">
+                        <h3>Camping Stove</h3>
+                         <div class="sim-canvas-area" id="stove-sim-canvas">
+                             <div id="sim-stove-pot"></div>
+                             <div id="sim-stove-lid"></div>
+                             <div id="sim-stove-base"></div>
+                             <div id="sim-stove-flame"></div>
+                         </div>
+                         <div class="energy-bars-display" id="stove-energy-bars">
+                             <div class="energy-bar-container">Chemical (Fuel)<div class="energy-bar" id="chem-bar"><span class="value">100%</span></div></div>
+                             <div class="energy-bar-container">Thermal (Soup)<div class="energy-bar" id="te-soup-bar"><span class="value">0%</span></div></div>
+                              <div class="energy-bar-container">Thermal (Surr.)<div class="energy-bar" id="te-surr-bar"><span class="value">0%</span></div></div>
+                         </div>
+                         <div class="sim-controls">
+                             <button onclick="lightStove()">Light Stove</button>
+                             <button onclick="resetStoveSimulation()">Reset</button>
+                         </div>
+                    </div>
+
+                     <!-- Torch Simulation -->
+                    <div class="simulation-box">
+                        <h3>Battery Torch</h3>
+                        <div class="sim-canvas-area" id="torch-sim-canvas">
+                             <div id="sim-torch-body"></div>
+                             <div id="sim-torch-bulb"></div>
+                             <div id="sim-torch-beam"></div>
+                        </div>
+                        <div class="energy-bars-display" id="torch-energy-bars">
+                            <div class="energy-bar-container">Chemical<div class="energy-bar" id="torch-chem-bar"><span class="value">100%</span></div></div>
+                            <div class="energy-bar-container">Light<div class="energy-bar" id="light-bar"><span class="value">0%</span></div></div>
+                            <div class="energy-bar-container">Thermal<div class="energy-bar" id="torch-te-bar"><span class="value">0%</span></div></div>
+                        </div>
+                        <div class="sim-controls">
+                             <button onclick="switchOnTorch()">Switch On</button>
+                             <button onclick="resetTorchSimulation()">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Bungee Jumper Simulation -->
+                    <div class="simulation-box">
+                        <h3>Bungee Jumper</h3>
+                        <div class="sim-canvas-area" id="bungee-sim-canvas">
+                             <div id="bungee-platform"></div>
+                             <div id="bungee-cord"></div>
+                             <div id="bungee-jumper"></div>
+                        </div>
+                        <div class="energy-bars-display" id="bungee-energy-bars">
+                            <div class="energy-bar-container">GPE<div class="energy-bar" id="bungee-gpe-bar"><span class="value">100%</span></div></div>
+                            <div class="energy-bar-container">Kinetic<div class="energy-bar" id="bungee-ke-bar"><span class="value">0%</span></div></div>
+                            <div class="energy-bar-container">Elastic<div class="energy-bar" id="bungee-epe-bar"><span class="value">0%</span></div></div>
+                             <div class="energy-bar-container">Thermal<div class="energy-bar" id="bungee-te-bar"><span class="value">0%</span></div></div>
+                        </div>
+                        <div class="sim-controls">
+                             <button onclick="startBungeeJump()">Jump!</button>
+                             <button onclick="resetBungeeSimulation()">Reset</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div> <!-- End Simulations Screen -->
+
+            <!-- ========================== -->
+            <!-- ==   PRACTICE SCREEN    == -->
+            <!-- ========================== -->
+            <div id="practice-screen" class="main-screen">
+                <h2>Practice Questions</h2>
+                <!-- Question 1 -->
+                <div class="practice-question" id="pq1"> <p class="question-text">1. Complete the sentences about the law of conservation of energy:</p> <p>Energy cannot be <select id="q1a"> <option value="">...</option> <option value="created">created</option> <option value="transferred">transferred</option> <option value="used">used</option> </select> or <select id="q1b"> <option value="">...</option> <option value="made">made</option> <option value="destroyed">destroyed</option> <option value="moved">moved</option> </select>. When you burn coal, you transfer energy from a <select id="q1c"> <option value="">...</option> <option value="chemical">chemical</option> <option value="thermal">thermal</option> <option value="kinetic">kinetic</option> </select> energy store primarily to a <select id="q1d"> <option value="">...</option> <option value="chemical">chemical</option> <option value="thermal">thermal</option> <option value="potential">potential</option> </select> energy store (of the surroundings and boiler). We <select id="q1e"> <option value="">...</option> <option value="can">can</option> <option value="cannot">cannot</option> </select> explain physical processes using energy transfers. </p> <button onclick="checkPracticeQ1()">Check Answer</button> <div id="feedback_pq1" class="feedback"></div> </div>
+                 <!-- Question 2 -->
+                <div class="practice-question" id="pq2"> <p class="question-text">2. Choose the correct terms to describe the main energy transfers:</p> <p>a) A battery torch converts energy from its <select id="q2a_1"> <option>...</option> <option>Chemical</option> <option>Electrical</option> <option>Kinetic</option> </select> store into useful <select id="q2a_2"> <option>...</option> <option>Light</option> <option>Sound</option> <option>Chemical</option> </select> energy and wasted <select id="q2a_3"> <option>...</option> <option>Sound</option> <option>Thermal</option> <option>Potential</option> </select> energy. The transfer pathway within the circuit is primarily <select id="q2a_4"> <option>...</option> <option>Electrically</option> <option>Heating</option> <option>Mechanically</option> </select>. </p> <p>b) Generating electricity from coal involves burning the coal (transferring from <select id="q2b_1"><option>...</option><option>Chemical</option><option>Thermal</option></select> store) to produce <select id="q2b_2"><option>...</option><option>Thermal</option><option>Kinetic</option></select> energy. This heats water to steam, which turns a turbine (<select id="q2b_3"><option>...</option><option>Kinetic</option><option>Potential</option></select> store). The turbine spins a generator, producing <select id="q2b_4"><option>...</option><option>Electrical</option><option>Mechanical</option></select> energy. </p> <p>c) Generating electricity from wind uses the wind's <select id="q2c_1"><option>...</option><option>Kinetic</option><option>Potential</option></select> store to turn the turbine blades (<select id="q2c_2"><option>...</option><option>Kinetic</option><option>Thermal</option></select> store). The turbine spins a generator, producing <select id="q2c_3"><option>...</option><option>Electrical</option><option>Chemical</option></select> energy which might be used to run a motor (<select id="q2c_4"><option>...</option><option>Kinetic</option><option>Potential</option></select> store). </p> <button onclick="checkPracticeQ2()">Check Answers</button> <div id="feedback_pq2a" class="feedback"></div> <div id="feedback_pq2b" class="feedback"></div> <div id="feedback_pq2c" class="feedback"></div> </div>
+                 <!-- Question 3 -->
+                <div class="practice-question" id="pq3"> <p class="question-text">3. Complete the sentences linking object properties to energy stores:</p> <p>Increasing an object's speed increases its <select id="q3a"><option>...</option><option>Kinetic</option><option>Thermal</option><option>GPE</option><option>Chemical</option></select> energy store.</p> <p>Increasing an object's temperature increases its <select id="q3b"><option>...</option><option>Kinetic</option><option>Thermal</option><option>Elastic Potential</option><option>GPE</option></select> energy store.</p> <p>Increasing an object's height (in a gravitational field) increases its <select id="q3c"><option>...</option><option>Chemical</option><option>GPE</option><option>Kinetic</option><option>Thermal</option></select> energy store.</p> <p>Stretching an elastic band increases its <select id="q3d"><option>...</option><option>Thermal</option><option>GPE</option><option>Elastic Potential</option><option>Kinetic</option></select> energy store.</p> <button onclick="checkPracticeQ3()">Check Answers</button> <div id="feedback_pq3" class="feedback"></div> </div>
+                 <!-- Question 4 -->
+                <div class="practice-question" id="pq4"> <p class="question-text">4. Fill the gaps using the word bank to describe cooking sausages on a campfire:</p> <p> Burning wood releases energy from its <input type="text" id="q4a" class="gap-fill-input" data-answer="Chemical"> store. Energy is transferred from the fire to the sausages mainly by <input type="text" id="q4b" class="gap-fill-input" data-answer="Heating"> (convection/conduction from hot air/embers) and <input type="text" id="q4c" class="gap-fill-input" data-answer="Radiation"> (infrared). This increases the <input type="text" id="q4d" class="gap-fill-input" data-answer="Thermal"> energy store of the sausages, cooking them. </p> <div class="word-bank"> <strong>Word Bank:</strong> <span>Chemical</span> <span>Thermal</span> <span>Kinetic</span> <span>Heating</span> <span>Radiation</span> <span>Electrical</span> <span>GPE</span> <span>Elastic Potential</span> <span>Mechanically</span> </div> <button onclick="checkPracticeQ4()">Check Answer</button> <div id="feedback_pq4" class="feedback"></div> <img src="images/campfire.jpg" alt="Sausages cooking over a campfire" class="inline-img" style="max-width: 250px;" onerror="this.style.display='none'"> </div>
+            </div> <!-- End Practice Screen -->
+
+            <!-- ========================== -->
+            <!-- ==     GAMES SCREEN     == -->
+            <!-- ========================== -->
+            <div id="games-screen" class="main-screen">
+                <h2>Games Zone</h2>
+                <div class="game-container"> <!-- Match Game -->
+                     <h3>Game 1: Match the Energy Store!</h3> <p class="game-instructions">Click an example on the left, then click the matching energy store type on the right. Some stores match multiple examples! The store type will highlight green when all its examples are matched.</p>
+                     <div id="match-game-area"> <div class="match-game-column" id="match-game-examples"><h4>Example / Description</h4></div> <div class="match-game-column" id="match-game-stores"><h4>Energy Store Type</h4></div> </div>
+                     <div id="match-game-feedback" class="game-feedback"></div> <button onclick="setupMatchGame()" class="game-button">Restart Match Game</button>
+                 </div>
+                 <div class="game-container"> <!-- Flow Game -->
+                     <h3>Game 2: Energy Flow Builder</h3> <p class="game-instructions">Drag the energy stores and transfer types from the 'Options' box into the correct places (dashed boxes) in the flow diagrams below.</p>
+                     <div id="flow-game-area">
+                         <!-- UPDATED Options structure -->
+                         <div id="flow-game-options">
+                             <h4>Options (Drag these)</h4>
+                             <div class="flow-options-section" id="flow-options-stores">
+                                 <h5>Energy Stores</h5>
+                                 <!-- JS Populates Stores -->
+                             </div>
+                             <div class="flow-options-section" id="flow-options-pathways">
+                                  <h5>Transfer Pathways</h5>
+                                 <!-- JS Populates Pathways -->
+                             </div>
+                         </div>
+                         <div id="flow-game-scenarios"> <h4>Scenarios</h4>
+                             <div class="flow-scenario" id="flow-scenario-torch">
+                                <h5>Battery Torch</h5>
+                                <div class="flow-diagram">
+                                     <div class="drop-zone" data-correct="Chemical" title="Initial Energy Store">Initial Store</div> <span class="flow-arrow">→</span>
+                                     <div class="drop-zone" data-correct="Electrical" title="Energy Transfer Pathway">Transfer</div> <span class="flow-arrow">→</span>
+                                     <div class="drop-zone" data-correct="Radiation" title="Useful Output Energy Transfer">Useful Output</div> <span style="font-size: 1.2em; margin: 0 5px;">+</span>
+                                     <div class="drop-zone" data-correct="Thermal" title="Wasted Output Energy Store">Wasted Output</div>
+                                </div> <div id="feedback-torch" class="feedback" style="justify-content: center;"></div>
+                             </div>
+                             <div class="flow-scenario" id="flow-scenario-apple">
+                                <h5>Falling Apple (just before hitting ground)</h5>
+                                <div class="flow-diagram">
+                                     <div class="drop-zone" data-correct="GPE" title="Initial Energy Store (High up)">Initial Store (High up)</div> <span class="flow-arrow">→</span>
+                                     <div class="drop-zone" data-correct="Mechanically" title="Energy Transfer Pathway (Work done by gravity)">Transfer</div> <span class="flow-arrow">→</span>
+                                     <div class="drop-zone" data-correct="Kinetic" title="Main Energy Store just before impact">Main Store (Falling)</div> <span style="font-size: 1.2em; margin: 0 5px;">+</span>
+                                     <div class="drop-zone" data-correct="Thermal" title="Wasted Energy Store (Air Resistance)">Wasted (Air Res.)</div>
+                                </div> <div id="feedback-apple" class="feedback" style="justify-content: center;"></div>
+                             </div>
+                             <div class="flow-scenario" id="flow-scenario-motor">
+                                <h5>Simple Electric Motor</h5>
+                                <div class="flow-diagram">
+                                     <div class="drop-zone" data-correct="Electrical" title="Input Energy Transfer Pathway">Input Transfer</div> <span class="flow-arrow">→</span>
+                                     <div class="drop-zone" data-correct="Kinetic" title="Useful Output Energy Store (Movement)">Useful Output (Movement)</div> <span style="font-size: 1.2em; margin: 0 5px;">+</span>
+                                     <div class="drop-zone" data-correct="Thermal" title="Wasted Output Energy Store (Heat/Friction)">Wasted Output (Heat)</div> <span style="font-size: 1.2em; margin: 0 5px;">+</span>
+                                     <div class="drop-zone" data-correct="Sound" title="Wasted Output Energy Store (Noise)">Wasted Output (Noise)</div>
+                                </div> <div id="feedback-motor" class="feedback" style="justify-content: center;"></div>
+                             </div>
+                         </div>
+                     </div>
+                     <button onclick="setupFlowGame()" class="game-button">Reset Flow Game</button>
+                 </div>
+            </div> <!-- End Games Screen -->
+
+        </div> <!-- End Content Area -->
+    </div> <!-- End Container -->
+
+    <script>
+        // --- Screen Navigation ---
+        function showScreen(screenId, event) { if (event) event.preventDefault(); document.querySelectorAll('.main-screen').forEach(screen => { screen.classList.remove('active-screen'); screen.style.display = 'none'; }); document.querySelectorAll('nav ul li a').forEach(link => { link.classList.remove('active-nav'); }); const targetScreen = document.getElementById(screenId); if (targetScreen) { targetScreen.style.display = 'block'; void targetScreen.offsetWidth; targetScreen.classList.add('active-screen'); } else { console.error("Screen not found:", screenId); return; } const navLinkId = `nav-${screenId.split('-')[0]}`; const targetLink = document.getElementById(navLinkId); if (targetLink) { targetLink.classList.add('active-nav'); } else { console.warn("Nav link not found:", navLinkId); } const contentArea = document.querySelector('.content-area'); if (contentArea) contentArea.scrollTop = 0; }
+
+        // --- Tutorial Tab Functionality ---
+        function openTutorialTab(evt, tabName) { let i, tabcontent, tablinks; const tutorialScreen = document.getElementById('tutorial-screen'); if (!tutorialScreen) return; tabcontent = tutorialScreen.getElementsByClassName("tab-content"); for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; tabcontent[i].classList.remove("active"); } tablinks = tutorialScreen.getElementsByClassName("tab-button"); for (i = 0; i < tablinks.length; i++) { tablinks[i].classList.remove("active"); } const activeTabContent = document.getElementById(tabName); if (activeTabContent){ activeTabContent.style.display = "block"; void activeTabContent.offsetWidth; activeTabContent.classList.add("active"); } else { console.error("Tab content not found:", tabName); } if(evt && evt.currentTarget) { evt.currentTarget.classList.add("active"); } }
+
+        // --- General Checkpoint Checker ---
+        function checkCheckpoint(cpId, correctAnswers) { const feedbackEl = document.getElementById(`feedback_${cpId}`); if (!feedbackEl) return; let allCorrect = true; correctAnswers.forEach((answer, index) => { const selectId = `${cpId}_${String.fromCharCode(97 + index)}`; const selectElement = document.getElementById(selectId); if (!selectElement) { allCorrect = false; return; } selectElement.style.borderColor = '#ccc'; if (selectElement.value !== answer) { allCorrect = false; selectElement.style.borderColor = '#dc3545'; } else { selectElement.style.borderColor = '#28a745'; } }); if (allCorrect) { feedbackEl.innerHTML = `Correct! <img src='images/tick.png' alt='Correct' onerror="this.style.display='none'">`; feedbackEl.className = "feedback correct"; } else { feedbackEl.innerHTML = `Not quite, check the highlighted answers. <img src='images/cross.png' alt='Incorrect' onerror="this.style.display='none'">`; feedbackEl.className = "feedback incorrect"; } }
+
+        // --- Simulation Logic ---
+        // Shared function to update energy bars
+        function updateEnergyBars(barsData, containerId) { const container = document.getElementById(containerId); if (!container) return; let totalPercent = 0; const maxBarHeight = 90; for (const barId in barsData) { const barEl = container.querySelector(`#${barId}`); const valueEl = barEl ? barEl.querySelector('.value') : null; if (barEl && valueEl) { const percent = Math.max(0, Math.min(100, barsData[barId])); totalPercent += percent; barEl.style.height = `${(percent / 100) * maxBarHeight}px`; valueEl.textContent = `${Math.round(percent)}%`; } } if (Math.abs(totalPercent - 100) > 1.5 && totalPercent > 0.1) { /* console.warn(`Total energy bar % in ${containerId} is ${Math.round(totalPercent)}%`); */ } }
+
+        // --- Bouncing Ball Simulation ---
+        let ballSimInterval = null; let ballSimState = { height: 100, velocity: 0, g: 18, restitution: 0.75, thermal: 0, elastic: 0, totalEnergy: 100, onGround: false }; const ballUpdateRate = 20; const minBounceVelocityThreshold = 0.5; const epsilon = 0.1;
+        function ballSimulationStep() { const dt = ballUpdateRate / 1000; const ballEl = document.getElementById('sim-ball'); if (!ballEl) return; let nextHeight = ballSimState.height; let nextVelocity = ballSimState.velocity; ballSimState.onGround = false; ballSimState.elastic = 0; nextVelocity -= ballSimState.g * dt; nextHeight += nextVelocity * dt; if (nextHeight <= 0 && nextVelocity < 0) { ballSimState.onGround = true; const energyAvailable = ballSimState.totalEnergy - ballSimState.thermal; const energyLossFraction = (1 - ballSimState.restitution * ballSimState.restitution); const impactSeverityFactor = Math.min(1, Math.abs(nextVelocity) / 10); const energyLost = energyAvailable * energyLossFraction * (0.4 + 0.6 * impactSeverityFactor); ballSimState.thermal = Math.min(ballSimState.totalEnergy, ballSimState.thermal + energyLost); const energyAfterLoss = Math.max(0, energyAvailable - energyLost); nextHeight = 0; nextVelocity = 0; ballSimState.elastic = energyAfterLoss; let reboundVelocity = Math.abs(ballSimState.velocity * ballSimState.restitution); if (reboundVelocity < minBounceVelocityThreshold || energyAfterLoss < epsilon) { clearInterval(ballSimInterval); ballSimInterval = null; ballSimState.velocity = 0; ballSimState.height = 0; ballSimState.elastic = 0; ballSimState.thermal = ballSimState.totalEnergy; ballSimState.onGround = true; updateBallSimulationView(); return; } ballSimState.velocity = reboundVelocity; } else if (nextHeight > 0) { const airLoss = Math.abs(nextVelocity) * 0.008 * dt; ballSimState.thermal = Math.min(ballSimState.totalEnergy, ballSimState.thermal + airLoss); ballSimState.elastic = 0; ballSimState.velocity = nextVelocity; } else { nextHeight = 0; ballSimState.velocity = nextVelocity; } ballSimState.height = Math.max(0, nextHeight); updateBallSimulationView(); }
+        function updateBallSimulationView() { const ballEl = document.getElementById('sim-ball'); const canvasEl = document.getElementById('ball-sim-canvas'); if (!ballEl || !canvasEl) return; const ballHeightPixels = ballEl.offsetHeight; const canvasHeightPixels = canvasEl.offsetHeight; const usableHeight = canvasHeightPixels - ballHeightPixels - 10; const displayY = Math.max(0, Math.min(usableHeight, (ballSimState.height / ballSimState.totalEnergy) * usableHeight)); ballEl.style.bottom = `calc(10px + ${displayY}px)`; const currentTotal = ballSimState.totalEnergy; let gpePercent = 0, kePercent = 0, epePercent = 0; const thermalPercent = Math.min(100, (ballSimState.thermal / currentTotal) * 100); const remainingEnergyPercent = 100 - thermalPercent; if (ballSimState.onGround && ballSimState.elastic > epsilon) { epePercent = remainingEnergyPercent; gpePercent = 0; kePercent = 0; } else if (ballSimState.height < epsilon) { gpePercent = 0; epePercent = 0; kePercent = remainingEnergyPercent; } else if (Math.abs(ballSimState.velocity) < epsilon && ballSimState.height > epsilon) { kePercent = 0; epePercent = 0; gpePercent = remainingEnergyPercent; } else { epePercent = 0; gpePercent = (ballSimState.height / currentTotal) * 100; gpePercent = Math.min(gpePercent, remainingEnergyPercent); gpePercent = Math.max(0, gpePercent); kePercent = Math.max(0, remainingEnergyPercent - gpePercent); } const barsData = { 'gpe-bar': gpePercent, 'ke-bar': kePercent, 'epe-bar': epePercent, 'te-bar': thermalPercent }; updateEnergyBars(barsData, 'ball-energy-bars'); }
+        function startBallSimulation() { if (ballSimInterval !== null) return; resetBallSimulation(); ballSimInterval = setInterval(ballSimulationStep, ballUpdateRate); }
+        function resetBallSimulation() { clearInterval(ballSimInterval); ballSimInterval = null; ballSimState = { height: 100, velocity: 0, g: 18, restitution: 0.75, thermal: 0, elastic: 0, totalEnergy: 100, onGround: false }; updateBallSimulationView(); }
+
+        // --- Stove Simulation ---
+        let stoveSimInterval = null; let stoveState = { chemical: 100, soupThermal: 0, surrThermal: 0, time: 0, isOn: false, totalEnergy: 100 }; const stoveRate = 2; const soupHeatEfficiency = 0.6;
+        function stoveSimulationStep() { if (!stoveState.isOn || stoveState.chemical <= 0) { clearInterval(stoveSimInterval); stoveSimInterval = null; stoveState.isOn = false; const flame = document.getElementById('sim-stove-flame'); if (flame) flame.classList.remove('on'); if (stoveState.chemical <= 0) { stoveState.chemical = 0; } updateStoveView(); return; } const energyUsed = Math.min(stoveState.chemical, stoveRate); stoveState.chemical -= energyUsed; const soupHeatGain = energyUsed * soupHeatEfficiency; const surrHeatGain = energyUsed * (1 - soupHeatEfficiency); stoveState.soupThermal += soupHeatGain; stoveState.surrThermal += surrHeatGain; const currentTotal = stoveState.chemical + stoveState.soupThermal + stoveState.surrThermal; if (currentTotal > stoveState.totalEnergy + 0.1) { const excess = currentTotal - stoveState.totalEnergy; const surrReduction = Math.min(excess, stoveState.surrThermal); stoveState.surrThermal -= surrReduction; const remainingExcess = excess - surrReduction; if (remainingExcess > 0) { stoveState.soupThermal = Math.max(0, stoveState.soupThermal - remainingExcess); } } stoveState.soupThermal = Math.min(stoveState.totalEnergy, stoveState.soupThermal); stoveState.surrThermal = Math.min(stoveState.totalEnergy, stoveState.surrThermal); stoveState.chemical = Math.max(0, stoveState.chemical); stoveState.time++; updateStoveView(); }
+        function updateStoveView(){ const barsData = { 'chem-bar': (stoveState.chemical / stoveState.totalEnergy) * 100, 'te-soup-bar': (stoveState.soupThermal / stoveState.totalEnergy) * 100, 'te-surr-bar': (stoveState.surrThermal / stoveState.totalEnergy) * 100 }; updateEnergyBars(barsData, 'stove-energy-bars'); }
+        function lightStove() { if (stoveState.isOn || stoveState.chemical <= 0) return; resetStoveSimulation(); stoveState.isOn = true; const flame = document.getElementById('sim-stove-flame'); if (flame) flame.classList.add('on'); clearInterval(stoveSimInterval); stoveSimInterval = setInterval(stoveSimulationStep, 200); }
+        function resetStoveSimulation() { clearInterval(stoveSimInterval); stoveSimInterval = null; stoveState = { chemical: 100, soupThermal: 0, surrThermal: 0, time: 0, isOn: false, totalEnergy: 100 }; const flame = document.getElementById('sim-stove-flame'); if (flame) flame.classList.remove('on'); updateStoveView(); }
+
+        // --- Torch Simulation --- (Final energy fix incorporated)
+        let torchSimInterval = null; let torchState = { chemical: 100, light: 0, thermal: 0, isOn: false, totalEnergy: 100 }; const torchRate = 0.7; const torchEfficiency = 0.3; const torchUpdateRate = 100;
+        function torchSimulationStep() {
+            if (!torchState.isOn || torchState.chemical <= 0) {
+                clearInterval(torchSimInterval); torchSimInterval = null;
+                torchState.isOn = false;
+                if (torchState.chemical <= 0) { // Battery depleted
+                    torchState.chemical = 0;
+                    // ** Ensure thermal gets all remaining energy **
+                    torchState.light = 0; // Light output stops
+                    torchState.thermal = torchState.totalEnergy; // All initial energy is now thermal
+                }
+                updateTorchView(); return; // Final update
+            }
+            const energyUsed = Math.min(torchState.chemical, torchRate);
+            torchState.chemical -= energyUsed;
+            const lightEnergyRate = energyUsed * torchEfficiency; // Energy *rate* to light
+            const thermalEnergyGain = energyUsed * (1 - torchEfficiency); // Energy going to thermal this step
+
+            // Update thermal store by accumulating gain
+            torchState.thermal += thermalEnergyGain;
+
+            // Represent 'light' store as the instantaneous useful output (simplification for bars)
+            // This value doesn't accumulate in the same way thermal does.
+            torchState.light = torchState.isOn ? (lightEnergyRate / torchRate * 10) : 0; // Show light bar based on rate (scaled for visibility)
+            torchState.light = Math.min(torchState.light, torchEfficiency * 50); // Cap light bar height visually
+
+            // Clamp and conserve
+            torchState.thermal = Math.min(torchState.totalEnergy - torchState.chemical, torchState.thermal); // Thermal fills remaining after chemical
+            torchState.light = Math.min(torchState.totalEnergy - torchState.chemical - torchState.thermal, torchState.light); // Light takes portion of remainder
+            // Ensure thermal gets the final remainder if light is capped
+             torchState.thermal = torchState.totalEnergy - torchState.chemical - torchState.light;
+
+
+            torchState.thermal = Math.max(0, torchState.thermal);
+            torchState.light = Math.max(0, torchState.light);
+
+            updateTorchView();
+        }
+        function updateTorchView() { const bulbEl = document.getElementById('sim-torch-bulb'); const beamEl = document.getElementById('sim-torch-beam'); if (bulbEl) bulbEl.classList.toggle('on', torchState.isOn && torchState.chemical > 0); if (beamEl) beamEl.classList.toggle('on', torchState.isOn && torchState.chemical > 0); const barsData = { 'torch-chem-bar': (torchState.chemical / torchState.totalEnergy) * 100, 'light-bar': (torchState.light / torchState.totalEnergy) * 100, 'torch-te-bar': (torchState.thermal / torchState.totalEnergy) * 100 }; updateEnergyBars(barsData, 'torch-energy-bars'); }
+        function switchOnTorch() { if (torchState.isOn || torchState.chemical <= 0) return; torchState.isOn = true; clearInterval(torchSimInterval); torchSimInterval = setInterval(torchSimulationStep, torchUpdateRate); updateTorchView(); }
+        function resetTorchSimulation() { clearInterval(torchSimInterval); torchSimInterval = null; torchState = { chemical: 100, light: 0, thermal: 0, isOn: false, totalEnergy: 100 }; updateTorchView(); }
+
+        // --- Bungee Jumper Simulation ---
+        let bungeeSimInterval = null; let bungeeState = { y: 0, velocity: 0, thermal: 0, totalEnergy: 100, isRunning: false }; const BUNGEE_MASS = 1; const BUNGEE_GRAVITY = 9.8; const BUNGEE_CORD_NATURAL_LENGTH = 50; const BUNGEE_CORD_STIFFNESS = 0.8; const BUNGEE_DAMPING_FACTOR = 0.05; const BUNGEE_UPDATE_RATE = 20; const BUNGEE_CANVAS_HEIGHT = 250; let BUNGEE_MAX_HEIGHT_ENERGY = BUNGEE_CANVAS_HEIGHT * BUNGEE_GRAVITY * BUNGEE_MASS; // Recalculate on reset
+        function bungeeSimulationStep() { const dt = BUNGEE_UPDATE_RATE / 1000; let forceGravity = BUNGEE_MASS * BUNGEE_GRAVITY; let forceElastic = 0; let forceDamping = -BUNGEE_DAMPING_FACTOR * bungeeState.velocity; const cordExtension = bungeeState.y - BUNGEE_CORD_NATURAL_LENGTH; if (cordExtension > 0) { forceElastic = -BUNGEE_CORD_STIFFNESS * cordExtension; } let netForce = forceGravity + forceElastic + forceDamping; let acceleration = netForce / BUNGEE_MASS; bungeeState.velocity += acceleration * dt; let nextY = bungeeState.y + bungeeState.velocity * dt; if (nextY < 0) { nextY = 0; bungeeState.velocity = 0; } let energyLost = Math.abs(forceDamping * bungeeState.velocity * dt); bungeeState.thermal += energyLost; bungeeState.thermal = Math.min(bungeeState.thermal, BUNGEE_MAX_HEIGHT_ENERGY); bungeeState.y = nextY; const kineticEnergy = 0.5 * BUNGEE_MASS * bungeeState.velocity * bungeeState.velocity; const elasticEnergy = (cordExtension > 0) ? (0.5 * BUNGEE_CORD_STIFFNESS * cordExtension * cordExtension) : 0; const equilibriumApprox = BUNGEE_CORD_NATURAL_LENGTH + (forceGravity / BUNGEE_CORD_STIFFNESS); const oscillationEnergy = kineticEnergy + elasticEnergy; if (oscillationEnergy < 0.1 && Math.abs(bungeeState.y - equilibriumApprox) < 5 && bungeeState.thermal > 0.1) { clearInterval(bungeeSimInterval); bungeeSimInterval = null; bungeeState.isRunning = false; bungeeState.y = equilibriumApprox; bungeeState.velocity = 0; bungeeState.thermal = BUNGEE_MAX_HEIGHT_ENERGY; console.log("Bungee sim stopped."); } updateBungeeView(); }
+        function updateBungeeView() { const jumperEl = document.getElementById('bungee-jumper'); const cordEl = document.getElementById('bungee-cord'); const platformEl = document.getElementById('bungee-platform'); if (!jumperEl || !cordEl || !platformEl) return; const platformBottom = platformEl.offsetHeight; const jumperHeight = jumperEl.offsetHeight; let jumperTop = platformBottom + bungeeState.y; jumperTop = Math.max(platformBottom, jumperTop); jumperTop = Math.min(jumperTop, BUNGEE_CANVAS_HEIGHT - jumperHeight); jumperEl.style.top = `${jumperTop}px`; let cordHeight = bungeeState.y; cordHeight = Math.max(0, cordHeight); cordEl.style.height = `${cordHeight}px`; cordEl.style.top = `${platformBottom}px`; const totalRefEnergy = BUNGEE_MAX_HEIGHT_ENERGY; if (totalRefEnergy <= 0) return; let heightAboveBottom = BUNGEE_CANVAS_HEIGHT - bungeeState.y; let gpe = BUNGEE_MASS * BUNGEE_GRAVITY * heightAboveBottom; let gpePercent = (gpe / totalRefEnergy) * 100; let ke = 0.5 * BUNGEE_MASS * bungeeState.velocity * bungeeState.velocity; let kePercent = (ke / totalRefEnergy) * 100; const cordExtension = Math.max(0, bungeeState.y - BUNGEE_CORD_NATURAL_LENGTH); let epe = 0.5 * BUNGEE_CORD_STIFFNESS * cordExtension * cordExtension; let epePercent = (epe / totalRefEnergy) * 100; let thermalPercent = (bungeeState.thermal / totalRefEnergy) * 100; let currentSumPercent = gpePercent + kePercent + epePercent + thermalPercent; let scaleFactor = (currentSumPercent > 0) ? 100 / currentSumPercent : 1; const barsData = { 'bungee-gpe-bar': Math.max(0, gpePercent * scaleFactor), 'bungee-ke-bar': Math.max(0, kePercent * scaleFactor), 'bungee-epe-bar': Math.max(0, epePercent * scaleFactor), 'bungee-te-bar': Math.max(0, thermalPercent * scaleFactor) }; updateEnergyBars(barsData, 'bungee-energy-bars'); }
+        function startBungeeJump() { if (bungeeState.isRunning) return; resetBungeeSimulation(); bungeeState.isRunning = true; clearInterval(bungeeSimInterval); bungeeSimInterval = setInterval(bungeeSimulationStep, BUNGEE_UPDATE_RATE); }
+        function resetBungeeSimulation() { clearInterval(bungeeSimInterval); bungeeSimInterval = null; BUNGEE_MAX_HEIGHT_ENERGY = BUNGEE_CANVAS_HEIGHT * BUNGEE_GRAVITY * BUNGEE_MASS; bungeeState = { y: 0, velocity: 0, thermal: 0, totalEnergy: BUNGEE_MAX_HEIGHT_ENERGY, isRunning: false }; updateBungeeView(); }
+
+        // --- Practice Question Checking ---
+        function checkPracticeQ1() { const answers = ['created', 'destroyed', 'chemical', 'thermal', 'can']; const ids = ['q1a', 'q1b', 'q1c', 'q1d', 'q1e']; let correct = true; ids.forEach((id, index) => { const selectEl = document.getElementById(id); if (!selectEl) { correct = false; return; }; selectEl.style.borderColor = '#ccc'; if (selectEl.value !== answers[index]) { correct = false; selectEl.style.borderColor = '#dc3545'; } else { selectEl.style.borderColor = '#28a745'; } }); const feedbackEl = document.getElementById('feedback_pq1'); if (!feedbackEl) return; feedbackEl.innerHTML = correct ? `Correct! <img src='images/tick.png' alt='Correct' onerror="this.style.display='none'">` : `Incorrect. Check highlights. <img src='images/cross.png' alt='Incorrect' onerror="this.style.display='none'">`; feedbackEl.className = `feedback ${correct ? 'correct' : 'incorrect'}`; }
+        function checkPracticeQ2() { const answersA = ['Chemical', 'Light', 'Thermal', 'Electrically']; const answersB = ['Chemical', 'Thermal', 'Kinetic', 'Electrical']; const answersC = ['Kinetic', 'Kinetic', 'Electrical', 'Kinetic']; let correctA = true, correctB = true, correctC = true; answersA.forEach((ans, i) => { const el = document.getElementById(`q2a_${i+1}`); if (!el) { correctA = false; return; }; el.style.borderColor = '#ccc'; if (el.value !== ans) { correctA = false; el.style.borderColor = '#dc3545'; } else { el.style.borderColor = '#28a745'; } }); answersB.forEach((ans, i) => { const el = document.getElementById(`q2b_${i+1}`); if (!el) { correctB = false; return; }; el.style.borderColor = '#ccc'; if (el.value !== ans) { correctB = false; el.style.borderColor = '#dc3545'; } else { el.style.borderColor = '#28a745'; } }); answersC.forEach((ans, i) => { const el = document.getElementById(`q2c_${i+1}`); if (!el) { correctC = false; return; }; el.style.borderColor = '#ccc'; if (el.value !== ans) { correctC = false; el.style.borderColor = '#dc3545'; } else { el.style.borderColor = '#28a745'; } }); const fbA = document.getElementById('feedback_pq2a'); const fbB = document.getElementById('feedback_pq2b'); const fbC = document.getElementById('feedback_pq2c'); if (fbA) { fbA.innerHTML = `a) Torch: ${correctA ? "Correct <img src='images/tick.png' alt='Correct' onerror=\"this.style.display='none'\">" : "Incorrect <img src='images/cross.png' alt='Incorrect' onerror=\"this.style.display='none'\">"}`; fbA.className = `feedback ${correctA ? 'correct' : 'incorrect'}`; } if (fbB) { fbB.innerHTML = `b) Coal Power: ${correctB ? "Correct <img src='images/tick.png' alt='Correct' onerror=\"this.style.display='none'\">" : "Incorrect <img src='images/cross.png' alt='Incorrect' onerror=\"this.style.display='none'\">"}`; fbB.className = `feedback ${correctB ? 'correct' : 'incorrect'}`; } if (fbC) { fbC.innerHTML = `c) Wind Power: ${correctC ? "Correct <img src='images/tick.png' alt='Correct' onerror=\"this.style.display='none'\">" : "Incorrect <img src='images/cross.png' alt='Incorrect' onerror=\"this.style.display='none'\">"}`; fbC.className = `feedback ${correctC ? 'correct' : 'incorrect'}`; } }
+        function checkPracticeQ3() { const answers = ['Kinetic', 'Thermal', 'GPE', 'Elastic Potential']; const ids = ['q3a', 'q3b', 'q3c', 'q3d']; let correctCount = 0; ids.forEach((id, index) => { const el = document.getElementById(id); if (!el) return; el.style.borderColor = '#ccc'; if (el.value === answers[index]) { correctCount++; el.style.borderColor = '#28a745'; } else { el.style.borderColor = '#dc3545'; } }); const feedbackEl = document.getElementById('feedback_pq3'); if (!feedbackEl) return; if (correctCount === answers.length) { feedbackEl.innerHTML = `All Correct! <img src='images/tick.png' alt='Correct' onerror="this.style.display='none'">`; feedbackEl.className = "feedback correct"; } else { feedbackEl.innerHTML = `Got ${correctCount}/${answers.length} correct. <img src='images/cross.png' alt='Incorrect' onerror="this.style.display='none'">`; feedbackEl.className = "feedback incorrect"; } }
+        function checkPracticeQ4() { const ids = ['q4a', 'q4b', 'q4c', 'q4d']; let correct = true; ids.forEach(id => { const inputEl = document.getElementById(id); if (!inputEl || !inputEl.dataset.answer) { correct = false; return; } inputEl.style.borderColor = '#ccc'; const userAnswer = inputEl.value.trim().toLowerCase(); const correctAnswer = inputEl.dataset.answer.toLowerCase(); if (userAnswer !== correctAnswer) { correct = false; inputEl.style.borderColor = '#dc3545'; } else { inputEl.style.borderColor = '#28a745'; } }); const feedbackEl = document.getElementById('feedback_pq4'); if (!feedbackEl) return; feedbackEl.innerHTML = correct ? `Correct! <img src='images/tick.png' alt='Correct' onerror="this.style.display='none'">` : `Incorrect. Check highlights. <img src='images/cross.png' alt='Incorrect' onerror="this.style.display='none'">`; feedbackEl.className = `feedback ${correct ? 'correct' : 'incorrect'}`; }
+
+        // --- Match Game Logic ---
+        const matchGameData = [ { example: "Petrol in a car tank", store: "Chemical" }, { example: "A running athlete", store: "Kinetic" }, { example: "A hot cup of tea", store: "Thermal" }, { example: "A stretched rubber band", store: "Elastic Potential" }, { example: "A book on a high shelf", store: "Gravitational Potential" }, { example: "Food (like an apple)", store: "Chemical" }, { example: "A moving bicycle", store: "Kinetic" }, { example: "Water boiling in a kettle", store: "Thermal" }, { example: "A compressed spring", store: "Elastic Potential" }, { example: "A plane flying high", store: "Gravitational Potential" } ];
+        let matchSelectedExample = null; let matchTotalExamples = 0; let matchFoundExamples = 0;
+        let storeExampleCounts = {}; let storeMatchedCounts = {};
+        function setupMatchGame() { const examplesCol = document.getElementById('match-game-examples'); const storesCol = document.getElementById('match-game-stores'); const gameFeedback = document.getElementById('match-game-feedback'); if (!examplesCol || !storesCol || !gameFeedback) return; examplesCol.innerHTML = '<h4>Example / Description</h4>'; storesCol.innerHTML = '<h4>Energy Store Type</h4>'; gameFeedback.textContent = ''; gameFeedback.className = "game-feedback"; matchSelectedExample = null; matchFoundExamples = 0; storeExampleCounts = {}; storeMatchedCounts = {}; const shuffledData = [...matchGameData]; shuffleArray(shuffledData); const uniqueStores = [...new Set(shuffledData.map(item => item.store))]; shuffleArray(uniqueStores); matchTotalExamples = shuffledData.length; shuffledData.forEach(item => { storeExampleCounts[item.store] = (storeExampleCounts[item.store] || 0) + 1; storeMatchedCounts[item.store] = 0; }); shuffledData.forEach((item, index) => { const div = document.createElement('div'); div.classList.add('match-game-item'); div.textContent = item.example; div.dataset.match = item.store; div.dataset.id = `ex-${index}`; div.onclick = handleMatchExampleClick; examplesCol.appendChild(div); }); uniqueStores.forEach((store, index) => { const div = document.createElement('div'); div.classList.add('match-game-item'); div.textContent = store; div.dataset.storeType = store; div.dataset.id = `st-${index}`; div.onclick = handleMatchStoreClick; storesCol.appendChild(div); }); }
+        function handleMatchExampleClick(event) { const target = event.currentTarget; if (target.classList.contains('matched-example')) return; if (target === matchSelectedExample) { target.classList.remove('selected'); matchSelectedExample = null; return; } if (matchSelectedExample) { matchSelectedExample.classList.remove('selected'); } target.classList.add('selected'); matchSelectedExample = target; document.querySelectorAll('#match-game-stores .match-game-item.incorrect-match').forEach(el => el.classList.remove('incorrect-match')); }
+        function handleMatchStoreClick(event) { const targetStoreDiv = event.currentTarget; const gameFeedback = document.getElementById('match-game-feedback'); if (!gameFeedback || !matchSelectedExample || targetStoreDiv.classList.contains('completed-store')) return; const correctStoreType = matchSelectedExample.dataset.match; const clickedStoreType = targetStoreDiv.dataset.storeType; targetStoreDiv.classList.remove('incorrect-match'); if (correctStoreType === clickedStoreType) { matchSelectedExample.classList.add('matched-example'); matchSelectedExample.classList.remove('selected'); matchSelectedExample.onclick = null; matchFoundExamples++; storeMatchedCounts[clickedStoreType]++; gameFeedback.textContent = "Correct Match!"; gameFeedback.className = "game-feedback correct"; if (storeMatchedCounts[clickedStoreType] === storeExampleCounts[clickedStoreType]) { targetStoreDiv.classList.add('completed-store'); targetStoreDiv.onclick = null; gameFeedback.textContent = `Correct! ${clickedStoreType} store complete!`; } matchSelectedExample = null; if (matchFoundExamples === matchTotalExamples) { gameFeedback.textContent = "Congratulations! You matched them all!"; gameFeedback.className = "game-feedback correct"; } } else { gameFeedback.textContent = "Not quite, try again!"; gameFeedback.className = "game-feedback incorrect"; targetStoreDiv.classList.add('incorrect-match'); setTimeout(() => { targetStoreDiv.classList.remove('incorrect-match'); }, 1000); } }
+
+        // --- Energy Flow Game Logic --- (Separated Options + Fix)
+        const energyStoresList = ["Chemical", "Thermal", "Kinetic", "GPE", "Elastic Potential", "Sound"];
+        const energyPathwaysList = ["Electrical", "Mechanically", "Heating", "Radiation"];
+        let flowGameCorrectDrops = {};
+        function allowDrop(ev) { ev.preventDefault(); const target = ev.target.closest('.drop-zone'); if(target && !target.classList.contains('correct')) target.classList.add('drag-over'); }
+        function dragLeave(ev) { const target = ev.target.closest('.drop-zone'); if(target) target.classList.remove('drag-over'); }
+        function drag(ev) { if (ev.target.dataset.item) { ev.dataTransfer.setData("text/plain", ev.target.dataset.item); ev.dataTransfer.effectAllowed = "move"; ev.target.style.opacity = '0.4'; } }
+        function dragEnd(ev) { ev.target.style.opacity = '1'; document.querySelectorAll('.drop-zone.drag-over').forEach(el => el.classList.remove('drag-over')); }
+        function drop(ev) { ev.preventDefault(); const dropZone = ev.target.closest('.drop-zone'); if (!dropZone || dropZone.classList.contains('correct')) return; dropZone.classList.remove('drag-over'); const data = ev.dataTransfer.getData("text/plain"); const scenarioDiv = dropZone.closest('.flow-scenario'); if (!scenarioDiv) return; const scenarioId = scenarioDiv.id; const correctValue = dropZone.dataset.correct; const feedbackElId = `feedback-${scenarioId.split('-')[2]}`; const feedbackEl = document.getElementById(feedbackElId); if (!feedbackEl) return; if (data === correctValue) { dropZone.textContent = data; dropZone.classList.add('correct'); dropZone.classList.remove('incorrect'); dropZone.ondragover = null; dropZone.ondrop = null; dropZone.ondragleave = null; flowGameCorrectDrops[scenarioId] = (flowGameCorrectDrops[scenarioId] || 0) + 1; const totalZonesInScenario = scenarioDiv.querySelectorAll('.drop-zone').length; if (flowGameCorrectDrops[scenarioId] === totalZonesInScenario) { feedbackEl.innerHTML = `Scenario Complete! <img src='images/tick.png' alt='Correct' onerror="this.style.display='none'">`; feedbackEl.className = 'feedback correct'; } else { feedbackEl.textContent = ""; feedbackEl.className = 'feedback'; } } else { dropZone.classList.add('incorrect'); dropZone.textContent = data; feedbackEl.textContent = "Incorrect item placed."; feedbackEl.className = 'feedback incorrect'; setTimeout(() => { if (!dropZone.classList.contains('correct')) { dropZone.classList.remove('incorrect'); dropZone.textContent = dropZone.title || 'Drop here'; feedbackEl.textContent = ""; feedbackEl.className = 'feedback'; } }, 1200); } }
+
+        // --- UPDATED setupFlowGame ---
+        function setupFlowGame() {
+            const storesContainer = document.getElementById('flow-options-stores');
+            const pathwaysContainer = document.getElementById('flow-options-pathways');
+            if (!storesContainer || !pathwaysContainer) { console.error("Flow game options containers missing!"); return; }
+
+            // Clear previous options
+            storesContainer.innerHTML = '<h5>Energy Stores</h5>'; // Keep header
+            pathwaysContainer.innerHTML = '<h5>Transfer Pathways</h5>'; // Keep header
+            flowGameCorrectDrops = {}; // Reset progress tracking
+
+            // Reset all drop zones
+            document.querySelectorAll('.drop-zone').forEach(dz => {
+                dz.classList.remove('correct', 'incorrect', 'drag-over');
+                dz.textContent = dz.title || 'Drop here';
+                dz.ondragover = allowDrop; dz.ondrop = drop; dz.ondragleave = dragLeave;
+                dz.setAttribute('draggable', false);
+            });
+            document.querySelectorAll('.flow-scenario .feedback').forEach(fb => { fb.textContent = ''; fb.className = 'feedback'; });
+
+            // Create and add draggable STORE items
+            const currentStores = [...energyStoresList];
+            shuffleArray(currentStores);
+            currentStores.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('draggable-item'); div.setAttribute('draggable', true);
+                div.textContent = item; div.dataset.item = item;
+                div.addEventListener('dragstart', drag); div.addEventListener('dragend', dragEnd);
+                storesContainer.appendChild(div);
+            });
+
+             // Create and add draggable PATHWAY items
+            const currentPathways = [...energyPathwaysList];
+            shuffleArray(currentPathways);
+            currentPathways.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('draggable-item'); div.setAttribute('draggable', true);
+                div.textContent = item; div.dataset.item = item;
+                div.addEventListener('dragstart', drag); div.addEventListener('dragend', dragEnd);
+                pathwaysContainer.appendChild(div);
+            });
+        }
+
+        // --- Utility Functions ---
+        function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+
+        // --- Initial Setup on Load ---
+        document.addEventListener('DOMContentLoaded', () => {
+            showScreen('tutorial-screen');
+            const firstTutorialTabButton = document.querySelector('#tutorial-screen .tab-button');
+            const firstTutorialTabContentId = firstTutorialTabButton ? firstTutorialTabButton.getAttribute('onclick').match(/'([^']+)'/)[1] : null;
+            if (firstTutorialTabButton && firstTutorialTabContentId) { openTutorialTab({ currentTarget: firstTutorialTabButton }, firstTutorialTabContentId); }
+
+            setupMatchGame();
+            setupFlowGame(); // Setup games which now includes populating split options
+
+            resetBallSimulation(); resetStoveSimulation(); resetTorchSimulation(); resetBungeeSimulation();
+
+            // Drag/Drop safety listeners
+             document.addEventListener('dragleave', (event) => { if (event.clientY <= 0 || event.clientX <= 0 || (event.clientX >= window.innerWidth || event.clientY >= window.innerHeight)) { document.querySelectorAll('.drop-zone.drag-over').forEach(el => el.classList.remove('drag-over')); } });
+             document.addEventListener('drop', (event) => { document.querySelectorAll('.drop-zone.drag-over').forEach(el => el.classList.remove('drag-over')); });
+             document.addEventListener('dragend', (event) => { document.querySelectorAll('.drop-zone.drag-over').forEach(el => el.classList.remove('drag-over')); });
+        });
+
+    </script>
+
+</body>
+</html>
