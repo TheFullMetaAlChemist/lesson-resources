@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Reaction Race - Textbook Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a7bd5;    /* Blue */
+            --secondary: #00d2ff;  /* Light Blue */
+            --accent: #ff6b6b;    /* Red/Pink */
+            --dark: #2c3e50;      /* Dark Blue/Grey */
+            --light: #f8f9fa;     /* Very Light Grey */
+            --success: #4caf50;   /* Green */
+            --warning: #ff9800;   /* Orange */
+            --danger: #f44336;    /* Red */
+
+            /* New Category Colors */
+            --atoms-mass-color: var(--primary);      /* Blue for Atoms & Mass */
+            --reactions-energy-color: var(--warning); /* Orange for Reactions & Energy */
+            --fuels-combustion-color: var(--success); /* Green for Fuels & Combustion */
+            --special-color: #9b59b6;                /* Purple for Special Cells */
+            --neutral: #95a5a6;                     /* Grey */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-family: 'Roboto Slab', serif;
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: var(--dark);
+            font-weight: 400;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(to right, var(--atoms-mass-color), var(--reactions-energy-color), var(--fuels-combustion-color));
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+
+        .cell::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1;
+            border-radius: 8px;
+        }
+
+        .cell > span {
+            position: relative;
+            z-index: 2;
+            line-height: 1.2;
+        }
+
+        .cell:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell::after {
+            content: attr(data-number);
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.7rem;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 20px;
+        }
+
+        .player {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .player1::before { background: var(--accent); }
+        .player2::before { background: var(--primary); }
+
+        .active-player {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 2px solid;
+        }
+
+        .active-player.player1 { border-color: var(--accent); }
+        .active-player.player2 { border-color: var(--primary); }
+
+        .player h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            display: flex; /* Align icon and text */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .player-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+
+        .stat { display: flex; flex-direction: column; align-items: center; }
+        .stat-value { font-weight: 700; font-size: 1.2rem; margin-top: 3px; }
+
+        .dice-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .dice-label { margin-bottom: 10px; font-weight: 600; color: var(--dark); }
+        .dice { width: 70px; height: 70px; background: linear-gradient(145deg, #ffffff, #e6e6e6); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); cursor: pointer; user-select: none; transition: all 0.3s; position: relative; overflow: hidden; border: none; color: var(--dark); }
+        .dice:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        .dice:active { transform: scale(0.95); }
+        .dice.rolling { animation: shake 0.5s infinite; }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 50% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } 100% { transform: rotate(0deg); } }
+
+        .powerups { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .powerup { padding: 8px 15px; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 5px; }
+        .powerup:hover { transform: translateY(-3px); box-shadow: 0 5px 10px rgba(0,0,0,0.15); }
+        .powerup:active { transform: scale(0.95); }
+        .powerup.double { background-color: #ffeb3b; color: #ff6f00; }
+        .powerup.extra { background-color: #4caf50; color: white; }
+        .powerup.shield { background-color: #2196f3; color: white; }
+        .powerup i { font-size: 1rem; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background-color: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; animation: slideUp 0.4s; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-modal { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #999; transition: color 0.2s; }
+        .close-modal:hover { color: var(--dark); }
+
+        .question { font-size: 1.2rem; margin-bottom: 25px; color: var(--dark); font-weight: 600; line-height: 1.4; }
+        .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 25px; }
+        .option { padding: 12px 15px; background-color: #f5f7fa; border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; font-weight: 500; }
+        .option:hover { background-color: #ebeff5; border-color: #d0d9e6; }
+        .option.selected { border-color: var(--primary); background-color: #e3f2fd; }
+        .option.correct { background-color: #e8f5e9; border-color: var(--success); color: var(--success); }
+        .option.incorrect { background-color: #ffebee; border-color: var(--danger); color: var(--danger); }
+
+        .feedback { margin-top: 20px; font-weight: 600; padding: 15px; border-radius: 8px; display: none; animation: fadeIn 0.5s; line-height: 1.4; }
+        .feedback.correct { background-color: #e8f5e9; color: var(--success); border-left: 5px solid var(--success); }
+        .feedback.incorrect { background-color: #ffebee; color: var(--danger); border-left: 5px solid var(--danger); }
+
+        .modal-buttons { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .btn { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; border: none; font-size: 1rem; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #2c65c4; transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-secondary { background-color: #f5f7fa; color: var(--dark); margin-right: 10px; }
+        .btn-secondary:hover { background-color: #e0e5eb; }
+
+        /* --- NEW CATEGORY STYLES --- */
+        .category-AtomsMass { background-color: var(--atoms-mass-color); }         /* Blue */
+        .category-ReactionsEnergy { background-color: var(--reactions-energy-color); } /* Orange */
+        .category-FuelsCombustion { background-color: var(--fuels-combustion-color); } /* Green */
+        .special-powerup { background-color: var(--special-color); }       /* Purple */
+
+        .cell.Start { background-color: var(--success); }
+        .cell.Finish { background-color: var(--dark); }
+
+        .player-marker { position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; z-index: 4; box-shadow: 0 2px 5px rgba(0,0,0,0.2); bottom: 5px; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; }
+        .player1-marker { background-color: var(--accent); transform: translateX(-70%); }
+        .player2-marker { background-color: var(--primary); transform: translateX(-30%); }
+
+        .periodic-table { position: absolute; top: 0; right: 0; width: 100px; opacity: 0.1; z-index: 0; }
+        .timer-container { width: 100%; height: 5px; background-color: #f0f0f0; border-radius: 5px; margin-bottom: 15px; overflow: hidden; }
+        .timer-bar { height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); width: 100%; transition: width 1s linear, background 0.3s linear; }
+
+        .progress-container { width: 100%; height: 8px; background-color: #e0e0e0; border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(to right, var(--primary), var(--secondary)); width: 0%; transition: width 0.5s ease; }
+
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; margin-left: 8px; background-color: rgba(255,255,255,0.3); color: white; position: relative; z-index: 2; }
+        .periodic-button { position: absolute; top: 20px; right: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 10; transition: all 0.3s; }
+        .periodic-button:hover { transform: scale(1.1) rotate(15deg); }
+        .periodic-table-modal .modal-content { max-width: 800px; padding: 20px; }
+        .periodic-grid { display: grid; grid-template-columns: repeat(18, 1fr); gap: 3px; margin-top: 20px; }
+        .periodic-element { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 5px; font-size: 0.7rem; font-weight: bold; background-color: #f5f5f5; cursor: pointer; transition: all 0.2s; padding: 2px; text-align: center; }
+        .periodic-element:hover { transform: scale(1.1); z-index: 2; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+        .element-number { font-size: 0.6rem; align-self: flex-start; }
+        .element-symbol { font-size: 1rem; margin: 2px 0; }
+        .element-name { font-size: 0.5rem; display: none; }
+        .periodic-element:hover .element-name { display: block; }
+        .nonmetal { background-color: #a5d6a7; } .alkali { background-color: #ffcdd2; } .alkaline { background-color: #ffccbc; } .transition { background-color: #d1c4e9; } .metalloid { background-color: #c8e6c9; } .halogen { background-color: #b3e5fc; } .noble { background-color: #b2ebf2; } .metal { background-color: #e0e0e0; } .lanthanide { background-color: #f8bbd0; } .actinide { background-color: #f0f4c3; }
+
+        .achievement { position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 1000; transform: translateX(150%); transition: transform 0.5s ease; }
+        .achievement.show { transform: translateX(0); }
+        .achievement i { font-size: 1.5rem; }
+        .achievement-text { display: flex; flex-direction: column; }
+        .achievement-title { font-weight: 700; }
+        .achievement-desc { font-size: 0.8rem; opacity: 0.8; }
+
+        @media (max-width: 768px) {
+            .board { grid-template-columns: repeat(5, 1fr); }
+            .player-info { flex-direction: column; }
+            .question { font-size: 1rem; }
+            h1 { font-size: 1.8rem; }
+            .cell { font-size: 0.7rem; }
+            .periodic-grid { grid-template-columns: repeat(9, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .board { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+            .modal-content { padding: 20px 15px; }
+            .options { gap: 8px; grid-template-columns: 1fr; }
+            .option { padding: 10px; }
+            h1 { font-size: 1.6rem;}
+            .subtitle { font-size: 1rem;}
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Chemistry Reaction Race</h1>
+        <p class="subtitle">Test your knowledge of Atoms, Reactions, Energy, Fuels and Combustion!</p>
+    </header>
+
+    <div class="game-container">
+        <button class="periodic-button" id="periodicButton">
+            <i class="fas fa-atom"></i>
+        </button>
+
+        <div class="player-info">
+            <div class="player player1" id="player1">
+                <h3><i class="fas fa-user-astronaut"></i>Player 1</h3> {/* Icon kept, class removed */}
+                <div class="player-stats">
+                    <div class="stat">
+                        <span>Position</span>
+                        <span class="stat-value" id="player1-pos">1</span>
+                    </div>
+                    <div class="stat">
+                        <span>Score</span>
+                        <span class="stat-value" id="player1-score">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Powerups</span>
+                        <span class="stat-value" id="player1-powerups">0</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="player1-progress"></div>
+                </div>
+            </div>
+
+            <div class="player player2" id="player2">
+                 <h3><i class="fas fa-rocket"></i>Player 2</h3> {/* Icon kept, class removed */}
+                <div class="player-stats">
+                    <div class="stat">
+                        <span>Position</span>
+                        <span class="stat-value" id="player2-pos">1</span>
+                    </div>
+                    <div class="stat">
+                        <span>Score</span>
+                        <span class="stat-value" id="player2-score">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Powerups</span>
+                        <span class="stat-value" id="player2-powerups">0</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="player2-progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="board" id="board"></div>
+
+        <div class="powerups" id="powerupsContainer">
+            <div class="powerup double" id="doublePowerup"> <i class="fas fa-dice"></i> Double Roll </div>
+            <div class="powerup extra" id="extraPowerup"> <i class="fas fa-star"></i> Extra Turn </div>
+            <div class="powerup shield" id="shieldPowerup"> <i class="fas fa-shield-alt"></i> Answer Shield </div>
+        </div>
+
+        <div class="dice-container">
+            <div class="dice-label">Click to Roll Dice</div>
+            <div class="dice" id="dice">?</div>
+        </div>
+    </div>
+
+    <!-- Question Modal -->
+    <div class="modal" id="questionModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeQuestionModal">×</span>
+            <div class="timer-container">
+                <div class="timer-bar" id="timerBar"></div>
+            </div>
+            <div class="question" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="feedback" id="feedback"></div>
+            {/* Removed additionalInfo div */}
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="hintBtn">Get Hint</button>
+                <button class="btn btn-primary" id="nextBtn" style="display: none;">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal" id="winnerModal">
+        <div class="modal-content">
+            <div class="question" id="winnerTitle"></div>
+            <div id="winnerStats"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="restartBtn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Periodic Table Modal -->
+    <div class="modal periodic-table-modal" id="periodicModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePeriodicModal">×</span>
+            <h2>Periodic Table Reference</h2>
+            <p>A helpful tool for your chemistry journey!</p>
+            <div class="periodic-grid" id="periodicTable"></div>
+        </div>
+    </div>
+
+    <!-- Achievement Notification -->
+    <div class="achievement" id="achievement">
+        <i class="fas fa-trophy"></i>
+        <div class="achievement-text">
+            <span class="achievement-title" id="achievementTitle">Achievement Unlocked!</span>
+            <span class="achievement-desc" id="achievementDesc">Description here</span>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Game State
+        const gameState = {
+            currentPlayer: 1,
+            playerPositions: [1, 1],
+            playerScores: [0, 0],
+            playerPowerups: [0, 0],
+            playerCorrectStreaks: [0, 0],
+            diceValue: 0,
+            gameOver: false,
+            timePerQuestion: 25,
+            currentTimer: null,
+            timeLeft: 25,
+            currentQuestion: null, // Store the current question object
+            // *** CATEGORIES UPDATED ***
+            categories: [
+                "AtomsMass",
+                "ReactionsEnergy",
+                "FuelsCombustion",
+                "AtomsMass",
+                "ReactionsEnergy",
+                "FuelsCombustion"
+            ],
+            powerups: {
+                double: { active: false },
+                extra: { active: false },
+                shield: { active: false }
+            },
+            achievements: [
+                { id: "fast_learner", title: "Quick Thinker!", desc: "Answered 3 questions correctly", threshold: 3, type: 'streak' },
+                { id: "chem_whiz", title: "Chemistry Whiz!", desc: "Answered 7 questions correctly", threshold: 7, type: 'streak' },
+                { id: "speed_demon", title: "Speed Demon!", desc: "Answered with 15+ seconds left", threshold: 15, type: 'time' },
+                { id: "power_collector", title: "Power Collector!", desc: "Collected 3 powerups", threshold: 3, type: 'powerup' }
+            ],
+            playerAchievements: { 1: new Set(), 2: new Set() },
+            powerupsCollected: [0, 0],
+
+            // *** QUESTIONS UPDATED ***
+            questions: {
+                AtomsMass: [
+                    { question: '(6.3.1) In a chemical reaction, what happens to the atoms?', options: ['They disappear.', 'They change into new atoms.', 'They join together in different ways (rearrange).', 'They get heavier.'], answer: 2, explanation: 'Atoms are rearranged in chemical reactions, not created, destroyed, or changed into other types.' },
+                    { question: '(6.3.1) What is the chemical formula for a molecule with two nitrogen atoms joined?', options: ['N', '2N', 'N₂', 'Ni₂'], answer: 2, explanation: 'N₂ represents a molecule with two nitrogen atoms chemically bonded.' },
+                    { question: '(6.3.3) What does \'conservation of mass\' mean?', options: ['Mass is lost.', 'Total mass of reactants equals total mass of products.', 'Mass is created.', 'Only solid mass is conserved.'], answer: 1, explanation: 'Mass is conserved in chemical reactions - total mass stays the same.' },
+                    { question: '(6.3.3) If 0.24 g Mg reacts with 0.16 g O₂, what mass of MgO is made?', options: ['0.16 g', '0.24 g', '0.08 g', '0.40 g'], answer: 3, explanation: 'Mass of products = mass of reactants (0.24g + 0.16g = 0.40g).' },
+                    { question: '(6.3.3) Why are chemical symbol equations balanced?', options: ['To look neat.', 'To show atoms aren\'t created/destroyed, just rearranged.', 'To show reaction speed.', 'To show colours.'], answer: 1, explanation: 'Balancing shows that the number of atoms of each element is conserved.' },
+                    { question: '(6.3.3) In a balanced equation, the number of _______ of each element is the same on both sides.', options: ['Molecules', 'Atoms', 'Grams', 'Compounds'], answer: 1, explanation: 'Balancing ensures the number of atoms of each element is equal on both sides.' },
+                    { question: '(6.3.1/6.3.3) True or False: In a chemical reaction, new atoms are made.', options: ['True', 'False'], answer: 1, explanation: 'False. Atoms are rearranged, not created or destroyed.' },
+                    { question: '(6.3.3) According to conservation of mass, is mass gained or lost in a reaction?', options: ['Mass is gained.', 'Mass is lost.', 'Mass is neither gained nor lost (it stays the same).', 'It depends on the reaction.'], answer: 2, explanation: 'The total mass remains constant during a chemical reaction.' },
+                    { question: '(6.3.1) Look at the N₂ + O₂ particle diagrams. Are there the same number of nitrogen atoms before and after?', options: ['Yes', 'No, there are fewer after.', 'No, there are more after.', 'The diagram doesn\'t show atoms.'], answer: 0, explanation: 'Atoms are conserved; the number of each type of atom is the same before and after.' }
+                ],
+                ReactionsEnergy: [
+                    { question: '(6.3.1) In `nitrogen + oxygen → nitrogen monoxide`, what are nitrogen and oxygen called?', options: ['Products', 'Reactants', 'Molecules', 'Elements'], answer: 1, explanation: 'The starting substances in a reaction are called reactants.' },
+                    { question: '(6.3.1) In `nitrogen + oxygen → nitrogen monoxide`, what is nitrogen monoxide called?', options: ['Product', 'Reactant', 'Atom', 'Mixture'], answer: 0, explanation: 'The new substance formed in a reaction is called the product.' },
+                    { question: '(6.3.1) What does the arrow (→) mean in a chemical word equation?', options: ['Equals', 'Reverses', 'Makes (or reacts to form)', 'Is bigger than'], answer: 2, explanation: 'The arrow indicates that the reactants react to form the products.' },
+                    { question: '(6.4.1) What is an exothermic reaction?', options: ['Absorbs heat, feels cold.', 'Releases energy (heat), feels warm.', 'No energy involved.', 'Only happens in cold places.'], answer: 1, explanation: 'Exothermic reactions release energy to the surroundings, often as heat.' },
+                    { question: '(6.4.1) What is an endothermic reaction?', options: ['Absorbs energy, surroundings feel colder.', 'Releases energy, surroundings feel warmer.', 'Burning is an example.', 'Creates energy.'], answer: 0, explanation: 'Endothermic reactions absorb energy from the surroundings, causing cooling.' },
+                    { question: '(6.4.1) A cold pack feels cool because the reaction inside is:', options: ['Exothermic', 'Endothermic', 'Combustion', 'Neutral'], answer: 1, explanation: 'The reaction absorbs heat from your skin, making it feel cold, so it is endothermic.' },
+                    { question: '(6.4.1) Dissolving sodium hydroxide makes the beaker warm. This is:', options: ['Endothermic', 'Exothermic', 'Very slow', 'Not chemical'], answer: 1, explanation: 'Releasing heat means the process is exothermic.' },
+                    { question: '(6.4.1) Dissolving sodium hydrogen carbonate cools the water. This is:', options: ['Exothermic', 'Endothermic', 'Combustion', 'Melting'], answer: 1, explanation: 'Absorbing heat and causing cooling means the process is endothermic.' },
+                    { question: '(6.3.1) Look at the H₂ + O₂ reacting particle diagram. What happens to atom connections?', options: ['Stay the same.', 'Break and new connections form.', 'All disappear.', 'Only oxygen connections change.'], answer: 1, explanation: 'In reactions, bonds in reactants break, and new bonds form in products.' }
+                ],
+                FuelsCombustion: [
+                    { question: '(6.3.2) What is a fuel?', options: ['Anything hot.', 'Substance storing chemical energy released by burning.', 'Only liquids like petrol.', 'Something making light.'], answer: 1, explanation: 'A fuel stores chemical energy that can be released, usually by burning.' },
+                    { question: '(6.3.2) Fossil fuels like coal are \'non-renewable\' because:', options: ['They give little energy.', 'They cannot be replaced quickly.', 'They are not real fuels.', 'They can be used again.'], answer: 1, explanation: 'Non-renewable fuels form over millions of years and cannot be quickly replaced.' },
+                    { question: '(6.3.2) What is the chemical name for burning?', options: ['Melting', 'Combustion', 'Dissolving', 'Freezing'], answer: 1, explanation: 'Combustion is the scientific term for burning.' },
+                    { question: '(6.3.2) What gas from the air is needed for fuels to burn?', options: ['Nitrogen', 'Carbon Dioxide', 'Hydrogen', 'Oxygen'], answer: 3, explanation: 'Oxygen is required for combustion (burning).' },
+                    { question: '(6.3.2) Which of these is a fossil fuel formed over millions of years?', options: ['Wood', 'Ethanol (from plants)', 'Coal', 'Hydrogen'], answer: 2, explanation: 'Coal, oil, and natural gas are fossil fuels formed over long periods.' },
+                    { question: '(6.3.2) Which of these is described as a \'renewable\' fuel?', options: ['Petrol', 'Natural Gas', 'Wood', 'Diesel'], answer: 2, explanation: 'Renewable fuels, like wood, can be replaced relatively quickly.' },
+                    { question: '(6.3.2) When methane (CH₄) burns completely in oxygen, the products are:', options: ['Carbon and hydrogen', 'Carbon dioxide and water', 'Only carbon dioxide', 'Soot and water'], answer: 1, explanation: 'Complete combustion of hydrocarbons produces carbon dioxide and water.' },
+                    { question: '(6.3.2) What is the main product when hydrogen (H₂) burns in oxygen?', options: ['Carbon dioxide', 'Soot', 'Water (H₂O)', 'Methane (CH₄)'], answer: 2, explanation: 'Hydrogen burns in oxygen to form water (2H₂ + O₂ → 2H₂O).' },
+                    { question: '(6.4.1) Burning fuels releases heat. Burning (combustion) is:', options: ['Exothermic', 'Endothermic', 'Dissolving', 'Cooling'], answer: 0, explanation: 'Reactions that release heat are exothermic.' },
+                    { question: '(6.3.2) What type of energy is stored inside fuels like wood?', options: ['Heat energy', 'Light energy', 'Chemical energy', 'Movement energy'], answer: 2, explanation: 'Fuels store energy in their chemical bonds, known as chemical energy.' }
+                ]
+            }
+        };
+
+        // DOM elements (ensure IDs match HTML)
+        const boardElement = document.getElementById('board');
+        const diceElement = document.getElementById('dice');
+        const player1Element = document.getElementById('player1');
+        const player2Element = document.getElementById('player2');
+        const player1PosElement = document.getElementById('player1-pos');
+        const player2PosElement = document.getElementById('player2-pos');
+        const player1ScoreElement = document.getElementById('player1-score');
+        const player2ScoreElement = document.getElementById('player2-score');
+        const player1PowerupsElement = document.getElementById('player1-powerups');
+        const player2PowerupsElement = document.getElementById('player2-powerups');
+        const player1ProgressElement = document.getElementById('player1-progress');
+        const player2ProgressElement = document.getElementById('player2-progress');
+        const questionModal = document.getElementById('questionModal');
+        const questionTextElement = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedbackElement = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const closeQuestionModal = document.getElementById('closeQuestionModal');
+        const winnerModal = document.getElementById('winnerModal');
+        const winnerTitle = document.getElementById('winnerTitle');
+        const winnerStats = document.getElementById('winnerStats');
+        const restartBtn = document.getElementById('restartBtn');
+        const timerBar = document.getElementById('timerBar');
+        const powerupsContainer = document.getElementById('powerupsContainer');
+        const doublePowerup = document.getElementById('doublePowerup');
+        const extraPowerup = document.getElementById('extraPowerup');
+        const shieldPowerup = document.getElementById('shieldPowerup');
+        const periodicButton = document.getElementById('periodicButton');
+        const periodicModal = document.getElementById('periodicModal');
+        const closePeriodicModal = document.getElementById('closePeriodicModal');
+        const periodicTable = document.getElementById('periodicTable');
+        const achievementElement = document.getElementById('achievement');
+        const achievementTitle = document.getElementById('achievementTitle');
+        const achievementDesc = document.getElementById('achievementDesc');
+
+        // Initialize the game
+        function initGame() {
+            createBoard();
+            createPeriodicTable();
+            updatePlayerDisplay();
+
+            diceElement.addEventListener('click', rollDice);
+            nextBtn.addEventListener('click', nextTurn);
+            restartBtn.addEventListener('click', resetGame);
+            closeQuestionModal.addEventListener('click', closeQuestion);
+            hintBtn.addEventListener('click', giveHint);
+            periodicButton.addEventListener('click', () => periodicModal.style.display = 'flex');
+            closePeriodicModal.addEventListener('click', () => periodicModal.style.display = 'none');
+            doublePowerup.addEventListener('click', () => usePowerup('double'));
+            extraPowerup.addEventListener('click', () => usePowerup('extra'));
+            shieldPowerup.addEventListener('click', () => usePowerup('shield'));
+
+            resetTimer();
+            updatePowerupButtons();
+        }
+
+        // Create the game board
+        function createBoard() {
+            boardElement.innerHTML = '';
+            const totalCells = 40;
+            const categories = gameState.categories;
+            const specialCells = [5, 15, 25, 35]; // Powerup cells
+
+            for (let i = 1; i <= totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.number = i;
+                const cellContent = document.createElement('span');
+
+                if (i === 1) {
+                    cellContent.textContent = 'Start';
+                    cell.classList.add('Start');
+                } else if (i === totalCells) {
+                    cellContent.textContent = 'Finish';
+                    cell.classList.add('Finish');
+                } else if (specialCells.includes(i)) {
+                    cellContent.innerHTML = 'Powerup! <i class="fas fa-star" style="margin-left: 5px; color: yellow;"></i>';
+                    cell.classList.add('special-powerup');
+                    cell.dataset.cellType = 'special';
+                } else {
+                    const categoryIndex = (i - 2 + categories.length) % categories.length;
+                    const categoryKey = categories[categoryIndex]; // e.g., "AtomsMass"
+                    const displayName = categoryKey.replace(/([A-Z])/g, ' $1').replace(/Mass/, '& Mass').replace(/Energy/,'& Energy').replace(/Combustion/,'& Combustion').trim(); // Format name
+                    cellContent.textContent = displayName;
+                    cell.classList.add(`category-${categoryKey}`);
+                    cell.dataset.category = categoryKey;
+                    cell.dataset.cellType = 'question';
+                }
+                cell.appendChild(cellContent);
+
+                // Player markers
+                const p1Marker = document.createElement('div'); p1Marker.className = 'player-marker player1-marker'; p1Marker.id = `p1-marker-${i}`; p1Marker.style.display = (i === 1 ? 'block' : 'none'); cell.appendChild(p1Marker);
+                const p2Marker = document.createElement('div'); p2Marker.className = 'player-marker player2-marker'; p2Marker.id = `p2-marker-${i}`; p2Marker.style.display = (i === 1 ? 'block' : 'none'); cell.appendChild(p2Marker);
+
+                boardElement.appendChild(cell);
+            }
+        }
+
+        // Create Periodic Table (Function unchanged)
+        function createPeriodicTable() {
+             periodicTable.innerHTML = '';
+             const elements = [ { num: 1, sym: 'H', name: 'Hydrogen', group: 'nonmetal', row: 1, col: 1 }, { num: 2, sym: 'He', name: 'Helium', group: 'noble', row: 1, col: 18 }, { num: 3, sym: 'Li', name: 'Lithium', group: 'alkali', row: 2, col: 1 }, { num: 4, sym: 'Be', name: 'Beryllium', group: 'alkaline', row: 2, col: 2 }, { num: 5, sym: 'B', name: 'Boron', group: 'metalloid', row: 2, col: 13 }, { num: 6, sym: 'C', name: 'Carbon', group: 'nonmetal', row: 2, col: 14 }, { num: 7, sym: 'N', name: 'Nitrogen', group: 'nonmetal', row: 2, col: 15 }, { num: 8, sym: 'O', name: 'Oxygen', group: 'nonmetal', row: 2, col: 16 }, { num: 9, sym: 'F', name: 'Fluorine', group: 'halogen', row: 2, col: 17 }, { num: 10, sym: 'Ne', name: 'Neon', group: 'noble', row: 2, col: 18 }, { num: 11, sym: 'Na', name: 'Sodium', group: 'alkali', row: 3, col: 1 }, { num: 12, sym: 'Mg', name: 'Magnesium', group: 'alkaline', row: 3, col: 2 }, { num: 13, sym: 'Al', name: 'Aluminum', group: 'metal', row: 3, col: 13 }, { num: 14, sym: 'Si', name: 'Silicon', group: 'metalloid', row: 3, col: 14 }, { num: 15, sym: 'P', name: 'Phosphorus', group: 'nonmetal', row: 3, col: 15 }, { num: 16, sym: 'S', name: 'Sulfur', group: 'nonmetal', row: 3, col: 16 }, { num: 17, sym: 'Cl', name: 'Chlorine', group: 'halogen', row: 3, col: 17 }, { num: 18, sym: 'Ar', name: 'Argon', group: 'noble', row: 3, col: 18 } ];
+             for (let r = 1; r <= 7; r++) {
+                 for (let c = 1; c <= 18; c++) {
+                     const elementData = elements.find(el => el.row === r && el.col === c);
+                     const elementDiv = document.createElement('div');
+                     if (elementData) {
+                         elementDiv.className = `periodic-element ${elementData.group}`;
+                         elementDiv.innerHTML = ` <div class="element-number">${elementData.num}</div> <div class="element-symbol">${elementData.sym}</div> <div class="element-name">${elementData.name}</div> `;
+                         elementDiv.title = `${elementData.name} (${elementData.sym})`;
+                         elementDiv.addEventListener('click', () => { alert(`Element: ${elementData.name}\nSymbol: ${elementData.sym}\nAtomic Number: ${elementData.num}\nGroup: ${elementData.group}`); });
+                     } else {
+                         elementDiv.className = 'periodic-element empty'; elementDiv.style.visibility = 'hidden';
+                     }
+                     elementDiv.style.gridRow = r; elementDiv.style.gridColumn = c; periodicTable.appendChild(elementDiv);
+                 }
+             }
+        }
+
+        // Update Player Display (Function largely unchanged, ensures correct IDs)
+        function updatePlayerDisplay() {
+            player1PosElement.textContent = gameState.playerPositions[0];
+            player2PosElement.textContent = gameState.playerPositions[1];
+            player1ScoreElement.textContent = gameState.playerScores[0];
+            player2ScoreElement.textContent = gameState.playerScores[1];
+            player1PowerupsElement.textContent = gameState.playerPowerups[0];
+            player2PowerupsElement.textContent = gameState.playerPowerups[1];
+
+            const totalCells = 40;
+            player1ProgressElement.style.width = `${Math.min(100, (gameState.playerPositions[0] / totalCells) * 100)}%`;
+            player2ProgressElement.style.width = `${Math.min(100, (gameState.playerPositions[1] / totalCells) * 100)}%`;
+
+            player1Element.classList.toggle('active-player', gameState.currentPlayer === 1);
+            player2Element.classList.toggle('active-player', gameState.currentPlayer === 2);
+
+            document.querySelectorAll('.player-marker').forEach(marker => marker.style.display = 'none');
+            const p1Marker = document.getElementById(`p1-marker-${gameState.playerPositions[0]}`);
+            const p2Marker = document.getElementById(`p2-marker-${gameState.playerPositions[1]}`);
+            if (p1Marker) p1Marker.style.display = 'block';
+            if (p2Marker) p2Marker.style.display = 'block';
+
+            if (gameState.playerPositions[0] === gameState.playerPositions[1] && gameState.playerPositions[0] !== 0) { // Avoid overlap at start
+                 if (p1Marker) p1Marker.style.transform = 'translateX(-70%)';
+                 if (p2Marker) p2Marker.style.transform = 'translateX(-30%)';
+            } else {
+                 if (p1Marker) p1Marker.style.transform = 'translateX(-50%)';
+                 if (p2Marker) p2Marker.style.transform = 'translateX(-50%)';
+            }
+            updatePowerupButtons();
+        }
+
+        // Roll Dice (Function unchanged)
+        function rollDice() {
+            if (gameState.gameOver || questionModal.style.display === 'flex') return;
+            diceElement.disabled = true; diceElement.classList.add('rolling'); diceElement.style.pointerEvents = 'none';
+            let rolls = 0; const maxRolls = 15;
+            const rollInterval = setInterval(() => {
+                const randomValue = Math.floor(Math.random() * 6) + 1; diceElement.textContent = randomValue; rolls++;
+                if (rolls >= maxRolls) {
+                    clearInterval(rollInterval); diceElement.classList.remove('rolling');
+                    gameState.diceValue = Math.floor(Math.random() * 6) + 1; diceElement.textContent = gameState.diceValue;
+                    if (gameState.powerups.double.active) {
+                        const secondValue = Math.floor(Math.random() * 6) + 1; const firstValue = gameState.diceValue;
+                        gameState.diceValue += secondValue; diceElement.textContent = gameState.diceValue;
+                        showMessage(`Double Roll! Rolled ${firstValue} + ${secondValue} = ${gameState.diceValue}`);
+                        gameState.powerups.double.active = false; gameState.playerPowerups[gameState.currentPlayer - 1]--; updatePowerupButtons();
+                    }
+                    movePlayer();
+                }
+            }, 100);
+        }
+
+        // Move Player (Function unchanged)
+        function movePlayer() {
+            const playerIndex = gameState.currentPlayer - 1; let currentPosition = gameState.playerPositions[playerIndex];
+            let targetPosition = currentPosition + gameState.diceValue; const totalCells = 40;
+            let step = 0;
+            const moveInterval = setInterval(() => {
+                if (gameState.gameOver) { clearInterval(moveInterval); return; }
+                currentPosition++; step++;
+                if (currentPosition > totalCells) currentPosition = totalCells;
+                gameState.playerPositions[playerIndex] = currentPosition; updatePlayerDisplay();
+                if (step >= gameState.diceValue || currentPosition === totalCells) {
+                    clearInterval(moveInterval);
+                    if (currentPosition >= totalCells) {
+                        gameState.playerPositions[playerIndex] = totalCells; gameState.gameOver = true; updatePlayerDisplay(); showWinner();
+                    } else { handleLanding(currentPosition); }
+                }
+            }, 250);
+        }
+
+        // Handle Landing (Updated logic for 'special' cells)
+        function handleLanding(position) {
+            const cell = document.querySelector(`.cell[data-number="${position}"]`);
+            const cellType = cell.dataset.cellType;
+
+            if (cellType === 'special') {
+                const playerIndex = gameState.currentPlayer - 1;
+                gameState.playerPowerups[playerIndex]++;
+                gameState.powerupsCollected[playerIndex]++;
+                showMessage(`Player ${gameState.currentPlayer} landed on a Powerup space and gained a powerup point!`);
+                checkAchievements(); updatePlayerDisplay();
+                setTimeout(nextTurn, 1500);
+            } else if (cellType === 'question') {
+                const category = cell.dataset.category;
+                if (gameState.powerups.shield.active) {
+                    showMessage(`Player ${gameState.currentPlayer}'s Shield protected them from the question!`);
+                    gameState.powerups.shield.active = false; gameState.playerPowerups[gameState.currentPlayer - 1]--; updatePowerupButtons();
+                    setTimeout(nextTurn, 1500);
+                } else { showQuestion(category); }
+            } else { nextTurn(); }
+        }
+
+        // Show Question (Updated category fetching)
+        function showQuestion(categoryKey) { // Takes category key like "AtomsMass"
+            resetTimer();
+            const questions = gameState.questions[categoryKey];
+            if (!questions || questions.length === 0) {
+                console.error(`No questions found for category: ${categoryKey}`); showMessage(`Oops! No questions for ${categoryKey}. Skipping turn.`); setTimeout(nextTurn, 1500); return;
+            }
+            const question = questions[Math.floor(Math.random() * questions.length)];
+            gameState.currentQuestion = question;
+
+            questionTextElement.textContent = question.question; optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div'); optionElement.className = 'option'; optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', () => selectAnswer(index, question.answer, question.explanation)); optionsContainer.appendChild(optionElement);
+            });
+
+            feedbackElement.textContent = ''; feedbackElement.style.display = 'none'; feedbackElement.className = 'feedback';
+            nextBtn.style.display = 'none'; hintBtn.style.display = 'block'; hintBtn.disabled = false; hintBtn.style.opacity = '1';
+            questionModal.style.display = 'flex'; startTimer();
+        }
+
+        // Start Timer (Function unchanged)
+        function startTimer() {
+            gameState.timeLeft = gameState.timePerQuestion; timerBar.style.transition = 'none'; timerBar.style.width = '100%'; timerBar.style.background = 'linear-gradient(to right, var(--primary), var(--secondary))'; void timerBar.offsetWidth; timerBar.style.transition = `width ${gameState.timePerQuestion}s linear, background 0.3s linear`;
+            timerBar.style.width = '0%';
+            if (gameState.currentTimer) { clearInterval(gameState.currentTimer); }
+            gameState.currentTimer = setInterval(() => {
+                gameState.timeLeft--;
+                if (gameState.timeLeft < 5 && gameState.timeLeft >= 0) { timerBar.style.background = 'linear-gradient(to right, var(--warning), var(--danger))'; }
+                if (gameState.timeLeft < 0) {
+                    clearInterval(gameState.currentTimer); gameState.currentTimer = null;
+                    if (questionModal.style.display === 'flex') { timeUp(); }
+                }
+            }, 1000);
+        }
+
+        // Reset Timer (Function unchanged)
+        function resetTimer() {
+            if (gameState.currentTimer) { clearInterval(gameState.currentTimer); gameState.currentTimer = null; }
+            gameState.timeLeft = gameState.timePerQuestion; timerBar.style.transition = 'none'; timerBar.style.width = '100%'; timerBar.style.background = 'linear-gradient(to right, var(--primary), var(--secondary))';
+        }
+
+        // Time Up (Updated feedback logic)
+        function timeUp() {
+            if (!gameState.currentQuestion) return;
+            const correctIndex = gameState.currentQuestion.answer; const explanation = gameState.currentQuestion.explanation; const correctAnswerText = gameState.currentQuestion.options[correctIndex];
+            optionsContainer.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'none'; if (parseInt(opt.dataset.index) === correctIndex) { opt.classList.add('correct'); }
+            });
+            feedbackElement.textContent = `Time's up! Correct was: ${correctAnswerText}. Explanation: ${explanation}`; // Combined feedback
+            feedbackElement.style.display = 'block'; feedbackElement.className = 'feedback incorrect';
+            const playerIndex = gameState.currentPlayer - 1; gameState.playerCorrectStreaks[playerIndex] = 0;
+            nextBtn.style.display = 'block'; hintBtn.style.display = 'none';
+        }
+
+        // Select Answer (Updated feedback logic)
+        function selectAnswer(selectedIndex, correctIndex, explanation) {
+            if (gameState.currentTimer) { clearInterval(gameState.currentTimer); gameState.currentTimer = null; }
+            const options = optionsContainer.querySelectorAll('.option'); const playerIndex = gameState.currentPlayer - 1; const questionTimeLeft = gameState.timeLeft;
+            options.forEach(option => {
+                option.style.pointerEvents = 'none'; const optIndex = parseInt(option.dataset.index);
+                if (optIndex === correctIndex) { option.classList.add('correct'); }
+                if (optIndex === selectedIndex && selectedIndex !== correctIndex) { option.classList.add('incorrect'); }
+                if (optIndex === selectedIndex) { option.classList.add('selected'); }
+            });
+            if (selectedIndex === correctIndex) {
+                feedbackElement.textContent = `Correct! ${explanation}`; // Combined feedback
+                feedbackElement.className = 'feedback correct';
+                const pointsEarned = 10 + Math.max(0, Math.floor(questionTimeLeft / 2));
+                gameState.playerScores[playerIndex] += pointsEarned; gameState.playerCorrectStreaks[playerIndex]++; showMessage(`+${pointsEarned} points!`);
+            } else {
+                const correctAnswerText = options[correctIndex]?.textContent || 'N/A';
+                feedbackElement.textContent = `Incorrect. Correct was: ${correctAnswerText}. ${explanation}`; // Combined feedback
+                feedbackElement.className = 'feedback incorrect'; gameState.playerCorrectStreaks[playerIndex] = 0;
+            }
+            feedbackElement.style.display = 'block'; nextBtn.style.display = 'block'; hintBtn.style.display = 'none';
+            updatePlayerDisplay(); checkAchievements(questionTimeLeft);
+        }
+
+        // Use Powerup (Function unchanged)
+        function usePowerup(type) {
+            const playerIndex = gameState.currentPlayer - 1;
+            if (gameState.playerPowerups[playerIndex] > 0) {
+                if (gameState.powerups[type].active) { showMessage(`${type} powerup is already active!`); return; }
+                gameState.powerups[type].active = true;
+                // gameState.playerPowerups[playerIndex]--; // Decrement only when consumed
+                showMessage(`Player ${gameState.currentPlayer} activated ${type} powerup!`); updatePowerupButtons();
+            } else { showMessage("No powerups available!"); }
+        }
+
+        // Give Hint (Function unchanged)
+        function giveHint() {
+             if (!gameState.currentQuestion) return; const options = optionsContainer.querySelectorAll('.option'); const correctIndex = gameState.currentQuestion.answer;
+             const incorrectOptions = Array.from(options).filter(opt => { return parseInt(opt.dataset.index) !== correctIndex && opt.style.opacity !== '0.3'; });
+             if (incorrectOptions.length > 1) {
+                 const randomIndex = Math.floor(Math.random() * incorrectOptions.length); incorrectOptions[randomIndex].style.opacity = '0.3'; incorrectOptions[randomIndex].style.pointerEvents = 'none';
+                 hintBtn.disabled = true; hintBtn.style.opacity = '0.5';
+             } else { showMessage("No more hints available for this question!"); hintBtn.disabled = true; hintBtn.style.opacity = '0.5'; }
+        }
+
+        // Next Turn (Function unchanged)
+        function nextTurn() {
+             if (questionModal.style.display === 'flex') { closeQuestion(); }
+             if (gameState.gameOver) return;
+            if (gameState.powerups.extra.active) {
+                showMessage(`Player ${gameState.currentPlayer} uses Extra Turn! Roll again.`); gameState.powerups.extra.active = false; gameState.playerPowerups[gameState.currentPlayer - 1]--; diceElement.disabled = false; diceElement.style.pointerEvents = 'auto'; updatePowerupButtons();
+            } else {
+                gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1; diceElement.disabled = false; diceElement.style.pointerEvents = 'auto'; updatePlayerDisplay(); showMessage(`Player ${gameState.currentPlayer}'s turn!`);
+            }
+             gameState.currentQuestion = null;
+        }
+
+        // Close Question Modal (Function unchanged)
+         function closeQuestion() {
+             resetTimer(); questionModal.style.display = 'none';
+             if (nextBtn.style.display === 'none') { nextTurn(); } // Proceed if answer wasn't submitted
+         }
+
+        // Show Winner (Function unchanged)
+        function showWinner() {
+            const winnerIndex = gameState.currentPlayer - 1; const loserIndex = winnerIndex === 0 ? 1 : 0;
+            winnerTitle.textContent = `🎉 Player ${gameState.currentPlayer} Wins! 🎉`;
+            winnerStats.innerHTML = `<h4>Final Stats:</h4><p><strong>Winner (Player ${gameState.currentPlayer}):</strong> Score: ${gameState.playerScores[winnerIndex]}, Streak: ${gameState.playerCorrectStreaks[winnerIndex]}, Powerups: ${gameState.playerPowerups[winnerIndex]}</p><p><strong>Player ${loserIndex + 1}:</strong> Score: ${gameState.playerScores[loserIndex]}, Streak: ${gameState.playerCorrectStreaks[loserIndex]}, Powerups: ${gameState.playerPowerups[loserIndex]}</p>`;
+            winnerModal.style.display = 'flex';
+        }
+
+        // Reset Game (Function unchanged)
+        function resetGame() {
+            gameState.currentPlayer = 1; gameState.playerPositions = [1, 1]; gameState.playerScores = [0, 0]; gameState.playerPowerups = [0, 0]; gameState.playerCorrectStreaks = [0, 0]; gameState.diceValue = 0; gameState.gameOver = false; gameState.currentQuestion = null; gameState.playerAchievements = { 1: new Set(), 2: new Set() }; gameState.powerupsCollected = [0, 0];
+            for (let type in gameState.powerups) { gameState.powerups[type].active = false; }
+            winnerModal.style.display = 'none'; questionModal.style.display = 'none'; diceElement.textContent = '?'; diceElement.disabled = false; diceElement.style.pointerEvents = 'auto';
+            resetTimer(); updatePlayerDisplay(); updatePowerupButtons(); hintBtn.disabled = false; hintBtn.style.opacity = '1';
+        }
+
+        // Check Achievements (Function unchanged)
+         function checkAchievements(timeRemaining = -1) {
+             const playerIndex = gameState.currentPlayer - 1; const player = gameState.currentPlayer; const streak = gameState.playerCorrectStreaks[playerIndex]; const powerupsCol = gameState.powerupsCollected[playerIndex];
+             gameState.achievements.forEach(ach => {
+                 if (!gameState.playerAchievements[player]?.has(ach.id)) {
+                     let unlocked = false;
+                     if (ach.type === 'streak' && streak >= ach.threshold) { unlocked = true; }
+                     else if (ach.type === 'time' && timeRemaining >= ach.threshold) { unlocked = true; }
+                     else if (ach.type === 'powerup' && powerupsCol >= ach.threshold) { unlocked = true; }
+                     if (unlocked) { gameState.playerAchievements[player].add(ach.id); showAchievement(ach.title, `Player ${player}: ${ach.desc}`); }
+                 }
+             });
+         }
+
+        // Show Achievement Notification (Function unchanged)
+        function showAchievement(title, desc) {
+            achievementTitle.textContent = title; achievementDesc.textContent = desc; achievementElement.classList.add('show');
+            setTimeout(() => { achievementElement.classList.remove('show'); }, 4000);
+        }
+
+        // Show Temporary Message (Function unchanged)
+        function showMessage(message) {
+            const msgElement = document.createElement('div'); msgElement.className = 'achievement'; msgElement.style.background = 'var(--neutral)';
+            msgElement.innerHTML = `<i class="fas fa-info-circle"></i><div class="achievement-text"><span class="achievement-title" style="font-weight: normal;">${message}</span></div>`;
+            document.body.appendChild(msgElement);
+            setTimeout(() => {
+                msgElement.classList.add('show'); setTimeout(() => { msgElement.classList.remove('show'); setTimeout(() => msgElement.remove(), 500); }, 2500);
+            }, 10);
+        }
+
+        // Update Powerup Buttons (Function unchanged)
+        function updatePowerupButtons() {
+             const playerIndex = gameState.currentPlayer - 1; const canUse = gameState.playerPowerups[playerIndex] > 0;
+             [doublePowerup, extraPowerup, shieldPowerup].forEach(btn => {
+                 btn.disabled = !canUse; btn.style.opacity = canUse ? '1' : '0.5'; btn.style.cursor = canUse ? 'pointer' : 'not-allowed';
+                 const type = btn.id.replace('Powerup', '');
+                 if (gameState.powerups[type]?.active) { btn.style.border = '3px solid yellow'; } else { btn.style.border = 'none'; }
+             });
+        }
+
+        // Initialize the game when the page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
