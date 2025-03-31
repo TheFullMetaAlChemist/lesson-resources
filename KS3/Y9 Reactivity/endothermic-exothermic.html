@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exothermic and Endothermic Reactions</title>
+    <style>
+        :root {
+            --primary-color: #f9a826; /* Orange */
+            --secondary-color: #1a73e8; /* Blue */
+            --success-color: #4caf50; /* Green */
+            --danger-color: #f44336; /* Red */
+            --dark-color: #333;
+            --light-color: #f9f9f9;
+            --border-radius: 8px;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.12); /* Slightly stronger shadow */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Enable smooth scrolling */
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #ff7700);
+            color: white;
+            padding: 25px 20px; /* Increased padding */
+            border-radius: var(--border-radius);
+            margin-bottom: 25px; /* Increased margin */
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.6rem; /* Slightly larger */
+            margin-bottom: 10px;
+            font-weight: 600; /* Bolder */
+        }
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+
+        nav {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 12px 20px; /* Adjusted padding */
+            margin-bottom: 25px; /* Increased margin */
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; /* Make nav sticky */
+            top: 10px; /* Add space from top */
+            z-index: 100; /* Ensure it's above other content */
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .progress-bar {
+            height: 12px; /* Slightly thicker */
+            background-color: #e0e0e0;
+            border-radius: 6px; /* Match height */
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.4s ease; /* Smoother transition */
+            border-radius: 6px;
+        }
+
+        .progress-text {
+            font-size: 0.85rem; /* Slightly larger */
+            color: #555; /* Darker grey */
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px; /* Increased gap */
+        }
+
+        .btn {
+            padding: 9px 18px; /* Adjusted padding */
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.25s ease;
+            font-size: 0.95rem; /* Slightly larger */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add shadow to buttons */
+        }
+        .btn:active {
+             transform: translateY(1px); /* Press effect */
+             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #e09000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #1565c0;
+            transform: translateY(-2px);
+             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn-success { /* Define success button style */
+             background-color: var(--success-color);
+             color: white;
+        }
+         .btn-success:hover {
+             background-color: #388e3c; /* Darker green */
+             transform: translateY(-2px);
+             box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+         }
+
+
+        .btn-disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn-disabled:hover {
+            background-color: #cccccc;
+            transform: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px; /* Increased padding */
+            margin-bottom: 30px; /* Increased margin */
+            box-shadow: var(--shadow);
+            border: 1px solid #eee; /* Subtle border */
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.6s ease-in-out; /* Smoother fade-in */
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 25px; /* Increased margin */
+            border-bottom: 3px solid var(--primary-color); /* Thicker border */
+            padding-bottom: 10px; /* Increased padding */
+            font-size: 1.9rem; /* Slightly larger */
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 20px 0 15px 0; /* Adjusted margins */
+            color: var(--secondary-color);
+            font-size: 1.4rem; /* Slightly larger */
+             font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 18px; /* Increased margin */
+            font-size: 1.05rem; /* Slightly larger base font */
+            color: #444; /* Slightly darker paragraph text */
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 30px; /* Increased margin */
+            flex-wrap: wrap;
+        }
+
+        .flex-col {
+            flex: 1;
+            min-width: 280px; /* Adjusted min width */
+        }
+
+        .highlight-box {
+            background-color: #fffaf0; /* Softer orange background */
+            border-left: 6px solid var(--primary-color); /* Thicker border */
+            padding: 20px; /* Increased padding */
+            margin-bottom: 25px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+             box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+         .highlight-box h3 { color: var(--primary-color); margin-top: 0; } /* Match border color */
+
+
+        .key-points {
+            background-color: #f0f8ff; /* Softer blue background */
+            border-left: 6px solid var(--secondary-color); /* Thicker border */
+            padding: 20px; /* Increased padding */
+            margin-bottom: 25px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+             box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        .key-points h3 { color: var(--secondary-color); margin-top: 0; } /* Match border color */
+
+
+        ul, ol {
+            margin-left: 30px; /* Indent lists more */
+            margin-bottom: 18px;
+        }
+
+        li {
+            margin-bottom: 12px; /* Increased spacing */
+            padding-left: 5px; /* Add space before bullet/number */
+        }
+
+        .checkpoint {
+            background-color: #f9f9f9;
+            border: 1px solid #e5e5e5;
+            padding: 25px; /* Increased padding */
+            margin: 30px 0;
+            border-radius: var(--border-radius);
+        }
+
+        .checkpoint-question {
+            font-weight: 600; /* Bolder */
+            margin-bottom: 18px; /* Increased margin */
+            font-size: 1.15rem; /* Slightly larger */
+            color: var(--dark-color);
+        }
+
+        .checkpoint-options {
+            margin-bottom: 18px;
+        }
+
+        .checkpoint-option {
+            display: block;
+            padding: 14px; /* Increased padding */
+            margin-bottom: 10px; /* Increased margin */
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s ease-out;
+        }
+
+        .checkpoint-option:hover {
+            background-color: #f0f8ff; /* Light blue hover */
+            border-color: var(--secondary-color);
+        }
+         .checkpoint-option:active {
+             transform: scale(0.98); /* Click feedback */
+         }
+
+
+        .checkpoint-option.selected {
+            background-color: #d6eaff; /* Darker selected blue */
+            border-color: var(--secondary-color);
+            font-weight: bold;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .checkpoint-feedback {
+            display: none;
+            padding: 14px; /* Increased padding */
+            margin-top: 18px; /* Increased margin */
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            border-width: 2px; /* Thicker border for feedback */
+            border-style: solid;
+        }
+
+        .checkpoint-feedback.correct {
+            background-color: #e8f5e9;
+            color: #2e7d32; /* Darker green */
+            border-color: var(--success-color);
+        }
+
+        .checkpoint-feedback.incorrect {
+            background-color: #ffebee;
+            color: #c62828; /* Darker red */
+            border-color: var(--danger-color);
+        }
+
+        .checkpoint-controls { /* Container for buttons */
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+
+        /* --- Animation & Equipment Styles --- */
+
+        .animation-container {
+            width: 100%;
+            min-height: 320px; /* Increased height */
+            background: linear-gradient(to bottom, #f0f5f9, #e0e8ef); /* Gradient background */
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #d0d8e0; /* Slightly darker border */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); /* Inner shadow */
+        }
+
+        .animation-content {
+            display: flex;
+            align-items: flex-end;
+            gap: 35px; /* Increased space */
+        }
+
+        .beaker {
+            width: 130px; /* Slightly wider */
+            height: 170px; /* Slightly taller */
+            background-color: rgba(210, 225, 235, 0.65); /* Adjusted glass color */
+            border: 4px solid #95a5b2; /* Thicker, grey-blue border */
+            border-top: none;
+            border-radius: 0 0 18px 18px; /* More rounded bottom */
+            position: relative;
+            margin: 0;
+            box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.12); /* Enhanced inner shadow */
+            overflow: hidden; /* Keep contents inside */
+        }
+         /* Beaker Lip */
+        .beaker::before {
+            content: '';
+            position: absolute;
+            top: -10px; /* Adjusted lip position */
+            left: -10px;
+            right: -10px;
+            height: 18px; /* Lip height */
+            background-color: rgba(190, 205, 215, 0.75); /* Adjusted lip color */
+            border: 4px solid #95a5b2;
+            border-bottom: none;
+            border-radius: 12px 12px 0 0 / 10px 10px 0 0; /* Adjusted curve */
+            box-shadow: 0 -3px 6px rgba(0,0,0,0.1);
+        }
+        /* Endothermic Frost Effect */
+        #endo-beaker::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(255,255,255,0.6), rgba(255,255,255,0.2) 70%, transparent);
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            pointer-events: none; /* Allow clicks through */
+            border-radius: 0 0 18px 18px; /* Match beaker */
+            z-index: 5; /* Above liquid, below bubbles? */
+        }
+         #endo-beaker.frosted::after {
+             opacity: 1;
+         }
+
+
+        .beaker-liquid {
+            width: 100%;
+            background-color: #ADD8E6;
+            position: absolute;
+            bottom: 0;
+            height: 60%;
+            transition: height 1.8s ease-in-out, background-color 1.8s ease-in-out; /* Slower transitions */
+            border-radius: 0 0 15px 15px; /* Match beaker bottom */
+            z-index: 1; /* Behind frost/bubbles */
+        }
+
+        .beaker-bubbles {
+            position: absolute;
+            width: 100%;
+            bottom: 5px;
+            height: 70%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in; /* Faster bubble appear */
+            pointer-events: none;
+            z-index: 2; /* Above liquid */
+        }
+
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8); /* Brighter bubbles */
+            border-radius: 50%;
+            animation: bubbleRise 3.5s infinite ease-in; /* Slower rise */
+            opacity: 0;
+            border: 1px solid rgba(255, 255, 255, 0.9); /* Subtle border */
+        }
+
+        @keyframes bubbleRise {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.9; transform: scale(1); }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-130px) scale(0.8); opacity: 0; } /* Rise higher, shrink slightly */
+        }
+
+        .thermometer-area {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             position: relative; /* Needed for positioning label */
+             padding-bottom: 25px; /* Space for label below */
+        }
+
+        .thermometer {
+            width: 22px; /* Slightly thinner */
+            height: 160px; /* Taller */
+            background-color: rgba(235, 240, 245, 0.85); /* Adjusted glass color */
+            border: 3px solid #a0aab5; /* Adjusted border */
+            border-radius: 11px 11px 0 0; /* Match width */
+            position: relative;
+            margin: 0; /* Remove bottom margin */
+            overflow: hidden;
+            box-shadow: inset 1px 0 3px rgba(0,0,0,0.1); /* Inner shadow */
+            z-index: 10; /* Above beaker frost */
+        }
+         /* Markings on thermometer */
+        .thermometer::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1.5px; /* Slightly thicker marking line */
+            background: repeating-linear-gradient(
+                to bottom,
+                #667,
+                #667 1px,
+                transparent 1px,
+                transparent 12px /* Adjusted spacing */
+            );
+            opacity: 0.6; /* Make markings subtle */
+            z-index: 11; /* Above liquid */
+        }
+
+
+        .thermometer-liquid {
+            width: 12px; /* Thinner liquid column */
+            background: linear-gradient(to top, #cc0000, #ff4d4d); /* Red gradient */
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px 6px 0 0; /* Match width */
+            transition: height 1.8s ease-in-out; /* Match liquid transition */
+            z-index: 9; /* Below markings, above background */
+            box-shadow: inset 0 0 3px rgba(0,0,0,0.2); /* Inner shadow on liquid */
+        }
+
+        .thermometer-bulb {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff4d4d, #b30000); /* Adjusted gradient */
+            border-radius: 50%;
+            position: relative;
+            margin-top: -18px; /* Overlap base */
+            z-index: 12; /* Above thermometer tube */
+            border: 3px solid #800000; /* Darker border */
+            box-shadow: 0 3px 5px rgba(0,0,0,0.25);
+        }
+
+        .thermometer-label { /* Style for the label */
+             position: absolute;
+             bottom: 0; /* Position at the very bottom of the area */
+             left: 50%;
+             transform: translateX(-50%);
+             font-size: 0.9rem;
+             color: #333;
+             font-weight: 500;
+        }
+
+
+        .animation-controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* --- Quiz and Game Styles --- */
+
+        .quiz-container, .game-container {
+            padding: 30px; /* Increased padding */
+            background-color: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #eee;
+        }
+
+        #quiz-progress {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 20px; /* Increased margin */
+            text-align: center;
+            font-size: 1.1rem; /* Larger progress text */
+        }
+
+        .quiz-question {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .quiz-question h3 {
+            color: var(--dark-color);
+            font-size: 1.25rem; /* Larger question text */
+            margin-bottom: 15px;
+            line-height: 1.4; /* Improve readability */
+             font-weight: 500; /* Normal weight */
+        }
+
+
+        .quiz-options {
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            display: block;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s ease-out;
+        }
+
+        .quiz-option:hover {
+            background-color: #f0f8ff;
+            border-color: var(--secondary-color);
+        }
+        .quiz-option:active {
+             transform: scale(0.98);
+         }
+
+
+        .quiz-option.selected {
+            background-color: #d6eaff;
+            border-color: var(--secondary-color);
+            font-weight: bold;
+             box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+         #quiz-controls {
+             text-align: center;
+             margin-top: 25px;
+         }
+         #quiz-controls .btn {
+             margin: 0 8px;
+             min-width: 120px; /* Ensure buttons have minimum width */
+         }
+
+        #quiz-results {
+            text-align: center;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        #quiz-results h3 {
+            color: var(--primary-color);
+             font-size: 1.5rem;
+             margin-bottom: 15px;
+        }
+        #quiz-score-display { /* Container for score text */
+             font-size: 1.1rem;
+             margin-bottom: 15px;
+        }
+        #quiz-score {
+             font-weight: bold;
+             font-size: 1.3rem;
+             color: var(--secondary-color);
+        }
+        #quiz-total {
+             font-size: 1.1rem;
+             color: #555;
+        }
+        #quiz-feedback {
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        #quiz-restart {
+            margin-top: 20px;
+        }
+
+
+        /* --- New Definition Match Game Styles --- */
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Vertically align items */
+            margin-bottom: 25px;
+            padding: 14px 20px;
+            background-color: #f5f5f5;
+            border-radius: var(--border-radius);
+            border: 1px solid #e0e0e0;
+        }
+
+        .timer, .score {
+            font-weight: bold;
+            font-size: 1.15rem; /* Larger stats text */
+            padding: 5px 10px; /* Add padding */
+            border-radius: 5px; /* Rounded corners for stats */
+        }
+        .timer {
+            color: var(--danger-color);
+             background-color: #ffebee; /* Light red background */
+        }
+
+        .score {
+            color: var(--primary-color);
+             background-color: #fff9e6; /* Light orange background */
+        }
+
+        #game-definition {
+            background-color: #e3f2fd; /* Lighter blue background */
+            border-left: 6px solid var(--secondary-color);
+            padding: 18px 22px; /* Adjusted padding */
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.15rem; /* Larger definition text */
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            color: #224; /* Darker text */
+            line-height: 1.5;
+             box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        #game-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Adjusted minmax */
+            gap: 18px; /* Increased gap */
+            margin-top: 25px;
+            min-height: 160px;
+        }
+
+        .keyword-option {
+            padding: 18px; /* Increased padding */
+            background-color: #ffffff; /* White background */
+            border: 1px solid #ccc; /* Slightly darker border */
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600; /* Bolder keywords */
+            font-size: 1.05rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.07);
+            position: relative; /* For potential future icon additions */
+            overflow: hidden; /* Hide potential overflow from transforms */
+        }
+
+        .keyword-option:hover {
+            transform: translateY(-4px) scale(1.02); /* More pronounced hover */
+            box-shadow: 0 6px 10px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: #fffaf0;
+        }
+        .keyword-option:active {
+             transform: translateY(-1px) scale(0.98); /* Click effect */
+             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+
+        .keyword-option.correct {
+            background-color: #e8f5e9;
+            color: #2e7d32; /* Darker green */
+            border-color: var(--success-color);
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+         .keyword-option.correct::before { /* Add checkmark */
+            content: '\2714'; /* Checkmark unicode */
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            color: var(--success-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+         }
+
+
+        .keyword-option.incorrect {
+            background-color: #ffebee;
+            color: #c62828; /* Darker red */
+            border-color: var(--danger-color);
+            animation: shake 0.4s ease-in-out; /* Faster shake */
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .keyword-option.incorrect::before { /* Add cross */
+             content: '\2718'; /* Cross unicode */
+             position: absolute;
+             top: 5px;
+             right: 8px;
+             color: var(--danger-color);
+             font-size: 1.2rem;
+             font-weight: bold;
+         }
+
+
+        @keyframes shake { /* Adjusted shake */
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+
+        #game-controls, #game-results-display {
+             text-align: center;
+             margin-top: 30px; /* Increased margin */
+             padding: 20px; /* Add padding to results area */
+             background-color: #f8f9fa;
+             border-radius: var(--border-radius);
+        }
+         #game-results-display h3 {
+             color: var(--primary-color);
+             font-size: 1.6rem;
+             margin-bottom: 15px;
+         }
+          #game-score-container { /* Container for score text */
+             font-size: 1.15rem;
+             margin-bottom: 15px;
+        }
+         #final-score {
+              font-weight: bold;
+              font-size: 1.4rem;
+              color: var(--secondary-color);
+         }
+         #game-feedback {
+             font-weight: 500;
+             font-size: 1.1rem;
+             margin-top: 15px;
+         }
+         #game-restart { /* Style restart button in results */
+             margin-top: 20px;
+         }
+
+
+        /* --- General Helper Classes --- */
+        .hide {
+            display: none !important;
+        }
+
+        .show {
+            display: block;
+        }
+        .reaction {
+            padding: 12px 18px; /* Adjusted padding */
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.1rem; /* Larger text */
+            border-width: 2px;
+            border-style: solid;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+
+        .exothermic {
+            background-color: #ffebee;
+            color: #c62828;
+            border-color: #f44336;
+        }
+
+        .endothermic {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border-color: #2196f3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+             border: 1px solid #ddd; /* Add outer border */
+             border-radius: var(--border-radius); /* Rounded corners for table */
+             overflow: hidden; /* Needed for border-radius */
+        }
+
+        th, td {
+            padding: 14px; /* Increased padding */
+            border: none; /* Remove individual cell borders */
+            border-bottom: 1px solid #eee; /* Use bottom borders for rows */
+            text-align: left;
+        }
+        td:not(:first-child), th:not(:first-child) {
+             text-align: center; /* Center align data cells */
+        }
+        tr:last-child td {
+             border-bottom: none; /* Remove border from last row */
+        }
+
+
+        th {
+            background-color: #f8f9fa; /* Lighter header */
+            font-weight: 600; /* Bolder header */
+            text-align: center;
+            font-size: 1.05rem;
+            border-bottom: 2px solid #dee2e6; /* Stronger header separator */
+        }
+
+        tr:nth-child(even) {
+            background-color: #fdfdfd; /* Very subtle striping */
+        }
+         tr:hover {
+             background-color: #f1f8ff; /* Hover effect */
+         }
+
+
+        /* Heat arrows animation */
+         .heat-container {
+             position: relative;
+             height: 60px; /* Increased height */
+             margin: 15px auto;
+             width: 80%;
+         }
+
+         .heat-arrow {
+             position: absolute;
+             width: 0;
+             height: 0;
+             border-left: 9px solid transparent;
+             border-right: 9px solid transparent;
+             opacity: 0;
+             left: 50%;
+             transform: translateX(-50%);
+             filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3)); /* Add shadow */
+         }
+
+         .heat-arrow-up {
+             border-bottom: 14px solid var(--danger-color);
+             animation: arrowUp 1.8s infinite ease-out; /* Slower */
+             bottom: 0;
+         }
+
+         .heat-arrow-down {
+             border-top: 14px solid var(--secondary-color);
+             animation: arrowDown 1.8s infinite ease-in; /* Slower */
+             top: 0;
+         }
+
+         @keyframes arrowUp {
+             0% { transform: translate(-50%, 15px); opacity: 0; }
+             50% { opacity: 0.9; }
+             100% { transform: translate(-50%, -35px); opacity: 0; }
+         }
+
+         @keyframes arrowDown {
+             0% { transform: translate(-50%, -15px); opacity: 0; }
+             50% { opacity: 0.9; }
+             100% { transform: translate(-50%, 35px); opacity: 0; }
+         }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Exothermic and Endothermic Reactions</h1>
+            <p>Explore how energy is released or absorbed in chemical changes</p>
+        </header>
+
+        <nav>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="progress-text">Progress: <span id="progress-percent">0%</span></div>
+            </div>
+
+            <div class="nav-buttons">
+                <button id="prev-btn" class="btn btn-secondary btn-disabled" disabled>Previous</button>
+                <button id="next-btn" class="btn btn-primary">Next</button>
+            </div>
+        </nav>
+
+        <!-- Introduction Section -->
+        <section id="intro" class="section active">
+            <div class="card">
+                <h2>Introduction</h2>
+                <p>Welcome! This interactive tutorial explores how energy is transferred in chemical reactions, focusing on two main types: exothermic and endothermic.</p>
+
+                <div class="key-points">
+                    <h3>Learning Objectives</h3>
+                    <p>After completing this tutorial, you will be able to:</p>
+                    <ul>
+                        <li>Define exothermic and endothermic reactions based on energy transfer.</li>
+                        <li>Identify whether a reaction is exothermic or endothermic based on temperature changes.</li>
+                        <li>Recognize examples of exothermic and endothermic processes in everyday life.</li>
+                        <li>Understand that energy is either released or absorbed during chemical changes.</li>
+                    </ul>
+                </div>
+
+                <div class="flex-container">
+                     <div class="flex-col">
+                        <h3>How To Use This Tutorial</h3>
+                        <ol>
+                            <li>Read through each section carefully.</li>
+                            <li>Observe the animations to visualize the concepts.</li>
+                            <li>Answer the checkpoint questions (you must get them right to proceed!).</li>
+                            <li>Complete the final quiz.</li>
+                            <li>Play the definition match game to reinforce key terms.</li>
+                        </ol>
+                        <p>Use the "Next" and "Previous" buttons in the sticky navigation bar, or the "Next Section" buttons that appear after correctly answering checkpoints.</p>
+                    </div>
+                    <div class="flex-col">
+                         <h3>Energy Transfer Overview</h3>
+                         <p>Chemical reactions involve changes in energy. Sometimes energy is given out to the surroundings, and sometimes it's taken in.</p>
+                        <div class="animation-container" style="min-height: 220px;">
+                            <div style="text-align: center; width: 100%;">
+                                <div class="reaction exothermic" style="margin-bottom: 25px;">Exothermic: Energy Released</div>
+                                <div class="heat-container">
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 0s;"></div>
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 0.6s;"></div>
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 1.2s;"></div>
+                                </div>
+                                <div class="reaction endothermic" style="margin-top: 45px; margin-bottom: 25px;">Endothermic: Energy Absorbed</div>
+                                <div class="heat-container">
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 0s;"></div>
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 0.6s;"></div>
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 1.2s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Quick Check: What is the fundamental concept regarding energy in chemical reactions?</p>
+                    <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="false">Energy is always created.</div>
+                        <div class="checkpoint-option" data-correct="false">Energy is always destroyed.</div>
+                        <div class="checkpoint-option" data-correct="true">Energy is transferred (released or absorbed).</div>
+                        <div class="checkpoint-option" data-correct="false">Energy plays no role in reactions.</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                     <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exothermic Reactions Section -->
+        <section id="exothermic" class="section">
+            <div class="card">
+                <h2>Exothermic Reactions: Releasing Energy</h2>
+
+                <div class="highlight-box">
+                    <h3>Definition</h3>
+                    <p>An <strong>exothermic reaction</strong> is a chemical reaction that <strong>releases energy</strong> to its surroundings, usually in the form of heat.</p>
+                    <p>Because energy is transferred <strong>out</strong> of the reaction system, the temperature of the surroundings <strong>increases</strong>.</p>
+                </div>
+
+                <div class="flex-container">
+                    <div class="flex-col">
+                        <h3>Key Characteristics</h3>
+                        <ul>
+                            <li>Energy is <strong>released</strong> to the surroundings.</li>
+                            <li>Temperature of the surroundings <strong>increases</strong>.</li>
+                            <li>Often feels <strong>warm</strong> or <strong>hot</strong>.</li>
+                        </ul>
+
+                        <h3>Common Examples</h3>
+                        <ul>
+                            <li><strong>Combustion:</strong> Burning fuels like wood, gas, or candles.</li>
+                            <li><strong>Neutralization:</strong> Mixing an acid and an alkali.</li>
+                            <li><strong>Respiration:</strong> The process in living cells that releases energy from glucose.</li>
+                            <li><strong>Hand Warmers:</strong> Chemical reactions designed to produce heat.</li>
+                            <li><strong>Freezing water:</strong> Energy is released when liquid water forms solid ice bonds.</li>
+                        </ul>
+                    </div>
+                    <div class="flex-col">
+                         <h3>Visualizing an Exothermic Reaction</h3>
+                        <div class="animation-container" id="exothermic-animation">
+                            <div class="animation-content">
+                                <div class="beaker" id="exo-beaker">
+                                    <div class="beaker-liquid" id="exo-liquid" style="height: 60%; background-color: #a0e0a0;"></div> {/* Initial slightly green color */}
+                                    <div class="beaker-bubbles" id="exo-bubbles">
+                                        <div class="bubble" style="left: 25%; width: 8px; height: 8px; animation-delay: 0.1s;"></div>
+                                        <div class="bubble" style="left: 60%; width: 12px; height: 12px; animation-delay: 0.5s;"></div>
+                                        <div class="bubble" style="left: 40%; width: 6px; height: 6px; animation-delay: 0.9s;"></div>
+                                         <div class="bubble" style="left: 75%; width: 10px; height: 10px; animation-delay: 1.2s;"></div>
+                                    </div>
+                                </div>
+                                <div class="thermometer-area">
+                                    <div class="thermometer">
+                                        <div class="thermometer-liquid" id="exo-thermometer-liquid" style="height: 40%;"></div> {/* Initial temp */}
+                                    </div>
+                                    <div class="thermometer-bulb"></div>
+                                     <div class="thermometer-label">Temperature</div>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="animation-controls">
+                            <button id="run-exo-animation" class="btn btn-secondary">Run Animation</button>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Exothermic Checkpoint: If you mix two chemicals and the beaker feels warm, what type of reaction is likely occurring?</p>
+                    <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="true">Exothermic reaction</div>
+                        <div class="checkpoint-option" data-correct="false">Endothermic reaction</div>
+                        <div class="checkpoint-option" data-correct="false">No reaction</div>
+                        <div class="checkpoint-option" data-correct="false">A physical change only</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                     <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Endothermic Reactions Section -->
+        <section id="endothermic" class="section">
+            <div class="card">
+                <h2>Endothermic Reactions: Absorbing Energy</h2>
+
+                <div class="highlight-box" style="border-left-color: var(--secondary-color); background-color: #f0f8ff;">
+                    <h3>Definition</h3>
+                    <p>An <strong>endothermic reaction</strong> is a chemical reaction that <strong>absorbs energy</strong> from its surroundings, usually in the form of heat.</p>
+                    <p>Because energy is transferred <strong>into</strong> the reaction system, the temperature of the surroundings <strong>decreases</strong>.</p>
+                </div>
+
+                 <div class="flex-container">
+                    <div class="flex-col">
+                        <h3>Key Characteristics</h3>
+                        <ul>
+                            <li>Energy is <strong>absorbed</strong> from the surroundings.</li>
+                            <li>Temperature of the surroundings <strong>decreases</strong>.</li>
+                            <li>Often feels <strong>cool</strong> or <strong>cold</strong>.</li>
+                        </ul>
+
+                        <h3>Common Examples</h3>
+                        <ul>
+                            <li><strong>Melting ice:</strong> Solid water absorbs heat energy to break bonds.</li>
+                            <li><strong>Photosynthesis:</strong> Plants absorb light energy to make glucose.</li>
+                            <li><strong>Chemical Cold Packs:</strong> Dissolving certain salts (like ammonium nitrate) in water.</li>
+                            <li><strong>Sherbet dissolving:</strong> Citric acid and carbonate react endothermically.</li>
+                            <li><strong>Boiling water:</strong> Liquid water absorbs heat energy to become gas.</li>
+                        </ul>
+                    </div>
+                    <div class="flex-col">
+                         <h3>Visualizing an Endothermic Reaction</h3>
+                        <div class="animation-container" id="endothermic-animation">
+                             <div class="animation-content">
+                                <div class="beaker" id="endo-beaker"> {/* Add ID for frost effect targeting */}
+                                    <div class="beaker-liquid" id="endo-liquid" style="height: 60%; background-color: #ADD8E6;"></div> {/* Initial blue */}
+                                </div>
+                                <div class="thermometer-area">
+                                    <div class="thermometer">
+                                        <div class="thermometer-liquid" id="endo-thermometer-liquid" style="height: 70%;"></div> {/* Initial temp */}
+                                    </div>
+                                    <div class="thermometer-bulb"></div>
+                                     <div class="thermometer-label">Temperature</div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="animation-controls">
+                             <button id="run-endo-animation" class="btn btn-secondary">Run Animation</button>
+                         </div>
+                    </div>
+                </div>
+
+                 <div class="key-points">
+                    <h3>Real-World Example: Cold Packs</h3>
+                    <p>Instant cold packs typically contain water and a salt like ammonium nitrate, separated. When you break the inner pouch:</p>
+                    <ol>
+                        <li>The salt dissolves in the water.</li>
+                        <li>This dissolving process is highly endothermic.</li>
+                        <li>It rapidly absorbs heat from the water and the pack itself, breaking bonds in the salt crystal lattice.</li>
+                        <li>Result: The pack becomes very cold, useful for treating injuries.</li>
+                    </ol>
+                </div>
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Endothermic Checkpoint: Photosynthesis uses sunlight to convert carbon dioxide and water into glucose. Is this process exothermic or endothermic?</p>
+                     <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="false">Exothermic, because plants grow</div>
+                        <div class="checkpoint-option" data-correct="true">Endothermic, because it absorbs light energy</div>
+                        <div class="checkpoint-option" data-correct="false">Neither, it's biological</div>
+                        <div class="checkpoint-option" data-correct="false">Both, depending on the time of day</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                     <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comparing Reactions Section -->
+        <section id="comparison" class="section">
+            <div class="card">
+                <h2>Comparing Exothermic and Endothermic Reactions</h2>
+                <p>Let's summarize the key differences:</p>
+
+                <table style="margin-bottom: 35px;">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Exothermic Reactions</th>
+                            <th>Endothermic Reactions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Energy Transfer Direction</strong></td>
+                            <td>System → Surroundings (Out)</td>
+                            <td>Surroundings → System (In)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Temperature Change (Surroundings)</strong></td>
+                            <td style="color: var(--danger-color); font-weight: bold;">Increases (gets warmer)</td>
+                            <td style="color: var(--secondary-color); font-weight: bold;">Decreases (gets cooler)</td>
+                        </tr>
+                         <tr>
+                            <td><strong>How it Feels</strong></td>
+                            <td>Warm / Hot 🔥</td>
+                             <td>Cool / Cold ❄️</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bond Energy Perspective</strong></td>
+                             <td>Energy released forming bonds > Energy absorbed breaking bonds</td>
+                            <td>Energy absorbed breaking bonds > Energy released forming bonds</td>
+                        </tr>
+                        <tr>
+                             <td><strong>Example</strong></td>
+                             <td>Burning fuel (Combustion)</td>
+                             <td>Melting ice</td>
+                         </tr>
+                    </tbody>
+                </table>
+
+
+                 <div class="flex-container">
+                    <div class="flex-col">
+                        <h3>Exothermic Summary</h3>
+                        <div class="reaction exothermic">
+                            <p>Energy Flows Out</p>
+                        </div>
+                        <div class="animation-container" style="min-height: 180px;">
+                             <div style="text-align: center; width: 100%;">
+                                <p style="margin-bottom: 20px;">Heat is released to surroundings</p>
+                                <div class="heat-container" style="height: 70px;">
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 0s;"></div>
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 0.4s;"></div>
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 0.8s;"></div>
+                                    <div class="heat-arrow heat-arrow-up" style="animation-delay: 1.2s;"></div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="flex-col">
+                         <h3>Endothermic Summary</h3>
+                        <div class="reaction endothermic">
+                           <p>Energy Flows In</p>
+                        </div>
+                         <div class="animation-container" style="min-height: 180px;">
+                              <div style="text-align: center; width: 100%;">
+                                 <p style="margin-bottom: 20px;">Heat is absorbed from surroundings</p>
+                                <div class="heat-container" style="height: 70px;">
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 0s;"></div>
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 0.4s;"></div>
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 0.8s;"></div>
+                                     <div class="heat-arrow heat-arrow-down" style="animation-delay: 1.2s;"></div>
+                                </div>
+                              </div>
+                         </div>
+                    </div>
+                </div>
+
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Comparison Checkpoint: A reaction causes the air around it to become noticeably colder. This reaction must be:</p>
+                     <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="false">Exothermic</div>
+                        <div class="checkpoint-option" data-correct="true">Endothermic</div>
+                        <div class="checkpoint-option" data-correct="false">Neutral</div>
+                        <div class="checkpoint-option" data-correct="false">Combustion</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                    <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simplified Energy Transfer Section -->
+        <section id="energy-transfer" class="section">
+            <div class="card">
+                <h2>Why Does Energy Transfer Happen? (Bond Energy)</h2>
+
+                <div class="highlight-box">
+                    <h3>Chemical Bonds Store Energy</h3>
+                    <p>Chemical reactions involve breaking existing chemical bonds in the reactants and forming new chemical bonds in the products. Energy is involved in both steps:</p>
+                    <ul>
+                        <li><strong>Breaking bonds ALWAYS requires energy input</strong> (it's an endothermic step). Think of pulling apart magnets – it takes effort!</li>
+                        <li><strong>Forming bonds ALWAYS releases energy</strong> (it's an exothermic step). Think of magnets snapping together – they release potential energy.</li>
+                    </ul>
+                </div>
+
+                <div class="flex-container">
+                    <div class="flex-col">
+                        <h3>Exothermic Reactions Explained</h3>
+                        <p>In exothermic reactions, the new bonds formed in the products are stronger (more stable) and release <strong>more energy</strong> than was required to break the original bonds in the reactants.</p>
+                        <p>The overall result is a net <strong>release</strong> of energy. The "extra" energy is given off as heat or light.</p>
+                         <div class="reaction exothermic" style="margin-top: 15px;">Energy Released (Bond Forming) > Energy Absorbed (Bond Breaking)</div>
+                    </div>
+                    <div class="flex-col">
+                        <h3>Endothermic Reactions Explained</h3>
+                        <p>In endothermic reactions, the bonds in the reactants are stronger, requiring <strong>more energy</strong> to break them than is released when the weaker (less stable) bonds form in the products.</p>
+                        <p>The reaction needs to continuously absorb energy from the surroundings to make up the difference, resulting in cooling.</p>
+                         <div class="reaction endothermic" style="margin-top: 15px;">Energy Absorbed (Bond Breaking) > Energy Released (Bond Forming)</div>
+                    </div>
+                </div>
+
+
+                <div class="key-points">
+                    <h3>Key Takeaway</h3>
+                    <p>The overall energy change of a reaction (whether it's exothermic or endothermic) depends on the <strong>balance</strong> between the energy needed to break bonds and the energy released when new bonds are formed.</p>
+                </div>
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Energy Checkpoint: If forming product bonds releases much more energy than breaking reactant bonds requires, the reaction will be:</p>
+                    <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="true">Exothermic</div>
+                        <div class="checkpoint-option" data-correct="false">Endothermic</div>
+                        <div class="checkpoint-option" data-correct="false">Energetically neutral</div>
+                        <div class="checkpoint-option" data-correct="false">Impossible to determine</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                    <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+         <!-- Practical Applications Section -->
+        <section id="applications" class="section">
+            <div class="card">
+                <h2>Practical Applications</h2>
+                 <p>Understanding exothermic and endothermic reactions is crucial for many technologies and everyday phenomena.</p>
+
+                <div class="flex-container">
+                    <div class="flex-col">
+                        <h3>Harnessing Exothermic Reactions</h3>
+                         <div class="reaction exothermic">Uses involving Heat Release</div>
+                        <ul>
+                            <li><strong>Heating:</strong> Burning natural gas or oil in furnaces.</li>
+                            <li><strong>Cooking:</strong> Gas stoves, charcoal grills use combustion.</li>
+                            <li><strong>Engines:</strong> Combustion of gasoline/diesel powers vehicles.</li>
+                            <li><strong>Hand Warmers:</strong> Controlled oxidation of iron powder.</li>
+                            <li><strong>Self-Heating Cans:</strong> Reactions like calcium oxide + water.</li>
+                            <li><strong>Concrete Curing:</strong> The hydration of cement releases heat.</li>
+                        </ul>
+                    </div>
+                    <div class="flex-col">
+                        <h3>Utilizing Endothermic Reactions</h3>
+                         <div class="reaction endothermic">Uses involving Heat Absorption</div>
+                        <ul>
+                            <li><strong>Cooling:</strong> Instant cold packs for reducing swelling.</li>
+                            <li><strong>Refrigeration & Air Conditioning:</strong> The evaporation step of the refrigerant cycle absorbs heat.</li>
+                             <li><strong>Food Preservation:</strong> Cooling slows down spoilage reactions.</li>
+                             <li><strong>Some Industrial Syntheses:</strong> Processes requiring cooling to control reaction rates or favour products.</li>
+                             <li><strong>Evaporative Cooling:</strong> Sweating cools the body; swamp coolers cool air.</li>
+                             <li><strong>Dissolving some Salts:</strong> Like ammonium nitrate or potassium chloride.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>Importance in Science and Engineering</h3>
+                    <ul>
+                        <li>Designing efficient and safe engines and power generation systems.</li>
+                        <li>Developing effective heating, cooling, and insulation technologies.</li>
+                        <li>Controlling chemical reactions in industry for safety and yield optimization.</li>
+                        <li>Understanding natural processes like weather patterns, geothermal energy, and biological metabolism.</li>
+                    </ul>
+                </div>
+
+                <div class="checkpoint">
+                    <p class="checkpoint-question">Applications Checkpoint: A self-heating coffee can uses a chemical reaction to warm the drink. This reaction must be:</p>
+                     <div class="checkpoint-options">
+                        <div class="checkpoint-option" data-correct="false">Endothermic</div>
+                        <div class="checkpoint-option" data-correct="true">Exothermic</div>
+                        <div class="checkpoint-option" data-correct="false">Photosynthesis</div>
+                        <div class="checkpoint-option" data-correct="false">A cooling process</div>
+                    </div>
+                    <div class="checkpoint-feedback"></div>
+                    <div class="checkpoint-controls">
+                        <button class="btn btn-primary check-answer-btn">Check Answer</button>
+                        <button class="btn btn-success checkpoint-next-btn hide">Next Section</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <div class="card">
+                <h2>Quiz: Test Your Knowledge</h2>
+                <p>Answer the following 8 questions to check your understanding.</p>
+
+                <div class="quiz-container">
+                    <div id="quiz-progress">Question 1 of 8</div>
+
+                    <div id="question-container">
+                        <!-- Questions will be dynamically inserted here -->
+                    </div>
+
+                    <div id="quiz-controls">
+                        <button id="quiz-next" class="btn btn-primary">Next Question</button>
+                        <button id="quiz-submit" class="btn btn-primary hide">Submit Quiz</button>
+                    </div>
+
+                    <div id="quiz-results" class="hide">
+                         <h3>Quiz Results</h3>
+                         <p id="quiz-score-display">You scored: <span id="quiz-score">0</span> / <span id="quiz-total">8</span></p>
+                        <div id="quiz-feedback"></div>
+                         <button id="quiz-restart" class="btn btn-secondary">Restart Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Game Section -->
+        <section id="game" class="section">
+            <div class="card">
+                <h2>Game: Definition Match</h2>
+                <p>Match the definition to the correct keyword. Be quick, you only have 60 seconds!</p>
+
+                <div class="game-container">
+                    <div class="game-stats">
+                        <div class="timer">Time Left: <span id="game-time">60</span>s</div>
+                        <div class="score">Score: <span id="game-score">0</span></div>
+                    </div>
+
+                    <div id="game-definition">
+                        Click "Start Game" to begin!
+                    </div>
+
+                    <div id="game-options-grid">
+                        <!-- Keyword options will be loaded here -->
+                    </div>
+
+                    <div id="game-controls" style="margin-top: 20px; text-align:center;">
+                        <button id="game-start" class="btn btn-success">Start Game</button>
+                    </div>
+
+                     <!-- Results display moved inside game container but separate flow -->
+                    <div id="game-results-display" class="hide">
+                        <h3>Game Over!</h3>
+                        <p id="game-score-container">Final Score: <span id="final-score">0</span></p>
+                        <div id="game-feedback"></div>
+                        <button id="game-restart" class="btn btn-secondary">Play Again</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div> {/* End of .container */}
+
+    <script>
+        // --- General Setup ---
+        let currentSection = 0;
+        const sections = document.querySelectorAll('.section');
+        const progressBar = document.getElementById('progress');
+        const progressPercent = document.getElementById('progress-percent');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const totalSections = sections.length;
+
+        // --- Navigation ---
+        function updateProgress() {
+            const progress = totalSections > 1 ? (currentSection / (totalSections - 1)) * 100 : 0;
+            progressBar.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+
+        function showSection(index) {
+            sections.forEach((section, i) => {
+                section.classList.toggle('active', i === index);
+            });
+
+            prevBtn.disabled = index === 0;
+            prevBtn.classList.toggle('btn-disabled', index === 0);
+            prevBtn.classList.toggle('btn-secondary', index > 0);
+
+            nextBtn.disabled = index === totalSections - 1;
+            nextBtn.classList.toggle('btn-disabled', index === totalSections - 1);
+            nextBtn.classList.toggle('btn-primary', index < totalSections - 1);
+
+            updateProgress();
+             // Scroll to the top of the new section smoothly
+             // sections[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+             // Or scroll window to top
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Main Navigation Button Click Handler
+        function handleMainNavigation(direction) {
+             const currentSectionElement = sections[currentSection];
+             const checkpoint = currentSectionElement.querySelector('.checkpoint');
+             let canProceed = true;
+
+            if (direction === 'next' && checkpoint) {
+                const feedback = checkpoint.querySelector('.checkpoint-feedback');
+                // Only allow proceeding if checkpoint exists and is correctly answered
+                if (!feedback.classList.contains('correct')) {
+                     alert("Please answer the checkpoint question correctly before proceeding.");
+                     canProceed = false;
+                 }
+             }
+
+             if (canProceed) {
+                 if (direction === 'next' && currentSection < totalSections - 1) {
+                     currentSection++;
+                 } else if (direction === 'prev' && currentSection > 0) {
+                     currentSection--;
+                 }
+                 showSection(currentSection);
+             }
+        }
+
+
+        prevBtn.addEventListener('click', () => handleMainNavigation('prev'));
+        nextBtn.addEventListener('click', () => handleMainNavigation('next'));
+
+
+        // --- Checkpoint Logic ---
+        document.querySelectorAll('.checkpoint').forEach(checkpoint => {
+            const options = checkpoint.querySelectorAll('.checkpoint-option');
+            const feedback = checkpoint.querySelector('.checkpoint-feedback');
+            const checkButton = checkpoint.querySelector('.check-answer-btn');
+            const nextSectionBtn = checkpoint.querySelector('.checkpoint-next-btn');
+            let selectedOption = null;
+
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedOption = option;
+                    feedback.style.display = 'none'; // Hide feedback on new selection
+                    nextSectionBtn.classList.add('hide'); // Hide next button on new selection
+                    feedback.className = 'checkpoint-feedback';
+                });
+            });
+
+            checkButton.addEventListener('click', () => {
+                 if (!selectedOption) {
+                     alert("Please select an answer first.");
+                     return;
+                 }
+
+                 const isCorrect = selectedOption.getAttribute('data-correct') === 'true';
+                 feedback.className = 'checkpoint-feedback'; // Reset classes
+
+                 if (isCorrect) {
+                     feedback.textContent = "Correct! Well done. You can now proceed.";
+                     feedback.classList.add('correct');
+                     nextSectionBtn.classList.remove('hide'); // Show the 'Next Section' button
+                 } else {
+                     feedback.textContent = "That's not quite right. Think about the definitions or examples provided.";
+                     feedback.classList.add('incorrect');
+                     nextSectionBtn.classList.add('hide'); // Ensure 'Next Section' button is hidden
+                 }
+                 feedback.style.display = 'block';
+            });
+
+            // Add listener for the checkpoint-specific 'Next Section' button
+            nextSectionBtn.addEventListener('click', () => {
+                 if (currentSection < totalSections - 1) {
+                    currentSection++;
+                    showSection(currentSection);
+                 }
+            });
+        });
+
+
+        // --- Animation Logic ---
+        document.getElementById('run-exo-animation').addEventListener('click', function() {
+            const liquid = document.getElementById('exo-liquid');
+            const bubbles = document.getElementById('exo-bubbles');
+            const thermometerLiquid = document.getElementById('exo-thermometer-liquid');
+
+            // Reset styles immediately without transition
+            liquid.style.transition = 'none';
+            bubbles.style.transition = 'none';
+            thermometerLiquid.style.transition = 'none';
+
+            liquid.style.backgroundColor = '#a0e0a0'; // Initial green
+            liquid.style.height = '60%';
+            bubbles.style.opacity = '0';
+            thermometerLiquid.style.height = '40%'; // Initial temp
+
+            // Force reflow/repaint
+            void liquid.offsetWidth;
+
+            // Re-apply transitions and start animation
+            liquid.style.transition = 'height 1.8s ease-in-out, background-color 1.8s ease-in-out';
+            bubbles.style.transition = 'opacity 0.6s ease-in';
+            thermometerLiquid.style.transition = 'height 1.8s ease-in-out';
+
+
+            setTimeout(() => {
+                liquid.style.backgroundColor = '#ffb3b3'; // Warmer pinkish color
+                liquid.style.height = '65%';
+                bubbles.style.opacity = '1';
+                thermometerLiquid.style.height = '85%'; // Higher temp
+            }, 50); // Short delay
+        });
+
+        document.getElementById('run-endo-animation').addEventListener('click', function() {
+            const beaker = document.getElementById('endo-beaker'); // Target beaker for frost
+            const liquid = document.getElementById('endo-liquid');
+            const thermometerLiquid = document.getElementById('endo-thermometer-liquid');
+
+             // Reset styles immediately without transition
+            beaker.classList.remove('frosted'); // Remove frost class
+            liquid.style.transition = 'none';
+            thermometerLiquid.style.transition = 'none';
+
+
+            liquid.style.backgroundColor = '#ADD8E6'; // Initial blue
+            liquid.style.height = '60%';
+            thermometerLiquid.style.height = '70%'; // Initial temp
+
+             // Force reflow/repaint
+             void liquid.offsetWidth;
+
+            // Re-apply transitions and start animation
+            liquid.style.transition = 'height 1.8s ease-in-out, background-color 1.8s ease-in-out';
+            thermometerLiquid.style.transition = 'height 1.8s ease-in-out';
+             // Note: Frost transition is handled purely by CSS on class add
+
+            setTimeout(() => {
+                beaker.classList.add('frosted'); // Add class to trigger frost CSS
+                liquid.style.backgroundColor = '#c0d8e6'; // Cooler, paler blue
+                liquid.style.height = '58%';
+                thermometerLiquid.style.height = '25%'; // Lower temp
+            }, 50);
+        });
+
+
+        // --- Quiz Logic ---
+        let currentQuizQuestion = 0;
+        let quizScore = 0;
+        const quizQuestions = [
+             { question: "A reaction that releases heat energy, making the surroundings warmer, is called:", options: ["Endothermic", "Exothermic", "Neutral", "Catalytic"], correctAnswer: 1 },
+             { question: "What happens to the temperature of the surroundings during an endothermic reaction?", options: ["It increases", "It decreases", "It stays the same", "It fluctuates rapidly"], correctAnswer: 1 },
+             { question: "Which of these is a common example of an exothermic reaction?", options: ["Melting ice", "Photosynthesis", "Burning wood", "Boiling water"], correctAnswer: 2 },
+             { question: "Instant cold packs work because the dissolving process inside them is:", options: ["Exothermic", "Endothermic", "Very fast", "Combustion"], correctAnswer: 1 },
+             { question: "Energy flows from the ______ to the ______ in an exothermic process.", options: ["Surroundings, System", "System, Surroundings", "Reactants, Products only", "Heat source, Thermometer"], correctAnswer: 1 },
+             { question: "Breaking chemical bonds always ______ energy.", options: ["Requires (absorbs)", "Releases", "Creates", "Destroys"], correctAnswer: 0 },
+             { question: "Forming chemical bonds always ______ energy.", options: ["Requires (absorbs)", "Releases", "Uses up", "Transfers"], correctAnswer: 1 },
+             { question: "If a reaction feels cold to the touch, it is likely:", options: ["Exothermic", "Endothermic", "Neutral", "Very slow"], correctAnswer: 1 }
+        ];
+        const totalQuizQuestions = quizQuestions.length;
+
+        function initQuiz() {
+            currentQuizQuestion = 0;
+            quizScore = 0;
+            document.getElementById('quiz-results').classList.add('hide');
+            document.getElementById('quiz-controls').classList.remove('hide');
+            document.getElementById('question-container').classList.remove('hide');
+            document.getElementById('quiz-next').classList.remove('hide');
+            document.getElementById('quiz-submit').classList.add('hide');
+             document.getElementById('quiz-total').textContent = totalQuizQuestions;
+             document.getElementById('quiz-score').textContent = quizScore; // Reset score display
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const quizProgress = document.getElementById('quiz-progress');
+
+            if (currentQuizQuestion < totalQuizQuestions) {
+                const q = quizQuestions[currentQuizQuestion];
+                quizProgress.textContent = `Question ${currentQuizQuestion + 1} of ${totalQuizQuestions}`;
+
+                let optionsHTML = '';
+                // Ensure options are shuffled each time for variety (optional)
+                // const shuffledOptions = shuffleArray([...q.options]);
+                // shuffledOptions.forEach((option, index) => { ... });
+                // If shuffling, need to map selected index back to original correct index
+
+                q.options.forEach((option, index) => { // Using original order for simplicity now
+                    optionsHTML += `<div class="quiz-option" data-index="${index}">${option}</div>`;
+                });
+
+
+                questionContainer.innerHTML = `
+                    <div class="quiz-question">
+                        <h3>${q.question}</h3>
+                    </div>
+                    <div class="quiz-options">${optionsHTML}</div>
+                `;
+
+                document.querySelectorAll('.quiz-option').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        // Allow selecting only one option
+                        document.querySelectorAll('.quiz-option.selected').forEach(sel => sel.classList.remove('selected'));
+                        e.target.classList.add('selected');
+                    });
+                });
+
+                document.getElementById('quiz-next').classList.toggle('hide', currentQuizQuestion === totalQuizQuestions - 1);
+                document.getElementById('quiz-submit').classList.toggle('hide', currentQuizQuestion < totalQuizQuestions - 1);
+
+            } else {
+                showQuizResults();
+            }
+        }
+
+        function handleQuizAnswer() {
+             const selectedOption = document.querySelector('.quiz-option.selected');
+             if (!selectedOption) {
+                 alert("Please select an answer.");
+                 return false;
+             }
+
+             const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
+             if (selectedIndex === quizQuestions[currentQuizQuestion].correctAnswer) {
+                 quizScore++;
+             }
+             currentQuizQuestion++;
+             return true;
+        }
+
+        document.getElementById('quiz-next').addEventListener('click', () => {
+            if (handleQuizAnswer()) {
+                 showQuizQuestion();
+             }
+        });
+
+        document.getElementById('quiz-submit').addEventListener('click', () => {
+             if (handleQuizAnswer()) {
+                 showQuizResults();
+             }
+        });
+
+
+        function showQuizResults() {
+            document.getElementById('question-container').classList.add('hide');
+             document.getElementById('quiz-controls').classList.add('hide');
+             document.getElementById('quiz-progress').textContent = 'Quiz Complete';
+
+            const resultsDiv = document.getElementById('quiz-results');
+            document.getElementById('quiz-score').textContent = quizScore; // Update final score
+            const feedbackDiv = document.getElementById('quiz-feedback');
+
+
+            let feedbackMsg = '';
+            const percentage = (quizScore / totalQuizQuestions) * 100;
+            if (percentage >= 90) {
+                feedbackMsg = "Excellent! You've mastered these concepts!";
+            } else if (percentage >= 70) {
+                feedbackMsg = "Great job! You have a strong understanding.";
+            } else if (percentage >= 50) {
+                feedbackMsg = "Good effort. A little review might be helpful.";
+            } else {
+                feedbackMsg = "Keep studying! Review the sections and try again.";
+            }
+
+            feedbackDiv.innerHTML = `<p>${feedbackMsg}</p>`;
+            resultsDiv.classList.remove('hide');
+        }
+
+        document.getElementById('quiz-restart').addEventListener('click', initQuiz);
+
+        // --- Definition Match Game Logic ---
+        let gameScore = 0;
+        let gameTime = 60;
+        let gameTimer;
+        let currentGameTermIndex = -1;
+        let availableGameTerms = [];
+        let currentCorrectKeyword = '';
+        let gameActive = false;
+
+        const gameTerms = [
+             { keyword: "Exothermic", definition: "A process that RELEASES energy, usually as heat, to the surroundings.", distractors: ["Endothermic", "Catalyst", "Combustion"] },
+             { keyword: "Endothermic", definition: "A process that ABSORBS energy, usually as heat, from the surroundings.", distractors: ["Exothermic", "Product", "Neutralization"] },
+             { keyword: "Surroundings", definition: "Everything outside the system where energy is transferred to or from.", distractors: ["System", "Reactant", "Beaker"] },
+             { keyword: "Temperature Increase", definition: "Observation often indicating an EXOTHERMIC reaction.", distractors: ["Temperature Decrease", "Color Change", "Gas Production"] },
+             { keyword: "Temperature Decrease", definition: "Observation often indicating an ENDOTHERMIC reaction.", distractors: ["Temperature Increase", "Precipitate", "Light Emission"] },
+             { keyword: "Combustion", definition: "A rapid exothermic reaction, typically with oxygen, producing heat and light (burning).", distractors: ["Melting", "Dissolving", "Photosynthesis"] },
+             { keyword: "Photosynthesis", definition: "An endothermic process used by plants to convert light energy into chemical energy.", distractors: ["Respiration", "Combustion", "Neutralization"] },
+             { keyword: "Cold Pack", definition: "An application that relies on an ENDOTHERMIC process (dissolving salt).", distractors: ["Hand Warmer", "Engine", "Furnace"] },
+             { keyword: "Hand Warmer", definition: "An application that relies on an EXOTHERMIC process (like iron oxidation).", distractors: ["Cold Pack", "Refrigerator", "Ice Cube"] },
+             { keyword: "Energy Absorption", definition: "The characteristic energy transfer in ENDOTHERMIC reactions.", distractors: ["Energy Release", "Energy Creation", "No Energy Change"] },
+             { keyword: "Energy Release", definition: "The characteristic energy transfer in EXOTHERMIC reactions.", distractors: ["Energy Absorption", "Energy Destruction", "Constant Energy"] },
+             { keyword: "Bond Breaking", definition: "The part of a reaction that ALWAYS requires energy input.", distractors: ["Bond Forming", "Product Formation", "Heat Release"] },
+             { keyword: "Bond Forming", definition: "The part of a reaction that ALWAYS releases energy.", distractors: ["Bond Breaking", "Reactant Consumption", "Cooling Down"] },
+        ];
+
+        const gameStartBtn = document.getElementById('game-start');
+        const gameRestartBtn = document.getElementById('game-restart');
+        const gameDefinitionEl = document.getElementById('game-definition');
+        const gameOptionsGridEl = document.getElementById('game-options-grid');
+        const gameTimeEl = document.getElementById('game-time');
+        const gameScoreEl = document.getElementById('game-score');
+        const gameResultsDisplayEl = document.getElementById('game-results-display');
+        const finalScoreEl = document.getElementById('final-score');
+        const gameFeedbackEl = document.getElementById('game-feedback');
+        const gameControlsEl = document.getElementById('game-controls');
+
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+         function initGame() {
+            console.log("Initializing game...");
+            gameScore = 0;
+            gameTime = 60;
+            gameActive = true;
+            currentGameTermIndex = -1;
+            clearInterval(gameTimer); // Clear previous timer if any
+
+            gameScoreEl.textContent = gameScore;
+            gameTimeEl.textContent = gameTime;
+
+            gameResultsDisplayEl.classList.add('hide');
+            gameControlsEl.classList.remove('hide'); // Show the div holding the start button initially
+            gameStartBtn.classList.add('hide'); // Hide start button itself as game begins
+            gameDefinitionEl.classList.remove('hide');
+            gameOptionsGridEl.classList.remove('hide');
+            gameOptionsGridEl.innerHTML = ''; // Clear grid
+
+            availableGameTerms = shuffleArray([...gameTerms]);
+            loadNextGameTerm();
+            startGameTimer();
+        }
+
+        function loadNextGameTerm() {
+             if (!gameActive) return; // Stop if game ended prematurely
+             currentGameTermIndex++;
+
+             // Clear previous button states and re-enable hover/click effects
+            gameOptionsGridEl.querySelectorAll('.keyword-option').forEach(btn => {
+                btn.classList.remove('correct', 'incorrect');
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                 // Re-attach listener if needed, or ensure it wasn't removed wrongly
+                 // btn.addEventListener('click', handleGameAnswer); // Re-adding might cause duplicates if not handled carefully
+            });
+
+
+             if (currentGameTermIndex >= availableGameTerms.length) {
+                 console.log("No more terms, ending game.");
+                 endGame();
+                 return;
+             }
+
+             console.log(`Loading term index: ${currentGameTermIndex}`);
+             const term = availableGameTerms[currentGameTermIndex];
+             currentCorrectKeyword = term.keyword;
+             gameDefinitionEl.textContent = term.definition;
+             gameOptionsGridEl.innerHTML = ''; // Clear previous options thoroughly
+
+             const options = shuffleArray([term.keyword, ...term.distractors]);
+
+             options.forEach(optionText => {
+                 const optionButton = document.createElement('div');
+                 optionButton.className = 'keyword-option';
+                 optionButton.textContent = optionText;
+                 optionButton.addEventListener('click', handleGameAnswer); // Add listener here
+                 gameOptionsGridEl.appendChild(optionButton);
+             });
+         }
+
+         function handleGameAnswer(event) {
+             if (!gameActive) return;
+
+             const selectedButton = event.target;
+             const selectedKeyword = selectedButton.textContent;
+             const isCorrect = selectedKeyword === currentCorrectKeyword;
+             console.log(`Selected: ${selectedKeyword}, Correct: ${currentCorrectKeyword}, Result: ${isCorrect}`);
+
+             // Disable all buttons immediately after a choice
+             gameOptionsGridEl.querySelectorAll('.keyword-option').forEach(btn => {
+                  // Use pointer-events for disabling interaction quickly
+                 btn.style.pointerEvents = 'none';
+                 btn.style.cursor = 'default';
+                 if (btn !== selectedButton) {
+                     btn.style.opacity = '0.6'; // Gray out others
+                 }
+             });
+
+
+             if (isCorrect) {
+                 gameScore += 10;
+                 selectedButton.classList.add('correct');
+             } else {
+                 gameScore = Math.max(0, gameScore - 5);
+                 selectedButton.classList.add('incorrect');
+                 // Highlight the correct one
+                 gameOptionsGridEl.querySelectorAll('.keyword-option').forEach(btn => {
+                     if (btn.textContent === currentCorrectKeyword) {
+                          btn.classList.add('correct');
+                          btn.style.opacity = '1';
+                     }
+                 });
+             }
+             gameScoreEl.textContent = gameScore;
+
+             // Load next term after delay
+             setTimeout(loadNextGameTerm, 1800); // Slightly longer delay (1.8s)
+         }
+
+        function startGameTimer() {
+            clearInterval(gameTimer); // Ensure no duplicate timers
+            console.log("Starting game timer.");
+            gameTimer = setInterval(() => {
+                gameTime--;
+                gameTimeEl.textContent = gameTime;
+                if (gameTime <= 0) {
+                     console.log("Time up, ending game.");
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+             if (!gameActive) return; // Prevent multiple calls
+             console.log("Ending game function called.");
+             gameActive = false;
+             clearInterval(gameTimer);
+
+             gameDefinitionEl.classList.add('hide');
+             gameOptionsGridEl.classList.add('hide');
+             gameControlsEl.classList.add('hide'); // Hide start button container
+
+             finalScoreEl.textContent = gameScore;
+
+             let feedbackMsg = '';
+              if (gameScore >= 80) feedbackMsg = "Amazing! You're a definitions expert!";
+              else if (gameScore >= 50) feedbackMsg = "Well done! You know your terms.";
+              else if (gameScore >= 20) feedbackMsg = "Good try! Keep practicing!";
+              else feedbackMsg = "Review the definitions and try again!";
+
+             gameFeedbackEl.innerHTML = `<p>${feedbackMsg}</p>`;
+             gameResultsDisplayEl.classList.remove('hide'); // Show results section
+        }
+
+
+         // Game Event Listeners
+         gameStartBtn.addEventListener('click', initGame);
+         gameRestartBtn.addEventListener('click', initGame); // Restart button now triggers initGame directly
+
+
+        // --- Initial Page Load ---
+        window.addEventListener('load', () => {
+            showSection(currentSection);
+            initQuiz();
+            // Prepare game section but don't start
+            gameResultsDisplayEl.classList.add('hide');
+            gameControlsEl.classList.remove('hide');
+            gameStartBtn.classList.remove('hide');
+             gameDefinitionEl.textContent = 'Click "Start Game" to begin!';
+             gameOptionsGridEl.innerHTML = '';
+        });
+
+    </script>
+
+</body>
+</html>
