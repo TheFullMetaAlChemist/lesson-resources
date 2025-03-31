@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift the Balance - Chemical Equilibrium Game</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #3498db; /* Blue */
+            --secondary-color: #e74c3c; /* Red */
+            --product-color: #3498db; /* Blue */
+            --reactant-color: #e74c3c; /* Red */
+            --neutral-color: #95a5a6;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --gradient-start: #3498db;
+            --gradient-end: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding: 0.5rem 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--neutral-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Game Container */
+        .game-container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            text-align: center;
+        }
+
+        .game-modes {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .mode-card {
+            background-color: var(--light-color);
+            border-radius: 0.8rem;
+            width: 200px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background-color 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .mode-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .mode-card p {
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+        }
+
+        /* Buttons */
+        .button {
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+            margin: 0.5rem;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            background: var(--neutral-color); /* More distinct disabled state */
+        }
+
+        .button-secondary {
+            background: linear-gradient(45deg, var(--neutral-color), var(--dark-color));
+        }
+
+        /* Game Screen Styles */
+        .game-screen {
+            display: none; /* Initially hidden */
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 1rem;
+        }
+
+        .player-info {
+            padding: 0.8rem 1.2rem;
+            background-color: var(--light-color);
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Enhanced Equilibrium Visualization (Flask Style) */
+        .equilibrium-container {
+            width: 100%;
+            background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .reaction-equation { /* Centralized definition */
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .reactant, .equilibrium-arrows, .product {
+            display: inline-block;
+            vertical-align: middle; /* Align items vertically */
+        }
+
+        .reactant {
+            color: var(--reactant-color);
+            margin-right: 10px;
+        }
+
+        .equilibrium-arrows {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            margin: 0 15px;
+        }
+
+        .product {
+            color: var(--product-color);
+            margin-left: 10px;
+        }
+
+        .beaker-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 250px; /* Adjusted height */
+            margin-bottom: 1rem;
+        }
+
+        .flask-left, .flask-right {
+            position: relative;
+            width: 40%;
+            height: 100%;
+        }
+
+        .flask-neck {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-bottom: none;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            z-index: 2; /* Ensure neck is above body */
+        }
+
+        .flask-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%; /* Adjusted width */
+            height: 200px; /* Adjusted height to match container minus neck */
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            overflow: hidden; /* Important for liquid level */
+        }
+
+        .flask-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            transition: height 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            overflow: hidden; /* Hide molecules outside liquid */
+        }
+
+        .reactants-liquid {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(192, 57, 43, 0.4));
+            height: 50%; /* Initial state */
+        }
+
+        .products-liquid {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(41, 128, 185, 0.4));
+            height: 50%; /* Initial state */
+        }
+
+        .molecules {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .reactant-molecules {
+            background: radial-gradient(circle, rgba(231, 76, 60, 0.6) 2px, transparent 3px) 0 0,
+                        radial-gradient(circle, rgba(231, 76, 60, 0.5) 1px, transparent 2px) 10px 10px;
+            background-size: 20px 20px;
+        }
+
+        .product-molecules {
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.6) 2px, transparent 3px) 0 0,
+                        radial-gradient(circle, rgba(52, 152, 219, 0.5) 1px, transparent 2px) 10px 10px;
+            background-size: 20px 20px;
+        }
+
+        .reaction-arrows {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 20%; /* Space between flasks */
+            font-size: 2rem;
+            color: #7f8c8d;
+        }
+
+        .forward-arrow {
+            margin-bottom: 10px;
+            transition: color 0.5s, transform 0.5s;
+        }
+
+        .backward-arrow {
+            transition: color 0.5s, transform 0.5s;
+        }
+
+        .equilibrium-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            flex-basis: 25%; /* Allocate space for labels */
+            text-align: center;
+        }
+
+        .reactants-label {
+            color: var(--reactant-color);
+            text-align: left;
+        }
+
+        .products-label {
+            color: var(--product-color);
+            text-align: right;
+        }
+
+        .equilibrium-indicator {
+            flex-basis: 50%; /* Indicator takes middle space */
+            height: 10px;
+            background-color: var(--light-color);
+            border: 1px solid var(--neutral-color); /* Add border */
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .indicator-arrow {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--dark-color);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%; /* Initial state */
+            transform: translate(-50%, -50%);
+            transition: left 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 5; /* Ensure it's above indicator bar */
+        }
+
+        /* Arrow shape inside the indicator */
+        .indicator-arrow::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 8px solid white; /* Pointing right */
+        }
+
+        /* Animation for molecules/bubbles */
+        @keyframes bubbleRise {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-30px); opacity: 0; } /* Rise higher */
+        }
+
+        .bubble {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            bottom: 5px; /* Start slightly above bottom */
+            animation: bubbleRise 2s linear; /* Removed infinite, create on demand */
+            pointer-events: none; /* Prevent bubbles interfering with clicks */
+        }
+
+        .reactant-bubble {
+            background-color: rgba(231, 76, 60, 0.7);
+        }
+
+        .product-bubble {
+            background-color: rgba(52, 152, 219, 0.7);
+        }
+
+        /* Active reaction states for arrows */
+        .forward-active .forward-arrow {
+            color: var(--product-color); /* Products are forming */
+            transform: scale(1.2);
+        }
+
+        .backward-active .backward-arrow {
+            color: var(--reactant-color); /* Reactants are forming */
+            transform: scale(1.2);
+        }
+
+        /* Pulse animation for correct/incorrect feedback on flasks */
+        @keyframes correctPulse {
+            0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(46, 204, 113, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        @keyframes incorrectPulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        /* Apply pulse to the flask body */
+        .correct-answer .flask-body {
+            animation: correctPulse 1s;
+        }
+
+        .incorrect-answer .flask-body {
+            animation: incorrectPulse 1s;
+        }
+
+        /* Question Area */
+        .question-area {
+            background-color: white;
+            border-radius: 0.8rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .easy { background-color: var(--success-color); }
+        .medium { background-color: var(--warning-color); }
+        .hard { background-color: var(--secondary-color); }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            border: 2px solid var(--light-color);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            user-select: none; /* Prevent text selection on click */
+        }
+
+        .option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .option.selected { /* More specific selector */
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .option.correct { /* More specific selector */
+            border-color: var(--success-color);
+            background-color: rgba(46, 204, 113, 0.1);
+            font-weight: bold; /* Highlight correct answer */
+            cursor: default; /* No pointer after submission */
+        }
+
+        .option.incorrect { /* More specific selector */
+            border-color: var(--secondary-color);
+            background-color: rgba(231, 76, 60, 0.1);
+            opacity: 0.7; /* Slightly fade incorrect selected option */
+             cursor: default; /* No pointer after submission */
+        }
+
+        /* Prevent hover effects after answer is submitted */
+        .options.answered .option:hover {
+             background-color: inherit;
+             border-color: var(--light-color);
+        }
+        .options.answered .option.selected:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        .options.answered .option.correct:hover {
+             border-color: var(--success-color);
+            background-color: rgba(46, 204, 113, 0.1);
+        }
+         .options.answered .option.incorrect:hover {
+            border-color: var(--secondary-color);
+            background-color: rgba(231, 76, 60, 0.1);
+        }
+
+
+        /* Controls Area */
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none; /* Initially hidden */
+            text-align: center;
+        }
+
+        .trophy {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #f1c40f, #f39c12);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .results-details {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            color: var(--dark-color);
+        }
+
+        .score-display {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap; /* Allow wrapping */
+        }
+
+        .score-box {
+            padding: 1rem 2rem;
+            background-color: var(--light-color);
+            border-radius: 0.8rem;
+            text-align: center;
+            min-width: 150px; /* Ensure boxes have some width */
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            transition: color 0.5s, font-size 0.5s; /* Animate score highlight */
+        }
+
+        /* Utility Classes */
+        .hidden { display: none; }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .game-container { padding: 1.5rem; }
+            .game-modes { flex-direction: column; align-items: center; }
+            .game-header { flex-direction: column; gap: 0.5rem; align-items: stretch; text-align: center;}
+            .player-info { width: 100%; }
+            .beaker-container { height: 200px; } /* Reduce height on smaller screens */
+            .flask-body { height: 150px; }
+            .flask-neck { height: 40px; }
+            .equilibrium-indicator { flex-basis: 40%; }
+            .label { flex-basis: 30%; font-size: 1rem; }
+            .reaction-equation { font-size: 1.2rem; }
+            .equilibrium-arrows { font-size: 1.5rem; margin: 0 10px;}
+        }
+
+         @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+            .controls { flex-direction: column; }
+            .button { width: 100%; margin: 0.5rem 0; }
+            .score-display { flex-direction: column; gap: 1rem; }
+         }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Shift the Balance</h1>
+        <p class="subtitle">A Chemistry Equilibrium Game</p>
+    </header>
+
+    <div class="game-container">
+        <!-- Setup Screen -->
+        <div class="setup-screen" id="setup-screen">
+            <h2>Choose Your Game Mode</h2>
+            <div class="game-modes">
+                <div class="mode-card" id="solo-mode">
+                    <h3>Solo Mode</h3>
+                    <p>Challenge yourself to shift the equilibrium and master Le Chatelier's Principle.</p>
+                </div>
+                <div class="mode-card" id="two-player-mode">
+                    <h3>Two Player Mode</h3>
+                    <p>Compete against a friend in a tug-of-war of chemical knowledge.</p>
+                </div>
+            </div>
+            <!-- Player setup section appears after mode selection -->
+            <div id="player-setup" class="hidden">
+                <h3 id="mode-title">Mode Selected</h3>
+                <div id="solo-setup" class="hidden">
+                    <button class="button" id="start-solo">Start Solo Game</button>
+                </div>
+                <div id="two-player-setup" class="hidden">
+                     <p>Player 1 (Reactants) vs Player 2 (Products)</p>
+                    <button class="button" id="start-two-player">Start Two Player Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="game-screen">
+            <div class="game-header">
+                <div class="player-info" id="player-turn">Player's Turn</div>
+                <div class="player-info">Question: <span id="question-number">1</span>/<span id="total-questions">25</span></div>
+            </div>
+
+            <!-- Updated Equilibrium Visualization -->
+            <div class="equilibrium-container">
+                <div class="reaction-equation">
+                    <span class="reactant">A + B</span>
+                    <span class="equilibrium-arrows">⇌</span>
+                    <span class="product">C + D</span>
+                </div>
+
+                <div class="beaker-container">
+                    <!-- Reactants Flask -->
+                    <div class="flask-left">
+                        <div class="flask-neck"></div>
+                        <div class="flask-body">
+                            <div class="flask-liquid reactants-liquid" id="reactants-liquid">
+                                <div class="molecules reactant-molecules"></div>
+                                <!-- Bubbles will be added here by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reaction Arrows -->
+                    <div class="reaction-arrows" id="reaction-arrows-container">
+                        <div class="forward-arrow">→</div>
+                        <div class="backward-arrow">←</div>
+                    </div>
+
+                    <!-- Products Flask -->
+                    <div class="flask-right">
+                        <div class="flask-neck"></div>
+                        <div class="flask-body">
+                            <div class="flask-liquid products-liquid" id="products-liquid">
+                                <div class="molecules product-molecules"></div>
+                                 <!-- Bubbles will be added here by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="equilibrium-labels">
+                    <div class="label reactants-label">Reactants</div>
+                    <div class="equilibrium-indicator">
+                        <div class="indicator-arrow" id="equilibrium-arrow"></div>
+                    </div>
+                    <div class="label products-label">Products</div>
+                </div>
+            </div>
+            <!-- End of Equilibrium Visualization -->
+
+
+            <div class="question-area">
+                <div class="question-header">
+                    <h3>Question</h3>
+                    <span class="difficulty" id="question-difficulty">Medium</span>
+                </div>
+                <p class="question-text" id="question-text">
+                    Question text will appear here.
+                </p>
+                <div class="options" id="options-container">
+                    <!-- Options will be inserted here by JS -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="button" id="submit-answer" disabled>Submit Answer</button>
+                <button class="button button-secondary" id="next-question" disabled>Next Question</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="results-screen">
+            <div class="trophy">🏆</div>
+            <h2 class="result-title" id="result-title">Game Completed!</h2>
+            <div class="results-details" id="results-details">
+                Final equilibrium state description.
+            </div>
+            <div class="score-display">
+                 <!-- Scores for Two Player Mode -->
+                <div class="score-box" id="player1-score-box">
+                    <div class="score-label">Player 1 (Reactants) Score</div>
+                    <div class="score-value" id="reactants-score">0</div>
+                </div>
+                 <div class="score-box" id="player2-score-box">
+                    <div class="score-label">Player 2 (Products) Score</div>
+                    <div class="score-value" id="products-score">0</div>
+                </div>
+                 <!-- Score for Solo Mode -->
+                 <div class="score-box" id="solo-score-box" class="hidden">
+                     <div class="score-label">Your Score</div>
+                     <div class="score-value" id="solo-score">0</div>
+                 </div>
+            </div>
+            <button class="button" id="play-again">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+         // Game questions
+    const questions = {
+        easy: [
+            {
+                question: "The reversible reaction below is allowed to reach equilibrium: H₂(g) + I₂(g) ⇌ 2HI(g) ΔH = -9.4 kJ/mol. Which change in conditions would be expected to shift the equilibrium position towards the products?",
+                options: ["Decrease the pressure", "Decrease the temperature", "Increase the pressure", "Increase the temperature"],
+                answer: 1
+            },
+            {
+                question: "Which of the following statements about dynamic equilibrium is not correct?",
+                options: ["The concentration of reactants and products remains constant", "The system must be open", "The rate of the forward and backward reactions are equal", "The equilibrium will shift to oppose any change in conditions"],
+                answer: 1
+            },
+            {
+                question: "In the reaction where gaseous iodine reacts with hydrogen, an equilibrium is established at 450°C: H₂(g) + I₂(g) ⇌ 2HI(g). Note: H₂ is colorless, I₂ is purple, and HI is colorless. The forward reaction is exothermic. Which change in conditions will cause the purple color of the equilibrium mixture to become darker?",
+                options: ["Decrease in pressure", "Increase in pressure", "Decrease in temperature", "Increase in temperature"],
+                answer: 3
+            },
+            {
+                question: "An equilibrium is established in the reaction: AB(g) + CD(g) ⇌ E(g) + F(g) ΔH = +89 kJ/mol. Which statement is not correct about this equilibrium?",
+                options: ["The forward reaction is endothermic", "Kc = [E][F]/[AB][CD]", "A decrease in temperature will increase the yield of AB(g) and CD(g)", "An increase in pressure will increase the yield of E(g) and F(g)"],
+                answer: 3
+            },
+            {
+                question: "Which is the correct Kc expression for the following equilibrium? 2SO₂(g) + O₂(g) ⇌ 2SO₃(g)",
+                options: ["Kc = [SO₂]²[O₂]/[SO₃]²", "Kc = [SO₃]/[SO₂][O₂]", "Kc = [SO₂][O₂]/[SO₃]", "Kc = [SO₃]²/[SO₂]²[O₂]"],
+                answer: 3
+            },
+            {
+                question: "Which is the correct Kc expression for the reaction between hydrogen and fluorine? H₂(g) + F₂(g) ⇌ 2HF(g)",
+                options: ["Kc = [HF]²/[H₂][F₂]", "Kc = [HF]/[H₂][F₂]", "Kc = 2[HF]/[H₂][F₂]", "Kc = [H₂][F₂]/[HF]²"],
+                answer: 0
+            },
+            {
+                question: "Ammonia, NH₃, is manufactured in the Haber process via the following reaction: 3H₂(g) + N₂(g) ⇌ 2NH₃(g) ΔH = -91.8 kJ/mol. Which statement about the Haber process is correct?",
+                options: ["Increasing the pressure gives a higher yield of H₂", "Increasing the pressure gives a higher yield of N₂", "Increasing the temperature gives a higher yield of NH₃", "Increasing the pressure gives a higher yield of NH₃"],
+                answer: 3
+            },
+            {
+                question: "Nitrosyl chloride decomposes into nitrogen monoxide and chlorine according to the following equation: 2NOCl(g) ⇌ 2NO(g) + Cl₂(g). The forward reaction is endothermic. Which change in condition would change the value for Kc?",
+                options: ["Decreasing the pressure", "Adding a catalyst", "Increasing the temperature", "Increasing the pressure"],
+                answer: 2
+            },
+            {
+                question: "In the reversible reaction PCl₅(g) ⇌ PCl₃(g) + Cl₂(g), which would shift the equilibrium to the right?",
+                options: ["Adding more Cl₂", "Increasing the pressure", "Removing some PCl₃", "Decreasing the volume of the container"],
+                answer: 2
+            },
+            {
+                question: "For the exothermic reaction N₂O₄(g) ⇌ 2NO₂(g), which statement is true?",
+                options: ["The equilibrium will shift left when the temperature decreases", "The equilibrium will shift right when the pressure increases", "The equilibrium will shift right when the temperature decreases", "Adding a catalyst will shift the equilibrium to the right"],
+                answer: 0
+            }
+        ],
+        medium: [
+            {
+                question: "The reversible reaction below is at equilibrium: 2SO₂(g) + O₂(g) → 2SO₃(g) ΔH = -197 kJ/mol. Which changes in pressure and temperature would shift the equilibrium position towards the products?",
+                options: ["Decrease pressure, Decrease temperature", "Decrease pressure, Increase temperature", "Increase pressure, Decrease temperature", "Increase pressure, Increase temperature"],
+                answer: 2
+            },
+            {
+                question: "The reversible reaction below is at equilibrium: N₂(g) + 3H₂(g) ⇌ 2NH₃(g). What is the expression for Kc?",
+                options: ["Kc = [N₂(g)][H₂(g)]³/[NH₃(g)]²", "Kc = [NH₃(g)]²/[N₂(g)][H₂(g)]³", "Kc = [N₂(g)] + 3[H₂(g)]/2[NH₃(g)]", "Kc = 2[NH₃(g)]/[N₂(g)] + 3[H₂(g)]"],
+                answer: 1
+            },
+            {
+                question: "Carbon monoxide reacts with steam in the following reaction equation: CO(g) + H₂O(g) → CO₂(g) + H₂(g) ΔH = -40 kJ/mol. Which change will shift the position of equilibrium to the right hand side of the equation?",
+                options: ["Decrease in pressure", "Increase in pressure", "Decrease in temperature", "Increase in temperature"],
+                answer: 2
+            },
+            {
+                question: "Chloroethene, CH₂=CHCl, is prepared in the presence of a solid catalyst using the equilibrium reaction below: CH₂ClCH₂Cl(g) → CH₂=CHCl(g) + HCl(g) ΔH = +51 kJ/mol. Which change would result in an increased equilibrium yield of chloroethene?",
+                options: ["Increasing the pressure", "Increasing the surface area of the catalyst", "Increasing the temperature", "Use of a homogeneous catalyst"],
+                answer: 2
+            },
+            {
+                question: "The dissociation of gas X₂Y₄ into XY₂ is represented in the equation below: X₂Y₄(g) ⇌ 2XY₂(g) ΔH = +60 kJ/mol. Which of the following statements is correct?",
+                options: ["The yield of XY₂ will increase if the pressure is decreased", "A decrease in temperature will increase the yield of XY₂", "The yield of XY₂ will increase if a catalyst is added", "An increase in temperature will shift the equilibrium to the left"],
+                answer: 0
+            },
+            {
+                question: "When a chemical reaction reaches equilibrium which of the following can be said about the concentrations of the substances present and the rates of reaction?",
+                options: ["Concentrations continue to change, Rates remain the same", "Concentrations remain constant, Rates are different", "Concentrations continue to change, Rates are different", "Concentrations remain constant, Rates remain the same"],
+                answer: 3
+            },
+            {
+                question: "For the reversible reaction C₂H₄(g) + H₂O(g) ⇌ C₂H₅OH(g), ΔH = -45 kJ/mol, which set of conditions would give the highest yield of ethanol?",
+                options: ["High temperature and high pressure", "Low temperature and high pressure", "High temperature and low pressure", "Low temperature and low pressure"],
+                answer: 1
+            },
+            {
+                question: "The decomposition of calcium carbonate is represented by the equation: CaCO₃(s) ⇌ CaO(s) + CO₂(g) ΔH = +178 kJ/mol. Which change would increase the yield of calcium oxide?",
+                options: ["Decreasing the temperature", "Increasing the pressure", "Adding more calcium carbonate", "Removing carbon dioxide as it forms"],
+                answer: 3
+            },
+            {
+                question: "For the equilibrium 2BrCl(g) ⇌ Br₂(g) + Cl₂(g), what would be the effect of adding more Cl₂?",
+                options: ["The equilibrium would shift right", "The equilibrium would shift left", "There would be no change to the equilibrium position", "The value of Kc would increase"],
+                answer: 1
+            },
+            {
+                question: "In the endothermic reaction CO₂(g) + H₂(g) ⇌ CO(g) + H₂O(g), which change would decrease the concentration of carbon monoxide at equilibrium?",
+                options: ["Adding more H₂", "Removing some H₂O", "Increasing the temperature", "Decreasing the temperature"],
+                answer: 3
+            }
+        ],
+        hard: [
+            {
+                question: "The dynamic equilibrium that forms between chromate(VI) and dichromate(VI) ions is shown below. Solutions of chromate ions are yellow and solutions of dichromate ions are orange: 2CrO₄²⁻(aq) + 2H⁺(aq) ⇌ Cr₂O₇²⁻(aq) + H₂O(l). Which of the following statements is/are correct? 1. Addition of aqueous sodium hydroxide shifts the position of the equilibrium to the left. 2. This reaction is a reversible and redox reaction. 3. A homogeneous catalyst can be used to shift the position of the equilibrium to the right.",
+                options: ["1, 2 and 3", "Only 1 and 2", "Only 2 and 3", "Only 1"],
+                answer: 1
+            },
+            {
+                question: "The following results are from an experiment involving an unknown equilibrium: Increased temperature → Right, Decreased pressure → Left, Addition of a catalyst → No shift. Which of the following statements is correct?",
+                options: ["The forward reaction is exothermic", "There are fewer moles of gas on the right-hand side", "The enthalpy change for the backwards reaction is positive", "The reaction must be carried out in an open system"],
+                answer: 2
+            },
+            {
+                question: "Haemoglobin carries oxygen in the blood around the body. It forms the following equilibrium where Hb is haemoglobin: O₂(g) + HbH⁺(aq) ⇌ HbO₂(aq) + H⁺(aq). Which of the following statements is/are correct? 1. If the pH of the blood is too low there will be more HbO₂ increasing the capacity of haemoglobin to carry oxygen. 2. The central Fe(II) ion has an electron configuration of 1s²2s²2p⁶3s²3p⁶3d⁶ and forms dative covalent bonds with oxygen. 3. On inhalation, the equilibrium in the capillaries surrounding the lungs shifts to the right due to an increased concentration of oxygen.",
+                options: ["1, 2 and 3", "Only 1 and 2", "Only 2 and 3", "Only 1"],
+                answer: 2
+            },
+            {
+                question: "For the reaction below which of the following statements is/are correct? 3A(l) + B(l) ⇌ 2C(l) + D(l). 1. If Kc increases when temperature is increased, the forward reaction has a positive enthalpy change. 2. The unit for Kc in this reaction is mol⁻¹ dm³. 3. If the concentration of B increases, the value for Kc will increase.",
+                options: ["1, 2 and 3", "Only 1 and 2", "Only 2 and 3", "Only 1"],
+                answer: 3
+            },
+            {
+                question: "The Haber-Bosch process involves the following equilibrium: N₂(g) + 3H₂(g) ⇌ 2NH₃(g) ΔH = -92 kJ/mol. Which combination of statements is correct? 1. Industrial conditions use a temperature of 450°C despite it being thermodynamically unfavorable. 2. The forward reaction is favored by high pressure because there are fewer gas molecules on the right. 3. The iron catalyst used increases the equilibrium yield of ammonia. 4. Removing ammonia as it forms will shift the equilibrium position to the right.",
+                options: ["1, 2 and 4", "2, 3 and 4", "1, 3 and 4", "1, 2 and 3"],
+                answer: 0
+            }
+        ]
+    };
+
+
+        // Game variables
+        let gameMode = ''; // 'solo' or 'twoPlayer'
+        let currentPlayer = 1; // 1 for Reactants, 2 for Products
+        let currentQuestion = 0;
+        let selectedOption = null; // Index of the selected option
+        let reactantsScore = 0; // Player 1 score in two-player, or generic 'left' score
+        let productsScore = 0;  // Player 2 score in two-player, or generic 'right' score / solo score
+        let equilibriumPosition = 50; // 0-100, representing % products side visually
+        let questionsMixed = [];
+        const TOTAL_QUESTIONS = 25; // Total questions to use
+
+         // DOM Elements
+        const setupScreen = document.getElementById('setup-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const soloModeCard = document.getElementById('solo-mode');
+        const twoPlayerModeCard = document.getElementById('two-player-mode');
+        const playerSetup = document.getElementById('player-setup');
+        const modeTitle = document.getElementById('mode-title');
+        const soloSetup = document.getElementById('solo-setup');
+        const twoPlayerSetup = document.getElementById('two-player-setup');
+        const startSoloBtn = document.getElementById('start-solo');
+        const startTwoPlayerBtn = document.getElementById('start-two-player');
+        const playerTurn = document.getElementById('player-turn');
+        const questionNumber = document.getElementById('question-number');
+        const totalQuestionsDisplay = document.getElementById('total-questions');
+        const questionDifficulty = document.getElementById('question-difficulty');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const submitAnswerBtn = document.getElementById('submit-answer');
+        const nextQuestionBtn = document.getElementById('next-question');
+
+        // Visualization Elements
+        const reactantsLiquid = document.getElementById('reactants-liquid');
+        const productsLiquid = document.getElementById('products-liquid');
+        const equilibriumArrow = document.getElementById('equilibrium-arrow');
+        const reactionArrowsContainer = document.getElementById('reaction-arrows-container');
+        const flaskLeft = document.querySelector('.flask-left'); // Container for pulse effect
+        const flaskRight = document.querySelector('.flask-right'); // Container for pulse effect
+
+        // Results Screen Elements
+        const resultTitle = document.getElementById('result-title');
+        const resultsDetails = document.getElementById('results-details');
+        const player1ScoreBox = document.getElementById('player1-score-box');
+        const player2ScoreBox = document.getElementById('player2-score-box');
+        const soloScoreBox = document.getElementById('solo-score-box');
+        const reactantsScoreElement = document.getElementById('reactants-score');
+        const productsScoreElement = document.getElementById('products-score');
+        const soloScoreElement = document.getElementById('solo-score');
+        const playAgainBtn = document.getElementById('play-again');
+
+        // --- Initialization ---
+        function init() {
+            // Event listeners for game mode selection
+            soloModeCard.addEventListener('click', selectSoloMode);
+            twoPlayerModeCard.addEventListener('click', selectTwoPlayerMode);
+            startSoloBtn.addEventListener('click', startSoloGame);
+            startTwoPlayerBtn.addEventListener('click', startTwoPlayerGame);
+            submitAnswerBtn.addEventListener('click', handleSubmitAnswer);
+            nextQuestionBtn.addEventListener('click', handleNextQuestion);
+            playAgainBtn.addEventListener('click', playAgain);
+
+            // Options click event delegation
+            optionsContainer.addEventListener('click', (e) => {
+                // Only allow selection if the options container doesn't have 'answered' class
+                if (!optionsContainer.classList.contains('answered')) {
+                    const option = e.target.closest('.option');
+                    if (option) {
+                        selectOption(option);
+                    }
+                }
+            });
+
+             totalQuestionsDisplay.textContent = TOTAL_QUESTIONS; // Set total questions display
+        }
+
+        // --- Setup Phase ---
+        function selectSoloMode() {
+            gameMode = 'solo';
+            playerSetup.classList.remove('hidden');
+            modeTitle.textContent = 'Solo Mode Selected';
+            soloSetup.classList.remove('hidden');
+            twoPlayerSetup.classList.add('hidden');
+            highlightModeCard(soloModeCard, twoPlayerModeCard);
+        }
+
+        function selectTwoPlayerMode() {
+            gameMode = 'twoPlayer';
+            playerSetup.classList.remove('hidden');
+            modeTitle.textContent = 'Two Player Mode Selected';
+            soloSetup.classList.add('hidden');
+            twoPlayerSetup.classList.remove('hidden');
+            highlightModeCard(twoPlayerModeCard, soloModeCard);
+        }
+
+         function highlightModeCard(selectedCard, otherCard) {
+            selectedCard.style.borderColor = 'var(--primary-color)';
+            selectedCard.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+            otherCard.style.borderColor = 'transparent';
+            otherCard.style.backgroundColor = 'var(--light-color)';
+        }
+
+        function startSoloGame() {
+            startGame('solo');
+        }
+
+        function startTwoPlayerGame() {
+            startGame('twoPlayer');
+        }
+
+        // --- Game Start ---
+        function startGame(mode) {
+            gameMode = mode;
+            setupScreen.style.display = 'none';
+            resultsScreen.style.display = 'none'; // Ensure results screen is hidden
+            gameScreen.style.display = 'block';
+
+            // Reset game variables
+            currentPlayer = 1;
+            currentQuestion = 0;
+            reactantsScore = 0;
+            productsScore = 0;
+            equilibriumPosition = 50; // Reset equilibrium to center
+
+             // Reset Visuals
+            updateEquilibriumVisuals(equilibriumPosition, 0); // Update visuals without shift animation
+
+            updatePlayerTurn();
+            mixQuestions(); // Get a fresh set of questions
+            loadQuestion();
+
+            // Reset result screen score displays
+            reactantsScoreElement.textContent = '0';
+            productsScoreElement.textContent = '0';
+            soloScoreElement.textContent = '0';
+            reactantsScoreElement.style.color = '';
+            reactantsScoreElement.style.fontSize = '';
+            productsScoreElement.style.color = '';
+            productsScoreElement.style.fontSize = '';
+            soloScoreElement.style.color = '';
+             soloScoreElement.style.fontSize = '';
+        }
+
+        // --- Question Handling ---
+        function mixQuestions() {
+            questionsMixed = [];
+            // Combine and shuffle (ensure exactly TOTAL_QUESTIONS are selected)
+            const allQuestions = [
+                ...questions.easy.map(q => ({ ...q, difficulty: 'easy' })),
+                ...questions.medium.map(q => ({ ...q, difficulty: 'medium' })),
+                ...questions.hard.map(q => ({ ...q, difficulty: 'hard' }))
+            ];
+            shuffleArray(allQuestions);
+            questionsMixed = allQuestions.slice(0, TOTAL_QUESTIONS); // Take the required number
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= questionsMixed.length) {
+                // Should not happen if check is done before calling loadQuestion, but as safeguard
+                endGame();
+                return;
+            }
+
+            const question = questionsMixed[currentQuestion];
+
+            questionNumber.textContent = currentQuestion + 1;
+            questionDifficulty.textContent = question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1);
+            questionDifficulty.className = 'difficulty ' + question.difficulty;
+            questionText.innerHTML = question.question; // Use innerHTML if questions have formatting
+
+            optionsContainer.innerHTML = ''; // Clear previous options
+            optionsContainer.classList.remove('answered'); // Allow selection again
+
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.dataset.index = index;
+                optionElement.textContent = option;
+                optionsContainer.appendChild(optionElement);
+            });
+
+            selectedOption = null;
+            submitAnswerBtn.disabled = true;
+            nextQuestionBtn.disabled = true; // Disable next until answer submitted
+        }
+
+        // --- Gameplay Interaction ---
+        function selectOption(optionElement) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            selectedOption = parseInt(optionElement.dataset.index);
+            submitAnswerBtn.disabled = false; // Enable submit once an option is selected
+        }
+
+        function handleSubmitAnswer() {
+            if (selectedOption === null) return; // Should be disabled, but check anyway
+
+            optionsContainer.classList.add('answered'); // Prevent re-selecting options
+            submitAnswerBtn.disabled = true; // Disable submit after use
+
+            const question = questionsMixed[currentQuestion];
+            const correctAnswerIndex = question.answer;
+            let isCorrect = (selectedOption === correctAnswerIndex);
+            let points = 0;
+            let shiftAmount = 0; // How much to shift equilibrium (-ve left, +ve right)
+
+            // Calculate points
+            if (question.difficulty === 'easy') points = 1;
+            else if (question.difficulty === 'medium') points = 2;
+            else if (question.difficulty === 'hard') points = 3;
+
+            // Mark options visually
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                if (index === correctAnswerIndex) {
+                    opt.classList.add('correct');
+                } else if (index === selectedOption) { // Incorrect selection
+                    opt.classList.add('incorrect');
+                }
+                 // Disable pointer events for all options after answering
+                opt.style.pointerEvents = 'none';
+            });
+
+            // Apply pulse effect to the correct flask for feedback
+            const targetFlask = isCorrect ? (gameMode === 'solo' || currentPlayer === 2 ? flaskRight : flaskLeft) : (gameMode === 'solo' || currentPlayer === 2 ? flaskLeft : flaskRight);
+            const pulseClass = isCorrect ? 'correct-answer' : 'incorrect-answer'; // Add pulse to the flask showing the outcome
+            targetFlask.classList.add(pulseClass);
+             setTimeout(() => targetFlask.classList.remove(pulseClass), 1000); // Remove pulse after animation
+
+            // Calculate score and equilibrium shift
+            if (gameMode === 'twoPlayer') {
+                if (isCorrect) {
+                    if (currentPlayer === 1) { // Player 1 (Reactants) correct
+                        reactantsScore += points;
+                        shiftAmount = -5 * points; // Shift Left
+                    } else { // Player 2 (Products) correct
+                        productsScore += points;
+                        shiftAmount = 5 * points; // Shift Right
+                    }
+                } else { // Incorrect answer
+                    if (currentPlayer === 1) { // Player 1 incorrect
+                        shiftAmount = 5; // Shift Right (penalty)
+                    } else { // Player 2 incorrect
+                        shiftAmount = -5; // Shift Left (penalty)
+                    }
+                }
+            } else { // Solo mode
+                if (isCorrect) {
+                    productsScore += points; // Solo score is tracked in productsScore
+                    shiftAmount = 5 * points; // Shift Right (towards products)
+                } else {
+                    shiftAmount = -5; // Shift Left (away from products)
+                }
+            }
+
+            // Update equilibrium state and visuals
+            equilibriumPosition += shiftAmount;
+            equilibriumPosition = Math.max(0, Math.min(100, equilibriumPosition)); // Clamp 0-100
+            updateEquilibriumVisuals(equilibriumPosition, shiftAmount);
+
+             // Enable next button OR end game immediately if equilibrium hit limits
+            if (equilibriumPosition <= 0 || equilibriumPosition >= 100) {
+                 setTimeout(endGame, 1500); // Wait for animation before ending
+            } else {
+                nextQuestionBtn.disabled = false;
+            }
+        }
+
+        function handleNextQuestion() {
+             // Re-enable pointer events on options for the next question
+            const options = document.querySelectorAll('.option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = ''; // Re-enable clicks
+            });
+
+            currentQuestion++;
+
+            if (currentQuestion >= questionsMixed.length) {
+                endGame();
+                return;
+            }
+
+            // Switch player in two player mode
+            if (gameMode === 'twoPlayer') {
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                updatePlayerTurn();
+            }
+
+            loadQuestion(); // Load the next question
+        }
+
+
+        // --- Visual Updates ---
+        function updatePlayerTurn() {
+            if (gameMode === 'solo') {
+                playerTurn.textContent = 'Solo Challenge';
+                playerTurn.style.backgroundColor = 'var(--light-color)'; // Neutral color
+            } else {
+                playerTurn.textContent = `Player ${currentPlayer}'s Turn (${currentPlayer === 1 ? 'Reactants' : 'Products'})`;
+                 // Use reactant/product colors for player turn background
+                 playerTurn.style.backgroundColor = currentPlayer === 1 ? 'rgba(231, 76, 60, 0.2)' : 'rgba(52, 152, 219, 0.2)';
+            }
+        }
+
+        // Updates the flask levels, indicator arrow, reaction arrows, and triggers bubbles
+        function updateEquilibriumVisuals(newPosition, shift) {
+             const reactantsLevel = 100 - newPosition;
+             const productsLevel = newPosition;
+
+             // Update liquid levels
+             reactantsLiquid.style.height = `${reactantsLevel}%`;
+             productsLiquid.style.height = `${productsLevel}%`;
+
+             // Update indicator arrow position
+             equilibriumArrow.style.left = `${newPosition}%`;
+
+            // Activate reaction arrows and bubbles based on shift direction
+            reactionArrowsContainer.classList.remove('forward-active', 'backward-active'); // Clear previous state
+
+             if (shift > 0) { // Shift Right (Forward reaction favored)
+                 reactionArrowsContainer.classList.add('forward-active');
+                 createBubbles(flaskLeft.querySelector('.flask-body'), 'reactant-bubble', 3); // Fewer bubbles consumed
+                 createBubbles(flaskRight.querySelector('.flask-body'), 'product-bubble', 6); // More bubbles produced
+            } else if (shift < 0) { // Shift Left (Backward reaction favored)
+                 reactionArrowsContainer.classList.add('backward-active');
+                 createBubbles(flaskRight.querySelector('.flask-body'), 'product-bubble', 3); // Fewer bubbles consumed
+                 createBubbles(flaskLeft.querySelector('.flask-body'), 'reactant-bubble', 6); // More bubbles produced
+             }
+
+             // Remove arrow active state after a short delay
+             if (shift !== 0) {
+                 setTimeout(() => {
+                    reactionArrowsContainer.classList.remove('forward-active', 'backward-active');
+                }, 1500); // Match transition time + buffer
+             }
+         }
+
+         // Creates temporary bubble elements for visual effect
+         function createBubbles(container, bubbleClass, count) {
+             if (!container) return; // Safety check
+             for (let i = 0; i < count; i++) {
+                 const bubble = document.createElement('div');
+                 bubble.className = `bubble ${bubbleClass}`;
+                 bubble.style.left = `${Math.random() * 85 + 7.5}%`; // Position within flask body width
+                 bubble.style.animationDelay = `${Math.random() * 0.5}s`; // Stagger start times
+
+                 container.appendChild(bubble);
+
+                 // Remove bubble after animation completes (animation duration is 2s)
+                 setTimeout(() => {
+                     bubble.remove();
+                 }, 2000);
+             }
+         }
+
+        // --- Game End ---
+        function endGame() {
+            gameScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+
+            // Update final scores
+            reactantsScoreElement.textContent = reactantsScore;
+            productsScoreElement.textContent = productsScore;
+            soloScoreElement.textContent = productsScore; // Solo score is tracked here
+
+            let winnerMessage = '';
+            let detailsMessage = '';
+
+             // Show appropriate score boxes based on mode
+             if (gameMode === 'twoPlayer') {
+                 player1ScoreBox.classList.remove('hidden');
+                 player2ScoreBox.classList.remove('hidden');
+                 soloScoreBox.classList.add('hidden');
+
+                // Determine winner based on equilibrium position first, then score
+                if (equilibriumPosition <= 0) {
+                    winnerMessage = 'Player 1 (Reactants) Wins!';
+                    detailsMessage = 'The equilibrium completely shifted to the Reactants!';
+                    reactantsScoreElement.style.color = 'var(--reactant-color)';
+                    reactantsScoreElement.style.fontSize = '2.2rem';
+                } else if (equilibriumPosition >= 100) {
+                    winnerMessage = 'Player 2 (Products) Wins!';
+                    detailsMessage = 'The equilibrium completely shifted to the Products!';
+                     productsScoreElement.style.color = 'var(--product-color)';
+                     productsScoreElement.style.fontSize = '2.2rem';
+                 } else if (reactantsScore > productsScore) {
+                    winnerMessage = 'Player 1 (Reactants) Wins!';
+                    detailsMessage = `Reactants win with ${reactantsScore} points! The equilibrium favored the left.`;
+                    reactantsScoreElement.style.color = 'var(--reactant-color)';
+                     reactantsScoreElement.style.fontSize = '2.2rem';
+                 } else if (productsScore > reactantsScore) {
+                    winnerMessage = 'Player 2 (Products) Wins!';
+                    detailsMessage = `Products win with ${productsScore} points! The equilibrium favored the right.`;
+                    productsScoreElement.style.color = 'var(--product-color)';
+                     productsScoreElement.style.fontSize = '2.2rem';
+                } else { // Tie in score
+                    winnerMessage = "It's a Tie!";
+                     detailsMessage = `Both players scored ${reactantsScore} points! Equilibrium position: ${equilibriumPosition.toFixed(0)}% Products.`;
+                }
+             } else { // Solo mode results
+                player1ScoreBox.classList.add('hidden');
+                 player2ScoreBox.classList.add('hidden');
+                 soloScoreBox.classList.remove('hidden');
+
+                 if (equilibriumPosition <= 0) {
+                    winnerMessage = 'Challenge Failed!';
+                    detailsMessage = 'The equilibrium shifted fully back to reactants.';
+                    soloScoreElement.style.color = 'var(--secondary-color)';
+                 } else if (equilibriumPosition >= 100) {
+                    winnerMessage = 'Challenge Complete!';
+                    detailsMessage = 'You successfully shifted the equilibrium fully to products!';
+                    soloScoreElement.style.color = 'var(--success-color)';
+                     soloScoreElement.style.fontSize = '2.2rem';
+                 } else {
+                     winnerMessage = 'Challenge Ended';
+                     detailsMessage = `You scored ${productsScore} points. Final equilibrium: ${equilibriumPosition.toFixed(0)}% Products.`;
+                     soloScoreElement.style.color = 'var(--primary-color)';
+                 }
+             }
+
+            resultTitle.textContent = winnerMessage;
+            resultsDetails.textContent = detailsMessage;
+        }
+
+        function playAgain() {
+            // Reset visual styles potentially added in endGame
+            reactantsScoreElement.style.color = '';
+            reactantsScoreElement.style.fontSize = '';
+            productsScoreElement.style.color = '';
+            productsScoreElement.style.fontSize = '';
+            soloScoreElement.style.color = '';
+            soloScoreElement.style.fontSize = '';
+
+            // Hide results, show setup
+            resultsScreen.style.display = 'none';
+            gameScreen.style.display = 'none'; // Ensure game screen is also hidden
+            setupScreen.style.display = 'block';
+
+             // Reset mode selection UI
+            playerSetup.classList.add('hidden');
+             highlightModeCard(soloModeCard, soloModeCard); // Deselect cards visually
+             highlightModeCard(twoPlayerModeCard, twoPlayerModeCard);
+        }
+
+        // --- Run Initialization ---
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
