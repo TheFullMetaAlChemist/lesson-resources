@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Reaction Race - Textbook Edition!</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #e74c3c;
+            --tertiary-color: #2ecc71;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --metal-color: #95a5a6; /* Kept for potential reuse if needed */
+            --nonmetal-color: #f39c12; /* Kept for potential reuse */
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --board-bg: #f9fcff;
+            --fun-yellow: #FFCC00;
+            --fun-orange: #FF9966;
+            --fun-green: #66CC99;
+            --fun-blue: #66CCFF;
+            --fun-purple: #CC99FF;
+            --fun-pink: #FF99CC;
+        }
+
+        /* Base Body Styles */
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-color);
+            min-height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"), linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            animation: bgScroll 60s linear infinite;
+        }
+        @keyframes bgScroll { 0% { background-position: 0 0; } 100% { background-position: 100px 100px; } }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px; margin: 0 auto; background-color: white; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 25px; position: relative; overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233498db' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Headings & Text */
+        h1 { text-align: center; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 2.5em; margin-bottom: 10px; font-weight: 700; letter-spacing: -0.02em; }
+        .subtitle { text-align: center; font-size: 1.3em; margin-top: 0; margin-bottom: 25px; color: var(--dark-color); opacity: 0.8; }
+
+        /* Player Cards & Controls */
+        .game-controls { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.9)); border-radius: 12px; padding: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); border: 1px solid rgba(255, 255, 255, 0.7); }
+        .player-info { display: flex; gap: 10px; flex-wrap: wrap; }
+        .player-card { padding: 10px; border-radius: 10px; min-width: 110px; position: relative; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; align-items: flex-start; }
+        .player-card.current { box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4); transform: translateY(-5px) scale(1.03); animation: cardPulse 1.5s infinite ease-in-out; z-index: 5; }
+        @keyframes cardPulse { 0%, 100% { box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4); } 50% { box-shadow: 0 12px 25px rgba(52, 152, 219, 0.6); } }
+        .player1 { background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.4)); border: 2px solid var(--primary-color); }
+        .player2 { background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.4)); border: 2px solid var(--secondary-color); }
+        .player3 { background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.4)); border: 2px solid var(--tertiary-color); }
+        .player4 { background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(243, 156, 18, 0.4)); border: 2px solid var(--nonmetal-color); }
+        .player-name { font-weight: bold; margin: 0 0 3px 0; font-size: 0.95em; }
+        .player-score { font-size: 1.6em; margin: 0 0 3px 0; font-weight: bold; text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5); transition: transform 0.3s ease, color 0.3s ease; }
+        .player-card small { font-size: 0.8em; color: #555; }
+        .player-card .status-indicator { font-size: 0.75em; font-weight: bold; margin-top: 4px; padding: 2px 5px; border-radius: 4px; background-color: rgba(255, 255, 255, 0.7); }
+        .player-card .status-skip { color: var(--secondary-color); border: 1px solid var(--secondary-color); }
+        .player-card .status-double { color: var(--fun-yellow); border: 1px solid var(--fun-yellow); }
+        .player-card.skipping-turn { opacity: 0.6; filter: grayscale(50%); }
+
+        /* Buttons */
+        button { background: linear-gradient(135deg, var(--primary-color), #2980b9); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 7px 10px rgba(0, 0, 0, 0.15); }
+        button:active:not(:disabled) { transform: translateY(0); box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); }
+        button:disabled { background: #95a5a6; cursor: not-allowed; box-shadow: none; transform: none; opacity: 0.7; }
+
+        /* Setup Container */
+        .setup-container { text-align: center; margin-bottom: 20px; }
+        #player-inputs { max-width: 600px; margin-left: auto; margin-right: auto; }
+        .setup-container input { padding: 10px; margin: 0 5px 10px 5px; border: 1px solid #ccc; border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); box-sizing: border-box; width: calc(100% - 10px); }
+        .setup-container label { display: block; margin-bottom: 3px; font-weight: 600; text-align: left; padding-left: 5px; }
+        #winScore { width: 70px; text-align: center; font-size: 1.1em; display: inline-block; vertical-align: middle; padding: 10px; margin: 0 5px 10px 5px; border: 1px solid #ccc; border-radius: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); box-sizing: border-box; }
+
+        /* Board Container & Spaces */
+        .board-container { position: relative; width: 100%; max-width: 650px; height: auto; aspect-ratio: 1 / 1; margin: 20px auto; overflow: hidden; border-radius: 16px; background-color: var(--board-bg); box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.15); padding: 15px; background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%233498db' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+        .game-board { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); gap: 8px; position: relative; }
+        .space { border: none; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 6px; text-align: center; font-size: 0.75em; font-weight: 600; position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07); min-height: 40px; }
+        .space > div:first-child { font-weight: normal; margin-bottom: 2px; line-height: 1.1; }
+        .space > div small { font-size: 0.9em; font-weight: bold; margin-top: auto; line-height: 1.1; }
+        .space:hover { transform: scale(1.05) translateY(-4px); z-index: 10; box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12); }
+        .space::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%); pointer-events: none; }
+        .space.special small { color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+
+        /* Special space styles */
+        .space.roll-again { background: linear-gradient(135deg, #FFC107, #FF9800) !important; border-left: 4px solid #FF9800 !important; animation: pulseBrightness 2s infinite; }
+        .space.boost { background: linear-gradient(135deg, #8BC34A, #4CAF50) !important; border-left: 4px solid #4CAF50 !important; }
+        .space.miss-turn { background: linear-gradient(135deg, #9C27B0, #673AB7) !important; border-left: 4px solid #673AB7 !important; }
+        .space.go-back { background: linear-gradient(135deg, #FF5722, #F44336) !important; border-left: 4px solid #F44336 !important; }
+        .space.jump-ahead { background: linear-gradient(135deg, #CDDC39, #8BC34A) !important; border-left: 4px solid #8BC34A !important; animation: bounceSpace 2s infinite; }
+        .space.swap { background: linear-gradient(135deg, #00BCD4, #009688) !important; border-left: 4px solid #009688 !important; }
+        .space.double-points { background: linear-gradient(135deg, #FFEB3B, #FFC107) !important; border-left: 4px solid #FFC107 !important; animation: glowPulse 2s infinite; }
+        .space.steal-point { background: linear-gradient(135deg, #607D8B, #455A64) !important; border-left: 4px solid #455A64 !important; }
+        .space.mystery { background: linear-gradient(135deg, #E91E63, #9C27B0) !important; border-left: 4px solid #9C27B0 !important; animation: mysterySpin 4s infinite linear; }
+        .space.hazard { background: linear-gradient(135deg, #795548, #5D4037) !important; border-left: 4px solid #5D4037 !important; }
+        @keyframes pulseBrightness { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.3); } }
+        @keyframes mysterySpin { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes glowPulse { 0%{box-shadow:0 0 5px rgba(255,235,59,.5),0 4px 8px rgba(0,0,0,.07) !important}50%{box-shadow:0 0 20px rgba(255,235,59,.8),0 4px 8px rgba(0,0,0,.07) !important}100%{box-shadow:0 0 5px rgba(255,235,59,.5),0 4px 8px rgba(0,0,0,.07) !important} }
+        @keyframes bounceSpace { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* --- NEW Category space styles --- */
+        .atoms-mass { background: linear-gradient(135deg, var(--fun-blue) 0%, rgba(52, 152, 219, 0.7) 100%); border-left: 4px solid rgba(52, 152, 219, 0.8); }
+        .reactions-energy { background: linear-gradient(135deg, var(--fun-yellow) 0%, rgba(241, 196, 15, 0.7) 100%); border-left: 4px solid rgba(241, 196, 15, 0.8); }
+        .fuels-combustion { background: linear-gradient(135deg, var(--fun-green) 0%, rgba(46, 204, 113, 0.7) 100%); border-left: 4px solid rgba(46, 204, 113, 0.8); }
+        /* Removing old category styles: .elements, .reaction-signs, .metal-oxygen, .metal-acid, .metal-water, .properties */
+
+        /* Player Tokens */
+        .player-token { width: 24px; height: 24px; border-radius: 50%; position: absolute; transition: left 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), top 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Faster transition */ z-index: 100; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25); border: 1px solid rgba(0,0,0,0.1); }
+        .token1 { background: radial-gradient(circle at 30% 30%, #6ac5ff, var(--primary-color)); box-shadow: 0 3px 6px rgba(52, 152, 219, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2); }
+        .token2 { background: radial-gradient(circle at 30% 30%, #ff8a7e, var(--secondary-color)); box-shadow: 0 3px 6px rgba(231, 76, 60, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2); }
+        .token3 { background: radial-gradient(circle at 30% 30%, #7dfbaf, var(--tertiary-color)); box-shadow: 0 3px 6px rgba(46, 204, 113, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2); }
+        .token4 { background: radial-gradient(circle at 30% 30%, #ffc55d, var(--nonmetal-color)); box-shadow: 0 3px 6px rgba(243, 156, 18, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.2); }
+        .token-hop { animation: tokenHop 0.4s ease-out; }
+        @keyframes tokenHop { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.1); } 100% { transform: translateY(0) scale(1); } }
+        .token-jump { animation: tokenJump 0.5s ease-in-out; }
+        @keyframes tokenJump { 0% { transform: scale(1); } 50% { transform: scale(1.3, 0.7); } 100% { transform: scale(1); } }
+        .token-rewind { animation: tokenRewind 0.5s ease-in-out; }
+        @keyframes tokenRewind { 0% { transform: scale(1); } 50% { transform: scale(0.7, 1.3); } 100% { transform: scale(1); } }
+        .token-sleep { animation: tokenSleep 1.5s infinite ease-in-out; }
+        @keyframes tokenSleep { 0%, 100% { transform: translateY(0) rotate(0); opacity: 0.7; } 50% { transform: translateY(2px) rotate(3deg); opacity: 0.5; } } /* Added opacity change */
+
+        /* Dice */
+        .dice-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; perspective: 600px; }
+        .dice { width: 70px; height: 70px; background: linear-gradient(135deg, #ffffff, #f5f5f5); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2em; font-weight: bold; margin: 0 auto 15px; transition: transform 0.5s ease; box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); position: relative; transform-style: preserve-3d; cursor: pointer; color: var(--dark-color); }
+        .dice::before { content: ''; position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 60%); top: 0; left: 0; border-radius: 12px; }
+        .dice.rolling { animation: diceRoll 0.75s ease-out; }
+        .dice.landed { animation: diceLand 0.3s ease-out; }
+        @keyframes diceRoll { 0%{transform:rotateX(0deg) rotateY(0deg)} 25%{transform:rotateX(360deg) rotateY(180deg)} 50%{transform:rotateX(720deg) rotateY(360deg)} 75%{transform:rotateX(1080deg) rotateY(540deg)} 100%{transform:rotateX(1440deg) rotateY(720deg)} }
+        @keyframes diceLand { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        .dice-dot { position: absolute; width: 12px; height: 12px; background-color: var(--dark-color); border-radius: 50%; z-index: 1; }
+        .dot-center { top: 50%; left: 50%; transform: translate(-50%, -50%); } .dot-top-left { top: 20%; left: 20%; } .dot-top-right { top: 20%; right: 20%; } .dot-bottom-left { bottom: 20%; left: 20%; } .dot-bottom-right { bottom: 20%; right: 20%; } .dot-mid-left { top: 50%; left: 20%; transform: translateY(-50%); } .dot-mid-right { top: 50%; right: 20%; transform: translateY(-50%); }
+        #dice-number { position: absolute; z-index: 0; opacity: 0; transition: opacity 0.2s ease-in; font-size: 1.5em; }
+        #roll-dice { font-size: 1.1em; padding: 12px 25px; border-radius: 50px; background: linear-gradient(135deg, var(--fun-orange), var(--secondary-color)); color: white; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
+        #roll-dice:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4); }
+        #roll-dice:active:not(:disabled) { transform: translateY(0); box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3); }
+
+        /* Question Modal & Feedback */
+        .question-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 600px; background-color: white; border-radius: 16px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3); padding: 25px; z-index: 1000; display: none; animation: modalFadeInScale 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        @keyframes modalFadeInScale { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.7); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        .modal-header { text-align: center; margin-bottom: 20px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 15px; font-size: 1.3em; font-weight: 600; }
+        .modal-content { margin-bottom: 25px; font-size: 1.1em; }
+        .answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; z-index: 10001; position: relative; }
+        .answer-btn { padding: 15px; background-color: var(--light-color); color: var(--dark-color); border: 2px solid #ccc; border-radius: 8px; cursor: pointer !important; transition: all 0.3s ease; font-size: 1em; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); margin: 0; width: 100%; position: relative; }
+        .answer-btn:hover:not(:disabled) { background-color: #e0e0e0; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12); }
+        .answer-btn:disabled { pointer-events: none; }
+        .answer-btn.highlight-correct { animation: pulseCorrect 0.6s ease; background-color: rgba(46, 204, 113, 0.3); border-color: #2ecc71; }
+        .answer-btn.highlight-incorrect { animation: shake 0.5s ease; background-color: rgba(231, 76, 60, 0.3); border-color: #e74c3c; }
+        @keyframes pulseCorrect { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); } 20%, 40%, 60%, 80% { transform: translateX(5px); } }
+        #continue-btn { margin-top: 20px; z-index: 10001; position: relative; width: 100%; padding: 15px; font-weight: bold; }
+        .feedback { margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; display: none; animation: feedbackFadeIn 0.5s forwards; font-size: 1.05em; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); }
+        @keyframes feedbackFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .correct { background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(46, 204, 113, 0.2)); border-left: 4px solid var(--tertiary-color); color: #217a52; }
+        .incorrect { background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.2)); border-left: 4px solid var(--secondary-color); color: #a93226; }
+
+        /* Overlay */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 999; display: none; backdrop-filter: blur(3px); animation: fadeInOverlay 0.3s forwards; }
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOutOverlay { from { opacity: 1; } to { opacity: 0; } }
+
+        /* Instructions & Modals */
+        .instructions-btn { background: linear-gradient(135deg, var(--fun-blue), var(--primary-color)); color: white; padding: 10px 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); font-weight: bold; display: inline-flex; align-items: center; gap: 8px; z-index: 500; transition: all 0.3s ease; margin-left: 15px; }
+        .instructions-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); }
+        .instructions-btn:before { content: "❓"; font-size: 1.2em; }
+        .instructions-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 800px; background-color: white; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); padding: 30px; z-index: 1000; display: none; max-height: 85vh; overflow-y: auto; animation: modalFadeInScale 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        .close-btn { position: absolute; top: 15px; right: 15px; background-color: var(--dark-color); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 1100; transition: background-color 0.2s ease; }
+        .close-btn:hover { background-color: var(--secondary-color); }
+        .instructions-modal h3 { margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .instructions-modal ul, .instructions-modal ol { margin-left: 20px; padding-left: 15px; }
+
+        /* Game Over & Winner Animation */
+        .game-over { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 30px 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0, 0.3); z-index: 1001; text-align: center; display: none; animation: modalFadeInScale 0.5s forwards; }
+        .winner-info { font-size: 1.5em; margin: 20px 0; color: var(--dark-color); }
+        #new-game { background: linear-gradient(135deg, var(--tertiary-color), #27ae60); margin-top: 15px; }
+        .player-card.winner-highlight { animation: winnerPulse 1s infinite; }
+        @keyframes winnerPulse { 0%, 100% { transform: scale(1.03) translateY(-5px); box-shadow: 0 12px 30px rgba(255, 215, 0, 0.7); } 50% { transform: scale(1.08) translateY(-8px); box-shadow: 0 18px 40px rgba(255, 215, 0, 0.9); } }
+
+        /* Decorations */
+        .atom { position: absolute; opacity: 0.08; z-index: 0; pointer-events: none; }
+        .atom-1 { top: 50px; left: 50px; width: 100px; height: 100px; animation: float 8s infinite ease-in-out; }
+        .atom-2 { bottom: 80px; right: 60px; width: 120px; height: 120px; animation: float 10s infinite ease-in-out reverse; }
+        @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(180deg); } 100% { transform: translateY(0) rotate(360deg); } }
+
+        /* Game Notification */
+        .game-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: rgba(44, 62, 80, 0.95); color: white; padding: 12px 25px; border-radius: 50px; font-size: 1.1em; font-weight: bold; z-index: 9999; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); animation: notificationFadeInUp 0.4s ease-out, notificationFadeOutDown 0.5s 2.5s ease-in forwards; }
+        @keyframes notificationFadeInUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+        @keyframes notificationFadeOutDown { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, 20px); } }
+
+        /* Player Count Selector */
+        .player-count-btn { padding: 12px 20px; background: linear-gradient(135deg, var(--light-color), #e0e0e0); border: 2px solid #ddd; border-radius: 12px; font-size: 1.2em; font-weight: bold; cursor: pointer !important; transition: all 0.3s ease; min-width: 50px; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05); }
+        .player-count-btn:hover { background: linear-gradient(135deg, #e0e0e0, #d0d0d0); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); }
+        .player-count-btn.active { background: linear-gradient(135deg, var(--primary-color), #2980b9); color: white; border-color: var(--primary-color); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3); }
+
+        /* General Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        .space-land-pulse { animation: spacePulse 0.5s ease-out; }
+        @keyframes spacePulse { 0%, 100% { transform: scale(1); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07); } 50% { transform: scale(1.1); box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); } }
+        .score-update { animation: scoreUpdate 0.4s ease-out; color: var(--tertiary-color); }
+        @keyframes scoreUpdate { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .confetti { position: fixed; width: 8px; height: 15px; background-color: var(--fun-yellow); opacity: 1; animation: confettiFall 3s linear forwards; z-index: 10002; pointer-events: none; }
+        @keyframes confettiFall { 0% { transform: translateY(0vh) rotateZ(0deg); opacity: 1; } 100% { transform: translateY(105vh) rotateZ(720deg); opacity: 0; } } /* Fall below screen */
+        .effect-icon { position: fixed; /* Use fixed to appear over everything */ font-size: 2.5em; opacity: 0; animation: effectIconAnim 0.8s ease-out forwards; z-index: 110; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        @keyframes effectIconAnim { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 50% { transform: translateY(-40px) scale(1.2); opacity: 1; } 100% { transform: translateY(-80px) scale(0.8); opacity: 0; } }
+
+        /* Media queries */
+        @media (max-width: 768px) {
+            body { padding: 10px; } .container { padding: 15px; } h1 { font-size: 2em; } .subtitle { font-size: 1.1em; margin-bottom: 15px; }
+            .game-controls { flex-direction: column; gap: 15px; align-items: stretch; } .player-info { justify-content: center; gap: 8px; }
+            .player-card { min-width: 100px; padding: 8px; border-radius: 8px; } .player-name { font-size: 0.9em; margin-bottom: 3px; } .player-score { font-size: 1.4em; margin-bottom: 3px; } .player-card small { font-size: 0.75em; } .player-card .status-indicator { font-size: 0.7em; margin-top: 3px; }
+            .dice-container { margin-bottom: 10px;} .dice { width: 60px; height: 60px; } #roll-dice { width: 100%; }
+            .board-container { padding: 10px; max-width: 100%; } .game-board { gap: 5px; } .space { font-size: 0.65em; padding: 4px; min-height: 35px; border-radius: 6px; } .space > div:first-child { margin-bottom: 1px; } .space > div small { font-size: 0.85em; } .player-token { width: 20px; height: 20px; }
+            .question-modal { width: 90%; padding: 15px; } .modal-header { font-size: 1.1em; padding-bottom: 10px; margin-bottom: 15px; } .modal-content { font-size: 1em; margin-bottom: 15px; } .answers { grid-template-columns: 1fr; gap: 8px; } .answer-btn { padding: 12px; font-size: 0.9em;} #continue-btn { padding: 12px; }
+            .instructions-modal { width: 90%; padding: 20px; } .close-btn { top: 10px; right: 10px; } .game-over { width: 90%; padding: 20px;} .winner-info { font-size: 1.2em; } .atom { display: none; }
+        }
+        @media (max-width: 480px) {
+             h1 { font-size: 1.8em; } .subtitle { font-size: 1em; } .player-card { min-width: 85px; padding: 5px;} .player-name { font-size: 0.8em; } .player-score { font-size: 1.2em; } .player-card small { font-size: 0.7em; }
+             .dice { width: 55px; height: 55px; } .dice-dot { width: 8px; height: 8px; } #dice-number { font-size: 1.2em;} #roll-dice { font-size: 1em; padding: 10px 20px;}
+             .space { font-size: 0.6em; padding: 3px; min-height: 30px; border-radius: 4px;} .player-token { width: 16px; height: 16px; }
+             .answer-btn { padding: 10px; font-size: 0.8em;} .game-notification { font-size: 1em; padding: 10px 20px; bottom: 20px; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Atom decorations -->
+        <svg class="atom atom-1" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="10" fill="#3498db"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#3498db" stroke-width="2" transform="rotate(0 50 50)"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#3498db" stroke-width="2" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#3498db" stroke-width="2" transform="rotate(120 50 50)"/></svg>
+        <svg class="atom atom-2" viewBox="0 0 100 100"> <circle cx="50" cy="50" r="10" fill="#e74c3c"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#e74c3c" stroke-width="2" transform="rotate(30 50 50)"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#e74c3c" stroke-width="2" transform="rotate(90 50 50)"/><ellipse cx="50" cy="50" rx="45" ry="15" fill="none" stroke="#e74c3c" stroke-width="2" transform="rotate(150 50 50)"/></svg>
+
+        <h1>Chemistry Reaction Race</h1>
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+            <!-- Subtitle updated slightly -->
+            <p class="subtitle" style="margin-right: 15px; margin-bottom: 10px;">Race using your knowledge of reactions!</p>
+            <button class="instructions-btn" id="instructions-btn">How to Play</button>
+        </div>
+
+        <!-- Game Setup Form -->
+        <div id="setup" class="setup-container">
+             <h2>Game Setup</h2>
+             <div style="margin-bottom: 20px;">
+                 <label style="display: block; margin-bottom: 8px; font-weight: 600;">Number of Players:</label>
+                 <div class="player-count-selector" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+                     <button class="player-count-btn" data-count="2">2</button>
+                     <button class="player-count-btn" data-count="3">3</button>
+                     <button class="player-count-btn active" data-count="4">4</button>
+                 </div>
+             </div>
+             <div id="player-inputs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                 <div class="player-input"> <label for="player1" style="color: var(--primary-color);">Player 1</label> <input type="text" id="player1" placeholder="Enter name" value="Player 1"> </div>
+                 <div class="player-input"> <label for="player2" style="color: var(--secondary-color);">Player 2</label> <input type="text" id="player2" placeholder="Enter name" value="Player 2"> </div>
+                 <div class="player-input player3-input"> <label for="player3" style="color: var(--tertiary-color);">Player 3</label> <input type="text" id="player3" placeholder="Enter name" value="Player 3"> </div>
+                 <div class="player-input player4-input"> <label for="player4" style="color: var(--nonmetal-color);">Player 4</label> <input type="text" id="player4" placeholder="Enter name" value="Player 4"> </div>
+             </div>
+             <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 25px;">
+                 <label for="winScore" style="font-weight: 600;">Points to Win: </label>
+                 <input type="number" id="winScore" min="5" max="20" value="10">
+             </div>
+             <button id="start-game" style="width: 200px; padding: 15px; font-size: 1.1em;">Start Game</button>
+        </div>
+
+        <!-- Game Board and Controls -->
+        <div id="game" style="display: none;">
+            <div class="game-controls">
+                <div class="player-info" id="player-info"></div>
+                <div class="dice-container">
+                     <div class="dice" id="dice" title="Click Roll Dice button"> <span id="dice-number">1</span> </div>
+                    <button id="roll-dice">Roll Dice</button>
+                </div>
+            </div>
+            <div class="board-container">
+                <div class="game-board" id="game-board"></div>
+            </div>
+        </div>
+
+        <!-- Modals & Overlays -->
+        <div class="overlay" id="overlay"></div>
+        <div class="question-modal" id="question-modal">
+            <h2 class="modal-header" id="question-category">Category</h2>
+            <div class="modal-content"> <p id="question-text">Question goes here?</p> <div class="answers" id="answers"></div> <div class="feedback" id="feedback"></div> </div>
+            <button id="continue-btn" style="display: none;">Continue</button>
+        </div>
+        <div class="instructions-modal" id="instructions-modal">
+             <div class="close-btn" id="close-instructions" title="Close Instructions">✕</div>
+             <h2>How to Play Chemistry Reaction Race</h2>
+             <p>Welcome! Race your friends around the board by answering chemistry questions based on your textbook.</p>
+             <h3>Game Rules:</h3> <ol> <li>Set up the game: Enter player names (or use defaults), choose 2-4 players, and set the score needed to win (5-20). Click "Start Game".</li> <li>Player 1's turn begins. Click the "Roll Dice" button.</li> <li>Your token moves the number of spaces shown.</li> <li>Landing on a colored space triggers a question from that category. Landing on a special space triggers its unique effect (see below).</li> <li>For questions: Read the question and click the answer you think is correct.</li> <li>Feedback shows if you were right or wrong, along with an explanation. Points are awarded for correct answers.</li> <li>Click "Continue" to proceed (unless the game ends or you get an extra turn).</li> <li>The turn passes to the next player.</li> <li>The first player to reach or exceed the winning score wins!</li> </ol>
+             <!-- *** INSTRUCTIONS UPDATED HERE *** -->
+             <h3>Chemistry Topics:</h3> <ul> <li style="color: var(--fun-blue);"><strong>Atoms & Mass:</strong> Questions about atoms, molecules, formulas, conservation of mass, and balancing equations.</li> <li style="color: var(--fun-yellow);"><strong>Reactions & Energy:</strong> Questions about reactants, products, chemical changes, exothermic and endothermic reactions.</li> <li style="color: var(--fun-green);"><strong>Fuels & Combustion:</strong> Questions about fuels, burning (combustion), oxygen, products of combustion, and fuel types (renewable/non-renewable).</li> </ul>
+             <h3>Special Spaces:</h3> <ul> <li style="color: #FF9800;"><strong>Roll Again:</strong> Get another roll immediately!</li> <li style="color: #4CAF50;"><strong>Boost:</strong> Answer correctly for an extra turn!</li> <li style="color: #8BC34A;"><strong>Catalyst:</strong> Jump ahead 3 spaces after your turn ends!</li> <li style="color: #5D4037;"><strong>Hazard:</strong> Lose 1 point if you answer incorrectly!</li> <li style="color: #673AB7;"><strong>Fail:</strong> Miss your next turn!</li> <li style="color: #009688;"><strong>Swap:</strong> Switch places with the player furthest ahead after your turn!</li> <li style="color: #F44336;"><strong>Unstable:</strong> Go back 2 spaces after your turn ends!</li> <li style="color: #FFC107;"><strong>Chain Rxn:</strong> Get double points for a correct answer *this turn*!</li> <li style="color: #455A64;"><strong>Thief:</strong> Steal 1 point from a random opponent if you answer correctly!</li> <li style="color: #9C27B0;"><strong>Mystery:</strong> A random event happens after your turn!</li> </ul>
+             <p>Have fun and good luck!</p>
+        </div>
+        <div class="game-over" id="game-over">
+            <h2>Game Over!</h2> <div class="winner-info" id="winner-info"></div> <button id="new-game">Play Again</button>
+        </div>
+
+    </div> <!-- End of .container -->
+
+    <script>
+        // --- Game State and Variables ---
+        let players = [];
+        let currentPlayerIndex = 0;
+        let gameActive = false;
+        let winningScore = 10;
+        let playerCount = 4;
+        const boardSize = 36;
+        let currentQuestionData = null;
+
+        // --- DOM Element References ---
+        let setupDiv, gameDiv, diceEl, rollBtn, gameBoard, playerInfoDiv;
+        let questionModal, questionCategory, questionText, answersDiv, feedbackDiv, continueBtn;
+        let overlay, instructionsBtn, instructionsModal, closeInstructionsBtn;
+        let gameOverDiv, winnerInfoDiv, newGameBtn, startGameBtn;
+        let diceNumberSpan;
+
+        // --- Board Configuration ---
+        // *** CATEGORIES UPDATED HERE ***
+        const categories = [
+            { name: 'Atoms & Mass', class: 'atoms-mass' },         // Blue
+            { name: 'Reactions & Energy', class: 'reactions-energy' }, // Yellow
+            { name: 'Fuels & Combustion', class: 'fuels-combustion' }, // Green
+            { name: 'Atoms & Mass', class: 'atoms-mass' },
+            { name: 'Reactions & Energy', class: 'reactions-energy' },
+            { name: 'Fuels & Combustion', class: 'fuels-combustion' }
+        ];
+        const specialSpaces = [ { index: 3, type: 'roll-again', text: 'Roll Again!' }, { index: 7, type: 'boost', text: 'Boost! +Turn if Correct' }, { index: 10, type: 'jump-ahead', text: 'Catalyst! +3 Spaces' }, { index: 14, type: 'hazard', text: 'Hazard! -1pt if Wrong' }, { index: 17, type: 'miss-turn', text: 'Fail! Miss Turn' }, { index: 21, type: 'swap', text: 'Swap w/ Leader!' }, { index: 24, type: 'go-back', text: 'Unstable! -2 Spaces' }, { index: 28, type: 'double-points', text: 'Chain Rxn! 2x Pts' }, { index: 31, type: 'steal-point', text: 'Thief! Steal 1pt' }, { index: 34, type: 'mystery', text: 'Mystery!' } ];
+
+        // --- Question Bank ---
+        // *** QUESTIONS UPDATED AND REORGANIZED HERE ***
+        const questions = {
+            'Atoms & Mass': [
+                // From 6.3.1 & 6.3.3
+                { question: '(6.3.1) In a chemical reaction, what happens to the atoms?', answers: ['They disappear.', 'They change into new atoms.', 'They join together in different ways (rearrange).', 'They get heavier.'], correct: 2, explanation: 'Atoms are rearranged in chemical reactions, not created, destroyed, or changed into other types.' },
+                { question: '(6.3.1) What is the chemical formula for a molecule with two nitrogen atoms joined?', answers: ['N', '2N', 'N₂', 'Ni₂'], correct: 2, explanation: 'N₂ represents a molecule with two nitrogen atoms chemically bonded.' },
+                { question: '(6.3.3) What does \'conservation of mass\' mean?', answers: ['Mass is lost.', 'Total mass of reactants equals total mass of products.', 'Mass is created.', 'Only solid mass is conserved.'], correct: 1, explanation: 'Mass is conserved in chemical reactions - total mass stays the same.' },
+                { question: '(6.3.3) If 0.24 g Mg reacts with 0.16 g O₂, what mass of MgO is made?', answers: ['0.16 g', '0.24 g', '0.08 g', '0.40 g'], correct: 3, explanation: 'Mass of products = mass of reactants (0.24g + 0.16g = 0.40g).' },
+                { question: '(6.3.3) Why are chemical symbol equations balanced?', answers: ['To look neat.', 'To show atoms aren\'t created/destroyed, just rearranged.', 'To show reaction speed.', 'To show colours.'], correct: 1, explanation: 'Balancing shows that the number of atoms of each element is conserved.' },
+                { question: '(6.3.3) In a balanced equation, the number of _______ of each element is the same on both sides.', answers: ['Molecules', 'Atoms', 'Grams', 'Compounds'], correct: 1, explanation: 'Balancing ensures the number of atoms of each element is equal on both sides.' },
+                { question: '(6.3.1/6.3.3) True or False: In a chemical reaction, new atoms are made.', answers: ['True', 'False'], correct: 1, explanation: 'False. Atoms are rearranged, not created or destroyed.' },
+                { question: '(6.3.3) According to conservation of mass, is mass gained or lost in a reaction?', answers: ['Mass is gained.', 'Mass is lost.', 'Mass is neither gained nor lost (it stays the same).', 'It depends on the reaction.'], correct: 2, explanation: 'The total mass remains constant during a chemical reaction.' },
+                { question: '(6.3.1) Look at the N₂ + O₂ particle diagrams. Are there the same number of nitrogen atoms before and after?', answers: ['Yes', 'No, there are fewer after.', 'No, there are more after.', 'The diagram doesn\'t show atoms.'], correct: 0, explanation: 'Atoms are conserved; the number of each type of atom is the same before and after.' } // Added Q5 here
+             ],
+            'Reactions & Energy': [
+                 // From 6.3.1 & 6.4.1
+                { question: '(6.3.1) In `nitrogen + oxygen → nitrogen monoxide`, what are nitrogen and oxygen called?', answers: ['Products', 'Reactants', 'Molecules', 'Elements'], correct: 1, explanation: 'The starting substances in a reaction are called reactants.' },
+                { question: '(6.3.1) In `nitrogen + oxygen → nitrogen monoxide`, what is nitrogen monoxide called?', answers: ['Product', 'Reactant', 'Atom', 'Mixture'], correct: 0, explanation: 'The new substance formed in a reaction is called the product.' },
+                { question: '(6.3.1) What does the arrow (→) mean in a chemical word equation?', answers: ['Equals', 'Reverses', 'Makes (or reacts to form)', 'Is bigger than'], correct: 2, explanation: 'The arrow indicates that the reactants react to form the products.' },
+                { question: '(6.4.1) What is an exothermic reaction?', answers: ['Absorbs heat, feels cold.', 'Releases energy (heat), feels warm.', 'No energy involved.', 'Only happens in cold places.'], correct: 1, explanation: 'Exothermic reactions release energy to the surroundings, often as heat.' },
+                { question: '(6.4.1) What is an endothermic reaction?', answers: ['Absorbs energy, surroundings feel colder.', 'Releases energy, surroundings feel warmer.', 'Burning is an example.', 'Creates energy.'], correct: 0, explanation: 'Endothermic reactions absorb energy from the surroundings, causing cooling.' },
+                { question: '(6.4.1) A cold pack feels cool because the reaction inside is:', answers: ['Exothermic', 'Endothermic', 'Combustion', 'Neutral'], correct: 1, explanation: 'The reaction absorbs heat from your skin, making it feel cold, so it is endothermic.' },
+                { question: '(6.4.1) Dissolving sodium hydroxide makes the beaker warm. This is:', answers: ['Endothermic', 'Exothermic', 'Very slow', 'Not chemical'], correct: 1, explanation: 'Releasing heat means the process is exothermic.' },
+                { question: '(6.4.1) Dissolving sodium hydrogen carbonate cools the water. This is:', answers: ['Exothermic', 'Endothermic', 'Combustion', 'Melting'], correct: 1, explanation: 'Absorbing heat and causing cooling means the process is endothermic.' },
+                { question: '(6.3.1) Look at the H₂ + O₂ reacting particle diagram. What happens to atom connections?', answers: ['Stay the same.', 'Break and new connections form.', 'All disappear.', 'Only oxygen connections change.'], correct: 1, explanation: 'In reactions, bonds in reactants break, and new bonds form in products.' }
+             ],
+            'Fuels & Combustion': [
+                 // From 6.3.2 & related
+                 { question: '(6.3.2) What is a fuel?', answers: ['Anything hot.', 'Substance storing chemical energy released by burning.', 'Only liquids like petrol.', 'Something making light.'], correct: 1, explanation: 'A fuel stores chemical energy that can be released, usually by burning.' },
+                 { question: '(6.3.2) Fossil fuels like coal are \'non-renewable\' because:', answers: ['They give little energy.', 'They cannot be replaced quickly.', 'They are not real fuels.', 'They can be used again.'], correct: 1, explanation: 'Non-renewable fuels form over millions of years and cannot be quickly replaced.' },
+                 { question: '(6.3.2) What is the chemical name for burning?', answers: ['Melting', 'Combustion', 'Dissolving', 'Freezing'], correct: 1, explanation: 'Combustion is the scientific term for burning.' },
+                 { question: '(6.3.2) What gas from the air is needed for fuels to burn?', answers: ['Nitrogen', 'Carbon Dioxide', 'Hydrogen', 'Oxygen'], correct: 3, explanation: 'Oxygen is required for combustion (burning).' },
+                 { question: '(6.3.2) Which of these is a fossil fuel formed over millions of years?', answers: ['Wood', 'Ethanol (from plants)', 'Coal', 'Hydrogen'], correct: 2, explanation: 'Coal, oil, and natural gas are fossil fuels formed over long periods.' },
+                 { question: '(6.3.2) Which of these is described as a \'renewable\' fuel?', answers: ['Petrol', 'Natural Gas', 'Wood', 'Diesel'], correct: 2, explanation: 'Renewable fuels, like wood, can be replaced relatively quickly.' },
+                 { question: '(6.3.2) When methane (CH₄) burns completely in oxygen, the products are:', answers: ['Carbon and hydrogen', 'Carbon dioxide and water', 'Only carbon dioxide', 'Soot and water'], correct: 1, explanation: 'Complete combustion of hydrocarbons produces carbon dioxide and water.' },
+                 { question: '(6.3.2) What is the main product when hydrogen (H₂) burns in oxygen?', answers: ['Carbon dioxide', 'Soot', 'Water (H₂O)', 'Methane (CH₄)'], correct: 2, explanation: 'Hydrogen burns in oxygen to form water (2H₂ + O₂ → 2H₂O).' },
+                 { question: '(6.4.1) Burning fuels releases heat. Burning (combustion) is:', answers: ['Exothermic', 'Endothermic', 'Dissolving', 'Cooling'], correct: 0, explanation: 'Reactions that release heat are exothermic.' }, // Related to combustion energy
+                 { question: '(6.3.2) What type of energy is stored inside fuels like wood?', answers: ['Heat energy', 'Light energy', 'Chemical energy', 'Movement energy'], correct: 2, explanation: 'Fuels store energy in their chemical bonds, known as chemical energy.' }
+            ]
+        }; // END OF QUESTIONS OBJECT
+
+        // --- Event Listeners Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Assign DOM elements (ensure all IDs exist in HTML)
+            setupDiv = document.getElementById('setup');
+            gameDiv = document.getElementById('game');
+            diceEl = document.getElementById('dice');
+            diceNumberSpan = document.getElementById('dice-number');
+            rollBtn = document.getElementById('roll-dice');
+            gameBoard = document.getElementById('game-board');
+            playerInfoDiv = document.getElementById('player-info');
+            questionModal = document.getElementById('question-modal');
+            questionCategory = document.getElementById('question-category');
+            questionText = document.getElementById('question-text');
+            answersDiv = document.getElementById('answers');
+            feedbackDiv = document.getElementById('feedback');
+            continueBtn = document.getElementById('continue-btn');
+            overlay = document.getElementById('overlay');
+            instructionsBtn = document.getElementById('instructions-btn');
+            instructionsModal = document.getElementById('instructions-modal');
+            closeInstructionsBtn = document.getElementById('close-instructions');
+            gameOverDiv = document.getElementById('game-over');
+            winnerInfoDiv = document.getElementById('winner-info');
+            newGameBtn = document.getElementById('new-game');
+            startGameBtn = document.getElementById('start-game');
+
+            // Check if all crucial elements were found
+            if (!setupDiv || !gameDiv || !startGameBtn || !rollBtn || !instructionsBtn || !overlay) {
+                console.error("CRITICAL ERROR: Essential DOM elements not found. Check HTML IDs.");
+                alert("Error loading game components. Please refresh the page.");
+                return; // Stop script if essential elements are missing
+            }
+
+            initEventListeners();
+            updatePlayerInputs();
+        });
+
+        function initEventListeners() {
+            // Attach listeners using the assigned variables
+            if (startGameBtn) startGameBtn.addEventListener('click', startGame);
+            if (rollBtn) rollBtn.addEventListener('click', rollDice);
+            if (continueBtn) continueBtn.addEventListener('click', continueGame);
+            if (newGameBtn) newGameBtn.addEventListener('click', resetGame);
+            if (instructionsBtn) instructionsBtn.addEventListener('click', showInstructions);
+            if (closeInstructionsBtn) closeInstructionsBtn.addEventListener('click', hideInstructions);
+            if (overlay) overlay.addEventListener('click', hideModals);
+
+            document.querySelectorAll('.player-count-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Check if button is already active
+                    if(this.classList.contains('active')) return;
+
+                    document.querySelectorAll('.player-count-btn.active').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    playerCount = parseInt(this.dataset.count);
+                    updatePlayerInputs();
+                });
+            });
+        }
+
+        // --- Animation Helper ---
+        function triggerAnimation(element, animationClass, duration = 500) {
+             if (!element) return;
+             // Ensure animation isn't already running on this element to avoid conflicts
+             if (element.classList.contains(animationClass)) {
+                element.classList.remove(animationClass);
+                void element.offsetWidth; // Force reflow to restart animation
+             }
+             element.classList.add(animationClass);
+             setTimeout(() => {
+                 // Check if element still exists before removing class
+                 if(element && element.classList.contains(animationClass)) {
+                    element.classList.remove(animationClass);
+                 }
+             }, duration);
+        }
+
+        // --- Game Setup and Control ---
+        function updatePlayerInputs() {
+             const p3 = document.querySelector('.player3-input');
+             const p4 = document.querySelector('.player4-input');
+             if(p3) p3.style.display = playerCount >= 3 ? 'block' : 'none';
+             if(p4) p4.style.display = playerCount >= 4 ? 'block' : 'none';
+        }
+
+        function startGame() {
+            console.log("Starting game..."); // Debug log
+            const p1 = document.getElementById('player1').value.trim() || 'Player 1';
+            const p2 = document.getElementById('player2').value.trim() || 'Player 2';
+            const p3 = document.getElementById('player3').value.trim() || 'Player 3';
+            const p4 = document.getElementById('player4').value.trim() || 'Player 4';
+            winningScore = parseInt(document.getElementById('winScore').value) || 10;
+            if (winningScore < 5) winningScore = 5;
+
+            players = [
+                { id: 0, name: p1, position: 0, score: 0, class: 'player1', tokenClass: 'token1', skipNextTurn: false, doublePointsNext: false },
+                { id: 1, name: p2, position: 0, score: 0, class: 'player2', tokenClass: 'token2', skipNextTurn: false, doublePointsNext: false }
+            ];
+            if (playerCount >= 3) players.push({ id: 2, name: p3, position: 0, score: 0, class: 'player3', tokenClass: 'token3', skipNextTurn: false, doublePointsNext: false });
+            if (playerCount >= 4) players.push({ id: 3, name: p4, position: 0, score: 0, class: 'player4', tokenClass: 'token4', skipNextTurn: false, doublePointsNext: false });
+
+            currentPlayerIndex = 0;
+            gameActive = true;
+
+            setupDiv.style.animation = 'fadeOut 0.3s forwards';
+            setTimeout(() => {
+                setupDiv.style.display = 'none';
+                setupDiv.style.animation = '';
+                gameDiv.style.display = 'block';
+                gameDiv.style.animation = 'fadeIn 0.3s forwards';
+
+                createGameBoard();
+                updatePlayerInfo();
+                updateTokenPositions();
+                updateDiceFace(1);
+                if(diceNumberSpan) diceNumberSpan.style.opacity = "0";
+                rollBtn.disabled = false;
+                rollBtn.textContent = "Roll Dice";
+
+                setTimeout(() => {
+                    showNotification(`Game started! ${players[currentPlayerIndex].name}'s turn.`);
+                    gameDiv.style.animation = '';
+                }, 350);
+            }, 300);
+        }
+
+        function resetGame() {
+            console.log("Resetting game..."); // Debug log
+            gameActive = false;
+            gameOverDiv.style.display = 'none';
+            gameOverDiv.style.animation = '';
+            hideOverlay(); // Ensure overlay is hidden
+
+            // Clear winner highlights if any
+            document.querySelectorAll('.player-card.winner-highlight').forEach(c => c.classList.remove('winner-highlight'));
+
+            gameDiv.style.animation = 'fadeOut 0.3s forwards';
+            setTimeout(() => {
+                gameDiv.style.display = 'none';
+                gameDiv.style.animation = '';
+                // Clear board and player info for clean start
+                if (gameBoard) gameBoard.innerHTML = '';
+                if (playerInfoDiv) playerInfoDiv.innerHTML = '';
+                // Show setup screen
+                setupDiv.style.display = 'block';
+                setupDiv.style.animation = 'fadeIn 0.3s forwards';
+                setTimeout(() => setupDiv.style.animation = '', 350);
+            }, 300);
+        }
+
+        function endGame() {
+            console.log("Ending game..."); // Debug log
+            gameActive = false;
+            if (rollBtn) rollBtn.disabled = true;
+
+            let maxScore = -1, winners = [];
+            players.forEach(p => {
+                if (p.score > maxScore) { maxScore = p.score; winners = [p]; }
+                else if (p.score === maxScore) { winners.push(p); }
+            });
+
+            hideQuestionModal();
+            showOverlay(true);
+
+            setTimeout(() => {
+                let winnerMsg;
+                if (winners.length === 1) { winnerMsg = `<span style="color: var(--primary-color); font-size: 1.3em; font-weight: bold;">${winners[0].name}</span> wins with <span style="color: var(--tertiary-color); font-weight: bold;">${maxScore} points</span>!`; }
+                else { const winnerNames = winners.map(w => `<span style="font-weight: bold; color: ${getCSSVariable('--' + w.class.replace('player','primary-color-'))};">${w.name}</span>`).join(' and '); winnerMsg = `It's a tie between ${winnerNames} with <span style="color: var(--tertiary-color); font-weight: bold;">${maxScore} points</span> each!`; }
+
+                if (winnerInfoDiv) winnerInfoDiv.innerHTML = winnerMsg;
+                if (gameOverDiv) {
+                    gameOverDiv.style.display = 'block';
+                    gameOverDiv.style.animation = 'modalFadeInScale 0.5s forwards';
+                }
+                createConfetti(40); // More confetti for win
+
+                // Highlight winner cards
+                winners.forEach(w => {
+                    const card = playerInfoDiv?.querySelector(`.${w.class}`);
+                    if (card) card.classList.add('winner-highlight');
+                });
+            }, 500);
+        }
+
+        // --- UI Updates ---
+        function createGameBoard() {
+            if (!gameBoard) return;
+            gameBoard.innerHTML = '';
+            const path = [ {r:0,c:0},{r:0,c:1},{r:0,c:2},{r:0,c:3},{r:0,c:4},{r:0,c:5},{r:1,c:5},{r:2,c:5},{r:3,c:5},{r:4,c:5},{r:5,c:5},{r:5,c:4},{r:5,c:3},{r:5,c:2},{r:5,c:1},{r:5,c:0},{r:4,c:0},{r:3,c:0},{r:2,c:0},{r:1,c:0},{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:2,c:4},{r:3,c:4},{r:4,c:4},{r:4,c:3},{r:4,c:2},{r:4,c:1},{r:3,c:1},{r:2,c:1},{r:2,c:2},{r:2,c:3},{r:3,c:3},{r:3,c:2} ];
+            for (let i = 0; i < boardSize; i++) {
+                const space = document.createElement('div'); space.className = 'space'; space.dataset.index = i;
+                // *** Use the NEW categories array here ***
+                const category = categories[i % categories.length]; // Cycle through the 3 new categories
+                space.classList.add(category.class);
+                const label = document.createElement('div'); label.innerHTML = `${i + 1}. ${category.name}`; space.appendChild(label);
+                const specialSpace = specialSpaces.find(s => s.index === i);
+                if (specialSpace) {
+                    space.classList.add(specialSpace.type, 'special');
+                    const specialText = document.createElement('div'); specialText.innerHTML = `<small>${specialSpace.text}</small>`; space.appendChild(specialText);
+                }
+                if (path[i]) { space.style.gridRow = path[i].r + 1; space.style.gridColumn = path[i].c + 1; }
+                gameBoard.appendChild(space);
+            }
+            players.forEach(player => {
+                const token = document.createElement('div'); token.className = `player-token ${player.tokenClass}`; token.id = `token-${player.id}`; token.title = player.name;
+                gameBoard.appendChild(token); // Append tokens to the board, not spaces
+            });
+        }
+
+        function updatePlayerInfo() {
+             if (!playerInfoDiv) return;
+             playerInfoDiv.innerHTML = '';
+             players.forEach((player, index) => {
+                 const playerCard = document.createElement('div');
+                 playerCard.className = `player-card ${player.class}`;
+                 playerCard.classList.toggle('current', index === currentPlayerIndex && gameActive);
+                 playerCard.classList.toggle('skipping-turn', player.skipNextTurn); // Use class for styling skip
+
+                 let statusHTML = '';
+                 if (player.skipNextTurn) { statusHTML = `<div class="status-indicator status-skip">Skip Next Turn</div>`; }
+                 else if (player.doublePointsNext) { statusHTML = `<div class="status-indicator status-double">2x Pts Next Turn</div>`; }
+
+                 playerCard.innerHTML = `<p class="player-name">${player.name}</p><p class="player-score">${player.score}</p><small>Space: ${player.position + 1}</small>${statusHTML}`;
+                 playerInfoDiv.appendChild(playerCard);
+             });
+        }
+
+        function updateTokenPositions() {
+            if (!gameBoard) return;
+            const boardRect = gameBoard.getBoundingClientRect();
+            players.forEach(player => {
+                const token = document.getElementById(`token-${player.id}`);
+                const space = gameBoard.querySelector(`.space[data-index="${player.position}"]`);
+                if (space && token) {
+                    const spaceRect = space.getBoundingClientRect();
+                    const tokensOnSpace = players.filter(p => p.position === player.position);
+                    const indexOnSpace = tokensOnSpace.findIndex(p => p.id === player.id);
+                    let offsetX = spaceRect.width / 2 - token.offsetWidth / 2; let offsetY = spaceRect.height / 2 - token.offsetHeight / 2;
+                    const offsetAmount = (token.offsetWidth || 24) * 0.25; // Adjust offset based on token size
+
+                    // Simple offset for overlap - adjust as needed
+                    if (tokensOnSpace.length === 2) { offsetX += (indexOnSpace === 0 ? -offsetAmount : offsetAmount); }
+                    else if (tokensOnSpace.length === 3) { if (indexOnSpace === 0) offsetX -= offsetAmount; if (indexOnSpace === 1) offsetX += offsetAmount; if (indexOnSpace === 2) offsetY += offsetAmount; }
+                    else if (tokensOnSpace.length >= 4) { offsetX += (indexOnSpace % 2 === 0 ? -offsetAmount : offsetAmount); offsetY += (indexOnSpace < 2 ? -offsetAmount : offsetAmount); }
+
+                    token.style.left = `${spaceRect.left - boardRect.left + offsetX}px`;
+                    token.style.top = `${spaceRect.top - boardRect.top + offsetY}px`;
+
+                    // Handle Sleep/Bounce Animation
+                    token.classList.toggle('token-sleep', player.skipNextTurn);
+                    if (player.id === players[currentPlayerIndex].id && gameActive && !player.skipNextTurn) {
+                        if (!token.style.animationName || token.style.animationName === 'tokenSleep') { token.style.animation = 'bounce 1s infinite ease-in-out'; }
+                    } else if (!player.skipNextTurn) { token.style.animation = ''; }
+                } else {
+                    // If space/token not found, log error maybe?
+                    // console.warn(`Could not find space/token for player ${player.id} at pos ${player.position}`);
+                }
+            });
+        }
+
+        function showNotification(message) { const n=document.createElement('div');n.className='game-notification';n.textContent=message;document.body.appendChild(n);setTimeout(()=>n.remove(),3000); }
+        function triggerScoreUpdateAnimation(playerIndex) { const card = playerInfoDiv?.querySelectorAll('.player-card')[playerIndex]; if (card) { const scoreEl = card.querySelector('.player-score'); triggerAnimation(scoreEl, 'score-update', 400); } }
+
+        // --- Dice Rolling ---
+        function rollDice() {
+            if (!gameActive || !rollBtn || rollBtn.disabled) return;
+            console.log("Rolling dice..."); // Debug log
+            rollBtn.disabled = true; rollBtn.textContent = "Rolling...";
+            diceEl.classList.remove('landed'); diceEl.classList.add('rolling');
+            if(diceNumberSpan) diceNumberSpan.style.opacity = "0";
+            updateDiceFace(0);
+            const finalRoll = Math.floor(Math.random() * 6) + 1;
+            setTimeout(() => {
+                if (!diceEl) return; // Check if element still exists
+                diceEl.classList.remove('rolling');
+                triggerAnimation(diceEl, 'landed', 300); // Use triggerAnimation
+                updateDiceFace(finalRoll);
+                movePlayer(finalRoll);
+            }, 750); // Match CSS animation duration
+        }
+        function updateDiceFace(number) { if (!diceEl) return; const dots=diceEl.querySelectorAll('.dice-dot');dots.forEach(d=>d.remove());if(number===0)return;const pos=[[],['dot-center'],['dot-top-left','dot-bottom-right'],['dot-top-left','dot-center','dot-bottom-right'],['dot-top-left','dot-top-right','dot-bottom-left','dot-bottom-right'],['dot-top-left','dot-top-right','dot-center','dot-bottom-left','dot-bottom-right'],['dot-top-left','dot-top-right','dot-mid-left','dot-mid-right','dot-bottom-left','dot-bottom-right']];if(pos[number]){pos[number].forEach(p=>{const d=document.createElement('div');d.className=`dice-dot ${p}`;diceEl.appendChild(d);});}}
+
+        // --- Player Movement ---
+        function movePlayer(steps) {
+            if (!gameActive) return;
+            const player = players[currentPlayerIndex];
+            let currentPos = player.position; let movedSteps = 0;
+            function nextStep() {
+                if (!gameActive) return; // Stop if game ended during move
+                if (movedSteps < steps) {
+                    movedSteps++; currentPos = (currentPos + 1) % boardSize; player.position = currentPos;
+                    updateTokenPositions(); // Update visual position smoothly via CSS transition
+                    highlightSpace(currentPos, movedSteps === steps);
+                    const delay = 350 - (movedSteps * 15); // Adjust delay for smoother feel
+                    setTimeout(nextStep, Math.max(80, delay));
+                } else {
+                    const token = document.getElementById(`token-${player.id}`);
+                    triggerAnimation(token, 'token-hop', 400);
+                    setTimeout(handleLanding, 200);
+                }
+            }
+            nextStep();
+        }
+        function highlightSpace(index, isFinal = false) { const spaceElement = gameBoard?.querySelector(`.space[data-index="${index}"]`); if (spaceElement) { triggerAnimation(spaceElement, 'space-land-pulse', isFinal ? 600 : 300); } }
+
+        // --- Handling Landing ---
+        function handleLanding() {
+            if (!gameActive) return;
+            const player = players[currentPlayerIndex];
+            const specialSpace = specialSpaces.find(s => s.index === player.position);
+            // Always ask a question unless it's specifically a "miss turn" space
+            // The effects of other special spaces are handled after the question/continue step.
+            if (specialSpace && specialSpace.type === 'miss-turn') {
+                 player.skipNextTurn = true;
+                 showNotification(`${player.name} landed on ${specialSpace.text}! They miss their next turn.`);
+                 updatePlayerInfo(); // Show the skip status
+                 // Automatically continue after a delay since there's no question
+                 setTimeout(continueGame, 1500);
+            } else {
+                 askQuestion();
+            }
+        }
+
+        // --- Questions and Answers ---
+        function askQuestion() {
+            if (!gameActive) return;
+            const player = players[currentPlayerIndex];
+             // *** Use the NEW categories array here ***
+            const category = categories[player.position % categories.length];
+            const categoryQuestions = questions[category.name]; // Get questions based on category name
+            if (!categoryQuestions || categoryQuestions.length === 0) { console.error(`No questions for ${category.name}`); showNotification("Oops! No question. Turn skipped."); setTimeout(nextTurn, 1500); return; }
+            const question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
+            currentQuestionData = { correct: question.correct, explanation: question.explanation };
+            if(questionCategory) questionCategory.textContent = category.name; // Display the NEW category name
+            if(questionText) questionText.textContent = question.question;
+            if(answersDiv) answersDiv.innerHTML = '';
+            question.answers.forEach((ans, idx) => { const btn = document.createElement('button'); btn.className = 'answer-btn'; btn.textContent = ans; btn.addEventListener('click', () => handleAnswerClick(idx)); if(answersDiv) answersDiv.appendChild(btn); });
+            if(feedbackDiv){ feedbackDiv.style.display = 'none'; feedbackDiv.textContent = ''; feedbackDiv.className = 'feedback'; }
+            if(continueBtn) continueBtn.style.display = 'none';
+            showQuestionModal();
+        }
+        function handleAnswerClick(selectedIndex) { if (!currentQuestionData || !gameActive) return; checkAnswer(selectedIndex, currentQuestionData.correct, currentQuestionData.explanation); }
+        function checkAnswer(selectedIndex, correctIndex, explanation) {
+            if (!gameActive) return;
+            const player = players[currentPlayerIndex]; const isCorrect = selectedIndex === correctIndex; const specialSpace = specialSpaces.find(s => s.index === player.position); let extraTurn = false; let pointsEarned = 0;
+            answersDiv?.querySelectorAll('.answer-btn').forEach(btn => btn.disabled = true);
+            if(feedbackDiv) feedbackDiv.style.display = 'block';
+            const selectedBtn = answersDiv?.querySelectorAll('.answer-btn')[selectedIndex];
+            const correctBtn = answersDiv?.querySelectorAll('.answer-btn')[correctIndex];
+            if (isCorrect) {
+                pointsEarned = player.doublePointsNext ? 2 : 1; player.score += pointsEarned;
+                if(feedbackDiv){ feedbackDiv.textContent = `Correct! ${explanation}`; feedbackDiv.className = 'feedback correct'; }
+                triggerAnimation(questionModal?.querySelector('.modal-content'), 'pulseCorrect', 600);
+                if(correctBtn) correctBtn.classList.add('highlight-correct');
+                createConfetti(15); triggerScoreUpdateAnimation(currentPlayerIndex);
+                if (pointsEarned > 1) feedbackDiv.textContent += ' Double points awarded!';
+                if (specialSpace) { if (specialSpace.type === 'boost' || specialSpace.type === 'roll-again') { extraTurn = true; feedbackDiv.textContent += ' You get an extra turn!'; } if (specialSpace.type === 'steal-point' && continueBtn) continueBtn.dataset.steal = "true"; }
+            } else {
+                const correctAnswerText = correctBtn?.textContent || "N/A";
+                if(feedbackDiv){ feedbackDiv.textContent = `Incorrect. Correct was: ${correctAnswerText}. ${explanation}`; feedbackDiv.className = 'feedback incorrect'; }
+                triggerAnimation(questionModal?.querySelector('.modal-content'), 'shake', 500);
+                if(selectedBtn) selectedBtn.classList.add('highlight-incorrect');
+                if(correctBtn) correctBtn.classList.add('highlight-correct');
+                if (specialSpace && specialSpace.type === 'hazard') { player.score = Math.max(0, player.score - 1); if(feedbackDiv) feedbackDiv.textContent += ' You lose 1 point!'; triggerScoreUpdateAnimation(currentPlayerIndex); }
+            }
+            updatePlayerInfo();
+            if (player.score >= winningScore) { setTimeout(endGame, 500); return; } // Delay end game slightly to show feedback
+            if(continueBtn){ continueBtn.style.display = 'block'; continueBtn.dataset.extraTurn = String(extraTurn); } // Ensure dataset value is string
+            currentQuestionData = null;
+        }
+
+        // --- Turn Progression ---
+        function continueGame() {
+            if (!gameActive) return;
+            hideQuestionModal();
+            const player = players[currentPlayerIndex];
+            const specialSpace = specialSpaces.find(s => s.index === player.position);
+            const extraTurn = continueBtn?.dataset.extraTurn === 'true'; // Read as boolean
+            const shouldSteal = continueBtn?.dataset.steal === 'true';
+
+            if (player.doublePointsNext) player.doublePointsNext = false; // Reset flag
+
+            let positionChangedByEffect = false;
+            let effectDelay = 0;
+            const token = document.getElementById(`token-${player.id}`);
+
+            if (shouldSteal) { handleStealPoint(player); if (continueBtn) delete continueBtn.dataset.steal; effectDelay = 1200; }
+            if (specialSpace) {
+                 if (specialSpace.type === 'jump-ahead') { showNotification(`${player.name} used ${specialSpace.text}`); player.position = (player.position + 3) % boardSize; positionChangedByEffect = true; triggerAnimation(token, 'token-jump', 500); createEffectIcon(token, '🚀'); effectDelay = Math.max(effectDelay, 1000); }
+                 else if (specialSpace.type === 'go-back') { showNotification(`${player.name} hit ${specialSpace.text}`); player.position = Math.max(0, player.position - 2); positionChangedByEffect = true; triggerAnimation(token, 'token-rewind', 500); createEffectIcon(token, '⏪'); effectDelay = Math.max(effectDelay, 1000); }
+                 else if (specialSpace.type === 'swap') { positionChangedByEffect = handleSwap(player); effectDelay = Math.max(effectDelay, positionChangedByEffect ? 1500 : 0); }
+                 else if (specialSpace.type === 'mystery') { positionChangedByEffect = handleMystery(player); createEffectIcon(token, '❓'); effectDelay = Math.max(effectDelay, 1200); }
+                 else if (specialSpace.type === 'double-points') { player.doublePointsNext = true; showNotification(`${player.name} landed on ${specialSpace.text}. Next correct answer is worth 2 points!`); createEffectIcon(token, '✨'); effectDelay = Math.max(effectDelay, 1000); }
+                 // miss-turn handled in handleLanding, boost/roll-again handled by extraTurn logic
+             }
+
+            setTimeout(() => {
+                if (!gameActive) return; // Check if game ended during delay
+                if (positionChangedByEffect) { updateTokenPositions(); updatePlayerInfo(); }
+                proceedToNextStep(extraTurn);
+            }, effectDelay);
+        }
+
+        function proceedToNextStep(extraTurn) {
+            if (!gameActive) return;
+            const player = players[currentPlayerIndex];
+            if (extraTurn) {
+                 showNotification(`${player.name} gets an extra turn!`);
+                 if (rollBtn) rollBtn.disabled = false;
+                 updatePlayerInfo();
+                 createEffectIcon(document.getElementById(`token-${player.id}`), '🔄');
+            } else {
+                 nextTurn(); // Normal turn progression
+            }
+        }
+
+        function nextTurn() {
+            if (!gameActive) return;
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            const nextPlayer = players[currentPlayerIndex];
+            // Clear highlights from previous turn
+            document.querySelectorAll('.winner-highlight').forEach(c=>c.classList.remove('winner-highlight'));
+            document.querySelectorAll('.skipping-turn').forEach(c=>c.classList.remove('skipping-turn')); // Clear visual skip status
+
+            if (nextPlayer.skipNextTurn) {
+                 showNotification(`${nextPlayer.name} misses their turn!`);
+                 nextPlayer.skipNextTurn = false; // Consume the flag
+                 updatePlayerInfo(); // Show skip cleared & current player
+                 const skippedToken = document.getElementById(`token-${nextPlayer.id}`);
+                 triggerAnimation(skippedToken, 'shake', 500);
+                 if (skippedToken) skippedToken.classList.add('token-sleep'); // Add sleep animation for the duration of the skip message
+                 setTimeout(() => {
+                     if (skippedToken) skippedToken.classList.remove('token-sleep');
+                     nextTurn(); // Skip to the *next* player after delay
+                 }, 1500);
+            } else {
+                 showNotification(`${nextPlayer.name}'s turn!`);
+                 updatePlayerInfo();
+                 updateTokenPositions();
+                 if (rollBtn) rollBtn.disabled = false;
+            }
+        }
+
+        // --- Special Space Handlers ---
+        function handleStealPoint(player) { const targets=players.filter(p=>p.id!==player.id&&p.score>0); if(targets.length>0){ const target=targets[Math.floor(Math.random()*targets.length)]; target.score--; player.score++; showNotification(`${player.name} stole a point from ${target.name}!`); triggerScoreUpdateAnimation(currentPlayerIndex); const targetIdx=players.findIndex(p=>p.id===target.id); if(targetIdx > -1) triggerScoreUpdateAnimation(targetIdx); createEffectIcon(document.getElementById(`token-${player.id}`), '💰'); } else { showNotification(`${player.name} tried to steal, but no one had points!`); } }
+        function handleSwap(player) { const furthest=findFurthestPlayer(player); if(furthest){ showNotification(`${player.name} swaps places with ${furthest.name}!`); const temp=player.position; player.position=furthest.position; furthest.position=temp; const t1=document.getElementById(`token-${player.id}`), t2=document.getElementById(`token-${furthest.id}`); triggerAnimation(t1,'token-jump',500); triggerAnimation(t2,'token-jump',500); createEffectIcon(t1,'↔️'); createEffectIcon(t2,'↔️'); return true; } else { showNotification(`${player.name} tried to swap, but no one was ahead!`); return false; } }
+        function handleMystery(player) { let posChanged = false; const effects=[()=>{player.score++;showNotification(`Mystery Bonus! ${player.name} gains 1 point!`);triggerScoreUpdateAnimation(currentPlayerIndex);},()=>{if(player.score>0){player.score--;showNotification(`Mystery Penalty! ${player.name} loses 1 point!`);triggerScoreUpdateAnimation(currentPlayerIndex);}else{showNotification(`Mystery... but ${player.name} had no points to lose!`);}},()=>{player.position=(player.position+5)%boardSize;showNotification(`Mystery Teleport! ${player.name} jumps forward 5 spaces!`);posChanged=true;},()=>{player.position=Math.max(0,player.position-3);showNotification(`Mystery Rewind! ${player.name} moves back 3 spaces!`);posChanged=true;},()=>{showNotification(`Mystery Safety! Nothing happens to ${player.name}. Phew!`);},()=>{player.doublePointsNext=true;showNotification(`Mystery Power-up! ${player.name} gets 2x points next turn!`);}]; const randomEffect = effects[Math.floor(Math.random() * effects.length)]; randomEffect(); return posChanged; }
+
+        // --- Helper Functions ---
+        function findFurthestPlayer(currentPlayer) { let furthestPos=-1, furthestP=null; players.forEach(p=>{if(p.id!==currentPlayer.id&&p.position>furthestPos){furthestPos=p.position;furthestP=p;}}); return (furthestP&&furthestPos>currentPlayer.position)?furthestP:null; }
+        function getCSSVariable(varName) { try { return getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); } catch (e) { return ''; /* Graceful fallback */ } }
+        function createConfetti(count=20) { if (document.body) { for (let i=0;i<count;i++){ const c=document.createElement('div'); c.className='confetti'; c.style.left=Math.random()*100+'vw'; c.style.top=-Math.random()*30+'vh'; c.style.backgroundColor=`hsl(${Math.random()*360},100%,70%)`; c.style.transform=`rotate(${Math.random()*360}deg) scale(${Math.random()*0.5+0.5})`; c.style.animationDuration=(Math.random()*2+2)+'s'; c.style.animationDelay=Math.random()*0.5+'s'; document.body.appendChild(c); setTimeout(()=>c.remove(),4500); } } }
+        function createEffectIcon(targetElement, icon = '✨') { if (!targetElement || !document.body) return; const iconEl = document.createElement('div'); iconEl.className = 'effect-icon'; iconEl.textContent = icon; const rect = targetElement.getBoundingClientRect(); const scrollX = window.scrollX || window.pageXOffset; const scrollY = window.scrollY || window.pageYOffset; iconEl.style.left = `${rect.left + scrollX + rect.width / 2 - 15}px`; iconEl.style.top = `${rect.top + scrollY - 30}px`; /* Adjusted top position */ document.body.appendChild(iconEl); setTimeout(() => iconEl.remove(), 800); }
+
+        // --- Modal Controls ---
+        function showOverlay(fade=false){if(!overlay)return;overlay.style.display='block';overlay.style.animation=fade?'fadeInOverlay 0.3s forwards':'';if(!fade)overlay.style.opacity='1';}
+        function hideOverlay(fade=false){if(!overlay)return;if(fade){overlay.style.animation='fadeOutOverlay 0.3s forwards';setTimeout(()=>{overlay.style.display='none';overlay.style.opacity='';},300);}else{overlay.style.display='none';overlay.style.opacity='';overlay.style.animation='';}}
+        function showInstructions(){if(!instructionsModal)return;showOverlay(true);instructionsModal.style.display='block';instructionsModal.style.animation='modalFadeInScale 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55)';}
+        function hideInstructions(){if(!instructionsModal||instructionsModal.style.display==='none')return;if(!questionModal||questionModal.style.display!=='block'){hideOverlay(true);}instructionsModal.style.animation='fadeOut 0.3s forwards';setTimeout(()=>{instructionsModal.style.display='none';instructionsModal.style.animation='';},300);}
+        function showQuestionModal(){if(!questionModal)return;showOverlay(true);questionModal.style.display='block';questionModal.style.animation='modalFadeInScale 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55)';}
+        function hideQuestionModal(){if(!questionModal||questionModal.style.display==='none')return;if(!instructionsModal||instructionsModal.style.display!=='block'){hideOverlay(true);}questionModal.style.animation='fadeOut 0.3s forwards';setTimeout(()=>{questionModal.style.display='none';questionModal.style.animation='';},300);}
+        function hideModals(){hideInstructions();hideQuestionModal();}
+
+    </script>
+</body>
+</html>
