@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing for Gases - Enhanced Game</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #8BC34A;
+            --accent-color: #FFC107;
+            --dark-color: #333;
+            --light-color: #f4f4f9;
+            --success-color: #66bb6a;
+            --danger-color: #f44336;
+            --info-color: #29b6f6;
+            --tube-border: #99a;
+            --tube-bg: rgba(225, 235, 255, 0.5);
+            --limewater-clear: rgba(250, 250, 255, 0.9);
+            --limewater-cloudy1: rgba(245, 245, 250, 0.85);
+            --limewater-cloudy2: rgba(235, 235, 240, 0.8);
+            --limewater-cloudy3: rgba(220, 220, 230, 0.75);
+            --splint-color: #a0522d;
+            --chlorine-gas-color: rgba(210, 255, 210, 0.4);
+            --litmus-color: #b19cd9;
+            --litmus-bleached: #ffffff;
+            --litmus-red: #ff6666;
+            --impurity-color: #616161; /* Dark grey for impurities */
+            --impurity-border: #424242;
+        }
+
+        /* --- General Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light-color); color: var(--dark-color); line-height: 1.6; }
+        header { background: var(--primary-color); color: white; text-align: center; padding: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        main { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background-color: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; }
+        h1, h2, h3, h4 { color: var(--primary-color); margin-bottom: 1rem; }
+        h4 { color: var(--secondary-color); font-size: 1.1rem;}
+        p { margin-bottom: 1rem; }
+        button { padding: 0.5rem 1rem; background-color: var(--primary-color); color: white; border: none; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem; }
+        button:hover:not(:disabled) { background-color: var(--secondary-color); }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .controls { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; align-items: center; flex-wrap: wrap; } /* Allow wrap */
+
+        /* --- Tabs --- */
+        .nav-tabs { display: flex; background-color: white; border-radius: 8px 8px 0 0; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .nav-tab { padding: 1rem 2rem; cursor: pointer; background-color: #e9e9e9; border: none; flex: 1; font-weight: bold; transition: all 0.3s ease; text-align: center; }
+        .nav-tab.active { background-color: var(--primary-color); color: white; }
+        .nav-tab:hover:not(.active) { background-color: #d1d1d1; }
+        .tab-content { display: none; padding: 2rem; background-color: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); min-height: 500px; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+        .gas-tab-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .gas-tab { padding: 0.5rem 1rem; background-color: #e9e9e9; border: none; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; }
+        .gas-tab.active { background-color: var(--primary-color); color: white; }
+        .gas-content { display: none; background-color: #f9f9f9; border-radius: 4px; margin-bottom: 1.5rem; border: 1px solid #eee; }
+        .gas-content.active { display: block; animation: fadeIn 0.5s; }
+        .gas-content > h3 { padding: 1rem 1.5rem 0; }
+        .gas-content > p:first-of-type { padding: 0 1.5rem; }
+
+        /* --- Simulation General --- */
+        .simulation-container {
+            width: 100%; max-width: 350px; aspect-ratio: 1;
+            background-color: #e8f0f8; position: relative; border-radius: 8px;
+            overflow: hidden; margin: 1.5rem auto; border: 1px solid #cdd;
+        }
+        .test-tube {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            width: 55px; height: 140px; background-color: var(--tube-bg);
+            border: 2px solid var(--tube-border); border-top: none;
+            border-radius: 0 0 18px 18px; overflow: hidden;
+        }
+        .test-tube::before { /* Rim */
+            content: ''; position: absolute; bottom: 140px; left: -2px;
+            width: calc(100% + 4px); height: 8px; background-color: var(--tube-bg);
+            border: 2px solid var(--tube-border); border-radius: 4px 4px 0 0;
+            box-sizing: border-box;
+        }
+        .gas { position: absolute; bottom: 0; width: 100%; height: 95%; transition: all 0.5s ease; }
+
+        /* --- Splint/Litmus Base Styles --- */
+        .splint, .litmus-paper {
+            position: absolute; transform-origin: bottom center; z-index: 10;
+            transition: top 0.8s ease-in-out, transform 0.8s ease-in-out, background-color 1.0s ease-in-out, opacity 0.3s ease;
+            left: calc(50% - 4px); top: 20px; /* Start UP */
+        }
+        /* Specific styles */
+        #hydrogen-simulation .splint { width: 8px; height: 90px; background-color: var(--splint-color); border-radius: 2px; left: calc(50% - 4px); }
+        #hydrogen-simulation .flame { position: absolute; width: 16px; height: 24px; background: radial-gradient(ellipse at bottom, #FFFF99, orange, #FF4400); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; bottom: -5px; left: -4px; filter: blur(1px); animation: flicker 0.15s infinite alternate; opacity: 0; }
+        .pop-bubble { position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 70px; height: 70px; background-color: rgba(255, 152, 0, 0.85); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); z-index: 20; opacity: 0; transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out; }
+        #oxygen-simulation .splint { width: 8px; height: 90px; background-color: var(--splint-color); border-radius: 2px; left: calc(50% - 4px); }
+        .splint-glow { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(ellipse at center, #ffcc00, #ff6600 70%); bottom: -6px; left: -2px; filter: blur(5px); opacity: 0; transition: opacity 0.4s ease, filter 0.4s ease; }
+        #oxygen-simulation .flame { position: absolute; width: 16px; height: 24px; background: radial-gradient(ellipse at bottom, #FFFF99, orange, #FF4400); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; bottom: -5px; left: -4px; filter: blur(1px); animation: flicker 0.15s infinite alternate; opacity: 0; transition: opacity 0.3s ease-in; }
+        .lime-water { position: absolute; bottom: 0; width: 100%; height: 60%; background-color: var(--limewater-clear); transition: background-color 0.8s ease-in-out; }
+        .bubble { position: absolute; bottom: 10%; left: calc(50% - 3px + (Math.random() - 0.5) * 20px); width: 6px; height: 6px; background-color: rgba(255, 255, 255, 0.7); border: 1px solid rgba(200, 220, 255, 0.8); border-radius: 50%; opacity: 0; animation: bubble-rise 1.8s linear forwards; z-index: 6; pointer-events: none; }
+        #chlorine-simulation .litmus-paper { width: 15px; height: 40px; background-color: var(--litmus-color); border: 1px solid #777; left: calc(50% - 7.5px); }
+        #chlorine-simulation .gas { background-color: var(--chlorine-gas-color); }
+
+        /* --- Checkpoint & Applications --- */
+        .checkpoint { background-color: #e8f5e9; border-left: 5px solid var(--primary-color); padding: 1rem 1.5rem; margin: 1.5rem 0; border-radius: 0 4px 4px 0; }
+        .question { font-weight: bold; color: var(--primary-color); }
+        .options { margin: 1rem 0; }
+        .option { padding: 0.5rem; margin: 0.5rem 0; background-color: #f1f1f1; border-radius: 4px; cursor: pointer; transition: all 0.3s ease; }
+        .option:hover { background-color: #e1e1e1; }
+        .option.selected { background-color: var(--accent-color); color: var(--dark-color); }
+        .option.correct { background-color: var(--success-color); color: white; }
+        .option.incorrect { background-color: var(--danger-color); color: white; }
+        .feedback { padding: 0.5rem; margin-top: 0.5rem; border-radius: 4px; display: none; font-size: 0.9rem;}
+        .feedback.correct { display: block; background-color: #e8f5e9; color: #388e3c; border: 1px solid #c8e6c9;}
+        .feedback.incorrect { display: block; background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;}
+        .applications { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0; padding: 0 1.5rem; }
+        .application-card { flex: 1 1 300px; background-color: #f8f8f8; border-radius: 8px; padding: 1rem; text-align: center; display: flex; flex-direction: column; min-height: 250px; border: 1px solid #ddd;}
+        .application-card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem; border: 1px solid #ccc;}
+        .application-card h5 { margin-bottom: 0.5rem; color: var(--secondary-color); }
+
+        /* --- Quiz --- */
+        .progress-container { width: 100%; height: 10px; background-color: #e0e0e0; border-radius: 5px; margin: 1rem 0; overflow: hidden; }
+        .progress-bar { height: 100%; background-color: var(--primary-color); width: 0%; transition: width 0.3s ease; }
+        .quiz-container .card { border: 1px solid #e0e0e0; }
+        .quiz-container .question { font-size: 1.1rem; }
+        .score-display { text-align: center; font-size: 1.2rem; margin: 1rem 0; }
+        .score-display h3 { font-size: 1.5rem; margin-bottom: 1rem;}
+
+         /* --- Game --- */
+        .game-container {
+            width: 100%; aspect-ratio: 16 / 10;
+            background: linear-gradient(to bottom, #d1e6ef, #a8d0e6); /* Slightly darker gradient */
+            position: relative; border-radius: 8px; overflow: hidden;
+            margin: 1.5rem 0; border: 1px solid #90caf9; cursor: none;
+        }
+        .falling-object {
+            position: absolute; width: 60px; height: 60px; /* Larger hit area */
+            border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            animation: fall linear forwards; cursor: default;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 0.75rem; /* Adjusted text size */ font-weight: bold; text-align: center;
+            line-height: 1.1; border: 1px solid rgba(0,0,0,0.1); padding: 3px;
+            color: var(--dark-color);
+            background-clip: padding-box; /* Prevent background bleeding under border */
+        }
+        /* Gas specific styles */
+        .falling-object.hydrogen { background-color: #e3f2fd; border-color: #bbdefb;}
+        .falling-object.oxygen { background-color: #fce4ec; border-color: #f8bbd0;}
+        .falling-object.carbon-dioxide { background-color: #eee; border-radius: 8px; border-color: #ccc;}
+        .falling-object.chlorine {
+            background-color: #f1f8e9; border-color: #dcedc8; width: 55px; height: 55px;
+            transform: rotate(45deg); border-radius: 4px;
+        }
+        .falling-object.chlorine span { display: block; transform: rotate(-45deg); }
+
+         /* Impurity styles */
+        .falling-object.impurity {
+            background-color: var(--impurity-color);
+            border-color: var(--impurity-border);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Blob shape */
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+            color: #ccc; /* Light text for contrast */
+            font-size: 0.7rem;
+        }
+
+        .catcher {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 40px; background-color: #78909c; border: 2px solid #455a64;
+            border-radius: 8px 8px 0 0; transition: left 0.05s linear, background-color 0.2s ease;
+            color: white; text-align: center; font-size: 0.8rem; padding-top: 5px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); z-index: 50;
+        }
+        .catcher::before { /* Rack appearance */
+            content: ''; position: absolute; bottom: -5px; left: 5px;
+            width: calc(100% - 10px); height: 5px; background-color: #546e7a;
+            border-radius: 0 0 3px 3px;
+        }
+        /* Score & Timer Display styling */
+        #game-score, #game-timer {
+            font-weight: bold; color: var(--dark-color); background: rgba(255,255,255,0.8);
+            padding: 5px 12px; border-radius: 15px; /* Rounded pill shape */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            margin: 0 5px; /* Spacing */
+            min-width: 80px; /* Ensure consistent width */
+            text-align: center;
+        }
+        /* Streak Display styling */
+        #streak-display {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 193, 7, 0.8); /* Yellow accent */
+            color: var(--dark-color);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 100; /* Above everything */
+        }
+         #streak-display.show { opacity: 1; }
+
+        #game-over { text-align: center; }
+        #game-over h3 { color: var(--danger-color); font-size: 1.8rem;}
+        .score-popup {
+            position: absolute; font-size: 1.2rem; font-weight: bold;
+            padding: 3px 8px; border-radius: 4px; color: white;
+            opacity: 0; transform: translate(-50%, 20px); /* Start below */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            z-index: 60; pointer-events: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .score-popup.show { opacity: 1; transform: translate(-50%, -10px); /* Move up */}
+        .score-popup.correct { background-color: rgba(76, 175, 80, 0.9); }
+        .score-popup.incorrect { background-color: rgba(244, 67, 54, 0.9); }
+
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes flicker { 0% { transform: scale(1.0, 1.0); opacity: 1; } 50% { transform: scale(1.1, 0.9); opacity: 0.8; } 100% { transform: scale(0.95, 1.05); opacity: 1; } }
+        @keyframes bubble-rise { 0% { opacity: 0; transform: translateY(0) scale(0.5); bottom: 10%; } 20% { opacity: 0.9; transform: translateY(0) scale(1); } 95% { opacity: 0.5; bottom: 55%; transform: scale(1.1); } 100% { opacity: 0; bottom: 60%; transform: scale(0.5); } }
+        @keyframes fall { from { top: -70px; } to { top: 100%; } } /* Start slightly higher */
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .nav-tabs { flex-direction: column; }
+            .controls { flex-direction: row; /* Keep controls row on small screens if space*/ justify-content: space-around; }
+            .simulation-container { max-width: 90%; }
+            .test-tube { width: 50px; height: 120px; }
+             .test-tube::before { bottom: 120px; }
+            .applications { flex-direction: column; padding: 0 1rem; }
+            .catcher { width: 100px; font-size: 0.7rem; }
+            .falling-object { width: 50px; height: 50px; font-size: 0.65rem; }
+            .falling-object.chlorine { width: 45px; height: 45px; }
+            .score-popup { font-size: 1rem; }
+            #game-score, #game-timer { padding: 4px 8px; font-size: 0.8rem; min-width: 70px;}
+            #streak-display { top: 10px; right: 10px; font-size: 0.7rem; padding: 2px 6px;}
+        }
+         @media (max-width: 480px) {
+             .nav-tab { padding: 0.8rem 1rem; font-size: 0.9rem;}
+             .tab-content { padding: 1rem; }
+             .controls { gap: 0.5rem;}
+             button { padding: 0.4rem 0.8rem; font-size: 0.8rem;}
+             .falling-object { width: 45px; height: 45px; font-size: 0.6rem; }
+            .falling-object.chlorine { width: 40px; height: 40px; }
+         }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Testing for Gases</h1>
+        <p>KS4 Chemistry Interactive Lesson</p>
+    </header>
+
+    <main>
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="tutorial">Tutorial</button>
+            <button class="nav-tab" data-tab="practice">Practice</button>
+            <button class="nav-tab" data-tab="game">Game</button>
+        </div>
+
+        <!-- ==================== -->
+        <!--    Tutorial Tab      -->
+        <!-- ==================== -->
+        <div class="tab-content active" id="tutorial">
+            <h2>Learn about Testing for Gases</h2>
+            <p>In chemistry, it's important to be able to identify different gases produced in reactions. Each common gas has unique properties allowing for specific chemical tests.</p>
+            <div class="gas-tab-container">
+                <button class="gas-tab active" data-gas="hydrogen">Hydrogen</button>
+                <button class="gas-tab" data-gas="oxygen">Oxygen</button>
+                <button class="gas-tab" data-gas="carbon-dioxide">Carbon Dioxide</button>
+                <button class="gas-tab" data-gas="chlorine">Chlorine</button>
+            </div>
+            <!-- Hydrogen Content -->
+            <div class="gas-content active" id="hydrogen-content">
+                <h3>Testing for Hydrogen (H₂)</h3>
+                <p>Hydrogen is a colorless, odorless gas, less dense than air and highly flammable.</p>
+                <div class="card"><h4>The Test: Burning Splint</h4><p>Hold a burning splint at the open mouth of a test tube containing hydrogen. It ignites rapidly with a characteristic 'squeaky pop' sound.</p><div class="simulation-container" id="hydrogen-simulation"><div class="test-tube"><div class="gas" style="background-color: rgba(200, 200, 255, 0.05);"></div></div><div class="splint"><div class="flame"></div></div><div class="pop-bubble">POP!</div></div><div class="controls"><button id="hydrogen-test-btn">Perform Test</button><button id="hydrogen-reset-btn" disabled>Reset</button></div></div>
+                <div class="card"><h4>Real-World Applications</h4><div class="applications"> <div class="application-card"><img src="images/hydrogen_fuel_cell.jpg" alt="Fuel Cell"><h5>Fuel Cells</h5><p>Clean electricity generation.</p></div><div class="application-card"><img src="images/rocket_fuel.jpg" alt="Rocket"><h5>Rocket Fuel</h5><p>High-energy fuel component.</p></div> </div></div>
+                <div class="checkpoint"><h4>Checkpoint</h4><p class="question">Result of testing H₂ with a burning splint?</p><div class="options"><div class="option" data-correct="true">'Squeaky pop' sound</div><div class="option">Splint relights</div><div class="option">Limewater cloudy</div><div class="option">Splint extinguishes</div></div><div class="feedback"></div></div>
+            </div>
+            <!-- Oxygen Content -->
+            <div class="gas-content" id="oxygen-content">
+                 <h3>Testing for Oxygen (O₂)</h3><p>Colorless, odorless gas essential for respiration and supports combustion.</p>
+                 <div class="card"><h4>The Test: Glowing Splint</h4><p>Insert a glowing splint (flame blown out) into oxygen. The splint will relight.</p><div class="simulation-container" id="oxygen-simulation"><div class="test-tube"><div class="gas" style="background-color: rgba(255, 200, 200, 0.05);"></div></div><div class="splint"><div class="splint-glow"></div></div></div><div class="controls"><button id="oxygen-test-btn">Perform Test</button><button id="oxygen-reset-btn" disabled>Reset</button></div></div>
+                 <div class="card"><h4>Real-World Applications</h4><div class="applications"> <div class="application-card"><img src="images/oxygen_medical.jpg" alt="Oxygen mask"><h5>Medical Use</h5><p>For breathing difficulties.</p></div><div class="application-card"><img src="images/oxygen_welding.jpg" alt="Welding torch"><h5>Welding</h5><p>High-temperature flames.</p></div> </div></div>
+                 <div class="checkpoint"><h4>Checkpoint</h4><p class="question">What happens to a glowing splint in O₂?</p><div class="options"><div class="option">Goes out</div><div class="option" data-correct="true">Relights</div><div class="option">'Pop' sound</div><div class="option">Turns gas cloudy</div></div><div class="feedback"></div></div>
+            </div>
+            <!-- Carbon Dioxide Content -->
+            <div class="gas-content" id="carbon-dioxide-content">
+                 <h3>Testing for Carbon Dioxide (CO₂)</h3><p>Colorless gas, denser than air, produced by respiration, combustion, carbonates + acids.</p>
+                 <div class="card"><h4>The Test: Limewater</h4><p>Bubble gas through limewater (aq. calcium hydroxide). CO₂ reacts forming insoluble calcium carbonate, turning it milky/cloudy.</p><div class="simulation-container" id="co2-simulation"><div class="test-tube"><div class="lime-water"></div></div></div><div class="controls"><button id="co2-test-btn">Perform Test</button><button id="co2-reset-btn" disabled>Reset</button></div></div>
+                 <div class="card"><h4>Real-World Applications</h4><div class="applications"> <div class="application-card"><img src="images/co2_fire_extinguisher.jpg" alt="Fire Extinguisher"><h5>Fire Extinguishers</h5><p>Displaces oxygen.</p></div><div class="application-card"><img src="images/co2_carbonation.jpg" alt="Fizzy Drink"><h5>Carbonated Drinks</h5><p>Creates fizz.</p></div> </div></div>
+                 <div class="checkpoint"><h4>Checkpoint</h4><p class="question">Substance used to test for CO₂?</p><div class="options"><div class="option">Litmus solution</div><div class="option">Acid</div><div class="option" data-correct="true">Limewater</div><div class="option">Alkali</div></div><div class="feedback"></div></div>
+            </div>
+            <!-- Chlorine Content -->
+            <div class="gas-content" id="chlorine-content">
+                 <h3>Testing for Chlorine (Cl₂)</h3><p>Pale green, pungent, toxic gas, denser than air.</p>
+                 <div class="card"><h4>The Test: Damp Litmus Paper</h4><p>Hold damp blue litmus paper in chlorine. It turns red (acidic) then bleaches white.</p><div class="simulation-container" id="chlorine-simulation"><div class="test-tube"><div class="gas"></div></div><div class="litmus-paper"></div></div><div class="controls"><button id="chlorine-test-btn">Perform Test</button><button id="chlorine-reset-btn" disabled>Reset</button></div></div>
+                 <div class="card"><h4>Real-World Applications</h4><div class="applications"> <div class="application-card"><img src="images/chlorine_pool.jpg" alt="Pool"><h5>Water Treatment</h5><p>Disinfects water/pools.</p></div><div class="application-card"><img src="images/chlorine_bleach.jpg" alt="Bleach"><h5>Bleach</h5><p>Household bleach agent.</p></div> </div></div>
+                 <div class="checkpoint"><h4>Checkpoint</h4><p class="question">Final observation for Cl₂ with damp blue litmus?</p><div class="options"><div class="option">Stays blue</div><div class="option">Turns red</div><div class="option" data-correct="true">Turns red then white</div><div class="option">Turns green</div></div><div class="feedback"></div></div>
+            </div>
+        </div> <!-- End Tutorial Tab -->
+
+        <!-- ==================== -->
+        <!--    Practice Tab      -->
+        <!-- ==================== -->
+        <div class="tab-content" id="practice">
+            <h2>Practice Questions</h2>
+            <p>Test your knowledge of identifying these common gases.</p>
+            <div class="progress-container"> <div class="progress-bar" id="quiz-progress"></div> </div>
+            <div class="quiz-container" id="quiz-container"> <!-- Questions injected here by JS --> </div>
+            <div class="score-display" id="score-display" style="display: none;">
+                <h3>Quiz Complete!</h3>
+                <h3>Your Score: <span id="quiz-score">0</span> / <span id="quiz-total">0</span></h3>
+                <button id="retry-quiz">Try Again</button>
+            </div>
+        </div> <!-- End Practice Tab -->
+
+        <!-- ==================== -->
+        <!--      Game Tab        -->
+        <!-- ==================== -->
+        <div class="tab-content" id="game">
+            <h2>Gas Catcher Game</h2>
+            <p>Move the catcher (A/D or ←/→ keys). Catch the falling gas matching the test shown. Avoid Impurities!</p>
+            <div class="card">
+                <div class="game-container" id="game-container">
+                    <div class="catcher" id="catcher" data-test="Pop Test">Pop Test</div>
+                    <div id="streak-display"></div> <!-- Added streak display -->
+                    <!-- Falling objects & score popups added dynamically -->
+                </div>
+                <div class="controls">
+                    <button id="start-game-btn">Start Game</button>
+                    <span id="game-score">Score: 0</span>
+                    <span id="game-timer">Time: 60s</span>
+                </div>
+            </div>
+            <div class="score-display" id="game-over" style="display: none;">
+                <h3>Game Over!</h3>
+                <p>Your final score: <span id="final-score">0</span></p>
+                <button id="play-again">Play Again</button>
+            </div>
+        </div> <!-- End Game Tab -->
+    </main>
+
+    <script>
+        // --- Global Scope & Config ---
+        let activeSim = null;
+        const TUBE_TOP_APPROX_POS = 80;
+        const SPLINT_INSERT_DEPTH = TUBE_TOP_APPROX_POS + 50;
+        const LITMUS_INSERT_DEPTH = TUBE_TOP_APPROX_POS + 40;
+        // Optional Sound Effects can be added here
+
+        // --- DOM Element References ---
+        const mainElement = document.querySelector('main');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const gasTabs = document.querySelectorAll('.gas-tab');
+        const gasContents = document.querySelectorAll('.gas-content');
+
+        // --- Tab Navigation ---
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTabId = tab.getAttribute('data-tab');
+                navTabs.forEach(t => t.classList.toggle('active', t === tab));
+                tabContents.forEach(content => content.classList.toggle('active', content.id === targetTabId));
+                resetAllSimulations(); // Reset sims when changing main tabs
+
+                const quizDisp = document.getElementById('score-display');
+                const gameDisp = document.getElementById('game-over');
+                const startBtn = document.getElementById('start-game-btn');
+
+                if (targetTabId === 'practice' && typeof quizStarted !== 'undefined' && !quizStarted) startQuiz();
+                else if (targetTabId === 'practice' && quizDisp?.style.display === 'block') { /* Keep score visible */ }
+
+                if (targetTabId === 'game' && typeof gameActive !== 'undefined' && !gameActive && gameDisp?.style.display === 'none') {
+                    initializeGame();
+                    if(startBtn) startBtn.disabled = false;
+                }
+            });
+        });
+
+        // --- Gas Tab Navigation ---
+        gasTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetGasId = tab.getAttribute('data-gas');
+                const currentActiveGasTab = document.querySelector('.gas-tab.active');
+                if (currentActiveGasTab && currentActiveGasTab !== tab) resetSimulation(currentActiveGasTab.getAttribute('data-gas'), true);
+                gasTabs.forEach(t => t.classList.toggle('active', t === tab));
+                gasContents.forEach(content => content.classList.toggle('active', content.id === targetGasId + '-content'));
+                resetSimulation(targetGasId, true);
+            });
+        });
+
+        // --- Checkpoint Question Logic ---
+        mainElement.addEventListener('click', function(event) {
+            if (event.target.classList.contains('option') && event.target.closest('.checkpoint')) {
+                const option = event.target;
+                const optionsContainer = option.parentElement;
+                const feedback = optionsContainer.parentElement.querySelector('.feedback');
+                const allOptions = optionsContainer.querySelectorAll('.option');
+                const isCorrect = option.getAttribute('data-correct') === 'true';
+                if (!optionsContainer.querySelector('.correct') && !option.classList.contains('incorrect')) {
+                    allOptions.forEach(opt => opt.classList.remove('selected', 'correct', 'incorrect'));
+                    option.classList.add('selected');
+                    if (isCorrect) {
+                        option.classList.add('correct');
+                        feedback.textContent = 'Correct! Well done.';
+                        feedback.className = 'feedback correct';
+                    } else {
+                        option.classList.add('incorrect');
+                        feedback.textContent = 'Not quite. Check the description again!';
+                        feedback.className = 'feedback incorrect';
+                        optionsContainer.querySelector('.option[data-correct="true"]')?.classList.add('correct');
+                    }
+                }
+            }
+        });
+
+        // --- Utility to Reset Simulations ---
+        function resetAllSimulations() {
+            resetSimulation('hydrogen', true);
+            resetSimulation('oxygen', true);
+            resetSimulation('carbon-dioxide', true);
+            resetSimulation('chlorine', true);
+        }
+
+        function resetSimulation(gasType, forceVisualReset = false) {
+            const simContainer = document.getElementById(`${gasType}-simulation`);
+            if (!simContainer) return;
+            const testBtn = document.getElementById(`${gasType}-test-btn`);
+            const resetBtn = document.getElementById(`${gasType}-reset-btn`);
+            if (!forceVisualReset && resetBtn?.disabled) return;
+
+            // Clear specific intervals
+            if (gasType === 'carbon-dioxide' && bubbleInterval) { clearInterval(bubbleInterval); bubbleInterval = null; }
+            // Clear timeouts associated with animations if necessary (requires tracking them)
+
+            // Reset visual elements
+            switch (gasType) {
+                case 'hydrogen':
+                    const hSplint = simContainer.querySelector('.splint');
+                    hSplint?.style.setProperty('top', '20px'); hSplint?.style.setProperty('transform', 'rotate(0deg)');
+                    simContainer.querySelector('.flame')?.style.setProperty('opacity', '0');
+                    simContainer.querySelector('.pop-bubble')?.style.setProperty('opacity', '0');
+                    simContainer.querySelector('.pop-bubble')?.style.setProperty('transform', 'translate(-50%, -50%) scale(0)');
+                    break;
+                case 'oxygen':
+                    const oSplint = simContainer.querySelector('.splint');
+                    oSplint?.style.setProperty('top', '20px'); oSplint?.style.setProperty('transform', 'rotate(0deg)');
+                    simContainer.querySelector('.splint-glow')?.style.setProperty('opacity', '0');
+                    simContainer.querySelector('.splint-glow')?.style.setProperty('filter', 'blur(5px)');
+                    simContainer.querySelector('.flame')?.remove(); oxygenFlameElement = null;
+                    break;
+                case 'carbon-dioxide':
+                    simContainer.querySelector('.test-tube')?.querySelectorAll('.bubble').forEach(b => b.remove());
+                    simContainer.querySelector('.lime-water')?.style.setProperty('background-color', 'var(--limewater-clear)');
+                    break;
+                case 'chlorine':
+                    const clPaper = simContainer.querySelector('.litmus-paper');
+                    if (clPaper) {
+                        clPaper.style.setProperty('top', '20px');
+                        clPaper.style.setProperty('transform', 'rotate(0deg)');
+                        clPaper.style.setProperty('background-color', 'var(--litmus-color)');
+                    }
+                    break;
+            }
+            if (testBtn) testBtn.disabled = false;
+            if (resetBtn) resetBtn.disabled = true;
+        }
+
+        // ==================================
+        // --- SIMULATION EVENT LISTENERS ---
+        // ==================================
+        let oxygenFlameElement = null; // Track dynamic elements if needed outside reset
+        let bubbleInterval = null;
+
+        // --- Hydrogen ---
+        document.getElementById('hydrogen-test-btn')?.addEventListener('click', () => {
+            const sim = document.getElementById('hydrogen-simulation');
+            const splint = sim?.querySelector('.splint'); const flame = splint?.querySelector('.flame'); const pop = sim?.querySelector('.pop-bubble');
+            if (!splint || !flame || !pop) return;
+            resetSimulation('hydrogen', true); document.getElementById('hydrogen-test-btn').disabled = true;
+            flame.style.opacity = '1';
+            splint.style.top = `${SPLINT_INSERT_DEPTH - 20}px`; splint.style.transform = 'rotate(5deg)';
+            setTimeout(() => {
+                pop.style.opacity = '1'; pop.style.transform = 'translate(-50%, -50%) scale(1)'; flame.style.opacity = '0';
+                setTimeout(() => {
+                    pop.style.opacity = '0'; pop.style.transform = 'translate(-50%, -50%) scale(0)';
+                    document.getElementById('hydrogen-reset-btn').disabled = false;
+                }, 300);
+            }, 900);
+        });
+        document.getElementById('hydrogen-reset-btn')?.addEventListener('click', () => resetSimulation('hydrogen', true));
+
+        // --- Oxygen ---
+        document.getElementById('oxygen-test-btn')?.addEventListener('click', () => {
+            const sim = document.getElementById('oxygen-simulation');
+            const splint = sim?.querySelector('.splint'); const glow = splint?.querySelector('.splint-glow');
+            if (!splint || !glow) return;
+            resetSimulation('oxygen', true); document.getElementById('oxygen-test-btn').disabled = true;
+            glow.style.opacity = '0.9';
+            splint.style.top = `${SPLINT_INSERT_DEPTH}px`; splint.style.transform = 'rotate(-5deg)';
+            setTimeout(() => {
+                glow.style.filter = 'blur(7px)';
+                setTimeout(() => {
+                    glow.style.opacity = '0';
+                    if (!oxygenFlameElement && splint) {
+                        oxygenFlameElement = document.createElement('div'); oxygenFlameElement.className = 'flame'; splint.appendChild(oxygenFlameElement);
+                    }
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            if (oxygenFlameElement) oxygenFlameElement.style.opacity = '1';
+                            document.getElementById('oxygen-reset-btn').disabled = false;
+                        });
+                    });
+                }, 500);
+            }, 900);
+        });
+        document.getElementById('oxygen-reset-btn')?.addEventListener('click', () => resetSimulation('oxygen', true));
+
+        // --- Carbon Dioxide ---
+        document.getElementById('co2-test-btn')?.addEventListener('click', () => {
+            const sim = document.getElementById('co2-simulation');
+            const tube = sim?.querySelector('.test-tube'); const limeWater = sim?.querySelector('.lime-water');
+            if (!tube || !limeWater) return;
+            resetSimulation('carbon-dioxide', true); document.getElementById('co2-test-btn').disabled = true;
+            bubbleInterval = setInterval(() => {
+                if (!tube) return; const bubble = document.createElement('div'); bubble.className = 'bubble';
+                const randomOffset = (Math.random() - 0.5) * 25; bubble.style.left = `calc(50% ${randomOffset >= 0 ? '+' : '-'} ${Math.abs(randomOffset)}px)`;
+                const duration = 1.5 + Math.random(); bubble.style.animationDuration = `${duration}s`;
+                tube.appendChild(bubble); setTimeout(() => bubble.remove(), duration * 1000 + 100);
+            }, 350);
+            setTimeout(() => limeWater.style.backgroundColor = 'var(--limewater-cloudy1)', 800);
+            setTimeout(() => limeWater.style.backgroundColor = 'var(--limewater-cloudy2)', 1600);
+            setTimeout(() => limeWater.style.backgroundColor = 'var(--limewater-cloudy3)', 2400);
+            setTimeout(() => {
+                if (bubbleInterval) clearInterval(bubbleInterval); bubbleInterval = null;
+                document.getElementById('co2-reset-btn').disabled = false;
+            }, 4500);
+        });
+        document.getElementById('co2-reset-btn')?.addEventListener('click', () => resetSimulation('carbon-dioxide', true));
+
+        // --- Chlorine ---
+        document.getElementById('chlorine-test-btn')?.addEventListener('click', () => {
+            const sim = document.getElementById('chlorine-simulation');
+            const litmus = sim?.querySelector('.litmus-paper'); if (!litmus) return;
+            resetSimulation('chlorine', true); document.getElementById('chlorine-test-btn').disabled = true;
+            litmus.style.top = `${LITMUS_INSERT_DEPTH}px`; litmus.style.transform = 'rotate(3deg)';
+            setTimeout(() => {
+                litmus.style.backgroundColor = 'var(--litmus-red)';
+                setTimeout(() => {
+                    litmus.style.backgroundColor = 'var(--litmus-bleached)';
+                    document.getElementById('chlorine-reset-btn').disabled = false;
+                }, 600);
+            }, 900);
+        });
+        document.getElementById('chlorine-reset-btn')?.addEventListener('click', () => resetSimulation('chlorine', true));
+
+
+        // ==================================
+        // ---    QUIZ FUNCTIONALITY    ---
+        // ==================================
+        const quizContainer = document.getElementById('quiz-container');
+        const quizProgress = document.getElementById('quiz-progress');
+        const scoreDisplay = document.getElementById('score-display');
+        const quizScore = document.getElementById('quiz-score');
+        const quizTotal = document.getElementById('quiz-total');
+        const retryQuizBtn = document.getElementById('retry-quiz');
+        let currentQuestion = 0;
+        let score = 0;
+        let quizStarted = false;
+
+        // --- PASTE YOUR ACTUAL QUESTIONS ARRAY HERE ---
+        let questions = [
+             { question: "Which gas produces a 'squeaky pop' sound when tested with a burning splint?", options: ["Oxygen", "Carbon Dioxide", "Hydrogen", "Chlorine"], correctIndex: 2 },
+             { question: "What happens when a glowing splint is inserted into a test tube of oxygen?", options: ["It goes out", "It relights", "It causes a pop", "Nothing changes"], correctIndex: 1 },
+             { question: "Which substance turns milky or cloudy in the presence of carbon dioxide?", options: ["Damp litmus paper", "Limewater", "Acidified Potassium Manganate(VII)", "Water"], correctIndex: 1 },
+             { question: "What is the final color of damp blue litmus paper after exposure to chlorine gas?", options: ["Red", "Blue", "Green", "White"], correctIndex: 3 },
+             { question: "Which test involves bubbling a gas through calcium hydroxide solution?", options: ["Hydrogen Test", "Oxygen Test", "Chlorine Test", "Carbon Dioxide Test"], correctIndex: 3 },
+             { question: "A gas relights a glowing splint. What is the gas?", options: ["Hydrogen", "Oxygen", "Carbon Dioxide", "Nitrogen"], correctIndex: 1 },
+             { question: "What color change occurs first when damp blue litmus meets chlorine?", options: ["Turns white", "Turns red", "Turns green", "Stays blue"], correctIndex: 1 }
+        ];
+        // --- END OF QUESTIONS ARRAY ---
+
+        function startQuiz() { /* ... Quiz start logic ... */
+            if (questions.length === 0) {
+                 if(quizContainer) quizContainer.innerHTML = '<p style="color: red;">Error: Quiz questions not loaded.</p>'; return;
+            }
+            quizStarted = true; currentQuestion = 0; score = 0;
+            if(quizContainer) quizContainer.innerHTML = '';
+            if(scoreDisplay) scoreDisplay.style.display = 'none';
+            if(quizProgress) quizProgress.style.width = '0%';
+            if(quizTotal) quizTotal.textContent = questions.length;
+            showQuestion();
+         }
+        function showQuestion() { /* ... Show question logic ... */
+            if (currentQuestion >= questions.length) { endQuiz(); return; }
+            const questionData = questions[currentQuestion];
+            if(quizProgress) quizProgress.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            const qElem = document.createElement('div'); qElem.className = 'card';
+            qElem.innerHTML = `<h4>Question ${currentQuestion + 1} of ${questions.length}</h4><p class="question">${questionData.question}</p><div class="options" data-question-index="${currentQuestion}">${questionData.options.map((o, i) => `<div class="option" data-index="${i}">${o}</div>`).join('')}</div><div class="feedback"></div><button class="next-question-btn" style="display:none;margin-top:1rem;">Next</button>`;
+            if(quizContainer) { quizContainer.innerHTML = ''; quizContainer.appendChild(qElem); }
+            qElem.querySelector('.options')?.addEventListener('click', handleOptionClick);
+            qElem.querySelector('.next-question-btn')?.addEventListener('click', () => { currentQuestion++; showQuestion(); });
+        }
+        function handleOptionClick(event) { /* ... Handle option click logic ... */
+             if (!event.target.classList.contains('option')) return;
+             const selectedOption = event.target, optionsContainer = selectedOption.parentElement;
+             const card = selectedOption.closest('.card'), feedbackDiv = card?.querySelector('.feedback'), nextBtn = card?.querySelector('.next-question-btn');
+             if (!optionsContainer || !feedbackDiv || !nextBtn || optionsContainer.classList.contains('answered')) return;
+             optionsContainer.classList.add('answered');
+             const questionIndex = parseInt(optionsContainer.getAttribute('data-question-index'));
+             if (isNaN(questionIndex) || questionIndex < 0 || questionIndex >= questions.length) return;
+             const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
+             const correctIndex = questions[questionIndex].correctIndex;
+             const allOptions = optionsContainer.querySelectorAll('.option');
+             allOptions.forEach(opt => opt.classList.remove('selected')); selectedOption.classList.add('selected');
+             if (selectedIndex === correctIndex) {
+                 selectedOption.classList.add('correct'); feedbackDiv.textContent = 'Correct!'; feedbackDiv.className = 'feedback correct'; score++;
+             } else {
+                 selectedOption.classList.add('incorrect'); allOptions[correctIndex]?.classList.add('correct');
+                 feedbackDiv.textContent = `Incorrect. Correct: ${questions[questionIndex].options[correctIndex]}`; feedbackDiv.className = 'feedback incorrect';
+             }
+             nextBtn.style.display = 'inline-block';
+         }
+        function endQuiz() { /* ... End quiz logic ... */
+             if(quizContainer) quizContainer.innerHTML = ''; if(scoreDisplay) scoreDisplay.style.display = 'block';
+             if(quizScore) quizScore.textContent = score; if(quizTotal) quizTotal.textContent = questions.length;
+             if(quizProgress) quizProgress.style.width = '100%'; quizStarted = false;
+         }
+        retryQuizBtn?.addEventListener('click', startQuiz);
+
+
+        // ==================================
+        // ---     GAME FUNCTIONALITY     ---
+        // ==================================
+        const gameContainer = document.getElementById('game-container');
+        const catcher = document.getElementById('catcher');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const gameScoreDisplay = document.getElementById('game-score');
+        const gameTimerDisplay = document.getElementById('game-timer');
+        const gameOver = document.getElementById('game-over');
+        const finalScore = document.getElementById('final-score');
+        const playAgainBtn = document.getElementById('play-again');
+        const streakDisplay = document.getElementById('streak-display'); // Streak display element
+
+        let gameActive = false; let gameScoreValue = 0; let gameTimeRemaining = 60;
+        let gameTimerInterval = null; let spawnInterval = null; let catcherPosition = 50;
+        const catcherWidth = 120; // Keep in sync with CSS
+        let spawnRate = 1900; // Start slightly slower
+        const minSpawnRate = 750; // Faster minimum
+        const spawnRateDecrease = 40; // Slower decrease initially
+        let difficultyInterval = null;
+        let correctStreak = 0; // Track correct catches in a row
+        let baseImpurityChance = 0.10; // 10% initial chance
+        const maxImpurityChance = 0.30; // Max 30% chance
+        let currentImpurityChance = baseImpurityChance;
+
+        const gasTypesForGame = [ /* ... gas types ... */
+             { name: 'Hydrogen', test: 'Pop Test', className: 'hydrogen' }, { name: 'Oxygen', test: 'Glowing Splint', className: 'oxygen' },
+             { name: 'Carbon Dioxide', test: 'Limewater', className: 'carbon-dioxide' }, { name: 'Chlorine', test: 'Litmus Paper', className: 'chlorine' } ];
+        const testTypes = ['Pop Test', 'Glowing Splint', 'Limewater', 'Litmus Paper'];
+
+        function initializeGame() { /* ... Game init logic ... */
+             if (!catcher || !gameContainer || !gameScoreDisplay || !gameTimerDisplay || !gameOver || !streakDisplay) return;
+             changeTestType(); catcher.style.left = '50%'; catcherPosition = 50;
+             gameScoreValue = 0; gameTimeRemaining = 60; spawnRate = 1900; correctStreak = 0; currentImpurityChance = baseImpurityChance;
+             gameScoreDisplay.textContent = `Score: ${gameScoreValue}`; gameTimerDisplay.textContent = `Time: ${gameTimeRemaining}s`;
+             gameOver.style.display = 'none'; streakDisplay.classList.remove('show'); streakDisplay.textContent = '';
+             gameContainer.querySelectorAll('.falling-object, .score-popup').forEach(el => el.remove());
+             if(startGameBtn) startGameBtn.disabled = false; if(playAgainBtn) playAgainBtn.disabled = true; // Only enable after game over
+        }
+
+        function startGame() { /* ... Game start logic ... */
+             if (gameActive || !gameContainer || !catcher || !startGameBtn || !playAgainBtn) return;
+             initializeGame(); gameActive = true;
+             startGameBtn.disabled = true; playAgainBtn.disabled = true;
+
+             gameTimerInterval = setInterval(() => {
+                 gameTimeRemaining--; if(gameTimerDisplay) gameTimerDisplay.textContent = `Time: ${gameTimeRemaining}s`;
+                 if (gameTimeRemaining <= 0) endGame();
+             }, 1000);
+
+             function respawn() { spawnObject(); if (gameActive) spawnInterval = setTimeout(respawn, spawnRate); }
+             respawn();
+
+             difficultyInterval = setInterval(() => { // Increase difficulty
+                 if (spawnRate > minSpawnRate) spawnRate = Math.max(minSpawnRate, spawnRate - spawnRateDecrease);
+                 if (currentImpurityChance < maxImpurityChance) currentImpurityChance += 0.01; // Slowly increase impurity chance
+                 // Optional: Add more difficulty scaling here (e.g., faster fall speed range)
+             }, 4000); // Increase difficulty every 4 seconds
+        }
+
+        function endGame() { /* ... Game end logic ... */
+             gameActive = false; clearInterval(gameTimerInterval); clearTimeout(spawnInterval); clearInterval(difficultyInterval);
+             gameTimerInterval = null; spawnInterval = null; difficultyInterval = null;
+             if(finalScore) finalScore.textContent = gameScoreValue; if(gameOver) gameOver.style.display = 'block';
+             if(startGameBtn) startGameBtn.disabled = false; if(playAgainBtn) playAgainBtn.disabled = false;
+             if(streakDisplay) streakDisplay.classList.remove('show'); // Hide streak on game over
+        }
+
+        function spawnObject() { /* ... Spawn object logic ... */
+             if (!gameActive || !gameContainer) return;
+             let object, duration;
+             const isImpurity = Math.random() < currentImpurityChance;
+
+             object = document.createElement('div');
+             object.className = 'falling-object';
+             object.style.left = `${5 + Math.random() * 90}%`;
+             // VARIABLE SPEED: Adjust range as needed
+             duration = 2.5 + Math.random() * 3.0; // Fall duration between 2.5 and 5.5 seconds
+             object.style.animationDuration = `${duration}s`;
+
+             if (isImpurity) {
+                 object.classList.add('impurity');
+                 object.innerHTML = `<span>Impurity</span>`;
+                 object.setAttribute('data-type', 'impurity'); // Identify as impurity
+             } else {
+                 const gas = gasTypesForGame[Math.floor(Math.random() * gasTypesForGame.length)];
+                 object.classList.add(gas.className);
+                 object.innerHTML = `<span>${gas.name}</span>`; // Add name label
+                 object.setAttribute('data-gas', gas.name); // Store gas name
+                 object.setAttribute('data-type', 'gas'); // Identify as gas
+             }
+
+             gameContainer.appendChild(object);
+
+             const checkCollisionInterval = setInterval(() => { /* ... Collision check ... */
+                 if (!gameActive || !object.parentNode) { clearInterval(checkCollisionInterval); return; }
+                 try {
+                    const objR = object.getBoundingClientRect(), catR = catcher.getBoundingClientRect(), conR = gameContainer.getBoundingClientRect();
+                    if (objR.bottom > catR.top && objR.top < catR.bottom && objR.right > catR.left && objR.left < catR.right) {
+                        // Pass the whole object to handleCatch to check its type
+                        handleCatch(object);
+                        object.remove(); clearInterval(checkCollisionInterval);
+                    } else if(objR.top > conR.bottom + 10) {
+                        // If a *required* gas was missed, reset streak
+                        const requiredGas = gasTypesForGame.find(g => g.test === catcher.getAttribute('data-test'))?.name;
+                        if (object.getAttribute('data-type') === 'gas' && object.getAttribute('data-gas') === requiredGas) {
+                           resetStreak();
+                        }
+                        object.remove(); clearInterval(checkCollisionInterval);
+                    }
+                 } catch (e) { clearInterval(checkCollisionInterval); }
+             }, 50);
+
+             setTimeout(() => { if (object.parentNode) object.remove(); clearInterval(checkCollisionInterval); }, duration * 1000 + 200);
+        }
+
+        function handleCatch(caughtObject) { /* ... Handle catch logic ... */
+             if (!catcher || !caughtObject) return;
+             const currentTest = catcher.getAttribute('data-test');
+             const objectType = caughtObject.getAttribute('data-type');
+             let pointsChange = 0;
+             let wasCorrect = false;
+
+             if (objectType === 'impurity') {
+                 // Caught an impurity - Penalty
+                 pointsChange = -15;
+                 catcher.style.backgroundColor = '#ef5350'; // Red flash
+                 resetStreak();
+             } else if (objectType === 'gas') {
+                 const caughtGasName = caughtObject.getAttribute('data-gas');
+                 const correctGasForTest = gasTypesForGame.find(g => g.test === currentTest)?.name;
+                 if (correctGasForTest && caughtGasName === correctGasForTest) {
+                     // Correct gas caught - Reward + Streak
+                     wasCorrect = true;
+                     correctStreak++;
+                     pointsChange = 10 + (correctStreak * 2); // Base points + streak bonus
+                     catcher.style.backgroundColor = '#66bb6a'; // Green flash
+                     updateStreakDisplay();
+                 } else {
+                     // Wrong gas caught - Penalty
+                     pointsChange = -10;
+                     catcher.style.backgroundColor = '#ef5350'; // Red flash
+                     resetStreak();
+                 }
+             }
+
+             gameScoreValue += pointsChange;
+             if (gameScoreValue < 0) gameScoreValue = 0; // No negative scores
+             if(gameScoreDisplay) gameScoreDisplay.textContent = `Score: ${gameScoreValue}`;
+
+             showScorePopup(`${pointsChange > 0 ? '+' : ''}${pointsChange}`, wasCorrect || pointsChange === 0); // Show popup
+
+             setTimeout(() => { if(catcher) catcher.style.backgroundColor = '#78909c'; }, 200); // Reset catcher color
+             changeTestType(); // Change test required for next catch
+        }
+
+        function resetStreak() {
+             if (correctStreak > 0) { // Only reset if there was a streak
+                 correctStreak = 0;
+                 updateStreakDisplay(); // Hide the display
+             }
+         }
+
+        function updateStreakDisplay() {
+             if (!streakDisplay) return;
+             if (correctStreak > 1) { // Only show for streaks of 2+
+                 streakDisplay.textContent = `${correctStreak}x Streak!`;
+                 streakDisplay.classList.add('show');
+             } else {
+                 streakDisplay.classList.remove('show');
+                 // Clear text after fade out
+                 setTimeout(() => { streakDisplay.textContent = ''; }, 300);
+             }
+         }
+
+        function showScorePopup(text, isCorrect) { /* ... Show score popup ... */
+             if(!gameContainer || !catcher) return; const popup = document.createElement('div');
+             popup.className = `score-popup ${isCorrect ? 'correct' : 'incorrect'}`; popup.textContent = text;
+             const catR = catcher.getBoundingClientRect(), conR = gameContainer.getBoundingClientRect();
+             popup.style.left = `${catR.left - conR.left + catR.width / 2}px`; popup.style.top = `${catR.top - conR.top - 20}px`;
+             gameContainer.appendChild(popup); requestAnimationFrame(() => popup.classList.add('show'));
+             setTimeout(() => popup.remove(), 600);
+         }
+
+        function changeTestType() { /* ... Change catcher test type ... */
+             if (!catcher) return; const nextTest = testTypes[Math.floor(Math.random() * testTypes.length)];
+             catcher.setAttribute('data-test', nextTest); catcher.textContent = nextTest;
+        }
+
+        // Game Controls Listener (Keyboard)
+        document.addEventListener('keydown', (e) => { /* ... Keyboard controls ... */
+            if (!gameActive || !catcher || !gameContainer) return;
+             const containerWidth = gameContainer.offsetWidth; const currentCatcherWidth = catcher.offsetWidth || 120;
+             const moveStep = containerWidth * 0.035; let newLeftPercent = catcherPosition;
+             if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') newLeftPercent -= (moveStep / containerWidth * 100);
+             else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') newLeftPercent += (moveStep / containerWidth * 100);
+             const halfCatcherPercent = (currentCatcherWidth / 2 / containerWidth * 100);
+             const minLeftPercent = halfCatcherPercent; const maxLeftPercent = 100 - halfCatcherPercent;
+             catcherPosition = Math.max(minLeftPercent, Math.min(maxLeftPercent, newLeftPercent));
+             catcher.style.left = `${catcherPosition}%`;
+        });
+
+        // Game Control Buttons
+        startGameBtn?.addEventListener('click', startGame);
+        playAgainBtn?.addEventListener('click', startGame);
+
+        // --- Initialisation ---
+        document.addEventListener('DOMContentLoaded', () => { /* ... DOM Loaded Init ... */
+             // Image placeholder logic
+            document.querySelectorAll('.application-card img').forEach(img => {
+                 img.onerror = function() { if (!this.src.includes('via.placeholder.com')) { const w = 300; const h = 150; this.src = `https://via.placeholder.com/${w}x${h}?text=App+Image`; this.alt = 'Placeholder'; this.onerror = null; } };
+                 if (!img.src || img.src.endsWith('/') || (img.complete && !img.naturalWidth)) img.onerror();
+            });
+             // Fill empty Applications sections
+             document.querySelectorAll('.applications').forEach(appContainer => {
+                 if (appContainer.children.length === 0) { /* ... Fill placeholder apps ... */ }
+             });
+             resetAllSimulations();
+             initializeGame(); // Init game state but don't start
+        });
+
+    </script>
+</body>
+</html>
