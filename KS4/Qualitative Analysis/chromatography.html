@@ -1,0 +1,2072 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chromatography - KS4 Chemistry</title>
+    <style>
+        /* --- Base Styles & Variables --- */
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --light-grey: #f7f7f7;
+            --medium-grey: #ddd;
+            --shadow: 0 1px 5px rgba(0,0,0,0.1);
+            --border-radius: 8px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        /* --- Navigation Tabs --- */
+        .nav-tabs {
+            display: flex;
+            background-color: var(--light);
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            flex-grow: 1;
+            text-align: center;
+            transition: all var(--transition-speed) ease;
+            font-weight: bold;
+            border-right: 1px solid var(--medium-grey); /* Add subtle separator */
+        }
+        .nav-tab:last-child {
+            border-right: none;
+        }
+
+        .nav-tab:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .nav-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- General Content Elements --- */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--dark);
+            margin: 20px 0 10px 0;
+            font-size: 1.4rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px; /* Slightly more indent */
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 5px 10px 0; /* Adjusted margin */
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover:not(:disabled) { /* Only apply hover effect when not disabled */
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #27ae60;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+        }
+        .btn-accent:hover:not(:disabled) {
+            background-color: #c0392b;
+        }
+
+        /* --- Tutorial Specific --- */
+        .tutorial-tabs {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
+            background-color: var(--light);
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .tutorial-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all var(--transition-speed) ease;
+            flex-grow: 1; /* Allow tabs to share space */
+            min-width: 100px; /* Ensure minimum width */
+        }
+
+        .tutorial-tab:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .tutorial-tab.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .tutorial-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tutorial-content.active {
+            display: block;
+        }
+
+        .image-placeholder {
+            background-color: var(--light-grey);
+            border: 2px dashed var(--medium-grey);
+            min-height: 150px; /* Use min-height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            color: #7f8c8d;
+        }
+
+        .rf-calculator {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: var(--light-grey);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--medium-grey);
+        }
+
+        .rf-calculator label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .rf-calculator input {
+            padding: 10px;
+            margin-bottom: 10px; /* Spacing below input */
+            width: 100%;
+            border: 1px solid var(--medium-grey);
+            border-radius: 5px;
+        }
+        .rf-calculator #rf-result {
+            font-weight: bold;
+            margin-top: 10px;
+            color: var(--primary);
+        }
+
+        /* --- Quiz & Practice Specific --- */
+        .quiz-container, .practice-container { /* Unified container name */
+            margin-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 20px; /* Add padding below question */
+            border-bottom: 1px solid var(--light); /* Separator */
+        }
+        .question:last-child {
+            border-bottom: none; /* No border on last question */
+        }
+
+        .question p:first-child { /* Style the question text itself */
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 12px; /* Slightly more padding */
+            background-color: var(--light);
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent; /* Prepare for potential border change on select */
+        }
+
+        .options label:hover {
+            background-color: #dfe6e9;
+        }
+
+        .options input[type="radio"],
+        .options input[type="checkbox"] { /* Style checkboxes similarly */
+            margin-right: 10px;
+            vertical-align: middle; /* Align checkbox with text */
+        }
+        /* Ensure checkbox labels are clickable */
+        .options label input[type="checkbox"] + span {
+             vertical-align: middle;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px 15px; /* Adjusted padding */
+            border-radius: 5px;
+            display: none; /* Hide by default */
+            font-weight: bold;
+            border-left-width: 5px;
+            border-left-style: solid;
+        }
+
+        .feedback.correct {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            border-left-color: #27ae60;
+        }
+
+        .feedback.incorrect {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+            border-left-color: #c0392b;
+        }
+
+        /* --- Simulation & Animation Specific --- */
+        .simulation-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            border: 2px solid var(--light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 20px 0;
+            background-color: var(--light-grey); /* Light background */
+        }
+
+        /* Animation Specific Elements (Tutorial) */
+        #animation-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: var(--light-grey);
+            border-radius: var(--border-radius);
+        }
+        #animation-container .beaker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            width: 160px;
+            height: 180px;
+            background-color: rgba(220, 220, 220, 0.3);
+            border: 2px solid #a0a0a0;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            overflow: hidden; /* Clip contents like water */
+        }
+        #animation-container .beaker-markings {
+            position: absolute; right: 10px; top: 20px; height: 140px; width: 2px;
+        }
+        #animation-container .beaker-mark {
+             position: absolute; width: 10px; height: 1px; background-color: #a0a0a0; right: 0;
+        }
+        #animation-container #beaker-water {
+            position: absolute; bottom: 0; width: 100%; height: 30px;
+            background-color: rgba(135, 206, 250, 0.5); /* Light blue for water */
+            transition: height 5s linear; /* Smooth transition */
+        }
+         #animation-container #paper-strip {
+             position: absolute; left: 50%; transform: translateX(-50%);
+             bottom: 0; /* Starts at bottom */
+             width: 20px; height: 160px; /* Paper dimensions */
+             background-color: #fff;
+             border: 1px solid var(--medium-grey);
+             z-index: 2; /* Above water */
+             overflow: hidden; /* Clip spots that go off the paper */
+         }
+        #animation-container #sample-spot {
+             width: 10px; height: 10px; background-color: black; border-radius: 50%;
+             position: absolute; left: 5px; bottom: 40px; /* Initial position */
+             transition: opacity 0.5s ease;
+             z-index: 3; /* Above paper */
+         }
+        #animation-container .animation-element { /* Base class for dynamic elements */
+            position: absolute;
+            z-index: 3; /* Default above paper */
+        }
+        #animation-container .solvent-front-anim {
+             width: 100%; height: 1px; background-color: #aaa;
+             left: 0; bottom: 30px; /* Start at water level */
+             z-index: 4; /* Above spots initially */
+         }
+        #animation-container .color-spot {
+             width: 8px; height: 8px; border-radius: 50%;
+             left: 6px; bottom: 40px; /* Start at sample spot pos */
+             opacity: 0; /* Initially hidden */
+             transition: bottom 5s linear, opacity 0.5s ease-in; /* Animate position and fading in */
+        }
+        #animation-container .beaker-lid {
+            position: absolute; top: -12px; /* Sit above beaker rim */
+            width: 170px; height: 10px; /* Slightly wider than beaker */
+            background-color: rgba(220, 220, 220, 0.7);
+            border: 2px solid #a0a0a0;
+            border-radius: 5px;
+            left: 50%; transform: translateX(-50%);
+        }
+        /* --- Virtual Lab Specific --- */
+        .lab-container {
+            width: 100%;
+            min-height: 550px; /* Increased height */
+            position: relative;
+            border: 2px solid var(--light);
+            border-radius: var(--border-radius);
+            background-color: var(--light-grey);
+            margin: 20px 0;
+            overflow: hidden;
+            display: flex;
+            flex-wrap: nowrap; /* Prevent wrapping by default */
+        }
+
+        .lab-sidebar {
+            flex: 0 0 220px; /* Fixed width sidebar */
+            background-color: var(--light);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Subtle shadow */
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Allow scrolling if content overflows */
+        }
+
+        .lab-workspace {
+            flex: 1; /* Takes remaining space */
+            min-height: 550px;
+            padding: 20px;
+            position: relative;
+            overflow-y: auto; /* Allow scrolling */
+        }
+
+        .tool {
+            background-color: white;
+            border: 1px solid var(--medium-grey);
+            border-radius: 5px;
+            padding: 10px 15px; /* Adjusted padding */
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block; /* Ensure full width clickable */
+            text-align: center; /* Center tool text */
+            font-weight: 500;
+        }
+
+        .tool:hover:not(.selected) { /* Don't apply hover if already selected */
+            background-color: #f1f1f1;
+            transform: translateY(-1px); /* Subtle lift */
+            box-shadow: var(--shadow);
+        }
+
+        .tool.selected {
+            border: 2px solid var(--primary);
+            background-color: rgba(52, 152, 219, 0.1);
+            font-weight: bold;
+        }
+
+        #lab-instructions ol {
+            margin-left: 20px;
+            padding-left: 10px;
+        }
+        #lab-instructions li {
+            margin-bottom: 8px;
+        }
+
+        #experiment-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            min-height: 300px; /* Ensure space for beaker */
+            justify-content: center; /* Center beaker vertically */
+        }
+
+        #chromatography-beaker {
+            width: 180px; /* Slightly narrower beaker */
+            height: 250px;
+            position: relative;
+            border: 2px solid #a0a0a0;
+            border-radius: 0 0 15px 15px; /* Smoother bottom curve */
+            background-color: rgba(220, 220, 220, 0.2); /* Fainter beaker glass */
+            margin: 20px auto;
+            display: none; /* Initially hidden */
+            overflow: hidden; /* Important to contain solvent/paper */
+        }
+
+        #chromatography-beaker .beaker-markings { /* Reusable markings */
+             position: absolute; right: 5px; top: 10px; height: 220px; width: 2px;
+        }
+         #chromatography-beaker .beaker-mark {
+             position: absolute; width: 8px; height: 1px; background-color: #999; right: 0;
+         }
+        #chromatography-beaker #lab-solvent {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            border-radius: 0 0 13px 13px; /* Match beaker curve */
+            transition: background-color var(--transition-speed) ease;
+        }
+        #chromatography-beaker #lab-chromatogram {
+            width: 30px;
+            height: 210px; /* Paper height inside beaker */
+            background-color: white;
+            border: 1px solid var(--medium-grey);
+            position: absolute;
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%);
+            bottom: 0px; /* Sits at the bottom */
+            z-index: 2; /* Above solvent */
+            overflow: hidden; /* Clip spots */
+        }
+
+        /* Dynamic elements within lab-chromatogram */
+        #lab-chromatogram .molecule {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 3; /* Above paper */
+        }
+         #lab-chromatogram .initial-spot {
+             width: 10px; height: 10px;
+             left: 10px; /* Center on 30px wide paper */
+             bottom: 40px; /* Starting line */
+             transition: opacity 2s ease-out;
+         }
+         #lab-chromatogram .separated-spot {
+             width: 8px; height: 8px;
+             left: 11px; /* Center on 30px wide paper */
+             bottom: 40px; /* Start position */
+             opacity: 0; /* Initially hidden */
+             /* Transition applied by JS */
+         }
+         #lab-chromatogram .solvent-front-lab {
+             width: 100%; height: 1px; background-color: #aaa;
+             position: absolute; left: 0; bottom: 30px; /* Start at solvent level */
+             transition: bottom 5s ease-out;
+             z-index: 2; /* Below spots, above paper */
+         }
+
+        /* --- Results Table --- */
+        #lab-results {
+            display: none;
+            margin-top: 20px;
+        }
+        .results-table-container {
+             overflow-x: auto; /* Make table scrollable on small screens */
+             margin: 20px 0;
+        }
+        .results-table {
+            width: 100%;
+            min-width: 600px; /* Ensure table doesn't get too cramped */
+            border-collapse: collapse;
+            box-shadow: var(--shadow);
+        }
+
+        .results-table th, .results-table td {
+            border: 1px solid var(--medium-grey);
+            padding: 12px; /* Increased padding */
+            text-align: left; /* Better readability */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .results-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+        .results-table tr:nth-child(even) {
+            background-color: var(--light-grey);
+        }
+        .results-table td:nth-child(3), /* Align numerical data centrally */
+        .results-table td:nth-child(4),
+        .results-table td:nth-child(5) {
+            text-align: center;
+        }
+
+        /* --- Game Specific --- */
+        .game-container {
+            width: 100%;
+            position: relative;
+            border: 2px solid var(--light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin: 20px 0;
+            background-color: var(--light-grey);
+            padding: 20px; /* Add padding */
+        }
+
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid var(--medium-grey);
+        }
+
+        .drag-item {
+            padding: 10px 15px;
+            background-color: var(--light);
+            border-radius: 5px;
+            cursor: grab;
+            user-select: none;
+            border: 1px solid var(--medium-grey);
+            transition: opacity 0.2s ease;
+        }
+        .drag-item:active {
+            cursor: grabbing;
+        }
+
+        #rf-drop-zones > div { /* Style each drop zone section */
+            margin-bottom: 15px;
+            display: flex; /* Use flex for alignment */
+            align-items: center;
+            gap: 10px; /* Space between label and drop zone */
+        }
+        #rf-drop-zones strong { /* Style the Rf value label */
+            flex: 0 0 80px; /* Fixed width for labels */
+            text-align: right;
+        }
+        #rf-drop-zones .drop-container {
+             flex: 1; /* Allow drop zone to take remaining space */
+             min-height: 45px; /* Adjusted height */
+        }
+
+        .drop-container {
+            min-height: 45px;
+            border: 2px dashed var(--medium-grey);
+            border-radius: var(--border-radius);
+            padding: 5px; /* Reduced padding */
+            background-color: white;
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+            display: flex; /* Align dropped items */
+            align-items: center;
+            justify-content: center; /* Center dropped item if alone */
+        }
+         .drop-container .drag-item { /* Style items when dropped */
+            cursor: default; /* No grab cursor needed */
+            margin: 2px; /* Spacing if multiple items accidentally dropped */
+            padding: 5px 10px; /* Slightly smaller padding */
+         }
+
+        .highlight { /* Highlight effect for dragover */
+            border-color: var(--primary);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        #matching-feedback, #mystery-feedback {
+            margin-top: 15px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            border-left-width: 5px;
+            border-left-style: solid;
+        }
+        #matching-feedback.correct, #mystery-feedback.correct {
+            background-color: rgba(46, 204, 113, 0.1); color: #27ae60; border-left-color: #27ae60;
+        }
+         #matching-feedback.incorrect, #mystery-feedback.incorrect {
+            background-color: rgba(231, 76, 60, 0.1); color: #c0392b; border-left-color: #c0392b;
+         }
+
+        /* Game 2 - Chromatogram Simulation */
+        .chromatogram-simulation {
+            width: 90%;
+            max-width: 350px;
+            height: 250px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            position: relative;
+            font-size: 10px; /* Smaller font for labels */
+            overflow: hidden; /* Ensure nothing spills out */
+        }
+        .chromatogram-simulation .baseline {
+            position: absolute;
+            bottom: 20%; /* 50px from bottom */
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #aaa;
+            z-index: 1;
+        }
+         .chromatogram-simulation .baseline::before {
+             content: 'Baseline';
+             position: absolute;
+             left: 5px;
+             top: -12px;
+             color: #888;
+         }
+        .chromatogram-simulation .solvent-front {
+            position: absolute;
+            bottom: 90%; /* 225px from bottom */
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #aaa;
+            border-bottom: 1px dashed #b0e0e6; /* Light blue dashed line */
+            z-index: 1;
+        }
+         .chromatogram-simulation .solvent-front::before {
+             content: 'Solvent Front';
+             position: absolute;
+             left: 5px;
+             top: 3px;
+             color: #888;
+         }
+        .chromatogram-simulation .lane-label {
+            position: absolute;
+            bottom: 5px; /* Label position at the very bottom */
+            width: 25%; /* Divide into 4 lanes */
+            text-align: center;
+            font-weight: bold;
+            color: #555;
+        }
+        .chromatogram-simulation .spot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transform: translateX(-50%); /* Center the spot horizontally */
+            z-index: 2;
+        }
+        /* Calculate spot positions:
+           Paper height used for Rf calculation = solvent_front_bottom (90%) - baseline_bottom (20%) = 70%
+           Spot position = baseline_bottom + (Rf * calculation_height)
+           Example Rf 0.4: bottom = 20% + (0.4 * 70%) = 20% + 28% = 48%
+        */
+        .chromatogram-simulation .spot.red { background-color: #e74c3c; bottom: calc(20% + (0.8 * 70%)); left: 12.5%; } /* Rf 0.8 */
+        .chromatogram-simulation .spot.blue { background-color: #3498db; bottom: calc(20% + (0.4 * 70%)); left: 37.5%; } /* Rf 0.4 */
+        .chromatogram-simulation .spot.yellow { background-color: #f1c40f; bottom: calc(20% + (0.6 * 70%)); left: 62.5%; } /* Rf 0.6 */
+        .chromatogram-simulation .spot.mystery-blue { background-color: #3498db; bottom: calc(20% + (0.4 * 70%)); left: 87.5%; } /* Rf 0.4 */
+        .chromatogram-simulation .spot.mystery-yellow { background-color: #f1c40f; bottom: calc(20% + (0.6 * 70%)); left: 87.5%; } /* Rf 0.6 */
+        /* Initial dots on baseline */
+         .chromatogram-simulation .initial-dot {
+             position: absolute;
+             width: 5px;
+             height: 5px;
+             border-radius: 50%;
+             background-color: #555;
+             transform: translateX(-50%);
+             bottom: 20%; /* On the baseline */
+             z-index: 1;
+         }
+
+
+        /* --- Helper Classes & Misc --- */
+        .checkpoint, .real-world {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            border-left-width: 4px;
+            border-left-style: solid;
+        }
+        .checkpoint {
+            background-color: #fff8e1;
+            border-left-color: #ffc107;
+        }
+        .real-world {
+            background-color: #e3f2fd;
+            border-left-color: #2196f3;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--dark);
+            cursor: help;
+        }
+        .tooltip .tooltip-text {
+            visibility: hidden; width: 200px; background-color: var(--dark);
+            color: white; text-align: center; border-radius: 6px; padding: 5px;
+            position: absolute; z-index: 10; bottom: 125%; left: 50%;
+            margin-left: -100px; opacity: 0; transition: opacity var(--transition-speed);
+        }
+        .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            .nav-tab {
+                border-right: none;
+                border-bottom: 1px solid var(--medium-grey);
+            }
+            .nav-tab:last-child {
+                border-bottom: none;
+            }
+
+            .lab-container {
+                flex-direction: column;
+                min-height: auto; /* Allow height to adjust */
+            }
+
+            .lab-sidebar {
+                width: 100%;
+                min-height: auto;
+                padding-bottom: 15px;
+                flex-basis: auto; /* Reset flex basis */
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Bottom shadow */
+                margin-bottom: 15px; /* Space before workspace */
+            }
+
+            .lab-workspace {
+                 min-height: 400px; /* Ensure decent workspace height */
+                 padding: 15px; /* Reduce padding slightly */
+            }
+
+            .tutorial-tabs {
+                flex-wrap: wrap;
+            }
+            .tutorial-tab {
+                flex-grow: 1;
+                min-width: 100px;
+            }
+
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.6rem; }
+            h3 { font-size: 1.3rem; }
+
+            .results-table th, .results-table td {
+                padding: 8px;
+                font-size: 0.9rem; /* Smaller font on mobile */
+            }
+             .results-table {
+                 min-width: 100%; /* Allow table to shrink */
+                 font-size: 0.9rem; /* Adjust base font size for table */
+            }
+
+             #rf-drop-zones > div { /* Stack labels above drop zones on mobile */
+                 flex-direction: column;
+                 align-items: flex-start; /* Align label left */
+             }
+             #rf-drop-zones strong {
+                 text-align: left;
+                 margin-bottom: 5px;
+                 flex-basis: auto; /* Let label width be natural */
+             }
+             #rf-drop-zones .drop-container {
+                 width: 100%; /* Make drop zone full width */
+             }
+             .chromatogram-simulation { /* Adjust game chromatogram size */
+                 height: 200px;
+                 font-size: 9px;
+             }
+             .chromatogram-simulation .spot {
+                 width: 10px; height: 10px;
+             }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Chromatography</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="tutorial">Tutorial</div>
+            <div class="nav-tab" data-tab="virtual-lab">Virtual Lab</div>
+            <div class="nav-tab" data-tab="practice">Practice</div>
+            <div class="nav-tab" data-tab="game">Game</div>
+        </div>
+
+        <!-- ======================= -->
+        <!-- === Tutorial Section === -->
+        <!-- ======================= -->
+        <div class="content-section active" id="tutorial">
+            <div class="tutorial-tabs">
+                <div class="tutorial-tab active" data-tutorial="basics">Basics</div>
+                <div class="tutorial-tab" data-tutorial="principles">Principles</div>
+                <div class="tutorial-tab" data-tutorial="rf-values">Rf Values</div>
+                <div class="tutorial-tab" data-tutorial="applications">Applications</div>
+                <div class="tutorial-tab" data-tutorial="animation">Animation</div>
+            </div>
+
+            <div class="card">
+                <!-- Tutorial: Basics -->
+                <div class="tutorial-content active" id="basics">
+                    <h2>What is Chromatography?</h2>
+                    <div class="image-placeholder">
+                        <p>Image: A colorful paper chromatography setup showing separation of colored inks</p>
+                    </div>
+                    <p>Chromatography is a laboratory technique used to separate mixtures into their individual components. The term "chromatography" comes from the Greek words "chroma" (color) and "graphein" (to write), as it was first used to separate plant pigments.</p>
+
+                    <h3>Key Points:</h3>
+                    <ul>
+                        <li>Chromatography can separate mixtures of substances.</li>
+                        <li>It provides information to help identify substances.</li>
+                        <li>It works by distributing components between two phases: a <span class="tooltip">stationary phase<span class="tooltip-text">The phase that doesn't move (e.g., paper).</span></span> and a <span class="tooltip">mobile phase<span class="tooltip-text">The phase that moves (e.g., solvent).</span></span>.</li>
+                    </ul>
+
+                    <div class="checkpoint">
+                        <h3>Checkpoint Question:</h3>
+                        <p>1. What is the main purpose of chromatography?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="wrong"> To change the chemical properties of substances</label>
+                            <label><input type="radio" name="q1" value="correct"> To separate mixtures into their individual components</label>
+                            <label><input type="radio" name="q1" value="wrong"> To combine different substances into a single mixture</label>
+                            <label><input type="radio" name="q1" value="wrong"> To create new compounds through chemical reactions</label>
+                        </div>
+                        <div class="feedback correct">Correct! Chromatography is used to separate mixtures into their individual components.</div>
+                        <div class="feedback incorrect">Incorrect. Chromatography is used to separate mixtures into their individual components.</div>
+                    </div>
+                </div>
+
+                <!-- Tutorial: Principles -->
+                <div class="tutorial-content" id="principles">
+                    <h2>Principles of Chromatography</h2>
+                    <div class="image-placeholder">
+                        <p>Image: Diagram showing stationary and mobile phases and how components separate based on attraction.</p>
+                    </div>
+                    <p>Chromatography involves two phases:</p>
+                    <ul>
+                        <li><strong>Stationary phase:</strong> The medium that stays in place (e.g., paper in paper chromatography, silica gel in TLC).</li>
+                        <li><strong>Mobile phase:</strong> The medium that moves through the stationary phase (e.g., a solvent like water or ethanol).</li>
+                    </ul>
+
+                    <h3>How Separation Occurs:</h3>
+                    <p>Different components in a mixture interact differently with the stationary and mobile phases. This difference in interaction causes them to move at different speeds:</p>
+                    <ul>
+                        <li>Components that are more <span class="tooltip">soluble<span class="tooltip-text">How well a substance dissolves in the mobile phase.</span></span> in the mobile phase and less <span class="tooltip">adsorbed<span class="tooltip-text">How strongly a substance sticks to the stationary phase.</span></span> to the stationary phase travel further and faster.</li>
+                        <li>Components that are less soluble in the mobile phase and more adsorbed to the stationary phase travel shorter distances and slower.</li>
+                    </ul>
+
+                    <p>The separation depends on factors like:</p>
+                    <ul>
+                        <li>Solubility in the mobile phase</li>
+                        <li>Adsorption (attraction) to the stationary phase</li>
+                        <li>Size and shape of the molecules</li>
+                        <li>Intermolecular forces (like hydrogen bonding, van der Waals forces)</li>
+                    </ul>
+
+                    <div class="real-world">
+                        <h3>Real-World Application: Ink Analysis</h3>
+                        <p>Forensic scientists use chromatography to analyze ink from suspected forged documents. Different pens use unique ink mixtures. Chromatography can reveal the specific colored components in an ink sample, helping to match it to a known pen or prove it's different.</p>
+                    </div>
+
+                    <div class="checkpoint">
+                        <h3>Checkpoint Question:</h3>
+                        <p>2. Which component will travel furthest up the chromatography paper?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="correct"> A component highly soluble in the mobile phase and weakly attracted to the stationary phase.</label>
+                            <label><input type="radio" name="q2" value="wrong"> A component poorly soluble in the mobile phase and strongly attracted to the stationary phase.</label>
+                            <label><input type="radio" name="q2" value="wrong"> All components travel the same distance.</label>
+                            <label><input type="radio" name="q2" value="wrong"> The component with the largest molecules.</label>
+                        </div>
+                        <div class="feedback correct">Correct! Higher solubility in the moving solvent and lower attraction to the stationary paper means it travels further.</div>
+                        <div class="feedback incorrect">Incorrect. The component that travels furthest is the one most attracted to the mobile phase and least attracted to the stationary phase.</div>
+                    </div>
+                </div>
+
+                <!-- Tutorial: Rf Values -->
+                <div class="tutorial-content" id="rf-values">
+                    <h2>Rf Values (Retention Factors)</h2>
+                    <div class="image-placeholder">
+                        <p>Image: Diagram clearly showing the baseline, solvent front, and distance travelled by a spot, labelling the measurements needed for Rf calculation.</p>
+                    </div>
+                    <p>The <span class="tooltip">Rf value<span class="tooltip-text">Retention factor - a ratio indicating how far a component travelled relative to the solvent.</span></span> (Retention factor) is a way to quantify how far a substance travels in chromatography. It's a ratio, calculated using the following formula:</p>
+
+                    <div style="text-align: center; margin: 25px 0; font-size: 1.2rem; background-color: #f0f8ff; padding: 15px; border-radius: 5px; border: 1px solid var(--primary);">
+                        <p><strong>R<sub>f</sub> = </strong>
+                        <div style="display: inline-block; text-align: center; vertical-align: middle;">
+                            <div style="border-bottom: 2px solid black; padding: 0 10px; margin-bottom: 5px;">distance moved by substance (from baseline)</div>
+                            <div>distance moved by solvent (from baseline)</div>
+                        </div>
+                        </p>
+                    </div>
+
+                    <h3>Key Points About Rf Values:</h3>
+                    <ul>
+                        <li>Rf values are always between 0 and 1 (they cannot be greater than 1 because a substance cannot travel further than the solvent).</li>
+                        <li>The Rf value of a specific substance depends on the stationary phase and the mobile phase used. Changing the solvent will likely change the Rf value.</li>
+                        <li>Under the same conditions (same paper, same solvent, same temperature), a particular substance should always have the same Rf value. This allows Rf values to help identify unknown substances by comparing them to known standards.</li>
+                        <li>Pure compounds produce a single spot with a characteristic Rf value.</li>
+                        <li>Impure substances or mixtures will show multiple spots, each with its own Rf value.</li>
+                    </ul>
+
+                    <div class="rf-calculator card" style="background-color: #eef;"> {/* Embedded card for emphasis */}
+                        <h3>Rf Value Calculator</h3>
+                        <p>Enter the distances measured from the baseline (starting line):</p>
+                        <div>
+                            <label for="distance-substance">Distance moved by substance (mm):</label>
+                            <input type="number" id="distance-substance" min="0" placeholder="e.g., 45">
+                        </div>
+                        <div>
+                            <label for="distance-solvent">Distance moved by solvent front (mm):</label>
+                            <input type="number" id="distance-solvent" min="0" placeholder="e.g., 90">
+                        </div>
+                        <button class="btn" id="calculate-rf">Calculate Rf Value</button>
+                        <p id="rf-result"></p>
+
+                        <div style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 5px;">
+                            <h4>Example Values to Try:</h4>
+                            <ul>
+                                <li>Substance: 24 mm, Solvent: 80 mm &rarr; Rf = 0.30</li>
+                                <li>Substance: 45 mm, Solvent: 75 mm &rarr; Rf = 0.60</li>
+                                <li>Substance: 63 mm, Solvent: 90 mm &rarr; Rf = 0.70</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="real-world">
+                        <h3>Real-World Application: Drug Purity</h3>
+                        <p>In pharmaceutical quality control, techniques like Thin Layer Chromatography (TLC) are used. Scientists run a sample of a manufactured drug alongside a pure standard. If the sample produces only one spot with the same Rf value as the standard, it indicates purity. Extra spots would suggest impurities.</p>
+                    </div>
+                </div>
+
+                <!-- Tutorial: Applications -->
+                <div class="tutorial-content" id="applications">
+                    <h2>Applications of Chromatography</h2>
+                    <div class="image-placeholder">
+                        <p>Image: Collage showing various applications - food dye testing, forensic analysis, drug testing, environmental monitoring.</p>
+                    </div>
+                    <h3>Paper Chromatography</h3>
+                    <p>Paper chromatography, which you'll simulate in the virtual lab, is a simple but effective type:</p>
+                    <ul>
+                        <li><strong>Stationary phase:</strong> Absorbent paper (cellulose).</li>
+                        <li><strong>Mobile phase:</strong> A suitable solvent (e.g., water, ethanol, or a mixture).</li>
+                        <li><strong>Common uses:</strong> Separating colored mixtures like inks and food dyes, analyzing plant pigments.</li>
+                    </ul>
+
+                    <h3>Other Important Types of Chromatography:</h3>
+                    <ul>
+                        <li><strong>Thin-Layer Chromatography (TLC):</strong> Similar to paper chromatography but uses a thin layer of adsorbent material (like silica gel or alumina) coated onto a glass or plastic plate. Often faster and gives better separation than paper chromatography.</li>
+                        <li><strong>Gas Chromatography (GC):</strong> Used to separate volatile substances (substances that turn into gas easily). The mobile phase is an inert gas (like helium or nitrogen), and the stationary phase is a high-boiling point liquid coated onto solid particles inside a long, thin tube (column).</li>
+                        <li><strong>High-Performance Liquid Chromatography (HPLC):</strong> A highly sensitive technique using high pressure to force a liquid mobile phase through a column packed with very fine stationary phase particles. Used extensively in research and industry for complex mixture analysis.</li>
+                    </ul>
+
+                    <h3>Wide-Ranging Uses:</h3>
+                    <div class="image-placeholder">
+                         <p>Image: Icons or simple drawings representing food, medicine, crime scene tape, water drop, DNA helix.</p>
+                     </div>
+                    <ul>
+                        <li><strong>Food Industry:</strong> Identifying artificial colorings and flavourings, detecting pesticides, analyzing nutritional content.</li>
+                        <li><strong>Pharmaceutical Industry:</strong> Ensuring drug purity, identifying active ingredients, developing new medicines.</li>
+                        <li><strong>Forensic Science:</strong> Analyzing fibers, inks, drugs, or explosives found at crime scenes; conducting toxicology tests on body fluids.</li>
+                        <li><strong>Environmental Science:</strong> Monitoring air and water quality, detecting pollutants like pesticides or industrial waste.</li>
+                        <li><strong>Biochemistry & Medicine:</strong> Separating proteins, DNA analysis, detecting diseases, clinical drug monitoring.</li>
+                    </ul>
+
+                    <div class="checkpoint">
+                        <h3>Checkpoint Question:</h3>
+                        <p>3. Which type of chromatography is typically used for separating volatile substances (gases)?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="wrong"> Paper Chromatography</label>
+                            <label><input type="radio" name="q3" value="wrong"> Thin-Layer Chromatography (TLC)</label>
+                            <label><input type="radio" name="q3" value="correct"> Gas Chromatography (GC)</label>
+                            <label><input type="radio" name="q3" value="wrong"> High-Performance Liquid Chromatography (HPLC)</label>
+                        </div>
+                        <div class="feedback correct">Correct! Gas Chromatography uses a gas mobile phase and is ideal for separating volatile compounds.</div>
+                        <div class="feedback incorrect">Incorrect. Gas Chromatography (GC) is the technique used for separating substances that can easily become gases.</div>
+                    </div>
+                </div>
+
+                <!-- Tutorial: Animation -->
+                <div class="tutorial-content" id="animation">
+                    <h2>Chromatography in Action (Animation)</h2>
+                    <p>Watch this simplified animation of paper chromatography separating a black ink spot (which is often a mixture of colours):</p>
+                    <div class="simulation-container">
+                        <div id="animation-container">
+                            <!-- Static elements rendered by CSS -->
+                            <div class="beaker">
+                                <div class="beaker-markings">
+                                    <div class="beaker-mark" style="top: 0;"></div>
+                                    <div class="beaker-mark" style="top: 35px;"></div>
+                                    <div class="beaker-mark" style="top: 70px;"></div>
+                                    <div class="beaker-mark" style="top: 105px;"></div>
+                                    <div class="beaker-mark" style="top: 140px;"></div>
+                                </div>
+                                <div id="beaker-water"></div>
+                                <div id="paper-strip">
+                                    <div id="sample-spot"></div>
+                                    <!-- Dynamic spots & solvent front added here by JS -->
+                                </div>
+                            </div>
+                            <div class="beaker-lid"></div>
+                             <!-- Controls -->
+                            <button id="start-animation" class="btn" style="position: absolute; bottom: 10px; right: 10px; z-index: 10;">Start Animation</button>
+                            <button id="reset-animation" class="btn btn-accent" style="position: absolute; bottom: 10px; right: 10px; display: none; z-index: 10;">Reset Animation</button>
+                        </div>
+                    </div>
+                    <h3>Explanation of the Animation:</h3>
+                    <ol>
+                        <li>A spot of black ink (mixture) is placed on the baseline near the bottom of the paper strip.</li>
+                        <li>The bottom edge of the paper is dipped into the solvent (blue liquid), ensuring the ink spot stays above the solvent level.</li>
+                        <li>The solvent travels up the paper by <span class="tooltip">capillary action<span class="tooltip-text">The ability of a liquid to flow in narrow spaces without external forces like gravity (or even opposing them).</span></span>, acting as the mobile phase.</li>
+                        <li>As the solvent front moves past the ink spot, it dissolves the different coloured dyes in the ink.</li>
+                        <li>Dyes that are more soluble in the solvent and less attracted to the paper travel further up, while less soluble/more attracted dyes move slower.</li>
+                        <li>The black ink separates into its constituent colours (e.g., yellow, red, blue) at different heights, forming the chromatogram.</li>
+                        <li>The animation stops before the solvent reaches the top of the paper.</li>
+                    </ol>
+                </div>
+            </div> <!-- End Card -->
+        </div> <!-- End Tutorial Section -->
+
+
+        <!-- ============================ -->
+        <!-- === Virtual Lab Section === -->
+        <!-- ============================ -->
+        <div class="content-section" id="virtual-lab">
+             <div class="card"> <!-- Wrap entire lab in a card for consistency -->
+                 <h2>Paper Chromatography Virtual Lab</h2>
+                 <p>Investigate the separation of different inks using different solvents. This simulates aspects of AQA Required Practical 6.</p>
+
+                 <div class="lab-container">
+                     <div class="lab-sidebar">
+                         <h3>1. Select Materials</h3>
+                         <h4>Ink Samples:</h4>
+                         <button class="tool" id="black-pen" data-type="pen">Black Pen</button>
+                         <button class="tool" id="blue-pen" data-type="pen">Blue Pen</button>
+                         <button class="tool" id="green-pen" data-type="pen">Green Pen</button>
+                         <button class="tool" id="red-pen" data-type="pen">Red Pen</button>
+                         <button class="tool" id="mystery-pen" data-type="pen">Mystery Ink</button>
+
+                         <h4 style="margin-top: 15px;">Solvents (Mobile Phase):</h4>
+                         <button class="tool" id="water" data-type="solvent">Water</button>
+                         <button class="tool" id="alcohol" data-type="solvent">Ethanol</button>
+
+                         <div style="margin-top: 20px; border-top: 1px solid var(--medium-grey); padding-top: 15px;">
+                            <h3>2. Run & Reset</h3>
+                            <button class="btn" id="start-experiment" disabled>Run Experiment</button>
+                             <button class="btn btn-accent" id="reset-experiment" style="display: none;">Reset Experiment</button>
+                         </div>
+                     </div>
+
+                     <div class="lab-workspace">
+                         <div id="lab-instructions">
+                             <h3>Instructions:</h3>
+                             <ol>
+                                 <li>Select one ink sample from the sidebar.</li>
+                                 <li>Select one solvent (Water or Ethanol).</li>
+                                 <li>Click "Run Experiment" to start the simulation.</li>
+                                 <li>Observe the separation and the results table below.</li>
+                                 <li>Click "Reset Experiment" to try a different combination.</li>
+                             </ol>
+                         </div>
+
+                         <div id="experiment-area">
+                             <!-- Beaker and Chromatogram appear here when experiment runs -->
+                             <div id="chromatography-beaker">
+                                 <div class="beaker-markings">
+                                     <div class="beaker-mark" style="top: 10px;"></div> <div class="beaker-mark" style="top: 60px;"></div> <div class="beaker-mark" style="top: 110px;"></div> <div class="beaker-mark" style="top: 160px;"></div> <div class="beaker-mark" style="top: 210px;"></div>
+                                 </div>
+                                 <div id="lab-solvent"></div>
+                                 <div id="lab-chromatogram">
+                                     <!-- Initial spot, separated spots, solvent front added here by JS -->
+                                 </div>
+                             </div>
+                         </div>
+
+                         <!-- Results Section -->
+                         <div id="lab-results">
+                             <h3>Results Table:</h3>
+                             <p>(Rf values are calculated automatically based on simulated distances)</p>
+                             <div class="results-table-container"> <!-- Make table scrollable on small screens -->
+                                 <table class="results-table">
+                                     <thead>
+                                         <tr>
+                                             <th>Ink Type</th>
+                                             <th>Solvent Used</th>
+                                             <th>Spot Distances (mm)</th>
+                                             <th>Solvent Distance (mm)</th>
+                                             <th>Rf Value(s)</th>
+                                             <th>Components Detected</th>
+                                         </tr>
+                                     </thead>
+                                     <tbody id="results-data">
+                                         <!-- Results rows added here by JavaScript -->
+                                     </tbody>
+                                 </table>
+                             </div>
+
+                            <div class="checkpoint" style="margin-top: 25px;">
+                                <h3>Lab Analysis & Questions:</h3>
+                                <ol>
+                                    <li>Compare the results for the <strong>same ink</strong> using <strong>Water</strong> vs. <strong>Ethanol</strong>. How does the solvent affect the separation and the Rf values?</li>
+                                    <li>Which ink(s) appear to be mixtures? How does the chromatogram show this?</li>
+                                    <li>Which ink(s) appear to be relatively pure substances?</li>
+                                    <li>Imagine the "Mystery Ink" was found at a "crime scene". Could you match it to any of the known pens based on your results? Explain your reasoning (use Rf values).</li>
+                                </ol>
+
+                                <div class="question" style="margin-top: 20px;">
+                                    <p>Based on typical chromatography experiments, which statement is generally correct?</p>
+                                    <div class="options">
+                                        <label><input type="radio" name="lab-q1" value="wrong"> All coloured inks are pure substances.</label>
+                                        <label><input type="radio" name="lab-q1" value="correct"> A substance's Rf value can change if a different solvent is used.</label>
+                                        <label><input type="radio" name="lab-q1" value="wrong"> Ethanol always makes substances travel further than water does.</label>
+                                        <label><input type="radio" name="lab-q1" value="wrong"> Rf values are usually greater than 1.</label>
+                                    </div>
+                                    <div class="feedback correct">Correct! The interaction between the substance, stationary phase, and mobile phase determines the Rf value. Changing the solvent (mobile phase) changes these interactions.</div>
+                                    <div class="feedback incorrect">Incorrect. The Rf value depends on the specific combination of stationary phase, mobile phase (solvent), and substance. Changing the solvent will likely change the Rf value.</div>
+                                </div>
+                            </div>
+                         </div>
+                     </div> <!-- End lab-workspace -->
+                 </div> <!-- End lab-container -->
+            </div> <!-- End Card -->
+        </div> <!-- End Virtual Lab Section -->
+
+
+        <!-- ========================= -->
+        <!-- === Practice Section === -->
+        <!-- ========================= -->
+        <div class="content-section" id="practice">
+             <div class="card">
+                 <h2>Practice Questions</h2>
+                 <p>Test your understanding of chromatography principles and calculations.</p>
+
+                 <div class="practice-container">
+                     <div class="question">
+                         <p>1. In paper chromatography, what is typically the stationary phase?</p>
+                         <div class="options">
+                             <label><input type="radio" name="practice-q1" value="wrong"> The solvent (e.g., water or ethanol)</label>
+                             <label><input type="radio" name="practice-q1" value="correct"> The paper (cellulose)</label>
+                             <label><input type="radio" name="practice-q1" value="wrong"> The ink spot</label>
+                             <label><input type="radio" name="practice-q1" value="wrong"> The beaker</label>
+                         </div>
+                         <div class="feedback correct">Correct! The paper itself is the stationary phase that the mobile phase moves through.</div>
+                         <div class="feedback incorrect">Incorrect. The stationary phase is the material that stays still. In paper chromatography, this is the paper.</div>
+                     </div>
+
+                     <div class="question">
+                         <p>2. A chromatogram shows a single spot with an Rf value of 0.75. What does this suggest about the substance?</p>
+                         <div class="options">
+                             <label><input type="radio" name="practice-q2" value="wrong"> It is a mixture of several components.</label>
+                             <label><input type="radio" name="practice-q2" value="wrong"> It did not dissolve in the solvent.</label>
+                             <label><input type="radio" name="practice-q2" value="correct"> It is likely a pure substance under these conditions.</label>
+                             <label><input type="radio" name="practice-q2" value="wrong"> It travelled further than the solvent front.</label>
+                         </div>
+                         <div class="feedback correct">Correct! A single spot generally indicates a single component, suggesting purity under the specific chromatographic conditions used.</div>
+                         <div class="feedback incorrect">Incorrect. A single spot on a chromatogram usually indicates a pure substance. Mixtures show multiple spots. Rf values cannot be > 1.</div>
+                     </div>
+
+                     <div class="question">
+                         <p>3. During an experiment, the solvent front moved 10 cm from the baseline. A blue spot moved 8 cm from the baseline. Calculate the Rf value of the blue spot.</p>
+                         <div class="options">
+                             <label><input type="radio" name="practice-q3" value="wrong"> 1.25</label>
+                             <label><input type="radio" name="practice-q3" value="wrong"> 0.20</label>
+                             <label><input type="radio" name="practice-q3" value="correct"> 0.80</label>
+                             <label><input type="radio" name="practice-q3" value="wrong"> 80</label>
+                         </div>
+                         <div class="feedback correct">Correct! Rf = (distance substance moved) / (distance solvent moved) = 8 cm / 10 cm = 0.80.</div>
+                         <div class="feedback incorrect">Incorrect. Remember the formula: Rf = (distance substance moved) / (distance solvent moved) = 8 cm / 10 cm = 0.80.</div>
+                     </div>
+
+                     <div class="question">
+                         <p>4. Why is it important to draw the baseline in pencil when preparing a chromatogram?</p>
+                         <div class="options">
+                             <label><input type="radio" name="practice-q4" value="wrong"> Pencil lead helps the solvent move faster.</label>
+                             <label><input type="radio" name="practice-q4" value="correct"> Pencil lead (graphite) is insoluble and won't move with the solvent, unlike ink.</label>
+                             <label><input type="radio" name="practice-q4" value="wrong"> Pencil makes a darker line that is easier to see.</label>
+                             <label><input type="radio" name="practice-q4" value="wrong"> Pencil lines absorb the solvent better than ink lines.</label>
+                         </div>
+                         <div class="feedback correct">Correct! Pencil graphite is insoluble in common chromatography solvents, so it stays put. Ink from a pen would dissolve and separate, interfering with the results.</div>
+                         <div class="feedback incorrect">Incorrect. Ink from a pen contains dyes that would dissolve in the solvent and separate along with the sample, confusing the chromatogram. Pencil lead (graphite) is insoluble and stays on the baseline.</div>
+                     </div>
+
+                      <div class="question">
+                         <p>5. Two substances are run on the same chromatogram using the same solvent. Substance A has an Rf value of 0.3 and Substance B has an Rf value of 0.6. Which substance is more strongly adsorbed to the stationary phase?</p>
+                         <div class="options">
+                             <label><input type="radio" name="practice-q5" value="correct"> Substance A (Rf = 0.3)</label>
+                             <label><input type="radio" name="practice-q5" value="wrong"> Substance B (Rf = 0.6)</label>
+                             <label><input type="radio" name="practice-q5" value="wrong"> Both are adsorbed equally.</label>
+                             <label><input type="radio" name="practice-q5" value="wrong"> Cannot be determined from Rf values.</label>
+                         </div>
+                         <div class="feedback correct">Correct! A lower Rf value means the substance travelled a shorter distance relative to the solvent. This indicates stronger attraction/adsorption to the stationary phase and/or lower solubility in the mobile phase.</div>
+                         <div class="feedback incorrect">Incorrect. A lower Rf value indicates the substance moved less far. This happens when it is more strongly attracted (adsorbed) to the stationary phase (or less soluble in the mobile phase). Therefore, Substance A is more strongly adsorbed.</div>
+                     </div>
+
+                     <button class="btn btn-secondary" id="check-answers">Check All Answers</button>
+                 </div>
+
+                 <div class="image-placeholder" style="margin-top: 30px;">
+                     <p>Image: Example chromatograms - one showing a pure substance (single spot), one showing a mixture (multiple spots), one comparing an unknown to known standards.</p>
+                 </div>
+
+             </div> <!-- End Card -->
+        </div> <!-- End Practice Section -->
+
+
+        <!-- ===================== -->
+        <!-- === Game Section === -->
+        <!-- ===================== -->
+        <div class="content-section" id="game">
+             <div class="card">
+                 <h2>Chromatography Challenge Game</h2>
+                 <p>Test your knowledge with these interactive challenges!</p>
+
+                 <div class="game-container">
+                     <h3>Game 1: Rf Value Matching</h3>
+                     <p>Drag the substance description to the correct Rf value based on how far you expect it to travel.</p>
+
+                     <div class="drag-container" id="rf-matching-game">
+                         <div class="drag-item" draggable="true" data-id="A">Travels very little</div>
+                         <div class="drag-item" draggable="true" data-id="B">Travels about halfway</div>
+                         <div class="drag-item" draggable="true" data-id="C">Travels almost with the solvent</div>
+                         <div class="drag-item" draggable="true" data-id="D">Travels a moderate distance</div>
+                     </div>
+
+                     <div id="rf-drop-zones">
+                         <div>
+                             <strong>Rf ≈ 0.15:</strong>
+                             <div class="drop-container" data-answer="A"></div>
+                         </div>
+                         <div>
+                             <strong>Rf ≈ 0.50:</strong>
+                             <div class="drop-container" data-answer="B"></div>
+                         </div>
+                         <div>
+                             <strong>Rf ≈ 0.65:</strong>
+                             <div class="drop-container" data-answer="D"></div>
+                         </div>
+                         <div>
+                              <strong>Rf ≈ 0.90:</strong>
+                             <div class="drop-container" data-answer="C"></div>
+                         </div>
+                     </div>
+
+                     <button class="btn" id="check-matches">Check Matches</button>
+                     <p id="matching-feedback"></p>
+
+                     <hr style="margin: 30px 0;">
+
+                     <h3>Game 2: Identify the Mixture Components</h3>
+                     <!-- Replaced placeholder with simulated chromatogram -->
+                     <div class="chromatogram-simulation" aria-label="Simulated chromatogram showing four lanes labelled Red, Blue, Yellow, and Mystery. A baseline is at 20% height, solvent front at 90%. Red lane has one spot at Rf 0.8. Blue lane has one spot at Rf 0.4. Yellow lane has one spot at Rf 0.6. Mystery lane has two spots matching the Blue (Rf 0.4) and Yellow (Rf 0.6) spots.">
+                         <div class="baseline"></div>
+                         <div class="solvent-front"></div>
+                         <!-- Lane Labels -->
+                         <div class="lane-label" style="left: 0%;">Red</div>
+                         <div class="lane-label" style="left: 25%;">Blue</div>
+                         <div class="lane-label" style="left: 50%;">Yellow</div>
+                         <div class="lane-label" style="left: 75%;">Mystery</div>
+                         <!-- Initial Dots -->
+                          <div class="initial-dot" style="left: 12.5%;"></div>
+                          <div class="initial-dot" style="left: 37.5%;"></div>
+                          <div class="initial-dot" style="left: 62.5%;"></div>
+                          <div class="initial-dot" style="left: 87.5%;"></div>
+                         <!-- Spots -->
+                         <div class="spot red"></div>
+                         <div class="spot blue"></div>
+                         <div class="spot yellow"></div>
+                         <div class="spot mystery-blue"></div>
+                         <div class="spot mystery-yellow"></div>
+                     </div>
+                     <p style="text-align: center; font-size: 0.9em; color: #555;">(Simulated Chromatogram)</p>
+
+                     <p>The chromatogram above shows the separation of a Mystery Green Ink compared to known pure Red, Blue, and Yellow dyes, all run using the same solvent and paper.</p>
+                     <p>Based on the positions (and therefore Rf values) of the spots, which pure dyes make up the Mystery Green Ink?</p>
+
+                     <div class="options" style="margin: 20px 0;">
+                         <label>
+                             <input type="checkbox" name="mystery" value="Red"> <span>Red Dye</span>
+                         </label>
+                         <label>
+                             <input type="checkbox" name="mystery" value="Blue"> <span>Blue Dye</span>
+                         </label>
+                         <label>
+                             <input type="checkbox" name="mystery" value="Yellow"> <span>Yellow Dye</span>
+                         </label>
+                     </div>
+
+                     <button class="btn" id="check-mystery">Check Mystery Ink</button>
+                     <p id="mystery-feedback"></p>
+                 </div>
+             </div> <!-- End Card -->
+        </div> <!-- End Game Section -->
+
+    </div> <!-- End Container -->
+
+    <script>
+        // Wait for DOM to be fully loaded before running any JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // --- Helper Functions ---
+            function getElement(id) {
+                const element = document.getElementById(id);
+                if (!element) {
+                    console.warn(`Element with ID "${id}" not found.`);
+                }
+                return element;
+            }
+
+            function querySelector(selector) {
+                const element = document.querySelector(selector);
+                 if (!element) {
+                    // console.warn(`Element with selector "${selector}" not found.`); // Removed for non-critical elements
+                 }
+                 return element;
+            }
+
+            function querySelectorAll(selector) {
+                 const elements = document.querySelectorAll(selector);
+                 // No warning needed if empty list is valid, e.g., optional elements
+                 return elements;
+            }
+
+            function addSafeEventListener(elementOrId, event, callback) {
+                const element = (typeof elementOrId === 'string') ? getElement(elementOrId) : elementOrId;
+                if (element) {
+                    element.addEventListener(event, callback);
+                } else {
+                    // console.warn(`Cannot add listener: Element ${elementOrId} not found.`); // Removed for non-critical elements
+                }
+            }
+
+            // --- Navigation Tabs ---
+            const navTabs = querySelectorAll('.nav-tab');
+            const contentSections = querySelectorAll('.content-section');
+
+            navTabs.forEach(tab => {
+                addSafeEventListener(tab, 'click', () => {
+                    // Deactivate all tabs and sections
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(section => section.classList.remove('active'));
+
+                    // Activate clicked tab and corresponding section
+                    tab.classList.add('active');
+                    const targetSection = getElement(tab.dataset.tab);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                });
+            });
+
+            // --- Tutorial Tabs ---
+            const tutorialTabs = querySelectorAll('.tutorial-tab');
+            const tutorialContents = querySelectorAll('.tutorial-content');
+
+            tutorialTabs.forEach(tab => {
+                addSafeEventListener(tab, 'click', () => {
+                    // Deactivate all tutorial tabs and content
+                    tutorialTabs.forEach(t => t.classList.remove('active'));
+                    tutorialContents.forEach(content => content.classList.remove('active'));
+
+                    // Activate clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const targetContent = getElement(tab.dataset.tutorial);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+
+            // --- Rf Value Calculator ---
+            addSafeEventListener('calculate-rf', 'click', () => {
+                const distanceSubstanceInput = getElement('distance-substance');
+                const distanceSolventInput = getElement('distance-solvent');
+                const rfResult = getElement('rf-result');
+
+                if (!distanceSubstanceInput || !distanceSolventInput || !rfResult) return;
+
+                const distanceSubstance = parseFloat(distanceSubstanceInput.value);
+                const distanceSolvent = parseFloat(distanceSolventInput.value);
+
+                rfResult.textContent = ''; // Clear previous result
+                rfResult.style.color = ''; // Reset color
+
+                if (isNaN(distanceSubstance) || isNaN(distanceSolvent)) {
+                    rfResult.textContent = '⚠️ Please enter valid numbers for both distances.';
+                    rfResult.style.color = 'var(--accent)';
+                    return;
+                }
+                 if (distanceSolvent <= 0) {
+                     rfResult.textContent = '⚠️ Solvent distance must be greater than zero.';
+                     rfResult.style.color = 'var(--accent)';
+                    return;
+                }
+                if (distanceSubstance < 0) {
+                     rfResult.textContent = '⚠️ Substance distance cannot be negative.';
+                     rfResult.style.color = 'var(--accent)';
+                    return;
+                 }
+                if (distanceSubstance > distanceSolvent) {
+                    rfResult.textContent = '⚠️ Substance distance cannot be greater than solvent distance.';
+                    rfResult.style.color = 'var(--accent)';
+                    return;
+                }
+
+                const rfValue = distanceSubstance / distanceSolvent;
+                rfResult.textContent = `Calculated Rf value = ${rfValue.toFixed(2)}`;
+                rfResult.style.color = 'var(--primary)'; // Set to default color on success
+            });
+
+            // --- Checkpoint/Practice Question Feedback ---
+            // Generic function to handle radio/checkbox button feedback within a question container
+            function handleInputFeedback(inputElement) {
+                const questionDiv = inputElement.closest('.question');
+                if (!questionDiv) return;
+
+                const correctFeedback = questionDiv.querySelector('.feedback.correct');
+                const incorrectFeedback = questionDiv.querySelector('.feedback.incorrect');
+                const options = questionDiv.querySelectorAll('.options label');
+
+                // Hide both feedbacks initially
+                if (correctFeedback) correctFeedback.style.display = 'none';
+                if (incorrectFeedback) incorrectFeedback.style.display = 'none';
+                 // Reset option background
+                 options.forEach(label => label.style.backgroundColor = '');
+
+                 let isCorrect = false;
+                 if (inputElement.type === 'radio') {
+                    isCorrect = (inputElement.value === 'correct');
+                 }
+                 // Add checkbox logic if needed later
+
+                if (isCorrect) {
+                    if (correctFeedback) correctFeedback.style.display = 'block';
+                    if (inputElement.parentElement && inputElement.parentElement.tagName === 'LABEL') {
+                        inputElement.parentElement.style.backgroundColor = 'rgba(46, 204, 113, 0.2)'; // Highlight correct label lightly
+                    }
+                } else {
+                    if (incorrectFeedback) incorrectFeedback.style.display = 'block';
+                     if (inputElement.parentElement && inputElement.parentElement.tagName === 'LABEL') {
+                        inputElement.parentElement.style.backgroundColor = 'rgba(231, 76, 60, 0.2)'; // Highlight incorrect label lightly
+                    }
+                }
+            }
+
+            // Add listeners to all radio buttons in tutorial and practice
+            querySelectorAll('input[type="radio"]').forEach(radio => {
+                addSafeEventListener(radio, 'change', (e) => handleInputFeedback(e.target));
+            });
+
+            // Practice Section - Check All Answers Button
+             addSafeEventListener('check-answers', 'click', () => {
+                 querySelectorAll('#practice .question').forEach(question => {
+                     const selectedOption = question.querySelector('input[type="radio"]:checked');
+                     if (selectedOption) {
+                         handleInputFeedback(selectedOption); // Show feedback for the selected answer
+                     } else {
+                         // Optionally indicate that the question wasn't answered
+                         const feedbacks = question.querySelectorAll('.feedback');
+                         feedbacks.forEach(fb => fb.style.display = 'none'); // Hide any previous feedback
+                         const options = question.querySelectorAll('.options label');
+                         options.forEach(label => label.style.backgroundColor = ''); // Clear highlighting
+
+                         // You could add a message here like "Please select an answer"
+                         // e.g. question.insertAdjacentHTML('beforeend', '<p class="warning">Please select an answer.</p>')
+                     }
+                 });
+             });
+
+
+            // --- Tutorial Animation ---
+            let animationRunning = false;
+            let waterLevel = 0;
+            let animationInterval = null;
+            let animationElements = []; // Keep track of dynamically created elements
+
+            const startAnimBtn = getElement('start-animation');
+            const resetAnimBtn = getElement('reset-animation');
+            const paperStripAnim = getElement('paper-strip'); // Use specific ID if needed
+            const sampleSpotAnim = getElement('sample-spot');
+            const beakerWaterAnim = getElement('beaker-water');
+
+            addSafeEventListener(startAnimBtn, 'click', () => {
+                if (animationRunning || !paperStripAnim || !sampleSpotAnim || !beakerWaterAnim || !startAnimBtn || !resetAnimBtn) return;
+
+                animationRunning = true;
+                startAnimBtn.style.display = 'none';
+                resetAnimBtn.style.display = 'inline-block';
+                resetAnimBtn.disabled = true; // Disable reset until animation finishes
+
+                // --- Create dynamic elements for animation ---
+                const solventFront = document.createElement('div');
+                solventFront.className = 'animation-element solvent-front-anim'; // Use specific class
+                paperStripAnim.appendChild(solventFront);
+                animationElements.push(solventFront);
+
+                // Example: Black ink separation (Yellow, Red, Blue)
+                const spotsData = [
+                    { color: 'yellow', speed: 0.7 },
+                    { color: 'red', speed: 0.3 },
+                    { color: 'blue', speed: 0.5 }
+                ];
+
+                spotsData.forEach(data => {
+                    const spot = document.createElement('div');
+                    spot.className = 'animation-element color-spot';
+                    spot.style.backgroundColor = data.color;
+                    paperStripAnim.appendChild(spot);
+                    animationElements.push(spot);
+                    spot.dataset.speed = data.speed; // Store speed factor
+                });
+
+                // Hide the original black spot
+                sampleSpotAnim.style.opacity = '0';
+
+                // Animate solvent front and spots
+                const maxWaterLevel = 100; // Corresponds to ~130px travel (100 steps * 1px/step + 30px base)
+                const baseLevel = 30; // Solvent starts at 30px bottom
+                const spotStartLevel = 40; // Spots start effectively at 40px
+
+                waterLevel = 0; // Reset water level for this run
+                animationInterval = setInterval(() => {
+                    waterLevel++;
+                    const currentSolventPos = baseLevel + waterLevel;
+
+                    // Move solvent front
+                    solventFront.style.bottom = `${currentSolventPos}px`;
+
+                    // Move colored spots
+                    animationElements.forEach(el => {
+                        if (el.classList.contains('color-spot')) {
+                            // Start moving spots slightly after solvent passes initial spot position
+                            if (currentSolventPos >= spotStartLevel + 5) {
+                                el.style.opacity = '1';
+                                const speed = parseFloat(el.dataset.speed);
+                                // Calculate spot position based on solvent travel *above the starting line*
+                                const solventTravelAboveStart = Math.max(0, currentSolventPos - spotStartLevel);
+                                el.style.bottom = `${spotStartLevel + solventTravelAboveStart * speed}px`;
+                            }
+                        }
+                    });
+
+                    // Stop animation
+                    if (waterLevel >= maxWaterLevel) {
+                        clearInterval(animationInterval);
+                        animationInterval = null;
+                        resetAnimBtn.disabled = false; // Enable reset button now
+                    }
+                }, 60); // Interval controls speed (lower = faster)
+            });
+
+            addSafeEventListener(resetAnimBtn, 'click', () => {
+                 if (animationInterval) { // Stop ongoing animation if reset is clicked early
+                    clearInterval(animationInterval);
+                    animationInterval = null;
+                 }
+                animationRunning = false;
+                waterLevel = 0;
+
+                if (startAnimBtn) startAnimBtn.style.display = 'inline-block';
+                if (resetAnimBtn) {
+                    resetAnimBtn.style.display = 'none';
+                    resetAnimBtn.disabled = true; // Should be hidden anyway, but good practice
+                }
+
+                // Reset beaker water level visually (optional, could just reset for next run)
+                if (beakerWaterAnim) beakerWaterAnim.style.height = '30px';
+
+                // Show the original black spot
+                if (sampleSpotAnim) sampleSpotAnim.style.opacity = '1';
+
+                // Remove dynamically created elements
+                animationElements.forEach(element => {
+                    if (element && element.parentNode) {
+                        element.parentNode.removeChild(element);
+                    }
+                });
+                animationElements = []; // Clear the tracking array
+
+                console.log("Animation reset.");
+            });
+
+
+            // --- Virtual Lab Logic ---
+            let selectedPen = null;
+            let selectedSolvent = null;
+            let experimentRunning = false;
+            let labAnimationTimeout = null; // To store timeout ID for clearing on reset
+
+            const startExperimentBtn = getElement('start-experiment');
+            const resetExperimentBtn = getElement('reset-experiment');
+            const labSidebarTools = querySelectorAll('.lab-sidebar .tool');
+            const chromatographyBeaker = getElement('chromatography-beaker');
+            const labChromatogram = getElement('lab-chromatogram');
+            const labSolventVisual = getElement('lab-solvent');
+            const labResultsDiv = getElement('lab-results');
+            const resultsTableBody = getElement('results-data');
+
+             // Function to update Run button status
+             function updateRunButtonStatus() {
+                 if (!startExperimentBtn) return;
+                 if (selectedPen && selectedSolvent) {
+                     startExperimentBtn.disabled = false;
+                 } else {
+                     startExperimentBtn.disabled = true;
+                 }
+             }
+
+            // Lab tools selection
+            labSidebarTools.forEach(tool => {
+                addSafeEventListener(tool, 'click', () => {
+                    const toolId = tool.id;
+                    const toolType = tool.dataset.type; // pen, solvent
+
+                    // Prevent changing pen/solvent while experiment is running
+                    if (experimentRunning) return;
+
+                    // Handle pen/solvent selection
+                    if (toolType === 'pen' || toolType === 'solvent') {
+                        // Deselect other tools of the same type
+                        querySelectorAll(`.lab-sidebar .tool[data-type="${toolType}"]`).forEach(t => {
+                            t.classList.remove('selected');
+                        });
+                        // Select the clicked tool
+                        tool.classList.add('selected');
+
+                        // Update state variable
+                        if (toolType === 'pen') selectedPen = toolId;
+                        if (toolType === 'solvent') selectedSolvent = toolId;
+
+                        // Update button status
+                        updateRunButtonStatus();
+                    }
+                });
+            });
+
+            // Run experiment
+            addSafeEventListener(startExperimentBtn, 'click', () => {
+                 // Simplified check - removed ruler elements
+                 if (!selectedPen || !selectedSolvent || experimentRunning || !chromatographyBeaker || !labChromatogram || !labSolventVisual || !resetExperimentBtn || !startExperimentBtn || !labResultsDiv || !resultsTableBody) {
+                    console.error("Cannot start experiment - missing elements, selection, or already running.");
+                     if (!selectedPen || !selectedSolvent) {
+                         alert('Please select both an ink sample and a solvent before starting.');
+                     }
+                    return;
+                }
+
+                experimentRunning = true;
+                startExperimentBtn.style.display = 'none';
+                resetExperimentBtn.style.display = 'inline-block';
+                labResultsDiv.style.display = 'none'; // Hide previous results
+
+                // --- Prepare Visuals ---
+                chromatographyBeaker.style.display = 'block';
+                // Clear previous chromatogram elements
+                while (labChromatogram.firstChild) {
+                    labChromatogram.removeChild(labChromatogram.firstChild);
+                }
+
+                // Set solvent color
+                labSolventVisual.style.backgroundColor = (selectedSolvent === 'water') ? 'rgba(135, 206, 250, 0.6)' : 'rgba(210, 210, 210, 0.6)'; // Water=blueish, Alcohol=greyish
+
+                // --- Define Experiment Parameters (Rf values based on ink/solvent) ---
+                 // Base Rf values (e.g., in Water) - Scale 0 to 1
+                 const baseRf = {
+                    'black-pen': [{ color: 'cyan', rf: 0.15 }, { color: 'magenta', rf: 0.45 }, { color: 'yellow', rf: 0.80 }],
+                    'blue-pen': [{ color: 'blue', rf: 0.40 }],
+                    'green-pen': [{ color: 'blue', rf: 0.40 }, { color: 'yellow', rf: 0.80 }], // Mixture
+                    'red-pen': [{ color: 'red', rf: 0.65 }],
+                    'mystery-pen': [{ color: 'red', rf: 0.65 }, { color: 'blue', rf: 0.40 }] // e.g., Red + Blue
+                 };
+
+                let currentRfData = JSON.parse(JSON.stringify(baseRf[selectedPen])); // Deep copy to modify
+
+                // Adjust Rf based on solvent (Ethanol makes most things travel slightly further)
+                 let solventFactor = 1.0;
+                 if (selectedSolvent === 'alcohol') {
+                    solventFactor = 1.15; // Example factor
+                     currentRfData.forEach(spot => {
+                         // Increase Rf, but cap at ~0.95 (nothing perfectly reaches solvent front)
+                         spot.rf = Math.min(spot.rf * solventFactor, 0.95);
+                     });
+                 }
+
+                // --- Simulate Chromatography ---
+                const paperHeight = 210; // Visual height of paper in px
+                const baselinePos = 40; // Starting line position in px from bottom
+
+                // **** MODIFICATION: Ensure solvent stops visibly below the top ****
+                const maxSolventTravelFraction = 0.85; // Solvent travels 85% of the available height above baseline
+                const availablePaperHeight = paperHeight - baselinePos;
+                const solventTravelDistance = availablePaperHeight * maxSolventTravelFraction; // Actual distance solvent travels from baseline
+                const maxSolventPos = baselinePos + solventTravelDistance; // Final absolute position of solvent front
+                // **** END MODIFICATION ****
+
+                 const animationDuration = 5000; // 5 seconds
+
+                 // Add initial spot visual
+                 const initialSpot = document.createElement('div');
+                 initialSpot.className = 'molecule initial-spot';
+                 initialSpot.style.backgroundColor = baseRf[selectedPen][0].color; // Use first color for initial spot appearance, or determine dominant color
+                 // Special handling for known mixtures maybe?
+                 if (selectedPen === 'black-pen') initialSpot.style.backgroundColor = 'black';
+                 if (selectedPen === 'green-pen') initialSpot.style.backgroundColor = 'green';
+                 if (selectedPen === 'mystery-pen') initialSpot.style.backgroundColor = 'purple'; // Example mixture appearance
+                 labChromatogram.appendChild(initialSpot);
+
+                 // Add solvent front visual
+                 const solventFront = document.createElement('div');
+                 solventFront.className = 'solvent-front-lab';
+                 solventFront.style.bottom = `${baselinePos - 10}px`; // Start just below baseline
+                 labChromatogram.appendChild(solventFront);
+
+                // Create elements for separated spots (initially hidden at baseline)
+                 const spotElements = currentRfData.map(spotData => {
+                     const spot = document.createElement('div');
+                     spot.className = 'molecule separated-spot';
+                     spot.style.backgroundColor = spotData.color;
+                     spot.style.bottom = `${baselinePos}px`; // Start at baseline
+                     spot.style.opacity = '0'; // Hidden
+                     labChromatogram.appendChild(spot);
+                     return { element: spot, rf: spotData.rf, color: spotData.color }; // Store element and target Rf
+                 });
+
+                 // Start animation after a short delay
+                 labAnimationTimeout = setTimeout(() => {
+                     // Animate solvent front
+                     solventFront.style.transition = `bottom ${animationDuration}ms ease-out`;
+                     solventFront.style.bottom = `${maxSolventPos}px`; // Use the calculated maxSolventPos
+
+                    // Fade out initial spot as separation starts
+                    initialSpot.style.opacity = '0.1';
+
+                    // Animate separated spots
+                    spotElements.forEach(spotInfo => {
+                        // Position calculation uses the MODIFIED solventTravelDistance
+                        const targetBottom = baselinePos + (spotInfo.rf * solventTravelDistance);
+                        spotInfo.element.style.transition = `bottom ${animationDuration}ms ease-out, opacity ${animationDuration/3}ms ease-in ${animationDuration/4}ms`; // Fade in slightly delayed
+                        spotInfo.element.style.bottom = `${targetBottom}px`; // Position automatically adjusted
+                        spotInfo.element.style.opacity = '1';
+                    });
+
+                    // --- After animation finishes ---
+                    labAnimationTimeout = setTimeout(() => {
+                        if (!experimentRunning) return; // Check if reset happened during animation
+                        if (labResultsDiv) labResultsDiv.style.display = 'block';
+
+                        // --- Populate Results Table (uses the MODIFIED solventTravelDistance for mm values) ---
+                        const penName = selectedPen.replace('-pen', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        const solventName = selectedSolvent.charAt(0).toUpperCase() + selectedSolvent.slice(1);
+
+                        const spotDistancesMm = spotElements.map(s => (s.rf * solventTravelDistance).toFixed(0)); // Distance based on actual travel
+                        const solventDistanceMm = solventTravelDistance.toFixed(0); // The actual distance solvent travelled from baseline
+                        const rfValuesStr = spotElements.map(s => s.rf.toFixed(2)); // Rf values are inherent properties used in simulation
+                        let componentsDesc = '';
+                        if (spotElements.length > 1) {
+                            componentsDesc = `${spotElements.length} components (${spotElements.map(s => s.color).join(', ')})`;
+                        } else {
+                            componentsDesc = `1 component (${spotElements[0].color})`;
+                        }
+
+                         // Add new row
+                         const newRow = resultsTableBody.insertRow();
+                         newRow.innerHTML = `
+                             <td>${penName}</td>
+                             <td>${solventName}</td>
+                             <td style="text-align: center;">${spotDistancesMm.join(', ')}</td>
+                             <td style="text-align: center;">${solventDistanceMm}</td>
+                             <td style="text-align: center;">${rfValuesStr.join(', ')}</td>
+                             <td>${componentsDesc}</td>
+                         `;
+
+                    }, animationDuration + 500); // Wait for animation + buffer
+
+                 }, 200); // Short delay before starting animation
+            });
+
+            // Reset experiment
+            addSafeEventListener(resetExperimentBtn, 'click', () => {
+                try {
+                    // Clear any running timeouts
+                    if (labAnimationTimeout) {
+                        clearTimeout(labAnimationTimeout);
+                        labAnimationTimeout = null;
+                    }
+
+                    experimentRunning = false;
+                    selectedPen = null;
+                    selectedSolvent = null;
+
+                    if (startExperimentBtn) {
+                        startExperimentBtn.style.display = 'inline-block';
+                         startExperimentBtn.disabled = true; // Disable until selections are made again
+                    }
+                    if (resetExperimentBtn) resetExperimentBtn.style.display = 'none';
+
+
+                    // Reset selections visually
+                    labSidebarTools.forEach(t => {
+                        t.classList.remove('selected');
+                    });
+
+                    // Hide experiment visuals
+                    if (chromatographyBeaker) chromatographyBeaker.style.display = 'none';
+                    if (labChromatogram) {
+                        while (labChromatogram.firstChild) {
+                            labChromatogram.removeChild(labChromatogram.firstChild);
+                        }
+                    }
+
+                    // Clear results table
+                     if (resultsTableBody) resultsTableBody.innerHTML = '';
+
+
+                    console.log("Experiment reset successfully.");
+                } catch (error) {
+                    console.error("Error during experiment reset:", error);
+                }
+            });
+
+
+            // --- Game Logic ---
+
+            // Game 1: Matching Rf Values (Drag and Drop)
+             const dragItems = querySelectorAll('.drag-item');
+             const dropContainers = querySelectorAll('.drop-container');
+
+             dragItems.forEach(item => {
+                 addSafeEventListener(item, 'dragstart', (e) => {
+                     // Use try...catch for older browser compatibility if needed
+                     try {
+                         e.dataTransfer.setData('text/plain', item.dataset.id);
+                         e.dataTransfer.effectAllowed = 'move'; // Indicate moving is allowed
+                     } catch (err) {
+                         console.warn("setData failed (possibly IE)", err);
+                     }
+                     setTimeout(() => { item.style.opacity = '0.5'; }, 0); // Visual feedback
+                     item.style.cursor = 'grabbing';
+                 });
+
+                 addSafeEventListener(item, 'dragend', () => {
+                     item.style.opacity = '1'; // Restore opacity
+                     item.style.cursor = 'grab';
+                 });
+             });
+
+             dropContainers.forEach(container => {
+                 addSafeEventListener(container, 'dragover', (e) => {
+                     e.preventDefault(); // Necessary to allow drop
+                     e.dataTransfer.dropEffect = 'move'; // Indicate move is possible
+                     container.classList.add('highlight');
+                 });
+
+                 addSafeEventListener(container, 'dragleave', () => {
+                     container.classList.remove('highlight');
+                 });
+
+                 addSafeEventListener(container, 'drop', (e) => {
+                     e.preventDefault();
+                     container.classList.remove('highlight');
+                     const id = e.dataTransfer.getData('text/plain');
+                     const draggedItem = querySelector(`.drag-item[data-id="${id}"]`); // Find the original item
+
+                     if (draggedItem && container) {
+                         // Check if the drop container is different from the source container
+                         const sourceContainer = draggedItem.parentNode;
+                          if (sourceContainer !== container) {
+                               // If container already has an item, move it back to the drag area
+                               if (container.hasChildNodes() && container.firstChild !== draggedItem) {
+                                   const dragArea = getElement('rf-matching-game');
+                                   // Check if it's actually a drag item before moving
+                                   if (dragArea && container.firstChild.classList.contains('drag-item')) {
+                                       dragArea.appendChild(container.firstChild);
+                                   } else if (container.firstChild) {
+                                       // If not a drag item, just remove it maybe? Or leave it? Decide based on desired behavior.
+                                       // For now, let's assume only drag items end up here.
+                                       if(container.firstChild.classList.contains('drag-item')) {
+                                            dragArea.appendChild(container.firstChild);
+                                       } else {
+                                           container.removeChild(container.firstChild); // Remove non-drag item content if necessary
+                                       }
+                                   }
+                               }
+                               // Append the dragged item
+                               container.appendChild(draggedItem);
+                               draggedItem.style.cursor = 'default'; // Change cursor in drop zone
+                           }
+                     }
+                 });
+             });
+
+
+            // Check Matches Button
+            addSafeEventListener('check-matches', 'click', () => {
+                let correct = 0;
+                let total = 0;
+                const feedbackP = getElement('matching-feedback');
+                if (!feedbackP) return;
+
+                querySelectorAll('#rf-drop-zones .drop-container').forEach(container => {
+                     total++;
+                     const answer = container.dataset.answer;
+                     const item = container.querySelector('.drag-item');
+
+                     // Reset styles first
+                     container.style.backgroundColor = '';
+                     container.style.borderColor = '';
+                     feedbackP.className = ''; // Clear previous feedback class
+
+                     if (item && item.dataset.id === answer) {
+                         correct++;
+                         container.style.backgroundColor = 'rgba(46, 204, 113, 0.1)'; // Correct BG
+                         container.style.borderColor = 'var(--secondary)'; // Correct border
+                     } else {
+                          container.style.backgroundColor = 'rgba(231, 76, 60, 0.1)'; // Incorrect BG
+                         container.style.borderColor = 'var(--accent)'; // Incorrect border
+                     }
+                });
+
+                feedbackP.textContent = `You matched ${correct} out of ${total} correctly!`;
+                if (correct === total) {
+                    feedbackP.classList.add('correct'); // Use class for styling
+                    feedbackP.textContent += ' Excellent!';
+                } else {
+                     feedbackP.classList.add('incorrect'); // Use class for styling
+                    feedbackP.textContent += ' Keep trying!';
+                }
+            });
+
+            // Game 2: Mystery Mixture Analyzer
+             addSafeEventListener('check-mystery', 'click', () => {
+                 const correctAnswers = ['Blue', 'Yellow']; // Based on the image description
+                 const selectedAnswers = [];
+                 const feedbackP = getElement('mystery-feedback');
+                 if (!feedbackP) return;
+
+                 querySelectorAll('input[name="mystery"]:checked').forEach(checkbox => {
+                     selectedAnswers.push(checkbox.value);
+                 });
+
+                 // Simple check: correct number of answers AND all selected are in the correct list
+                 const isCorrect = selectedAnswers.length === correctAnswers.length &&
+                                  selectedAnswers.every(answer => correctAnswers.includes(answer));
+
+                feedbackP.className = ''; // Reset class
+                feedbackP.style.backgroundColor = ''; // Reset background explicitl
+
+                 if (isCorrect) {
+                     feedbackP.textContent = 'Correct! The Mystery Green Ink is a mixture of the Blue Dye and the Yellow Dye, as their spots match the positions (Rf values).';
+                     feedbackP.classList.add('correct'); // Use class for styling
+                 } else {
+                     feedbackP.textContent = 'Not quite. Look closely at which spots in the Mystery Ink lane match the spots in the known dye lanes.';
+                     feedbackP.classList.add('incorrect'); // Use class for styling
+                 }
+             });
+
+            // --- Guided Practice Solution Toggle ---
+            addSafeEventListener('show-solution-1', 'click', (e) => {
+                const solutionDiv = getElement('solution-1');
+                const button = e.target;
+                 if (!solutionDiv || !button) return;
+
+                if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
+                    solutionDiv.style.display = 'block';
+                    button.textContent = 'Hide Solution';
+                } else {
+                    solutionDiv.style.display = 'none';
+                    button.textContent = 'Show Solution';
+                }
+            });
+
+            // --- Initial Setup ---
+            // Ensure the first tab/content is active on load
+            querySelector('.nav-tab')?.classList.add('active');
+            querySelector('.content-section')?.classList.add('active');
+            querySelector('.tutorial-tab')?.classList.add('active');
+            querySelector('.tutorial-content')?.classList.add('active');
+            // Ensure lab start button is disabled initially
+            if (startExperimentBtn) startExperimentBtn.disabled = true;
+
+
+        }); // --- End of DOMContentLoaded ---
+    </script>
+
+</body>
+</html>
+```
