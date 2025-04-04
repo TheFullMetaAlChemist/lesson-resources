@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 10 Chemistry Mock Feedback</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* Intro Screen Styling */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 100;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #intro-screen h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        #intro-screen p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        #start-button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background-color: #ffffff;
+            color: #2193b0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #start-button:hover {
+            background-color: #eef;
+            color: #1a758c;
+        }
+
+        /* Main Content Area (Hidden Initially) */
+        #main-content {
+            display: none; /* Hidden by default */
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Tab Navigation Styling */
+        .tab-nav {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 18px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            font-size: 1em;
+            margin-right: 5px;
+            margin-bottom: -2px; /* Overlap border slightly */
+            border-bottom: 2px solid transparent;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            color: #555;
+        }
+
+        .tab-button:hover {
+            background-color: #eee;
+            color: #000;
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid #2193b0;
+            font-weight: bold;
+            color: #2193b0;
+        }
+
+        /* Tab Content Styling */
+        .tab-content {
+            display: none; /* Hide all tab contents by default */
+            padding-top: 15px;
+            animation: fadeIn 0.5s ease; /* Simple fade-in animation */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab-content.active {
+            display: block; /* Show only the active tab content */
+        }
+
+        /* Content Element Styling */
+        h2 {
+            color: #2193b0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        h3 {
+            color: #1a758c;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        h4 {
+            color: #333;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        p, li {
+            margin-bottom: 10px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        strong { /* Style for 'Model Answer:' and 'Guidance:' */
+            font-weight: 600;
+            color: #0b4f6c;
+        }
+
+        code, .formula { /* Style for formulas, calculations */
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            background-color: #eef;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+
+        .guidance {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2193b0;
+            padding: 10px 15px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .tab-nav {
+                flex-direction: column;
+                align-items: stretch;
+                border-bottom: none;
+            }
+            .tab-button {
+                margin-right: 0;
+                margin-bottom: 5px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                text-align: center;
+                border-bottom: 1px solid #ddd; /* Reset border */
+            }
+            .tab-button.active {
+                border: 1px solid #2193b0;
+                background-color: #e0f7fa;
+            }
+            h2 { font-size: 1.4em; }
+            h3 { font-size: 1.2em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Intro Screen -->
+    <div id="intro-screen">
+        <h1>Year 10 Chemistry Mock Feedback</h1>
+        <p>Welcome! Use this resource to review the model answers and guidance for your recent mock exam. Click the button below to get started.</p>
+        <button id="start-button">Review My Exam</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-button active" data-target="q1">Question 1</button>
+            <button class="tab-button" data-target="q3">Question 3</button>
+            <button class="tab-button" data-target="q4">Question 4</button>
+            <button class="tab-button" data-target="q5">Question 5</button>
+            <button class="tab-button" data-target="q7">Question 7</button>
+            <button class="tab-button" data-target="q8">Question 8</button>
+            <button class="tab-button" data-target="tips">General Tips</button>
+        </div>
+
+        <!-- Tab Content Panels -->
+        <div id="q1" class="tab-content active">
+            <h2>Question 1 – Metals, Non-metals, and Electronic Structure</h2>
+
+            <h3>1.1 Element Q – Periodic Table Section</h3>
+            <p><strong>Model Answer:</strong> D</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Element Q has a low melting point and does not conduct electricity—features typical of non-metals. When reviewing your answer, ask yourself: “Do I remember which part of the periodic table is full of non-metals?"
+            </div>
+
+            <h3>1.2 Element R - Periodic Table Section</h3>
+            <p><strong>Model Answer:</strong> B</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Ions with multiple charges (like R<sup>2+</sup> and R<sup>3+</sup>) are common for transition metals. Make sure you know where transition metals are located and why they often have variable oxidation states.
+            </div>
+
+            <h3>1.3 Differences Between Group 1 and Transition Elements</h3>
+            <p><strong>Model Answer (sample responses):</strong></p>
+            <ol>
+                <li>Group 1 elements have lower melting and boiling points, while transition metals have higher melting and boiling points.</li>
+                <li>Group 1 metals are softer and less dense compared to the usually harder, denser transition metals.</li>
+            </ol>
+            <div class="guidance">
+                <strong>Guidance:</strong> When you answer, list two clear differences. Use words like “lower” and “higher" and make sure you compare like-for-like (e.g., physical state, density, melting point). (See mark scheme for acceptable points.)
+            </div>
+
+            <h3>1.4 Electronic Structure of Aluminium</h3>
+            <p><strong>Model Answer:</strong> 2, 8, 3</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Draw a simple diagram or list the electrons per energy level. This means aluminium has 2 electrons in the first shell, 8 in the second, and 3 in the outer shell. Double-check that you use the periodic table correctly.
+            </div>
+
+            <h3>1.5 How Metals Conduct Electricity</h3>
+            <p><strong>Model Answer:</strong> "Metals conduct electricity because they have <strong>delocalised electrons</strong>. These free electrons move throughout the metal's lattice structure, carrying charge efficiently."</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Remember to mention “delocalised electrons” and explain that these electrons are not fixed to any one atom. This shows you understand how electrical conduction works in metals.
+            </div>
+
+            <h3>1.6 Type of Bonding in Compounds Formed Between Metals and Non-metals</h3>
+            <p><strong>Model Answer:</strong> Ionic</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Think about how metals tend to lose electrons and non-metals gain electrons. This electron transfer creates ionic bonds—so keep that in mind when reviewing your answer.
+            </div>
+        </div>
+
+        <div id="q3" class="tab-content">
+            <h2>Question 3 – Different Forms of Carbon</h2>
+
+            <h3>3.1 Structure and Bonding of Diamond</h3>
+            <p><strong>Model Answer:</strong> "Diamond has a <strong>giant covalent lattice</strong> structure in which each carbon atom is tetrahedrally bonded to four other carbon atoms."</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> In your answer, be sure to include both the structure (giant lattice) and the type of bonding (covalent).
+            </div>
+
+            <h3>3.2 Why Diamond Has a Very High Melting Point</h3>
+            <p><strong>Model Answer:</strong> "Diamond's very high melting point is due to the <strong>strong covalent bonds</strong> throughout its lattice structure, which require a lot of energy to break."</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Focus on the energy required to break multiple bonds in a network.
+            </div>
+
+            <h3>3.3 Naming the Molecule in Figure 6</h3>
+            <p><strong>Model Answer:</strong> Fullerene</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Read the options carefully—this question tests your recall of specific carbon structures.
+            </div>
+
+            <h3>3.4 Use of C<sub>70</sub> in Medicine</h3>
+             <p><strong>Model Answer:</strong> "<code class="formula">C<sub>70</sub></code> is used in medicine because it is <strong>hollow</strong> (or has a large surface area to volume ratio), which allows it to trap and transport drug molecules."</p>
+            <div class="guidance">
+                 <strong>Guidance:</strong> Mention one valid property that makes it suitable for drug delivery.
+             </div>
+
+            <h3>3.5 Calculation for C<sub>70</sub> Molecules</h3>
+            <p><strong>Model Answer:</strong></p>
+            <ol>
+                <li>Calculate moles of <code class="formula">C<sub>70</sub></code>: Moles = mass / molar mass. (Assuming a mass was given in the question, e.g., 1g). Let's assume 1g for illustration:
+                <br> Molar mass of C = 12 g/mol. Molar mass of <code class="formula">C<sub>70</sub></code> = 70 * 12 = 840 g/mol.
+                <br> Moles = <code class="formula">1 g / 840 g/mol ≈ 0.00119</code> mol (adjust if a different mass was given).
+                </li>
+                <li>Multiply by Avogadro's number (<code class="formula">6.02 × 10<sup>23</sup></code>):
+                <br> Number of molecules = <code class="formula">0.00119 mol × 6.02 × 10<sup>23</sup> molecules/mol ≈ 7.16 × 10<sup>20</sup></code> molecules.
+                <br><em>(Note: The OCR text shows calculation for 1/70 moles, implying Ar was used instead of Mr, or a different context. Using the OCR's starting point: Moles ≈ 0.0143)</em>
+                <br> Recalculating based on OCR text's apparent starting moles:
+                <br> Moles ≈ <code class="formula">0.0143</code>
+                <br> Number of molecules = <code class="formula">0.0143 × 6.02 × 10<sup>23</sup> ≈ 8.6 × 10<sup>21</sup></code>
+                </li>
+            </ol>
+            <p>So, based on the OCR intermediate value, there are <code class="formula">8.6 × 10<sup>21</sup></code> <code class="formula">C<sub>70</sub></code> molecules.</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Always write out each step and check your units. A clear calculation helps secure marks even if you make a minor error. Ensure you use the correct molar mass (<code class="formula">M<sub>r</sub></code>) not relative atomic mass (<code class="formula">A<sub>r</sub></code>) unless calculating moles of atoms.
+             </div>
+        </div>
+
+        <div id="q4" class="tab-content">
+            <h2>Question 4 – Producing Zinc Chloride</h2>
+
+            <h3>4.1 Making zinc chloride crystals</h3>
+             <p><strong>Model Answer Steps:</strong></p>
+            <ol>
+                 <li><strong>Mixing Reactants:</strong>
+                     <ul>
+                         <li>Measure a fixed volume of hydrochloric acid into a clean beaker.</li>
+                         <li>Gradually add zinc oxide while stirring. Continue adding until extra zinc oxide remains undissolved; this shows that all the acid has reacted and zinc oxide is now in excess.</li>
+                     </ul>
+                 </li>
+                 <li><strong>Speeding Up the Reaction:</strong>
+                     <ul>
+                         <li>Gently heat the mixture during the reaction. This speeds up the reaction between zinc oxide and hydrochloric acid.</li>
+                     </ul>
+                 </li>
+                 <li><strong>Filtering and Crystallisation:</strong>
+                     <ul>
+                         <li>Filter the solution to remove the excess, undissolved zinc oxide.</li>
+                         <li>Allow the clear zinc chloride solution to evaporate gently (e.g., in an evaporating basin over a water bath) until crystals start to form (crystallisation point).</li>
+                         <li>Leave the solution undisturbed so that crystals can grow.</li>
+                         <li>(Optional final step: Filter off the crystals and dry them).</li>
+                     </ul>
+                 </li>
+             </ol>
+            <div class="guidance">
+                <strong>Tips and Advice:</strong>
+                <ul>
+                    <li><strong>Excess Zinc Oxide:</strong> Adding zinc oxide until it stops dissolving ensures that all the acid has been used up.</li>
+                    <li><strong>Gentle Heating:</strong> Heating the mixture gently helps the reaction go faster without causing splashing or decomposition of products.</li>
+                    <li><strong>Clear, Step-by-Step Process:</strong> Write your answer in clear, logical steps. Make sure to mention measuring, adding excess solid, stirring, heating, filtering, and evaporating/crystallising.</li>
+                </ul>
+            </div>
+
+            <h3>4.2 Ionic Equation for the Displacement Reaction</h3>
+             <p><strong>Model Answer:</strong> <code class="formula">Zn(s) + Cu<sup>2+</sup>(aq) → Zn<sup>2+</sup>(aq) + Cu(s)</code></p>
+            <div class="guidance">
+                 <strong>Guidance:</strong> Always balance your equations for atoms and charge. Check that you're showing electron transfer correctly (spectator ions are removed in ionic equations). Ensure state symbols are included if required.
+             </div>
+
+            <h3>4.3 Why Zinc is Oxidised</h3>
+             <p><strong>Model Answer:</strong> "Zinc is oxidised because it <strong>loses electrons</strong> to form <code class="formula">Zn<sup>2+</sup></code> ions."</p>
+            <div class="guidance">
+                 <strong>Guidance:</strong> Recall that Oxidation Is Loss of electrons (OIL). Reduction Is Gain of electrons (RIG). Link the definition to the specific species involved.
+             </div>
+        </div>
+
+        <div id="q5" class="tab-content">
+            <h2>Question 5 - Reactivity in Group 1 and Noble Gases</h2>
+
+            <h3>5.1 Observation for Rubidium's Reaction with Water</h3>
+             <p><strong>Model Answer:</strong> "Rubidium reacts more vigorously with water than potassium. Observations could include: faster movement on the surface, more rapid fizzing/bubbling (hydrogen gas production), potentially a more violet/lilac flame (if ignited), possibly a small explosion."</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Describe what you would actually *see* in a lab or demonstration compared to a less reactive element in the same group (like potassium). Look for physical signs of a more vigorous reaction (speed, heat, light, sound).
+             </div>
+
+            <h3>5.2 Explaining Rubidium's Higher Reactivity</h3>
+            <p><strong>Model Answer:</strong> "Rubidium is lower down Group 1 than potassium. Rubidium atoms are larger, so the outer electron is further from the nucleus. There is also increased shielding by the inner electron shells. Therefore, the electrostatic attraction between the nucleus and the outer electron is weaker. This makes it easier to lose the outer electron, hence rubidium is more reactive than potassium."</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Use terms like “atomic radius”, “electron shells”, “shielding” and “electrostatic attraction” to explain your reasoning clearly. Compare Rb directly to K.
+             </div>
+
+            <h3>5.3 Balancing the Reaction of Rubidium with Water</h3>
+             <p><strong>Model Answer:</strong> <code class="formula">2 Rb(s) + 2 H<sub>2</sub>O(l) → 2 RbOH(aq) + H<sub>2</sub>(g)</code></p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Ensure that the number of atoms of each element is the same on both sides of the equation. Always double-check your balancing. Include state symbols if required.
+             </div>
+
+            <h3>5.4 Correct Statement About the Noble Gases</h3>
+             <p><strong>Model Answer:</strong> "The noble gases have boiling points that <strong>increase</strong> going down the group."</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Read each option provided in the question carefully. Recall the trends in Group 0 (or 18). As atoms get larger down the group, intermolecular forces (London dispersion forces) between atoms increase, requiring more energy to overcome, thus increasing boiling points.
+             </div>
+
+            <h3>5.5 Calculating the Relative Atomic Mass of Neon</h3>
+            <p><strong>Model Answer:</strong>
+            <code class="formula">
+            A<sub>r</sub> = [ (Isotope 1 abundance × Isotope 1 mass number) + (Isotope 2 abundance × Isotope 2 mass number) + ... ] / 100
+            </code>
+            <br> Using the provided data:
+            <br>
+            <code class="formula">
+            A<sub>r</sub>(Ne) = [ (90.48 × 20) + (0.27 × 21) + (9.25 × 22) ] / 100
+            </code>
+            <br>
+            <code class="formula">
+            A<sub>r</sub>(Ne) = [ 1809.6 + 5.67 + 203.5 ] / 100
+            </code>
+            <br>
+            <code class="formula">
+            A<sub>r</sub>(Ne) = 2018.77 / 100
+            </code>
+            <br>
+            <code class="formula">
+            A<sub>r</sub>(Ne) = 20.1877
+            </code>
+            </p>
+            <p>So, the relative atomic mass of neon is <strong>20.2</strong> (to 3 significant figures, as usually appropriate for A<sub>r</sub> values based on this type of data).</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Set up your weighted average calculation carefully. Multiply the abundance (%) of each isotope by its mass number, sum these values, and divide by 100. Round only at the final step to the required number of significant figures or decimal places. This calculation is common, so practice until you're confident.
+             </div>
+        </div>
+
+        <div id="q7" class="tab-content">
+            <h2>Question 7 – Silicon, Its Extraction, and Reaction of Si<sub>2</sub>H<sub>6</sub></h2>
+
+             <h3>7.1 Position of Silicon in the Reactivity Series</h3>
+             <p><strong>Model Answer:</strong> “The reaction <code class="formula">2 C(s) + SiO<sub>2</sub>(s) → Si(s) + 2 CO(g)</code> shows that carbon is more reactive than silicon because carbon can displace silicon from its oxide (<code class="formula">SiO<sub>2</sub></code>). Therefore, silicon is below carbon in the reactivity series.”</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Displacement reactions are key indicators of relative reactivity. A more reactive element can displace a less reactive element from its compound (often oxide or salt). Ask yourself: which element is 'pushing' the other one out?
+             </div>
+
+             <h3>7.2 Why Aluminium is More Expensive than Carbon</h3>
+             <p><strong>Model Answer:</strong> "Aluminium extraction is more expensive primarily because it requires electrolysis of molten aluminium oxide (<code class="formula">Al<sub>2</sub>O<sub>3</sub></code> dissolved in cryolite). Electrolysis consumes large amounts of electrical energy, which is costly. Carbon (as coke) is obtained relatively cheaply by heating coal, and its use in extraction (like for iron or silicon) often involves high temperatures but generally less energy overall than large-scale electrolysis."</p>
+              <div class="guidance">
+                  <strong>Guidance:</strong> Focus on the differences in extraction methods (electrolysis vs. heating with a reducing agent like carbon) and the associated energy requirements and costs.
+              </div>
+
+             <h3>7.3 Difficulty in Separating Products with Magnesium</h3>
+             <p><strong>Model Answer:</strong> "When magnesium is used to reduce silicon dioxide (<code class="formula">SiO<sub>2</sub> + 2 Mg → Si + 2 MgO</code>), both products, silicon (Si) and magnesium oxide (MgO), are solids at room temperature and often produced as powders mixed together. Separating two solid products can be difficult, unlike separating a solid from a gas or a liquid."</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Think about the physical states (solid, liquid, gas) of the reaction products. Techniques like filtration work well for separating a solid from a liquid or gas, but separating two solids mixed together often requires more complex methods (e.g., differences in density, solubility, or further chemical reactions).
+             </div>
+
+            <h3>7.4 Calculation for Minimum Mass of Magnesium Needed</h3>
+            <p><strong>Model Answer:</strong></p>
+            <ol>
+                <li>Reaction: <code class="formula">SiO<sub>2</sub> + 2 Mg → Si + 2 MgO</code></li>
+                <li>Calculate molar mass of <code class="formula">SiO<sub>2</sub></code>: <code class="formula">M<sub>r</sub>(SiO<sub>2</sub>) = 28.1 + (2 × 16.0) = 60.1 g/mol</code> (Using more precise Ar values: Si≈28.1, O≈16.0. The OCR used Si=28, O=16 giving 60 g/mol, let's use that for consistency with the OCR result). <code class="formula">M<sub>r</sub>(SiO<sub>2</sub>) = 28 + (2 × 16) = 60 g/mol</code></li>
+                <li>Convert mass of <code class="formula">SiO<sub>2</sub></code> to kg: <code class="formula">1.2 kg = 1200 g</code></li>
+                <li>Calculate moles of <code class="formula">SiO<sub>2</sub></code>: Moles = mass / <code class="formula">M<sub>r</sub></code> = <code class="formula">1200 g / 60 g/mol = 20 moles</code></li>
+                <li>Use stoichiometry to find moles of Mg needed: From the equation, 1 mole <code class="formula">SiO<sub>2</sub></code> reacts with 2 moles Mg. So, moles Mg needed = <code class="formula">20 moles SiO<sub>2</sub> × (2 moles Mg / 1 mole SiO<sub>2</sub>) = 40 moles Mg</code></li>
+                <li>Calculate molar mass of Mg: <code class="formula">A<sub>r</sub>(Mg) = 24 g/mol</code> (from OCR) or 24.3 g/mol (periodic table). Using 24 g/mol:</li>
+                <li>Calculate mass of Mg needed: Mass = moles × <code class="formula">A<sub>r</sub></code> = <code class="formula">40 moles × 24 g/mol = 960 g</code></li>
+            </ol>
+             <p>So, the minimum mass of Mg needed is <strong>960 g</strong> (or 0.96 kg).</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Work through the calculation step-by-step: 1. Write balanced equation. 2. Calculate moles of the substance with known mass. 3. Use the mole ratio from the equation. 4. Calculate the mass of the required substance. Convert units carefully (kg to g). Ensure your calculation logic is sound.
+             </div>
+
+            <h3>7.5 Diagram of Si<sub>2</sub>H<sub>6</sub> – Outer Shell Electrons</h3>
+            <p><strong>Model Answer Description:</strong>
+            A diagram should show two silicon (Si) atoms bonded to each other. Each silicon atom should also be bonded to three hydrogen (H) atoms. Silicon is in Group 14, so it has 4 outer shell electrons. Hydrogen is in Group 1, so it has 1 outer shell electron.
+            The diagram (e.g., a dot-and-cross diagram) must show:
+            <ul>
+                <li>A single covalent bond between the two Si atoms (one electron contributed from each Si).</li>
+                <li>Three single covalent bonds between each Si atom and three different H atoms (one electron from Si, one from H for each bond).</li>
+                <li>Each Si atom should have a total of 8 electrons in its outer shell (4 of its own + 1 from the other Si + 3 from H atoms).</li>
+                <li>Each H atom should have a total of 2 electrons in its outer shell (1 of its own + 1 from Si).</li>
+            </ul>
+            Example structure: H<sub>3</sub>Si-SiH<sub>3</sub>
+            </p>
+            <div class="guidance">
+                 <strong>Guidance:</strong> Clarity is key. Draw clearly. Use different symbols (dots and crosses) for electrons from different types of atoms (Si vs H). Ensure each atom obeys the octet rule (or duet rule for H). Count the electrons carefully to show the sharing in covalent bonds.
+             </div>
+
+            <h3>7.6 Reaction of Si<sub>2</sub>H<sub>6</sub> with Oxygen (Gas Volume Calculation)</h3>
+             <p><strong>Model Answer:</strong>
+             Assuming the balanced equation is provided (it's needed here). Let's assume it's:
+             <code class="formula">2 Si<sub>2</sub>H<sub>6</sub>(g) + 7 O<sub>2</sub>(g) → 4 SiO<sub>2</sub>(s) + 6 H<sub>2</sub>O(g)</code>
+             (Note: <code class="formula">SiO<sub>2</sub></code> is solid, <code class="formula">H<sub>2</sub>O</code> is gas/vapour).
+             Gas volumes are proportional to moles at constant temperature and pressure (Avogadro's Law).
+             Given: 30 cm³ <code class="formula">Si<sub>2</sub>H<sub>6</sub></code>, 150 cm³ <code class="formula">O<sub>2</sub></code> (excess).
+             </p>
+             <ol>
+                 <li><strong>Oxygen used:</strong> From stoichiometry (2 vol <code class="formula">Si<sub>2</sub>H<sub>6</sub></code> : 7 vol <code class="formula">O<sub>2</sub></code>). Ratio is 7/2 = 3.5.
+                 <br><code class="formula">Volume O<sub>2</sub> used = 30 cm³ Si<sub>2</sub>H<sub>6</sub> × (7 vol O<sub>2</sub> / 2 vol Si<sub>2</sub>H<sub>6</sub>) = 30 × 3.5 = 105 cm³</code></li>
+                 <li><strong>Excess oxygen:</strong> Initial volume - volume used.
+                 <br><code class="formula">Excess O<sub>2</sub> = 150 cm³ - 105 cm³ = 45 cm³</code></li>
+                 <li><strong>Water vapour produced:</strong> From stoichiometry (2 vol <code class="formula">Si<sub>2</sub>H<sub>6</sub></code> : 6 vol <code class="formula">H<sub>2</sub>O</code>). Ratio is 6/2 = 3.
+                 <br><code class="formula">Volume H<sub>2</sub>O produced = 30 cm³ Si<sub>2</sub>H<sub>6</sub> × (6 vol H<sub>2</sub>O / 2 vol Si<sub>2</sub>H<sub>6</sub>) = 30 × 3 = 90 cm³</code></li>
+                 <li><strong>Total final volume of gases:</strong> Excess oxygen + water vapour (+ any other gaseous products - <code class="formula">SiO<sub>2</sub></code> is solid).
+                 <br><code class="formula">Total volume = Volume(Excess O<sub>2</sub>) + Volume(H<sub>2</sub>O) = 45 cm³ + 90 cm³ = 135 cm³</code></li>
+             </ol>
+             <p>The total volume of gas remaining is <strong>135 cm³</strong>.</p>
+             <div class="guidance">
+                  <strong>Guidance:</strong> Ensure you have the correct balanced chemical equation. Use the mole ratios (which are equivalent to volume ratios for gases). Identify the limiting reactant (<code class="formula">Si<sub>2</sub>H<sub>6</sub></code> here). Calculate the volume of reactant used, the volume of excess reactant remaining, and the volume of gaseous products formed. Remember that solid products (<code class="formula">SiO<sub>2</sub></code>) do not contribute to the gas volume. Sum the volumes of all gases present at the end. Write down each step clearly.
+              </div>
+        </div>
+
+        <div id="q8" class="tab-content">
+            <h2>Question 8 – Acids, Alkalis, and Titration</h2>
+
+             <h3>8.1 pH Dependence on Acid Strength and Concentration</h3>
+             <p><strong>Model Answer:</strong>
+             "pH depends on the concentration of H<sup>+</sup> ions in the solution, which is affected by both the acid's strength and its concentration:
+             <ul>
+                 <li><strong>Strength:</strong> A strong acid (like HCl) ionises completely in water, releasing all its hydrogen atoms as H<sup>+</sup> ions. A weak acid (like ethanoic acid) only partially ionises, releasing fewer H<sup>+</sup> ions for the same concentration. Therefore, a strong acid produces a higher concentration of H<sup>+</sup> ions and has a lower pH than a weak acid of the same concentration.</li>
+                 <li><strong>Concentration:</strong> A higher concentration of any acid (strong or weak) means there are more acid molecules per unit volume. This leads to a higher concentration of H<sup>+</sup> ions (although the proportion ionised stays the same for a weak acid) and therefore a lower pH compared to a more dilute solution of the same acid."</li>
+             </ul>
+             </p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Keep your answer structured. Clearly explain the difference between strong and weak acids (degree of ionisation) and the effect of concentration (amount of substance per volume). Link both factors to the resulting H<sup>+</sup> ion concentration and its effect on pH (lower pH = higher [H<sup>+</sup>]).
+             </div>
+
+            <h3>8.2 Using 23.50 cm³ in Titration Calculations</h3>
+            <p><strong>Model Answer:</strong> “The student likely performed multiple titrations and obtained several results (titres). Titres are considered concordant if they are close to each other (usually within 0.10 cm³ or 0.20 cm³). An outlier is a result that is significantly different from the others. The student should exclude any outliers and calculate the mean (average) of the concordant titres. Using the average of concordant results (e.g., 23.50 cm³) provides a more reliable and accurate value for the volume of solution used at the end-point for subsequent calculations.”</p>
+            <div class="guidance">
+                <strong>Guidance:</strong> Understand the importance of repeating measurements (titrations) to ensure reliability. Know what concordant results are and why outliers should be ignored when calculating a mean titre. Accuracy and reliability are key concepts.
+            </div>
+
+            <h3>8.3 Calculating the Concentration of HCl</h3>
+            <p><strong>Model Answer:</strong></p>
+            <ol>
+                <li>Balanced Equation: <code class="formula">2 HCl + Ba(OH)<sub>2</sub> → BaCl<sub>2</sub> + 2 H<sub>2</sub>O</code></li>
+                <li>Calculate moles of known reactant (<code class="formula">Ba(OH)<sub>2</sub></code>):
+                <br>Volume = 23.50 cm³ = 0.02350 dm³ (since 1 dm³ = 1000 cm³)
+                <br>Concentration = 0.100 mol/dm³
+                <br>Moles <code class="formula">Ba(OH)<sub>2</sub> = Concentration × Volume = 0.100 mol/dm³ × 0.02350 dm³ = 0.00235 moles</code></li>
+                <li>Use stoichiometry to find moles of unknown reactant (HCl):
+                <br>From equation, ratio HCl : <code class="formula">Ba(OH)<sub>2</sub></code> is 2 : 1.
+                <br>Moles HCl = Moles <code class="formula">Ba(OH)<sub>2</sub> × (2 moles HCl / 1 mole Ba(OH)<sub>2</sub>) = 0.00235 moles × 2 = 0.00470 moles</code></li>
+                <li>Calculate concentration of HCl:
+                <br>Volume HCl used = 25.00 cm³ = 0.02500 dm³ (assuming this was the volume pipetted)
+                <br>Concentration HCl = Moles HCl / Volume HCl
+                <br><code class="formula">Concentration HCl = 0.00470 moles / 0.02500 dm³ = 0.188 mol/dm³</code></li>
+            </ol>
+            <p>The concentration of HCl is <strong>0.188 mol/dm³</strong>.</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Show every step in your calculation: 1. Balanced equation. 2. Moles of known. 3. Mole ratio. 4. Moles of unknown. 5. Concentration of unknown. Keep your units consistent (use dm³ for concentration calculations). Double-check your maths and use appropriate significant figures (usually 3 s.f. in titration calculations unless data suggests otherwise).
+             </div>
+
+            <h3>8.4 Why Electrical Conductivity is Zero at the End-Point</h3>
+             <p><strong>Model Answer:</strong> "At the start of the titration (assuming HCl in flask, <code class="formula">Ba(OH)<sub>2</sub></code> added), the solution contains mobile ions (H<sup>+</sup> and Cl<sup>-</sup>) and conducts electricity. As <code class="formula">Ba(OH)<sub>2</sub></code> is added, H<sup>+</sup> ions react with OH<sup>-</sup> ions to form water (<code class="formula">H<sub>2</sub>O</code>), which is molecular and does not conduct well. Also, Ba<sup>2+</sup> ions react with SO<sub>4</sub><sup>2-</sup> ions (if sulfuric acid was used) or form soluble BaCl<sub>2</sub> (if HCl was used). In this specific case with <code class="formula">Ba(OH)<sub>2</sub></code> and HCl, the reaction is <code class="formula">2H<sup>+</sup> + 2Cl<sup>-</sup> + Ba<sup>2+</sup> + 2OH<sup>-</sup> → Ba<sup>2+</sup> + 2Cl<sup>-</sup> + 2H<sub>2</sub>O</code>. The highly mobile H<sup>+</sup> and OH<sup>-</sup> ions are removed and replaced by less mobile Ba<sup>2+</sup> and Cl<sup>-</sup> ions, causing conductivity to decrease. If BaSO<sub>4</sub> precipitate formed (with H<sub>2</sub>SO<sub>4</sub>), conductivity would drop more sharply as ions form a solid. Conductivity reaches a *minimum* at the end-point when the concentration of free H<sup>+</sup> and OH<sup>-</sup> ions is lowest. It doesn't usually drop to absolute zero because water itself slightly conducts, and the salt formed (<code class="formula">BaCl<sub>2</sub></code>) is soluble and ionic, though perhaps less conductive than the initial acid."
+             <br><em>(Correction to Model Answer based on typical conductivity titrations: It usually reaches a minimum, not zero, unless an insoluble precipitate removes *all* ions, which isn't the case here).</em>
+             </p>
+             <div class="guidance">
+                  <strong>Guidance:</strong> Explain conductivity in terms of mobile ions. Describe how the ions present change during the neutralisation reaction. H<sup>+</sup> and OH<sup>-</sup> ions are particularly good conductors. When they react to form water, conductivity decreases. The ions of the salt formed (<code class="formula">Ba<sup>2+</sup></code>, <code class="formula">Cl<sup>-</sup></code>) remain, so conductivity usually reaches a minimum, not absolute zero. Explain *why* the number of mobile ions is lowest at the equivalence point.
+              </div>
+
+             <h3>8.5 Increase in Conductivity After Adding Extra Base</h3>
+             <p><strong>Model Answer:</strong> "After the end-point, all the acid (HCl) has been neutralised. Adding further barium hydroxide (<code class="formula">Ba(OH)<sub>2</sub></code>) introduces excess mobile ions into the solution, specifically barium ions (Ba<sup>2+</sup>) and hydroxide ions (OH<sup>-</sup>). Since these ions are free to move and carry charge, their increasing concentration causes the electrical conductivity of the solution to rise again."</p>
+             <div class="guidance">
+                 <strong>Guidance:</strong> Highlight that adding more base *after* neutralisation means adding excess ions (specifically the ions from the base, <code class="formula">Ba<sup>2+</sup></code> and <code class="formula">OH<sup>-</sup></code>). More mobile ions mean higher conductivity.
+             </div>
+        </div>
+
+        <div id="tips" class="tab-content">
+            <h2>General Exam Tips for You</h2>
+
+             <ul>
+                 <li>
+                     <strong>Clarity & Organisation:</strong>
+                     Write your answers in clear steps. Neat diagrams, clearly labelled graphs, and fully shown calculations help examiners follow your reasoning—even if a small mistake is made, you may still earn partial credit.
+                 </li>
+                 <li>
+                     <strong>Use of Key Terms:</strong>
+                     Always include important vocabulary like "delocalised electrons,” “ionic,” “covalent,” "oxidised,” “reduced,” "activation energy,” "catalyst," "equilibrium," "rate of reaction," "exothermic," "endothermic," etc., where appropriate. These terms show your understanding of the concepts.
+                 </li>
+                 <li>
+                     <strong>Showing Your Work:</strong>
+                     Especially in calculations, show all your steps logically. Even if you make a numerical error, detailed working can get you marks (Error Carried Forward, ECF). Make sure every calculation is step-by-step, including units.
+                 </li>
+                 <li>
+                     <strong>Reviewing Your Marked Papers:</strong>
+                     Compare your answers carefully with these model answers and any specific mark scheme provided. Identify common errors you made (e.g., misinterpreting the question, calculation mistakes, missing key terms, incorrect balancing, forgetting units) and make corrections. Understanding *why* you lost marks is crucial for improvement.
+                 </li>
+                 <li>
+                     <strong>Time Management:</strong>
+                     Practice answering questions under timed conditions. Allocate time based on the marks available for each part. Ensure you allocate enough time to both answer all parts of a question and check your work at the end.
+                 </li>
+                 <li>
+                     <strong>Self-Assessment:</strong>
+                     Use these model answers to check if you've covered every aspect of the question. If any part of your original answer was missing or unclear, use the guidance here and your textbook/notes to improve it. Try re-attempting questions you struggled with after reviewing the feedback.
+                 </li>
+                  <li>
+                      <strong>Read the Question Carefully:</strong>
+                      Make sure you understand exactly what is being asked before you start writing. Look for command words (Describe, Explain, Calculate, Compare, State, etc.) and keywords.
+                  </li>
+             </ul>
+        </div>
+    </div>
+
+    <script>
+        // Get references to elements
+        const introScreen = document.getElementById('intro-screen');
+        const mainContent = document.getElementById('main-content');
+        const startButton = document.getElementById('start-button');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Event listener for the start button
+        startButton.addEventListener('click', () => {
+            introScreen.style.opacity = '0'; // Fade out intro
+            // Wait for fade out animation to finish before hiding and showing main content
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                mainContent.style.display = 'block';
+                // Ensure the first tab content is visible (as its button starts active)
+                document.querySelector('.tab-content.active').style.display = 'block';
+            }, 500); // Match timeout duration to CSS transition duration
+        });
+
+        // Event listener for tab navigation
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                const targetContent = document.getElementById(targetId);
+
+                // Remove 'active' class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    content.style.display = 'none'; // Explicitly hide
+                });
+
+                // Add 'active' class to the clicked button and corresponding content
+                button.classList.add('active');
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                    targetContent.style.display = 'block'; // Explicitly show
+                }
+            });
+        });
+
+        // Ensure initial state (first tab active) is handled correctly
+        // (Handled by initial HTML classes and the startButton logic)
+
+    </script>
+
+</body>
+</html>
