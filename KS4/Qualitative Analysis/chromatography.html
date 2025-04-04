@@ -256,18 +256,32 @@
             margin-top: 20px;
         }
 
-        .question {
+        /* --- Checkpoint is slightly different container name --- */
+        .checkpoint, .question { /* Apply styles to both checkpoint blocks and practice questions */
             margin-bottom: 25px;
             padding-bottom: 20px; /* Add padding below question */
             border-bottom: 1px solid var(--light); /* Separator */
+        }
+        /* Ensure checkpoint styling doesn't add double border */
+        .checkpoint {
+            border-bottom: none; /* Removed bottom border from the checkpoint block itself */
+            padding-bottom: 5px; /* Reduce padding slightly for checkpoint block */
         }
         .question:last-child {
             border-bottom: none; /* No border on last question */
         }
 
-        .question p:first-child { /* Style the question text itself */
+        /* Style the question text itself (both in .question and .checkpoint) */
+        .question p:first-child, .checkpoint > p:first-child {
             font-weight: bold;
             margin-bottom: 15px;
+            color: var(--dark);
+        }
+         /* Target the h3 within checkpoint specifically if needed */
+        .checkpoint h3 {
+            margin-top: 0; /* Adjust spacing for checkpoint title */
+            margin-bottom: 15px;
+            font-size: 1.1rem; /* Slightly smaller title */
             color: var(--dark);
         }
 
@@ -657,6 +671,9 @@
             border-radius: 5px;
             border-left-width: 5px;
             border-left-style: solid;
+            /* Dynamic background/color set by JS */
+            display: block; /* Ensure it takes space even when empty initially */
+            min-height: 1.5em; /* Prevent layout jump */
         }
         #matching-feedback.correct, #mystery-feedback.correct {
             background-color: rgba(46, 204, 113, 0.1); color: #27ae60; border-left-color: #27ae60;
@@ -750,21 +767,22 @@
 
 
         /* --- Helper Classes & Misc --- */
-        .checkpoint, .real-world {
+        /* Checkpoint was restyled above to integrate with question styling */
+        .real-world {
             padding: 15px;
             margin: 20px 0;
             border-radius: 0 5px 5px 0;
             border-left-width: 4px;
             border-left-style: solid;
-        }
-        .checkpoint {
-            background-color: #fff8e1;
-            border-left-color: #ffc107;
-        }
-        .real-world {
             background-color: #e3f2fd;
             border-left-color: #2196f3;
         }
+        /* Original Checkpoint Styling (for reference or if separation is preferred) */
+         .checkpoint-original-style {
+             padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0;
+             border-left-width: 4px; border-left-style: solid;
+             background-color: #fff8e1; border-left-color: #ffc107;
+         }
 
         .tooltip {
             position: relative;
@@ -899,7 +917,8 @@
                         <li>It works by distributing components between two phases: a <span class="tooltip">stationary phase<span class="tooltip-text">The phase that doesn't move (e.g., paper).</span></span> and a <span class="tooltip">mobile phase<span class="tooltip-text">The phase that moves (e.g., solvent).</span></span>.</li>
                     </ul>
 
-                    <div class="checkpoint">
+                    <!-- Checkpoint integrated into card -->
+                    <div class="checkpoint checkpoint-original-style"> <!-- Using original style class for visual distinction -->
                         <h3>Checkpoint Question:</h3>
                         <p>1. What is the main purpose of chromatography?</p>
                         <div class="options">
@@ -945,7 +964,7 @@
                         <p>Forensic scientists use chromatography to analyze ink from suspected forged documents. Different pens use unique ink mixtures. Chromatography can reveal the specific colored components in an ink sample, helping to match it to a known pen or prove it's different.</p>
                     </div>
 
-                    <div class="checkpoint">
+                    <div class="checkpoint checkpoint-original-style">
                         <h3>Checkpoint Question:</h3>
                         <p>2. Which component will travel furthest up the chromatography paper?</p>
                         <div class="options">
@@ -1048,7 +1067,7 @@
                         <li><strong>Biochemistry & Medicine:</strong> Separating proteins, DNA analysis, detecting diseases, clinical drug monitoring.</li>
                     </ul>
 
-                    <div class="checkpoint">
+                    <div class="checkpoint checkpoint-original-style">
                         <h3>Checkpoint Question:</h3>
                         <p>3. Which type of chromatography is typically used for separating volatile substances (gases)?</p>
                         <div class="options">
@@ -1180,7 +1199,7 @@
                                  </table>
                              </div>
 
-                            <div class="checkpoint" style="margin-top: 25px;">
+                            <div class="checkpoint checkpoint-original-style" style="margin-top: 25px;"> <!-- Used checkpoint class with original style -->
                                 <h3>Lab Analysis & Questions:</h3>
                                 <ol>
                                     <li>Compare the results for the <strong>same ink</strong> using <strong>Water</strong> vs. <strong>Ethanol</strong>. How does the solvent affect the separation and the Rf values?</li>
@@ -1189,7 +1208,8 @@
                                     <li>Imagine the "Mystery Ink" was found at a "crime scene". Could you match it to any of the known pens based on your results? Explain your reasoning (use Rf values).</li>
                                 </ol>
 
-                                <div class="question" style="margin-top: 20px;">
+                                <!-- This is structured like a practice question, so using the .question class -->
+                                <div class="question" style="margin-top: 20px; border-bottom: none;"> <!-- Remove bottom border -->
                                     <p>Based on typical chromatography experiments, which statement is generally correct?</p>
                                     <div class="options">
                                         <label><input type="radio" name="lab-q1" value="wrong"> All coloured inks are pure substances.</label>
@@ -1217,6 +1237,7 @@
                  <p>Test your understanding of chromatography principles and calculations.</p>
 
                  <div class="practice-container">
+                     <!-- Using the .question class for each practice item -->
                      <div class="question">
                          <p>1. In paper chromatography, what is typically the stationary phase?</p>
                          <div class="options">
@@ -1385,23 +1406,18 @@
             // --- Helper Functions ---
             function getElement(id) {
                 const element = document.getElementById(id);
-                if (!element) {
-                    console.warn(`Element with ID "${id}" not found.`);
-                }
+                // No console warning here as some elements might be optional depending on context (e.g., dynamic ones)
                 return element;
             }
 
             function querySelector(selector) {
                 const element = document.querySelector(selector);
-                 if (!element) {
-                    // console.warn(`Element with selector "${selector}" not found.`); // Removed for non-critical elements
-                 }
-                 return element;
+                // No warning needed
+                return element;
             }
 
             function querySelectorAll(selector) {
                  const elements = document.querySelectorAll(selector);
-                 // No warning needed if empty list is valid, e.g., optional elements
                  return elements;
             }
 
@@ -1410,7 +1426,7 @@
                 if (element) {
                     element.addEventListener(event, callback);
                 } else {
-                    // console.warn(`Cannot add listener: Element ${elementOrId} not found.`); // Removed for non-critical elements
+                    // console.warn(`Cannot add listener: Element ${elementOrId} not found.`); // Keep commented unless debugging specific missing element issues
                 }
             }
 
@@ -1495,61 +1511,81 @@
             // --- Checkpoint/Practice Question Feedback ---
             // Generic function to handle radio/checkbox button feedback within a question container
             function handleInputFeedback(inputElement) {
-                const questionDiv = inputElement.closest('.question');
-                if (!questionDiv) return;
+                // Find the closest ancestor container that holds the question and feedback
+                // This could be .question, .checkpoint, or other similar structures
+                const questionContainer = inputElement.closest('.question, .checkpoint');
+                if (!questionContainer) {
+                    // console.warn("Could not find parent question/checkpoint container for input:", inputElement);
+                    return;
+                }
 
-                const correctFeedback = questionDiv.querySelector('.feedback.correct');
-                const incorrectFeedback = questionDiv.querySelector('.feedback.incorrect');
-                const options = questionDiv.querySelectorAll('.options label');
+                const correctFeedback = questionContainer.querySelector('.feedback.correct');
+                const incorrectFeedback = questionContainer.querySelector('.feedback.incorrect');
+                const options = questionContainer.querySelectorAll('.options label'); // Find labels within the container
 
                 // Hide both feedbacks initially
                 if (correctFeedback) correctFeedback.style.display = 'none';
                 if (incorrectFeedback) incorrectFeedback.style.display = 'none';
-                 // Reset option background
-                 options.forEach(label => label.style.backgroundColor = '');
+                // Reset option background highlight
+                options.forEach(label => {
+                     label.style.backgroundColor = '';
+                     label.style.border = '1px solid transparent'; // Reset border if used for highlighting
+                });
 
-                 let isCorrect = false;
-                 if (inputElement.type === 'radio') {
+                let isCorrect = false;
+                if (inputElement.type === 'radio') {
                     isCorrect = (inputElement.value === 'correct');
-                 }
-                 // Add checkbox logic if needed later
+                }
+                 // Add checkbox logic here if you use checkboxes for questions later
+                 // else if (inputElement.type === 'checkbox') { ... }
+
+                // Show the appropriate feedback and highlight the selected label
+                const parentLabel = inputElement.closest('label'); // Find the immediate parent label
 
                 if (isCorrect) {
                     if (correctFeedback) correctFeedback.style.display = 'block';
-                    if (inputElement.parentElement && inputElement.parentElement.tagName === 'LABEL') {
-                        inputElement.parentElement.style.backgroundColor = 'rgba(46, 204, 113, 0.2)'; // Highlight correct label lightly
+                    if (parentLabel) {
+                        parentLabel.style.backgroundColor = 'rgba(46, 204, 113, 0.15)'; // Light green highlight
+                        parentLabel.style.border = '1px solid rgba(46, 204, 113, 0.4)';
                     }
                 } else {
                     if (incorrectFeedback) incorrectFeedback.style.display = 'block';
-                     if (inputElement.parentElement && inputElement.parentElement.tagName === 'LABEL') {
-                        inputElement.parentElement.style.backgroundColor = 'rgba(231, 76, 60, 0.2)'; // Highlight incorrect label lightly
+                    if (parentLabel) {
+                        parentLabel.style.backgroundColor = 'rgba(231, 76, 60, 0.1)'; // Light red highlight
+                        parentLabel.style.border = '1px solid rgba(231, 76, 60, 0.3)';
                     }
                 }
             }
 
-            // Add listeners to all radio buttons in tutorial and practice
+            // Add listeners to all radio buttons ANYWHERE in the document that might be part of a question
+            // This covers Tutorial checkpoints, Practice questions, Lab questions etc.
             querySelectorAll('input[type="radio"]').forEach(radio => {
-                addSafeEventListener(radio, 'change', (e) => handleInputFeedback(e.target));
+                // Ensure it's within an .options div to avoid unintended listeners
+                if (radio.closest('.options')) {
+                    addSafeEventListener(radio, 'change', (e) => handleInputFeedback(e.target));
+                }
             });
 
             // Practice Section - Check All Answers Button
-             addSafeEventListener('check-answers', 'click', () => {
-                 querySelectorAll('#practice .question').forEach(question => {
-                     const selectedOption = question.querySelector('input[type="radio"]:checked');
-                     if (selectedOption) {
-                         handleInputFeedback(selectedOption); // Show feedback for the selected answer
-                     } else {
-                         // Optionally indicate that the question wasn't answered
-                         const feedbacks = question.querySelectorAll('.feedback');
-                         feedbacks.forEach(fb => fb.style.display = 'none'); // Hide any previous feedback
-                         const options = question.querySelectorAll('.options label');
-                         options.forEach(label => label.style.backgroundColor = ''); // Clear highlighting
-
-                         // You could add a message here like "Please select an answer"
-                         // e.g. question.insertAdjacentHTML('beforeend', '<p class="warning">Please select an answer.</p>')
-                     }
-                 });
-             });
+            addSafeEventListener('check-answers', 'click', () => {
+                // Target only questions within the #practice section
+                querySelectorAll('#practice .question').forEach(question => {
+                    const selectedOption = question.querySelector('input[type="radio"]:checked');
+                    if (selectedOption) {
+                        handleInputFeedback(selectedOption); // Show feedback for the selected answer
+                    } else {
+                        // Optionally clear feedback if no answer is selected for a question
+                        const feedbacks = question.querySelectorAll('.feedback');
+                        feedbacks.forEach(fb => fb.style.display = 'none');
+                        const options = question.querySelectorAll('.options label');
+                        options.forEach(label => {
+                           label.style.backgroundColor = ''; // Clear highlighting
+                           label.style.border = '1px solid transparent';
+                        });
+                        // You could add a message like "Please select an answer" here if desired
+                    }
+                });
+            });
 
 
             // --- Tutorial Animation ---
@@ -1560,12 +1596,13 @@
 
             const startAnimBtn = getElement('start-animation');
             const resetAnimBtn = getElement('reset-animation');
-            const paperStripAnim = getElement('paper-strip'); // Use specific ID if needed
+            const paperStripAnim = getElement('paper-strip');
             const sampleSpotAnim = getElement('sample-spot');
             const beakerWaterAnim = getElement('beaker-water');
+            const animationContainer = getElement('animation-container'); // Get container for dynamic elements
 
             addSafeEventListener(startAnimBtn, 'click', () => {
-                if (animationRunning || !paperStripAnim || !sampleSpotAnim || !beakerWaterAnim || !startAnimBtn || !resetAnimBtn) return;
+                if (animationRunning || !paperStripAnim || !sampleSpotAnim || !beakerWaterAnim || !startAnimBtn || !resetAnimBtn || !animationContainer) return;
 
                 animationRunning = true;
                 startAnimBtn.style.display = 'none';
@@ -1575,21 +1612,22 @@
                 // --- Create dynamic elements for animation ---
                 const solventFront = document.createElement('div');
                 solventFront.className = 'animation-element solvent-front-anim'; // Use specific class
+                // Append to paper strip so it moves with it if paper moved (it doesn't here, but good practice)
                 paperStripAnim.appendChild(solventFront);
                 animationElements.push(solventFront);
 
                 // Example: Black ink separation (Yellow, Red, Blue)
                 const spotsData = [
-                    { color: 'yellow', speed: 0.7 },
-                    { color: 'red', speed: 0.3 },
-                    { color: 'blue', speed: 0.5 }
+                    { color: '#f1c40f', speed: 0.7 }, // Yellow
+                    { color: '#e74c3c', speed: 0.3 }, // Red
+                    { color: '#3498db', speed: 0.5 }  // Blue
                 ];
 
                 spotsData.forEach(data => {
                     const spot = document.createElement('div');
                     spot.className = 'animation-element color-spot';
                     spot.style.backgroundColor = data.color;
-                    paperStripAnim.appendChild(spot);
+                    paperStripAnim.appendChild(spot); // Append to paper strip
                     animationElements.push(spot);
                     spot.dataset.speed = data.speed; // Store speed factor
                 });
@@ -1598,39 +1636,42 @@
                 sampleSpotAnim.style.opacity = '0';
 
                 // Animate solvent front and spots
-                const maxWaterLevel = 100; // Corresponds to ~130px travel (100 steps * 1px/step + 30px base)
-                const baseLevel = 30; // Solvent starts at 30px bottom
-                const spotStartLevel = 40; // Spots start effectively at 40px
+                const maxSolventTravel = 100; // Relative travel distance (e.g., 100 units/px)
+                const baseLevel = 30; // Solvent starts at 30px bottom inside beaker
+                const spotStartLevel = 40; // Spots start effectively at 40px absolute bottom position on paper
 
                 waterLevel = 0; // Reset water level for this run
                 animationInterval = setInterval(() => {
                     waterLevel++;
-                    const currentSolventPos = baseLevel + waterLevel;
+                    const currentSolventPosOnPaper = baseLevel + waterLevel; // Absolute bottom position of solvent front
 
-                    // Move solvent front
-                    solventFront.style.bottom = `${currentSolventPos}px`;
+                    // Move solvent front visual on the paper strip
+                    // Ensure it doesn't go beyond the paper's visual height (e.g., 160px)
+                    solventFront.style.bottom = `${Math.min(currentSolventPosOnPaper, 159)}px`;
 
                     // Move colored spots
                     animationElements.forEach(el => {
                         if (el.classList.contains('color-spot')) {
                             // Start moving spots slightly after solvent passes initial spot position
-                            if (currentSolventPos >= spotStartLevel + 5) {
+                            if (currentSolventPosOnPaper >= spotStartLevel + 2) { // Start moving when solvent is slightly past
                                 el.style.opacity = '1';
                                 const speed = parseFloat(el.dataset.speed);
                                 // Calculate spot position based on solvent travel *above the starting line*
-                                const solventTravelAboveStart = Math.max(0, currentSolventPos - spotStartLevel);
-                                el.style.bottom = `${spotStartLevel + solventTravelAboveStart * speed}px`;
+                                const solventTravelAboveStart = Math.max(0, currentSolventPosOnPaper - spotStartLevel);
+                                const spotTargetBottom = spotStartLevel + solventTravelAboveStart * speed;
+                                // Ensure spot doesn't go beyond paper height (e.g. 160px - spot height 8px)
+                                el.style.bottom = `${Math.min(spotTargetBottom, 152)}px`;
                             }
                         }
                     });
 
                     // Stop animation
-                    if (waterLevel >= maxWaterLevel) {
+                    if (waterLevel >= maxSolventTravel) {
                         clearInterval(animationInterval);
                         animationInterval = null;
                         resetAnimBtn.disabled = false; // Enable reset button now
                     }
-                }, 60); // Interval controls speed (lower = faster)
+                }, 50); // Interval controls speed (lower = faster)
             });
 
             addSafeEventListener(resetAnimBtn, 'click', () => {
@@ -1644,11 +1685,11 @@
                 if (startAnimBtn) startAnimBtn.style.display = 'inline-block';
                 if (resetAnimBtn) {
                     resetAnimBtn.style.display = 'none';
-                    resetAnimBtn.disabled = true; // Should be hidden anyway, but good practice
+                    resetAnimBtn.disabled = true;
                 }
 
                 // Reset beaker water level visually (optional, could just reset for next run)
-                if (beakerWaterAnim) beakerWaterAnim.style.height = '30px';
+                // if (beakerWaterAnim) beakerWaterAnim.style.height = '30px'; // Not really needed as it's CSS based
 
                 // Show the original black spot
                 if (sampleSpotAnim) sampleSpotAnim.style.opacity = '1';
@@ -1661,7 +1702,7 @@
                 });
                 animationElements = []; // Clear the tracking array
 
-                console.log("Animation reset.");
+                // console.log("Animation reset."); // Keep for debugging if needed
             });
 
 
@@ -1669,7 +1710,8 @@
             let selectedPen = null;
             let selectedSolvent = null;
             let experimentRunning = false;
-            let labAnimationTimeout = null; // To store timeout ID for clearing on reset
+            let labAnimationTimeout1 = null; // For main animation
+            let labAnimationTimeout2 = null; // For results display delay
 
             const startExperimentBtn = getElement('start-experiment');
             const resetExperimentBtn = getElement('reset-experiment');
@@ -1683,11 +1725,7 @@
              // Function to update Run button status
              function updateRunButtonStatus() {
                  if (!startExperimentBtn) return;
-                 if (selectedPen && selectedSolvent) {
-                     startExperimentBtn.disabled = false;
-                 } else {
-                     startExperimentBtn.disabled = true;
-                 }
+                 startExperimentBtn.disabled = !(selectedPen && selectedSolvent);
              }
 
             // Lab tools selection
@@ -1720,9 +1758,8 @@
 
             // Run experiment
             addSafeEventListener(startExperimentBtn, 'click', () => {
-                 // Simplified check - removed ruler elements
                  if (!selectedPen || !selectedSolvent || experimentRunning || !chromatographyBeaker || !labChromatogram || !labSolventVisual || !resetExperimentBtn || !startExperimentBtn || !labResultsDiv || !resultsTableBody) {
-                    console.error("Cannot start experiment - missing elements, selection, or already running.");
+                    // console.error("Cannot start experiment - missing elements, selection, or already running.");
                      if (!selectedPen || !selectedSolvent) {
                          alert('Please select both an ink sample and a solvent before starting.');
                      }
@@ -1732,14 +1769,13 @@
                 experimentRunning = true;
                 startExperimentBtn.style.display = 'none';
                 resetExperimentBtn.style.display = 'inline-block';
+                resetExperimentBtn.disabled = true; // Disable reset during run
                 labResultsDiv.style.display = 'none'; // Hide previous results
 
                 // --- Prepare Visuals ---
                 chromatographyBeaker.style.display = 'block';
                 // Clear previous chromatogram elements
-                while (labChromatogram.firstChild) {
-                    labChromatogram.removeChild(labChromatogram.firstChild);
-                }
+                labChromatogram.innerHTML = ''; // Clear previous elements simply
 
                 // Set solvent color
                 labSolventVisual.style.backgroundColor = (selectedSolvent === 'water') ? 'rgba(135, 206, 250, 0.6)' : 'rgba(210, 210, 210, 0.6)'; // Water=blueish, Alcohol=greyish
@@ -1747,11 +1783,11 @@
                 // --- Define Experiment Parameters (Rf values based on ink/solvent) ---
                  // Base Rf values (e.g., in Water) - Scale 0 to 1
                  const baseRf = {
-                    'black-pen': [{ color: 'cyan', rf: 0.15 }, { color: 'magenta', rf: 0.45 }, { color: 'yellow', rf: 0.80 }],
-                    'blue-pen': [{ color: 'blue', rf: 0.40 }],
-                    'green-pen': [{ color: 'blue', rf: 0.40 }, { color: 'yellow', rf: 0.80 }], // Mixture
-                    'red-pen': [{ color: 'red', rf: 0.65 }],
-                    'mystery-pen': [{ color: 'red', rf: 0.65 }, { color: 'blue', rf: 0.40 }] // e.g., Red + Blue
+                    'black-pen': [{ color: 'cyan', rf: 0.15, name: 'Cyan' }, { color: 'magenta', rf: 0.45, name: 'Magenta' }, { color: 'yellow', rf: 0.80, name: 'Yellow' }],
+                    'blue-pen': [{ color: 'blue', rf: 0.40, name: 'Blue' }],
+                    'green-pen': [{ color: 'blue', rf: 0.40, name: 'Blue' }, { color: 'yellow', rf: 0.80, name: 'Yellow' }], // Mixture
+                    'red-pen': [{ color: 'red', rf: 0.65, name: 'Red' }],
+                    'mystery-pen': [{ color: 'red', rf: 0.65, name: 'Red' }, { color: 'blue', rf: 0.40, name: 'Blue' }] // e.g., Red + Blue
                  };
 
                 let currentRfData = JSON.parse(JSON.stringify(baseRf[selectedPen])); // Deep copy to modify
@@ -1762,37 +1798,41 @@
                     solventFactor = 1.15; // Example factor
                      currentRfData.forEach(spot => {
                          // Increase Rf, but cap at ~0.95 (nothing perfectly reaches solvent front)
-                         spot.rf = Math.min(spot.rf * solventFactor, 0.95);
+                         spot.rf = Math.min((spot.rf * solventFactor).toFixed(2), 0.95); // Keep 2 decimal places
                      });
                  }
 
                 // --- Simulate Chromatography ---
-                const paperHeight = 210; // Visual height of paper in px
-                const baselinePos = 40; // Starting line position in px from bottom
-
-                // **** MODIFICATION: Ensure solvent stops visibly below the top ****
+                const paperHeightPx = 210; // Visual height of paper in px
+                const baselinePosPx = 40; // Starting line position in px from bottom
                 const maxSolventTravelFraction = 0.85; // Solvent travels 85% of the available height above baseline
-                const availablePaperHeight = paperHeight - baselinePos;
-                const solventTravelDistance = availablePaperHeight * maxSolventTravelFraction; // Actual distance solvent travels from baseline
-                const maxSolventPos = baselinePos + solventTravelDistance; // Final absolute position of solvent front
-                // **** END MODIFICATION ****
+                const availablePaperHeightPx = paperHeightPx - baselinePosPx;
+                const solventTravelDistancePx = availablePaperHeightPx * maxSolventTravelFraction; // Actual distance solvent travels from baseline in Px
+                const maxSolventPosPx = baselinePosPx + solventTravelDistancePx; // Final absolute position of solvent front in Px
 
-                 const animationDuration = 5000; // 5 seconds
+                 const animationDurationMs = 5000; // 5 seconds
 
                  // Add initial spot visual
                  const initialSpot = document.createElement('div');
                  initialSpot.className = 'molecule initial-spot';
-                 initialSpot.style.backgroundColor = baseRf[selectedPen][0].color; // Use first color for initial spot appearance, or determine dominant color
-                 // Special handling for known mixtures maybe?
-                 if (selectedPen === 'black-pen') initialSpot.style.backgroundColor = 'black';
-                 if (selectedPen === 'green-pen') initialSpot.style.backgroundColor = 'green';
-                 if (selectedPen === 'mystery-pen') initialSpot.style.backgroundColor = 'purple'; // Example mixture appearance
+                 // Determine initial spot color more intelligently
+                 if (currentRfData.length === 1) {
+                     initialSpot.style.backgroundColor = currentRfData[0].color;
+                 } else if (selectedPen === 'black-pen') {
+                     initialSpot.style.backgroundColor = 'black';
+                 } else if (selectedPen === 'green-pen') {
+                      initialSpot.style.backgroundColor = 'green';
+                 } else if (selectedPen === 'mystery-pen') {
+                     initialSpot.style.backgroundColor = 'purple'; // Or derive from components
+                 } else {
+                      initialSpot.style.backgroundColor = '#555'; // Default grey
+                 }
                  labChromatogram.appendChild(initialSpot);
 
                  // Add solvent front visual
                  const solventFront = document.createElement('div');
                  solventFront.className = 'solvent-front-lab';
-                 solventFront.style.bottom = `${baselinePos - 10}px`; // Start just below baseline
+                 solventFront.style.bottom = `${baselinePosPx - 10}px`; // Start just below baseline visually
                  labChromatogram.appendChild(solventFront);
 
                 // Create elements for separated spots (initially hidden at baseline)
@@ -1800,139 +1840,149 @@
                      const spot = document.createElement('div');
                      spot.className = 'molecule separated-spot';
                      spot.style.backgroundColor = spotData.color;
-                     spot.style.bottom = `${baselinePos}px`; // Start at baseline
+                     spot.style.bottom = `${baselinePosPx}px`; // Start at baseline
                      spot.style.opacity = '0'; // Hidden
                      labChromatogram.appendChild(spot);
-                     return { element: spot, rf: spotData.rf, color: spotData.color }; // Store element and target Rf
+                     return { element: spot, rf: spotData.rf, color: spotData.color, name: spotData.name }; // Store element and target Rf/details
                  });
 
                  // Start animation after a short delay
-                 labAnimationTimeout = setTimeout(() => {
+                 labAnimationTimeout1 = setTimeout(() => {
                      // Animate solvent front
-                     solventFront.style.transition = `bottom ${animationDuration}ms ease-out`;
-                     solventFront.style.bottom = `${maxSolventPos}px`; // Use the calculated maxSolventPos
+                     solventFront.style.transition = `bottom ${animationDurationMs}ms ease-out`;
+                     solventFront.style.bottom = `${maxSolventPosPx}px`; // Use the calculated maxSolventPos
 
                     // Fade out initial spot as separation starts
-                    initialSpot.style.opacity = '0.1';
+                    initialSpot.style.transition = `opacity ${animationDurationMs / 3}ms ease-out`; // Fade out faster
+                    initialSpot.style.opacity = '0';
 
                     // Animate separated spots
                     spotElements.forEach(spotInfo => {
-                        // Position calculation uses the MODIFIED solventTravelDistance
-                        const targetBottom = baselinePos + (spotInfo.rf * solventTravelDistance);
-                        spotInfo.element.style.transition = `bottom ${animationDuration}ms ease-out, opacity ${animationDuration/3}ms ease-in ${animationDuration/4}ms`; // Fade in slightly delayed
-                        spotInfo.element.style.bottom = `${targetBottom}px`; // Position automatically adjusted
+                        const targetBottomPx = baselinePosPx + (spotInfo.rf * solventTravelDistancePx);
+                        spotInfo.element.style.transition = `bottom ${animationDurationMs}ms ease-out, opacity ${animationDurationMs/3}ms ease-in ${animationDurationMs/4}ms`; // Fade in slightly delayed
+                        spotInfo.element.style.bottom = `${targetBottomPx}px`;
                         spotInfo.element.style.opacity = '1';
                     });
 
                     // --- After animation finishes ---
-                    labAnimationTimeout = setTimeout(() => {
+                    labAnimationTimeout2 = setTimeout(() => {
                         if (!experimentRunning) return; // Check if reset happened during animation
-                        if (labResultsDiv) labResultsDiv.style.display = 'block';
+                        labResultsDiv.style.display = 'block'; // Show results container
+                        resetExperimentBtn.disabled = false; // Enable reset button now
 
-                        // --- Populate Results Table (uses the MODIFIED solventTravelDistance for mm values) ---
+                        // --- Populate Results Table ---
+                        // Use "mm" conceptually, based on pixel distances for simulation consistency
                         const penName = selectedPen.replace('-pen', '').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
                         const solventName = selectedSolvent.charAt(0).toUpperCase() + selectedSolvent.slice(1);
 
-                        const spotDistancesMm = spotElements.map(s => (s.rf * solventTravelDistance).toFixed(0)); // Distance based on actual travel
-                        const solventDistanceMm = solventTravelDistance.toFixed(0); // The actual distance solvent travelled from baseline
-                        const rfValuesStr = spotElements.map(s => s.rf.toFixed(2)); // Rf values are inherent properties used in simulation
+                        const spotDistancesMm = spotElements.map(s => (s.rf * solventTravelDistancePx).toFixed(0));
+                        const solventDistanceMm = solventTravelDistancePx.toFixed(0);
+                        const rfValuesStr = spotElements.map(s => parseFloat(s.rf).toFixed(2)); // Ensure numeric conversion before toFixed
                         let componentsDesc = '';
-                        if (spotElements.length > 1) {
-                            componentsDesc = `${spotElements.length} components (${spotElements.map(s => s.color).join(', ')})`;
-                        } else {
-                            componentsDesc = `1 component (${spotElements[0].color})`;
-                        }
+                         if (spotElements.length > 1) {
+                             componentsDesc = `${spotElements.length} components (${spotElements.map(s => s.name).join(', ')})`;
+                         } else if (spotElements.length === 1) {
+                             componentsDesc = `1 component (${spotElements[0].name})`;
+                         } else {
+                             componentsDesc = 'No components detected'; // Should not happen with current setup
+                         }
 
-                         // Add new row
+                         // Clear previous results before adding new row
+                         resultsTableBody.innerHTML = '';
                          const newRow = resultsTableBody.insertRow();
                          newRow.innerHTML = `
                              <td>${penName}</td>
                              <td>${solventName}</td>
-                             <td style="text-align: center;">${spotDistancesMm.join(', ')}</td>
+                             <td style="text-align: center;">${spotDistancesMm.join(', ') || 'N/A'}</td>
                              <td style="text-align: center;">${solventDistanceMm}</td>
-                             <td style="text-align: center;">${rfValuesStr.join(', ')}</td>
+                             <td style="text-align: center;">${rfValuesStr.join(', ') || 'N/A'}</td>
                              <td>${componentsDesc}</td>
                          `;
 
-                    }, animationDuration + 500); // Wait for animation + buffer
+                    }, animationDurationMs + 500); // Wait for animation + buffer
 
                  }, 200); // Short delay before starting animation
             });
 
             // Reset experiment
             addSafeEventListener(resetExperimentBtn, 'click', () => {
-                try {
-                    // Clear any running timeouts
-                    if (labAnimationTimeout) {
-                        clearTimeout(labAnimationTimeout);
-                        labAnimationTimeout = null;
-                    }
+                // Clear any running timeouts
+                if (labAnimationTimeout1) clearTimeout(labAnimationTimeout1);
+                if (labAnimationTimeout2) clearTimeout(labAnimationTimeout2);
+                labAnimationTimeout1 = null;
+                labAnimationTimeout2 = null;
 
-                    experimentRunning = false;
-                    selectedPen = null;
-                    selectedSolvent = null;
+                experimentRunning = false;
+                selectedPen = null;
+                selectedSolvent = null;
 
-                    if (startExperimentBtn) {
-                        startExperimentBtn.style.display = 'inline-block';
-                         startExperimentBtn.disabled = true; // Disable until selections are made again
-                    }
-                    if (resetExperimentBtn) resetExperimentBtn.style.display = 'none';
-
-
-                    // Reset selections visually
-                    labSidebarTools.forEach(t => {
-                        t.classList.remove('selected');
-                    });
-
-                    // Hide experiment visuals
-                    if (chromatographyBeaker) chromatographyBeaker.style.display = 'none';
-                    if (labChromatogram) {
-                        while (labChromatogram.firstChild) {
-                            labChromatogram.removeChild(labChromatogram.firstChild);
-                        }
-                    }
-
-                    // Clear results table
-                     if (resultsTableBody) resultsTableBody.innerHTML = '';
-
-
-                    console.log("Experiment reset successfully.");
-                } catch (error) {
-                    console.error("Error during experiment reset:", error);
+                if (startExperimentBtn) {
+                    startExperimentBtn.style.display = 'inline-block';
+                    startExperimentBtn.disabled = true; // Disable until selections are made again
                 }
+                if (resetExperimentBtn) {
+                    resetExperimentBtn.style.display = 'none';
+                    resetExperimentBtn.disabled = true; // Ensure disabled state
+                }
+
+                // Reset selections visually
+                labSidebarTools.forEach(t => t.classList.remove('selected'));
+
+                // Hide experiment visuals and results
+                if (chromatographyBeaker) chromatographyBeaker.style.display = 'none';
+                if (labChromatogram) labChromatogram.innerHTML = '';
+                if (labResultsDiv) labResultsDiv.style.display = 'none';
+                // Clear results table (optional, could leave last result shown until next run)
+                // if (resultsTableBody) resultsTableBody.innerHTML = '';
+
+                // console.log("Experiment reset."); // Keep for debugging if needed
             });
 
 
             // --- Game Logic ---
 
             // Game 1: Matching Rf Values (Drag and Drop)
-             const dragItems = querySelectorAll('.drag-item');
-             const dropContainers = querySelectorAll('.drop-container');
+             const dragItems = querySelectorAll('#rf-matching-game .drag-item'); // Be more specific
+             const dropContainers = querySelectorAll('#rf-drop-zones .drop-container');
+             const dragArea = getElement('rf-matching-game'); // Cache drag area
 
              dragItems.forEach(item => {
                  addSafeEventListener(item, 'dragstart', (e) => {
-                     // Use try...catch for older browser compatibility if needed
                      try {
                          e.dataTransfer.setData('text/plain', item.dataset.id);
-                         e.dataTransfer.effectAllowed = 'move'; // Indicate moving is allowed
+                         e.dataTransfer.effectAllowed = 'move';
+                         // Add a class for visual feedback during drag
+                         item.classList.add('dragging');
                      } catch (err) {
-                         console.warn("setData failed (possibly IE)", err);
+                         console.warn("setData failed", err);
                      }
-                     setTimeout(() => { item.style.opacity = '0.5'; }, 0); // Visual feedback
                      item.style.cursor = 'grabbing';
                  });
 
-                 addSafeEventListener(item, 'dragend', () => {
-                     item.style.opacity = '1'; // Restore opacity
+                 addSafeEventListener(item, 'dragend', (e) => {
+                     item.classList.remove('dragging'); // Remove visual feedback class
                      item.style.cursor = 'grab';
+                     // If drop wasn't successful (didn't land in a dropzone),
+                     // ensure the item is visible back in the drag area.
+                     // This handles cases where the drop fails or is cancelled.
+                     // A simple check: if its parent is still the drag area, ensure opacity is 1.
+                     if (item.parentNode === dragArea) {
+                         item.style.opacity = '1';
+                     }
                  });
              });
 
              dropContainers.forEach(container => {
                  addSafeEventListener(container, 'dragover', (e) => {
                      e.preventDefault(); // Necessary to allow drop
-                     e.dataTransfer.dropEffect = 'move'; // Indicate move is possible
-                     container.classList.add('highlight');
+                     const draggingItem = querySelector('.dragging'); // Find the item being dragged
+                     // Allow drop only if container is empty or holds a different item
+                     if (draggingItem && (!container.firstChild || container.firstChild !== draggingItem)) {
+                        e.dataTransfer.dropEffect = 'move';
+                        container.classList.add('highlight');
+                     } else {
+                         e.dataTransfer.dropEffect = 'none'; // Indicate drop not allowed
+                     }
                  });
 
                  addSafeEventListener(container, 'dragleave', () => {
@@ -1945,30 +1995,21 @@
                      const id = e.dataTransfer.getData('text/plain');
                      const draggedItem = querySelector(`.drag-item[data-id="${id}"]`); // Find the original item
 
-                     if (draggedItem && container) {
-                         // Check if the drop container is different from the source container
-                         const sourceContainer = draggedItem.parentNode;
-                          if (sourceContainer !== container) {
-                               // If container already has an item, move it back to the drag area
-                               if (container.hasChildNodes() && container.firstChild !== draggedItem) {
-                                   const dragArea = getElement('rf-matching-game');
-                                   // Check if it's actually a drag item before moving
-                                   if (dragArea && container.firstChild.classList.contains('drag-item')) {
-                                       dragArea.appendChild(container.firstChild);
-                                   } else if (container.firstChild) {
-                                       // If not a drag item, just remove it maybe? Or leave it? Decide based on desired behavior.
-                                       // For now, let's assume only drag items end up here.
-                                       if(container.firstChild.classList.contains('drag-item')) {
-                                            dragArea.appendChild(container.firstChild);
-                                       } else {
-                                           container.removeChild(container.firstChild); // Remove non-drag item content if necessary
-                                       }
-                                   }
-                               }
-                               // Append the dragged item
-                               container.appendChild(draggedItem);
-                               draggedItem.style.cursor = 'default'; // Change cursor in drop zone
-                           }
+                     if (draggedItem && container && dragArea) {
+                         // If container already has an item, move it back to the drag area
+                         if (container.firstChild && container.firstChild !== draggedItem) {
+                             const existingItem = container.firstChild;
+                             if (existingItem.classList.contains('drag-item')) {
+                                 existingItem.style.cursor = 'grab'; // Reset cursor
+                                 dragArea.appendChild(existingItem); // Move back
+                             } else {
+                                 container.removeChild(existingItem); // Remove non-drag item content
+                             }
+                         }
+                         // Append the new dragged item
+                         container.appendChild(draggedItem);
+                         draggedItem.style.cursor = 'default'; // Change cursor in drop zone
+                         draggedItem.classList.remove('dragging'); // Ensure class is removed on drop
                      }
                  });
              });
@@ -1981,6 +2022,9 @@
                 const feedbackP = getElement('matching-feedback');
                 if (!feedbackP) return;
 
+                feedbackP.textContent = ''; // Clear previous text
+                feedbackP.className = ''; // Clear previous classes
+
                 querySelectorAll('#rf-drop-zones .drop-container').forEach(container => {
                      total++;
                      const answer = container.dataset.answer;
@@ -1989,26 +2033,35 @@
                      // Reset styles first
                      container.style.backgroundColor = '';
                      container.style.borderColor = '';
-                     feedbackP.className = ''; // Clear previous feedback class
 
                      if (item && item.dataset.id === answer) {
                          correct++;
                          container.style.backgroundColor = 'rgba(46, 204, 113, 0.1)'; // Correct BG
                          container.style.borderColor = 'var(--secondary)'; // Correct border
-                     } else {
+                     } else if (item) { // Item present but wrong
                           container.style.backgroundColor = 'rgba(231, 76, 60, 0.1)'; // Incorrect BG
                          container.style.borderColor = 'var(--accent)'; // Incorrect border
+                     } else { // No item dropped
+                        container.style.borderColor = 'var(--medium-grey)'; // Reset to default dashed look maybe? Or specific indication
                      }
                 });
 
-                feedbackP.textContent = `You matched ${correct} out of ${total} correctly!`;
-                if (correct === total) {
-                    feedbackP.classList.add('correct'); // Use class for styling
-                    feedbackP.textContent += ' Excellent!';
+                // Provide feedback only if all drop zones are attempted (optional)
+                const droppedItemsCount = querySelectorAll('#rf-drop-zones .drop-container .drag-item').length;
+                if (droppedItemsCount === total) { // Check if all zones have an item
+                    feedbackP.textContent = `You matched ${correct} out of ${total} correctly!`;
+                    if (correct === total) {
+                        feedbackP.classList.add('correct');
+                        feedbackP.textContent += ' Excellent!';
+                    } else {
+                        feedbackP.classList.add('incorrect');
+                        feedbackP.textContent += ' Check the explanations for Rf values again.';
+                    }
                 } else {
-                     feedbackP.classList.add('incorrect'); // Use class for styling
-                    feedbackP.textContent += ' Keep trying!';
+                    feedbackP.textContent = `Drag all descriptions to the Rf values before checking.`;
+                    feedbackP.classList.add('incorrect'); // Use incorrect style for this message too
                 }
+
             });
 
             // Game 2: Mystery Mixture Analyzer
@@ -2022,45 +2075,39 @@
                      selectedAnswers.push(checkbox.value);
                  });
 
-                 // Simple check: correct number of answers AND all selected are in the correct list
+                 // Sort both arrays to ensure order doesn't matter for comparison
                  const isCorrect = selectedAnswers.length === correctAnswers.length &&
-                                  selectedAnswers.every(answer => correctAnswers.includes(answer));
+                                   selectedAnswers.sort().every((value, index) => value === correctAnswers.sort()[index]);
 
+                feedbackP.textContent = ''; // Clear previous
                 feedbackP.className = ''; // Reset class
-                feedbackP.style.backgroundColor = ''; // Reset background explicitl
 
                  if (isCorrect) {
                      feedbackP.textContent = 'Correct! The Mystery Green Ink is a mixture of the Blue Dye and the Yellow Dye, as their spots match the positions (Rf values).';
-                     feedbackP.classList.add('correct'); // Use class for styling
+                     feedbackP.classList.add('correct');
                  } else {
-                     feedbackP.textContent = 'Not quite. Look closely at which spots in the Mystery Ink lane match the spots in the known dye lanes.';
-                     feedbackP.classList.add('incorrect'); // Use class for styling
+                     feedbackP.textContent = 'Not quite. Look closely at which spots in the Mystery Ink lane match the spots in the known dye lanes (same height = same Rf value).';
+                     feedbackP.classList.add('incorrect');
                  }
              });
 
-            // --- Guided Practice Solution Toggle ---
-            addSafeEventListener('show-solution-1', 'click', (e) => {
-                const solutionDiv = getElement('solution-1');
-                const button = e.target;
-                 if (!solutionDiv || !button) return;
+            // --- Guided Practice Solution Toggle (Example - remove if not used) ---
+            // addSafeEventListener('show-solution-1', 'click', (e) => { ... });
 
-                if (solutionDiv.style.display === 'none' || solutionDiv.style.display === '') {
-                    solutionDiv.style.display = 'block';
-                    button.textContent = 'Hide Solution';
-                } else {
-                    solutionDiv.style.display = 'none';
-                    button.textContent = 'Show Solution';
-                }
-            });
 
             // --- Initial Setup ---
-            // Ensure the first tab/content is active on load
-            querySelector('.nav-tab')?.classList.add('active');
-            querySelector('.content-section')?.classList.add('active');
-            querySelector('.tutorial-tab')?.classList.add('active');
-            querySelector('.tutorial-content')?.classList.add('active');
+            // Ensure only the first main tab/content is active on load
+            querySelectorAll('.nav-tab').forEach((tab, index) => tab.classList.toggle('active', index === 0));
+            querySelectorAll('.content-section').forEach((section, index) => section.classList.toggle('active', index === 0));
+             // Ensure only the first tutorial tab/content is active on load
+            querySelectorAll('.tutorial-tab').forEach((tab, index) => tab.classList.toggle('active', index === 0));
+            querySelectorAll('.tutorial-content').forEach((content, index) => content.classList.toggle('active', index === 0));
             // Ensure lab start button is disabled initially
             if (startExperimentBtn) startExperimentBtn.disabled = true;
+             // Ensure lab reset button is hidden initially
+             if (resetExperimentBtn) resetExperimentBtn.style.display = 'none';
+             // Ensure animation reset button is hidden initially
+             if (resetAnimBtn) resetAnimBtn.style.display = 'none';
 
 
         }); // --- End of DOMContentLoaded ---
