@@ -1,0 +1,2626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KS3 Science: Continuous and Discontinuous Variation</title>
+    <!-- Include Chart.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Include Lodash library (for shuffling) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-light: #14b8a6;
+            --secondary: #a3e635;
+            --tertiary: #9ca3af;
+            --text-dark: #333;
+            --text-light: #fff;
+            --background: #f8fafc;
+            --accent: #ef4444; /* Used for Discontinuous button */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6; /* Used for Continuous button */
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html, body {
+            height: 100%; /* Ensure body takes full height */
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column; /* Stack header, container, footer */
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%; /* Ensure container takes width */
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1; /* Allow container to fill space */
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-light);
+            padding: 20px 0;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px; /* Added padding for consistency */
+            flex-wrap: wrap; /* Allow wrapping */
+             gap: 10px; /* Add gap for wrapping */
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="%23f8fafc"/></svg>') no-repeat;
+            background-size: cover;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 50px; /* Slightly smaller */
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem; /* Adjust size */
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        header h1 {
+             font-size: 1.4rem; /* Adjust size */
+             /* *** FIX: Add text shadow for better contrast *** */
+             text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+             margin: 0; /* Remove default margins */
+             text-align: center; /* Center on smaller screens */
+             flex-grow: 1; /* Allow title to take space */
+        }
+         header .header-content > div:last-child p { /* Style the right-side text */
+             font-size: 0.9rem;
+             opacity: 0.9;
+             text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+             text-align: right;
+             margin: 0; /* Remove default margin */
+         }
+
+        nav {
+            background-color: white;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            position: sticky;
+            top: 10px; /* Adjust sticky top position */
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px; /* Reduced padding */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 5px; /* Reduced gap */
+             flex-wrap: wrap; /* Allow wrapping */
+             padding: 5px 0; /* Add some vertical padding */
+             margin: 0; /* Reset margin */
+             justify-content: center; /* Center links when wrapped */
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--text-dark);
+            padding: 8px 12px; /* Adjusted padding */
+            display: block;
+            position: relative;
+            transition: all 0.3s ease;
+            font-size: 0.85rem; /* Slightly smaller font */
+             border-radius: 4px; /* Add slight rounding */
+        }
+
+        .nav-links li a:hover, .nav-links li a.active {
+            color: var(--primary);
+             background-color: #f0fdfa; /* Light background on hover/active */
+        }
+
+        .nav-links li a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; /* Position slightly below */
+            left: 10%; /* Indent underline */
+            width: 80%;
+            height: 3px;
+            background-color: var(--primary);
+             border-radius: 1px;
+        }
+
+        .progress-container {
+            padding: 5px 0px; /* Adjusted padding */
+            display: flex;
+            align-items: center;
+            gap: 8px; /* Reduced gap */
+            min-width: 150px; /* Ensure minimum width */
+            justify-content: flex-end; /* Align to the right */
+        }
+         .progress-container span:first-child { /* Style "Progress:" label */
+             font-size: 0.85rem;
+             color: var(--tertiary);
+         }
+
+        .progress-bar {
+            height: 8px; /* Thinner bar */
+            width: 80px; /* Fixed width */
+            background-color: #e5e7eb; /* Lighter grey */
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary);
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-weight: bold;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px 0; /* Reduced margin */
+            padding: 25px; /* Reduced padding */
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .section-title h2 {
+            color: var(--primary);
+            margin: 0; /* Reset default margin */
+            font-size: 1.4rem; /* Adjust size */
+        }
+
+        .section-number {
+            width: 35px; /* Slightly smaller */
+            height: 35px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .hidden {
+            display: none !important; /* Use important to override potential conflicts */
+        }
+        .active-section {
+            display: block !important; /* Ensure active section is visible */
+        }
+
+        .objectives-list {
+            list-style: none;
+            margin: 15px 0; /* Reduced margin */
+            padding-left: 0; /* Remove default padding */
+        }
+
+        .objectives-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px; /* Reduced margin */
+            font-size: 0.95rem;
+        }
+
+        .objectives-list li::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 10px 20px; /* Adjust padding */
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+             font-size: 0.9rem; /* Adjust font size */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none; /* For potential <a> tags styled as buttons */
+             vertical-align: middle; /* Align with text */
+        }
+
+        .btn:hover:not(:disabled) { /* Apply hover only when not disabled */
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Add subtle shadow on hover */
+        }
+
+        .btn:disabled {
+            background-color: var(--tertiary);
+            cursor: not-allowed;
+            transform: none;
+             opacity: 0.7;
+        }
+
+        .btn-next {
+            margin-top: 20px;
+             float: right; /* Position next buttons to the right */
+        }
+         /* Clearfix for containers holding floated buttons */
+        section::after, .checkpoint::after, #practice-part-1::after, #practice-part-2::after, #practice-part-3::after, .game-container::after, .summary-quiz::after {
+             content: "";
+             display: table;
+             clear: both;
+         }
+
+        .card {
+            border-radius: var(--border-radius);
+            background-color: #f1f5f9;
+            padding: 15px; /* Reduced padding */
+            margin: 15px 0; /* Reduced margin */
+            border-left: 5px solid var(--primary);
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 8px; /* Reduced margin */
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjust min width */
+            gap: 15px; /* Reduced gap */
+            margin: 15px 0;
+        }
+
+        .example-card {
+            background-color: #f1f5f9;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column; /* Stack content vertically */
+            justify-content: space-between; /* Space out content */
+        }
+
+        .example-card:hover {
+            transform: translateY(-3px); /* Reduced hover effect */
+            box-shadow: var(--shadow);
+        }
+
+        .example-card img {
+            width: 100%;
+            height: 120px; /* Reduced height */
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+        }
+         .example-card h4 {
+             color: var(--primary);
+             margin-bottom: 10px;
+             font-size: 1rem;
+         }
+
+        .definition-box {
+            background-color: #e0f2fe; /* Lighter blue */
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 5px solid var(--info); /* Use info color */
+        }
+
+        .key-word {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .fact-box {
+            background-color: #fefce8; /* Lighter yellow */
+            border-radius: var(--border-radius);
+            padding: 15px;
+            padding-top: 25px; /* Space for the label */
+            margin: 25px 0 15px 0; /* Adjust margin */
+            border-left: 5px solid var(--warning);
+            position: relative;
+        }
+
+        .fact-box::before {
+            content: 'Fantastic Fact';
+            position: absolute;
+            top: -10px; /* Adjust position */
+            left: 15px;
+            background-color: var(--warning);
+            color: white;
+            padding: 4px 8px; /* Adjust padding */
+            border-radius: 5px;
+            font-size: 0.75rem; /* Adjust size */
+            font-weight: bold;
+        }
+
+        .checkpoint {
+            background-color: #fef2f2; /* Lighter red */
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 5px solid var(--accent);
+        }
+
+        .checkpoint-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .question {
+            margin-bottom: 10px; /* Reduced margin */
+        }
+         .question p { /* Style question text */
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+         }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Adjust min width */
+            gap: 8px; /* Reduced gap */
+            margin-top: 8px;
+        }
+
+        .option {
+            padding: 10px; /* Adjusted padding */
+            border-radius: var(--border-radius);
+            background-color: white;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+             font-size: 0.9rem; /* Adjust size */
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+             background-color: #f9fafb;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background-color: #e0f2fe; /* Match definition box */
+            font-weight: bold;
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background-color: #ecfdf5; /* Lighter green */
+            color: #059669; /* Darker green text */
+             font-weight: bold;
+        }
+
+        .option.incorrect {
+            border-color: var(--accent);
+            background-color: #fef2f2; /* Lighter red */
+            color: #dc2626; /* Darker red text */
+             font-weight: bold;
+        }
+
+        .feedback {
+            margin-top: 10px; /* Reduced margin */
+            font-weight: bold;
+             font-size: 0.9rem;
+            min-height: 1.5em; /* Reserve space */
+            opacity: 0;
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+             padding: 6px 10px; /* Adjust padding */
+             border-radius: var(--border-radius);
+             text-align: center;
+        }
+
+        .feedback.visible {
+            opacity: 1;
+        }
+
+        .feedback.correct {
+            color: var(--success);
+             background-color: #ecfdf5; /* Lighter green background */
+        }
+
+        .feedback.incorrect {
+            color: var(--accent);
+             background-color: #fef2f2; /* Lighter red background */
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 500px; /* Adjust max width */
+            margin: 20px auto; /* Reduced margin */
+            position: relative;
+             background: #f9fafb;
+             padding: 10px; /* Reduced padding */
+             border-radius: var(--border-radius);
+             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+             min-height: 250px; /* Adjust min height */
+             display: flex; /* Use flex to help center canvas */
+             justify-content: center;
+             align-items: center;
+        }
+         .chart-container canvas {
+             max-width: 100%;
+             max-height: 350px; /* Adjust max height */
+         }
+         .chart-container h4 { /* Style chart titles */
+             position: absolute; /* Position title */
+             top: 5px; /* Adjust position */
+             left: 50%;
+             transform: translateX(-50%);
+             color: var(--primary);
+             font-size: 0.9rem;
+             background: rgba(249, 250, 251, 0.8); /* Semi-transparent background */
+             padding: 2px 8px;
+             border-radius: 4px;
+             z-index: 10; /* Ensure title is above chart */
+         }
+
+        .variation-comparison {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Reduced gap */
+            margin: 20px 0; /* Reduced margin */
+        }
+
+        .comparison-card {
+            flex: 1;
+            min-width: 280px; /* Adjust min width */
+            background-color: #f1f5f9;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border-top: 4px solid var(--primary); /* Thinner border */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comparison-card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+         .comparison-card p {
+             font-size: 0.9rem;
+             margin-bottom: 10px;
+             flex-grow: 1; /* Allow text to take space */
+         }
+
+        .characteristics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Reduced gap */
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e5e7eb; /* Background for source items */
+            border-radius: var(--border-radius);
+             min-height: 40px; /* Ensure minimum height */
+        }
+
+        .characteristic-item { /* New name for clarity */
+            background-color: white;
+            border-radius: 15px; /* More rounded */
+            padding: 6px 12px; /* Adjusted padding */
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            cursor: grab; /* Use grab cursor */
+            border: 1px solid #d1d5db;
+             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .characteristic-item:hover {
+            background-color: #f9fafb;
+             border-color: var(--primary-light);
+        }
+         .characteristic-item.dragging {
+             opacity: 0.5;
+             cursor: grabbing;
+             box-shadow: var(--shadow);
+         }
+         /* Styles for items when dropped */
+         .characteristic-item.correct {
+             background-color: #ecfdf5;
+             border-color: var(--success);
+         }
+         .characteristic-item.incorrect {
+             background-color: #fef2f2;
+             border-color: var(--accent);
+         }
+
+
+        .dropzone { /* General dropzone style */
+             min-height: 120px; /* Reduced min height */
+             border: 2px dashed #d1d5db; /* Adjusted border */
+             border-radius: var(--border-radius);
+             padding: 10px; /* Reduced padding */
+             margin-top: 15px;
+             transition: all 0.3s ease;
+             background-color: #f9fafb; /* Light background */
+         }
+
+        .dropzone.dragover { /* Style when dragging over */
+            border-color: var(--primary);
+            background-color: #f0fdfa; /* Light teal background */
+            border-style: solid;
+        }
+
+        /* --- NEW SWIPE GAME STYLES --- */
+        .game-container {
+             text-align: center;
+             padding: 20px 15px; /* Adjust padding */
+             background-color: #f0f9ff; /* Different background for game */
+             border-radius: var(--border-radius);
+             min-height: 400px; /* Adjust min height */
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             position: relative; /* Needed for absolute positioned elements like feedback */
+             overflow: hidden; /* Prevent card overflow issues */
+         }
+         .game-instructions {
+             margin-bottom: 15px; /* Increased margin */
+             color: var(--text-dark);
+             font-size: 0.95rem; /* Slightly larger */
+             max-width: 550px;
+         }
+
+         .game-stats-swipe {
+             display: flex;
+             justify-content: space-around;
+             width: 100%;
+             max-width: 400px; /* Adjust width */
+             margin-bottom: 20px; /* Increased margin */
+             gap: 15px; /* Increased gap */
+         }
+
+         .game-stat-item {
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             background-color: white;
+             padding: 8px 15px; /* Adjust padding */
+             border-radius: var(--border-radius);
+             box-shadow: var(--shadow);
+             flex: 1; /* Allow stats to take equal space */
+         }
+         .game-stat-item .label { font-size: 0.8rem; color: var(--tertiary); }
+         .game-stat-item .value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+
+         #swipe-card-area { /* Container for the card */
+             width: 90%;
+             max-width: 320px; /* Adjust card size */
+             height: 140px; /* Adjust height */
+             margin: 20px auto; /* Increased margin */
+             position: relative; /* For positioning card */
+             perspective: 1000px; /* For potential 3D effects */
+             flex-shrink: 0; /* Prevent shrinking */
+         }
+
+         #swipe-card {
+             width: 100%;
+             height: 100%;
+             background-color: white;
+             border-radius: var(--border-radius);
+             box-shadow: var(--shadow);
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             font-size: 1.3rem; /* Adjust font size */
+             font-weight: 500;
+             padding: 15px;
+             text-align: center;
+             position: absolute;
+             top: 0;
+             left: 0;
+             transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, border-color 0.2s ease; /* Smooth transitions, adjusted easing */
+             cursor: default; /* No grabbing needed if using buttons */
+             user-select: none; /* Prevent text selection */
+             border: 3px solid transparent; /* Border to show feedback color */
+             will-change: transform, opacity; /* Optimize animation */
+         }
+         /* Feedback styles applied directly to the card */
+         #swipe-card.feedback-correct {
+              border-color: var(--success);
+              background-color: #f0fdf4; /* Lighter green */
+              transform: scale(1.03); /* Slight zoom for correct */
+          }
+         #swipe-card.feedback-incorrect {
+              border-color: var(--accent);
+              background-color: #fef2f2; /* Lighter red */
+              animation: shake 0.4s ease-in-out; /* Shake animation for incorrect */
+          }
+         /* Animation for card leaving */
+          #swipe-card.leaving-left {
+              transform: translateX(-120%) rotate(-10deg) scale(0.9);
+              opacity: 0;
+              transition: transform 0.3s ease-in, opacity 0.2s ease-in;
+          }
+          #swipe-card.leaving-right {
+              transform: translateX(120%) rotate(10deg) scale(0.9);
+              opacity: 0;
+              transition: transform 0.3s ease-in, opacity 0.2s ease-in;
+          }
+          /* Style for the next card entering (initially hidden) */
+           #swipe-card.next {
+              transform: translateY(20px) scale(0.95);
+              opacity: 0;
+              z-index: -1; /* Position behind current card */
+              transition: none; /* No transition when just sitting as 'next' */
+           }
+           /* Animation for next card becoming current */
+           #swipe-card.entering {
+               transform: translateY(0) scale(1);
+               opacity: 1;
+               z-index: 1; /* Bring to front */
+               transition: transform 0.3s ease-out 0.1s, opacity 0.3s ease-out 0.1s; /* Delay entry slightly */
+           }
+
+
+         @keyframes shake {
+           0%, 100% { transform: translateX(0); }
+           25% { transform: translateX(-6px); }
+           50% { transform: translateX(6px); }
+           75% { transform: translateX(-6px); }
+         }
+
+
+         .swipe-controls {
+             display: flex;
+             justify-content: center;
+             gap: 15px; /* Increased gap */
+             margin-top: 20px; /* Increased margin */
+             width: 100%;
+             max-width: 450px; /* Limit width */
+             flex-wrap: wrap;
+             flex-shrink: 0; /* Prevent controls shrinking */
+         }
+         .swipe-btn {
+             padding: 12px 18px; /* Adjust padding */
+             font-size: 0.95rem; /* Adjust size */
+             flex-basis: 140px; /* Base width */
+             flex-grow: 1; /* Allow buttons to grow */
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             gap: 6px;
+             border: none; /* Override .btn border if needed */
+             border-radius: var(--border-radius); /* Ensure rounding */
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+         }
+         /* Specific button colors */
+         .swipe-btn.continuous { background-color: var(--info); }
+         .swipe-btn.discontinuous { background-color: var(--accent); }
+
+         .swipe-btn:hover:not(:disabled) {
+             filter: brightness(1.1); /* Simple hover effect */
+              transform: translateY(-1px);
+              box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+         }
+         .swipe-btn:disabled {
+              background-color: var(--tertiary) !important; /* Force disabled color */
+              opacity: 0.6;
+               box-shadow: none;
+               transform: none;
+         }
+
+
+         #swipe-feedback {
+             margin-top: 15px; /* Increased margin */
+             font-weight: bold;
+             font-size: 0.95rem;
+             height: 1.5em; /* Reserve space */
+             color: var(--text-dark);
+         }
+         #swipe-feedback.correct { color: var(--success); }
+         #swipe-feedback.incorrect { color: var(--accent); }
+
+         #game-end-summary {
+             margin-top: 30px; /* Increased margin */
+             padding: 20px; /* Increased padding */
+             background-color: white;
+             border-radius: var(--border-radius);
+             box-shadow: var(--shadow);
+             text-align: center;
+         }
+          #game-end-summary h3 {
+              color: var(--primary);
+              margin-bottom: 10px;
+          }
+          #game-end-summary p {
+              margin-bottom: 15px;
+              font-size: 1rem;
+          }
+          #game-end-summary #final-swipe-score {
+              font-weight: bold;
+              font-size: 1.3rem; /* Larger score */
+              color: var(--primary);
+          }
+         /* --- END SWIPE GAME STYLES --- */
+
+        .classification-container {
+            display: flex;
+            gap: 20px; /* Reduced gap */
+            flex-wrap: wrap;
+            margin: 20px 0; /* Reduced margin */
+        }
+
+        .classification-dropzone { /* Inherits from .dropzone */
+            flex: 1;
+            min-width: 250px;
+            min-height: 150px; /* Reduced height */
+        }
+
+        .classification-dropzone h3 {
+            text-align: center;
+            margin-bottom: 15px; /* Reduced margin */
+            color: var(--primary);
+             font-weight: 600;
+             font-size: 1rem;
+        }
+
+        /* dragover style inherited from .dropzone.dragover */
+
+
+        .animation-container {
+            width: 100%;
+            height: 250px; /* Reduced height */
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+            margin: 20px 0; /* Reduced margin */
+            background-color: #f1f5f9;
+            padding: 10px;
+             border: 1px solid #e5e7eb;
+        }
+         .animation-title {
+             text-align: center;
+             padding-bottom: 5px;
+             font-weight: bold;
+             color: var(--primary);
+             font-size: 0.9rem;
+         }
+
+        .height-animation {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: calc(100% - 30px); /* Account for title */
+            padding: 10px;
+        }
+
+        .person {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+             max-width: 40px; /* Limit width */
+        }
+
+        .person-body {
+            background-color: var(--primary);
+            width: 20px; /* Thinner */
+            height: 0;
+            margin-bottom: 4px; /* Reduced margin */
+            transition: height 1s ease-out; /* Adjusted timing */
+            border-radius: 4px 4px 0 0;
+        }
+
+        .person-head {
+            width: 20px; /* Match body width */
+            height: 20px; /* Match body width */
+            background-color: #fcd34d;
+            border-radius: 50%;
+             margin-bottom: 4px; /* Add space below head */
+        }
+
+        .person-label {
+            font-size: 0.7rem; /* Smaller label */
+            margin-top: 3px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .blood-animation {
+             display: flex;
+             flex-wrap: wrap; /* Allow wrapping */
+            justify-content: space-around;
+             align-items: flex-end; /* Align items at the bottom */
+            height: calc(100% - 30px); /* Account for title */
+            padding: 10px;
+             gap: 15px; /* Adjust gap */
+        }
+
+        .blood-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+             flex: 1; /* Allow groups to take equal space */
+             min-width: 60px; /* Adjust min width */
+             padding-bottom: 5px; /* Space at bottom */
+        }
+
+        .blood-cell {
+            width: 40px; /* Smaller cells */
+            height: 40px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+             font-size: 1rem; /* Adjust size */
+            margin-bottom: 8px;
+             border: 2px solid #dc2626; /* Darker border */
+             transition: transform 0.5s ease; /* Add transition for animation */
+             flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .blood-group-label {
+            font-size: 0.8rem; /* Adjust size */
+            font-weight: bold;
+             margin-bottom: 4px;
+             text-align: center;
+        }
+
+        .population-count {
+             width: 100%; /* Full width of container */
+            height: auto; /* Auto height */
+             padding: 4px 0; /* Adjust padding */
+            background-color: var(--primary);
+            margin-top: 5px;
+            border-radius: 4px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem; /* Adjusted font size */
+        }
+
+        .summary-quiz {
+            margin: 25px 0; /* Adjust margin */
+        }
+         .summary-quiz h3 {
+             text-align: center;
+             color: var(--primary);
+             margin-bottom: 15px;
+             font-size: 1.3rem;
+         }
+          .summary-quiz > p { /* Style intro paragraph */
+             text-align: center;
+             margin-bottom: 15px;
+             font-size: 0.95rem;
+         }
+
+        .quiz-progress {
+            height: 8px; /* Thinner bar */
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            margin-bottom: 20px; /* Reduced margin */
+            overflow: hidden;
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-question {
+            margin-bottom: 25px;
+        }
+
+        .quiz-question h3 {
+            margin-bottom: 15px; /* Reduced margin */
+            color: var(--primary);
+             font-size: 1.05rem; /* Adjust size */
+             font-weight: 600;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust min width */
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 12px;
+            background-color: white;
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+             font-size: 0.9rem;
+        }
+
+        .quiz-option:hover {
+            background-color: #f9fafb;
+             border-color: var(--primary-light);
+        }
+
+        .quiz-option.selected {
+            background-color: #f0fdfa; /* Light teal background */
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+        /* Quiz option correct/incorrect highlighting */
+         .quiz-option.correct {
+             background-color: #ecfdf5;
+             border-color: var(--success);
+             color: #047857; /* Darker green text */
+         }
+         .quiz-option.incorrect {
+             background-color: #fef2f2;
+             border-color: var(--accent);
+             color: #b91c1c; /* Darker red text */
+         }
+
+
+        .quiz-results {
+            text-align: center;
+            margin: 30px 0; /* Adjust margin */
+            padding: 25px;
+            background-color: #f1f5f9;
+            border-radius: var(--border-radius);
+        }
+         .quiz-results h3 {
+             color: var(--primary);
+             margin-bottom: 10px;
+         }
+
+        .quiz-score {
+            font-size: 2.2rem; /* Adjust size */
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px; /* Reduced margin */
+        }
+
+        .quiz-feedback {
+            font-size: 1rem; /* Adjust size */
+            margin-bottom: 20px; /* Reduced margin */
+            font-weight: 500;
+        }
+
+
+        .histogram-container, .bar-chart-container { /* Combine styles */
+            width: 100%;
+            max-width: 500px; /* Adjust max width */
+            margin: 20px auto; /* Reduced margin */
+             background: #f9fafb;
+             padding: 10px; /* Reduced padding */
+             border-radius: var(--border-radius);
+             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+             min-height: 250px; /* Adjust min height */
+             display: flex; /* Use flex to help center canvas */
+             justify-content: center;
+             align-items: center;
+        }
+
+
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0; /* Reduced padding */
+            margin-top: 30px; /* Reduced margin */
+            text-align: center;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            font-size: 0.9rem;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        @media (max-width: 992px) { /* Adjust breakpoint for nav */
+            .nav-container {
+                flex-direction: column;
+                align-items: stretch; /* Stretch items */
+                padding: 10px;
+            }
+            .nav-links {
+                order: 2; /* Move links below progress */
+                justify-content: center; /* Center links */
+                 margin-top: 10px;
+                 gap: 3px; /* Further reduce gap */
+            }
+             .nav-links li a {
+                 padding: 6px 10px; /* Smaller padding */
+             }
+            .progress-container {
+                order: 1; /* Move progress above links */
+                justify-content: center; /* Center progress bar */
+                 width: 100%; /* Full width */
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .header-content {
+                 justify-content: center; /* Center items when wrapped */
+             }
+             header h1 {
+                 font-size: 1.2rem; /* Smaller title */
+             }
+
+            .example-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .variation-comparison {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .classification-container {
+                 flex-direction: column;
+                 gap: 15px;
+             }
+             .btn-next {
+                 float: none; /* Remove float */
+                 display: block; /* Make button block level */
+                 width: 100%; /* Full width */
+                 margin-top: 15px;
+                 text-align: center;
+             }
+             section::after, .checkpoint::after, #practice-part-1::after, #practice-part-2::after, #practice-part-3::after {
+                 /* Clearfix not needed when button is not floated */
+                 content: none;
+             }
+             .quiz-options {
+                 grid-template-columns: 1fr; /* Single column quiz options */
+             }
+              #swipe-card { font-size: 1.1rem; }
+              .swipe-btn { flex-basis: 100px; } /* Adjust button base width */
+        }
+         @media (max-width: 480px) {
+             .container { padding: 10px; }
+             section { padding: 15px; }
+             .section-title h2 { font-size: 1.2rem; }
+             .nav-links li a { padding: 5px 8px; font-size: 0.8rem;}
+             .progress-container { gap: 5px; }
+             .progress-text { font-size: 0.8rem; }
+
+             .game-stats-swipe { flex-direction: column; gap: 8px; align-items: center; }
+             .game-stat-item { width: 80%; justify-content: center;}
+             #swipe-card-area { height: 110px; /* Further reduce height */ }
+             #swipe-card { font-size: 1rem; padding: 10px;}
+             .swipe-controls { flex-direction: column; align-items: center; gap: 8px;}
+             .swipe-btn { width: 80%; flex-basis: auto; padding: 10px 15px;}
+             .chart-container { min-height: 200px; }
+             .quiz-options { grid-template-columns: 1fr; }
+             .quiz-option { padding: 10px; }
+             footer { padding: 10px 0; font-size: 0.8rem; }
+         }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-circle">10.1.2</div>
+                <h1>Continuous & Discontinuous Variation</h1>
+            </div>
+            <div>
+                 <p>Understanding Variation</p>
+            </div>
+        </div>
+        <div class="wave"></div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <div class="nav-container">
+                <ul class="nav-links">
+                    <li><a href="#introduction" class="active" data-section="introduction">Introduction</a></li>
+                    <li><a href="#tutorial" data-section="tutorial">Tutorial</a></li>
+                    <li><a href="#practice" data-section="practice">Practice</a></li>
+                    <li><a href="#game" data-section="game">Game</a></li>
+                    <li><a href="#summary" data-section="summary">Summary</a></li>
+                </ul>
+                <div class="progress-container">
+                     <span>Progress:</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text">0%</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="active-section">
+            <div class="section-title">
+                <div class="section-number">1</div>
+                <h2>Introduction</h2>
+            </div>
+
+            <p>Welcome to our lesson on Variation in living organisms! In this lesson, we'll explore how characteristics vary within a species and understand the difference between continuous and discontinuous variation.</p>
+
+            <div class="card">
+                <div class="card-title">Learning Objectives</div>
+                <ul class="objectives-list">
+                    <li>State the two types of variation</li>
+                    <li>Describe the difference between continuous and discontinuous variation</li>
+                    <li>Represent variation within a species using graphs</li>
+                    <li>Classify examples of characteristics</li>
+                </ul>
+            </div>
+
+            <p>Look around you. You'll notice that individuals share some characteristics, like having eyes, but may differ in others, like eye color or height. Even within a single species, like humans or dogs, there's a lot of variety. Why is this?</p>
+
+            <div class="fact-box">
+                <p>The tallest ever recorded person was Robert Wadlow. He grew to an incredible height of 2.72 meters (8 ft 11 in)! Imagine trying to fit through doorways!</p>
+            </div>
+
+            <button class="btn btn-next" id="intro-next">
+                Let's Get Started
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </section>
+
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="hidden">
+            <div class="section-title">
+                <div class="section-number">2</div>
+                <h2>Tutorial: Understanding Variation</h2>
+            </div>
+
+            <div class="definition-box">
+                <p><span class="key-word">Variation</span> refers to the differences in characteristics between individuals of the same species.</p>
+            </div>
+
+            <p>Scientists classify variation into two main types:</p>
+
+            <!-- Tutorial Part 1 -->
+            <div id="tutorial-part-1">
+                <h3>Part 1: What is Discontinuous Variation?</h3>
+
+                <p>Characteristics that can only result in specific, distinct categories show <span class="key-word">discontinuous variation</span> (also called discrete variation). There are no in-between values.</p>
+                <p>For example, human blood groups are discontinuous. You are either group A, B, AB, or O – you can't be halfway between A and B.</p>
+
+                <div class="animation-container">
+                     <div class="animation-title">Human Blood Groups (Example)</div>
+                    <div class="blood-animation" id="blood-animation">
+                        <div class="blood-group">
+                            <div class="blood-cell">A</div>
+                            <p class="blood-group-label">Blood Group A</p>
+                            <div class="population-count">~42%</div>
+                        </div>
+                        <div class="blood-group">
+                            <div class="blood-cell">B</div>
+                            <p class="blood-group-label">Blood Group B</p>
+                            <div class="population-count">~10%</div>
+                        </div>
+                        <div class="blood-group">
+                            <div class="blood-cell">AB</div>
+                            <p class="blood-group-label">Blood Group AB</p>
+                            <div class="population-count">~3%</div>
+                        </div>
+                        <div class="blood-group">
+                            <div class="blood-cell">O</div>
+                            <p class="blood-group-label">Blood Group O</p>
+                            <div class="population-count">~45%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>Other characteristics that often show discontinuous variation include:</p>
+                <ul>
+                    <li>Eye color (usually distinct categories like blue, brown, green, etc.)</li>
+                    <li>Ability to roll your tongue (you either can or can't)</li>
+                    <li>Earlobe attachment (attached or detached)</li>
+                     <li>Number of petals on certain flowers</li>
+                </ul>
+
+                <div class="chart-container">
+                    <h4>Plotting Discontinuous Data: Bar Chart</h4>
+                    <canvas id="bloodGroupChart"></canvas>
+                     <p style="text-align: center; font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Bar charts are great for showing counts in distinct categories.</p>
+                </div>
+
+                <div class="checkpoint">
+                    <div class="checkpoint-title">Checkpoint 1</div>
+                    <div class="question">
+                        <p>Which of the following is the best example of discontinuous variation?</p>
+                        <div class="options">
+                            <div class="option" data-correct="false">Human Height</div>
+                            <div class="option" data-correct="true">Human Blood Group</div>
+                            <div class="option" data-correct="false">Leaf Length</div>
+                            <div class="option" data-correct="false">Body Weight</div>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-next" id="part-1-next" disabled>
+                    Continue to Continuous Variation
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- Tutorial Part 2 -->
+            <div id="tutorial-part-2" class="hidden">
+                 <h3>Part 2: What is Continuous Variation?</h3>
+
+                <p>A characteristic that can take <span class="key-word">any value within a given range</span> is said to show <span class="key-word">continuous variation</span>.</p>
+                <p>Think about human height. While we might measure it in cm or inches, a person's actual height could theoretically be any value between the shortest and tallest possible heights. There's a continuous range of possibilities.</p>
+
+                <div class="animation-container">
+                    <div class="animation-title">Human Height (Example)</div>
+                    <div class="height-animation" id="height-animation">
+                        <div class="person"><div class="person-head"></div><div class="person-body" data-height="150"></div><p class="person-label">150 cm</p></div>
+                        <div class="person"><div class="person-head"></div><div class="person-body" data-height="165"></div><p class="person-label">165 cm</p></div>
+                        <div class="person"><div class="person-head"></div><div class="person-body" data-height="172"></div><p class="person-label">172 cm</p></div>
+                        <div class="person"><div class="person-head"></div><div class="person-body" data-height="180"></div><p class="person-label">180 cm</p></div>
+                        <div class="person"><div class="person-head"></div><div class="person-body" data-height="195"></div><p class="person-label">195 cm</p></div>
+                    </div>
+                </div>
+
+                <p>Other characteristics that typically show continuous variation include:</p>
+                <ul>
+                    <li>Weight</li>
+                    <li>Arm span or hand span</li>
+                    <li>Foot size (although shoe sizes are discrete categories, actual foot length is continuous)</li>
+                    <li>Milk yield in cows</li>
+                     <li>Leaf width or length</li>
+                </ul>
+
+                <div class="chart-container">
+                    <h4>Plotting Continuous Data: Histogram</h4>
+                    <canvas id="heightHistogram"></canvas>
+                     <p style="text-align: center; font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Histograms show the frequency distribution across continuous ranges (bins).</p>
+                </div>
+
+                <div class="checkpoint">
+                    <div class="checkpoint-title">Checkpoint 2</div>
+                    <div class="question">
+                        <p>Which of the following is the best example of continuous variation?</p>
+                        <div class="options">
+                            <div class="option" data-correct="true">Human Height</div>
+                            <div class="option" data-correct="false">Human Blood Group</div>
+                            <div class="option" data-correct="false">Tongue Rolling Ability</div>
+                            <div class="option" data-correct="false">Flower Color (e.g., red or white)</div>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-next" id="part-2-next" disabled>
+                    Continue to Plotting Data
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- Tutorial Part 3 -->
+            <div id="tutorial-part-3" class="hidden">
+                 <h3>Part 3: Plotting Variation Data</h3>
+                 <p>Choosing the right type of graph is important for representing variation clearly.</p>
+
+                <div class="variation-comparison">
+                    <div class="comparison-card">
+                        <h3>Plotting Discontinuous Variation</h3>
+                        <p>Characteristics that show discontinuous variation (distinct categories) are best plotted on a <span class="key-word">bar chart</span>. Each bar represents a separate category, and its height shows the frequency or count for that category.</p>
+                        <div class="chart-container">
+                             <h4>Example: Blood Groups</h4>
+                            <canvas id="bloodGroupBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="comparison-card">
+                        <h3>Plotting Continuous Variation</h3>
+                        <p>Characteristics that show continuous variation (a range of values) are best plotted on a <span class="key-word">histogram</span>. The data is grouped into bins (ranges), and the height of each bar shows the frequency within that bin. The bars often touch to show the continuous nature of the data.</p>
+                        <div class="chart-container">
+                             <h4>Example: Height Distribution</h4>
+                            <canvas id="heightHistogram2"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Why does variation occur?</div>
+                    <p>Variation within a species arises from a combination of factors:</p>
+                    <ul>
+                        <li><span class="key-word">Genetic factors</span>: Differences in the genes inherited from parents. These often determine discontinuous characteristics like blood groups.</li>
+                        <li><span class="key-word">Environmental factors</span>: Differences in the surroundings or lifestyle, such as diet, climate, or exercise.</li>
+                        <li><span class="key-word">Combination</span>: Many characteristics, especially continuous ones like height or weight, are influenced by *both* genetics and the environment.</li>
+                    </ul>
+                </div>
+
+                <div class="checkpoint">
+                    <div class="checkpoint-title">Checkpoint 3</div>
+                    <div class="question">
+                        <p>Which type of graph is most suitable for displaying the distribution of student heights measured in centimeters?</p>
+                        <div class="options">
+                            <div class="option" data-correct="false">Bar Chart</div>
+                            <div class="option" data-correct="true">Histogram</div>
+                            <div class="option" data-correct="false">Pie Chart</div>
+                            <div class="option" data-correct="false">Line Graph</div>
+                        </div>
+                        <div class="feedback"></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-next" id="part-3-next" disabled>
+                    Move to Practice Section
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="hidden">
+            <div class="section-title">
+                <div class="section-number">3</div>
+                <h2>Practice: Apply Your Knowledge</h2>
+            </div>
+
+            <!-- Practice Part 1 -->
+            <div id="practice-part-1">
+                <h3>Activity 1: Classifying Variation Types</h3>
+                <p>Drag each characteristic below into the correct box: <span class="key-word">Continuous Variation</span> (can take any value in a range) or <span class="key-word">Discontinuous Variation</span> (falls into distinct categories).</p>
+
+                 <div class="characteristics" id="characteristics-container">
+                    <!-- Items to be dragged -->
+                    <div class="characteristic-item" draggable="true" data-type="continuous">Height</div>
+                    <div class="characteristic-item" draggable="true" data-type="discontinuous">Blood Group</div>
+                    <div class="characteristic-item" draggable="true" data-type="continuous">Weight</div>
+                    <div class="characteristic-item" draggable="true" data-type="discontinuous">Eye Color</div>
+                    <div class="characteristic-item" draggable="true" data-type="continuous">Arm Length</div>
+                    <div class="characteristic-item" draggable="true" data-type="discontinuous">Tongue Rolling Ability</div>
+                    <div class="characteristic-item" draggable="true" data-type="continuous">Shoe Size (actual foot length)</div>
+                    <div class="characteristic-item" draggable="true" data-type="discontinuous">Attached/Detached Earlobes</div>
+                    <div class="characteristic-item" draggable="true" data-type="continuous">Hand Span</div>
+                    <div class="characteristic-item" draggable="true" data-type="discontinuous">Presence/Absence of Horns</div>
+                </div>
+
+                <div class="classification-container">
+                    <div class="classification-dropzone dropzone" id="continuous-dropzone">
+                        <h3>Continuous Variation</h3>
+                        <!-- Dropped items will appear here -->
+                    </div>
+                    <div class="classification-dropzone dropzone" id="discontinuous-dropzone">
+                        <h3>Discontinuous Variation</h3>
+                        <!-- Dropped items will appear here -->
+                    </div>
+                </div>
+
+                <div class="feedback" id="classification-feedback" style="min-height: 40px;"></div> <!-- Feedback area -->
+
+                <button class="btn btn-next" id="practice-1-next" disabled>
+                    Continue to Activity 2
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- Practice Part 2 -->
+            <div id="practice-part-2" class="hidden">
+                 <h3>Activity 2: Graphing Different Types of Variation</h3>
+
+                <div class="card">
+                    <div class="card-title">Choose the correct graph type</div>
+                    <p>For each dataset below, select the appropriate graph type (Bar Chart or Histogram). Clicking the correct type will reveal the graph.</p>
+                </div>
+
+                <div class="example-grid">
+                    <div class="example-card">
+                        <h4>Dataset 1: Student Eye Colors</h4>
+                        <p>Blue: 12, Brown: 18, Green: 8, Hazel: 5</p>
+                         <p><i>Is this continuous or discontinuous data?</i></p>
+                        <div class="options">
+                            <div class="option" data-correct="true" data-chart-id="eyeColorChart">Bar Chart</div>
+                            <div class="option" data-correct="false" data-chart-id="eyeColorChart">Histogram</div>
+                        </div>
+                        <div class="feedback"></div> <!-- Feedback for this card -->
+                        <div class="chart-container hidden" id="eyeColorChart-container">
+                            <canvas id="eyeColorChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Dataset 2: Student Heights (cm)</h4>
+                        <p>145-150: 3, 151-155: 5, 156-160: 12, 161-165: 18, 166-170: 11, 171-175: 6, 176-180: 3</p>
+                         <p><i>Is this continuous or discontinuous data?</i></p>
+                        <div class="options">
+                            <div class="option" data-correct="false" data-chart-id="studentHeightChart">Bar Chart</div>
+                            <div class="option" data-correct="true" data-chart-id="studentHeightChart">Histogram</div>
+                        </div>
+                         <div class="feedback"></div> <!-- Feedback for this card -->
+                        <div class="chart-container hidden" id="studentHeightChart-container">
+                            <canvas id="studentHeightChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-next" id="practice-2-next" disabled>
+                     Continue to Activity 3
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+
+            <!-- Practice Part 3 -->
+            <div id="practice-part-3" class="hidden">
+                 <h3>Activity 3: Factors Affecting Variation</h3>
+
+                <div class="card">
+                    <div class="card-title">What causes variation?</div>
+                    <p>Drag each factor below into the box that best describes its primary influence: <span class="key-word">Genetic Factors</span> (inherited) or <span class="key-word">Environmental Factors</span> (external influences).</p>
+                     <p><small>Note: Some factors might involve both, but choose the *primary* influence.</small></p>
+                </div>
+
+                 <div class="characteristics" id="factors-container">
+                    <!-- Factors to be dragged -->
+                    <div class="characteristic-item" draggable="true" data-type="genetic">Inherited eye color</div>
+                    <div class="characteristic-item" draggable="true" data-type="environmental">Diet and nutrition</div>
+                    <div class="characteristic-item" draggable="true" data-type="genetic">Blood group type</div>
+                    <div class="characteristic-item" draggable="true" data-type="environmental">Amount of sunlight (tanning)</div>
+                    <div class="characteristic-item" draggable="true" data-type="genetic">Natural hair color</div>
+                    <div class="characteristic-item" draggable="true" data-type="environmental">Scars from injuries</div>
+                    <div class="characteristic-item" draggable="true" data-type="genetic">Ability to roll tongue</div>
+                    <div class="characteristic-item" draggable="true" data-type="environmental">Level of physical training</div>
+                    <div class="characteristic-item" draggable="true" data-type="environmental">Hair dye color</div>
+                    <div class="characteristic-item" draggable="true" data-type="genetic">Presence of genetic disorders</div>
+                </div>
+
+
+                <div class="classification-container">
+                    <div class="classification-dropzone dropzone" id="genetic-dropzone">
+                        <h3>Primarily Genetic Factors</h3>
+                         <!-- Dropped items will appear here -->
+                    </div>
+                    <div class="classification-dropzone dropzone" id="environmental-dropzone">
+                         <h3>Primarily Environmental Factors</h3>
+                         <!-- Dropped items will appear here -->
+                    </div>
+                </div>
+
+                <div class="feedback" id="factors-feedback" style="min-height: 40px;"></div> <!-- Feedback area -->
+
+                <button class="btn btn-next" id="practice-3-next" disabled>
+                    Play the Classification Game
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Game Section (Swipe Game) -->
+        <section id="game" class="hidden">
+            <div class="section-title">
+                <div class="section-number">4</div>
+                <h2>Game: Variation Classifier</h2>
+            </div>
+
+            <div class="game-container">
+                 <p class="game-instructions">Classify the characteristics! Click 'Continuous' or 'Discontinuous' for the trait shown on the card. Be quick and accurate!</p>
+
+                 <!-- Game Stats -->
+                 <div class="game-stats-swipe">
+                     <div class="game-stat-item">
+                         <span class="label">Time Left</span>
+                         <span class="value" id="swipe-timer">60</span>
+                     </div>
+                     <div class="game-stat-item">
+                         <span class="label">Score</span>
+                         <span class="value" id="swipe-score">0</span>
+                     </div>
+                 </div>
+
+                 <!-- Card Display Area -->
+                 <div id="swipe-card-area">
+                     <div id="swipe-card">Game Starting...</div>
+                 </div>
+
+                 <!-- Feedback Area -->
+                 <div id="swipe-feedback"></div>
+
+                 <!-- Control Buttons -->
+                 <div class="swipe-controls">
+                     <button class="btn swipe-btn continuous" id="swipe-continuous-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                         Continuous
+                     </button>
+                     <button class="btn swipe-btn discontinuous" id="swipe-discontinuous-btn" disabled>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                         Discontinuous
+                     </button>
+                 </div>
+
+                 <!-- Start/End Game Elements -->
+                 <div id="swipe-start-screen" style="margin-top: 20px;">
+                      <button class="btn" id="start-swipe-game-btn">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                          Start Game
+                      </button>
+                  </div>
+
+                 <div id="game-end-summary" class="hidden">
+                     <h3>Game Over!</h3>
+                     <p>Your final score is: <span id="final-swipe-score">0</span></p>
+                     <button class="btn" id="restart-swipe-game-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v6h6"></path><path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path><path d="M21 22v-6h-6"></path><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path></svg>
+                         Play Again
+                     </button>
+                     <button class="btn btn-next" id="swipe-game-next-btn" style="margin-left: 10px;">
+                         Continue to Summary
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                     </button>
+                 </div>
+             </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="hidden">
+            <div class="section-title">
+                <div class="section-number">5</div>
+                <h2>Summary & Quiz</h2>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Key Points Recap</div>
+                <ul>
+                    <li><span class="key-word">Variation</span>: Differences between individuals of the same species.</li>
+                    <li><span class="key-word">Discontinuous Variation</span>: Characteristics fall into distinct, separate categories (e.g., blood group, tongue rolling). Often determined mainly by genetics. Plotted using <span class="key-word">bar charts</span>.</li>
+                    <li><span class="key-word">Continuous Variation</span>: Characteristics can take any value within a range (e.g., height, weight, leaf length). Often influenced by both genetics and environment. Plotted using <span class="key-word">histograms</span>.</li>
+                    <li>Variation is crucial for the adaptation and evolution of species.</li>
+                </ul>
+            </div>
+
+            <div class="summary-quiz">
+                <h3>Final Quiz</h3>
+                 <p>Test your understanding with these 5 questions.</p>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-fill" id="quiz-progress-fill"></div>
+                </div>
+
+                <div class="quiz-questions" id="quiz-questions">
+                    <!-- Quiz questions will be dynamically generated here -->
+                     <p style="text-align: center;">Loading quiz...</p>
+                </div>
+
+                <div class="quiz-results hidden" id="quiz-results">
+                    <h3>Quiz Complete!</h3>
+                    <div class="quiz-score" id="quiz-final-score">0/5</div>
+                    <div class="quiz-feedback" id="quiz-feedback">Feedback message goes here.</div>
+                    <button class="btn" id="retry-quiz">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v6h6"></path><path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path><path d="M21 22v-6h-6"></path><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path></svg>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; Interactive Science Lesson - Variation</p>
+        </div>
+    </footer>
+
+    <script>
+        // Wait for DOM to be fully loaded before executing scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Global Variables ---
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const sections = document.querySelectorAll('section');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.querySelector('.progress-text');
+            let currentProgressLevel = 0; // Use levels 0-4 instead of direct progress count
+
+            // Debounce function
+             function debounce(func, wait) {
+                 let timeout;
+                 return function executedFunction(...args) {
+                     const later = () => {
+                         clearTimeout(timeout);
+                         func(...args);
+                     };
+                     clearTimeout(timeout);
+                     timeout = setTimeout(later, wait);
+                 };
+             }
+
+            // --- Navigation ---
+            navLinks.forEach((link, index) => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetSectionId = this.getAttribute('data-section');
+                    // Stop any active game timers when navigating away manually
+                     if (swipeGameTimer) {
+                         stopSwipeGame();
+                     }
+                    showSection(targetSectionId);
+                    // Update progress based on the *index* of the clicked link
+                    currentProgressLevel = index;
+                    updateProgress();
+                });
+            });
+
+            function showSection(sectionId) {
+                navLinks.forEach(link => {
+                     link.classList.toggle('active', link.getAttribute('data-section') === sectionId);
+                 });
+
+                 sections.forEach(section => {
+                     section.classList.toggle('active-section', section.id === sectionId);
+                     section.classList.toggle('hidden', section.id !== sectionId);
+                 });
+
+                 // Trigger animations/setup for the newly shown section
+                 switch (sectionId) {
+                    case 'tutorial':
+                         // Delay slightly to ensure section is visible before animating/charting
+                         setTimeout(() => {
+                             // Determine which tutorial part is actually visible
+                             const activeTutorialPart = document.querySelector('#tutorial > div:not(.hidden)[id^="tutorial-part"]');
+                             if (activeTutorialPart) {
+                                 if (activeTutorialPart.id === 'tutorial-part-1') {
+                                    animateBloodGroups();
+                                    createBloodGroupChart();
+                                 } else if (activeTutorialPart.id === 'tutorial-part-2') {
+                                     startHeightAnimation();
+                                     createHeightHistogram();
+                                 } else if (activeTutorialPart.id === 'tutorial-part-3') {
+                                     createBloodGroupBarChart();
+                                     createHeightHistogram2();
+                                 }
+                             } else { // Default to part 1 if none are explicitly active (or on first load)
+                                animateBloodGroups();
+                                createBloodGroupChart();
+                             }
+                         }, 200); // Short delay
+                        break;
+                     case 'practice':
+                         setTimeout(() => {
+                             // Determine which practice part is visible
+                             const activePracticePart = document.querySelector('#practice > div:not(.hidden)[id^="practice-part"]');
+                              if (activePracticePart) {
+                                 if (activePracticePart.id === 'practice-part-1') {
+                                     setupDragAndDropActivity('#practice-part-1', '.characteristic-item', '.classification-dropzone', '#classification-feedback', '#practice-1-next', checkClassificationCompletion);
+                                 } else if (activePracticePart.id === 'practice-part-2') {
+                                     createEyeColorChart();
+                                     createStudentHeightChart();
+                                     // Ensure options listeners are active for this part
+                                      activePracticePart.querySelectorAll('.option').forEach(option => {
+                                         // Remove old listener if exists, add new one
+                                         option.removeEventListener('click', handleOptionClick);
+                                         option.addEventListener('click', handleOptionClick);
+                                      });
+                                 } else if (activePracticePart.id === 'practice-part-3') {
+                                     setupDragAndDropActivity('#practice-part-3', '.characteristic-item', '.classification-dropzone', '#factors-feedback', '#practice-3-next', checkFactorsCompletion);
+                                 }
+                              }
+                         }, 200);
+                        break;
+                     case 'game':
+                         // Reset game UI but don't start automatically
+                          resetSwipeGameUI();
+                         break;
+                     case 'summary':
+                         setTimeout(() => {
+                             if (!quizResultsContainer || quizResultsContainer.classList.contains('hidden')) {
+                                 initializeQuiz(); // Initialize quiz only if results aren't already shown
+                             }
+                         }, 200);
+                         break;
+                 }
+            }
+
+             function navigateToNextSection(currentSectionId, nextSectionId) {
+                 const currentLink = document.querySelector(`.nav-links a[data-section="${currentSectionId}"]`);
+                 const nextLink = document.querySelector(`.nav-links a[data-section="${nextSectionId}"]`);
+
+                 if (currentLink && nextLink) {
+                     const currentLevel = Array.from(navLinks).indexOf(currentLink);
+                     currentProgressLevel = Math.max(currentProgressLevel, currentLevel + 1); // Ensure progress moves forward
+                     showSection(nextSectionId);
+                     updateProgress();
+                 } else {
+                     console.error(`Navigation error: Could not find links for ${currentSectionId} or ${nextSectionId}`);
+                 }
+            }
+
+            function updateProgress() {
+                const totalLevels = navLinks.length -1; // 0 to 4 levels
+                const percentage = totalLevels > 0 ? Math.round((currentProgressLevel / totalLevels) * 100) : 0;
+
+                if(progressFill) progressFill.style.width = `${percentage}%`;
+                if(progressText) progressText.textContent = `${percentage}%`;
+            }
+
+            // --- Introduction ---
+            const introNextBtn = document.getElementById('intro-next');
+            if (introNextBtn) {
+                introNextBtn.addEventListener('click', () => navigateToNextSection('introduction', 'tutorial'));
+            } else { console.error("Introduction next button not found"); }
+
+
+            // --- Tutorial Section ---
+
+            // General Checkpoint/Option Handler
+             const allOptions = document.querySelectorAll('.option'); // Query all options globally initially
+             allOptions.forEach(option => {
+                 option.removeEventListener('click', handleOptionClick); // Remove potential old listeners
+                 option.addEventListener('click', handleOptionClick); // Add listener
+             });
+
+            function handleOptionClick() {
+                 const parentOptionsContainer = this.parentElement;
+                 if (!parentOptionsContainer) return;
+                 const optionsInGroup = parentOptionsContainer.querySelectorAll('.option');
+                 // Find feedback element: could be next sibling or nested differently
+                  let feedbackElement = parentOptionsContainer.nextElementSibling;
+                  // Fallback if feedback is not immediate sibling (e.g., within example-card)
+                  if (!feedbackElement || !feedbackElement.classList.contains('feedback')) {
+                      feedbackElement = this.closest('.checkpoint, .example-card')?.querySelector('.feedback');
+                  }
+
+                 const isCorrect = this.getAttribute('data-correct') === 'true';
+
+                 // Reset styles for all options in this group
+                 optionsInGroup.forEach(opt => {
+                     opt.classList.remove('selected', 'correct', 'incorrect');
+                     // Re-enable clicking other options unless correct one was chosen
+                      if (!isCorrect) {
+                         opt.removeEventListener('click', handleOptionClick); // Prevent multiple clicks after wrong answer? Maybe not needed.
+                          opt.addEventListener('click', handleOptionClick);
+                      }
+                 });
+
+                 // Apply style to clicked option
+                 this.classList.add('selected');
+                 this.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+                 // Disable clicking the chosen option again immediately
+                 this.removeEventListener('click', handleOptionClick);
+
+
+                 // Display feedback
+                 if (feedbackElement) {
+                    feedbackElement.textContent = isCorrect ? 'Correct! Well done!' : 'Incorrect. Think again!';
+                    feedbackElement.className = `feedback visible ${isCorrect ? 'correct' : 'incorrect'}`; // Use className to overwrite previous status
+                 } else {
+                     console.warn("Feedback element not found for option:", this);
+                 }
+
+                 // Enable next button OR check completion for specific sections
+                 if (isCorrect) {
+                     // Check if this is inside a Tutorial Checkpoint
+                     const checkpoint = this.closest('.checkpoint');
+                     if (checkpoint) {
+                         const tutorialPart = checkpoint.closest('div[id^="tutorial-part"]');
+                         if (tutorialPart) {
+                             const nextButton = tutorialPart.querySelector('.btn-next');
+                             if (nextButton) nextButton.disabled = false;
+                         }
+                     }
+                     // Check if this is inside Practice Part 2
+                     const practicePart2Card = this.closest('.example-card');
+                      if (practicePart2Card && practicePart2Card.closest('#practice-part-2')) {
+                         // Reveal chart if correct type chosen
+                         const chartContainerId = this.getAttribute('data-chart-id') + '-container';
+                         const chartContainer = document.getElementById(chartContainerId);
+                         if(chartContainer) chartContainer.classList.remove('hidden');
+
+                         checkPracticePart2Completion(); // Check if BOTH are now correct
+                     }
+                 }
+             }
+
+
+             // Tutorial Navigation Buttons
+             setupNavigationButton('part-1-next', 'tutorial-part-1', 'tutorial-part-2', () => {
+                 setTimeout(() => { startHeightAnimation(); createHeightHistogram(); }, 300);
+             });
+             setupNavigationButton('part-2-next', 'tutorial-part-2', 'tutorial-part-3', () => {
+                  setTimeout(() => { createBloodGroupBarChart(); createHeightHistogram2(); }, 300);
+             });
+             setupNavigationButton('part-3-next', 'tutorial-part-3', null, () => { // Last button navigates to next main section
+                  navigateToNextSection('tutorial', 'practice');
+             });
+
+             // Generic function for section part navigation
+            function setupNavigationButton(buttonId, currentPartId, nextPartId, setupCallback) {
+                 const btn = document.getElementById(buttonId);
+                 if (btn) {
+                     btn.addEventListener('click', function() {
+                         const currentPart = document.getElementById(currentPartId);
+                         if (currentPart) currentPart.classList.add('hidden');
+
+                         if (nextPartId) {
+                            const nextPart = document.getElementById(nextPartId);
+                            if (nextPart) {
+                                 nextPart.classList.remove('hidden');
+                                 // Re-attach listeners for options in the newly shown part
+                                  nextPart.querySelectorAll('.option').forEach(option => {
+                                     option.removeEventListener('click', handleOptionClick);
+                                     option.addEventListener('click', handleOptionClick);
+                                  });
+                                 if (setupCallback) setupCallback(); // Run setup for the next part
+                            } else { console.error("Next part not found:", nextPartId); }
+                         } else {
+                             // If no nextPartId, assume it's navigating out of this section
+                             if (setupCallback) setupCallback();
+                         }
+                     });
+                 } else { console.error("Navigation button not found:", buttonId); }
+            }
+
+            // Animations
+            function startHeightAnimation() {
+                const personBodies = document.querySelectorAll('#height-animation .person-body');
+                personBodies.forEach(body => {
+                    const height = parseFloat(body.getAttribute('data-height')) || 145;
+                    const scaledHeight = Math.max(0, (height - 140) * 1.5); // Adjust scaling factor
+                    body.style.height = `${scaledHeight}px`;
+                });
+            }
+
+            function animateBloodGroups() {
+                const bloodCells = document.querySelectorAll('#blood-animation .blood-cell');
+                bloodCells.forEach((cell, index) => {
+                    cell.style.transform = 'scale(0.5)';
+                    cell.style.opacity = '0';
+                    setTimeout(() => {
+                         cell.style.transition = 'transform 0.4s ease-out, opacity 0.4s ease-out';
+                         cell.style.transform = 'scale(1)';
+                         cell.style.opacity = '1';
+                    }, index * 100 + 100);
+                });
+            }
+
+            // Charts (with error handling and aspect ratio fix)
+            function createChart(canvasId, config) {
+                 const canvas = document.getElementById(canvasId);
+                 if (!canvas) {
+                     console.error(`Chart canvas not found: #${canvasId}`);
+                     return null;
+                 }
+                 // Ensure the container has a defined height or the canvas itself
+                  if (!canvas.style.height && !canvas.parentElement.style.height) {
+                       // console.warn(`Chart container or canvas #${canvasId} lacks explicit height. Might lead to sizing issues.`);
+                       // Optionally set a default canvas height: canvas.style.height = '300px';
+                  }
+
+                 let existingChart = Chart.getChart(canvas);
+                 if (existingChart) {
+                     existingChart.destroy();
+                 }
+
+                 try {
+                    const ctx = canvas.getContext('2d');
+                    return new Chart(ctx, config);
+                 } catch (e) {
+                    console.error(`Error creating chart #${canvasId}:`, e);
+                    return null;
+                 }
+            }
+
+            function createBloodGroupChart() {
+                 createChart('bloodGroupChart', {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'AB', 'O'],
+                        datasets: [{ label: 'Blood Group Distribution (%)', data: [42, 10, 3, 45], backgroundColor: ['rgba(54, 162, 235, 0.7)','rgba(255, 99, 132, 0.7)','rgba(255, 206, 86, 0.7)','rgba(75, 192, 192, 0.7)'], borderColor: ['rgba(54, 162, 235, 1)','rgba(255, 99, 132, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)'], borderWidth: 1 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, // *** FIX: Allow chart to fit container height ***
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } }, x: { title: { display: true, text: 'Blood Group' } } },
+                         plugins: { legend: { display: true, position: 'top' } }
+                    }
+                });
+            }
+
+            function createHeightHistogram() {
+                 createChart('heightHistogram', {
+                    type: 'bar',
+                    data: {
+                         labels: ['140-145', '146-150', '151-155', '156-160', '161-165', '166-170', '171-175', '176-180', '181-185', '186-190'],
+                        datasets: [{ label: 'Number of Students', data: [3, 7, 15, 25, 35, 32, 22, 12, 6, 2], backgroundColor: 'rgba(75, 192, 192, 0.7)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }]
+                     },
+                     options: { responsive: true, maintainAspectRatio: false,
+                         plugins: { legend: { display: false } },
+                         scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Students' } }, x: { title: { display: true, text: 'Height (cm)' }, categoryPercentage: 1.0, barPercentage: 1.0 } } // Make bars touch for histogram
+                     }
+                });
+            }
+
+            function createBloodGroupBarChart() {
+                 createChart('bloodGroupBarChart', {
+                    type: 'bar',
+                    data: {
+                         labels: ['A', 'B', 'AB', 'O'],
+                         datasets: [{ label: 'Blood Group Distribution (%)', data: [42, 10, 3, 45], backgroundColor: ['rgba(54, 162, 235, 0.7)','rgba(255, 99, 132, 0.7)','rgba(255, 206, 86, 0.7)','rgba(75, 192, 192, 0.7)'], borderColor: ['rgba(54, 162, 235, 1)','rgba(255, 99, 132, 1)','rgba(255, 206, 86, 1)','rgba(75, 192, 192, 1)'], borderWidth: 1 }]
+                     },
+                     options: { responsive: true, maintainAspectRatio: false, // *** FIX: Allow chart to fit container height ***
+                         scales: { y: { beginAtZero: true, title: { display: true, text: 'Percentage (%)' } }, x: { title: { display: true, text: 'Blood Group' } } },
+                          plugins: { legend: { display: true, position: 'top' } }
+                     }
+                 });
+            }
+
+            function createHeightHistogram2() {
+                 createChart('heightHistogram2', {
+                    type: 'bar',
+                    data: {
+                         labels: ['140-145', '146-150', '151-155', '156-160', '161-165', '166-170', '171-175', '176-180', '181-185', '186-190'],
+                         datasets: [{ label: 'Number of Students', data: [2, 5, 12, 20, 35, 30, 22, 10, 5, 2], backgroundColor: 'rgba(75, 192, 192, 0.7)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }]
+                     },
+                    options: { responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Students' } }, x: { title: { display: true, text: 'Height (cm)' }, categoryPercentage: 1.0, barPercentage: 1.0 } } // Make bars touch
+                    }
+                 });
+            }
+
+
+            // --- Practice Section ---
+
+            // Drag and Drop Setup Function (Generic)
+            function setupDragAndDropActivity(containerSelector, itemSelector, dropzoneSelector, feedbackSelector, nextButtonSelector, checkCompletionFunction) {
+                // Select elements within the specific container
+                 const container = document.querySelector(containerSelector);
+                 if (!container) {
+                     console.error("Drag and drop container not found:", containerSelector);
+                     return;
+                 }
+                const items = container.querySelectorAll(itemSelector);
+                const dropzones = container.querySelectorAll(dropzoneSelector);
+                 const sourceContainer = container.querySelector('.characteristics'); // Assumes items start here
+                let draggedItem = null;
+
+                if (!items.length || !dropzones.length || !sourceContainer) {
+                    console.error('Drag and drop elements missing within:', containerSelector);
+                    return;
+                }
+                 // Ensure items in source container are draggable initially
+                  sourceContainer.querySelectorAll(itemSelector).forEach(item => item.setAttribute('draggable', 'true'));
+
+                 // Clean up old listeners before adding new ones (important if called multiple times)
+                 items.forEach(item => {
+                     item.removeEventListener('dragstart', dragStartHandler);
+                     item.removeEventListener('dragend', dragEndHandler);
+                     item.addEventListener('dragstart', dragStartHandler);
+                     item.addEventListener('dragend', dragEndHandler);
+                 });
+
+                 dropzones.forEach(dropzone => {
+                      dropzone.removeEventListener('dragover', dragOverHandler);
+                      dropzone.removeEventListener('dragenter', dragEnterHandler);
+                      dropzone.removeEventListener('dragleave', dragLeaveHandler);
+                      dropzone.removeEventListener('drop', dropHandler);
+                      dropzone.addEventListener('dragover', dragOverHandler);
+                      dropzone.addEventListener('dragenter', dragEnterHandler);
+                      dropzone.addEventListener('dragleave', dragLeaveHandler);
+                      dropzone.addEventListener('drop', dropHandler);
+                 });
+                  // Add listeners to the source container as well to allow returning items
+                   sourceContainer.removeEventListener('dragover', dragOverHandler);
+                   sourceContainer.removeEventListener('drop', dropHandler);
+                   sourceContainer.addEventListener('dragover', dragOverHandler);
+                   sourceContainer.addEventListener('drop', dropHandler); // Allow dropping back into source
+
+
+                 function dragStartHandler(e) {
+                     // Check if the item is actually draggable (might be disabled if inside a dropzone already?)
+                     // if (this.getAttribute('draggable') !== 'true') {
+                     //     e.preventDefault();
+                     //     return;
+                     // }
+                     draggedItem = this;
+                     setTimeout(() => this.classList.add('dragging'), 0);
+                 }
+
+                 function dragEndHandler() {
+                     if(draggedItem) draggedItem.classList.remove('dragging');
+                     draggedItem = null;
+                 }
+
+                 function dragOverHandler(e) {
+                     e.preventDefault(); // Necessary to allow dropping
+                      this.classList.add('dragover'); // Use 'this' for the element event is on
+                 }
+
+                 function dragEnterHandler(e) {
+                      e.preventDefault();
+                      this.classList.add('dragover');
+                 }
+
+                 function dragLeaveHandler() {
+                     this.classList.remove('dragover');
+                 }
+
+                 function dropHandler(e) {
+                     e.preventDefault();
+                     this.classList.remove('dragover'); // 'this' is the drop target
+                     if (draggedItem && draggedItem.parentElement !== this) {
+                         this.appendChild(draggedItem);
+                         // Check completion after dropping
+                         checkCompletionFunction(containerSelector, itemSelector, feedbackSelector, nextButtonSelector);
+                     }
+                     draggedItem = null; // Reset dragged item after drop attempt
+                 }
+             }
+
+             // Practice Part 1: Classification Check
+            function checkClassificationCompletion(containerSelector, itemSelector, feedbackSelector, nextButtonSelector) {
+                 const container = document.querySelector(containerSelector);
+                 const feedback = container?.querySelector(feedbackSelector);
+                 const nextButton = container?.querySelector(nextButtonSelector);
+                 const continuousDropzone = container?.querySelector('#continuous-dropzone');
+                 const discontinuousDropzone = container?.querySelector('#discontinuous-dropzone');
+                 const sourceContainer = container?.querySelector('#characteristics-container');
+
+                 if (!container || !feedback || !nextButton || !continuousDropzone || !discontinuousDropzone || !sourceContainer) {
+                      console.warn("Elements missing for checkClassificationCompletion in", containerSelector);
+                      return;
+                  }
+
+                 const allItems = container.querySelectorAll(itemSelector);
+                 const totalItems = allItems.length;
+                 const itemsInDropzones = continuousDropzone.querySelectorAll(itemSelector).length + discontinuousDropzone.querySelectorAll(itemSelector).length;
+                 const itemsInSource = sourceContainer.querySelectorAll(itemSelector).length;
+
+                 // Reset styles first
+                  allItems.forEach(item => item.classList.remove('correct', 'incorrect'));
+
+                 // Only check and provide feedback when all items are out of the source container
+                 if (itemsInSource === 0 && itemsInDropzones === totalItems) {
+                     let allCorrect = true;
+
+                     continuousDropzone.querySelectorAll(itemSelector).forEach(item => {
+                         const isCorrect = item.getAttribute('data-type') === 'continuous';
+                         item.classList.add(isCorrect ? 'correct' : 'incorrect');
+                         if (!isCorrect) allCorrect = false;
+                     });
+
+                     discontinuousDropzone.querySelectorAll(itemSelector).forEach(item => {
+                         const isCorrect = item.getAttribute('data-type') === 'discontinuous';
+                         item.classList.add(isCorrect ? 'correct' : 'incorrect');
+                         if (!isCorrect) allCorrect = false;
+                     });
+
+                      feedback.textContent = allCorrect ? "Well done! You've correctly classified all the characteristics." : "Some characteristics are in the wrong category. Drag them to the correct box!";
+                      feedback.className = `feedback visible ${allCorrect ? 'correct' : 'incorrect'}`;
+                      nextButton.disabled = !allCorrect;
+
+                 } else {
+                     // Hide feedback and disable button if not all items are placed
+                      feedback.textContent = 'Drag all items to the boxes.';
+                      feedback.className = 'feedback visible'; // Show instruction
+                      nextButton.disabled = true;
+                 }
+             }
+            // Initial call to setup D&D when practice section loads (or becomes visible)
+             setupDragAndDropActivity('#practice-part-1', '.characteristic-item', '.classification-dropzone', '#classification-feedback', '#practice-1-next', checkClassificationCompletion);
+
+
+            // Practice Part 2: Graphing Check
+            function checkPracticePart2Completion() {
+                const part2Section = document.getElementById('practice-part-2');
+                if (!part2Section) return;
+
+                const exampleCards = part2Section.querySelectorAll('.example-card');
+                let correctCount = 0;
+                exampleCards.forEach(card => {
+                    const correctOption = card.querySelector('.option[data-correct="true"]');
+                    if (correctOption && correctOption.classList.contains('correct')) { // Check if marked correct
+                        correctCount++;
+                    }
+                });
+
+                const nextButton = part2Section.querySelector('#practice-2-next');
+                if (nextButton) {
+                    nextButton.disabled = (correctCount !== exampleCards.length);
+                }
+            }
+             // Chart creation functions for Practice Part 2
+             function createEyeColorChart() {
+                 createChart('eyeColorChart', {
+                     type: 'bar',
+                     data: {
+                         labels: ['Blue', 'Brown', 'Green', 'Hazel'],
+                         datasets: [{ label: 'Number of Students', data: [12, 18, 8, 5], backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(165, 42, 42, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(255, 206, 86, 0.7)'], borderColor: ['rgba(54, 162, 235, 1)', 'rgba(165, 42, 42, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)'], borderWidth: 1 }]
+                     },
+                     options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Students' } }, x: { title: { display: true, text: 'Eye Color' } } } }
+                 });
+             }
+             function createStudentHeightChart() {
+                 createChart('studentHeightChart', {
+                     type: 'bar',
+                     data: {
+                         labels: ['145-150', '151-155', '156-160', '161-165', '166-170', '171-175', '176-180'],
+                         datasets: [{ label: 'Number of Students', data: [3, 5, 12, 18, 11, 6, 3], backgroundColor: 'rgba(75, 192, 192, 0.7)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }]
+                     },
+                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Number of Students' } }, x: { title: { display: true, text: 'Height Range (cm)' }, categoryPercentage: 1.0, barPercentage: 1.0 } } }
+                 });
+             }
+
+
+             // Practice Part 3: Factors Drag & Drop Check
+             function checkFactorsCompletion(containerSelector, itemSelector, feedbackSelector, nextButtonSelector) {
+                  const container = document.querySelector(containerSelector);
+                  const feedback = container?.querySelector(feedbackSelector);
+                  const nextButton = container?.querySelector(nextButtonSelector);
+                  const geneticDropzone = container?.querySelector('#genetic-dropzone');
+                  const environmentalDropzone = container?.querySelector('#environmental-dropzone');
+                  const sourceContainer = container?.querySelector('#factors-container');
+
+                   if (!container || !feedback || !nextButton || !geneticDropzone || !environmentalDropzone || !sourceContainer) {
+                      console.warn("Elements missing for checkFactorsCompletion in", containerSelector);
+                      return;
+                  }
+
+                  const allItems = container.querySelectorAll(itemSelector);
+                  const totalItems = allItems.length;
+                  const itemsInDropzones = geneticDropzone.querySelectorAll(itemSelector).length + environmentalDropzone.querySelectorAll(itemSelector).length;
+                  const itemsInSource = sourceContainer.querySelectorAll(itemSelector).length;
+
+                  // Reset styles first
+                  allItems.forEach(item => item.classList.remove('correct', 'incorrect'));
+
+                  if (itemsInSource === 0 && itemsInDropzones === totalItems) {
+                      let allCorrect = true;
+
+                      geneticDropzone.querySelectorAll(itemSelector).forEach(item => {
+                          const isCorrect = item.getAttribute('data-type') === 'genetic';
+                          item.classList.add(isCorrect ? 'correct' : 'incorrect');
+                          if (!isCorrect) allCorrect = false;
+                      });
+
+                      environmentalDropzone.querySelectorAll(itemSelector).forEach(item => {
+                          const isCorrect = item.getAttribute('data-type') === 'environmental';
+                          item.classList.add(isCorrect ? 'correct' : 'incorrect');
+                          if (!isCorrect) allCorrect = false;
+                      });
+
+                      feedback.textContent = allCorrect ? "Well done! You've correctly classified the factors." : "Some factors seem misplaced. Review genetic vs. environmental influences.";
+                      feedback.className = `feedback visible ${allCorrect ? 'correct' : 'incorrect'}`;
+                      nextButton.disabled = !allCorrect;
+                  } else {
+                      feedback.textContent = 'Drag all factors to the boxes.';
+                      feedback.className = 'feedback visible';
+                      nextButton.disabled = true;
+                  }
+              }
+            // Setup D&D for Part 3 (will be called when Part 3 becomes visible)
+
+
+            // Practice Navigation Buttons
+             setupNavigationButton('practice-1-next', 'practice-part-1', 'practice-part-2', () => {
+                 setTimeout(() => {
+                      createEyeColorChart();
+                      createStudentHeightChart();
+                      // Add listeners for options in Practice Part 2
+                       document.querySelectorAll('#practice-part-2 .option').forEach(option => {
+                           option.removeEventListener('click', handleOptionClick);
+                           option.addEventListener('click', handleOptionClick);
+                       });
+                      checkPracticePart2Completion(); // Check if already complete from previous visit
+                 }, 300);
+             });
+             setupNavigationButton('practice-2-next', 'practice-part-2', 'practice-part-3', () => {
+                  setTimeout(() => {
+                       // Setup D&D for Part 3 when it becomes visible
+                       setupDragAndDropActivity('#practice-part-3', '.characteristic-item', '.classification-dropzone', '#factors-feedback', '#practice-3-next', checkFactorsCompletion);
+                       checkFactorsCompletion('#practice-part-3', '.characteristic-item', '#factors-feedback', '#practice-3-next'); // Check state
+                   }, 300);
+             });
+             setupNavigationButton('practice-3-next', 'practice-part-3', null, () => {
+                  navigateToNextSection('practice', 'game');
+             });
+
+
+            // --- Swipe Game Section ---
+             const swipeGameData = [
+                 { text: "Height", type: "continuous" },
+                 { text: "Blood Group", type: "discontinuous" },
+                 { text: "Weight", type: "continuous" },
+                 { text: "Eye Color", type: "discontinuous" },
+                 { text: "Arm Length", type: "continuous" },
+                 { text: "Tongue Rolling Ability", type: "discontinuous" },
+                 { text: "Shoe Size (Length)", type: "continuous" },
+                 { text: "Attached/Detached Earlobes", type: "discontinuous" },
+                 { text: "Hand Span", type: "continuous" },
+                 { text: "Number of Limbs", type: "discontinuous" },
+                 { text: "Leaf Width", type: "continuous" },
+                 { text: "Flower Color (e.g., Red/White)", type: "discontinuous" },
+                 { text: "Body Temperature", type: "continuous" },
+                 { text: "Presence/Absence of Tail", type: "discontinuous" },
+                 { text: "Skin Color (Range)", type: "continuous"},
+                 { text: "Hair Type (Curly/Straight)", type: "discontinuous"}
+             ];
+
+             let swipeGameActive = false;
+             let swipeGameTimer;
+             let swipeTimeLeft = 60; // 60 seconds
+             let swipeScore = 0;
+             let currentSwipeItemIndex = 0;
+             let shuffledSwipeData = [];
+
+             // DOM Elements for Swipe Game
+             const swipeTimerElement = document.getElementById('swipe-timer');
+             const swipeScoreElement = document.getElementById('swipe-score');
+             const swipeCard = document.getElementById('swipe-card');
+             const swipeCardArea = document.getElementById('swipe-card-area');
+             const swipeContinuousBtn = document.getElementById('swipe-continuous-btn');
+             const swipeDiscontinuousBtn = document.getElementById('swipe-discontinuous-btn');
+             const swipeFeedbackElement = document.getElementById('swipe-feedback');
+             const startSwipeGameBtn = document.getElementById('start-swipe-game-btn');
+             const restartSwipeGameBtn = document.getElementById('restart-swipe-game-btn');
+             const swipeGameNextBtn = document.getElementById('swipe-game-next-btn');
+             const gameEndSummary = document.getElementById('game-end-summary');
+             const finalSwipeScoreElement = document.getElementById('final-swipe-score');
+             const swipeStartScreen = document.getElementById('swipe-start-screen');
+
+             // Swipe Game Functions
+             function startSwipeGame() {
+                 if (typeof _ === 'undefined') {
+                     console.error("Lodash is required for the swipe game.");
+                     swipeCard.textContent = "Error: Game library missing.";
+                     return;
+                 }
+                 swipeGameActive = true;
+                 swipeTimeLeft = 60;
+                 swipeScore = 0;
+                 currentSwipeItemIndex = 0;
+                 shuffledSwipeData = _.shuffle(swipeGameData); // Shuffle the data
+
+                 // Update UI
+                 if(swipeStartScreen) swipeStartScreen.classList.add('hidden');
+                 if(gameEndSummary) gameEndSummary.classList.add('hidden');
+                 if(swipeContinuousBtn) swipeContinuousBtn.disabled = false;
+                 if(swipeDiscontinuousBtn) swipeDiscontinuousBtn.disabled = false;
+                 if(swipeFeedbackElement) swipeFeedbackElement.textContent = '';
+                 updateSwipeGameDisplay();
+                 displayNextSwipeCard();
+
+                 // Start Timer
+                 if (swipeGameTimer) clearInterval(swipeGameTimer);
+                 swipeGameTimer = setInterval(updateSwipeTimer, 1000);
+             }
+
+             function stopSwipeGame() {
+                  swipeGameActive = false;
+                  clearInterval(swipeGameTimer);
+                   if(swipeContinuousBtn) swipeContinuousBtn.disabled = true;
+                   if(swipeDiscontinuousBtn) swipeDiscontinuousBtn.disabled = true;
+             }
+
+             function updateSwipeTimer() {
+                 swipeTimeLeft--;
+                 updateSwipeGameDisplay();
+                 if (swipeTimeLeft <= 0) {
+                     endSwipeGame();
+                 }
+             }
+
+             function updateSwipeGameDisplay() {
+                 if (swipeTimerElement) swipeTimerElement.textContent = swipeTimeLeft;
+                 if (swipeScoreElement) swipeScoreElement.textContent = swipeScore;
+             }
+
+             function displayNextSwipeCard() {
+                 if (!swipeCard || !swipeCardArea) return;
+
+                  // Remove feedback/animation classes from previous card state
+                 swipeCard.classList.remove('feedback-correct', 'feedback-incorrect', 'leaving-left', 'leaving-right', 'entering');
+
+                 if (currentSwipeItemIndex >= shuffledSwipeData.length) {
+                     // If run out of unique items, could either end game or reshuffle
+                     // For now, let's end if timer hasn't run out
+                      if (swipeGameActive) endSwipeGame();
+                      swipeCard.textContent = "All items classified!";
+                     return;
+                 }
+
+                 const item = shuffledSwipeData[currentSwipeItemIndex];
+                 swipeCard.textContent = item.text;
+                  swipeCard.dataset.type = item.type; // Store correct type on the card element
+
+                 // Add entering animation class (slight delay might be needed)
+                  requestAnimationFrame(() => {
+                      swipeCard.classList.add('entering');
+                  });
+                 // Remove entering class after animation
+                  setTimeout(() => {
+                      swipeCard.classList.remove('entering');
+                  }, 300); // Match CSS transition duration
+             }
+
+              const handleSwipeSelection = debounce(function(selectedType) {
+                 if (!swipeGameActive || !swipeCard) return;
+
+                 const currentItemType = swipeCard.dataset.type;
+                 const isCorrect = selectedType === currentItemType;
+                  let scoreChange = 0;
+                  let feedbackText = '';
+
+                  // Disable buttons temporarily during feedback/animation
+                  if (swipeContinuousBtn) swipeContinuousBtn.disabled = true;
+                  if (swipeDiscontinuousBtn) swipeDiscontinuousBtn.disabled = true;
+
+                 if (isCorrect) {
+                     scoreChange = 5; // Points for correct
+                     swipeScore += scoreChange;
+                     feedbackText = `Correct! (+${scoreChange})`;
+                      if(swipeFeedbackElement) swipeFeedbackElement.className = 'correct';
+                      swipeCard.classList.add('feedback-correct');
+                 } else {
+                     scoreChange = -2; // Penalty for incorrect
+                     swipeScore = Math.max(0, swipeScore + scoreChange); // Score cannot go below 0
+                     feedbackText = `Incorrect. (${scoreChange})`;
+                     if(swipeFeedbackElement) swipeFeedbackElement.className = 'incorrect';
+                      swipeCard.classList.add('feedback-incorrect');
+                 }
+
+                  if(swipeFeedbackElement) swipeFeedbackElement.textContent = feedbackText;
+                 updateSwipeGameDisplay();
+
+                 // Animate card out based on choice (optional, could just change content)
+                 const directionClass = selectedType === 'continuous' ? 'leaving-left' : 'leaving-right';
+                  swipeCard.classList.add(directionClass);
+
+
+                 // After a delay for feedback and animation:
+                 setTimeout(() => {
+                      swipeCard.classList.remove('feedback-correct', 'feedback-incorrect', directionClass); // Clean up classes
+                      if(swipeFeedbackElement) swipeFeedbackElement.textContent = ''; // Clear text feedback
+                      currentSwipeItemIndex++;
+                      displayNextSwipeCard(); // Show next card
+
+                      // Re-enable buttons only if game is still active
+                       if (swipeGameActive) {
+                          if (swipeContinuousBtn) swipeContinuousBtn.disabled = false;
+                          if (swipeDiscontinuousBtn) swipeDiscontinuousBtn.disabled = false;
+                       }
+                 }, 800); // Delay should be long enough for feedback and animation (e.g., 400ms animation + 400ms view)
+
+             }, 200); // Debounce button clicks slightly
+
+
+             function endSwipeGame() {
+                 stopSwipeGame();
+                 if (finalSwipeScoreElement) finalSwipeScoreElement.textContent = swipeScore;
+                 if (gameEndSummary) gameEndSummary.classList.remove('hidden');
+                  if (swipeCard) swipeCard.textContent = "Time's up!"; // Or completion message
+                  if(swipeStartScreen) swipeStartScreen.classList.add('hidden'); // Ensure start button is hidden
+             }
+
+              function resetSwipeGameUI() {
+                  stopSwipeGame(); // Ensure timer is stopped etc.
+                  if (swipeTimerElement) swipeTimerElement.textContent = '60';
+                  if (swipeScoreElement) swipeScoreElement.textContent = '0';
+                  if (swipeCard) swipeCard.textContent = 'Game Ready';
+                  if (swipeCard) swipeCard.classList.remove('feedback-correct', 'feedback-incorrect', 'leaving-left', 'leaving-right', 'entering');
+                  if (swipeFeedbackElement) swipeFeedbackElement.textContent = '';
+                  if (gameEndSummary) gameEndSummary.classList.add('hidden');
+                  if (swipeStartScreen) swipeStartScreen.classList.remove('hidden'); // Show start button
+                  if (swipeContinuousBtn) swipeContinuousBtn.disabled = true; // Keep buttons disabled until start
+                  if (swipeDiscontinuousBtn) swipeDiscontinuousBtn.disabled = true;
+              }
+
+
+             // Event Listeners for Swipe Game
+             if (startSwipeGameBtn) startSwipeGameBtn.addEventListener('click', startSwipeGame);
+             if (restartSwipeGameBtn) restartSwipeGameBtn.addEventListener('click', startSwipeGame); // Restart calls start again
+             if (swipeContinuousBtn) swipeContinuousBtn.addEventListener('click', () => handleSwipeSelection('continuous'));
+             if (swipeDiscontinuousBtn) swipeDiscontinuousBtn.addEventListener('click', () => handleSwipeSelection('discontinuous'));
+             if (swipeGameNextBtn) swipeGameNextBtn.addEventListener('click', () => navigateToNextSection('game', 'summary'));
+
+
+            // --- Quiz Section (Summary) ---
+            const quizQuestions = [
+                 { question: "Which is an example of continuous variation?", options: ["Blood group", "Eye color", "Height", "Gender"], correctAnswer: 2 },
+                 { question: "Which is an example of discontinuous variation?", options: ["Weight", "Height", "Hand span", "Blood group"], correctAnswer: 3 },
+                 { question: "What graph displays discontinuous variation data?", options: ["Line graph", "Scatter plot", "Bar chart", "Pie chart"], correctAnswer: 2 },
+                 { question: "What graph displays continuous variation data?", options: ["Histogram", "Bar chart", "Line graph", "Pie chart"], correctAnswer: 0 },
+                 { question: "What factors influence variation?", options: ["Only genetic", "Only environmental", "Both genetic and environmental", "Neither"], correctAnswer: 2 },
+                 { question: "Which shows discontinuous variation?", options: ["Weight", "Ability to roll tongue", "Arm span", "Foot size"], correctAnswer: 1 },
+                 { question: "Continuous variation often forms which distribution?", options: ["Random", "Bell curve/normal", "Straight line", "U-shape"], correctAnswer: 1 },
+                 { question: "Which statement about variation is correct?", options: ["Only between species", "All traits are continuous", "Differences within the same species", "Environment has no impact"], correctAnswer: 2 },
+                 { question: "Height is continuous because:", options: ["Specific values only", "Any value within a range", "Only environmental", "Only genetic"], correctAnswer: 1 },
+                 { question: "Which is NOT primarily a genetic factor?", options: ["Blood group", "Natural eye color", "Diet and nutrition", "Tongue rolling"], correctAnswer: 2 }
+             ];
+
+            let currentQuizQuestionIndex = 0;
+            let quizScoreCount = 0;
+            let selectedQuizQuestions = []; // Holds the 5 questions for the current quiz attempt
+
+            const quizQuestionsContainer = document.getElementById('quiz-questions');
+            const quizResultsContainer = document.getElementById('quiz-results');
+            const quizProgressFill = document.getElementById('quiz-progress-fill');
+            const quizFinalScoreElement = document.getElementById('quiz-final-score');
+            const quizFeedbackElement = document.getElementById('quiz-feedback');
+            const retryQuizBtn = document.getElementById('retry-quiz');
+
+             if (retryQuizBtn) retryQuizBtn.addEventListener('click', initializeQuiz); else console.error("Retry quiz button missing");
+
+            function initializeQuiz() {
+                 if (typeof _ === 'undefined') {
+                     console.error("Lodash is required for the quiz.");
+                     if(quizQuestionsContainer) quizQuestionsContainer.innerHTML = "<p>Error: Quiz library missing.</p>";
+                     return;
+                 }
+                selectedQuizQuestions = _.shuffle(quizQuestions).slice(0, 5);
+                currentQuizQuestionIndex = 0;
+                quizScoreCount = 0;
+                 if (quizQuestionsContainer) quizQuestionsContainer.classList.remove('hidden');
+                 if (quizResultsContainer) quizResultsContainer.classList.add('hidden');
+                 updateQuizProgressUI();
+                displayQuizQuestion();
+            }
+
+            function displayQuizQuestion() {
+                if (!quizQuestionsContainer || currentQuizQuestionIndex >= selectedQuizQuestions.length) {
+                     if (currentQuizQuestionIndex >= selectedQuizQuestions.length) showQuizResults(); // End if no more questions
+                    return;
+                }
+                const questionData = selectedQuizQuestions[currentQuizQuestionIndex];
+                quizQuestionsContainer.innerHTML = ''; // Clear previous
+
+                const questionElement = document.createElement('div');
+                questionElement.className = 'quiz-question';
+                const questionTitle = document.createElement('h3');
+                questionTitle.textContent = `Question ${currentQuizQuestionIndex + 1} of ${selectedQuizQuestions.length}: ${questionData.question}`;
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'quiz-options';
+
+                questionData.options.forEach((optionText, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = optionText;
+                    optionElement.dataset.index = index;
+                    optionElement.addEventListener('click', handleQuizOptionSelect, { once: true }); // Only allow one click per option
+                    optionsContainer.appendChild(optionElement);
+                });
+
+                questionElement.appendChild(questionTitle);
+                questionElement.appendChild(optionsContainer);
+                quizQuestionsContainer.appendChild(questionElement);
+            }
+
+             function handleQuizOptionSelect(event) {
+                 const selectedOptionElement = event.target;
+                 const optionsContainer = selectedOptionElement.parentElement;
+                 const allOptionElements = optionsContainer.querySelectorAll('.quiz-option');
+                 const selectedIndex = parseInt(selectedOptionElement.dataset.index);
+                 const questionData = selectedQuizQuestions[currentQuizQuestionIndex];
+                 const correctAnswerIndex = questionData.correctAnswer;
+
+                 // Disable further clicks on any option for this question
+                  allOptionElements.forEach(opt => {
+                       opt.removeEventListener('click', handleQuizOptionSelect);
+                       opt.style.cursor = 'default';
+                        // Highlight correct answer and the selected answer if it was wrong
+                        if (parseInt(opt.dataset.index) === correctAnswerIndex) {
+                            opt.classList.add('correct');
+                        } else if (opt === selectedOptionElement) { // Only mark the selected one as incorrect if it's not the correct one
+                            opt.classList.add('incorrect');
+                        }
+                         if(opt === selectedOptionElement) {
+                             opt.classList.add('selected'); // Keep selected style
+                         }
+                  });
+
+                 if (selectedIndex === correctAnswerIndex) {
+                     quizScoreCount++;
+                 }
+
+                 setTimeout(() => {
+                     currentQuizQuestionIndex++;
+                     updateQuizProgressUI();
+                     displayQuizQuestion();
+                 }, 1200); // Longer delay to see feedback
+             }
+
+            function updateQuizProgressUI() {
+                if (quizProgressFill) {
+                    const progressPercent = selectedQuizQuestions.length > 0 ? (currentQuizQuestionIndex / selectedQuizQuestions.length) * 100 : 0;
+                    quizProgressFill.style.width = `${progressPercent}%`;
+                }
+            }
+
+            function showQuizResults() {
+                if (quizQuestionsContainer) quizQuestionsContainer.classList.add('hidden');
+                if (quizResultsContainer) quizResultsContainer.classList.remove('hidden');
+                 if (quizProgressFill) quizProgressFill.style.width = '100%'; // Ensure 100%
+
+                if (quizFinalScoreElement) {
+                    quizFinalScoreElement.textContent = `${quizScoreCount} / ${selectedQuizQuestions.length}`;
+                }
+
+                if (quizFeedbackElement) {
+                    const percentage = selectedQuizQuestions.length > 0 ? (quizScoreCount / selectedQuizQuestions.length) * 100 : 0;
+                    let feedbackText = '';
+                    if (percentage >= 80) feedbackText = 'Excellent! Strong understanding!';
+                    else if (percentage >= 60) feedbackText = 'Good job! You grasp the basics.';
+                    else feedbackText = 'Review the lesson to improve.';
+                    quizFeedbackElement.textContent = feedbackText;
+                }
+                 // Update main lesson progress to 100%
+                 currentProgressLevel = navLinks.length - 1;
+                 updateProgress();
+            }
+
+            // --- Initial Setup ---
+             updateProgress(); // Set initial progress (0%)
+             showSection('introduction'); // Show intro first
+
+        }); // End of DOMContentLoaded
+    </script>
+</body>
+</html>
