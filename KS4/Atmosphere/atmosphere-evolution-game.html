@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Atmosphere Evolution Adventure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        :root {
+            --crt-green: #33ff33;
+            --crt-dark: #002200;
+            --crt-black: #000800;
+            --crt-shadow: rgba(0,100,0,0.5);
+        }
+        
+        body {
+            background-color: #111;
+            color: var(--crt-green);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-shadow: 0 0 5px var(--crt-shadow);
+            overflow: hidden;
+        }
+        
+        #computer {
+            width: 90vw;
+            max-width: 800px;
+            height: 85vh;
+            max-height: 600px;
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        
+        #screen {
+            background-color: var(--crt-black);
+            height: calc(100% - 40px);
+            overflow: hidden;
+            border: 10px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            position: relative;
+        }
+        
+        #screen::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #screen::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(18, 16, 16, 0) 0%,
+                rgba(0, 0, 0, 0.3) 90%
+            );
+            pointer-events: none;
+            z-index: 101;
+        }
+        
+        #content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+            padding-right: 10px;
+        }
+        
+        #content::-webkit-scrollbar {
+            width: 0;
+        }
+        
+        #text-display {
+            margin-bottom: 20px;
+        }
+        
+        #choices {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .choice {
+            background-color: var(--crt-dark);
+            border: none;
+            color: var(--crt-green);
+            padding: 10px;
+            text-align: left;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 5px var(--crt-shadow);
+        }
+        
+        .choice:hover {
+            background-color: var(--crt-green);
+            color: var(--crt-black);
+            transform: translateX(5px);
+        }
+        
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--crt-green);
+        }
+        
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            line-height: 1.2;
+            font-size: 10px;
+            text-align: center;
+            margin: 15px 0;
+            color: #5f5;
+        }
+        
+        .quiz-option {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .quiz-option input {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .quiz-option label {
+            cursor: pointer;
+        }
+        
+        #submit-quiz {
+            background-color: var(--crt-dark);
+            border: none;
+            color: var(--crt-green);
+            padding: 10px 15px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        #submit-quiz:hover {
+            background-color: var(--crt-green);
+            color: var(--crt-black);
+        }
+        
+        #progress-bar {
+            position: absolute;
+            bottom: 10px;
+            right: 25px;
+            font-size: 12px;
+            z-index: 102;
+        }
+        
+        .power-buttons {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            bottom: 5px;
+            left: 25px;
+            right: 25px;
+        }
+        
+        .power-button {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #444;
+            border: 2px solid #333;
+        }
+        
+        .power-button.red {
+            background-color: #f55;
+        }
+        
+        .power-button.yellow {
+            background-color: #ff5;
+        }
+        
+        .power-button.green {
+            background-color: #5f5;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .pixel-image {
+            image-rendering: pixelated;
+            max-width: 100%;
+            max-height: 150px;
+        }
+        
+        .highlight {
+            color: #fff;
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        .time-period {
+            font-size: 10px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        
+        .important {
+            color: #ff9;
+            text-shadow: 0 0 5px #ff9;
+        }
+        
+        .success {
+            color: #9f9;
+            text-shadow: 0 0 5px #9f9;
+        }
+        
+        .error {
+            color: #f99;
+            text-shadow: 0 0 5px #f99;
+        }
+        
+        #quiz-results {
+            margin-top: 20px;
+        }
+        
+        #timeline {
+            margin-top: 20px;
+            border: 1px solid var(--crt-green);
+            padding: 10px;
+        }
+        
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 10px;
+        }
+        
+        #score-display {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="computer">
+        <div id="screen">
+            <div id="content">
+                <div id="hud">
+                    <div id="mission-status">MISSION: TERRAFORM</div>
+                    <div id="score-display">KNOWLEDGE: 0</div>
+                </div>
+                <div id="text-display"></div>
+                <div id="choices"></div>
+            </div>
+            <div id="progress-bar">LOADING...</div>
+        </div>
+        <div class="power-buttons">
+            <div class="power-button red"></div>
+            <div class="power-button yellow"></div>
+            <div class="power-button green"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            currentScene: 'intro',
+            knowledge: 0,
+            quizAnswers: {},
+            timeline: []
+        };
+        
+        // Game scenes
+        const scenes = {
+            intro: {
+                text: `
+<div class="header">OPERATION: TERRAFORM</div>
+
+<div class="ascii-art">
+  _____          _   _          _____          _   _     
+ |  ___|_ _ _ __| |_| |__      |_   _|__ _ __ | |_| |__  
+ | |_ / _\` | '__| __| '_ \\ _____ | |/ _ \\ '_ \\| __| '_ \\ 
+ |  _| (_| | |  | |_| | | |_____| |  __/ | | | |_| | | |
+ |_|  \\__,_|_|   \\__|_| |_|     |_|\\___|_| |_|\\__|_| |_|
+</div>
+
+GALACTIC YEAR: 4,237,891
+EARTH TIME: APPROXIMATELY 4.6 BILLION YEARS AGO
+
+*INCOMING TRANSMISSION*
+
+GREETINGS, AGENT Z-459.
+
+YOU HAVE BEEN SELECTED FOR A SPECIAL TERRAFORMING MISSION TO PLANET EARTH. YOUR TASK IS TO TRANSFORM THIS BARREN ROCK INTO A HABITABLE PLANET FOR FUTURE COLONIZATION.
+
+YOUR MISSION WILL SPAN BILLIONS OF YEARS, REQUIRING PATIENCE AND SCIENTIFIC EXPERTISE.
+
+EARTH CURRENTLY HAS A TOXIC, UNINHABITABLE ATMOSPHERE. YOUR JOB IS TO GUIDE ITS EVOLUTION INTO A LIFE-SUPPORTING PLANET.
+
+ARE YOU READY TO BEGIN?
+`,
+                choices: [
+                    { text: "ACCEPT MISSION", nextScene: 'mission_briefing' },
+                    { text: "REQUEST MORE INFORMATION", nextScene: 'more_info' }
+                ]
+            },
+            
+            more_info: {
+                text: `
+<div class="header">MISSION DETAILS</div>
+
+EARTH IS A NEWLY FORMED PLANET CREATED BY A VIOLENT COLLISION BETWEEN TWO PLANETARY BODIES APPROXIMATELY 4.6 BILLION YEARS AGO.
+
+THE PLANET IS CURRENTLY COOLING FROM ITS FORMATION. HOWEVER, ITS ATMOSPHERE IS HOSTILE TO LIFE AS WE KNOW IT.
+
+YOUR TERRAFORMING MISSION WILL REQUIRE:
+- ATMOSPHERIC MODIFICATION
+- INTRODUCTION OF LIFE FORMS
+- MONITORING OF GEOLOGICAL PROCESSES
+
+THIS MISSION IS CRUCIAL FOR UNDERSTANDING PLANETARY DEVELOPMENT AND PREPARING FOR FUTURE COLONIZATION.
+
+YOU WILL BE EQUIPPED WITH TERRAFORMING TOOLS AND SCIENTIFIC KNOWLEDGE NECESSARY TO COMPLETE YOUR MISSION.
+`,
+                choices: [
+                    { text: "ACCEPT MISSION", nextScene: 'mission_briefing' },
+                    { text: "DECLINE MISSION", nextScene: 'decline_mission' }
+                ]
+            },
+            
+            decline_mission: {
+                text: `
+<div class="header">MISSION DECLINED</div>
+
+UNDERSTOOD, AGENT Z-459.
+
+NOT ALL ARE PREPARED FOR THE RESPONSIBILITY OF PLANETARY TERRAFORMING.
+
+ANOTHER AGENT WILL BE ASSIGNED TO THIS CRITICAL MISSION.
+
+YOU WILL BE REASSIGNED TO LUNAR MAINTENANCE DUTY.
+
+*END OF TRANSMISSION*
+`,
+                choices: [
+                    { text: "WAIT, I'VE CHANGED MY MIND", nextScene: 'mission_briefing' },
+                    { text: "RESTART MISSION", nextScene: 'intro' }
+                ]
+            },
+            
+            mission_briefing: {
+                text: `
+<div class="header">MISSION BRIEFING</div>
+
+<div class="time-period">EARLY EARTH: 4.6 BILLION YEARS AGO</div>
+
+EXCELLENT CHOICE, AGENT Z-459!
+
+YOUR FIRST OBJECTIVE IS TO ANALYZE EARTH'S EARLY ATMOSPHERE. YOUR SCANNERS SHOW:
+
+- EXTREMELY HOT SURFACE (OVER 1800°C)
+- NO OCEANS PRESENT
+- ATMOSPHERE COMPOSITION UNKNOWN
+
+EARTH SCIENTISTS WILL LATER DEVELOP THEORIES ABOUT THIS EARLY ATMOSPHERE. HOWEVER, DIRECT EVIDENCE WILL BE LIMITED DUE TO THE VAST TIMESPAN OF 4.6 BILLION YEARS.
+
+WHAT IS YOUR FIRST ACTION?
+`,
+                choices: [
+                    { text: "DEPLOY ATMOSPHERIC SCANNERS", nextScene: 'deploy_scanners' },
+                    { text: "CONSULT GALACTIC DATABASE FOR SIMILAR PLANETS", nextScene: 'consult_database' }
+                ]
+            },
+            
+            deploy_scanners: {
+                text: `
+<div class="header">ATMOSPHERIC ANALYSIS</div>
+
+<div class="time-period">EARLY EARTH: 4.5 BILLION YEARS AGO</div>
+
+SCANNERS DEPLOYED. ANALYZING EARLY EARTH ATMOSPHERE...
+
+RESULTS INDICATE THE ATMOSPHERE CONSISTS MAINLY OF:
+- <span class="important">WATER VAPOR (H₂O)</span>
+- <span class="important">CARBON DIOXIDE (CO₂)</span>
+- <span class="important">NITROGEN (N₂)</span>
+- HYDROGEN SULFIDE (H₂S)
+- TRACE AMOUNTS OF METHANE (CH₄) AND AMMONIA (NH₃)
+
+NOTABLY, THERE IS <span class="important">VIRTUALLY NO OXYGEN (O₂)</span> PRESENT.
+
+WHAT APPEARS TO BE THE MAIN SOURCE CONTINUALLY REPLENISHING THESE GASES?
+`,
+                choices: [
+                    { text: "INTENSE VOLCANIC ACTIVITY", nextScene: 'volcanic_activity', correct: true },
+                    { text: "METEOR IMPACTS", nextScene: 'meteor_theory', correct: false },
+                    { text: "SOLAR RADIATION", nextScene: 'solar_theory', correct: false }
+                ]
+            },
+            
+            meteor_theory: {
+                text: `
+<div class="header">ANALYSIS RESULTS</div>
+
+<div class="time-period">EARLY EARTH: 4.5 BILLION YEARS AGO</div>
+
+<span class="error">THAT THEORY IS PARTIALLY INCORRECT.</span>
+
+While meteor impacts did deliver some materials to Earth, they weren't the primary source of the early atmosphere.
+
+Let's reconsider what was happening on early Earth...
+`,
+                choices: [
+                    { text: "INTENSE VOLCANIC ACTIVITY", nextScene: 'volcanic_activity', correct: true },
+                    { text: "SOLAR RADIATION", nextScene: 'solar_theory', correct: false }
+                ]
+            },
+            
+            solar_theory: {
+                text: `
+<div class="header">ANALYSIS RESULTS</div>
+
+<div class="time-period">EARLY EARTH: 4.5 BILLION YEARS AGO</div>
+
+<span class="error">THAT THEORY IS INCORRECT.</span>
+
+Solar radiation affects atmospheric chemistry but doesn't generate the gases in Earth's early atmosphere.
+
+Let's reconsider what was happening on early Earth...
+`,
+                choices: [
+                    { text: "INTENSE VOLCANIC ACTIVITY", nextScene: 'volcanic_activity', correct: true },
+                    { text: "METEOR IMPACTS", nextScene: 'meteor_theory', correct: false }
+                ]
+            },
+            
+            consult_database: {
+                text: `
+<div class="header">GALACTIC DATABASE</div>
+
+<div class="time-period">COMPARING DATA</div>
+
+SEARCHING GALACTIC DATABASE FOR COMPARABLE PLANETS...
+
+MATCHES FOUND:
+- VENUS (SOL SYSTEM)
+- MARS (SOL SYSTEM)
+
+ANALYSIS: EARLY EARTH'S ATMOSPHERE WAS LIKELY SIMILAR TO CURRENT ATMOSPHERES OF VENUS AND MARS:
+- <span class="important">PRIMARILY CARBON DIOXIDE (CO₂)</span>
+- <span class="important">LITTLE TO NO OXYGEN (O₂)</span>
+
+RECOMMENDED ACTION: INVESTIGATE THE SOURCE OF ATMOSPHERIC GASES ON EARLY EARTH.
+`,
+                choices: [
+                    { text: "INVESTIGATE VOLCANIC ACTIVITY", nextScene: 'volcanic_activity' },
+                    { text: "CONDUCT CHEMICAL ANALYSIS OF SURFACE", nextScene: 'surface_analysis' }
+                ]
+            },
+            
+            surface_analysis: {
+                text: `
+<div class="header">SURFACE ANALYSIS</div>
+
+<div class="time-period">EARLY EARTH: 4.4 BILLION YEARS AGO</div>
+
+SURFACE ANALYSIS COMPLETE:
+- MOLTEN SURFACE IS SLOWLY COOLING
+- HEAVY BOMBARDMENT FROM SPACE DEBRIS IS ONGOING
+- FORMATION OF EARLY CRUST IS OCCURRING
+- <span class="important">NUMEROUS ACTIVE VOLCANOES ARE PRESENT</span>
+
+KEY FINDING: VOLCANIC ACTIVITY APPEARS TO BE THE PRIMARY SOURCE OF ATMOSPHERIC GASES.
+
+FURTHER INVESTIGATION IS RECOMMENDED.
+`,
+                choices: [
+                    { text: "INVESTIGATE VOLCANIC GASES", nextScene: 'volcanic_activity' },
+                    { text: "MONITOR COOLING PROCESS", nextScene: 'cooling_process' }
+                ]
+            },
+            
+            cooling_process: {
+                text: `
+<div class="header">THERMAL MONITORING</div>
+
+<div class="time-period">EARLY EARTH: 4.3 BILLION YEARS AGO</div>
+
+THERMAL MONITORING ACTIVATED.
+
+AS EARTH CONTINUES COOLING:
+- SURFACE TEMPERATURE IS DECREASING
+- CRUST IS BECOMING MORE STABLE
+- <span class="important">WATER VAPOR IN ATMOSPHERE IS BEGINNING TO CONDENSE</span>
+
+THIS CONDENSATION WILL EVENTUALLY FORM OCEANS, BUT THE PROCESS WILL TAKE HUNDREDS OF MILLIONS OF YEARS.
+
+THE ONGOING VOLCANIC ACTIVITY REMAINS A KEY FACTOR IN ATMOSPHERIC DEVELOPMENT.
+`,
+                choices: [
+                    { text: "INVESTIGATE VOLCANIC GASES", nextScene: 'volcanic_activity' },
+                    { text: "MONITOR WATER VAPOR CONDENSATION", nextScene: 'water_formation' }
+                ]
+            },
+            
+            volcanic_activity: {
+                text: `
+<div class="header">VOLCANIC ANALYSIS</div>
+
+<div class="time-period">EARLY EARTH: 4.2 BILLION YEARS AGO</div>
+
+<div class="ascii-art">
+     (\‌‌_/)
+    (   ‌  )
+   /|‌____‌‌\\
+  / |‌‌‌‌‌    \\
+ *  |‌‌/‌\\‌\/‌\\  *
+    |/‌‌‌\\|/‌\\|
+   *  * *  *
+</div>
+
+VOLCANIC ACTIVITY ANALYSIS COMPLETE.
+
+DURING THE FIRST BILLION YEARS OF EARTH'S EXISTENCE:
+- <span class="important">INTENSE VOLCANIC ERUPTIONS RELEASED GASES THAT FORMED THE EARLY ATMOSPHERE</span>
+- THESE GASES INCLUDED:
+  * <span class="important">WATER VAPOR (H₂O)</span>
+  * <span class="important">CARBON DIOXIDE (CO₂)</span>
+  * <span class="important">NITROGEN (N₂)</span>
+  * SMALL AMOUNTS OF METHANE (CH₄) AND AMMONIA (NH₃)
+
+WATER VAPOR WOULD EVENTUALLY CONDENSE TO FORM THE OCEANS.
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> EARTH'S EARLY ATMOSPHERE WAS PRIMARILY FORMED BY VOLCANIC ACTIVITY.
+
+BASED ON YOUR MODELS, WHAT WILL HAPPEN AS EARTH CONTINUES TO COOL?
+`,
+                choices: [
+                    { text: "WATER VAPOR WILL CONDENSE TO FORM OCEANS", nextScene: 'water_formation', correct: true },
+                    { text: "OXYGEN LEVELS WILL INCREASE NATURALLY", nextScene: 'oxygen_incorrect', correct: false },
+                    { text: "ATMOSPHERE WILL REMAIN UNCHANGED", nextScene: 'atmosphere_incorrect', correct: false }
+                ]
+            },
+            
+            oxygen_incorrect: {
+                text: `
+<div class="header">PREDICTION ERROR</div>
+
+<div class="time-period">SIMULATION RESULTS</div>
+
+<span class="error">THAT PREDICTION IS INCORRECT.</span>
+
+Your models show oxygen will NOT naturally increase at this stage.
+
+In fact, oxygen is virtually absent from Earth's early atmosphere. 
+
+A different process will be required to introduce significant oxygen later.
+
+Let's reconsider what might happen as Earth cools...
+`,
+                choices: [
+                    { text: "WATER VAPOR WILL CONDENSE TO FORM OCEANS", nextScene: 'water_formation', correct: true },
+                    { text: "ATMOSPHERE WILL REMAIN UNCHANGED", nextScene: 'atmosphere_incorrect', correct: false }
+                ]
+            },
+            
+            atmosphere_incorrect: {
+                text: `
+<div class="header">PREDICTION ERROR</div>
+
+<div class="time-period">SIMULATION RESULTS</div>
+
+<span class="error">THAT PREDICTION IS INCORRECT.</span>
+
+Your models show the atmosphere WILL change significantly as Earth cools.
+
+The cooling process will trigger important transitions in the atmosphere's composition.
+
+Let's reconsider what might happen as Earth cools...
+`,
+                choices: [
+                    { text: "WATER VAPOR WILL CONDENSE TO FORM OCEANS", nextScene: 'water_formation', correct: true },
+                    { text: "OXYGEN LEVELS WILL INCREASE NATURALLY", nextScene: 'oxygen_incorrect', correct: false }
+                ]
+            },
+            
+            water_formation: {
+                text: `
+<div class="header">OCEAN FORMATION</div>
+
+<div class="time-period">EARLY EARTH: 4.0 BILLION YEARS AGO</div>
+
+<div class="ascii-art">
+  _.-'~~~'-._
+ /           \\
+|    ~~~~~    |
+|  ~       ~  |
+ \\_  ~~~~~  _/
+   '-._~_.-'
+</div>
+
+<span class="success">CORRECT PREDICTION!</span>
+
+AS EARTH COOLED:
+- <span class="important">WATER VAPOR CONDENSED TO FORM THE FIRST OCEANS</span>
+- A SIGNIFICANT CHANGE TO THE ATMOSPHERE OCCURRED:
+  * <span class="important">CARBON DIOXIDE BEGAN DISSOLVING INTO THE OCEANS</span>
+
+THIS DISSOLUTION OF CO₂ INTO THE OCEANS INITIATED AN IMPORTANT PROCESS:
+- CO₂ + H₂O → H₂CO₃ (CARBONIC ACID)
+- H₂CO₃ + MINERALS → <span class="important">CARBONATES</span>
+- THESE CARBONATES PRECIPITATED OUT, FORMING SEDIMENTS ON THE OCEAN FLOOR
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> OCEAN FORMATION REDUCED ATMOSPHERIC CO₂ THROUGH DISSOLUTION AND CARBONATE FORMATION.
+
+WHAT WAS EARTH'S ATMOSPHERE PRIMARILY COMPOSED OF AT THIS POINT?
+`,
+                choices: [
+                    { text: "MAINLY NITROGEN WITH SOME CO₂", nextScene: 'atmosphere_composition', correct: true },
+                    { text: "MAINLY OXYGEN WITH SOME NITROGEN", nextScene: 'composition_incorrect1', correct: false },
+                    { text: "MAINLY METHANE AND AMMONIA", nextScene: 'composition_incorrect2', correct: false }
+                ]
+            },
+            
+            composition_incorrect1: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+Oxygen was still virtually absent from Earth's atmosphere at this point.
+
+Let's review what's happened so far:
+- Volcanic activity released mainly CO₂, N₂, and water vapor
+- Water vapor condensed to form oceans
+- Some CO₂ dissolved in these oceans
+
+Let's reassess the atmospheric composition...
+`,
+                choices: [
+                    { text: "MAINLY NITROGEN WITH SOME CO₂", nextScene: 'atmosphere_composition', correct: true },
+                    { text: "MAINLY METHANE AND AMMONIA", nextScene: 'composition_incorrect2', correct: false }
+                ]
+            },
+            
+            composition_incorrect2: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+While methane and ammonia were present in small amounts, they weren't the main components.
+
+Let's review what gases were most abundant:
+- Volcanic activity released mainly CO₂, N₂, and water vapor
+- Water vapor condensed to form oceans
+- Some CO₂ dissolved in these oceans
+
+Let's reassess the atmospheric composition...
+`,
+                choices: [
+                    { text: "MAINLY NITROGEN WITH SOME CO₂", nextScene: 'atmosphere_composition', correct: true },
+                    { text: "MAINLY OXYGEN WITH SOME NITROGEN", nextScene: 'composition_incorrect1', correct: false }
+                ]
+            },
+            
+            atmosphere_composition: {
+                text: `
+<div class="header">ATMOSPHERIC COMPOSITION CONFIRMED</div>
+
+<div class="time-period">EARLY EARTH: 3.5 BILLION YEARS AGO</div>
+
+<span class="success">CORRECT ANALYSIS!</span>
+
+AT THIS STAGE, EARTH'S ATMOSPHERE WAS:
+- <span class="important">PRIMARILY NITROGEN (N₂)</span>
+- <span class="important">SIGNIFICANT CARBON DIOXIDE (CO₂)</span>, though reduced from earlier levels
+- <span class="important">VIRTUALLY NO OXYGEN (O₂)</span>
+- Small amounts of water vapor and other gases
+
+THE PLANET REMAINS HOSTILE TO COMPLEX LIFE AS WE UNDERSTAND IT.
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> AFTER OCEAN FORMATION, EARTH'S ATMOSPHERE WAS MAINLY NITROGEN WITH SIGNIFICANT CO₂ AND NO OXYGEN.
+
+Your next terraforming decision:
+`,
+                choices: [
+                    { text: "INTRODUCE PRIMITIVE LIFE FORMS", nextScene: 'introduce_life' },
+                    { text: "INCREASE OXYGEN ARTIFICIALLY", nextScene: 'artificial_oxygen' },
+                    { text: "MONITOR NATURAL PROCESSES", nextScene: 'monitor_natural' }
+                ]
+            },
+            
+            artificial_oxygen: {
+                text: `
+<div class="header">TERRAFORMING ERROR</div>
+
+<div class="time-period">COMMAND CENTER</div>
+
+<span class="error">WARNING: ARTIFICIAL OXYGEN INTRODUCTION NOT RECOMMENDED</span>
+
+ANALYSIS INDICATES:
+- PREMATURE OXYGEN INTRODUCTION WOULD DISRUPT NATURAL EVOLUTIONARY PROCESSES
+- OXYGEN IS HIGHLY REACTIVE AND WOULD CAUSE MASS OXIDATION OF SURFACE MINERALS
+- SUSTAINABLE OXYGEN PRODUCTION REQUIRES BIOLOGICAL MECHANISMS
+
+RECOMMEND RECONSIDERING APPROACH.
+`,
+                choices: [
+                    { text: "INTRODUCE PRIMITIVE LIFE FORMS", nextScene: 'introduce_life' },
+                    { text: "MONITOR NATURAL PROCESSES", nextScene: 'monitor_natural' }
+                ]
+            },
+            
+            monitor_natural: {
+                text: `
+<div class="header">NATURAL DEVELOPMENT</div>
+
+<div class="time-period">EARLY EARTH: 3.5-3.0 BILLION YEARS AGO</div>
+
+MONITORING NATURAL PROCESSES...
+
+OBSERVATIONS:
+- SIMPLE CHEMICAL REACTIONS OCCURRING IN PRIMORDIAL OCEANS
+- FORMATION OF COMPLEX ORGANIC MOLECULES
+- POTENTIAL FOR PRIMITIVE LIFE DEVELOPMENT
+
+AFTER 500 MILLION YEARS OF OBSERVATION, YOUR SCANNERS DETECT THE EMERGENCE OF SIMPLE SINGLE-CELLED ORGANISMS IN THE OCEANS.
+
+THESE PRIMITIVE LIFE FORMS USE CHEMOSYNTHESIS RATHER THAN PHOTOSYNTHESIS.
+
+<span class="highlight">RECOMMENDATION:</span> INTRODUCE OR ENCOURAGE DEVELOPMENT OF PHOTOSYNTHETIC ORGANISMS.
+`,
+                choices: [
+                    { text: "INTRODUCE PHOTOSYNTHETIC ORGANISMS", nextScene: 'introduce_life' },
+                    { text: "CONTINUE MONITORING", nextScene: 'continue_monitoring' }
+                ]
+            },
+            
+            continue_monitoring: {
+                text: `
+<div class="header">EXTENDED MONITORING</div>
+
+<div class="time-period">EARLY EARTH: 3.0-2.8 BILLION YEARS AGO</div>
+
+CONTINUED MONITORING SHOWS:
+- SLOW DIVERSIFICATION OF PRIMITIVE LIFE
+- NO SIGNIFICANT CHANGES TO ATMOSPHERIC COMPOSITION
+- EVOLUTION PROCEEDING AT NATURAL PACE
+
+HOWEVER, YOUR MISSION TIMELINE REQUIRES ACCELERATION OF ATMOSPHERIC DEVELOPMENT.
+
+<span class="highlight">RECOMMENDATION:</span> INTRODUCE PHOTOSYNTHETIC ORGANISMS TO CATALYZE ATMOSPHERIC CHANGE.
+`,
+                choices: [
+                    { text: "INTRODUCE PHOTOSYNTHETIC ORGANISMS", nextScene: 'introduce_life' },
+                ]
+            },
+            
+            introduce_life: {
+                text: `
+<div class="header">LIFE INTRODUCTION</div>
+
+<div class="time-period">EARLY EARTH: 2.7 BILLION YEARS AGO</div>
+
+<div class="ascii-art">
+   _____
+  /     \\
+ |  o o  |
+ |   o   |
+  \\_____/
+</div>
+
+DEPLOYING PHOTOSYNTHETIC LIFE FORMS...
+
+YOU HAVE INTRODUCED PRIMITIVE <span class="important">CYANOBACTERIA (BLUE-GREEN ALGAE)</span> TO EARTH'S OCEANS.
+
+THESE ORGANISMS CAN PERFORM <span class="important">PHOTOSYNTHESIS</span>, A PROCESS THAT:
+- USES SUNLIGHT, WATER, AND CARBON DIOXIDE
+- PRODUCES GLUCOSE (FOOD) AND OXYGEN AS BYPRODUCTS
+
+THE BASIC PHOTOSYNTHESIS EQUATION IS:
+<span class="important">6CO₂ + 6H₂O + LIGHT ENERGY → C₆H₁₂O₆ + 6O₂</span>
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> PHOTOSYNTHETIC ALGAE FIRST APPEARED AROUND 2.7 BILLION YEARS AGO.
+
+WHAT EFFECT WILL THESE PHOTOSYNTHETIC ORGANISMS HAVE ON EARTH'S ATMOSPHERE?
+`,
+                choices: [
+                    { text: "INCREASE OXYGEN LEVELS", nextScene: 'oxygen_increase', correct: true },
+                    { text: "INCREASE CARBON DIOXIDE LEVELS", nextScene: 'carbon_incorrect', correct: false },
+                    { text: "NO SIGNIFICANT EFFECT", nextScene: 'effect_incorrect', correct: false }
+                ]
+            },
+            
+            carbon_incorrect: {
+                text: `
+<div class="header">PREDICTION ERROR</div>
+
+<div class="time-period">SIMULATION REVIEW</div>
+
+<span class="error">THAT PREDICTION IS INCORRECT.</span>
+
+Photosynthesis CONSUMES carbon dioxide, so it wouldn't increase CO₂ levels.
+
+Let's review the photosynthesis equation:
+6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂
+
+What does this equation tell us about atmospheric changes?
+`,
+                choices: [
+                    { text: "INCREASE OXYGEN LEVELS", nextScene: 'oxygen_increase', correct: true },
+                    { text: "NO SIGNIFICANT EFFECT", nextScene: 'effect_incorrect', correct: false }
+                ]
+            },
+            
+            effect_incorrect: {
+                text: `
+<div class="header">PREDICTION ERROR</div>
+
+<div class="time-period">SIMULATION REVIEW</div>
+
+<span class="error">THAT PREDICTION IS INCORRECT.</span>
+
+Photosynthetic organisms would have a major effect on Earth's atmosphere.
+
+Let's review the photosynthesis equation:
+6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂
+
+Notice what's being produced in this equation...
+`,
+                choices: [
+                    { text: "INCREASE OXYGEN LEVELS", nextScene: 'oxygen_increase', correct: true },
+                    { text: "INCREASE CARBON DIOXIDE LEVELS", nextScene: 'carbon_incorrect', correct: false }
+                ]
+            },
+            
+            oxygen_increase: {
+                text: `
+<div class="header">OXYGEN REVOLUTION</div>
+
+<div class="time-period">EARTH: 2.5-2.0 BILLION YEARS AGO</div>
+
+<span class="success">CORRECT PREDICTION!</span>
+
+MONITORING ATMOSPHERIC CHANGES:
+
+- <span class="important">OXYGEN LEVELS ARE SLOWLY INCREASING</span>
+- INITIALLY, OXYGEN REACTED WITH SURFACE MINERALS (ESPECIALLY IRON)
+- THIS CREATED RUST DEPOSITS KNOWN AS "BANDED IRON FORMATIONS"
+- AFTER SATURATING AVAILABLE MINERALS, OXYGEN BEGAN ACCUMULATING IN THE ATMOSPHERE
+
+THIS PERIOD WILL LATER BE KNOWN AS THE <span class="important">"GREAT OXYGENATION EVENT"</span> OR "OXYGEN CATASTROPHE."
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> PHOTOSYNTHETIC ALGAE PRODUCED OXYGEN THAT BEGAN ACCUMULATING IN THE ATMOSPHERE AFTER REACTING WITH SURFACE MINERALS.
+
+THE OXYGEN REVOLUTION HAD ANOTHER IMPORTANT EFFECT ON THE ATMOSPHERE. WHAT WAS IT?
+`,
+                choices: [
+                    { text: "DECREASED CARBON DIOXIDE LEVELS", nextScene: 'carbon_decrease', correct: true },
+                    { text: "DECREASED NITROGEN LEVELS", nextScene: 'nitrogen_incorrect', correct: false },
+                    { text: "INCREASED METHANE LEVELS", nextScene: 'methane_incorrect', correct: false }
+                ]
+            },
+            
+            nitrogen_incorrect: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+Nitrogen levels remained relatively stable during the oxygen revolution.
+
+Let's reconsider the photosynthesis equation:
+6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂
+
+Which atmospheric gas is being consumed in this process?
+`,
+                choices: [
+                    { text: "DECREASED CARBON DIOXIDE LEVELS", nextScene: 'carbon_decrease', correct: true },
+                    { text: "INCREASED METHANE LEVELS", nextScene: 'methane_incorrect', correct: false }
+                ]
+            },
+            
+            methane_incorrect: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+Methane levels would have decreased, not increased, during the oxygen revolution due to oxidation.
+
+Let's reconsider the photosynthesis equation:
+6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂
+
+Which atmospheric gas is being consumed in this process?
+`,
+                choices: [
+                    { text: "DECREASED CARBON DIOXIDE LEVELS", nextScene: 'carbon_decrease', correct: true },
+                    { text: "DECREASED NITROGEN LEVELS", nextScene: 'nitrogen_incorrect', correct: false }
+                ]
+            },
+            
+            carbon_decrease: {
+                text: `
+<div class="header">CARBON DIOXIDE REDUCTION</div>
+
+<div class="time-period">EARTH: 2.0-1.5 BILLION YEARS AGO</div>
+
+<span class="success">CORRECT ANALYSIS!</span>
+
+ATMOSPHERIC MONITORING CONFIRMS:
+
+- <span class="important">CARBON DIOXIDE LEVELS DECREASED SIGNIFICANTLY</span>
+- THIS OCCURRED FOR TWO MAIN REASONS:
+  1. <span class="important">PHOTOSYNTHESIS CONSUMED CO₂</span>
+  2. <span class="important">FORMATION OF CARBONATE ROCKS AND EARLY FOSSIL FUELS</span>
+
+AS PHOTOSYNTHETIC ORGANISMS DIED AND WERE BURIED, THEIR CARBON WAS REMOVED FROM THE ATMOSPHERIC CYCLE AND EVENTUALLY FORMED:
+- LIMESTONE (CaCO₃)
+- EARLY DEPOSITS OF COAL, OIL, AND NATURAL GAS
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> CO₂ DECREASED THROUGH PHOTOSYNTHESIS AND THE FORMATION OF CARBON-CONTAINING ROCKS AND FOSSIL FUELS.
+
+YOUR NEXT TERRAFORMING ACTION:
+`,
+                choices: [
+                    { text: "ENCOURAGE PLANT EVOLUTION", nextScene: 'plant_evolution' },
+                    { text: "ACCELERATE OXYGEN PRODUCTION", nextScene: 'accelerate_oxygen' },
+                    { text: "MONITOR ECOLOGICAL DEVELOPMENT", nextScene: 'monitor_ecology' }
+                ]
+            },
+            
+            accelerate_oxygen: {
+                text: `
+<div class="header">OXYGEN ACCELERATION</div>
+
+<div class="time-period">EARTH: 1.5-1.0 BILLION YEARS AGO</div>
+
+DEPLOYING OXYGEN ACCELERATION MEASURES...
+
+YOUR ACTIONS HAVE:
+- ENHANCED THE PHOTOSYNTHETIC EFFICIENCY OF EXISTING ORGANISMS
+- ENCOURAGED WIDER COLONIZATION OF MARINE ENVIRONMENTS
+- BEGUN THE DEVELOPMENT OF MORE COMPLEX LIFE FORMS
+
+ATMOSPHERIC OXYGEN CONTINUES TO INCREASE, ALBEIT AT A MEASURED PACE.
+
+<span class="highlight">NOTE:</span> SUSTAINABLE ATMOSPHERIC CHANGE REQUIRES TIME FOR ECOLOGICAL BALANCE TO DEVELOP.
+`,
+                choices: [
+                    { text: "CONTINUE TO NEXT PHASE", nextScene: 'plant_evolution' }
+                ]
+            },
+            
+            monitor_ecology: {
+                text: `
+<div class="header">ECOLOGICAL MONITORING</div>
+
+<div class="time-period">EARTH: 1.5-1.0 BILLION YEARS AGO</div>
+
+MONITORING ECOLOGICAL DEVELOPMENT...
+
+OBSERVATIONS:
+- DIVERSIFICATION OF SINGLE-CELLED ORGANISMS IS OCCURRING
+- EUKARYOTIC CELLS (WITH NUCLEUS AND ORGANELLES) HAVE APPEARED
+- EARLY FORMS OF MULTICELLULAR LIFE ARE BEGINNING TO EMERGE
+- OXYGEN LEVELS CONTINUE TO RISE GRADUALLY
+
+THESE CHANGES ARE LAYING THE GROUNDWORK FOR MORE COMPLEX LIFE FORMS.
+
+<span class="highlight">ANALYSIS:</span> THE STAGE IS SET FOR THE EVOLUTION OF PLANT LIFE.
+`,
+                choices: [
+                    { text: "CONTINUE TO NEXT PHASE", nextScene: 'plant_evolution' }
+                ]
+            },
+            
+            plant_evolution: {
+                text: `
+<div class="header">PLANT EVOLUTION</div>
+
+<div class="time-period">EARTH: 1.0-0.5 BILLION YEARS AGO</div>
+
+<div class="ascii-art">
+    /\\
+   /  \\
+  /    \\
+ /______\\
+    ||
+</div>
+
+OBSERVING EVOLUTIONARY DEVELOPMENT...
+
+MAJOR TRANSITIONS OCCURRING:
+- <span class="important">EVOLUTION OF MULTICELLULAR PLANTS</span>
+- FIRST APPEARANCE OF SIMPLE MARINE PLANTS
+- LATER COLONIZATION OF LAND SURFACES
+- <span class="important">SIGNIFICANT INCREASE IN PHOTOSYNTHETIC CAPACITY</span>
+
+THESE PLANTS CONTINUE THE PROCESS BEGUN BY ALGAE:
+- <span class="important">CONSUMING CO₂</span>
+- <span class="important">RELEASING O₂</span>
+- CREATING MORE COMPLEX ECOSYSTEMS
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> OVER THE NEXT BILLION YEARS, PLANTS EVOLVED AND OXYGEN LEVELS GRADUALLY INCREASED TO A LEVEL THAT ENABLED ANIMALS TO EVOLVE.
+
+WHAT ADDITIONAL CARBON REPOSITORIES FORMED AS A RESULT OF PLANT EVOLUTION?
+`,
+                choices: [
+                    { text: "COAL, OIL AND NATURAL GAS", nextScene: 'fossil_fuels', correct: true },
+                    { text: "ONLY CARBONATE ROCKS", nextScene: 'rocks_incorrect', correct: false },
+                    { text: "NONE - ALL CARBON REMAINED IN ATMOSPHERE", nextScene: 'none_incorrect', correct: false }
+                ]
+            },
+            
+            rocks_incorrect: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">CARBON CYCLE REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCOMPLETE.</span>
+
+While carbonate rocks did form, they weren't the only carbon repositories.
+
+Plant matter that was buried and compressed over millions of years formed other important carbon deposits.
+
+Let's reconsider where this plant carbon ended up...
+`,
+                choices: [
+                    { text: "COAL, OIL AND NATURAL GAS", nextScene: 'fossil_fuels', correct: true },
+                    { text: "NONE - ALL CARBON REMAINED IN ATMOSPHERE", nextScene: 'none_incorrect', correct: false }
+                ]
+            },
+            
+            none_incorrect: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">CARBON CYCLE REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+A significant amount of carbon was removed from the atmosphere and stored in various forms.
+
+This carbon sequestration was crucial for reducing atmospheric CO₂ and creating Earth's modern atmosphere.
+
+Let's reconsider where this carbon ended up...
+`,
+                choices: [
+                    { text: "COAL, OIL AND NATURAL GAS", nextScene: 'fossil_fuels', correct: true },
+                    { text: "ONLY CARBONATE ROCKS", nextScene: 'rocks_incorrect', correct: false }
+                ]
+            },
+            
+            fossil_fuels: {
+                text: `
+<div class="header">FOSSIL FUEL FORMATION</div>
+
+<div class="time-period">EARTH: 500-200 MILLION YEARS AGO</div>
+
+<span class="success">CORRECT ANALYSIS!</span>
+
+AS PLANT LIFE FLOURISHED AND DIED:
+- DEAD PLANT MATTER ACCUMULATED IN OXYGEN-POOR ENVIRONMENTS
+- LAYERS OF THIS MATERIAL WERE BURIED UNDER SEDIMENT
+- HEAT AND PRESSURE TRANSFORMED IT OVER MILLIONS OF YEARS
+
+THIS PROCESS CREATED:
+- <span class="important">COAL</span> (FROM LAND PLANTS IN SWAMPS/BOGS)
+- <span class="important">OIL AND NATURAL GAS</span> (FROM MARINE ORGANISMS)
+
+THESE FOSSIL FUELS REPRESENT SIGNIFICANT CARBON REPOSITORIES, EFFECTIVELY REMOVING CARBON FROM THE ATMOSPHERIC CYCLE.
+
+<span class="highlight">KNOWLEDGE UPDATE:</span> FOSSIL FUELS FORMED FROM BURIED ORGANIC MATTER, FURTHER REDUCING ATMOSPHERIC CARBON DIOXIDE.
+
+THE COMBINED EFFECT OF PHOTOSYNTHESIS, CARBONATE ROCK FORMATION, AND FOSSIL FUEL DEVELOPMENT HAS:
+`,
+                choices: [
+                    { text: "CREATED AN OXYGEN-RICH, CO₂-REDUCED ATMOSPHERE", nextScene: 'modern_atmosphere', correct: true },
+                    { text: "MAINTAINED HIGH CO₂ LEVELS", nextScene: 'co2_incorrect', correct: false },
+                    { text: "ELIMINATED NITROGEN FROM THE ATMOSPHERE", nextScene: 'nitrogen_incorrect2', correct: false }
+                ]
+            },
+            
+            co2_incorrect: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+CO₂ levels have significantly decreased from Earth's early atmosphere.
+
+Multiple processes have removed carbon dioxide:
+- Photosynthesis
+- Dissolution in oceans
+- Formation of carbonate rocks
+- Creation of fossil fuels
+
+Let's reconsider the overall atmospheric change...
+`,
+                choices: [
+                    { text: "CREATED AN OXYGEN-RICH, CO₂-REDUCED ATMOSPHERE", nextScene: 'modern_atmosphere', correct: true },
+                    { text: "ELIMINATED NITROGEN FROM THE ATMOSPHERE", nextScene: 'nitrogen_incorrect2', correct: false }
+                ]
+            },
+            
+            nitrogen_incorrect2: {
+                text: `
+<div class="header">ANALYSIS ERROR</div>
+
+<div class="time-period">ATMOSPHERIC REVIEW</div>
+
+<span class="error">THAT ANALYSIS IS INCORRECT.</span>
+
+Nitrogen has remained the most abundant gas in Earth's atmosphere.
+
+While oxygen levels increased and carbon dioxide decreased, nitrogen has maintained its dominant position in the atmospheric composition.
+
+Let's reconsider the overall atmospheric change...
+`,
+                choices: [
+                    { text: "CREATED AN OXYGEN-RICH, CO₂-REDUCED ATMOSPHERE", nextScene: 'modern_atmosphere', correct: true },
+                    { text: "MAINTAINED HIGH CO₂ LEVELS", nextScene: 'co2_incorrect', correct: false }
+                ]
+            },
+            
+            modern_atmosphere: {
+                text: `
+<div class="header">MODERN ATMOSPHERE ACHIEVED</div>
+
+<div class="time-period">EARTH: PRESENT DAY</div>
+
+<span class="success">CORRECT ANALYSIS!</span>
+
+CONGRATULATIONS, AGENT Z-459!
+
+YOUR TERRAFORMING MISSION IS COMPLETE. EARTH NOW HAS A LIFE-SUPPORTING ATMOSPHERE:
+
+<span class="important">MODERN EARTH ATMOSPHERE:</span>
+- NITROGEN (N₂): ~78%
+- OXYGEN (O₂): ~21%
+- ARGON (Ar): ~0.9%
+- CARBON DIOXIDE (CO₂): ~0.04%
+- WATER VAPOR & TRACE GASES: <1%
+
+THIS TRANSFORMATION FROM A CO₂-RICH, OXYGEN-POOR ATMOSPHERE TO TODAY'S COMPOSITION TOOK APPROXIMATELY 4.6 BILLION YEARS.
+
+<span class="highlight">MISSION SUMMARY:</span> YOU HAVE SUCCESSFULLY GUIDED EARTH'S ATMOSPHERIC EVOLUTION!
+
+WOULD YOU LIKE TO:
+`,
+                choices: [
+                    { text: "REVIEW ATMOSPHERIC EVOLUTION TIMELINE", nextScene: 'timeline_review' },
+                    { text: "TAKE FINAL ASSESSMENT", nextScene: 'final_quiz' }
+                ]
+            },
+            
+            timeline_review: {
+                text: `
+<div class="header">ATMOSPHERIC EVOLUTION TIMELINE</div>
+
+<div id="timeline">
+<span class="time-period">4.6 BILLION YEARS AGO:</span>
+- Earth forms with NO atmosphere
+- Intense heat from formation
+
+<span class="time-period">4.6-4.0 BILLION YEARS AGO:</span>
+- <span class="important">Volcanic activity releases gases</span> (mainly CO₂, N₂, water vapor)
+- Atmosphere similar to Venus and Mars today
+- <span class="important">Water vapor condenses to form oceans</span>
+- <span class="important">CO₂ dissolves in oceans, forms carbonates</span>
+
+<span class="time-period">3.5-2.7 BILLION YEARS AGO:</span>
+- Simple life forms emerge
+- <span class="important">Photosynthetic algae appears ~2.7 billion years ago</span>
+
+<span class="time-period">2.5-2.0 BILLION YEARS AGO:</span>
+- <span class="important">"Great Oxygenation Event"</span>
+- <span class="important">Oxygen begins accumulating in atmosphere</span>
+- <span class="important">CO₂ levels decrease through photosynthesis</span>
+
+<span class="time-period">2.0-0.5 BILLION YEARS AGO:</span>
+- <span class="important">Evolution of multicellular plants</span>
+- <span class="important">Continued oxygen increase</span>
+- <span class="important">Formation of carbon repositories</span> (limestone, fossil fuels)
+
+<span class="time-period">500 MILLION YEARS TO PRESENT:</span>
+- <span class="important">Development of modern atmospheric composition</span>
+- <span class="important">Nitrogen: ~78%</span>
+- <span class="important">Oxygen: ~21%</span>
+- <span class="important">CO₂: ~0.04%</span>
+</div>
+
+<span class="highlight">MISSION COMPLETE!</span> YOU HAVE SUCCESSFULLY GUIDED EARTH'S ATMOSPHERIC EVOLUTION.
+`,
+                choices: [
+                    { text: "TAKE FINAL ASSESSMENT", nextScene: 'final_quiz' }
+                ]
+            },
+            
+            final_quiz: {
+                text: `
+<div class="header">FINAL ASSESSMENT</div>
+
+GALACTIC TERRAFORMING COMMAND REQUIRES A FINAL EVALUATION OF YOUR KNOWLEDGE.
+
+COMPLETE THE FOLLOWING ASSESSMENT TO CERTIFY YOUR MISSION SUCCESS.
+
+<div id="quiz-container">
+  <div class="quiz-question">
+    <p>1. WHAT WAS THE MAIN SOURCE OF GASES IN EARTH'S EARLY ATMOSPHERE?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q1" id="q1a" value="a">
+      <label for="q1a">METEOR IMPACTS</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q1" id="q1b" value="b">
+      <label for="q1b">VOLCANIC ACTIVITY</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q1" id="q1c" value="c">
+      <label for="q1c">SOLAR RADIATION</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>2. EARTH'S EARLY ATMOSPHERE WAS MOST SIMILAR TO WHICH PRESENT-DAY PLANETS?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q2" id="q2a" value="a">
+      <label for="q2a">JUPITER AND SATURN</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q2" id="q2b" value="b">
+      <label for="q2b">VENUS AND MARS</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q2" id="q2c" value="c">
+      <label for="q2c">MERCURY AND MOON</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>3. What was the approximate composition of Earth's early atmosphere?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q3" id="q3a" value="a">
+      <label for="q3a">Mainly nitrogen and oxygen</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q3" id="q3b" value="b">
+      <label for="q3b">Mainly carbon dioxide with little or no oxygen</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q3" id="q3c" value="c">
+      <label for="q3c">Mainly hydrogen and helium</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>4. What happened to much of the carbon dioxide in Earth's early atmosphere?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q4" id="q4a" value="a">
+      <label for="q4a">It was blown away by solar winds</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q4" id="q4b" value="b">
+      <label for="q4b">It dissolved in the oceans and formed carbonates</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q4" id="q4c" value="c">
+      <label for="q4c">It was converted to nitrogen by lightning</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>5. What life forms first produced significant oxygen in Earth's atmosphere?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q5" id="q5a" value="a">
+      <label for="q5a">Land plants</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q5" id="q5b" value="b">
+      <label for="q5b">Algae (cyanobacteria)</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q5" id="q5c" value="c">
+      <label for="q5c">Animal respiration</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>6. Approximately when did oxygen first appear in significant amounts in the atmosphere?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q6" id="q6a" value="a">
+      <label for="q6a">4.6 billion years ago</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q6" id="q6b" value="b">
+      <label for="q6b">2.7 billion years ago</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q6" id="q6c" value="c">
+      <label for="q6c">10 million years ago</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>7. What is the correct equation for photosynthesis?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q7" id="q7a" value="a">
+      <label for="q7a">6O₂ + C₆H₁₂O₆ → 6CO₂ + 6H₂O + energy</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q7" id="q7b" value="b">
+      <label for="q7b">6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q7" id="q7c" value="c">
+      <label for="q7c">6CO₂ + 6O₂ → C₆H₁₂O₆ + energy</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>8. How did plants help decrease carbon dioxide in the atmosphere?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q8" id="q8a" value="a">
+      <label for="q8a">Through photosynthesis, using CO₂ to produce oxygen</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q8" id="q8b" value="b">
+      <label for="q8b">By converting CO₂ to nitrogen</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q8" id="q8c" value="c">
+      <label for="q8c">By releasing CO₂ into space</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>9. Which of these are carbon repositories that formed over time?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q9" id="q9a" value="a">
+      <label for="q9a">Granite and basalt</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q9" id="q9b" value="b">
+      <label for="q9b">Limestone, coal, oil, and natural gas</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q9" id="q9c" value="c">
+      <label for="q9c">Nitrogen and oxygen</label>
+    </div>
+  </div>
+  
+  <div class="quiz-question">
+    <p>10. What is the approximate composition of Earth's atmosphere today?</p>
+    <div class="quiz-option">
+      <input type="radio" name="q10" id="q10a" value="a">
+      <label for="q10a">78% nitrogen, 21% oxygen, 0.04% carbon dioxide</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q10" id="q10b" value="b">
+      <label for="q10b">50% oxygen, 50% carbon dioxide</label>
+    </div>
+    <div class="quiz-option">
+      <input type="radio" name="q10" id="q10c" value="c">
+      <label for="q10c">95% carbon dioxide, 5% nitrogen</label>
+    </div>
+  </div>
+  
+  <button id="submit-quiz">SUBMIT ASSESSMENT</button>
+  
+  <div id="quiz-results"></div>
+</div>
+`,
+                choices: []
+            },
+            
+            quiz_results: {
+                text: `
+<div class="header">ASSESSMENT RESULTS</div>
+
+<div id="final-score"></div>
+
+<div id="quiz-feedback"></div>
+
+<span class="highlight">MISSION DEBRIEFING:</span>
+
+YOU HAVE SUCCESSFULLY GUIDED EARTH'S ATMOSPHERIC EVOLUTION FROM ITS EARLY COMPOSITION (PRIMARILY CO₂ WITH NO OXYGEN) TO ITS MODERN LIFE-SUPPORTING COMPOSITION (78% NITROGEN, 21% OXYGEN, 0.04% CO₂).
+
+KEY PROCESSES IN THIS TRANSFORMATION:
+1. <span class="important">VOLCANIC ACTIVITY</span> CREATED THE EARLY ATMOSPHERE
+2. <span class="important">OCEAN FORMATION</span> REDUCED CO₂ THROUGH DISSOLUTION
+3. <span class="important">PHOTOSYNTHETIC ALGAE (2.7 BILLION YEARS AGO)</span> BEGAN PRODUCING OXYGEN
+4. <span class="important">PLANT EVOLUTION</span> ACCELERATED OXYGEN PRODUCTION
+5. <span class="important">FORMATION OF CARBON REPOSITORIES</span> (LIMESTONE, FOSSIL FUELS) REMOVED CARBON FROM THE ATMOSPHERE
+
+GALACTIC COMMAND CONGRATULATES YOU ON YOUR SUCCESSFUL MISSION.
+
+`,
+                choices: [
+                    { text: "RESTART MISSION", nextScene: 'intro' }
+                ]
+            }
+        };
+        
+        // Function to update the text display with the current scene
+        function updateScene(sceneName) {
+            gameState.currentScene = sceneName;
+            const scene = scenes[sceneName];
+            
+            // Update text display
+            document.getElementById('text-display').innerHTML = scene.text;
+            
+            // Update choices
+            const choicesElement = document.getElementById('choices');
+            choicesElement.innerHTML = '';
+            
+            if (scene.choices && scene.choices.length > 0) {
+                scene.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice';
+                    button.textContent = choice.text;
+                    button.addEventListener('click', () => {
+                        if (choice.correct === true) {
+                            gameState.knowledge += 10;
+                            updateKnowledge();
+                        }
+                        
+                        // Add to timeline if appropriate
+                        const knowledgeUpdateMatch = scene.text.match(/<span class="highlight">KNOWLEDGE UPDATE:<\/span>(.*?)\./);
+                        if (knowledgeUpdateMatch) {
+                            gameState.timeline.push(knowledgeUpdateMatch[1].trim());
+                        }
+                        
+                        updateScene(choice.nextScene);
+                    });
+                    choicesElement.appendChild(button);
+                });
+            }
+            
+            // Scroll to top of content
+            document.getElementById('content').scrollTop = 0;
+            
+            // Add event listener for quiz if this is the quiz scene
+            if (sceneName === 'final_quiz') {
+                document.getElementById('submit-quiz').addEventListener('click', evaluateQuiz);
+            }
+        }
+        
+        // Function to evaluate the quiz
+        function evaluateQuiz() {
+            const answers = {
+                q1: 'b', // Volcanic activity
+                q2: 'b', // Venus and Mars
+                q3: 'b', // Mainly carbon dioxide with little or no oxygen
+                q4: 'b', // It dissolved in the oceans and formed carbonates
+                q5: 'b', // Algae (cyanobacteria)
+                q6: 'b', // 2.7 billion years ago
+                q7: 'b', // 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂
+                q8: 'a', // Through photosynthesis, using CO₂ to produce oxygen
+                q9: 'b', // Limestone, coal, oil, and natural gas
+                q10: 'a'  // 78% nitrogen, 21% oxygen, 0.04% carbon dioxide
+            };
+            
+            let score = 0;
+            let feedback = '';
+            
+            for (let i = 1; i <= 10; i++) {
+                const questionId = 'q' + i;
+                const selectedOption = document.querySelector(`input[name="${questionId}"]:checked`);
+                
+                if (selectedOption) {
+                    gameState.quizAnswers[questionId] = selectedOption.value;
+                    if (selectedOption.value === answers[questionId]) {
+                        score += 10;
+                    }
+                }
+            }
+            
+            // Add quiz score to knowledge score
+            gameState.knowledge += score;
+            updateKnowledge();
+            
+            // Generate feedback based on score
+            if (score >= 80) {
+                feedback = `<span class="success">EXCELLENT WORK, AGENT Z-459!</span> Your understanding of Earth's atmospheric evolution is comprehensive. You have proven yourself worthy of the highest honors in Galactic Terraforming Command.`;
+            } else if (score >= 60) {
+                feedback = `<span class="highlight">GOOD WORK, AGENT Z-459.</span> Your understanding of Earth's atmospheric evolution is solid, though there are a few areas where you could improve your knowledge.`;
+            } else {
+                feedback = `<span class="error">ADDITIONAL TRAINING REQUIRED, AGENT Z-459.</span> Your understanding of Earth's atmospheric evolution needs improvement before you can be assigned to future terraforming missions.`;
+            }
+            
+            // Update the quiz results scene
+            scenes.quiz_results.text = scenes.quiz_results.text.replace('<div id="final-score"></div>', `<div id="final-score" class="highlight">FINAL SCORE: ${score}/100</div>`);
+            scenes.quiz_results.text = scenes.quiz_results.text.replace('<div id="quiz-feedback"></div>', `<div id="quiz-feedback">${feedback}</div>`);
+            
+            // Move to results scene
+            updateScene('quiz_results');
+        }
+        
+        // Function to update knowledge display
+        function updateKnowledge() {
+            document.getElementById('score-display').textContent = `KNOWLEDGE: ${gameState.knowledge}`;
+        }
+        
+        // Typewriter effect simulation with CSS class
+        function updateProgressBar(percent) {
+            document.getElementById('progress-bar').textContent = `LOADED: ${percent}%`;
+            if (percent >= 100) {
+                document.getElementById('progress-bar').textContent = 'SYSTEM READY';
+                setTimeout(() => {
+                    document.getElementById('progress-bar').style.opacity = '0';
+                }, 1000);
+            }
+        }
+        
+        // Simulate loading sequence
+        let loadingPercent = 0;
+        const loadingInterval = setInterval(() => {
+            loadingPercent += Math.floor(Math.random() * 10) + 5;
+            if (loadingPercent > 100) loadingPercent = 100;
+            updateProgressBar(loadingPercent);
+            if (loadingPercent >= 100) {
+                clearInterval(loadingInterval);
+                // Start game after loading
+                updateScene('intro');
+            }
+        }, 300);
+    </script>
+</body>
+</html>
