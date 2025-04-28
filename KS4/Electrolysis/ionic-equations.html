@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Ionic Equations - Interactive Tutorial</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #e74c3c;
+            --accent: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --correct: #27ae60;
+            --wrong: #c0392b;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f7f9fc;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 15px;
+            color: var(--dark);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+            color: var(--primary);
+        }
+        
+        p {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab.active {
+            background-color: var(--light);
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .nav-tab:hover {
+            background-color: var(--light);
+        }
+        
+        .content-section {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tutorial-tabs {
+            display: flex;
+            background-color: #f1f8fe;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tutorial-tab {
+            padding: 12px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border-bottom: 3px solid transparent;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .tutorial-tab.active {
+            background-color: white;
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        .tutorial-tab:hover {
+            background-color: #e8f4f8;
+        }
+        
+        .tutorial-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tutorial-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .example-box, .practice-box {
+            background-color: #f1f8fe;
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .example-box h4, .practice-box h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .step-box {
+            background-color: #efffef;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 0 3px;
+            border-radius: 3px;
+        }
+        
+        .important {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .practice-level-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .practice-level-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        .practice-level-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .practice-level {
+            display: none;
+        }
+        
+        .practice-level.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .question-container {
+            margin-bottom: 40px;
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .reaction-equation {
+            font-size: 1.4rem;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 15px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            font-family: 'Courier New', monospace;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .equation-builder {
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            min-height: 70px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px;
+            width: 100%;
+        }
+        
+        .equation-builder:focus {
+            outline: 2px solid var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .components-container {
+            background-color: #f1f8fe;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .component-category {
+            margin-bottom: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .component-category h5 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .component-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .component-item {
+            display: inline-block;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px 8px;
+            margin: 2px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .component-item:hover {
+            background-color: #e8f4f8;
+            border-color: var(--primary);
+        }
+        
+        .equation-element {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f1f8fe;
+            border: 1px solid var(--primary);
+            border-radius: 4px;
+            padding: 4px 8px;
+            margin: 2px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .equation-element .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 16px;
+            height: 16px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            font-size: 10px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        .equation-element:hover .remove-btn {
+            display: flex;
+        }
+        
+        .clear-equation {
+            background-color: #e0e0e0;
+            color: var(--dark);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .clear-equation:hover {
+            background-color: #d0d0d0;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px 0;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        button.secondary {
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        button.secondary:hover {
+            background-color: #d7d7d7;
+        }
+        
+        .feedback {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.correct {
+            background-color: #d4edd4;
+            color: var(--correct);
+            border-left: 3px solid var(--correct);
+        }
+        
+        .feedback.incorrect {
+            background-color: #f7d7d7;
+            color: var(--wrong);
+            border-left: 3px solid var(--wrong);
+        }
+        
+        .hint {
+            display: none;
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .result-summary {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .result-summary h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--primary);
+            cursor: help;
+            color: var(--primary);
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .equation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .equation-table th,
+        .equation-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .equation-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .equation-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .equation-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .next-section-btn, .prev-section-btn {
+            background-color: var(--accent);
+            padding: 10px 15px;
+        }
+        
+        .next-section-btn:hover, .prev-section-btn:hover {
+            background-color: #28a745;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .practice-level-tabs {
+                flex-direction: column;
+            }
+            
+            .practice-level-tab {
+                margin-bottom: 5px;
+                border-radius: 5px;
+            }
+            
+            .reaction-equation {
+                font-size: 1rem;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Ionic Equations</h1>
+            <p>An interactive GCSE Chemistry tutorial</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="tutorial">Tutorial</div>
+            <div class="nav-tab" data-tab="practice">Practice</div>
+        </div>
+
+        <!-- Tutorial Section -->
+        <div id="tutorial" class="content-section active">
+            <h2>Understanding Ionic Equations</h2>
+            
+            <div class="tutorial-tabs">
+                <div class="tutorial-tab active" data-section="intro">Introduction</div>
+                <div class="tutorial-tab" data-section="method">Step-by-Step Method</div>
+                <div class="tutorial-tab" data-section="solubility">Solubility Rules</div>
+                <div class="tutorial-tab" data-section="examples">Worked Examples</div>
+                <div class="tutorial-tab" data-section="mistakes">Common Mistakes</div>
+            </div>
+            
+            <!-- Introduction Section -->
+            <div id="intro" class="tutorial-section active">
+                <p>Welcome to this interactive lesson on ionic equations! This is an important topic in GCSE Chemistry that helps us understand what's really happening in chemical reactions.</p>
+                
+                <h3>What are Ionic Equations?</h3>
+                
+                <p>Ionic equations are simplified versions of chemical equations that show only the ions that actually participate in a reaction. They help us focus on the <span class="important">key chemical changes</span> without the distraction of spectator ions.</p>
+                
+                <div class="step-box">
+                    <h4>Key Terms:</h4>
+                    <p><span class="tooltip">Spectator ions<span class="tooltiptext">Ions that are present in solution but don't participate in the reaction</span></span>: Ions that appear on both sides of the chemical equation and don't change during the reaction.</p>
+                    <p><span class="tooltip">Net ionic equation<span class="tooltiptext">The simplified equation showing only the species that actually react</span></span>: Shows only the ions and molecules that actually participate in the reaction.</p>
+                </div>
+                
+                <h3>Why Do We Use Ionic Equations?</h3>
+                
+                <p>Ionic equations help us:</p>
+                <ul>
+                    <li>Focus on the actual chemistry taking place</li>
+                    <li>Identify which ions are responsible for observed reactions</li>
+                    <li>Understand the fundamental processes occurring in solution</li>
+                    <li>Simplify complex reactions to their essential components</li>
+                </ul>
+                
+                <div class="button-row">
+                    <div></div> <!-- Empty div for spacing -->
+                    <button class="next-section-btn" data-next="method">Next: Step-by-Step Method</button>
+                </div>
+            </div>
+            
+            <!-- Step-by-Step Method Section -->
+            <div id="method" class="tutorial-section">
+                <h3>How to Write Ionic Equations: Step-by-Step</h3>
+                
+                <div class="step-box">
+                    <h4>Step 1: Write the balanced molecular equation</h4>
+                    <p>Make sure your starting equation is balanced with the correct formulas.</p>
+                </div>
+                
+                <div class="step-box">
+                    <h4>Step 2: Split aqueous compounds into ions</h4>
+                    <p>Identify soluble ionic compounds (usually marked with (aq)) and split them into their component ions.</p>
+                    <p><strong>Remember:</strong> Not all compounds split into ions! These generally don't split:</p>
+                    <ul>
+                        <li>Solids (s), gases (g), and liquids (l)</li>
+                        <li>Weak electrolytes like H₂O, weak acids, and molecular compounds</li>
+                    </ul>
+                </div>
+                
+                <div class="step-box">
+                    <h4>Step 3: Identify and cancel spectator ions</h4>
+                    <p>Look for ions that appear unchanged on both sides of the equation. These can be removed to form the net ionic equation.</p>
+                </div>
+                
+                <div class="step-box">
+                    <h4>Step 4: Write the final ionic equation</h4>
+                    <p>Write the equation with just the species that are actually reacting.</p>
+                </div>
+                
+                <div class="button-row">
+                    <button class="prev-section-btn" data-prev="intro">Previous: Introduction</button>
+                    <button class="next-section-btn" data-next="solubility">Next: Solubility Rules</button>
+                </div>
+            </div>
+            
+            <!-- Solubility Rules Section -->
+            <div id="solubility" class="tutorial-section">
+                <h3>Common States and Solubility Rules</h3>
+                
+                <p>To write ionic equations correctly, you need to know which compounds dissociate into ions in solution:</p>
+                
+                <table class="equation-table">
+                    <tr>
+                        <th>Compound Type</th>
+                        <th>Solubility</th>
+                        <th>Examples</th>
+                    </tr>
+                    <tr>
+                        <td>Group 1 metals and ammonium compounds</td>
+                        <td>Soluble (aq)</td>
+                        <td>NaCl, KNO₃, (NH₄)₂SO₄</td>
+                    </tr>
+                    <tr>
+                        <td>Nitrates</td>
+                        <td>Soluble (aq)</td>
+                        <td>Ca(NO₃)₂, Fe(NO₃)₃</td>
+                    </tr>
+                    <tr>
+                        <td>Most chlorides, bromides, iodides</td>
+                        <td>Soluble (aq)</td>
+                        <td>MgCl₂, KBr (except AgCl, PbCl₂)</td>
+                    </tr>
+                    <tr>
+                        <td>Most sulfates</td>
+                        <td>Soluble (aq)</td>
+                        <td>Na₂SO₄ (except BaSO₄, PbSO₄, CaSO₄)</td>
+                    </tr>
+                    <tr>
+                        <td>Carbonates, hydroxides, phosphates</td>
+                        <td>Usually insoluble (s)</td>
+                        <td>CaCO₃, Fe(OH)₃, Ca₃(PO₄)₂</td>
+                    </tr>
+                </table>
+                
+                <div class="button-row">
+                    <button class="prev-section-btn" data-prev="method">Previous: Step-by-Step Method</button>
+                    <button class="next-section-btn" data-next="examples">Next: Worked Examples</button>
+                </div>
+            </div>
+            
+            <!-- Worked Examples Section -->
+            <div id="examples" class="tutorial-section">
+                <h3>Worked Examples</h3>
+                
+                <div class="example-box">
+                    <h4>Example 1: Precipitation Reaction</h4>
+                    <p>When solutions of silver nitrate and sodium chloride are mixed, a white precipitate forms.</p>
+                    
+                    <p><strong>Step 1:</strong> Write the balanced molecular equation</p>
+                    <div class="reaction-equation">AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)</div>
+                    
+                    <p><strong>Step 2:</strong> Split aqueous compounds into ions</p>
+                    <div class="reaction-equation">Ag⁺(aq) + NO₃⁻(aq) + Na⁺(aq) + Cl⁻(aq) → AgCl(s) + Na⁺(aq) + NO₃⁻(aq)</div>
+                    
+                    <p><strong>Step 3:</strong> Identify spectator ions</p>
+                    <p>Na⁺ and NO₃⁻ appear unchanged on both sides, so they are spectator ions.</p>
+                    
+                    <p><strong>Step 4:</strong> Write the final ionic equation</p>
+                    <div class="reaction-equation">Ag⁺(aq) + Cl⁻(aq) → AgCl(s)</div>
+                    
+                    <p>This shows us that the precipitate forms when silver ions react with chloride ions.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 2: Neutralization Reaction</h4>
+                    <p>Hydrochloric acid reacts with sodium hydroxide to form salt and water.</p>
+                    
+                    <p><strong>Step 1:</strong> Write the balanced molecular equation</p>
+                    <div class="reaction-equation">HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)</div>
+                    
+                    <p><strong>Step 2:</strong> Split aqueous compounds into ions</p>
+                    <div class="reaction-equation">H⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l)</div>
+                    
+                    <p><strong>Step 3:</strong> Identify spectator ions</p>
+                    <p>Na⁺ and Cl⁻ appear unchanged on both sides, so they are spectator ions.</p>
+                    
+                    <p><strong>Step 4:</strong> Write the final ionic equation</p>
+                    <div class="reaction-equation">H⁺(aq) + OH⁻(aq) → H₂O(l)</div>
+                    
+                    <p>This shows that neutralization is fundamentally the reaction between hydrogen ions and hydroxide ions to form water.</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Example 3: Displacement Reaction</h4>
+                    <p>When zinc metal is added to copper(II) sulfate solution, copper metal is displaced.</p>
+                    
+                    <p><strong>Step 1:</strong> Write the balanced molecular equation</p>
+                    <div class="reaction-equation">Zn(s) + CuSO₄(aq) → ZnSO₄(aq) + Cu(s)</div>
+                    
+                    <p><strong>Step 2:</strong> Split aqueous compounds into ions</p>
+                    <div class="reaction-equation">Zn(s) + Cu²⁺(aq) + SO₄²⁻(aq) → Zn²⁺(aq) + SO₄²⁻(aq) + Cu(s)</div>
+                    
+                    <p><strong>Step 3:</strong> Identify spectator ions</p>
+                    <p>SO₄²⁻ appears unchanged on both sides, so it is a spectator ion.</p>
+                    
+                    <p><strong>Step 4:</strong> Write the final ionic equation</p>
+                    <div class="reaction-equation">Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)</div>
+                    
+                    <p>This shows the electron transfer from zinc to copper(II) ions, which is the essence of this redox reaction.</p>
+                </div>
+
+                <div class="example-box">
+                    <h4>Example 4: Precipitation of Barium Sulfate</h4>
+                    <p>When barium chloride solution is mixed with sodium sulfate solution, a white precipitate forms.</p>
+                    
+                    <p><strong>Step 1:</strong> Write the balanced molecular equation</p>
+                    <div class="reaction-equation">BaCl₂(aq) + Na₂SO₄(aq) → BaSO₄(s) + 2NaCl(aq)</div>
+                    
+                    <p><strong>Step 2:</strong> Split aqueous compounds into ions</p>
+                    <div class="reaction-equation">Ba²⁺(aq) + 2Cl⁻(aq) + 2Na⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2Na⁺(aq) + 2Cl⁻(aq)</div>
+                    
+                    <p><strong>Step 3:</strong> Identify spectator ions</p>
+                    <p>Na⁺ and Cl⁻ appear unchanged on both sides, so they are spectator ions.</p>
+                    
+                    <p><strong>Step 4:</strong> Write the final ionic equation</p>
+                    <div class="reaction-equation">Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)</div>
+                    
+                    <p>This shows that the insoluble barium sulfate precipitate forms when barium ions and sulfate ions combine.</p>
+                </div>
+                
+                <div class="button-row">
+                    <button class="prev-section-btn" data-prev="solubility">Previous: Solubility Rules</button>
+                    <button class="next-section-btn" data-next="mistakes">Next: Common Mistakes</button>
+                </div>
+            </div>
+            
+            <!-- Common Mistakes Section -->
+            <div id="mistakes" class="tutorial-section">
+                <h3>Common Mistakes to Avoid</h3>
+                
+                <div class="step-box">
+                    <h4>1. Forgetting states</h4>
+                    <p>Always include the states (aq), (s), (g), or (l) in your ionic equations.</p>
+                </div>
+                
+                <div class="step-box">
+                    <h4>2. Splitting insoluble compounds</h4>
+                    <p>Remember, only aqueous (dissolved) ionic compounds split into ions.</p>
+                </div>
+                
+                <div class="step-box">
+                    <h4>3. Not balancing charges</h4>
+                    <p>Make sure the total charge on each side of the equation is the same.</p>
+                </div>
+                
+                <div class="step-box">
+                    <h4>4. Missing spectator ions</h4>
+                    <p>Check carefully for ions that appear unchanged on both sides of the equation.</p>
+                </div>
+
+                <p>Now let's practice what we've learned!</p>
+                <div class="button-row">
+                    <button class="prev-section-btn" data-prev="examples">Previous: Worked Examples</button>
+                    <button id="go-to-practice" class="secondary">Go to Practice Section</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice Section -->
+        <div id="practice" class="content-section">
+            <h2>Practice Writing Ionic Equations</h2>
+            
+            <p>Let's apply what you've learned about ionic equations. Choose your level:</p>
+            
+            <div class="practice-level-tabs">
+                <div class="practice-level-tab active" data-level="beginner">Beginner</div>
+                <div class="practice-level-tab" data-level="intermediate">Intermediate</div>
+                <div class="practice-level-tab" data-level="advanced">Advanced</div>
+            </div>
+            
+            <div class="practice-level active" id="beginner-level">
+                <h3>Beginner Level</h3>
+                <p>In this level, you'll get step-by-step guidance to write ionic equations.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="beginner-progress"></div>
+                </div>
+                
+                <div id="beginner-questions"></div>
+                
+                <div class="result-summary" id="beginner-results">
+                    <h3>Level Complete!</h3>
+                    <p>Your score: <span id="beginner-score">0</span> out of <span id="beginner-total">0</span></p>
+                    <button id="retry-beginner">Try Again</button>
+                    <button id="next-to-intermediate">Try Intermediate Level</button>
+                </div>
+            </div>
+            
+            <div class="practice-level" id="intermediate-level">
+                <h3>Intermediate Level</h3>
+                <p>In this level, you'll first write the full ionic equation, then identify spectator ions.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="intermediate-progress"></div>
+                </div>
+                
+                <div id="intermediate-questions"></div>
+                
+                <div class="result-summary" id="intermediate-results">
+                    <h3>Level Complete!</h3>
+                    <p>Your score: <span id="intermediate-score">0</span> out of <span id="intermediate-total">0</span></p>
+                    <button id="retry-intermediate">Try Again</button>
+                    <button id="next-to-advanced">Try Advanced Level</button>
+                </div>
+            </div>
+            
+            <div class="practice-level" id="advanced-level">
+                <h3>Advanced Level</h3>
+                <p>In this level, you'll apply your knowledge with minimal guidance.</p>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="advanced-progress"></div>
+                </div>
+                
+                <div id="advanced-questions"></div>
+                
+                <div class="result-summary" id="advanced-results">
+                    <h3>Level Complete!</h3>
+                    <p>Your score: <span id="advanced-score">0</span> out of <span id="advanced-total">0</span></p>
+                    <button id="retry-advanced">Try Again</button>
+                    <button id="back-to-tutorial">Review Tutorial</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab Navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.nav-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all content sections
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding content section
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Tutorial Section Tabs
+            document.querySelectorAll('.tutorial-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tutorial tabs
+                    document.querySelectorAll('.tutorial-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked tutorial tab
+                    tab.classList.add('active');
+                    
+                    // Hide all tutorial sections
+                    document.querySelectorAll('.tutorial-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding tutorial section
+                    const sectionId = tab.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+            
+            // Next Section buttons
+            document.querySelectorAll('.next-section-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const nextSection = btn.getAttribute('data-next');
+                    
+                    // Remove active class from all tutorial tabs
+                    document.querySelectorAll('.tutorial-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to next tutorial tab
+                    document.querySelector(`.tutorial-tab[data-section="${nextSection}"]`).classList.add('active');
+                    
+                    // Hide all tutorial sections
+                    document.querySelectorAll('.tutorial-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the next tutorial section
+                    document.getElementById(nextSection).classList.add('active');
+                    
+                    // Scroll to top of the tutorial section
+                    document.getElementById('tutorial').scrollIntoView({behavior: 'smooth'});
+                });
+            });
+            
+            // Previous Section buttons
+            document.querySelectorAll('.prev-section-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const prevSection = btn.getAttribute('data-prev');
+                    
+                    // Remove active class from all tutorial tabs
+                    document.querySelectorAll('.tutorial-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to previous tutorial tab
+                    document.querySelector(`.tutorial-tab[data-section="${prevSection}"]`).classList.add('active');
+                    
+                    // Hide all tutorial sections
+                    document.querySelectorAll('.tutorial-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show the previous tutorial section
+                    document.getElementById(prevSection).classList.add('active');
+                    
+                    // Scroll to top of the tutorial section
+                    document.getElementById('tutorial').scrollIntoView({behavior: 'smooth'});
+                });
+            });
+            
+            // Practice Level Navigation
+            document.querySelectorAll('.practice-level-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all level tabs
+                    document.querySelectorAll('.practice-level-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked level tab
+                    tab.classList.add('active');
+                    
+                    // Hide all practice levels
+                    document.querySelectorAll('.practice-level').forEach(level => {
+                        level.classList.remove('active');
+                    });
+                    
+                    // Show the corresponding practice level
+                    const levelId = tab.getAttribute('data-level');
+                    document.getElementById(levelId + '-level').classList.add('active');
+                });
+            });
+            
+            // Go to Practice button
+            document.getElementById('go-to-practice').addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                document.querySelector('.nav-tab[data-tab="practice"]').classList.add('active');
+                
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('practice').classList.add('active');
+            });
+            
+            // Level navigation buttons
+            document.getElementById('next-to-intermediate').addEventListener('click', () => {
+                document.querySelectorAll('.practice-level-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                document.querySelector('.practice-level-tab[data-level="intermediate"]').classList.add('active');
+                
+                document.querySelectorAll('.practice-level').forEach(level => {
+                    level.classList.remove('active');
+                });
+                document.getElementById('intermediate-level').classList.add('active');
+            });
+            
+            document.getElementById('next-to-advanced').addEventListener('click', () => {
+                document.querySelectorAll('.practice-level-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                document.querySelector('.practice-level-tab[data-level="advanced"]').classList.add('active');
+                
+                document.querySelectorAll('.practice-level').forEach(level => {
+                    level.classList.remove('active');
+                });
+                document.getElementById('advanced-level').classList.add('active');
+            });
+            
+            document.getElementById('back-to-tutorial').addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                document.querySelector('.nav-tab[data-tab="tutorial"]').classList.add('active');
+                
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById('tutorial').classList.add('active');
+            });
+            
+            // Common components for equation builder
+            const commonIons = [
+                { value: 'H⁺', display: 'H⁺' },
+                { value: 'OH⁻', display: 'OH⁻' },
+                { value: 'Na⁺', display: 'Na⁺' },
+                { value: 'K⁺', display: 'K⁺' },
+                { value: 'NH₄⁺', display: 'NH₄⁺' },
+                { value: 'Mg²⁺', display: 'Mg²⁺' },
+                { value: 'Ca²⁺', display: 'Ca²⁺' },
+                { value: 'Ba²⁺', display: 'Ba²⁺' },
+                { value: 'Cu²⁺', display: 'Cu²⁺' },
+                { value: 'Fe²⁺', display: 'Fe²⁺' },
+                { value: 'Fe³⁺', display: 'Fe³⁺' },
+                { value: 'Pb²⁺', display: 'Pb²⁺' },
+                { value: 'Ag⁺', display: 'Ag⁺' },
+                { value: 'Zn²⁺', display: 'Zn²⁺' },
+                { value: 'Al³⁺', display: 'Al³⁺' },
+                { value: 'Cl⁻', display: 'Cl⁻' },
+                { value: 'Br⁻', display: 'Br⁻' },
+                { value: 'I⁻', display: 'I⁻' },
+                { value: 'NO₃⁻', display: 'NO₃⁻' },
+                { value: 'SO₄²⁻', display: 'SO₄²⁻' },
+                { value: 'CO₃²⁻', display: 'CO₃²⁻' },
+                { value: 'PO₄³⁻', display: 'PO₄³⁻' },
+                { value: 'MnO₄⁻', display: 'MnO₄⁻' },
+                { value: 'C₂O₄²⁻', display: 'C₂O₄²⁻' }
+            ];
+            
+            const commonMolecules = [
+                { value: 'H₂O', display: 'H₂O' },
+                { value: 'CO₂', display: 'CO₂' },
+                { value: 'H₂', display: 'H₂' },
+                { value: 'O₂', display: 'O₂' },
+                { value: 'AgCl', display: 'AgCl' },
+                { value: 'CaCO₃', display: 'CaCO₃' },
+                { value: 'BaSO₄', display: 'BaSO₄' },
+                { value: 'CuO', display: 'CuO' },
+                { value: 'Fe', display: 'Fe' },
+                { value: 'Zn', display: 'Zn' },
+                { value: 'Cu', display: 'Cu' },
+                { value: 'Ag', display: 'Ag' },
+                { value: 'PbI₂', display: 'PbI₂' },
+                { value: 'Ca₃(PO₄)₂', display: 'Ca₃(PO₄)₂' },
+                { value: 'Mg(OH)₂', display: 'Mg(OH)₂' }
+            ];
+            
+            const numbers = [
+                { value: '2', display: '2' },
+                { value: '3', display: '3' },
+                { value: '4', display: '4' },
+                { value: '5', display: '5' },
+                { value: '6', display: '6' },
+                { value: '8', display: '8' },
+                { value: '10', display: '10' },
+                { value: '16', display: '16' }
+            ];
+            
+            const stateSymbols = [
+                { value: '(aq)', display: '(aq)' },
+                { value: '(s)', display: '(s)' },
+                { value: '(l)', display: '(l)' },
+                { value: '(g)', display: '(g)' }
+            ];
+            
+            const operators = [
+                { value: ' + ', display: '+' },
+                { value: ' → ', display: '→' },
+                { value: ' ⇌ ', display: '⇌' }
+            ];
+            
+            // Question data
+            const beginnerQuestions = [
+                {
+                    id: 'b1',
+                    equation: 'AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)',
+                    ions: 'Ag⁺(aq) + NO₃⁻(aq) + Na⁺(aq) + Cl⁻(aq) → AgCl(s) + Na⁺(aq) + NO₃⁻(aq)',
+                    spectators: 'Na⁺ and NO₃⁻',
+                    answer: 'Ag⁺(aq) + Cl⁻(aq) → AgCl(s)',
+                    hint: 'Look for the ions that appear unchanged on both sides of the equation (Na⁺ and NO₃⁻). Remove these spectator ions to get the final ionic equation.'
+                },
+                {
+                    id: 'b2',
+                    equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+                    ions: 'H⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l)',
+                    spectators: 'Na⁺ and Cl⁻',
+                    answer: 'H⁺(aq) + OH⁻(aq) → H₂O(l)',
+                    hint: 'In this neutralization reaction, the sodium and chloride ions don\'t participate in the reaction. The key reaction is between H⁺ and OH⁻.'
+                },
+                {
+                    id: 'b3',
+                    equation: 'CaCl₂(aq) + Na₂CO₃(aq) → CaCO₃(s) + 2NaCl(aq)',
+                    ions: 'Ca²⁺(aq) + 2Cl⁻(aq) + 2Na⁺(aq) + CO₃²⁻(aq) → CaCO₃(s) + 2Na⁺(aq) + 2Cl⁻(aq)',
+                    spectators: 'Na⁺ and Cl⁻',
+                    answer: 'Ca²⁺(aq) + CO₃²⁻(aq) → CaCO₃(s)',
+                    hint: 'The sodium and chloride ions appear unchanged on both sides. The calcium and carbonate ions react to form the precipitate.'
+                },
+                {
+                    id: 'b4',
+                    equation: 'Pb(NO₃)₂(aq) + 2KI(aq) → PbI₂(s) + 2KNO₃(aq)',
+                    ions: 'Pb²⁺(aq) + 2NO₃⁻(aq) + 2K⁺(aq) + 2I⁻(aq) → PbI₂(s) + 2K⁺(aq) + 2NO₃⁻(aq)',
+                    spectators: 'K⁺ and NO₃⁻',
+                    answer: 'Pb²⁺(aq) + 2I⁻(aq) → PbI₂(s)',
+                    hint: 'The potassium and nitrate ions are spectators. Focus on what happens with the lead and iodide ions.'
+                },
+                {
+                    id: 'b5',
+                    equation: 'BaCl₂(aq) + Na₂SO₄(aq) → BaSO₄(s) + 2NaCl(aq)',
+                    ions: 'Ba²⁺(aq) + 2Cl⁻(aq) + 2Na⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2Na⁺(aq) + 2Cl⁻(aq)',
+                    spectators: 'Na⁺ and Cl⁻',
+                    answer: 'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)',
+                    hint: 'The sodium and chloride ions don\'t participate in the reaction. This is a classic precipitation reaction where barium and sulfate ions combine.'
+                }
+            ];
+            
+            const intermediateQuestions = [
+                {
+                    id: 'i1',
+                    equation: 'Zn(s) + Cu(NO₃)₂(aq) → Zn(NO₃)₂(aq) + Cu(s)',
+                    full_ionic: 'Zn(s) + Cu²⁺(aq) + 2NO₃⁻(aq) → Zn²⁺(aq) + 2NO₃⁻(aq) + Cu(s)',
+                    answer: 'Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)',
+                    hint: 'This is a displacement reaction. Split the aqueous compounds into ions and look for the spectator ions.'
+                },
+                {
+                    id: 'i2',
+                    equation: '2HNO₃(aq) + Mg(OH)₂(s) → Mg(NO₃)₂(aq) + 2H₂O(l)',
+                    full_ionic: '2H⁺(aq) + 2NO₃⁻(aq) + Mg(OH)₂(s) → Mg²⁺(aq) + 2NO₃⁻(aq) + 2H₂O(l)',
+                    answer: '2H⁺(aq) + Mg(OH)₂(s) → Mg²⁺(aq) + 2H₂O(l)',
+                    hint: 'Remember that solids don\'t split into ions. The nitrate ions are spectators in this reaction.'
+                },
+                {
+                    id: 'i3',
+                    equation: '2AgNO₃(aq) + CaCl₂(aq) → 2AgCl(s) + Ca(NO₃)₂(aq)',
+                    full_ionic: '2Ag⁺(aq) + 2NO₃⁻(aq) + Ca²⁺(aq) + 2Cl⁻(aq) → 2AgCl(s) + Ca²⁺(aq) + 2NO₃⁻(aq)',
+                    answer: '2Ag⁺(aq) + 2Cl⁻(aq) → 2AgCl(s)',
+                    hint: 'This is a double displacement reaction forming a precipitate. Identify which ions combine to form the insoluble product.'
+                },
+                {
+                    id: 'i4',
+                    equation: '2HCl(aq) + K₂CO₃(aq) → 2KCl(aq) + H₂O(l) + CO₂(g)',
+                    full_ionic: '2H⁺(aq) + 2Cl⁻(aq) + 2K⁺(aq) + CO₃²⁻(aq) → 2K⁺(aq) + 2Cl⁻(aq) + H₂O(l) + CO₂(g)',
+                    answer: '2H⁺(aq) + CO₃²⁻(aq) → H₂O(l) + CO₂(g)',
+                    hint: 'This is a reaction between an acid and a carbonate. Potassium and chloride ions are spectators.'
+                },
+                {
+                    id: 'i5',
+                    equation: 'Fe(s) + 2HCl(aq) → FeCl₂(aq) + H₂(g)',
+                    full_ionic: 'Fe(s) + 2H⁺(aq) + 2Cl⁻(aq) → Fe²⁺(aq) + 2Cl⁻(aq) + H₂(g)',
+                    answer: 'Fe(s) + 2H⁺(aq) → Fe²⁺(aq) + H₂(g)',
+                    hint: 'This is a single displacement reaction where iron displaces hydrogen. Which ions are spectators?'
+                }
+            ];
+            
+            const advancedQuestions = [
+                {
+                    id: 'a1',
+                    equation: 'Ba(OH)₂(aq) + H₂SO₄(aq) → BaSO₄(s) + 2H₂O(l)',
+                    full_ionic: 'Ba²⁺(aq) + 2OH⁻(aq) + 2H⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2H₂O(l)',
+                    answer: 'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)',
+                    ionic_answer: 'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)',
+                    hint: 'This involves both neutralization and precipitation. Think about which ions react with each other.'
+                },
+                {
+                    id: 'a2',
+                    equation: '2KMnO₄(aq) + 5H₂C₂O₄(aq) + 3H₂SO₄(aq) → K₂SO₄(aq) + 2MnSO₄(aq) + 10CO₂(g) + 8H₂O(l)',
+                    full_ionic: '2K⁺(aq) + 2MnO₄⁻(aq) + 5H₂C₂O₄(aq) + 6H⁺(aq) + 3SO₄²⁻(aq) → 2K⁺(aq) + SO₄²⁻(aq) + 2Mn²⁺(aq) + 2SO₄²⁻(aq) + 10CO₂(g) + 8H₂O(l)',
+                    answer: '2MnO₄⁻(aq) + 5C₂O₄²⁻(aq) + 16H⁺(aq) → 2Mn²⁺(aq) + 10CO₂(g) + 8H₂O(l)',
+                    ionic_answer: '2MnO₄⁻(aq) + 5C₂O₄²⁻(aq) + 16H⁺(aq) → 2Mn²⁺(aq) + 10CO₂(g) + 8H₂O(l)',
+                    hint: 'This is a complex redox reaction. Identify the spectator ions (K⁺ and SO₄²⁻) and focus on the redox pairs.'
+                },
+                {
+                    id: 'a3',
+                    equation: 'Mg(s) + 2AgNO₃(aq) → Mg(NO₃)₂(aq) + 2Ag(s)',
+                    full_ionic: 'Mg(s) + 2Ag⁺(aq) + 2NO₃⁻(aq) → Mg²⁺(aq) + 2NO₃⁻(aq) + 2Ag(s)',
+                    answer: 'Mg(s) + 2Ag⁺(aq) → Mg²⁺(aq) + 2Ag(s)',
+                    ionic_answer: 'Mg(s) + 2Ag⁺(aq) → Mg²⁺(aq) + 2Ag(s)',
+                    hint: 'This is a single displacement reaction. Identify which ions are being transferred in this redox reaction.'
+                },
+                {
+                    id: 'a4',
+                    equation: '2Na₃PO₄(aq) + 3CaCl₂(aq) → Ca₃(PO₄)₂(s) + 6NaCl(aq)',
+                    full_ionic: '6Na⁺(aq) + 2PO₄³⁻(aq) + 3Ca²⁺(aq) + 6Cl⁻(aq) → Ca₃(PO₄)₂(s) + 6Na⁺(aq) + 6Cl⁻(aq)',
+                    answer: '2PO₄³⁻(aq) + 3Ca²⁺(aq) → Ca₃(PO₄)₂(s)',
+                    ionic_answer: '2PO₄³⁻(aq) + 3Ca²⁺(aq) → Ca₃(PO₄)₂(s)',
+                    hint: 'This is a precipitation reaction. Na⁺ and Cl⁻ are spectator ions.'
+                },
+                {
+                    id: 'a5',
+                    equation: 'CuO(s) + 2HNO₃(aq) → Cu(NO₃)₂(aq) + H₂O(l)',
+                    full_ionic: 'CuO(s) + 2H⁺(aq) + 2NO₃⁻(aq) → Cu²⁺(aq) + 2NO₃⁻(aq) + H₂O(l)',
+                    answer: 'CuO(s) + 2H⁺(aq) → Cu²⁺(aq) + H₂O(l)',
+                    ionic_answer: 'CuO(s) + 2H⁺(aq) → Cu²⁺(aq) + H₂O(l)',
+                    hint: 'This is a reaction between a metal oxide and an acid. Remember that solids don\'t split into ions.'
+                }
+            ];
+            
+            // Scores
+            let beginnerScore = 0;
+            let intermediateScore = 0;
+            let advancedScore = 0;
+            
+            // Current question index
+            let beginnerCurrentQuestion = 0;
+            let intermediateCurrentQuestion = 0;
+            let advancedCurrentQuestion = 0;
+            
+            // Get equation text from equation builder
+            function getEquationText(equationBuilder) {
+                let equationText = '';
+                if (equationBuilder) {
+                    const elements = equationBuilder.querySelectorAll('.equation-element');
+                    elements.forEach(element => {
+                        equationText += element.getAttribute('data-value');
+                    });
+                }
+                return equationText;
+            }
+            
+            // Normalize equation for comparison
+            function normalizeEquation(equation) {
+                return equation
+                    .toLowerCase()
+                    .replace(/\s+/g, '') // Remove all whitespace
+                    .replace(/→/g, '->') // Standardize arrow
+                    .replace(/\(/g, '') // Remove opening brackets
+                    .replace(/\)/g, ''); // Remove closing brackets
+            }
+            
+            // Setup equation builder event listeners
+            function setupEquationBuilder(builderId, questionId) {
+                const equationBuilder = document.getElementById(builderId);
+                if (!equationBuilder) return;
+                
+                equationBuilder.className = 'equation-builder';
+                equationBuilder.setAttribute('tabindex', '0');
+                
+                // Add event listeners for component items
+                const prefix = builderId.startsWith('full-ionic-builder') ? 'full-' : '';
+                
+                const componentItems = document.querySelectorAll(`#${prefix}ions-${questionId} .component-item, 
+                                                                #${prefix}molecules-${questionId} .component-item, 
+                                                                #${prefix}numbers-${questionId} .component-item, 
+                                                                #${prefix}states-${questionId} .component-item, 
+                                                                #${prefix}operators-${questionId} .component-item`);
+                
+                componentItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const value = item.getAttribute('data-value');
+                        const display = item.textContent;
+                        
+                        // Create and add equation element
+                        const element = document.createElement('div');
+                        element.className = 'equation-element';
+                        element.setAttribute('data-value', value);
+                        element.textContent = display;
+                        
+                        // Add remove button
+                        const removeBtn = document.createElement('div');
+                        removeBtn.className = 'remove-btn';
+                        removeBtn.textContent = '×';
+                        removeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            element.remove();
+                        });
+                        
+                        element.appendChild(removeBtn);
+                        equationBuilder.appendChild(element);
+                    });
+                });
+            }
+            
+            // Display questions
+            function displayBeginnerQuestion() {
+                if (beginnerCurrentQuestion < beginnerQuestions.length) {
+                    const question = beginnerQuestions[beginnerCurrentQuestion];
+                    
+                    // Update progress bar
+                    const progressPercentage = (beginnerCurrentQuestion / beginnerQuestions.length) * 100;
+                    document.getElementById('beginner-progress').style.width = `${progressPercentage}%`;
+                    
+                    // Create question HTML
+                    const questionHTML = `
+                        <div class="question-container" id="${question.id}">
+                            <h4>Question ${beginnerCurrentQuestion + 1}</h4>
+                            <p>Write the ionic equation for the following reaction:</p>
+                            <div class="reaction-equation">${question.equation}</div>
+                            
+                            <div class="step-box">
+                                <h4>Step 1: Identify the aqueous compounds and split them into ions</h4>
+                                <div class="reaction-equation">${question.ions}</div>
+                            </div>
+                            
+                            <div class="step-box">
+                                <h4>Step 2: Identify the spectator ions</h4>
+                                <p>Spectator ions: ${question.spectators}</p>
+                            </div>
+                            
+                            <div class="step-box">
+                                <h4>Step 3: Write the final ionic equation</h4>
+                                <p>Use the components below to build your equation by clicking on them:</p>
+                                <div id="equation-builder-${question.id}" class="equation-builder" tabindex="0"></div>
+                                <div class="components-container">
+                                    <div class="component-category">
+                                        <h5>Ions</h5>
+                                        <div class="component-items" id="ions-${question.id}">
+                                            ${commonIons.map(ion => `<div class="component-item" data-value="${ion.value}">${ion.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Molecules and Elements</h5>
+                                        <div class="component-items" id="molecules-${question.id}">
+                                            ${commonMolecules.map(molecule => `<div class="component-item" data-value="${molecule.value}">${molecule.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Numbers</h5>
+                                        <div class="component-items" id="numbers-${question.id}">
+                                            ${numbers.map(number => `<div class="component-item" data-value="${number.value}">${number.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>State Symbols</h5>
+                                        <div class="component-items" id="states-${question.id}">
+                                            ${stateSymbols.map(state => `<div class="component-item" data-value="${state.value}">${state.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Operators</h5>
+                                        <div class="component-items" id="operators-${question.id}">
+                                            ${operators.map(operator => `<div class="component-item" data-value="${operator.value}">${operator.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="clear-equation" id="clear-equation-${question.id}">Clear Equation</button>
+                            </div>
+                            
+                            <button id="hint-btn-${question.id}">Show Hint</button>
+                            <button id="check-btn-${question.id}">Check Answer</button>
+                            
+                            <div class="hint" id="hint-${question.id}">${question.hint}</div>
+                            <div class="feedback" id="feedback-${question.id}"></div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('beginner-questions').innerHTML = questionHTML;
+                    
+                    // Setup equation builder
+                    setupEquationBuilder(`equation-builder-${question.id}`, question.id);
+                    
+                    // Add event listeners
+                    document.getElementById(`hint-btn-${question.id}`).addEventListener('click', () => {
+                        document.getElementById(`hint-${question.id}`).style.display = 'block';
+                    });
+                    
+                    document.getElementById(`check-btn-${question.id}`).addEventListener('click', () => {
+                        checkBeginnerAnswer(question);
+                    });
+                    
+                    // Add event listener for clear button
+                    document.getElementById(`clear-equation-${question.id}`).addEventListener('click', () => {
+                        const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                        while (equationBuilder.firstChild) {
+                            equationBuilder.removeChild(equationBuilder.firstChild);
+                        }
+                    });
+                } else {
+                    // End of questions
+                    showBeginnerResults();
+                }
+            }
+            
+            function displayIntermediateQuestion() {
+                if (intermediateCurrentQuestion < intermediateQuestions.length) {
+                    const question = intermediateQuestions[intermediateCurrentQuestion];
+                    
+                    // Update progress bar
+                    const progressPercentage = (intermediateCurrentQuestion / intermediateQuestions.length) * 100;
+                    document.getElementById('intermediate-progress').style.width = `${progressPercentage}%`;
+                    
+                    // Create question HTML
+                    const questionHTML = `
+                        <div class="question-container" id="${question.id}">
+                            <h4>Question ${intermediateCurrentQuestion + 1}</h4>
+                            <p>Write the ionic equation for the following reaction:</p>
+                            <div class="reaction-equation">${question.equation}</div>
+                            
+                            <div class="step-box">
+                                <h4>Step 1: First, split the aqueous compounds into ions (write the full ionic equation):</h4>
+                                <p>Use the components below to build your full ionic equation:</p>
+                                <div id="full-ionic-builder-${question.id}" class="equation-builder" tabindex="0"></div>
+                                <div class="components-container">
+                                    <div class="component-category">
+                                        <h5>Ions</h5>
+                                        <div class="component-items" id="full-ions-${question.id}">
+                                            ${commonIons.map(ion => `<div class="component-item" data-value="${ion.value}">${ion.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Molecules and Elements</h5>
+                                        <div class="component-items" id="full-molecules-${question.id}">
+                                            ${commonMolecules.map(molecule => `<div class="component-item" data-value="${molecule.value}">${molecule.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Numbers</h5>
+                                        <div class="component-items" id="full-numbers-${question.id}">
+                                            ${numbers.map(number => `<div class="component-item" data-value="${number.value}">${number.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>State Symbols</h5>
+                                        <div class="component-items" id="full-states-${question.id}">
+                                            ${stateSymbols.map(state => `<div class="component-item" data-value="${state.value}">${state.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Operators</h5>
+                                        <div class="component-items" id="full-operators-${question.id}">
+                                            ${operators.map(operator => `<div class="component-item" data-value="${operator.value}">${operator.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="clear-equation" id="clear-full-equation-${question.id}">Clear Equation</button>
+                                <button id="check-full-ionic-btn-${question.id}" class="secondary">Check Full Ionic Equation</button>
+                                <div class="feedback" id="full-ionic-feedback-${question.id}"></div>
+                            </div>
+                            
+                            <div class="step-box">
+                                <h4>Step 2: Identify and remove spectator ions (write the net ionic equation):</h4>
+                                <p>Now write the final net ionic equation:</p>
+                                <div id="equation-builder-${question.id}" class="equation-builder" tabindex="0"></div>
+                                <div class="components-container">
+                                    <div class="component-category">
+                                        <h5>Ions</h5>
+                                        <div class="component-items" id="ions-${question.id}">
+                                            ${commonIons.map(ion => `<div class="component-item" data-value="${ion.value}">${ion.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Molecules and Elements</h5>
+                                        <div class="component-items" id="molecules-${question.id}">
+                                            ${commonMolecules.map(molecule => `<div class="component-item" data-value="${molecule.value}">${molecule.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Numbers</h5>
+                                        <div class="component-items" id="numbers-${question.id}">
+                                            ${numbers.map(number => `<div class="component-item" data-value="${number.value}">${number.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>State Symbols</h5>
+                                        <div class="component-items" id="states-${question.id}">
+                                            ${stateSymbols.map(state => `<div class="component-item" data-value="${state.value}">${state.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Operators</h5>
+                                        <div class="component-items" id="operators-${question.id}">
+                                            ${operators.map(operator => `<div class="component-item" data-value="${operator.value}">${operator.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="clear-equation" id="clear-equation-${question.id}">Clear Equation</button>
+                            </div>
+                            
+                            <button id="hint-btn-${question.id}">Hint</button>
+                            <button id="check-btn-${question.id}">Check Final Answer</button>
+                            
+                            <div class="hint" id="hint-${question.id}">${question.hint}</div>
+                            <div class="feedback" id="feedback-${question.id}"></div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('intermediate-questions').innerHTML = questionHTML;
+                    
+                    // Add event listeners for component items
+                    setupEquationBuilder(`full-ionic-builder-${question.id}`, question.id);
+                    setupEquationBuilder(`equation-builder-${question.id}`, question.id);
+                    
+                    // Add event listeners for buttons
+                    document.getElementById(`hint-btn-${question.id}`).addEventListener('click', () => {
+                        document.getElementById(`hint-${question.id}`).style.display = 'block';
+                    });
+                    
+                    document.getElementById(`check-full-ionic-btn-${question.id}`).addEventListener('click', () => {
+                        checkFullIonicEquation(question);
+                    });
+                    
+                    document.getElementById(`check-btn-${question.id}`).addEventListener('click', () => {
+                        checkIntermediateAnswer(question);
+                    });
+                    
+                    // Add event listeners for clear buttons
+                    document.getElementById(`clear-full-equation-${question.id}`).addEventListener('click', () => {
+                        const equationBuilder = document.getElementById(`full-ionic-builder-${question.id}`);
+                        while (equationBuilder.firstChild) {
+                            equationBuilder.removeChild(equationBuilder.firstChild);
+                        }
+                    });
+                    
+                    document.getElementById(`clear-equation-${question.id}`).addEventListener('click', () => {
+                        const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                        while (equationBuilder.firstChild) {
+                            equationBuilder.removeChild(equationBuilder.firstChild);
+                        }
+                    });
+                } else {
+                    // End of questions
+                    showIntermediateResults();
+                }
+            }
+            
+            function displayAdvancedQuestion() {
+                if (advancedCurrentQuestion < advancedQuestions.length) {
+                    const question = advancedQuestions[advancedCurrentQuestion];
+                    
+                    // Update progress bar
+                    const progressPercentage = (advancedCurrentQuestion / advancedQuestions.length) * 100;
+                    document.getElementById('advanced-progress').style.width = `${progressPercentage}%`;
+                    
+                    // Create question HTML
+                    const questionHTML = `
+                        <div class="question-container" id="${question.id}">
+                            <h4>Question ${advancedCurrentQuestion + 1}</h4>
+                            <p>Write the ionic equation for the following reaction:</p>
+                            <div class="reaction-equation">${question.equation}</div>
+                            
+                            <div class="step-box">
+                                <h4>Step 1: First, split the aqueous compounds into ions (write the full ionic equation):</h4>
+                                <p>Use the components below to build your full ionic equation:</p>
+                                <div id="full-ionic-builder-${question.id}" class="equation-builder" tabindex="0"></div>
+                                <div class="components-container">
+                                    <div class="component-category">
+                                        <h5>Ions</h5>
+                                        <div class="component-items" id="full-ions-${question.id}">
+                                            ${commonIons.map(ion => `<div class="component-item" data-value="${ion.value}">${ion.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Molecules and Elements</h5>
+                                        <div class="component-items" id="full-molecules-${question.id}">
+                                            ${commonMolecules.map(molecule => `<div class="component-item" data-value="${molecule.value}">${molecule.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Numbers</h5>
+                                        <div class="component-items" id="full-numbers-${question.id}">
+                                            ${numbers.map(number => `<div class="component-item" data-value="${number.value}">${number.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>State Symbols</h5>
+                                        <div class="component-items" id="full-states-${question.id}">
+                                            ${stateSymbols.map(state => `<div class="component-item" data-value="${state.value}">${state.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Operators</h5>
+                                        <div class="component-items" id="full-operators-${question.id}">
+                                            ${operators.map(operator => `<div class="component-item" data-value="${operator.value}">${operator.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="clear-equation" id="clear-full-equation-${question.id}">Clear Equation</button>
+                                <button id="check-full-ionic-btn-${question.id}" class="secondary">Check Full Ionic Equation</button>
+                                <div class="feedback" id="full-ionic-feedback-${question.id}"></div>
+                            </div>
+                            
+                            <div class="step-box">
+                                <h4>Step 2: Identify and remove spectator ions (write the net ionic equation):</h4>
+                                <p>Now write the final net ionic equation:</p>
+                                <div id="equation-builder-${question.id}" class="equation-builder" tabindex="0"></div>
+                                <div class="components-container">
+                                    <div class="component-category">
+                                        <h5>Ions</h5>
+                                        <div class="component-items" id="ions-${question.id}">
+                                            ${commonIons.map(ion => `<div class="component-item" data-value="${ion.value}">${ion.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Molecules and Elements</h5>
+                                        <div class="component-items" id="molecules-${question.id}">
+                                            ${commonMolecules.map(molecule => `<div class="component-item" data-value="${molecule.value}">${molecule.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Numbers</h5>
+                                        <div class="component-items" id="numbers-${question.id}">
+                                            ${numbers.map(number => `<div class="component-item" data-value="${number.value}">${number.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>State Symbols</h5>
+                                        <div class="component-items" id="states-${question.id}">
+                                            ${stateSymbols.map(state => `<div class="component-item" data-value="${state.value}">${state.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="component-category">
+                                        <h5>Operators</h5>
+                                        <div class="component-items" id="operators-${question.id}">
+                                            ${operators.map(operator => `<div class="component-item" data-value="${operator.value}">${operator.display}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button class="clear-equation" id="clear-equation-${question.id}">Clear Equation</button>
+                            </div>
+                            
+                            <button id="hint-btn-${question.id}">Hint</button>
+                            <button id="check-btn-${question.id}">Check Final Answer</button>
+                            
+                            <div class="hint" id="hint-${question.id}">${question.hint}</div>
+                            <div class="feedback" id="feedback-${question.id}"></div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('advanced-questions').innerHTML = questionHTML;
+                    
+                    // Add event listeners for component items
+                    setupEquationBuilder(`full-ionic-builder-${question.id}`, question.id);
+                    setupEquationBuilder(`equation-builder-${question.id}`, question.id);
+                    
+                    // Add event listeners for buttons
+                    document.getElementById(`hint-btn-${question.id}`).addEventListener('click', () => {
+                        document.getElementById(`hint-${question.id}`).style.display = 'block';
+                    });
+                    
+                    document.getElementById(`check-full-ionic-btn-${question.id}`).addEventListener('click', () => {
+                        checkFullIonicEquation(question);
+                    });
+                    
+                    document.getElementById(`check-btn-${question.id}`).addEventListener('click', () => {
+                        checkAdvancedAnswer(question);
+                    });
+                    
+                    // Add event listeners for clear buttons
+                    document.getElementById(`clear-full-equation-${question.id}`).addEventListener('click', () => {
+                        const equationBuilder = document.getElementById(`full-ionic-builder-${question.id}`);
+                        while (equationBuilder.firstChild) {
+                            equationBuilder.removeChild(equationBuilder.firstChild);
+                        }
+                    });
+                    
+                    document.getElementById(`clear-equation-${question.id}`).addEventListener('click', () => {
+                        const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                        while (equationBuilder.firstChild) {
+                            equationBuilder.removeChild(equationBuilder.firstChild);
+                        }
+                    });
+                } else {
+                    // End of questions
+                    showAdvancedResults();
+                }
+            }
+            
+            // Check answers
+            function checkBeginnerAnswer(question) {
+                const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                const userAnswer = getEquationText(equationBuilder);
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                
+                // Normalize answers for comparison (remove spaces, make lowercase)
+                const normalizedUserAnswer = normalizeEquation(userAnswer);
+                const normalizedCorrectAnswer = normalizeEquation(question.answer);
+                
+                if (normalizedUserAnswer === normalizedCorrectAnswer) {
+                    feedback.textContent = 'Correct! Well done!';
+                    feedback.className = 'feedback correct';
+                    feedback.style.display = 'block';
+                    beginnerScore++;
+                    
+                    // Disable buttons
+                    document.getElementById(`check-btn-${question.id}`).disabled = true;
+                    
+                    // Make equation builder read-only
+                    equationBuilder.classList.add('read-only');
+                    const removeBtns = equationBuilder.querySelectorAll('.remove-btn');
+                    removeBtns.forEach(btn => btn.style.display = 'none');
+                    
+                    // Show next question after delay
+                    setTimeout(() => {
+                        beginnerCurrentQuestion++;
+                        displayBeginnerQuestion();
+                    }, 1500);
+                } else {
+                    feedback.textContent = 'Not quite right. Try again!';
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                }
+            }
+            
+            function checkIntermediateAnswer(question) {
+                const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                const userAnswer = getEquationText(equationBuilder);
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                
+                // Normalize answers for comparison
+                const normalizedUserAnswer = normalizeEquation(userAnswer);
+                const normalizedCorrectAnswer = normalizeEquation(question.answer);
+                
+                if (normalizedUserAnswer === normalizedCorrectAnswer) {
+                    feedback.textContent = 'Correct! Good job!';
+                    feedback.className = 'feedback correct';
+                    feedback.style.display = 'block';
+                    intermediateScore++;
+                    
+                    // Disable buttons
+                    document.getElementById(`check-btn-${question.id}`).disabled = true;
+                    
+                    // Make equation builder read-only
+                    equationBuilder.classList.add('read-only');
+                    const removeBtns = equationBuilder.querySelectorAll('.remove-btn');
+                    removeBtns.forEach(btn => btn.style.display = 'none');
+                    
+                    // Show next question after delay
+                    setTimeout(() => {
+                        intermediateCurrentQuestion++;
+                        displayIntermediateQuestion();
+                    }, 1500);
+                } else {
+                    feedback.textContent = 'That\'s not correct. Try again!';
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                }
+            }
+            
+            function checkAdvancedAnswer(question) {
+                const equationBuilder = document.getElementById(`equation-builder-${question.id}`);
+                const userAnswer = getEquationText(equationBuilder);
+                const feedback = document.getElementById(`feedback-${question.id}`);
+                
+                // Normalize answers for comparison
+                const normalizedUserAnswer = normalizeEquation(userAnswer);
+                const normalizedCorrectAnswer1 = normalizeEquation(question.answer);
+                const normalizedCorrectAnswer2 = question.ionic_answer ? normalizeEquation(question.ionic_answer) : '';
+                
+                if (normalizedUserAnswer === normalizedCorrectAnswer1 || 
+                    (normalizedCorrectAnswer2 && normalizedUserAnswer === normalizedCorrectAnswer2)) {
+                    feedback.textContent = 'Excellent! Perfect answer!';
+                    feedback.className = 'feedback correct';
+                    feedback.style.display = 'block';
+                    advancedScore++;
+                    
+                    // Disable buttons
+                    document.getElementById(`check-btn-${question.id}`).disabled = true;
+                    
+                    // Make equation builder read-only
+                    equationBuilder.classList.add('read-only');
+                    const removeBtns = equationBuilder.querySelectorAll('.remove-btn');
+                    removeBtns.forEach(btn => btn.style.display = 'none');
+                    
+                    // Show next question after delay
+                    setTimeout(() => {
+                        advancedCurrentQuestion++;
+                        displayAdvancedQuestion();
+                    }, 1500);
+                } else {
+                    feedback.textContent = 'That\'s not correct. Check your answer carefully!';
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                }
+            }
+            
+            // Check full ionic equation
+            function checkFullIonicEquation(question) {
+                const equationBuilder = document.getElementById(`full-ionic-builder-${question.id}`);
+                const userAnswer = getEquationText(equationBuilder);
+                const feedback = document.getElementById(`full-ionic-feedback-${question.id}`);
+                
+                // Normalize answers for comparison
+                const normalizedUserAnswer = normalizeEquation(userAnswer);
+                const normalizedCorrectAnswer = normalizeEquation(question.full_ionic);
+                
+                if (normalizedUserAnswer === normalizedCorrectAnswer) {
+                    feedback.textContent = 'Correct! Now identify the spectator ions and write the net ionic equation.';
+                    feedback.className = 'feedback correct';
+                    feedback.style.display = 'block';
+                    
+                    // Make equation builder read-only
+                    equationBuilder.classList.add('read-only');
+                    const removeBtns = equationBuilder.querySelectorAll('.remove-btn');
+                    removeBtns.forEach(btn => btn.style.display = 'none');
+                    
+                    // Disable check button
+                    document.getElementById(`check-full-ionic-btn-${question.id}`).disabled = true;
+                } else {
+                    feedback.textContent = 'Not quite right. Make sure you\'ve correctly split all aqueous compounds into ions.';
+                    feedback.className = 'feedback incorrect';
+                    feedback.style.display = 'block';
+                }
+            }
+            
+            // Show results
+            function showBeginnerResults() {
+                document.getElementById('beginner-questions').innerHTML = '';
+                document.getElementById('beginner-score').textContent = beginnerScore;
+                document.getElementById('beginner-total').textContent = beginnerQuestions.length;
+                document.getElementById('beginner-progress').style.width = '100%';
+                document.getElementById('beginner-results').style.display = 'block';
+            }
+            
+            function showIntermediateResults() {
+                document.getElementById('intermediate-questions').innerHTML = '';
+                document.getElementById('intermediate-score').textContent = intermediateScore;
+                document.getElementById('intermediate-total').textContent = intermediateQuestions.length;
+                document.getElementById('intermediate-progress').style.width = '100%';
+                document.getElementById('intermediate-results').style.display = 'block';
+            }
+            
+            function showAdvancedResults() {
+                document.getElementById('advanced-questions').innerHTML = '';
+                document.getElementById('advanced-score').textContent = advancedScore;
+                document.getElementById('advanced-total').textContent = advancedQuestions.length;
+                document.getElementById('advanced-progress').style.width = '100%';
+                document.getElementById('advanced-results').style.display = 'block';
+            }
+            
+            // Retry buttons
+            document.getElementById('retry-beginner').addEventListener('click', initBeginner);
+            document.getElementById('retry-intermediate').addEventListener('click', initIntermediate);
+            document.getElementById('retry-advanced').addEventListener('click', initAdvanced);
+            
+            // Initialize practice sections
+            function initBeginner() {
+                beginnerScore = 0;
+                beginnerCurrentQuestion = 0;
+                document.getElementById('beginner-questions').innerHTML = '';
+                document.getElementById('beginner-results').style.display = 'none';
+                displayBeginnerQuestion();
+            }
+            
+            function initIntermediate() {
+                intermediateScore = 0;
+                intermediateCurrentQuestion = 0;
+                document.getElementById('intermediate-questions').innerHTML = '';
+                document.getElementById('intermediate-results').style.display = 'none';
+                displayIntermediateQuestion();
+            }
+            
+            function initAdvanced() {
+                advancedScore = 0;
+                advancedCurrentQuestion = 0;
+                document.getElementById('advanced-questions').innerHTML = '';
+                document.getElementById('advanced-results').style.display = 'none';
+                displayAdvancedQuestion();
+            }
+            
+            // Initialize all practice sections
+            initBeginner();
+            initIntermediate();
+            initAdvanced();
+        });
+    </script>
+</body>
+</html>
