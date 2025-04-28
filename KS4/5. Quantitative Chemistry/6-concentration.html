@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Chemistry: Concentration Calculations (g/dm³)</title>
+    <style>
+        /* --- General Styling --- */
+        :root {
+            --primary-color: #0056b3; /* Deep Blue */
+            --secondary-color: #e9ecef; /* Light Grey */
+            --accent-color: #28a745;  /* Green */
+            --challenge-color: #ff8c00; /* Dark Orange for Challenge */
+            --text-color: #333;
+            --border-color: #ccc;
+            --error-color: #dc3545; /* Red */
+            --hint-bg: #fff3cd; /* Light Yellow */
+            --disabled-color: #adb5bd; /* Grey for disabled elements */
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 5px;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        h1 { text-align: center; border-bottom: 3px solid var(--primary-color); margin-bottom: 1em; }
+        p { margin-bottom: 1em; }
+        code { background-color: var(--secondary-color); padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; }
+        strong { color: var(--primary-color); }
+        hr { border: 0; height: 1px; background-color: var(--border-color); margin: 1.5em 0; }
+
+        /* --- Global Navigation/Controls --- */
+        .global-controls {
+            background-color: var(--secondary-color);
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px; /* Reduced margin */
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+         .extra-controls { /* For Challenge Button */
+            text-align: center;
+            margin-bottom: 20px;
+         }
+
+        .control-btn, .nav-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
+        }
+        .control-btn:hover, .nav-btn:hover:not(:disabled) { background-color: #004494; }
+        .nav-btn { background-color: var(--accent-color); }
+        .nav-btn:hover:not(:disabled) { background-color: #218838; }
+        .nav-btn.back { background-color: #6c757d; }
+        .nav-btn.back:hover:not(:disabled) { background-color: #5a6268; }
+        .nav-btn.challenge-mode { background-color: var(--challenge-color); }
+        .nav-btn.challenge-mode:hover:not(:disabled) { background-color: #e67e00; }
+
+
+        button:disabled {
+            background-color: var(--disabled-color);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* --- Screen Wrappers --- */
+        .screen-wrapper { /* Common styles for screens */
+           /* Add transitions if desired */
+        }
+        .hidden { display: none !important; }
+
+        /* --- Toggable Content --- */
+        .toggleable-content { border: 1px dashed var(--border-color); padding: 15px; margin-top: 15px; margin-bottom: 15px; border-radius: 5px; background-color: #f8f9fa; }
+        .equation-triangle { text-align: center; font-weight: bold; margin: 10px auto; width: 150px; position: relative; padding-top: 20px; }
+        .triangle-top { position: absolute; top: 0; left: 50%; transform: translateX(-50%); }
+        .triangle-bottom { display: flex; justify-content: space-around; border-top: 2px solid var(--text-color); padding-top: 5px; margin-top: 10px; }
+        .triangle-op { font-size: 1.2em; margin: 0 5px; align-self: center; }
+
+        /* --- Tabs --- */
+        .tab-container { margin-top: 20px; border: 1px solid var(--border-color); border-radius: 5px; overflow: hidden; }
+        .tab-buttons { display: flex; background-color: var(--secondary-color); border-bottom: 1px solid var(--border-color); }
+        .tab-btn { padding: 10px 15px; cursor: pointer; border: none; background-color: transparent; border-right: 1px solid var(--border-color); font-size: 0.95em; color: var(--primary-color); transition: background-color 0.3s ease, color 0.3s ease; flex-grow: 1; text-align: center; }
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn.active { background-color: var(--primary-color); color: white; font-weight: bold; }
+        .tab-btn:hover:not(.active):not(:disabled) { background-color: #d3d9df; }
+        .tab-btn:disabled { color: var(--disabled-color); background-color: var(--secondary-color) !important; opacity: 0.7; cursor: not-allowed; }
+        .tab-content { padding: 20px; }
+        .tab-pane:not(.active) { display: none; }
+
+        /* --- Example/Question Styling --- */
+        .example, .question { background-color: #fff; border: 1px solid var(--border-color); padding: 15px; margin-bottom: 15px; border-radius: 5px; border-left: 4px solid var(--primary-color); }
+        .example { border-left-color: #17a2b8; }
+        .question { border-left-color: var(--accent-color); }
+        .example strong { color: #0056b3; }
+        .question-number { font-weight: bold; color: var(--primary-color); margin-right: 5px; }
+        .question label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .question input[type="text"] { padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; margin-right: 10px; min-width: 100px; }
+        .question .controls { margin-top: 10px; background-color: transparent; padding: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+        .question .check-btn, .question .hint-toggle-btn { background-color: var(--accent-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background-color 0.3s ease; }
+        .question .hint-toggle-btn { background-color: #ffc107; color: #333; }
+        .question .check-btn:hover:not(:disabled) { background-color: #218838; }
+        .question .hint-toggle-btn:hover { background-color: #e0a800; }
+        .hint { background-color: var(--hint-bg); border: 1px solid #ffeeba; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 0.9em; }
+        .feedback { margin-top: 8px; font-weight: bold; padding: 5px; border-radius: 3px; min-height: 1.5em; }
+        .feedback.correct { color: var(--accent-color); background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .feedback.incorrect { color: var(--error-color); background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .progress-message { margin-top: 15px; padding: 10px; background-color: #e2f0ff; border: 1px solid #b8d6f3; border-radius: 4px; color: #0056b3; font-weight: bold; text-align: center; }
+
+        /* --- Challenge Section Styling --- */
+        #challenge-wrapper { text-align: center; }
+        #challenge-interface { border: 2px solid var(--challenge-color); padding: 20px; border-radius: 8px; background-color: #fffaf0; margin-top: 20px; }
+        #challenge-timer, #challenge-score { font-size: 1.8em; font-weight: bold; margin: 10px 0; }
+        #challenge-timer { color: var(--error-color); }
+        #challenge-score { color: var(--accent-color); }
+        #challenge-question { font-size: 1.2em; margin: 20px 0; min-height: 3em; }
+        #challenge-answer { padding: 10px; font-size: 1.1em; margin-right: 10px; border: 1px solid var(--border-color); border-radius: 4px; }
+        #challenge-results { margin-top: 30px; padding: 20px; background-color: #e9f5ff; border: 1px solid #b3d7f2; border-radius: 5px;}
+        #challenge-results h3 { color: var(--challenge-color); border-bottom-color: var(--challenge-color); }
+        #challenge-results p { font-size: 1.2em; }
+
+
+        /* --- Calculator Styling --- */
+        #calculator { position: fixed; bottom: 15px; right: 15px; width: 260px; background-color: #f1f3f5; border: 1px solid #adb5bd; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); z-index: 1000; overflow: hidden; transition: height 0.3s ease, width 0.3s ease; display: flex; flex-direction: column; }
+        #calculator.hidden { display: none; } #calculator.minimized { height: 35px; width: 150px; }
+        #calculator.minimized .calculator-body, #calculator.minimized #calc-display-container { display: none; }
+        #calculator-header { background-color: var(--primary-color); color: white; padding: 5px 10px; cursor: move; display: flex; justify-content: space-between; align-items: center; height: 35px; box-sizing: border-box; }
+        #calculator-header span { font-weight: bold; font-size: 0.9em; } #calculator-header button { background: none; border: none; color: white; font-size: 1.2em; cursor: pointer; padding: 0 5px; }
+        #calc-display-container { padding: 10px; background-color: #e9ecef; } #calc-display { width: 100%; padding: 10px; font-size: 1.5em; text-align: right; border: 1px solid var(--border-color); border-radius: 4px; background-color: #fff; box-sizing: border-box; overflow: hidden; }
+        .calculator-body { padding: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .calc-btn { padding: 12px 5px; font-size: 1.1em; border: 1px solid #adb5bd; border-radius: 4px; background-color: #fff; cursor: pointer; transition: background-color 0.2s; display: flex; justify-content: center; align-items: center; }
+        .calc-btn:hover { background-color: #e9ecef; } .calc-btn:active { background-color: #dee2e6; } .calc-btn.operator { background-color: #ffc107; } .calc-btn.operator:hover { background-color: #e0a800; } .calc-btn.equals { background-color: var(--accent-color); color: white; grid-column: span 2; } .calc-btn.equals:hover { background-color: #218838; } .calc-btn.clear { background-color: var(--error-color); color: white; } .calc-btn.clear:hover { background-color: #c82333; } .calc-btn.backspace { background-color: #6c757d; color: white; } .calc-btn.backspace:hover { background-color: #5a6268; }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) { .container { margin: 10px; padding: 15px; } h1 { font-size: 1.8em; } .global-controls { justify-content: flex-start; } .tab-buttons { flex-wrap: wrap; } .tab-btn { border-right: none; border-bottom: 1px solid var(--border-color); font-size: 0.9em;} .tab-btn:last-child { border-bottom: none; } #calculator { width: 240px; } }
+        @media (max-width: 480px) { h1 { font-size: 1.5em; } .control-btn, .nav-btn { font-size: 0.8em; padding: 6px 10px; } .question input[type="text"] { width: calc(100% - 20px); margin-bottom: 10px;} .question .controls { flex-wrap: wrap; } #calculator { bottom: 5px; right: 5px; width: 220px; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>GCSE Chemistry: Concentration Calculations (g/dm³)</h1>
+
+        <!-- Global Tool Controls -->
+        <nav class="global-controls">
+            <button id="toggle-equations-btn" class="control-btn">Show Equations</button>
+            <button id="toggle-triangle-btn" class="control-btn">Show Equation Triangle</button>
+            <button id="toggle-calculator-btn" class="control-btn">Show Calculator</button>
+        </nav>
+        <div class="extra-controls">
+             <button id="goto-challenge-btn" class="nav-btn challenge-mode">Challenge Mode</button>
+        </div>
+
+        <!-- Hidden Content Areas -->
+        <div id="equations-display" class="toggleable-content hidden">
+             <h3>Required Equations & Conversions</h3>
+             <p><strong>Concentration:</strong> <code>Concentration (g/dm³) = Mass (g) / Volume (dm³)</code></p>
+             <p><strong>Mass:</strong> <code>Mass (g) = Concentration (g/dm³) × Volume (dm³)</code></p>
+             <p><strong>Volume:</strong> <code>Volume (dm³) = Mass (g) / Concentration (g/dm³)</code></p>
+             <hr> <p><strong>Unit Conversion:</strong></p>
+             <ul> <li>To convert cm³ to dm³: <code>Volume (dm³) = Volume (cm³) ÷ 1000</code></li> <li>To convert dm³ to cm³: <code>Volume (cm³) = Volume (dm³) × 1000</code></li> <li>Remember: <strong>1 dm³ = 1 Litre (L) = 1000 cm³ = 1000 mL</strong></li> </ul>
+        </div>
+        <div id="triangle-display" class="toggleable-content hidden">
+            <h3>Equation Triangle</h3> <p>Cover the value you want to calculate:</p>
+            <div class="equation-triangle"> <div class="triangle-top">Mass (g)</div> <div class="triangle-bottom"> <span>Conc (g/dm³)</span> <span class="triangle-op">×</span> <span>Vol (dm³)</span> </div> </div>
+             <ul> <li>Cover <strong>Mass</strong>: Leaves <code>Conc × Vol</code></li> <li>Cover <strong>Concentration</strong>: Leaves <code>Mass / Vol</code></li> <li>Cover <strong>Volume</strong>: Leaves <code>Mass / Conc</code></li> </ul>
+        </div>
+
+        <!-- MAIN LESSON AREA (Tutorial & Practice) -->
+        <div id="main-lesson-area">
+
+            <!-- Screen 1: Introduction & Tutorial -->
+            <div id="tutorial-wrapper" class="screen-wrapper">
+                <section id="intro">
+                    <h2>1. Introduction: What is Concentration?</h2>
+                    <p>Concentration is a fundamental concept in chemistry that describes how much of a substance (the <strong>solute</strong>) is dissolved in a specific amount of another substance (the <strong>solvent</strong>). Together, they form a <strong>solution</strong>.</p>
+                    <p>Imagine making squash: the squash concentrate is the solute, the water is the solvent, and the drink is the solution. Adding more concentrate makes the solution more concentrated (stronger taste), while adding more water makes it less concentrated (more dilute or weaker taste).</p>
+                     <p>In GCSE Chemistry, we often measure concentration in <strong>grams per cubic decimetre (g/dm³)</strong>. This tells us the mass of solute (in grams) present in every 1 cubic decimetre (which is the same as 1 litre) of the solution.</p>
+                    <ul>
+                        <li><strong>Mass (g):</strong> Measures the amount of solute dissolved.</li>
+                        <li><strong>Volume (dm³):</strong> Measures the total volume of the solution. Remember the crucial conversion: <strong>1 dm³ = 1000 cm³</strong>.</li>
+                    </ul>
+                    <p>The core relationship is defined by the formula:</p>
+                    <p><code>Concentration (g/dm³) = Mass (g) / Volume (dm³)</code></p>
+                    <p>It's essential to ensure the volume is in dm³ before using this formula. If you are given the volume in cm³, you must <strong>divide by 1000</strong> to convert it to dm³.</p>
+                </section>
+                <hr>
+                <section id="tutorial-examples">
+                    <h2>2. Worked Examples</h2>
+                    <p>Understanding how to apply the formula and its rearrangements is key. Click through the tabs below to see detailed worked examples for calculating concentration, mass, volume, and handling necessary unit conversions.</p>
+
+                    <div class="tab-container" id="examples-tab-container">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-target="example1-pane">Example 1: Calculating Concentration</button>
+                            <button class="tab-btn" data-target="example2-pane">Example 2: Calculating Mass</button>
+                            <button class="tab-btn" data-target="example3-pane">Example 3: Calculating Volume</button>
+                            <button class="tab-btn" data-target="example4-pane">Example 4: Including Unit Conversion</button>
+                        </div>
+                        <div class="tab-content">
+                            <!-- Example 1 Pane -->
+                            <div id="example1-pane" class="tab-pane active example">
+                                <h3>Example 1: Calculating Concentration</h3>
+                                 <p><strong>Problem:</strong> A student dissolves 20g of sodium chloride (NaCl) in water to create a final solution with a volume of 2 dm³. What is the concentration of this salt solution in g/dm³?</p>
+                                 <p><strong>Solution Steps:</strong></p>
+                                 <ol>
+                                     <li><strong>Identify knowns:</strong> Mass = 20 g, Volume = 2 dm³</li>
+                                     <li><strong>Identify unknown:</strong> Concentration = ? g/dm³</li>
+                                     <li><strong>Select formula:</strong> <code>Concentration = Mass / Volume</code></li>
+                                     <li><strong>Substitute values:</strong> <code>Concentration = 20 g / 2 dm³</code></li>
+                                     <li><strong>Calculate:</strong> <code>Concentration = 10</code></li>
+                                     <li><strong>Final Answer:</strong> The concentration of the solution is <strong>10 g/dm³</strong>.</li>
+                                 </ol>
+                            </div>
+                            <!-- Example 2 Pane -->
+                            <div id="example2-pane" class="tab-pane example">
+                                 <h3>Example 2: Calculating Mass</h3>
+                                 <p><strong>Problem:</strong> You need to prepare 0.5 dm³ of an aqueous sugar solution with a concentration of 50 g/dm³. What mass of sugar (in grams) must you dissolve?</p>
+                                 <p><strong>Solution Steps:</strong></p>
+                                 <ol>
+                                     <li><strong>Identify knowns:</strong> Concentration = 50 g/dm³, Volume = 0.5 dm³</li>
+                                     <li><strong>Identify unknown:</strong> Mass = ? g</li>
+                                     <li><strong>Select formula:</strong> Rearrange the main formula or use the triangle: <code>Mass = Concentration × Volume</code></li>
+                                     <li><strong>Substitute values:</strong> <code>Mass = 50 g/dm³ × 0.5 dm³</code></li>
+                                     <li><strong>Calculate:</strong> <code>Mass = 25</code></li>
+                                     <li><strong>Final Answer:</strong> You must dissolve <strong>25 g</strong> of sugar.</li>
+                                 </ol>
+                            </div>
+                            <!-- Example 3 Pane -->
+                            <div id="example3-pane" class="tab-pane example">
+                                 <h3>Example 3: Calculating Volume</h3>
+                                  <p><strong>Problem:</strong> A chemist has 15 g of solid copper sulfate (CuSO₄). They want to make a solution with a concentration of exactly 30 g/dm³. What volume of solution, in dm³, can they prepare?</p>
+                                 <p><strong>Solution Steps:</strong></p>
+                                 <ol>
+                                     <li><strong>Identify knowns:</strong> Mass = 15 g, Concentration = 30 g/dm³</li>
+                                     <li><strong>Identify unknown:</strong> Volume = ? dm³</li>
+                                     <li><strong>Select formula:</strong> Rearrange or use the triangle: <code>Volume = Mass / Concentration</code></li>
+                                     <li><strong>Substitute values:</strong> <code>Volume = 15 g / 30 g/dm³</code></li>
+                                     <li><strong>Calculate:</strong> <code>Volume = 0.5</code></li>
+                                     <li><strong>Final Answer:</strong> They can prepare <strong>0.5 dm³</strong> of the solution.</li>
+                                 </ol>
+                            </div>
+                            <!-- Example 4 Pane -->
+                            <div id="example4-pane" class="tab-pane example">
+                                 <h3>Example 4: Calculation Including Unit Conversion</h3>
+                                 <p><strong>Problem:</strong> 5 grams of potassium chloride (KCl) are dissolved in water, making a final solution volume of 250 cm³. Calculate the concentration of this solution in g/dm³.</p>
+                                 <p><strong>Solution Steps:</strong></p>
+                                 <ol>
+                                     <li><strong>Identify knowns:</strong> Mass = 5 g, Volume = 250 cm³</li>
+                                     <li><strong>Identify unknown:</strong> Concentration = ? g/dm³</li>
+                                     <li><strong>Crucial Step - Convert Volume:</strong> The volume is in cm³, but the formula needs dm³.
+                                         <code>Volume (dm³) = Volume (cm³) ÷ 1000</code>
+                                         <code>Volume (dm³) = 250 ÷ 1000 = 0.25 dm³</code></li>
+                                     <li><strong>Select formula:</strong> <code>Concentration = Mass / Volume</code></li>
+                                     <li><strong>Substitute values (using converted volume):</strong> <code>Concentration = 5 g / 0.25 dm³</code></li>
+                                     <li><strong>Calculate:</strong> <code>Concentration = 20</code></li>
+                                     <li><strong>Final Answer:</strong> The concentration is <strong>20 g/dm³</strong>.</li>
+                                 </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                 <div style="text-align: center; margin-top: 30px;">
+                    <button id="goto-practice-btn" class="nav-btn" disabled>Proceed to Practice Questions</button>
+                    <p id="practice-unlock-msg" class="progress-message">View all worked examples to unlock the practice questions.</p>
+                 </div>
+            </div><!-- End Tutorial Wrapper -->
+
+            <!-- Screen 2: Practice Questions -->
+            <div id="practice-wrapper" class="screen-wrapper hidden">
+                 <div style="text-align: center; margin-bottom: 20px;">
+                    <button id="goto-tutorial-btn" class="nav-btn back">Back to Tutorial</button>
+                 </div>
+                <h2>3. Practice Questions: Test Your Skills!</h2>
+                 <p>Now it's your turn! Work through the levels below. You must answer each question correctly to unlock the next one. Use the hints if you get stuck, and feel free to use the calculator. Your progress will be saved.</p>
+                <div class="tab-container" id="practice-tab-container">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-target="beginner-pane" id="beginner-tab-btn">Beginner</button>
+                        <button class="tab-btn" data-target="intermediate-pane" id="intermediate-tab-btn" disabled>Intermediate</button>
+                        <button class="tab-btn" data-target="advanced-pane" id="advanced-tab-btn" disabled>Advanced</button>
+                    </div>
+                    <div class="tab-content">
+                        <!-- Beginner Pane -->
+                        <div id="beginner-pane" class="tab-pane active">
+                            <h3>Level 1: Beginner</h3> <p>These questions involve direct application of the formula, mostly with volumes already in dm³.</p>
+                            <div class="question" data-answer="5" data-question-id="q1">
+                                <p><span class="question-number">Q1.</span> Please calculate the concentration in g/dm³ if 10 grams of a solute are dissolved to make 2 dm³ of solution.</p>
+                                <label for="q1-answer">Your Answer (g/dm³):</label> <input type="text" id="q1-answer">
+                                <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                <div class="hint hidden"><strong>Hint:</strong> Use the main formula: Concentration = Mass / Volume. Check if the units given (g and dm³) match the formula units.</div><div class="feedback"></div>
+                            </div>
+                            <div class="question hidden" data-answer="15" data-question-id="q2">
+                                <p><span class="question-number">Q2.</span> What is the concentration in g/dm³ when 45 grams of sugar are completely dissolved to create 3 dm³ of sugar solution?</p>
+                                <label for="q2-answer">Your Answer (g/dm³):</label> <input type="text" id="q2-answer">
+                                <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                <div class="hint hidden"><strong>Hint:</strong> Identify the mass (45 g) and the volume (3 dm³). Apply the concentration formula directly.</div><div class="feedback"></div>
+                            </div>
+                            <div class="question hidden" data-answer="10" data-question-id="q3">
+                                 <p><span class="question-number">Q3.</span> A particular solution has a known concentration of 20 g/dm³. If you have 0.5 dm³ of this solution, what mass of solute (in grams) must be dissolved in it?</p>
+                                 <label for="q3-answer">Your Answer (g):</label> <input type="text" id="q3-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> You need to find the mass. Rearrange the formula (or use the triangle) to get Mass = Concentration × Volume.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="32" data-question-id="q4">
+                                 <p><span class="question-number">Q4.</span> How many grams of solute are required to prepare 4 dm³ of a solution that has a concentration of 8 g/dm³?</p>
+                                 <label for="q4-answer">Your Answer (g):</label> <input type="text" id="q4-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> You are calculating the mass needed. Use the formula Mass = Concentration × Volume.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="2" data-question-id="q5">
+                                 <p><span class="question-number">Q5.</span> If you dissolve 50 grams of salt to create a solution with a concentration of 25 g/dm³, what will the final volume of the solution be in dm³?</p>
+                                 <label for="q5-answer">Your Answer (dm³):</label> <input type="text" id="q5-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> You need to calculate the volume. Rearrange the formula (or use the triangle) to get Volume = Mass / Concentration.</div><div class="feedback"></div>
+                             </div>
+                             <p class="progress-message hidden" id="beginner-complete-msg">Beginner level complete! Well done. The Intermediate level is now unlocked.</p>
+                        </div>
+                        <!-- Intermediate Pane -->
+                        <div id="intermediate-pane" class="tab-pane">
+                            <h3>Level 2: Intermediate</h3> <p>These questions may involve unit conversions (cm³ to dm³) and rearranging the formula.</p>
+                             <div class="question hidden" data-answer="24" data-question-id="q6">
+                                 <p><span class="question-number">Q6.</span> Calculate the concentration in g/dm³ when 12 grams of a substance are dissolved in water to make a final volume of 500 cm³.</p>
+                                 <label for="q6-answer">Your Answer (g/dm³):</label> <input type="text" id="q6-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> The volume is given in cm³. First, convert 500 cm³ into dm³ by dividing by 1000. Then use the standard concentration formula.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="8" data-question-id="q7">
+                                 <p><span class="question-number">Q7.</span> A student prepares 200 cm³ of a salt solution which has a concentration of 40 g/dm³. Calculate the mass of salt (in grams) that the student must have used.</p>
+                                 <label for="q7-answer">Your Answer (g):</label> <input type="text" id="q7-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> First, convert the volume from 200 cm³ to dm³. Then, use the formula rearranged for mass: Mass = Concentration × Volume.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="0.4" data-question-id="q8">
+                                 <p><span class="question-number">Q8.</span> What is the maximum volume of solution, in dm³, that can be prepared using 6 grams of copper sulfate if the desired concentration is 15 g/dm³?</p>
+                                 <label for="q8-answer">Your Answer (dm³):</label> <input type="text" id="q8-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> You are calculating volume. Use the formula Volume = Mass / Concentration. Ensure the units are consistent (g and g/dm³ are given, so the result will be in dm³).</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="20" data-question-id="q9">
+                                 <p><span class="question-number">Q9.</span> You are given 750 cm³ of a solution that contains 15 grams of a dissolved solute. Calculate the concentration of this solution in g/dm³.</p>
+                                 <label for="q9-answer">Your Answer (g/dm³):</label> <input type="text" id="q9-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> Remember to convert the volume from 750 cm³ to dm³ before applying the formula Concentration = Mass / Volume.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="15" data-question-id="q10">
+                                 <p><span class="question-number">Q10.</span> Determine the mass of sodium hydroxide (NaOH), in grams, needed to make 1500 cm³ of a solution with a concentration of 10 g/dm³.</p>
+                                 <label for="q10-answer">Your Answer (g):</label> <input type="text" id="q10-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> Convert the volume (1500 cm³) to dm³ first. Then calculate the required mass using Mass = Concentration × Volume.</div><div class="feedback"></div>
+                             </div>
+                            <p class="progress-message hidden" id="intermediate-complete-msg">Intermediate level complete! Excellent work. The Advanced level is now unlocked.</p>
+                        </div>
+                        <!-- Advanced Pane -->
+                        <div id="advanced-pane" class="tab-pane">
+                             <h3>Level 3: Advanced</h3> <p>These questions may require multiple steps or careful interpretation.</p>
+                              <div class="question hidden" data-answer="20" data-question-id="q11">
+                                 <p><span class="question-number">Q11.</span> A chemist has a large volume of a stock solution with concentration 80 g/dm³. They take exactly 250 cm³ of this stock solution and dilute it by adding water until the final volume is 1 dm³. What is the concentration, in g/dm³, of the new diluted solution?</p>
+                                 <label for="q11-answer">Your Answer (g/dm³):</label> <input type="text" id="q11-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> This is a two-step dilution calculation. First, calculate the mass of solute present in the 250 cm³ (0.25 dm³) sample taken from the stock solution (Mass = Stock Conc × Sample Vol). Second, use this calculated mass and the final diluted volume (1 dm³) to find the new concentration (New Conc = Mass / Final Vol).</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="24" data-question-id="q12">
+                                 <p><span class="question-number">Q12.</span> Solution A is made by dissolving 2.5 g of solute X in 100 cm³ of water. Solution B is made by dissolving 3.5 g of solute X in 150 cm³ of water. If Solution A and Solution B are mixed together, what is the final concentration of solute X in the combined solution, in g/dm³? (Assume the volumes are additive).</p>
+                                 <label for="q12-answer">Your Answer (g/dm³):</label> <input type="text" id="q12-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> To find the final concentration, you need the total mass of solute and the total volume of the mixture. Calculate Total Mass = Mass A + Mass B. Calculate Total Volume = Volume A + Volume B (keep in cm³ for now). Convert the Total Volume to dm³. Finally, calculate Final Concentration = Total Mass / Total Volume (in dm³).</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="250" data-question-id="q13">
+                                 <p><span class="question-number">Q13.</span> A saturated solution of potassium nitrate at 20°C has a concentration of 316 g/dm³. What volume of this saturated solution, measured in cm³, would contain exactly 79 grams of dissolved potassium nitrate?</p>
+                                 <label for="q13-answer">Your Answer (cm³):</label> <input type="text" id="q13-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> First, calculate the required volume in dm³ using the formula Volume = Mass / Concentration. Then, convert your answer from dm³ into cm³ by multiplying by 1000.</div><div class="feedback"></div>
+                             </div>
+                             <div class="question hidden" data-answer="150" data-question-id="q14">
+                                 <p><span class="question-number">Q14.</span> You start with 50 cm³ of a solution that has a concentration of 40 g/dm³. How much pure water, in cm³, must be added to this initial solution to dilute it so that its final concentration becomes exactly 10 g/dm³?</p>
+                                 <label for="q14-answer">Your Answer (cm³):</label> <input type="text" id="q14-answer">
+                                 <div class="controls"><button class="check-btn">Check Answer</button><button class="hint-toggle-btn">Hint</button></div>
+                                 <div class="hint hidden"><strong>Hint:</strong> This requires several steps. 1. Calculate the mass of solute in the original 50 cm³ (0.05 dm³) solution (Mass = 40 g/dm³ × 0.05 dm³). 2. Calculate the *new total volume* needed to achieve the target concentration of 10 g/dm³ using the mass found in step 1 (New Vol (dm³) = Mass / 10 g/dm³). 3. Convert this new total volume from dm³ to cm³. 4. The volume of water added is the difference between this new total volume (in cm³) and the original volume (50 cm³).</div><div class="feedback"></div>
+                             </div>
+                             <p class="progress-message hidden" id="advanced-complete-msg">Congratulations! You have successfully completed all practice levels.</p>
+                        </div>
+                    </div>
+                </div>
+                <section id="summary" class="hidden" style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 20px;">
+                    <h2>4. Summary & Key Takeaways</h2>
+                    <p>Fantastic effort! You have successfully navigated through the concepts and practice of calculating concentration in g/dm³. Remember these key points:</p>
+                    <ul>
+                        <li>The fundamental relationship is: <strong>Concentration (g/dm³) = Mass (g) / Volume (dm³)</strong></li>
+                        <li>This formula can be rearranged (or use the triangle) to find Mass (<code>Conc × Vol</code>) or Volume (<code>Mass / Conc</code>).</li>
+                        <li><strong>Volume MUST be in dm³</strong> for these calculations. Always convert cm³ to dm³ by <strong>dividing by 1000</strong> before using the formula.</li>
+                        <li>Pay close attention to the units asked for in the question and ensure your final answer has the correct units.</li>
+                        <li>Dilution problems often involve finding the mass of solute first, as this amount doesn't change when only water is added.</li>
+                    </ul>
+                    <p>Mastering these calculations is a crucial skill for success in your GCSE Chemistry studies and beyond!</p>
+                 </section>
+            </div><!-- End Practice Wrapper -->
+
+        </div> <!-- End Main Lesson Area -->
+
+        <!-- CHALLENGE SECTION -->
+        <div id="challenge-wrapper" class="screen-wrapper hidden">
+            <div style="text-align: center; margin-bottom: 20px;">
+                 <button id="return-to-lesson-btn" class="nav-btn back">Return to Lesson</button>
+            </div>
+             <h2>Challenge Mode: Mental Arithmetic!</h2>
+             <p>Test your speed! You have <strong>60 seconds</strong> to answer as many concentration, mass, and volume questions as possible using mental calculation.</p>
+
+             <div id="challenge-start-area">
+                 <button id="start-challenge-btn" class="nav-btn challenge-mode" style="padding: 15px 30px; font-size: 1.2em;">Start Challenge!</button>
+             </div>
+
+             <div id="challenge-interface" class="hidden">
+                 <div id="challenge-timer">Time: 60s</div>
+                 <div id="challenge-score">Score: 0</div>
+                 <hr>
+                 <div id="challenge-question">Question text appears here...</div>
+                 <div>
+                     <label for="challenge-answer">Answer:</label>
+                     <input type="text" id="challenge-answer" inputmode="numeric" pattern="[0-9.]*">
+                     <button id="submit-challenge-answer-btn" class="nav-btn" style="background-color: var(--accent-color)">Submit</button>
+                 </div>
+                 <div id="challenge-feedback" class="feedback" style="margin-top: 15px;"></div>
+             </div>
+
+             <div id="challenge-results" class="hidden">
+                 <h3>Challenge Over!</h3>
+                 <p id="final-score-display">Your final score is: X</p>
+                 <button id="restart-challenge-btn" class="nav-btn challenge-mode">Try Again?</button>
+             </div>
+        </div><!-- End Challenge Wrapper -->
+
+
+    </div><!-- End Container -->
+
+    <!-- Calculator HTML -->
+    <div id="calculator" class="hidden">
+         <div id="calculator-header"><span>Calculator</span><div><button id="calc-minimize-btn" title="Minimize/Maximize">_</button></div></div>
+         <div id="calc-display-container"><input type="text" id="calc-display" value="0" readonly></div>
+         <div class="calculator-body">
+             <button class="calc-btn clear" data-action="clear">C</button><button class="calc-btn backspace" data-action="backspace">←</button><button class="calc-btn">(</button><button class="calc-btn">)</button>
+             <button class="calc-btn number">7</button><button class="calc-btn number">8</button><button class="calc-btn number">9</button><button class="calc-btn operator" data-action="divide">÷</button>
+             <button class="calc-btn number">4</button><button class="calc-btn number">5</button><button class="calc-btn number">6</button><button class="calc-btn operator" data-action="multiply">×</button>
+             <button class="calc-btn number">1</button><button class="calc-btn number">2</button><button class="calc-btn number">3</button><button class="calc-btn operator" data-action="subtract">−</button>
+             <button class="calc-btn number">0</button><button class="calc-btn decimal" data-action="decimal">.</button><button class="calc-btn equals" data-action="calculate">=</button><button class="calc-btn operator" data-action="add">+</button>
+         </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Get Elements ---
+            const mainLessonArea = document.getElementById('main-lesson-area');
+            const tutorialWrapper = document.getElementById('tutorial-wrapper');
+            const practiceWrapper = document.getElementById('practice-wrapper');
+            const challengeWrapper = document.getElementById('challenge-wrapper');
+
+            const gotoPracticeBtn = document.getElementById('goto-practice-btn');
+            const gotoTutorialBtn = document.getElementById('goto-tutorial-btn');
+            const practiceUnlockMsg = document.getElementById('practice-unlock-msg');
+            const summarySection = document.getElementById('summary');
+
+            const gotoChallengeBtn = document.getElementById('goto-challenge-btn');
+            const returnToLessonBtn = document.getElementById('return-to-lesson-btn');
+
+            const toggleEquationsBtn = document.getElementById('toggle-equations-btn');
+            const equationsDisplay = document.getElementById('equations-display');
+            const toggleTriangleBtn = document.getElementById('toggle-triangle-btn');
+            const triangleDisplay = document.getElementById('triangle-display');
+            const toggleCalculatorBtn = document.getElementById('toggle-calculator-btn');
+            const calculator = document.getElementById('calculator');
+
+            const examplesTabContainer = document.getElementById('examples-tab-container');
+            const practiceTabContainer = document.getElementById('practice-tab-container');
+
+            // Challenge Elements
+            const challengeStartArea = document.getElementById('challenge-start-area');
+            const startChallengeBtn = document.getElementById('start-challenge-btn');
+            const challengeInterface = document.getElementById('challenge-interface');
+            const challengeTimerDisplay = document.getElementById('challenge-timer');
+            const challengeScoreDisplay = document.getElementById('challenge-score');
+            const challengeQuestionDisplay = document.getElementById('challenge-question');
+            const challengeAnswerInput = document.getElementById('challenge-answer');
+            const submitChallengeAnswerBtn = document.getElementById('submit-challenge-answer-btn');
+            const challengeFeedback = document.getElementById('challenge-feedback');
+            const challengeResults = document.getElementById('challenge-results');
+            const finalScoreDisplay = document.getElementById('final-score-display');
+            const restartChallengeBtn = document.getElementById('restart-challenge-btn');
+
+            // --- Local Storage Key ---
+            const STORAGE_KEY = 'concentrationLessonProgress_v2';
+
+            // --- State Variables ---
+            let challengeTimerInterval = null;
+            let challengeTimeLeft = 60;
+            let challengeScore = 0;
+            let currentChallengeQuestion = null;
+
+            // --- Initial Default Progress ---
+            const defaultProgress = {
+                 unlockedLevel: 'beginner',
+                 lastCorrectIndex: { beginner: -1, intermediate: -1, advanced: -1 },
+                 summaryVisible: false,
+             };
+
+            // --- Load Progress ---
+            function loadProgress() {
+                 const savedData = localStorage.getItem(STORAGE_KEY);
+                 let progress = defaultProgress;
+                 if (savedData) {
+                     try {
+                         progress = { ...defaultProgress, ...JSON.parse(savedData) };
+                         if (!progress.lastCorrectIndex) progress.lastCorrectIndex = { beginner: -1, intermediate: -1, advanced: -1 };
+                     } catch (e) {
+                         console.error("Error loading progress:", e);
+                         progress = defaultProgress;
+                     }
+                 }
+
+                 // Apply progress to UI
+                 const levels = ['beginner', 'intermediate', 'advanced'];
+                 let currentLevelIndex = levels.indexOf(progress.unlockedLevel);
+                 if(progress.unlockedLevel === 'complete') currentLevelIndex = levels.length;
+
+                 // 1. Enable Tabs
+                 levels.forEach((level, index) => {
+                     const tabBtn = document.getElementById(`${level}-tab-btn`);
+                     if (tabBtn) tabBtn.disabled = (index > currentLevelIndex);
+                 });
+
+                 // 2. Mark questions as completed & show next
+                 levels.forEach(level => {
+                     const pane = document.getElementById(`${level}-pane`);
+                     if (!pane) return;
+                     const questions = pane.querySelectorAll('.question');
+                     const lastCorrect = progress.lastCorrectIndex[level] ?? -1;
+
+                     questions.forEach((q, qIndex) => {
+                         const inputField = q.querySelector('input[type="text"]');
+                         const checkBtn = q.querySelector('.check-btn');
+                         const hintBtn = q.querySelector('.hint-toggle-btn');
+                         const feedbackDiv = q.querySelector('.feedback');
+                         if (qIndex <= lastCorrect) {
+                             if(inputField) inputField.disabled = true;
+                             if(checkBtn) checkBtn.disabled = true;
+                             if(hintBtn) hintBtn.disabled = true;
+                             if(feedbackDiv) { feedbackDiv.textContent = 'Correct!'; feedbackDiv.className = 'feedback correct'; }
+                             q.classList.remove('hidden');
+                         } else {
+                             if(inputField) { inputField.disabled = false; inputField.value = ''; }
+                             if(checkBtn) checkBtn.disabled = false;
+                             if(hintBtn) hintBtn.disabled = false;
+                             if(feedbackDiv) { feedbackDiv.textContent = ''; feedbackDiv.className = 'feedback'; }
+                             q.classList.add('hidden');
+                         }
+                     });
+                     const nextQuestionIndex = lastCorrect + 1;
+                     if (levels.indexOf(level) <= currentLevelIndex && nextQuestionIndex < questions.length) {
+                          if(questions[nextQuestionIndex]) questions[nextQuestionIndex].classList.remove('hidden');
+                     }
+                     const levelCompleteMsg = document.getElementById(`${level}-complete-msg`);
+                     if(levelCompleteMsg) levelCompleteMsg.classList.toggle('hidden', !(lastCorrect === questions.length - 1));
+                 });
+
+                 // 3. Show Summary
+                 summarySection.classList.toggle('hidden', !progress.summaryVisible);
+
+                 // 4. Restore active practice tab
+                 let activeTabSet = false;
+                 for (const level of levels) {
+                     const tabBtn = document.getElementById(`${level}-tab-btn`);
+                     const pane = document.getElementById(`${level}-pane`);
+                     if (tabBtn && !tabBtn.disabled) {
+                        const lastCorrect = progress.lastCorrectIndex[level] ?? -1;
+                        const questions = pane.querySelectorAll('.question');
+                        if(lastCorrect < questions.length - 1) {
+                            setActiveTab(practiceTabContainer, tabBtn); activeTabSet = true; break;
+                        }
+                     }
+                 }
+                 if (!activeTabSet) {
+                     const firstTab = practiceTabContainer.querySelector('.tab-btn');
+                     if (firstTab) setActiveTab(practiceTabContainer, firstTab);
+                 }
+
+                 // 5. Apply Tutorial completion state check
+                 const hasProgress = progress.unlockedLevel !== 'beginner' || Object.values(progress.lastCorrectIndex).some(idx => idx > -1);
+                 gotoPracticeBtn.disabled = !hasProgress;
+                 practiceUnlockMsg.classList.toggle('hidden', hasProgress);
+
+                 return progress;
+            }
+
+            // --- Save Progress ---
+            function saveProgress(progress) {
+                 try { localStorage.setItem(STORAGE_KEY, JSON.stringify(progress)); }
+                 catch (e) { console.error("Error saving progress:", e); }
+            }
+
+            // --- Global State ---
+            let currentProgress = loadProgress();
+
+             // --- Helper: Set Active Tab ---
+            function setActiveTab(container, targetButton) {
+                if (!container || !targetButton) return;
+                const tabButtons = container.querySelectorAll('.tab-btn');
+                const tabPanes = container.querySelectorAll('.tab-pane');
+                const targetPaneId = targetButton.dataset.target;
+
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+
+                targetButton.classList.add('active');
+                const targetPane = container.querySelector(`#${targetPaneId}`);
+                if (targetPane) {
+                    targetPane.classList.add('active');
+                     if (container === practiceTabContainer) activateFirstQuestionInActivePane(container);
+                 }
+             }
+
+            // --- CORRECTED: Global Tool Toggles ---
+            if (toggleEquationsBtn && equationsDisplay) {
+                toggleEquationsBtn.addEventListener('click', () => {
+                    equationsDisplay.classList.toggle('hidden');
+                    toggleEquationsBtn.textContent = equationsDisplay.classList.contains('hidden') ? 'Show Equations' : 'Hide Equations';
+                });
+            }
+             if (toggleTriangleBtn && triangleDisplay) {
+                toggleTriangleBtn.addEventListener('click', () => {
+                    triangleDisplay.classList.toggle('hidden');
+                    toggleTriangleBtn.textContent = triangleDisplay.classList.contains('hidden') ? 'Show Equation Triangle' : 'Hide Equation Triangle';
+                });
+             }
+             if (toggleCalculatorBtn && calculator) {
+                toggleCalculatorBtn.addEventListener('click', () => {
+                    calculator.classList.toggle('hidden');
+                    toggleCalculatorBtn.textContent = calculator.classList.contains('hidden') ? 'Show Calculator' : 'Hide Calculator';
+                    if (!calculator.classList.contains('hidden')) calculator.classList.remove('minimized');
+                });
+             }
+
+             // --- Screen Navigation ---
+            gotoPracticeBtn.addEventListener('click', () => {
+                tutorialWrapper.classList.add('hidden'); practiceWrapper.classList.remove('hidden');
+                challengeWrapper.classList.add('hidden'); mainLessonArea.classList.remove('hidden');
+                window.scrollTo(0, 0); activateFirstQuestionInActivePane(practiceTabContainer);
+            });
+            gotoTutorialBtn.addEventListener('click', () => {
+                practiceWrapper.classList.add('hidden'); tutorialWrapper.classList.remove('hidden');
+                challengeWrapper.classList.add('hidden'); mainLessonArea.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
+            gotoChallengeBtn.addEventListener('click', () => {
+                 mainLessonArea.classList.add('hidden'); challengeWrapper.classList.remove('hidden');
+                 resetChallengeUI(); window.scrollTo(0, 0);
+             });
+            returnToLessonBtn.addEventListener('click', () => {
+                 challengeWrapper.classList.add('hidden'); mainLessonArea.classList.remove('hidden');
+                 practiceWrapper.classList.add('hidden'); // Default return to tutorial
+                 tutorialWrapper.classList.remove('hidden'); window.scrollTo(0, 0);
+                 if (challengeTimerInterval) { clearInterval(challengeTimerInterval); challengeTimerInterval = null; }
+             });
+
+
+            // --- Tab Functionality ---
+            function setupTabs(container) {
+                if (!container) return;
+                const tabButtonContainer = container.querySelector('.tab-buttons');
+                if (!tabButtonContainer) return; // Added safety check
+
+                tabButtonContainer.addEventListener('click', (event) => {
+                    const clickedButton = event.target.closest('.tab-btn');
+                    if (!clickedButton || clickedButton.disabled || clickedButton.classList.contains('active')) return;
+
+                    setActiveTab(container, clickedButton);
+
+                    if (container === examplesTabContainer) {
+                         const allExampleTabs = Array.from(container.querySelectorAll('.tab-btn'));
+                         const lastExampleTab = allExampleTabs[allExampleTabs.length - 1];
+                         const hasProgress = currentProgress.unlockedLevel !== 'beginner' || Object.values(currentProgress.lastCorrectIndex).some(idx => idx > -1);
+                         if (clickedButton === lastExampleTab || hasProgress) {
+                             if (gotoPracticeBtn.disabled) { gotoPracticeBtn.disabled = false; practiceUnlockMsg.classList.add('hidden'); }
+                         }
+                    }
+                });
+            }
+            setupTabs(examplesTabContainer);
+            setupTabs(practiceTabContainer);
+
+
+             // --- Practice Question Logic ---
+             practiceTabContainer.addEventListener('click', (event) => {
+                 const target = event.target;
+                 const questionDiv = target.closest('.question');
+                 if (!questionDiv) return;
+
+                 // Hint Toggling
+                 if (target.classList.contains('hint-toggle-btn')) {
+                    const hintDiv = questionDiv.querySelector('.hint');
+                     if (hintDiv) { hintDiv.classList.toggle('hidden'); target.textContent = hintDiv.classList.contains('hidden') ? 'Show Hint' : 'Hide Hint'; }
+                     return;
+                 }
+
+                 // Answer Checking
+                 if (target.classList.contains('check-btn')) {
+                     const inputField = questionDiv.querySelector('input[type="text"]');
+                     const feedbackDiv = questionDiv.querySelector('.feedback');
+                     const correctAnswer = questionDiv.dataset.answer;
+                     const userAnswer = inputField.value.trim();
+                     const currentPane = questionDiv.closest('.tab-pane');
+                     const levelName = currentPane.id.replace('-pane', '');
+                     const questionsInLevel = Array.from(currentPane.querySelectorAll('.question'));
+                     const questionIndex = questionsInLevel.indexOf(questionDiv);
+
+                     feedbackDiv.classList.remove('correct', 'incorrect');
+                     if (userAnswer === '') { feedbackDiv.textContent = 'Please enter an answer.'; return; }
+
+                     if (parseFloat(userAnswer) == parseFloat(correctAnswer)) {
+                         feedbackDiv.textContent = 'Correct!'; feedbackDiv.classList.add('correct');
+                         if(inputField) inputField.disabled = true; target.disabled = true;
+                         const hintButton = questionDiv.querySelector('.hint-toggle-btn'); if (hintButton) hintButton.disabled = true;
+
+                         currentProgress.lastCorrectIndex[levelName] = questionIndex;
+
+                         const nextQuestion = findNextSiblingQuestion(questionDiv);
+                         const isLastInLevel = (questionIndex === questionsInLevel.length - 1);
+
+                         if (nextQuestion) nextQuestion.classList.remove('hidden');
+
+                         if (isLastInLevel) {
+                            const levelCompleteMsg = document.getElementById(`${levelName}-complete-msg`);
+                            if(levelCompleteMsg) levelCompleteMsg.classList.remove('hidden');
+                            const levels = ['beginner', 'intermediate', 'advanced'];
+                            const currentLevelOrder = levels.indexOf(levelName);
+                            if (currentLevelOrder < levels.length - 1) {
+                                const nextLevelName = levels[currentLevelOrder + 1];
+                                currentProgress.unlockedLevel = nextLevelName;
+                                const nextTabButton = document.getElementById(`${nextLevelName}-tab-btn`);
+                                if (nextTabButton) nextTabButton.disabled = false;
+                            } else {
+                                currentProgress.unlockedLevel = 'complete'; currentProgress.summaryVisible = true;
+                                summarySection.classList.remove('hidden');
+                            }
+                         }
+                         saveProgress(currentProgress);
+                     } else {
+                         feedbackDiv.textContent = `Incorrect. Please review your calculation or the hint and try again.`;
+                         feedbackDiv.classList.add('incorrect');
+                     }
+                 }
+             });
+
+             // --- Helper Functions for Progression ---
+            function findNextSiblingQuestion(element) {
+                let sibling = element.nextElementSibling;
+                while(sibling) {
+                    if (sibling.classList.contains('question')) return sibling;
+                    // Stop if we hit something that isn't the progress message or another question
+                    if (!sibling.classList.contains('progress-message')) return null;
+                    sibling = sibling.nextElementSibling;
+                }
+                return null;
+            }
+            function activateFirstQuestionInActivePane(container) {
+                 const activePane = container.querySelector('.tab-pane.active');
+                 if (!activePane) return;
+                 const questions = activePane.querySelectorAll('.question');
+                 let firstVisibleUnanswered = null;
+                 for (const q of questions) {
+                     const inputField = q.querySelector('input[type="text"]');
+                     if (inputField && !inputField.disabled) { firstVisibleUnanswered = q; break; }
+                 }
+                 if(firstVisibleUnanswered && firstVisibleUnanswered.classList.contains('hidden')) {
+                     questions.forEach(q => { // Ensure only ONE is visible
+                         const inputField = q.querySelector('input[type="text"]');
+                         q.classList.toggle('hidden', !(inputField && !inputField.disabled && q === firstVisibleUnanswered));
+                     });
+                 } else if (!firstVisibleUnanswered && questions.length > 0) {
+                      // If all seem answered, ensure first one is visible (though disabled)
+                      const firstQ = questions[0];
+                      if(firstQ && firstQ.classList.contains('hidden')){
+                         firstQ.classList.remove('hidden');
+                      }
+                 }
+             }
+
+
+            // --- CHALLENGE MODE LOGIC ---
+            const challengeQuestions = [ /* Questions unchanged */
+                { text: "Mass = 10g, Volume = 2 dm³. Concentration (g/dm³)?", answer: "5" }, { text: "Mass = 20g, Volume = 4 dm³. Concentration (g/dm³)?", answer: "5" },
+                { text: "Mass = 50g, Volume = 5 dm³. Concentration (g/dm³)?", answer: "10" }, { text: "Mass = 15g, Volume = 3 dm³. Concentration (g/dm³)?", answer: "5" },
+                { text: "Mass = 8g, Volume = 2 dm³. Concentration (g/dm³)?", answer: "4" }, { text: "Mass = 6g, Volume = 0.5 dm³. Concentration (g/dm³)?", answer: "12" },
+                { text: "Mass = 10g, Volume = 0.2 dm³. Concentration (g/dm³)?", answer: "50" }, { text: "Mass = 25g, Volume = 0.5 dm³. Concentration (g/dm³)?", answer: "50" },
+                { text: "Mass = 30g, Volume = 1.5 dm³. Concentration (g/dm³)?", answer: "20" }, { text: "Conc = 10 g/dm³, Volume = 3 dm³. Mass (g)?", answer: "30" },
+                { text: "Conc = 20 g/dm³, Volume = 2 dm³. Mass (g)?", answer: "40" }, { text: "Conc = 5 g/dm³, Volume = 4 dm³. Mass (g)?", answer: "20" },
+                { text: "Conc = 8 g/dm³, Volume = 5 dm³. Mass (g)?", answer: "40" }, { text: "Conc = 12 g/dm³, Volume = 0.5 dm³. Mass (g)?", answer: "6" },
+                { text: "Conc = 50 g/dm³, Volume = 0.2 dm³. Mass (g)?", answer: "10" }, { text: "Conc = 25 g/dm³, Volume = 0.4 dm³. Mass (g)?", answer: "10" },
+                { text: "Conc = 100 g/dm³, Volume = 0.1 dm³. Mass (g)?", answer: "10" }, { text: "Conc = 30 g/dm³, Volume = 1.5 dm³. Mass (g)?", answer: "45" },
+                { text: "Mass = 20g, Conc = 10 g/dm³. Volume (dm³)?", answer: "2" }, { text: "Mass = 50g, Conc = 25 g/dm³. Volume (dm³)?", answer: "2" },
+                { text: "Mass = 100g, Conc = 50 g/dm³. Volume (dm³)?", answer: "2" }, { text: "Mass = 12g, Conc = 6 g/dm³. Volume (dm³)?", answer: "2" },
+                { text: "Mass = 9g, Conc = 3 g/dm³. Volume (dm³)?", answer: "3" }, { text: "Mass = 5g, Conc = 10 g/dm³. Volume (dm³)?", answer: "0.5" },
+                { text: "Mass = 4g, Conc = 8 g/dm³. Volume (dm³)?", answer: "0.5" }, { text: "Mass = 10g, Conc = 20 g/dm³. Volume (dm³)?", answer: "0.5" },
+                { text: "Mass = 15g, Conc = 5 g/dm³. Volume (dm³)?", answer: "3" },
+            ];
+            function startChallenge() { /* Unchanged */
+                 challengeTimeLeft = 60; challengeScore = 0; currentChallengeQuestion = null;
+                challengeScoreDisplay.textContent = `Score: ${challengeScore}`;
+                challengeTimerDisplay.textContent = `Time: ${challengeTimeLeft}s`;
+                challengeFeedback.textContent = ''; challengeFeedback.className = 'feedback';
+                challengeStartArea.classList.add('hidden'); challengeResults.classList.add('hidden');
+                challengeInterface.classList.remove('hidden');
+                challengeAnswerInput.disabled = false; submitChallengeAnswerBtn.disabled = false;
+                displayNextChallengeQuestion(); challengeAnswerInput.focus();
+                if(challengeTimerInterval) clearInterval(challengeTimerInterval);
+                challengeTimerInterval = setInterval(updateTimer, 1000);
+             }
+            function updateTimer() { /* Unchanged */
+                 challengeTimeLeft--; challengeTimerDisplay.textContent = `Time: ${challengeTimeLeft}s`;
+                if (challengeTimeLeft <= 0) { endChallenge(); }
+             }
+            function displayNextChallengeQuestion() { /* Unchanged */
+                 challengeAnswerInput.value = ''; challengeFeedback.textContent = ''; challengeFeedback.className = 'feedback';
+                const randomIndex = Math.floor(Math.random() * challengeQuestions.length);
+                currentChallengeQuestion = challengeQuestions[randomIndex];
+                challengeQuestionDisplay.textContent = currentChallengeQuestion.text;
+                challengeAnswerInput.focus();
+             }
+            function checkChallengeAnswer() { /* Unchanged */
+                 if (!currentChallengeQuestion || challengeTimeLeft <= 0) return;
+                 const userAnswer = challengeAnswerInput.value.trim();
+                 if (userAnswer === '') return;
+                 if (parseFloat(userAnswer) == parseFloat(currentChallengeQuestion.answer)) {
+                    challengeScore++; challengeScoreDisplay.textContent = `Score: ${challengeScore}`;
+                    challengeFeedback.textContent = 'Correct!'; challengeFeedback.className = 'feedback correct';
+                 } else {
+                    challengeFeedback.textContent = `Incorrect. Answer was ${currentChallengeQuestion.answer}`;
+                    challengeFeedback.className = 'feedback incorrect';
+                 }
+                 setTimeout(displayNextChallengeQuestion, 600);
+             }
+             function endChallenge() { /* Unchanged */
+                 if(challengeTimerInterval) clearInterval(challengeTimerInterval); challengeTimerInterval = null;
+                 challengeInterface.classList.add('hidden'); challengeResults.classList.remove('hidden');
+                 finalScoreDisplay.textContent = `Your final score is: ${challengeScore}`;
+                 challengeAnswerInput.disabled = true; submitChallengeAnswerBtn.disabled = true;
+             }
+            function resetChallengeUI() { /* Unchanged */
+                 challengeStartArea.classList.remove('hidden'); challengeInterface.classList.add('hidden');
+                 challengeResults.classList.add('hidden'); challengeFeedback.textContent = '';
+                 challengeFeedback.className = 'feedback';
+                 if(challengeTimerInterval) clearInterval(challengeTimerInterval); challengeTimerInterval = null;
+             }
+            startChallengeBtn.addEventListener('click', startChallenge);
+            restartChallengeBtn.addEventListener('click', startChallenge);
+            submitChallengeAnswerBtn.addEventListener('click', checkChallengeAnswer);
+            challengeAnswerInput.addEventListener('keypress', function (e) { if (e.key === 'Enter') { e.preventDefault(); checkChallengeAnswer(); } });
+
+
+            // --- Calculator Logic ---
+            const calcDisplay = document.getElementById('calc-display');
+            const calcButtons = document.querySelector('.calculator-body');
+            const calculatorElement = document.getElementById('calculator');
+            const minimizeBtn = document.getElementById('calc-minimize-btn');
+            let firstValue = ''; let operator = ''; let secondValue = ''; let shouldResetDisplay = false;
+            function calculate(n1, op, n2) {
+                const num1 = parseFloat(n1); const num2 = parseFloat(n2);
+                if (op && (isNaN(num1) || isNaN(num2)) && n1 !== 'Error' && n2 !== 'Error') return 'Error';
+                if (op && (n1 === 'Error' || n2 === 'Error') && op !== 'clear') return 'Error';
+                switch (op) {
+                    case 'add': return num1 + num2; case 'subtract': return num1 - num2;
+                    case 'multiply': return num1 * num2;
+                    case 'divide': return num2 === 0 ? 'Error: Div by 0' : num1 / num2;
+                    default: return n2;
+                }
+            }
+            calcButtons.addEventListener('click', e => {
+                if (!e.target.matches('.calc-btn')) return;
+                const key = e.target; const action = key.dataset.action; const keyContent = key.textContent; let displayedNum = calcDisplay.value;
+                document.querySelectorAll('.calc-btn.operator').forEach(k => k.classList.remove('is-depressed'));
+                if (displayedNum.startsWith('Error') && (key.classList.contains('number') || key.classList.contains('decimal') || action === 'clear')) { displayedNum = '0'; firstValue = ''; operator = ''; secondValue = ''; }
+                if (key.classList.contains('number')) { if (displayedNum === '0' || shouldResetDisplay) { calcDisplay.value = keyContent; shouldResetDisplay = false; } else { calcDisplay.value = displayedNum + keyContent; } }
+                if (key.classList.contains('decimal')) { if (!displayedNum.includes('.')) { calcDisplay.value = displayedNum + '.'; } else if (shouldResetDisplay) { calcDisplay.value = '0.'; shouldResetDisplay = false; } }
+                if (key.classList.contains('operator')) {
+                    if (firstValue && operator && !shouldResetDisplay) {
+                        const result = calculate(firstValue, operator, displayedNum); calcDisplay.value = String(result);
+                        if (String(result).startsWith('Error')) { firstValue = 'Error'; } else { firstValue = String(result); }
+                    } else if (!String(displayedNum).startsWith('Error')) { firstValue = displayedNum; }
+                    if (!firstValue.startsWith('Error')){ operator = action; shouldResetDisplay = true; key.classList.add('is-depressed'); }
+                }
+                if (action === 'calculate') {
+                    if (firstValue && operator) {
+                        if (firstValue.startsWith('Error')) { calcDisplay.value = firstValue; return; }
+                        secondValue = displayedNum; const result = calculate(firstValue, operator, secondValue);
+                        calcDisplay.value = String(result); firstValue = ''; operator = ''; shouldResetDisplay = true;
+                    } else if (!operator && !displayedNum.startsWith('Error')) { shouldResetDisplay = true; }
+                 }
+                if (action === 'clear') { calcDisplay.value = '0'; firstValue = ''; operator = ''; secondValue = ''; shouldResetDisplay = false; document.querySelectorAll('.calc-btn.operator').forEach(k => k.classList.remove('is-depressed')); }
+                if (action === 'backspace') {
+                    if (displayedNum.startsWith('Error')) { calcDisplay.value = '0'; firstValue = ''; operator = ''; secondValue = ''; shouldResetDisplay = false; }
+                    else if (displayedNum.length === 1) { calcDisplay.value = '0'; } else { calcDisplay.value = displayedNum.slice(0, -1); }
+                    shouldResetDisplay = false;
+                 }
+                 if (keyContent === '(' || keyContent === ')') { if (displayedNum === '0' || shouldResetDisplay) { calcDisplay.value = keyContent; shouldResetDisplay = false; } else { calcDisplay.value = displayedNum + keyContent; } }
+            });
+            const header = document.getElementById('calculator-header'); let isDragging = false; let offsetX, offsetY;
+            header.addEventListener('mousedown', (e) => { isDragging = true; offsetX = e.clientX - calculatorElement.offsetLeft; offsetY = e.clientY - calculatorElement.offsetTop; calculatorElement.style.cursor = 'grabbing'; e.preventDefault(); });
+            document.addEventListener('mousemove', (e) => { if (!isDragging) return; let newX = e.clientX - offsetX; let newY = e.clientY - offsetY; calculatorElement.style.left = `${newX}px`; calculatorElement.style.top = `${newY}px`; calculatorElement.style.bottom = 'auto'; calculatorElement.style.right = 'auto'; });
+            document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; calculatorElement.style.cursor = 'move'; } });
+            minimizeBtn.addEventListener('click', (e) => { e.stopPropagation(); calculatorElement.classList.toggle('minimized'); });
+
+
+        }); // End DOMContentLoaded
+    </script>
+
+</body>
+</html>
