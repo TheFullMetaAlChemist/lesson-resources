@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limiting Reactants - Interactive Worksheet</title>
+    <style>
+        :root {
+            --primary-color: #007bff; /* Blue */
+            --secondary-color: #6c757d; /* Gray */
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --dark-text: #343a40;
+            --light-text: #6c757d;
+            --border-color: #dee2e6;
+            --success-color: #28a745; /* Green */
+            --info-color: #17a2b8; /* Teal */
+            --warning-color: #ffc107; /* Yellow */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            margin: 0;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        /* --- Tab Styles --- */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 18px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            font-size: 1em;
+            color: var(--light-text);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin-bottom: -1px; /* Overlap border */
+            margin-right: 5px;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab-pane {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            background-color: var(--white);
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+        /* --- End Tab Styles --- */
+
+        .question-block { /* For Worked Examples, non-tabbed items */
+             background-color: #e9ecef;
+             border: 1px solid var(--border-color);
+             padding: 15px 20px;
+             margin-bottom: 20px;
+             border-radius: 5px;
+             border-left: 5px solid var(--info-color);
+        }
+        .question-block p, .question-block ul {
+             margin-bottom: 10px;
+        }
+
+        .question-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: var(--dark-text);
+            margin-bottom: 15px;
+        }
+
+        .equation {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: block; /* Make it block */
+            margin: 15px 0;
+            font-weight: bold;
+            border: 1px solid #ced4da;
+            overflow-x: auto; /* Handle long equations */
+        }
+
+        .reveal-button-group {
+            margin-top: 20px;
+        }
+
+        button.reveal-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button.reveal-btn:hover {
+            background-color: #5a6268;
+        }
+        button.reveal-btn-steps {
+             background-color: var(--info-color);
+        }
+        button.reveal-btn-steps:hover {
+             background-color: #138496;
+        }
+         button.reveal-btn-answer {
+             background-color: var(--success-color);
+        }
+        button.reveal-btn-answer:hover {
+            background-color: #218838;
+        }
+
+
+        .hidden-content {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        .hidden-content ul {
+             list-style-type: disc;
+             margin-left: 20px;
+             padding-left: 0;
+        }
+        .hidden-content li {
+            margin-bottom: 5px;
+        }
+        .answer {
+            font-weight: bold;
+            color: var(--success-color); /* Green for answers */
+        }
+        .sub {
+             vertical-align: sub;
+             font-size: smaller;
+        }
+        .error-note {
+            color: #dc3545; /* Red */
+            font-style: italic;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Responsive adjustments (optional but good practice) */
+        @media (max-width: 600px) {
+            .container {
+                margin: 15px;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            .tab-button {
+                width: 100%;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 0;
+                 margin-right: 0;
+            }
+             .tab-button.active {
+                 border-bottom: 3px solid var(--primary-color); /* Keep bottom border for active */
+             }
+            .tab-content {
+                margin-top: 10px;
+            }
+            .tab-pane {
+                 border: 1px solid var(--border-color); /* Add border back */
+                 border-radius: 5px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Limiting Reactants</h1>
+
+    <!-- ======================= SECTION 1 ======================= -->
+    <section id="part1">
+        <h2>Part 1: Moles Given – Identify the Limiting Reactant</h2>
+
+        <div class="question-block"> <!-- Worked Example -->
+            <p class="question-title">Worked Example 1</p>
+            <p>In a reaction where hydrogen reacts with chlorine to produce hydrogen chloride using the equation:</p>
+            <p class="equation">H<span class="sub">2</span> + Cl<span class="sub">2</span> → 2HCl</p>
+            <p>2 moles of hydrogen is mixed with 1 mole of chlorine.</p>
+            <p><strong>Step 1:</strong> Determine how many moles of HCl each reactant can produce.</p>
+            <ul>
+                <li>1 mol Cl<span class="sub">2</span> produces 2 mol HCl</li>
+                <li>2 mol H<span class="sub">2</span> can also produce 4 mol HCl, but we only have 1 mol Cl<span class="sub">2</span></li>
+            </ul>
+            <p><strong>Step 2:</strong> The reactant that produces the fewest moles of product is limiting.</p>
+            <p><strong>Answer:</strong> Cl<span class="sub">2</span> is the limiting reactant as the amount we have would make less HCl.</p>
+        </div>
+
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('part1', 'part1-q2', this)">Question 2</button>
+            <button class="tab-button" onclick="showTab('part1', 'part1-q3', this)">Question 3</button>
+            <button class="tab-button" onclick="showTab('part1', 'part1-q4', this)">Question 4</button>
+            <button class="tab-button" onclick="showTab('part1', 'part1-q5', this)">Question 5</button>
+        </nav>
+
+        <div class="tab-content">
+            <div id="part1-q2" class="tab-pane active">
+                <p class="question-title">Question 2 (Scaffolded)</p>
+                <p>Sodium reacts with chlorine using the equation:</p>
+                <p class="equation">2Na + Cl<span class="sub">2</span> → 2NaCl</p>
+                <p>3 mol of sodium is mixed with 2 mol of chlorine:</p>
+                <ul>
+                    <li>How many moles of NaCl could be produced from sodium?</li>
+                    <li>How many moles of NaCl could be produced from chlorine?</li>
+                    <li>Which reactant is limiting?</li>
+                </ul>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q2-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q2-answer')">Reveal Answer</button>
+                </div>
+                <div id="q2-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Identify given moles: Moles of Na = 3, Moles of Cl<span class="sub">2</span> = 2.</li>
+                        <li>Calculate max NaCl from Na: From ratio, 2 mol Na makes 2 mol NaCl → 3 mol Na makes 3 mol NaCl.</li>
+                        <li>Calculate max NaCl from Cl<span class="sub">2</span>: From ratio, 1 mol Cl<span class="sub">2</span> makes 2 mol NaCl → 2 mol Cl<span class="sub">2</span> makes 4 mol NaCl.</li>
+                        <li>Compare the amounts of NaCl produced: Na produces 3 mol, Cl<span class="sub">2</span> produces 4 mol.</li>
+                        <li>The reactant producing the smaller amount is limiting.</li>
+                     </ul>
+                </div>
+                <div id="q2-answer" class="hidden-content answer">
+                    Limiting reactant: Na
+                </div>
+            </div>
+
+            <div id="part1-q3" class="tab-pane">
+                <p class="question-title">Question 3 (Exam-Style)</p>
+                <p>In the manufacture of ammonia, 1 mole of nitrogen reacts with 3 moles of hydrogen according to the equation:</p>
+                <p class="equation">N<span class="sub">2</span> + 3H<span class="sub">2</span> → 2NH<span class="sub">3</span></p>
+                <p>If a chemist mixes 1 mole of nitrogen with 3 moles of hydrogen, identify the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q3-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q3-answer')">Reveal Answer</button>
+                </div>
+                <div id="q3-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Identify given moles: Moles of N<span class="sub">2</span> = 1, Moles of H<span class="sub">2</span> = 3.</li>
+                        <li>Compare given ratio to stoichiometric ratio: Given ratio is 1 mol N<span class="sub">2</span> : 3 mol H<span class="sub">2</span>.</li>
+                        <li>The equation ratio is also 1 mol N<span class="sub">2</span> : 3 mol H<span class="sub">2</span>.</li>
+                        <li>Since the ratios match exactly, the reactants are present in the perfect stoichiometric amounts.</li>
+                     </ul>
+                </div>
+                <div id="q3-answer" class="hidden-content answer">
+                    No limiting reactant – perfect stoichiometric ratio
+                </div>
+            </div>
+
+            <div id="part1-q4" class="tab-pane">
+                 <p class="question-title">Question 4 (Exam-Style)</p>
+                <p>Aluminium reacts with bromine according to: </p>
+                <p class="equation">2Al + 3Br<span class="sub">2</span> → 2AlBr<span class="sub">3</span></p>
+                <p>If 4 moles of aluminium are reacted with 5 moles of bromine, determine the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q4-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q4-answer')">Reveal Answer</button>
+                </div>
+                <div id="q4-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Identify given moles: Moles of Al = 4, Moles of Br<span class="sub">2</span> = 5.</li>
+                        <li>Method 1 (Check Al needed for Br<span class="sub">2</span>): From ratio, 3 mol Br<span class="sub">2</span> needs 2 mol Al. So, 5 mol Br<span class="sub">2</span> needs (5 / 3) * 2 = 3.33 mol Al. We have 4 mol Al (more than enough).</li>
+                        <li>Method 2 (Check Br<span class="sub">2</span> needed for Al): From ratio, 2 mol Al needs 3 mol Br<span class="sub">2</span>. So, 4 mol Al needs (4 / 2) * 3 = 6 mol Br<span class="sub">2</span>.</li>
+                        <li>Compare needed Br<span class="sub">2</span> with available Br<span class="sub">2</span>: We need 6 mol Br<span class="sub">2</span>, but only 5 mol Br<span class="sub">2</span> are available.</li>
+                        <li>Therefore, Bromine (Br<span class="sub">2</span>) will run out first.</li>
+                     </ul>
+                </div>
+                <div id="q4-answer" class="hidden-content answer">
+                    Limiting reactant: Br<span class="sub">2</span>
+                </div>
+            </div>
+
+            <div id="part1-q5" class="tab-pane">
+                 <p class="question-title">Question 5 (Exam-Style)</p>
+                <p>When potassium reacts with water to produce potassium hydroxide and hydrogen gas:</p>
+                <p class="equation">2K + 2H<span class="sub">2</span>O → 2KOH + H<span class="sub">2</span></p>
+                <p>A student uses 5 mol of potassium and 4 mol of water. Identify the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q5-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q5-answer')">Reveal Answer</button>
+                </div>
+                <div id="q5-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Identify given moles: Moles of K = 5, Moles of H<span class="sub">2</span>O = 4.</li>
+                        <li>Method 1 (Check K needed for H<span class="sub">2</span>O): From ratio, 2 mol H<span class="sub">2</span>O needs 2 mol K. So, 4 mol H<span class="sub">2</span>O needs 4 mol K. We have 5 mol K (more than enough).</li>
+                        <li>Method 2 (Check H<span class="sub">2</span>O needed for K): From ratio, 2 mol K needs 2 mol H<span class="sub">2</span>O. So, 5 mol K needs 5 mol H<span class="sub">2</span>O.</li>
+                        <li>Compare needed H<span class="sub">2</span>O with available H<span class="sub">2</span>O: We need 5 mol H<span class="sub">2</span>O, but only 4 mol H<span class="sub">2</span>O are available.</li>
+                        <li>Therefore, Water (H<span class="sub">2</span>O) will run out first.</li>
+                     </ul>
+                </div>
+                <div id="q5-answer" class="hidden-content answer">
+                    Limiting reactant: H<span class="sub">2</span>O
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================= SECTION 2 ======================= -->
+    <section id="part2">
+        <h2>Part 2: Masses Given – Identify the Limiting Reactant</h2>
+
+        <div class="question-block"> <!-- Worked Example -->
+            <p class="question-title">Worked Example 6</p>
+            <p>Magnesium reacts with oxygen to form magnesium oxide:</p>
+            <p class="equation">2Mg + O<span class="sub">2</span> → 2MgO</p>
+            <p>If you react 24g of Mg (Mr = 24) with 32g of O<span class="sub">2</span> (Mr = 32):</p>
+            <ul>
+                <li>Moles of Mg = mass / Mr = 24 / 24 = 1 mol</li>
+                <li>Moles of O<span class="sub">2</span> = mass / Mr = 32 / 32 = 1 mol</li>
+                <li>Determine product from each reactant:
+                    <ul>
+                        <li>From ratio, 2 mol Mg produces 2 mol MgO, so 1 mol Mg produces 1 mol MgO.</li>
+                        <li>From ratio, 1 mol O<span class="sub">2</span> produces 2 mol MgO.</li>
+                    </ul>
+                </li>
+                <li>Compare amounts of product: Mg produces less MgO (1 mol) than O<span class="sub">2</span> (2 mol).</li>
+            </ul>
+            <p><strong>Answer:</strong> Magnesium is the limiting reactant as the amount we have would make less MgO.</p>
+        </div>
+
+        <nav class="tabs">
+            <button class="tab-button active" onclick="showTab('part2', 'part2-q7', this)">Question 7</button>
+            <button class="tab-button" onclick="showTab('part2', 'part2-q8', this)">Question 8</button>
+            <button class="tab-button" onclick="showTab('part2', 'part2-q9', this)">Question 9</button>
+            <button class="tab-button" onclick="showTab('part2', 'part2-q10', this)">Question 10</button>
+        </nav>
+
+         <div class="tab-content">
+            <div id="part2-q7" class="tab-pane active">
+                 <p class="question-title">Question 7 (Scaffolded)</p>
+                <p>Iron reacts with sulfur according to the equation: </p>
+                <p class="equation">Fe + S → FeS</p>
+                <p>A student uses 56g of iron (Mr = 56) and 32g of sulfur (Mr = 32).</p>
+                <ul>
+                    <li>Calculate moles of Fe and S.</li>
+                    <li>Work out how many moles of FeS each could produce.</li>
+                    <li>Which is the limiting reactant?</li>
+                </ul>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q7-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q7-answer')">Reveal Answer</button>
+                </div>
+                <div id="q7-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Fe: Moles = mass / Mr = 56 / 56 = 1 mol.</li>
+                        <li>Calculate moles S: Moles = mass / Mr = 32 / 32 = 1 mol.</li>
+                        <li>Determine max FeS from Fe: From ratio, 1 mol Fe makes 1 mol FeS.</li>
+                        <li>Determine max FeS from S: From ratio, 1 mol S makes 1 mol FeS.</li>
+                        <li>Compare amounts of FeS: Both reactants produce 1 mol FeS.</li>
+                        <li>Since the mole ratio (1:1) matches the equation ratio (1:1), they react completely.</li>
+                     </ul>
+                </div>
+                <div id="q7-answer" class="hidden-content answer">
+                    No limiting reactant
+                </div>
+            </div>
+
+            <div id="part2-q8" class="tab-pane">
+                <p class="question-title">Question 8 (Exam-Style)</p>
+                <p>Aluminium reacts with chlorine to form aluminium chloride:</p>
+                <p class="equation">2Al + 3Cl<span class="sub">2</span> → 2AlCl<span class="sub">3</span></p>
+                <p>A reaction uses 54g of aluminium (Mr = 27) and 71g of chlorine (Mr = 71). Determine which is the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q8-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q8-answer')">Reveal Answer</button>
+                </div>
+                <div id="q8-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Al: Moles = 54 / 27 = 2 mol.</li>
+                        <li>Calculate moles Cl<span class="sub">2</span>: Moles = 71 / 71 = 1 mol.</li>
+                        <li>Determine required ratio: From equation, 2 mol Al reacts with 3 mol Cl<span class="sub">2</span>.</li>
+                        <li>Check Cl<span class="sub">2</span> needed for Al: 2 mol Al needs (2 / 2) * 3 = 3 mol Cl<span class="sub">2</span>.</li>
+                        <li>Compare needed Cl<span class="sub">2</span> with available: Need 3 mol Cl<span class="sub">2</span>, but only have 1 mol Cl<span class="sub">2</span>.</li>
+                        <li>Therefore, Chlorine (Cl<span class="sub">2</span>) will run out first.</li>
+                    </ul>
+                </div>
+                <div id="q8-answer" class="hidden-content answer">
+                    Limiting reactant: Cl<span class="sub">2</span>
+                </div>
+            </div>
+
+             <div id="part2-q9" class="tab-pane">
+                <p class="question-title">Question 9 (Exam-Style)</p>
+                <p>Zinc reacts with hydrochloric acid to produce hydrogen:</p>
+                <p class="equation">Zn + 2HCl → ZnCl<span class="sub">2</span> + H<span class="sub">2</span></p>
+                <p>If 65g of zinc (Mr = 65) reacts with 73g of HCl (Mr = 36.5), identify the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q9-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q9-answer')">Reveal Answer</button>
+                </div>
+                <div id="q9-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Zn: Moles = 65 / 65 = 1 mol.</li>
+                        <li>Calculate moles HCl: Moles = 73 / 36.5 = 2 mol.</li>
+                        <li>Determine required ratio: From equation, 1 mol Zn reacts with 2 mol HCl.</li>
+                        <li>Compare given mole ratio (1 Zn : 2 HCl) to equation ratio (1 Zn : 2 HCl).</li>
+                        <li>The ratios match exactly.</li>
+                    </ul>
+                </div>
+                <div id="q9-answer" class="hidden-content answer">
+                    No limiting reactant (perfect match)
+                </div>
+            </div>
+
+             <div id="part2-q10" class="tab-pane">
+                 <p class="question-title">Question 10 (Exam-Style)</p>
+                <p>Carbon reacts with oxygen to form carbon dioxide:</p>
+                <p class="equation">C + O<span class="sub">2</span> → CO<span class="sub">2</span></p>
+                <p>A student burns 24g of carbon (Mr = 12) with 64g of oxygen (Mr = 32). Determine the limiting reactant.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q10-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q10-answer')">Reveal Answer</button>
+                </div>
+                <div id="q10-steps" class="hidden-content steps">
+                     <ul>
+                        <li>Calculate moles C: Moles = 24 / 12 = 2 mol.</li>
+                        <li>Calculate moles O<span class="sub">2</span>: Moles = 64 / 32 = 2 mol.</li>
+                        <li>Determine required ratio: From equation, 1 mol C reacts with 1 mol O<span class="sub">2</span>.</li>
+                        <li>Compare given mole ratio (2 C : 2 O<span class="sub">2</span>, which simplifies to 1:1) to equation ratio (1 C : 1 O<span class="sub">2</span>).</li>
+                        <li>The ratios match exactly.</li>
+                     </ul>
+                </div>
+                <div id="q10-answer" class="hidden-content answer">
+                     No limiting reactant
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================= SECTION 3 ======================= -->
+    <section id="part3">
+        <h2>Part 3: Maximum Mass of Product Formed</h2>
+
+         <div class="question-block"> <!-- Worked Example -->
+            <p class="question-title">Worked Example 11</p>
+            <p>Potassium reacts with chlorine to form potassium chloride:</p>
+            <p class="equation">2K + Cl<span class="sub">2</span> → 2KCl</p>
+            <p>A student reacts 39g of potassium (Mr = 39) with 71g of chlorine (Mr = 71).</p>
+            <ul>
+                <li>Moles K = 39 / 39 = 1 mol</li>
+                <li>Moles Cl<span class="sub">2</span> = 71 / 71 = 1 mol</li>
+                <li>Identify limiting reactant:
+                    <ul>
+                        <li>Equation ratio: 2 mol K : 1 mol Cl<span class="sub">2</span></li>
+                        <li>Need for 1 mol K: (1 / 2) * 1 = 0.5 mol Cl<span class="sub">2</span>. Have 1 mol Cl<span class="sub">2</span> (excess).</li>
+                        <li>Need for 1 mol Cl<span class="sub">2</span>: (1 / 1) * 2 = 2 mol K. Have only 1 mol K (limiting).</li>
+                        <li>So, K is the limiting reactant.</li>
+                    </ul>
+                </li>
+                <li>Calculate product based on limiting reactant (K):
+                    <ul>
+                         <li>From ratio, 2 mol K produces 2 mol KCl.</li>
+                         <li>Therefore, 1 mol K produces 1 mol KCl.</li>
+                    </ul>
+                </li>
+                <li>Calculate mass of product:
+                    <ul>
+                        <li>Mr of KCl = 39 + 35.5 = 74.5 g/mol</li>
+                        <li>Mass KCl = moles * Mr = 1 mol * 74.5 g/mol = 74.5g</li>
+                    </ul>
+                </li>
+            </ul>
+             <p><strong>Answer:</strong> 74.5g of KCl is the maximum mass formed.</p>
+        </div>
+
+        <nav class="tabs">
+             <button class="tab-button active" onclick="showTab('part3', 'part3-q12', this)">Question 12</button>
+             <button class="tab-button" onclick="showTab('part3', 'part3-q13', this)">Question 13</button>
+             <button class="tab-button" onclick="showTab('part3', 'part3-q14', this)">Question 14</button>
+             <button class="tab-button" onclick="showTab('part3', 'part3-q15', this)">Question 15</button>
+         </nav>
+
+        <div class="tab-content">
+            <div id="part3-q12" class="tab-pane active">
+                <p class="question-title">Question 12 (Scaffolded)</p>
+                <p>Sodium reacts with sulfur:</p>
+                <p class="equation">2Na + S → Na<span class="sub">2</span>S</p>
+                <p>A chemist uses 46g of Na (Mr = 23) and 32g of S (Mr = 32).</p>
+                <ul>
+                    <li>Calculate the moles of each reactant</li>
+                    <li>Determine the limiting reactant</li>
+                    <li>Use the ratio to work out moles of Na<span class="sub">2</span>S produced</li>
+                    <li>Find the maximum mass of Na<span class="sub">2</span>S (Mr = 78)</li>
+                </ul>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q12-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q12-answer')">Reveal Answer</button>
+                </div>
+                <div id="q12-steps" class="hidden-content steps">
+                    <ul>
+                         <li>Calculate moles Na: Moles = 46 / 23 = 2 mol.</li>
+                         <li>Calculate moles S: Moles = 32 / 32 = 1 mol.</li>
+                         <li>Determine limiting reactant:
+                            <ul>
+                                <li>Equation ratio: 2 mol Na : 1 mol S.</li>
+                                <li>Given ratio: 2 mol Na : 1 mol S.</li>
+                                <li>The ratios match perfectly. Neither is limiting (or both are equally limiting). Following answer key: Limiting Reactant: Na.</li>
+                             </ul>
+                         </li>
+                          <li>Calculate moles Na<span class="sub">2</span>S produced (use limiting reactant Na):
+                            <ul>
+                                <li>From ratio, 2 mol Na produces 1 mol Na<span class="sub">2</span>S.</li>
+                                <li>So, 2 mol Na produces 1 mol Na<span class="sub">2</span>S.</li>
+                            </ul>
+                         </li>
+                         <li>Calculate max mass Na<span class="sub">2</span>S:
+                            <ul>
+                                <li>Mr(Na<span class="sub">2</span>S) = (2 * 23) + 32 = 78 g/mol.</li>
+                                <li>Mass = moles * Mr = 1 mol * 78 g/mol.</li>
+                            </ul>
+                         </li>
+                     </ul>
+                </div>
+                <div id="q12-answer" class="hidden-content answer">
+                     Maximum mass of Na<span class="sub">2</span>S = 78g
+                </div>
+            </div>
+
+             <div id="part3-q13" class="tab-pane">
+                <p class="question-title">Question 13 (Exam-Style)</p>
+                <p>Hydrogen reacts with oxygen to form water:</p>
+                <p class="equation">2H<span class="sub">2</span> + O<span class="sub">2</span> → 2H<span class="sub">2</span>O</p>
+                <p>If 4g of hydrogen (Mr = 2) and 32g of oxygen (Mr = 32) are used, calculate the maximum mass of water (Mr = 18) produced.</p>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q13-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q13-answer')">Reveal Answer</button>
+                </div>
+                <div id="q13-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles H<span class="sub">2</span>: Moles = 4 / 2 = 2 mol.</li>
+                        <li>Calculate moles O<span class="sub">2</span>: Moles = 32 / 32 = 1 mol.</li>
+                        <li>Determine limiting reactant:
+                            <ul>
+                                <li>Equation ratio: 2 mol H<span class="sub">2</span> : 1 mol O<span class="sub">2</span>.</li>
+                                <li>Given ratio: 2 mol H<span class="sub">2</span> : 1 mol O<span class="sub">2</span>.</li>
+                                <li>Perfect stoichiometric match. Neither is limiting.</li>
+                             </ul>
+                         </li>
+                         <li>Calculate moles H<span class="sub">2</span>O produced (can use either reactant):
+                            <ul>
+                                 <li>Using H<span class="sub">2</span>: 2 mol H<span class="sub">2</span> produces 2 mol H<span class="sub">2</span>O.</li>
+                                 <li>Using O<span class="sub">2</span>: 1 mol O<span class="sub">2</span> produces 2 mol H<span class="sub">2</span>O.</li>
+                                 <li>So, 2 mol H<span class="sub">2</span>O are produced.</li>
+                             </ul>
+                         </li>
+                          <li>Calculate max mass H<span class="sub">2</span>O:
+                            <ul>
+                                <li>Mr(H<span class="sub">2</span>O) = 18 g/mol.</li>
+                                <li>Mass = moles * Mr = 2 mol * 18 g/mol.</li>
+                            </ul>
+                         </li>
+                     </ul>
+                </div>
+                <div id="q13-answer" class="hidden-content answer">
+                    Maximum mass of H<span class="sub">2</span>O = 36g
+                </div>
+            </div>
+
+            <div id="part3-q14" class="tab-pane">
+                 <p class="question-title">Question 14 (Exam-Style)</p>
+                <p>Aluminium reacts with bromine to form aluminium bromide:</p>
+                <p class="equation">2Al + 3Br<span class="sub">2</span> → 2AlBr<span class="sub">3</span></p>
+                <p>Given 54g of aluminium (Mr = 27) and 240g of bromine (Mr(Br) = 80, Mr(Br<span class="sub">2</span>)=160), find the maximum mass of AlBr<span class="sub">3</span> (Mr = 267) that can form.</p>
+                 <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q14-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q14-answer')">Reveal Answer</button>
+                </div>
+                <div id="q14-steps" class="hidden-content steps">
+                     <ul>
+                         <li>Calculate moles Al: Moles = 54 / 27 = 2 mol.</li>
+                         <li>Calculate moles Br<span class="sub">2</span>: Moles = 240 / 160 = 1.5 mol. (Note: Answer key uses Mr=80, giving 3 mol. Steps below use correct Mr=160).</li>
+                         <li>Determine limiting reactant:
+                            <ul>
+                                <li>Equation ratio: 2 mol Al : 3 mol Br<span class="sub">2</span>.</li>
+                                <li>Need for 2 mol Al: (2 / 2) * 3 = 3 mol Br<span class="sub">2</span>. Have only 1.5 mol Br<span class="sub">2</span> (limiting).</li>
+                                <li>Need for 1.5 mol Br<span class="sub">2</span>: (1.5 / 3) * 2 = 1 mol Al. Have 2 mol Al (excess).</li>
+                                <li>Br<span class="sub">2</span> is limiting.</li>
+                             </ul>
+                         </li>
+                         <li>Calculate moles AlBr<span class="sub">3</span> produced (use limiting Br<span class="sub">2</span>):
+                            <ul>
+                                 <li>From ratio: 3 mol Br<span class="sub">2</span> produces 2 mol AlBr<span class="sub">3</span>.</li>
+                                 <li>So, 1.5 mol Br<span class="sub">2</span> produces (1.5 / 3) * 2 = 1 mol AlBr<span class="sub">3</span>.</li>
+                             </ul>
+                         </li>
+                          <li>Calculate max mass AlBr<span class="sub">3</span>:
+                            <ul>
+                                <li>Mr(AlBr<span class="sub">3</span>) = 267 g/mol.</li>
+                                <li>Mass = moles * Mr = 1 mol * 267 g/mol.</li>
+                            </ul>
+                         </li>
+                     </ul>
+                      <p class="error-note">Note: The provided answer key incorrectly uses Mr(Br)=80 for Br<span class="sub">2</span>, leading to 3 mol Br<span class="sub">2</span>, a perfect ratio, and a final answer of 534g. The steps above use the correct Mr(Br<span class="sub">2</span>)=160.</p>
+                </div>
+                <div id="q14-answer" class="hidden-content answer">
+                    Maximum mass of AlBr<span class="sub">3</span> = 267g (Using correct Mr for Br<span class="sub">2</span>)
+                    <br>(Answer based on flawed key: 534g)
+                </div>
+            </div>
+
+            <div id="part3-q15" class="tab-pane">
+                <p class="question-title">Question 15 (Exam-Style)</p>
+                <p>Calcium reacts with hydrochloric acid:</p>
+                <p class="equation">Ca + 2HCl → CaCl<span class="sub">2</span> + H<span class="sub">2</span></p>
+                <p>If a student uses 40g of Ca (Mr = 40) and 73g of HCl (Mr = 36.5), calculate the maximum mass of CaCl<span class="sub">2</span> (Mr = 111) that could be produced.</p>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q15-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q15-answer')">Reveal Answer</button>
+                </div>
+                <div id="q15-steps" class="hidden-content steps">
+                     <ul>
+                         <li>Calculate moles Ca: Moles = 40 / 40 = 1 mol.</li>
+                         <li>Calculate moles HCl: Moles = 73 / 36.5 = 2 mol.</li>
+                         <li>Determine limiting reactant:
+                            <ul>
+                                <li>Equation ratio: 1 mol Ca : 2 mol HCl.</li>
+                                <li>Given ratio: 1 mol Ca : 2 mol HCl.</li>
+                                <li>Perfect stoichiometric match. Neither is limiting.</li>
+                             </ul>
+                         </li>
+                         <li>Calculate moles CaCl<span class="sub">2</span> produced (can use either reactant):
+                            <ul>
+                                 <li>Using Ca: 1 mol Ca produces 1 mol CaCl<span class="sub">2</span>.</li>
+                                 <li>Using HCl: 2 mol HCl produces 1 mol CaCl<span class="sub">2</span>.</li>
+                                 <li>So, 1 mol CaCl<span class="sub">2</span> is produced.</li>
+                             </ul>
+                         </li>
+                          <li>Calculate max mass CaCl<span class="sub">2</span>:
+                            <ul>
+                                <li>Mr(CaCl<span class="sub">2</span>) = 111 g/mol.</li>
+                                <li>Mass = moles * Mr = 1 mol * 111 g/mol.</li>
+                            </ul>
+                         </li>
+                     </ul>
+                </div>
+                <div id="q15-answer" class="hidden-content answer">
+                     Maximum mass of CaCl<span class="sub">2</span> = 111g
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================= SECTION 4 ======================= -->
+     <section id="part4">
+        <h2>Part 4: Mass of Excess Reactant Remaining</h2>
+
+        <div class="question-block"> <!-- Worked Example -->
+            <p class="question-title">Worked Example 16</p>
+            <p>Hydrogen and oxygen react to form water:</p>
+             <p class="equation">2H<span class="sub">2</span> + O<span class="sub">2</span> → 2H<span class="sub">2</span>O</p>
+             <p>A student reacts 8g of H<span class="sub">2</span> (Mr = 2) and 48g of O<span class="sub">2</span> (Mr = 32).</p>
+             <ul>
+                 <li>Moles H<span class="sub">2</span> = 8 / 2 = 4 mol</li>
+                 <li>Moles O<span class="sub">2</span> = 48 / 32 = 1.5 mol</li>
+                 <li>Identify limiting reactant:
+                     <ul>
+                         <li>Equation ratio: 2 mol H<span class="sub">2</span> : 1 mol O<span class="sub">2</span></li>
+                         <li>Need for 4 mol H<span class="sub">2</span>: (4 / 2) * 1 = 2 mol O<span class="sub">2</span>. Have only 1.5 mol O<span class="sub">2</span> (limiting).</li>
+                         <li>Need for 1.5 mol O<span class="sub">2</span>: (1.5 / 1) * 2 = 3 mol H<span class="sub">2</span>. Have 4 mol H<span class="sub">2</span> (excess).</li>
+                         <li>O<span class="sub">2</span> is limiting, H<span class="sub">2</span> is in excess.</li>
+                     </ul>
+                 </li>
+                  <li>Calculate excess H<span class="sub">2</span>:
+                     <ul>
+                         <li>Moles H<span class="sub">2</span> used = 3 mol (calculated above, needed for 1.5 mol O<span class="sub">2</span>).</li>
+                         <li>Moles H<span class="sub">2</span> left over = Initial moles - Moles used = 4 mol - 3 mol = 1 mol.</li>
+                     </ul>
+                 </li>
+                  <li>Calculate mass of excess H<span class="sub">2</span>:
+                     <ul>
+                         <li>Mass = moles * Mr = 1 mol * 2 g/mol = 2g.</li>
+                     </ul>
+                 </li>
+             </ul>
+             <p><strong>Answer:</strong> 2g excess hydrogen left over.</p>
+        </div>
+
+         <nav class="tabs">
+             <button class="tab-button active" onclick="showTab('part4', 'part4-q17', this)">Question 17</button>
+             <button class="tab-button" onclick="showTab('part4', 'part4-q18', this)">Question 18</button>
+             <button class="tab-button" onclick="showTab('part4', 'part4-q19', this)">Question 19</button>
+             <button class="tab-button" onclick="showTab('part4', 'part4-q20', this)">Question 20</button>
+         </nav>
+
+         <div class="tab-content">
+             <div id="part4-q17" class="tab-pane active">
+                 <p class="question-title">Question 17 (Scaffolded)</p>
+                <p>Aluminium reacts with chlorine:</p>
+                <p class="equation">2Al + 3Cl<span class="sub">2</span> → 2AlCl<span class="sub">3</span></p>
+                <p>54g of Al (Mr = 27) and 213g of Cl<span class="sub">2</span> (Mr = 71) are used.</p>
+                <ul>
+                    <li>Calculate moles of each reactant</li>
+                    <li>Determine the limiting reactant</li>
+                    <li>Find how much of the excess reactant is needed</li>
+                    <li>Subtract from the original amount to find the number of moles left over</li>
+                    <li>Convert moles to mass for the excess reactant</li>
+                </ul>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q17-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q17-answer')">Reveal Answer</button>
+                </div>
+                <div id="q17-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Al: Moles = 54 / 27 = 2 mol.</li>
+                        <li>Calculate moles Cl<span class="sub">2</span>: Moles = 213 / 71 = 3 mol.</li>
+                        <li>Determine limiting reactant:
+                           <ul>
+                               <li>Equation ratio: 2 mol Al : 3 mol Cl<span class="sub">2</span>.</li>
+                               <li>Given ratio: 2 mol Al : 3 mol Cl<span class="sub">2</span>.</li>
+                               <li>Perfect stoichiometric match.</li>
+                           </ul>
+                        </li>
+                        <li>Calculate needed amount of 'excess' reactant: Since it's a perfect match, all of both reactants are needed and used up.</li>
+                        <li>Calculate moles left over: Moles left = Initial moles - Moles used = 2 mol Al - 2 mol Al = 0 mol Al. Also, 3 mol Cl<span class="sub">2</span> - 3 mol Cl<span class="sub">2</span> = 0 mol Cl<span class="sub">2</span>.</li>
+                        <li>Convert moles left to mass: Mass = 0 mol * Mr = 0g.</li>
+                    </ul>
+                </div>
+                <div id="q17-answer" class="hidden-content answer">
+                    No excess reactant → 0g excess
+                </div>
+            </div>
+
+            <div id="part4-q18" class="tab-pane">
+                 <p class="question-title">Question 18 (Exam-Style)</p>
+                <p>Magnesium reacts with oxygen:</p>
+                <p class="equation">2Mg + O<span class="sub">2</span> → 2MgO</p>
+                <p>A reaction uses 60g of Mg (Mr = 24) and 64g of O<span class="sub">2</span> (Mr = 32). Calculate the mass of excess reactant remaining after the reaction.</p>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q18-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q18-answer')">Reveal Answer</button>
+                </div>
+                <div id="q18-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Mg: Moles = 60 / 24 = 2.5 mol.</li>
+                        <li>Calculate moles O<span class="sub">2</span>: Moles = 64 / 32 = 2 mol.</li>
+                        <li>Determine limiting reactant:
+                           <ul>
+                               <li>Equation ratio: 2 mol Mg : 1 mol O<span class="sub">2</span>.</li>
+                               <li>Need for 2.5 mol Mg: (2.5 / 2) * 1 = 1.25 mol O<span class="sub">2</span>. Have 2 mol O<span class="sub">2</span> (excess).</li>
+                               <li>Need for 2 mol O<span class="sub">2</span>: (2 / 1) * 2 = 4 mol Mg. Have only 2.5 mol Mg (limiting).</li>
+                               <li>Mg is limiting, O<span class="sub">2</span> is in excess.</li>
+                           </ul>
+                        </li>
+                         <li>Calculate moles O<span class="sub">2</span> used (reacts with limiting Mg):
+                             <ul>
+                                 <li>Moles O<span class="sub">2</span> used = 1.25 mol (calculated above).</li>
+                             </ul>
+                         </li>
+                         <li>Calculate moles O<span class="sub">2</span> left over:
+                             <ul>
+                                 <li>Moles O<span class="sub">2</span> left = Initial moles - Moles used = 2 mol - 1.25 mol = 0.75 mol.</li>
+                             </ul>
+                         </li>
+                          <li>Convert excess moles to mass:
+                             <ul>
+                                 <li>Mass O<span class="sub">2</span> left = moles * Mr = 0.75 mol * 32 g/mol = 24g.</li>
+                             </ul>
+                         </li>
+                    </ul>
+                </div>
+                <div id="q18-answer" class="hidden-content answer">
+                    Mass of excess O<span class="sub">2</span> = 24g
+                </div>
+            </div>
+
+            <div id="part4-q19" class="tab-pane">
+                 <p class="question-title">Question 19 (Exam-Style)</p>
+                <p>Zinc reacts with hydrochloric acid:</p>
+                <p class="equation">Zn + 2HCl → ZnCl<span class="sub">2</span> + H<span class="sub">2</span></p>
+                <p>130g of zinc (Mr = 65) and 146g of HCl (Mr = 36.5) are used. Find the mass of excess reactant remaining.</p>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q19-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q19-answer')">Reveal Answer</button>
+                </div>
+                <div id="q19-steps" class="hidden-content steps">
+                    <ul>
+                        <li>Calculate moles Zn: Moles = 130 / 65 = 2 mol.</li>
+                        <li>Calculate moles HCl: Moles = 146 / 36.5 = 4 mol.</li>
+                         <li>Determine limiting reactant:
+                           <ul>
+                               <li>Equation ratio: 1 mol Zn : 2 mol HCl.</li>
+                               <li>Given ratio: 2 mol Zn : 4 mol HCl (simplifies to 1:2).</li>
+                               <li>Perfect stoichiometric match.</li>
+                           </ul>
+                        </li>
+                         <li>Calculate excess: Since it's a perfect match, there is no excess reactant. All reactants are used up.</li>
+                         <li>Mass of excess = 0g.</li>
+                     </ul>
+                </div>
+                <div id="q19-answer" class="hidden-content answer">
+                    No excess reactant → 0g excess
+                </div>
+            </div>
+
+             <div id="part4-q20" class="tab-pane">
+                 <p class="question-title">Question 20 (Exam-Style)</p>
+                <p>Potassium reacts with bromine:</p>
+                <p class="equation">2K + Br<span class="sub">2</span> → 2KBr</p>
+                <p>78g of K (Mr = 39) and 160g of Br<span class="sub">2</span> (Mr(Br) = 80, Mr(Br<span class="sub">2</span>)=160) are reacted. Determine the mass of the excess reactant left unreacted.</p>
+                <div class="reveal-button-group">
+                    <button class="reveal-btn reveal-btn-steps" onclick="toggleVisibility('q20-steps')">Reveal Steps</button>
+                    <button class="reveal-btn reveal-btn-answer" onclick="toggleVisibility('q20-answer')">Reveal Answer</button>
+                </div>
+                <div id="q20-steps" class="hidden-content steps">
+                     <ul>
+                        <li>Calculate moles K: Moles = 78 / 39 = 2 mol.</li>
+                        <li>Calculate moles Br<span class="sub">2</span>: Moles = 160 / 160 = 1 mol. (Note: Answer key uses Mr=80, giving 2 mol. Steps below use correct Mr=160).</li>
+                         <li>Determine limiting reactant:
+                           <ul>
+                               <li>Equation ratio: 2 mol K : 1 mol Br<span class="sub">2</span>.</li>
+                               <li>Given ratio: 2 mol K : 1 mol Br<span class="sub">2</span>.</li>
+                               <li>Perfect stoichiometric match.</li>
+                            </ul>
+                        </li>
+                         <li>Calculate excess: Since it's a perfect match, there is no excess reactant. All reactants are used up.</li>
+                         <li>Mass of excess = 0g.</li>
+                     </ul>
+                      <p class="error-note">Note: The provided answer key incorrectly uses Mr(Br)=80 for Br<span class="sub">2</span>, leading to 2 mol Br<span class="sub">2</span>, making K limiting, and resulting in 1 mol (80g) of excess Br<span class="sub">2</span>. The steps above use the correct Mr(Br<span class="sub">2</span>)=160.</p>
+                </div>
+                <div id="q20-answer" class="hidden-content answer">
+                    No excess reactant → 0g excess (Using correct Mr for Br<span class="sub">2</span>)
+                     <br>(Answer based on flawed key: 80g Br<span class="sub">2</span> left)
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+</div><!-- /container -->
+
+<script>
+    function showTab(sectionId, tabId, buttonElement) {
+        // Get the container for the specific section
+        const sectionElement = document.getElementById(sectionId);
+
+        // Hide all tab panes in this section
+        const tabPanes = sectionElement.querySelectorAll('.tab-pane');
+        tabPanes.forEach(pane => {
+            pane.classList.remove('active');
+            pane.style.display = 'none'; // Ensure it's hidden
+        });
+
+        // Deactivate all tab buttons in this section
+        const tabButtons = sectionElement.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.classList.remove('active');
+        });
+
+        // Show the target tab pane
+        const targetPane = document.getElementById(tabId);
+        if (targetPane) {
+             targetPane.style.display = 'block'; // Make visible first
+             // Use a tiny timeout to allow the display change to register before adding class for potential transitions
+             setTimeout(() => {
+                 targetPane.classList.add('active');
+             }, 10);
+        }
+
+        // Activate the clicked button
+        if (buttonElement) {
+            buttonElement.classList.add('active');
+        }
+    }
+
+    function toggleVisibility(id) {
+        var element = document.getElementById(id);
+        if (element) {
+             if (element.style.display === 'none' || element.style.display === '') {
+                element.style.display = 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize the first tab in each section on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('section').forEach(section => {
+            const firstButton = section.querySelector('.tab-button');
+            if (firstButton) {
+                firstButton.click(); // Simulate a click on the first button
+            }
+             // Ensure worked examples are visible if outside tabs
+            section.querySelectorAll('.question-block').forEach(wb => wb.style.display = 'block');
+        });
+    });
+
+</script>
+
+</body>
+</html>
