@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>OCR A-Level Chemistry Diagnostic Quiz</title>
+
+<!-- ────────── MAIN STYLES ────────── -->
+<style>
+  /* ---------- Base ---------- */
+  :root{
+    --primary1:#6d8cff;
+    --primary2:#9b6dff;
+    --card-bg:rgba(255,255,255,0.75);
+    --glass:blur(12px) saturate(180%);
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    padding:0;
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(135deg,var(--primary1) 0%,var(--primary2) 100%);
+    min-height:100vh;
+  }
+  #app{max-width:960px;margin:0 auto;padding:40px 20px;}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--card-bg);
+    backdrop-filter:var(--glass);
+    border:1px solid rgba(255,255,255,0.35);
+    border-radius:14px;
+    box-shadow:0 8px 22px rgba(0,0,0,.15);
+    padding:30px;
+    margin-bottom:28px;
+    transition:transform .25s ease;
+  }
+  .card:hover{transform:translateY(-2px)}
+
+  /* ---------- Typography & Lists ---------- */
+  h1,h2{margin-top:0;color:#222}
+  h1{font-weight:600;font-size:1.9rem}
+  h2{font-weight:600;font-size:1.35rem}
+  p,li,label{font-size:1rem;color:#333;line-height:1.4}
+  ul{padding-left:22px;margin-top:6px}
+  ul.missed{font-size:.9rem}
+
+  /* ---------- Buttons & Inputs ---------- */
+button,
+input[type=text]{
+  font-size:1rem;
+  border-radius:6px;
+  border:1px solid rgba(0,0,0,.35);
+  padding:10px 18px;
+  outline:none;
+}
+button{
+  background:#fff;
+  cursor:pointer;
+  transition:background .2s;
+}
+button:hover:not(:disabled){background:#f2f2f2}
+button:disabled{opacity:.45;cursor:not-allowed}
+#name-field{width:280px;margin-right:10px}
+
+/* ---------- Answer options ---------- */
+#options-form label{
+  display:block;      /* each option shows on its own line */
+  margin:8px 0;
+  cursor:pointer;
+  line-height:1.4;
+}
+#options-form input[type="radio"]{
+  margin-right:6px;   /* small gap between bullet and text */
+}
+
+  /* ---------- Feedback ---------- */
+  .feedback{
+    margin-top:16px;
+    padding:16px;
+    border-radius:8px;
+    border:1px solid rgba(0,0,0,.15);
+    background:rgba(0,0,0,.04);
+  }
+  .correct{color:#077407;font-weight:600}
+  .summary-pass{color:#077407;font-weight:600}
+  .summary-work{color:#c20606;font-weight:600}
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff}
+    #start-screen,#quiz-screen #next-btn,#quiz-screen #submit-btn,#print-btn,#restart-btn{display:none!important}
+    .card{box-shadow:none;border:none;background:#fff}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ─────────────── START ─────────────── -->
+  <div id="start-screen" class="card">
+    <h1>Shapes & Intermolecular Forces<br>Diagnostic Quiz</h1>
+    <p>Enter your name, then click <em>Start&nbsp;Quiz</em>. You’ll answer 40 multiple-choice questions covering:</p>
+    <ul>
+      <li>Shapes &amp; Bond Angles</li>
+      <li>Electronegativity &amp; Polarity</li>
+      <li>Intermolecular Forces</li>
+      <li>Structures &amp; Physical Properties</li>
+    </ul>
+
+    <div style="margin-top:18px;margin-bottom:20px;">
+      <input id="name-field" type="text" placeholder="Your name…" />
+      <button id="start-btn" disabled>Start Quiz</button>
+    </div>
+    <small style="color:#555;">(Your name will appear on the printable results page.)</small>
+  </div>
+
+  <!-- ─────────────── QUIZ ─────────────── -->
+  <div id="quiz-screen" class="card" style="display:none;">
+    <h2 id="question-number"></h2>
+    <p id="question-text"></p>
+    <form id="options-form"></form>
+    <div style="margin-top:18px;">
+      <button id="submit-btn">Submit</button>
+      <button id="next-btn" style="display:none;margin-left:12px;">Next Question</button>
+    </div>
+    <div id="feedback" class="feedback" style="display:none;"></div>
+  </div>
+
+  <!-- ─────────────── RESULTS ─────────────── -->
+  <div id="result-screen" class="card" style="display:none;">
+    <h2>Diagnostic Analysis – Shapes & Intermolecular Forces</h2>
+    <p id="student-line" style="font-weight:600"></p>
+    <p id="score"></p>
+    <div id="diagnostic"></div>
+    <div style="margin-top:20px;">
+      <button id="print-btn">Print / Save PDF</button>
+      <button id="restart-btn" style="margin-left:12px;">Retake Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ────────── JAVASCRIPT LOGIC ────────── -->
+<script>
+/* -------------------------------------------------------------------- */
+/*  FULL QUESTION DATA  (only first few shown here to save space)       */
+/*  Use the same 40-object array from the previous version!             */
+/* -------------------------------------------------------------------- */
+const questions = [
+ /* SECTION 1 – SHAPES & BOND ANGLES (1-10) */
+ {id:1,concept:"Shapes & Bond Angles",note:"Counts regions incorrectly; mis-matches shape to pairs.",question:"What is the shape and bond angle of methane (CH₄)?",options:[{text:"Trigonal planar, 120°",correct:false,prompt:"Check the number of bonding pairs – only 3 gives trigonal planar."},{text:"Tetrahedral, 109.5°",correct:true,prompt:""},{text:"Pyramidal, 107°",correct:false,prompt:"That shape fits 3 bp + 1 lp (e.g. NH₃)."},
+ {text:"Linear, 180°",correct:false,prompt:"Linear needs exactly 2 bonding pairs."}],explanation:"CH₄ has four bonding pairs and no lone pairs, so it is tetrahedral (109.5 °)."},
+ {id:2,concept:"Shapes & Bond Angles",note:"Ignores lone-pair repulsion.",question:"Which molecule is bent because it contains two bonding pairs and two lone pairs?",options:[{text:"BeCl₂",correct:false,prompt:"BeCl₂ is linear – only two electron regions."},{text:"CO₂",correct:false,prompt:"CO₂ is linear – no lone pairs on carbon."},{text:"H₂O",correct:true,prompt:""},{text:"BF₃",correct:false,prompt:"BF₃ is trigonal planar (3 bonding pairs)."}],explanation:"Water has 2 bonding pairs and 2 lone pairs, giving a bent shape (~104.5 °)."},
+ {id:3,concept:"Shapes & Bond Angles",note:"Forgets that NH₄⁺ has no lone pair.",question:"What is the shape of the ammonium ion, NH₄⁺?",options:[{text:"Pyramidal",correct:false,prompt:"That describes NH₃, which has a lone pair."},{text:"Tetrahedral",correct:true,prompt:""},{text:"Trigonal planar",correct:false,prompt:"Needs only 3 regions."},{text:"Square planar",correct:false,prompt:"Needs 4 bp and 2 lp."}],explanation:"NH₄⁺ has four bonding pairs and no lone pairs → tetrahedral (109.5 °)."},
+ {id:4,concept:"Shapes & Bond Angles",note:"Thinks angle compression is due to size/distance not repulsion.",question:"Why do lone pairs compress bond angles more than bonding pairs?",options:[{text:"Lone pairs are smaller.",correct:false,prompt:"Focus on repulsion strength, not size."},{text:"Lone pairs are further from the nucleus.",correct:false,prompt:"They are actually held slightly closer."},{text:"Lone-pair regions occupy more space and repel more strongly.",correct:true,prompt:""},{text:"Bonding pairs are more negative.",correct:false,prompt:"All electrons have the same charge."}],explanation:"Non-shared electron density spreads out more and repels bonding pairs strongly, reducing the angle."},
+ {id:5,concept:"Shapes & Bond Angles",note:"Doesn’t recognise 6-coordinate octahedral examples.",question:"Which of these species is octahedral?",options:[{text:"SF₆",correct:true,prompt:""},{text:"CH₄",correct:false,prompt:"Four bonding pairs give tetrahedral."},{text:"NH₃",correct:false,prompt:"Three bonding pairs + lone pair → pyramidal."},{text:"H₂O",correct:false,prompt:"Bent."}],explanation:"SF₆ has six bonding pairs and no lone pairs – classic octahedral (90 °)."},
+ {id:6,concept:"Shapes & Bond Angles",note:"Treats double bonds as separate regions.",question:"What is the shape and bond angle of carbon dioxide (CO₂)?",options:[{text:"Linear, 180°",correct:true,prompt:""},{text:"Bent, 104.5°",correct:false,prompt:"Bent shapes need lone pairs."},{text:"Trigonal planar, 120°",correct:false,prompt:"Would need three electron regions."},{text:"Tetrahedral, 109.5°",correct:false,prompt:"Requires four regions."}],explanation:"CO₂ has two electron-density regions (two double bonds) – linear (180 °)."},
+ {id:7,concept:"Shapes & Bond Angles",note:"Cannot link 3 bp + 1 lp to pyramidal geometry.",question:"Which molecule contains three bonding pairs and one lone pair on the central atom?",options:[{text:"CH₄",correct:false,prompt:"Four bonding pairs; no lone pairs."},{text:"NH₃",correct:true,prompt:""},{text:"H₂O",correct:false,prompt:"Two bonding, two lone."},{text:"CO₂",correct:false,prompt:"Carbon has no lone pairs."}],explanation:"NH₃ has 3 bp & 1 lp → pyramidal (~107 °)."},
+ {id:8,concept:"Shapes & Bond Angles",note:"Thinks tetrahedral has 90° angles.",question:"Which shape has 90 ° between every bond pair?",options:[{text:"Tetrahedral",correct:false,prompt:"Tetrahedral angles are 109.5 °."},{text:"Octahedral",correct:true,prompt:""},{text:"Pyramidal",correct:false,prompt:"Lone-pair distortion alters angles."},{text:"Trigonal bipyramidal",correct:false,prompt:"Has 90 ° *and* 120 ° angles."}],explanation:"Only octahedral geometries (e.g. SF₆) have all bond angles at 90 °."},
+ {id:9,concept:"Shapes & Bond Angles",note:"Defaults to tetrahedral – doesn’t count bonding regions.",question:"Which molecule has trigonal planar geometry around its central atom?",options:[{text:"CO₂",correct:false,prompt:"Linear."},{text:"BF₃",correct:true,prompt:""},{text:"CH₄",correct:false,prompt:"Tetrahedral (4 regions)."},
+ {text:"NH₃",correct:false,prompt:"Pyramidal (lone pair present)."}],explanation:"BF₃ has 3 bonding regions and no lone pairs – trigonal planar (120 °)."},
+ {id:10,concept:"Shapes & Bond Angles",note:"Hasn’t seen see-saw shape from 5 regions.",question:"What is the molecular shape of sulfur tetrafluoride (SF₄)?",options:[{text:"Tetrahedral",correct:false,prompt:"That needs 0 lone pairs."},{text:"See-saw",correct:true,prompt:""},{text:"Square planar",correct:false,prompt:"Needs 2 lone pairs."},{text:"Trigonal planar",correct:false,prompt:"Needs exactly 3 bonding pairs."}],explanation:"SF₄ has 5 electron-density regions (4 bp + 1 lp) → see-saw."},
+
+ /* SECTION 2 – ELECTRONEGATIVITY & POLARITY (11-20) */
+ {id:11,concept:"Electronegativity & Polarity",note:"Confuses electronegativity with EA/IE.",question:"What is meant by ‘electronegativity’?",options:[{text:"Energy released when an atom gains an electron",correct:false,prompt:"That is electron affinity."},{text:"Attraction of an atom for the bonding pair of electrons in a covalent bond",correct:true,prompt:""},{text:"Ability of an atom to lose electrons",correct:false,prompt:"That is ionisation energy."},{text:"Total number of electrons in an atom",correct:false,prompt:"Electronegativity is a trend, not a count."}],explanation:"Electronegativity measures how strongly an atom attracts shared electrons."},
+ {id:12,concept:"Electronegativity & Polarity",note:"Chooses biggest atoms, not largest χ difference.",question:"Which of these bonds is the most polar?",options:[{text:"C–H",correct:false,prompt:"Small χ difference."},{text:"O–H",correct:true,prompt:""},{text:"Cl–Br",correct:false,prompt:"Halogens have similar χ values."},{text:"N–O",correct:false,prompt:"Smaller difference than O–H."}],explanation:"O and H have the greatest electronegativity difference."},
+ {id:13,concept:"Electronegativity & Polarity",note:"Doesn’t understand dipole cancellation.",question:"Which molecule has polar bonds but is non-polar overall?",options:[{text:"HCl",correct:false,prompt:"Single polar bond – molecule is polar."},{text:"NH₃",correct:false,prompt:"Pyramidal shape is asymmetrical."},{text:"CO₂",correct:true,prompt:""},{text:"H₂O",correct:false,prompt:"Bent shape – polar."}],explanation:"Linear CO₂ – the two bond dipoles cancel."},
+ {id:14,concept:"Electronegativity & Polarity",note:"Thinks lone pairs mandatory for polarity.",question:"Which is NOT required for a molecule to be polar?",options:[{text:"At least one polar bond",correct:false,prompt:"Needed for polarity."},{text:"An asymmetrical shape",correct:false,prompt:"Symmetry determines cancellation."},{text:"A non-zero dipole moment",correct:false,prompt:"That *defines* polarity."},{text:"Lone pairs on the central atom",correct:true,prompt:""}],explanation:"E.g. HCl is polar with no lone pair on Cl – lone pairs are optional."},
+ {id:15,concept:"Electronegativity & Polarity",note:"Attributes polarity to hydrogen bonding instead of the reverse.",question:"Why is water a polar molecule?",options:[{text:"It has two hydrogen atoms",correct:false,prompt:"Atom count is irrelevant."},{text:"It has polar O–H bonds and a bent shape",correct:true,prompt:""},{text:"It forms hydrogen bonds",correct:false,prompt:"Hydrogen bonding is a *consequence* of polarity."},{text:"It contains ions",correct:false,prompt:"Water is molecular, not ionic."}],explanation:"Bent geometry + polar O–H bonds give an overall dipole."},
+ {id:16,concept:"Electronegativity & Polarity",note:"Thinks all tetrahedral molecules are polar.",question:"In which molecule do bond dipoles cancel out?",options:[{text:"NH₃",correct:false,prompt:"Pyramidal – dipoles don’t cancel."},{text:"H₂O",correct:false,prompt:"Bent – dipoles don’t cancel."},{text:"CCl₄",correct:true,prompt:""},{text:"CH₃Cl",correct:false,prompt:"Asymmetrical tetrahedral – polar."}],explanation:"CCl₄ is symmetric tetrahedral: four identical dipoles cancel."},
+ {id:17,concept:"Electronegativity & Polarity",note:"Ignores shape in deciding polarity.",question:"Which factor(s) determine whether a molecule has a permanent dipole?",options:[{text:"Presence of lone pairs only",correct:false,prompt:"Need polar bonds too."},{text:"Polar bonds *and* molecular shape",correct:true,prompt:""},{text:"Just bond polarity",correct:false,prompt:"Dipoles may still cancel."},{text:"Atomic number of the central atom",correct:false,prompt:"Irrelevant to polarity."}],explanation:"Both polar bonds and an asymmetrical shape are required."},
+ {id:18,concept:"Electronegativity & Polarity",note:"Forgets that C–H bonds are only weakly polar and symmetrical.",question:"Which molecule contains a polar bond but is non-polar overall?",options:[{text:"CH₄",correct:true,prompt:""},{text:"NH₃",correct:false,prompt:"Pyramidal geometry gives a dipole."},{text:"HCl",correct:false,prompt:"Single polar bond – polar molecule."},{text:"H₂O",correct:false,prompt:"Bent – polar."}],explanation:"CH₄ is symmetric; any weak C–H dipoles cancel."},
+ {id:19,concept:"Electronegativity & Polarity",note:"Thinks symmetry cancels dipole in diatomics.",question:"Why does CO have a dipole even though it is linear?",options:[{text:"C and O have similar electronegativities",correct:false,prompt:"They actually differ greatly."},{text:"Oxygen is more electronegative than carbon",correct:true,prompt:""},{text:"It contains a lone pair on oxygen",correct:false,prompt:"Dipole arises from bond polarity, not the lone pair."},{text:"The molecule is non-linear",correct:false,prompt:"CO is linear."}],explanation:"Large electronegativity difference in the C≡O bond produces a dipole."},
+ {id:20,concept:"Electronegativity & Polarity",note:"Still missing linear cancellation idea.",question:"Which molecule is non-polar despite having polar bonds?",options:[{text:"SO₂",correct:false,prompt:"Bent – polar."},{text:"HCl",correct:false,prompt:"Single polar bond."},{text:"CO₂",correct:true,prompt:""},{text:"H₂O",correct:false,prompt:"Bent – polar."}],explanation:"Linear CO₂ has two identical polar bonds whose dipoles cancel."},
+
+ /* SECTION 3 – INTERMOLECULAR FORCES (21-30) */
+ {id:21,concept:"Intermolecular Forces",note:"Confuses intra- with intermolecular forces.",question:"What is the weakest type of intermolecular force?",options:[{text:"Covalent bond",correct:false,prompt:"Covalent = *intra*molecular."},{text:"Permanent dipole–dipole interaction",correct:false,prompt:"Stronger than London forces."},{text:"Hydrogen bond",correct:false,prompt:"Strongest of the three."},{text:"London (dispersion) force",correct:true,prompt:""}],explanation:"London forces (induced dipole-dipole) are the weakest intermolecular forces."},
+ {id:22,concept:"Intermolecular Forces",note:"Misses N/O/F requirement for H-bonding.",question:"Which molecule can form hydrogen bonds between its molecules?",options:[{text:"CH₄",correct:false,prompt:"No electronegative atom bonded to H."},{text:"NH₃",correct:true,prompt:""},{text:"CO₂",correct:false,prompt:"No suitable H donors."},{text:"HCl",correct:false,prompt:"H–Cl cannot hydrogen-bond."}],explanation:"NH₃ has hydrogen directly bonded to nitrogen → hydrogen bonding."},
+ {id:23,concept:"Intermolecular Forces",note:"Doesn’t know origin of London forces.",question:"What causes London forces between non-polar molecules like I₂?",options:[{text:"Attraction between positive and negative ions",correct:false,prompt:"I₂ molecules have no ions."},{text:"Instantaneous and induced dipoles",correct:true,prompt:""},{text:"Hydrogen bonding",correct:false,prompt:"Requires H–N/O/F."},{text:"Permanent dipoles",correct:false,prompt:"I₂ is non-polar."}],explanation:"Fluctuations in electron density create temporary dipoles that induce dipoles in neighbours – London forces."},
+ {id:24,concept:"Intermolecular Forces",note:"Focuses on mass not IMF type.",question:"Why does H₂O have a higher boiling point than H₂S?",options:[{text:"Water is heavier",correct:false,prompt:"Mass isn’t the main factor here."},{text:"H₂O forms hydrogen bonds, whereas H₂S has only dipole–dipole forces",correct:true,prompt:""},{text:"H₂O has stronger covalent bonds",correct:false,prompt:"Boiling breaks intermolecular forces, not covalent bonds."},{text:"H₂S has fewer electrons",correct:false,prompt:"Electron count chiefly influences London forces; H-bonding dominates here."}],explanation:"Hydrogen bonds are much stronger than the permanent dipole–dipole forces in H₂S, so more energy is needed to vaporise water."},
+ {id:25,concept:"Intermolecular Forces",note:"Assumes any polarity yields hydrogen bonding.",question:"Which of the following molecules experiences *only* London forces?",options:[{text:"CH₄",correct:true,prompt:""},{text:"HCl",correct:false,prompt:"It has a permanent dipole."},{text:"NH₃",correct:false,prompt:"Forms hydrogen bonds."},{text:"H₂O",correct:false,prompt:"Forms hydrogen bonds."}],explanation:"Methane is non-polar and lacks H-bond donors, so London forces are the only intermolecular attraction."},
+ {id:26,concept:"Intermolecular Forces",note:"Overlooks size effect on London forces.",question:"Why is iodine (I₂) a solid at room temperature despite having only London forces?",options:[{text:"It forms a giant covalent lattice",correct:false,prompt:"I₂ is molecular, not a network solid."},{text:"It forms hydrogen bonds",correct:false,prompt:"No H atoms present."},{text:"It has a large electron cloud, producing strong London forces",correct:true,prompt:""},{text:"It is ionic",correct:false,prompt:"No ions in I₂."}],explanation:"Many electrons give I₂ very polarisable clouds → strong London forces → solid lattice."},
+ {id:27,concept:"Intermolecular Forces",note:"Incorrect ranking of IMF strengths.",question:"Rank the intermolecular forces from weakest to strongest.",options:[{text:"Hydrogen bond < London < Permanent dipole",correct:false,prompt:"Hydrogen bonds are strongest, not weakest."},{text:"London < Permanent dipole < Hydrogen bond",correct:true,prompt:""},{text:"Permanent dipole < London < Hydrogen bond",correct:false,prompt:"London forces are always weaker than permanent dipoles."},{text:"London < Hydrogen bond < Permanent dipole",correct:false,prompt:"Permanent dipoles are weaker than hydrogen bonds."}],explanation:"Trend of increasing strength: London < permanent dipole–dipole < hydrogen bonding."},
+ {id:28,concept:"Intermolecular Forces",note:"Thinks density difference due to trapped air, not structure.",question:"Why is ice less dense than liquid water?",options:[{text:"Covalent bonds push water molecules apart",correct:false,prompt:"Covalent bonds are within molecules."},{text:"Hydrogen bonds hold molecules in an open lattice",correct:true,prompt:""},{text:"More air is trapped in ice",correct:false,prompt:"Density difference is structural."},{text:"London forces are stronger in ice",correct:false,prompt:"London forces are weak and not the cause."}],explanation:"Hydrogen-bonded hexagonal lattice in ice contains large spaces, lowering density."},
+ {id:29,concept:"Intermolecular Forces",note:"Thinks size drives solubility.",question:"Why is ethanol miscible with water?",options:[{text:"Similar molar mass",correct:false,prompt:"Mass is not decisive."},{text:"Ethanol can form hydrogen bonds with water",correct:true,prompt:""},{text:"Ethanol is non-polar",correct:false,prompt:"It is actually polar."},{text:"Both are ionic",correct:false,prompt:"Neither is ionic."}],explanation:"The –OH group in ethanol hydrogen bonds extensively with water."},
+ {id:30,concept:"Intermolecular Forces",note:"Misses that H-bond implies permanent dipole as well.",question:"Which intermolecular forces operate between HF molecules?",options:[{text:"Only London forces",correct:false,prompt:"HF is highly polar and hydrogen-bonding."},{text:"Hydrogen bonding and permanent dipole–dipole forces",correct:true,prompt:""},{text:"Ionic bonds",correct:false,prompt:"No ions between HF molecules."},{text:"Only permanent dipole–dipole forces",correct:false,prompt:"Hydrogen bonding also present."}],explanation:"HF meets the criteria for hydrogen bonding; permanent dipole interactions and universal London forces are also present."},
+
+ /* SECTION 4 – STRUCTURES & PHYSICAL PROPERTIES (31-40) */
+ {id:31,concept:"Structures & Physical Properties",note:"Mis-classifies iodine’s lattice type.",question:"What type of solid structure does iodine (I₂) form at room temperature?",options:[{text:"Giant ionic lattice",correct:false,prompt:"No ions present."},{text:"Giant covalent lattice",correct:false,prompt:"I₂ consists of discrete molecules."},{text:"Simple molecular lattice",correct:true,prompt:""},{text:"Metallic lattice",correct:false,prompt:"Iodine is not metallic."}],explanation:"Solid iodine is a simple molecular lattice held together by London forces."},
+ {id:32,concept:"Structures & Physical Properties",note:"Thinks non-polar molecules form dipole forces.",question:"Main intermolecular force between iodine molecules in solid I₂?",options:[{text:"Hydrogen bonding",correct:false,prompt:"No H–N/O/F present."},{text:"London (dispersion) forces",correct:true,prompt:""},{text:"Permanent dipole–dipole forces",correct:false,prompt:"Non-polar molecules lack permanent dipoles."},{text:"Ionic bonding",correct:false,prompt:"No ions present."}],explanation:"Non-polar I₂ molecules interact via instantaneous-induced dipole (London) forces."},
+ {id:33,concept:"Structures & Physical Properties",note:"Confuses bond breaking with IMF overcoming.",question:"Why do simple molecular substances like I₂ have low melting and boiling points?",options:[{text:"Weak intermolecular forces that need little energy to overcome",correct:true,prompt:""},{text:"Weak covalent bonds",correct:false,prompt:"Covalent bonds are strong; they’re not broken when I₂ melts."},{text:"They are highly polar",correct:false,prompt:"I₂ is non-polar."},{text:"They conduct electricity",correct:false,prompt:"Conductivity is unrelated to melting point."}],explanation:"Only weak London forces need to be overcome, so little energy is required."},
+ {id:34,concept:"Structures & Physical Properties",note:"Doesn’t link ionic mobility to conductivity.",question:"Which substance is most likely to conduct electricity when molten?",options:[{text:"Iodine",correct:false,prompt:"Neutral molecules – no mobile charge carriers."},{text:"Diamond",correct:false,prompt:"No delocalised electrons."},{text:"Magnesium chloride",correct:true,prompt:""},{text:"Ice",correct:false,prompt:"Molten water molecules are neutral."}],explanation:"Molten MgCl₂ contains mobile Mg²⁺ and Cl⁻ ions which carry charge."},
+ {id:35,concept:"Structures & Physical Properties",note:"Attributes ice density to ions/air, not hydrogen bonds.",question:"Why is ice less dense than water?",options:[{text:"Hydrogen bonds create an open lattice",correct:true,prompt:""},{text:"Ice contains ionic bonds",correct:false,prompt:"Water is molecular."},{text:"Ice has a giant covalent structure",correct:false,prompt:"It is simple molecular."},{text:"Van der Waals forces dominate in ice",correct:false,prompt:"Hydrogen bonding is dominant."}],explanation:"Hydrogen bonding locks water molecules into a spacious hexagonal lattice."},
+ {id:36,concept:"Structures & Physical Properties",note:"Thinks IMF determine diamond’s melting point.",question:"Why does diamond have a very high melting point, unlike I₂ or CO₂?",options:[{text:"It has strong intermolecular forces",correct:false,prompt:"Diamond is a single covalent network; no IMFs exist between molecules."},{text:"It has a giant covalent structure",correct:true,prompt:""},{text:"It contains metal atoms",correct:false,prompt:"Diamond is pure carbon."},{text:"It forms hydrogen bonds",correct:false,prompt:"No hydrogen present."}],explanation:"Breaking an extensive C–C covalent network requires a great deal of energy."},
+ {id:37,concept:"Structures & Physical Properties",note:"Doesn’t apply ‘like dissolves like’.",question:"Which compound is most likely to dissolve well in water?",options:[{text:"CH₄",correct:false,prompt:"Non-polar, poorly soluble."},{text:"CCl₄",correct:false,prompt:"Non-polar."},{text:"NH₃",correct:true,prompt:""},{text:"I₂",correct:false,prompt:"Non-polar solid."}],explanation:"NH₃ is polar and hydrogen-bonds with water, so it is highly soluble."},
+ {id:38,concept:"Structures & Physical Properties",note:"Thinks stronger forces raise vapour pressure.",question:"Which property *decreases* as intermolecular forces strengthen in molecular substances?",options:[{text:"Boiling point",correct:false,prompt:"Stronger IMFs raise boiling point."},{text:"Melting point",correct:false,prompt:"Stronger IMFs raise melting point."},{text:"Vapour pressure",correct:true,prompt:""},{text:"Density",correct:false,prompt:"Density depends more on packing."}],explanation:"Stronger IMFs make molecules less likely to escape → lower vapour pressure."},
+ {id:39,concept:"Structures & Physical Properties",note:"Reverses ‘like dissolves like’.",question:"Which molecule is least soluble in a non-polar solvent like hexane?",options:[{text:"I₂",correct:false,prompt:"Non-polar – dissolves well in hexane."},{text:"CH₄",correct:false,prompt:"Non-polar."},{text:"H₂O",correct:true,prompt:""},{text:"CCl₄",correct:false,prompt:"Non-polar."}],explanation:"Water is polar and does not dissolve in non-polar solvents."},
+ {id:40,concept:"Structures & Physical Properties",note:"Mis-identifies ice structure and bonding.",question:"Which description best fits ice?",options:[{text:"Giant covalent lattice with ionic bonds",correct:false,prompt:"Ice is molecular."},{text:"Simple molecular lattice with hydrogen bonding",correct:true,prompt:""},{text:"Metallic lattice with delocalised electrons",correct:false,prompt:"Not metallic."},{text:"Ionic lattice with dipole interactions",correct:false,prompt:"No ions present."}],explanation:"Ice comprises discrete H₂O molecules arranged in a hydrogen-bonded lattice."}
+];
+
+/* ------------ CONFIG / SUGGESTIONS ------------ */
+const suggestions={
+  "Shapes & Bond Angles":"Review VSEPR – count bonding & lone pairs; memorise common shapes/angles.",
+  "Electronegativity & Polarity":"Practise χ differences plus 3-D symmetry to decide if dipoles cancel.",
+  "Intermolecular Forces":"Rank London < permanent dipole < hydrogen bonding; recognise when each applies.",
+  "Structures & Physical Properties":"Relate lattice/IMF type to melting point, solubility and conductivity."
+};
+
+/* ------------ STATE ------------ */
+let current=0,score=0,studentName="";
+const stats={};  // total, correct, missed[]
+questions.forEach(q=>{
+  if(!stats[q.concept]) stats[q.concept]={total:0,correct:0,missed:[]};
+  stats[q.concept].total++;
+});
+
+/* ------------ DOM ------------- */
+const nameField=document.getElementById('name-field');
+const startBtn=document.getElementById('start-btn');
+const startScr=document.getElementById('start-screen');
+const quizScr=document.getElementById('quiz-screen');
+const resScr=document.getElementById('result-screen');
+
+const qNum=document.getElementById('question-number');
+const qTxt=document.getElementById('question-text');
+const optForm=document.getElementById('options-form');
+const submitBtn=document.getElementById('submit-btn');
+const nextBtn=document.getElementById('next-btn');
+const fbDiv=document.getElementById('feedback');
+
+const scoreP=document.getElementById('score');
+const diagDiv=document.getElementById('diagnostic');
+const studentLine=document.getElementById('student-line');
+const printBtn=document.getElementById('print-btn');
+const restartBtn=document.getElementById('restart-btn');
+
+/* ------------ ENABLE START WHEN NAME TYPED ------------ */
+nameField.addEventListener('input',()=> startBtn.disabled=!nameField.value.trim());
+
+/* ------------ START QUIZ ------------ */
+startBtn.onclick=()=>{
+  studentName=nameField.value.trim();
+  startScr.style.display='none';
+  quizScr.style.display='block';
+  showQuestion();
+};
+
+/* ------------ RENDER QUESTION ------------ */
+function showQuestion(){
+  const q=questions[current];
+  qNum.textContent=`Question ${current+1} of ${questions.length}  (${q.concept})`;
+  qTxt.textContent=q.question;
+
+  optForm.innerHTML='';
+  q.options.forEach((o,i)=>{
+    optForm.insertAdjacentHTML('beforeend',
+      `<label><input type="radio" name="opt" value="${i}"> ${o.text}</label>`
+    );
+  });
+  fbDiv.style.display='none';
+  submitBtn.disabled=false;
+  nextBtn.style.display='none';
+}
+
+/* ------------ SUBMIT ANSWER ------------ */
+submitBtn.onclick=()=>{
+  const chosen=optForm.querySelector('input[name="opt"]:checked');
+  if(!chosen) return;
+  const idx=parseInt(chosen.value,10);
+  const q=questions[current];
+  const opt=q.options[idx];
+
+  fbDiv.style.display='block';
+  if(opt.correct){
+    fbDiv.innerHTML=`<span class="correct">Correct!</span><br>${q.explanation}`;
+    score++;
+    stats[q.concept].correct++;
+  }else{
+    fbDiv.innerHTML=
+      `<span style="color:#c20606;font-weight:600;">Incorrect.</span> ${opt.prompt}<br><em>${q.explanation}</em>`;
+    if(!stats[q.concept].missed.includes(q.note)) stats[q.concept].missed.push(q.note);
+  }
+  submitBtn.disabled=true;
+  nextBtn.style.display='inline-block';
+};
+
+/* ------------ NEXT OR FINISH ------------ */
+nextBtn.onclick=()=>{
+  current++;
+  if(current<questions.length) showQuestion();
+  else showResults();
+};
+
+/* ------------ SHOW RESULTS ------------ */
+function showResults(){
+  quizScr.style.display='none';
+  resScr.style.display='block';
+
+  studentLine.textContent=`Student: ${studentName}`;
+  scoreP.textContent=`You scored ${score} / ${questions.length}`;
+
+  diagDiv.innerHTML='';
+  for(const concept in stats){
+    const {total,correct,missed}=stats[concept];
+    const pct=correct/total;
+    const block=document.createElement('div');
+    if(pct>=0.8){
+      block.innerHTML=`<span class="summary-pass">&#10003; ${concept}: Competent (${correct}/${total})</span>`;
+    }else{
+      block.innerHTML=`<span class="summary-work">&#10007; ${concept}: Needs work (${correct}/${total})</span>`;
+      if(missed.length){
+        const ul=document.createElement('ul');
+        ul.className='missed';
+        missed.forEach(m=>ul.insertAdjacentHTML('beforeend',`<li>${m}</li>`));
+        block.appendChild(ul);
+      }
+      block.insertAdjacentHTML('beforeend',`<small>${suggestions[concept]}</small>`);
+    }
+    diagDiv.appendChild(block);
+  }
+}
+
+/* ------------ UTIL BUTTONS ------------ */
+printBtn.onclick=()=>window.print();
+restartBtn.onclick=()=>window.location.reload();
+</script>
+</body>
+</html>
