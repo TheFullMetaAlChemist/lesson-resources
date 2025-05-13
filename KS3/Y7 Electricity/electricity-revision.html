@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive KS3 Electricity Lesson</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for long content */
+            min-height: 100vh;
+            padding-top: 20px; /* Space from top */
+        }
+
+        .lesson-container {
+            width: 90%;
+            max-width: 950px;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px; /* Space at bottom */
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Vibrant gradient */
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            margin: -25px -25px 25px -25px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+        
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .screen {
+            display: none; /* Hidden by default */
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #fdfdfd;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .screen h2 {
+            color: #3a0ca3; /* Deep purple */
+            margin-top: 0;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .exercise {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 6px;
+        }
+        .exercise p:first-child {
+            margin-top:0;
+        }
+
+        label, p {
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            margin-right: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 120px;
+            font-size: 1em;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+            outline: none;
+        }
+
+        button, .calc-btn, .game-btn {
+            padding: 10px 18px;
+            background-color: #4361ee; /* Bright blue */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+        }
+
+        button:hover, .calc-btn:hover, .game-btn:hover {
+            background-color: #3a0ca3; /* Darker purple on hover */
+        }
+        button:active, .calc-btn:active, .game-btn:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-left: 10px;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 3px;
+            display: inline-block; /* To allow padding */
+        }
+
+        .correct {
+            color: #2a9d8f; /* Green */
+            background-color: #e8f5e9;
+        }
+
+        .incorrect {
+            color: #e63946; /* Red */
+            background-color: #ffebee;
+        }
+
+        ul {
+            list-style-type: "✔ "; /* Custom bullet */
+            padding-left: 25px;
+        }
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        .navigation-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .navigation-buttons button {
+            margin-left: 10px;
+        }
+
+        /* Calculator Styles */
+        #calculator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 260px;
+            background-color: #ffffff;
+            border: 2px solid #3a0ca3;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Initially hidden */
+            cursor: grab;
+        }
+        #calculator.dragging {
+            cursor: grabbing;
+        }
+        .calc-header {
+            padding: 8px;
+            background-color: #3a0ca3;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+        }
+        .calc-display {
+            width: calc(100% - 20px);
+            margin: 10px;
+            padding: 10px;
+            font-size: 1.5em;
+            text-align: right;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            height: 40px; /* Fixed height */
+            overflow-x: auto; /* Scroll for long numbers */
+        }
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            padding: 10px;
+        }
+        .calc-btn {
+            padding: 15px;
+            font-size: 1.1em;
+        }
+        .calc-btn.operator {
+            background-color: #f77f00; /* Orange for operators */
+        }
+        .calc-btn.operator:hover {
+            background-color: #e27100;
+        }
+        .calc-btn.equals {
+            background-color: #4caf50; /* Green for equals */
+            grid-column: span 2;
+        }
+        .calc-btn.equals:hover {
+            background-color: #43a047;
+        }
+        .calc-btn.clear {
+            background-color: #e63946; /* Red for clear */
+        }
+         .calc-btn.clear:hover {
+            background-color: #cf303c;
+        }
+
+        #toggle-calculator-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1001;
+        }
+        
+        /* Quiz Styles */
+        .quiz-question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+        }
+        .quiz-options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+         .quiz-options label:hover {
+            background-color: #e9ecef;
+         }
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        #quiz-score, #quiz-feedback-summary {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        #quiz-score {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        #quiz-feedback-summary p {
+            margin-bottom: 5px;
+            padding: 3px;
+        }
+        
+        /* Game Styles */
+        #game-section {
+            text-align: center;
+        }
+        #game-timer, #game-score {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #3a0ca3;
+        }
+        #game-question {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        #game-answer-input {
+            padding: 10px;
+            font-size: 1em;
+            width: 60%;
+            margin-bottom: 10px;
+        }
+        #game-feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <button id="toggle-calculator-btn">Toggle Calculator</button>
+    <div id="calculator">
+        <div class="calc-header">Calculator (Drag Me)</div>
+        <input type="text" class="calc-display" id="calcDisplay" readonly>
+        <div class="calc-buttons">
+            <button class="calc-btn clear" onclick="clearDisplay()">C</button>
+            <button class="calc-btn" onclick="deleteLast()">DEL</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('/')">÷</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('*')">×</button>
+
+            <button class="calc-btn" onclick="appendToDisplay('7')">7</button>
+            <button class="calc-btn" onclick="appendToDisplay('8')">8</button>
+            <button class="calc-btn" onclick="appendToDisplay('9')">9</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('-')">-</button>
+
+            <button class="calc-btn" onclick="appendToDisplay('4')">4</button>
+            <button class="calc-btn" onclick="appendToDisplay('5')">5</button>
+            <button class="calc-btn" onclick="appendToDisplay('6')">6</button>
+            <button class="calc-btn operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button class="calc-btn" onclick="appendToDisplay('1')">1</button>
+            <button class="calc-btn" onclick="appendToDisplay('2')">2</button>
+            <button class="calc-btn" onclick="appendToDisplay('3')">3</button>
+            <button class="calc-btn equals" onclick="calculateResult()">=</button>
+
+            <button class="calc-btn" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+            <button class="calc-btn" onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <div class="lesson-container">
+        <header>
+            <h1>P1 Chapter 2: Electricity</h1>
+            <p>Interactive Knowledge Organiser</p>
+        </header>
+
+        <!-- Screen 1: Current -->
+        <div class="screen active" id="screen-current" data-screen-index="0">
+            <h2>Current</h2>
+            <p>Current is the amount of charge flowing per second.</p>
+            <ul>
+                <li>The charges that flow in a circuit are <strong>electrons</strong>, they are negatively charged.</li>
+                <li>Electrons leave the <strong>negative</strong> end of the cell and travel around the circuit to the <strong>positive</strong> end of the cell.</li>
+                <li>Current has the unit of Amps (A) and is measured with an <strong>ammeter</strong> (which is placed in series or in the main circuit).</li>
+            </ul>
+
+            <div class="exercise" data-exercise-id="current-q1">
+                <p><strong>Quick Check 1.1:</strong></p>
+                <label for="current-q1-input">1. Current is the amount of <input type="text" id="current-q1-input" size="10"> flowing per second.</label>
+                <button onclick="checkAnswer('current-q1-input', ['charge'], 'current-fb1', 0)">Check</button>
+                <span class="feedback" id="current-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="current-q2">
+                <label for="current-q2-select">2. The particles that flow in a circuit are called </label>
+                <select id="current-q2-select">
+                    <option value="">Select...</option>
+                    <option value="protons">Protons</option>
+                    <option value="neutrons">Neutrons</option>
+                    <option value="electrons">Electrons</option>
+                </select>
+                <button onclick="checkAnswer('current-q2-select', ['electrons'], 'current-fb2', 0)">Check</button>
+                <span class="feedback" id="current-fb2"></span>
+            </div>
+            <div class="exercise" data-exercise-id="current-q3">
+                <label>3. Current is measured in <input type="text" id="current-q3a-input" size="5"> (symbol: <input type="text" id="current-q3b-input" size="2">).</label>
+                <button onclick="checkMultiAnswer(['current-q3a-input', 'current-q3b-input'], [['amps', 'amperes'], ['a']], 'current-fb3', 0)">Check</button>
+                <span class="feedback" id="current-fb3"></span>
+            </div>
+            <div class="exercise" data-exercise-id="current-q4">
+                 <label for="current-q4-select">4. An ammeter is placed in <select id="current-q4-select"><option value="">Select...</option><option value="series">series</option><option value="parallel">parallel</option></select> with a component.</label>
+                <button onclick="checkAnswer('current-q4-select', ['series'], 'current-fb4', 0)">Check</button>
+                <span class="feedback" id="current-fb4"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(1)" id="next-btn-0" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Potential Difference -->
+        <div class="screen" id="screen-pd" data-screen-index="1">
+            <h2>Potential Difference (Voltage)</h2>
+            <p>Potential difference is the amount of energy transferred by the cell or battery to the charges.</p>
+            <ul>
+                <li>The value of potential difference tells us about the force applied to each charge and then the energy transferred by each charge to the component which it passes through.</li>
+                <li>Potential difference has the unit of Volts (V) and is measured with a <strong>voltmeter</strong> (which is placed in parallel to the circuit).</li>
+            </ul>
+            <div class="exercise" data-exercise-id="pd-q1">
+                <p><strong>Quick Check 2.1:</strong></p>
+                <label for="pd-q1-input">1. Potential difference is the amount of <input type="text" id="pd-q1-input" size="10"> transferred to the charges.</label>
+                <button onclick="checkAnswer('pd-q1-input', ['energy'], 'pd-fb1', 1)">Check</button>
+                <span class="feedback" id="pd-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="pd-q2">
+                <label>2. Potential difference is measured in <input type="text" id="pd-q2a-input" size="5"> (symbol: <input type="text" id="pd-q2b-input" size="2">).</label>
+                <button onclick="checkMultiAnswer(['pd-q2a-input', 'pd-q2b-input'], [['volts'], ['v']], 'pd-fb2', 1)">Check</button>
+                <span class="feedback" id="pd-fb2"></span>
+            </div>
+            <div class="exercise" data-exercise-id="pd-q3">
+                <label for="pd-q3-select">3. A voltmeter is placed in <select id="pd-q3-select"><option value="">Select...</option><option value="series">series</option><option value="parallel">parallel</option></select> across a component.</label>
+                <button onclick="checkAnswer('pd-q3-select', ['parallel'], 'pd-fb3', 1)">Check</button>
+                <span class="feedback" id="pd-fb3"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(0)">Previous</button>
+                <button onclick="navigateToScreen(2)" id="next-btn-1" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Screen 3: Series Circuits -->
+        <div class="screen" id="screen-series" data-screen-index="2">
+            <h2>Series Circuits</h2>
+             <ul>
+                <li>Series circuits only have <strong>one loop</strong>.</li>
+                <li>If one component breaks, the whole circuit <strong>stops working</strong>.</li>
+                <li>Current is the <strong>same everywhere</strong> in a series circuit.</li>
+                <li>The total potential difference from the battery is <strong>shared</strong> between the components in a series circuit.</li>
+                <li>Adding more bulbs <strong>decreases the brightness</strong> of the bulbs.</li>
+            </ul>
+            <div class="exercise" data-exercise-id="series-q1">
+                <p><strong>Quick Check 3.1:</strong></p>
+                <label for="series-q1-input">1. In a series circuit, if one bulb breaks, the other bulbs will <input type="text" id="series-q1-input" size="15"> working.</label>
+                <button onclick="checkAnswer('series-q1-input', ['stop', 'stop working', 'not work'], 'series-fb1', 2)">Check</button>
+                <span class="feedback" id="series-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="series-q2">
+                <label for="series-q2-select">2. In a series circuit, the current is <select id="series-q2-select"><option value="">Select...</option><option value="same">the same</option><option value="shared">shared</option></select> everywhere.</label>
+                <button onclick="checkAnswer('series-q2-select', ['same', 'the same'], 'series-fb2', 2)">Check</button>
+                <span class="feedback" id="series-fb2"></span>
+            </div>
+             <div class="navigation-buttons">
+                <button onclick="navigateToScreen(1)">Previous</button>
+                <button onclick="navigateToScreen(3)" id="next-btn-2" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Screen 4: Parallel Circuits -->
+        <div class="screen" id="screen-parallel" data-screen-index="3">
+            <h2>Parallel Circuits</h2>
+            <ul>
+                <li>Parallel circuits have <strong>more than one loop</strong>.</li>
+                <li>If one component breaks, the rest of the circuit will <strong>still work</strong>.</li>
+                <li>Current is <strong>shared</strong> between the different loops in the circuit.</li>
+                <li>The potential difference is the <strong>same everywhere</strong> in the circuit (across each branch).</li>
+                <li>Adding more bulbs (in parallel branches) <strong>does not affect the brightness</strong> of the bulbs in other branches.</li>
+            </ul>
+            <div class="exercise" data-exercise-id="parallel-q1">
+                <p><strong>Quick Check 4.1:</strong></p>
+                <label for="parallel-q1-input">1. In a parallel circuit, if one bulb breaks, the other bulbs will <input type="text" id="parallel-q1-input" size="15"> working.</label>
+                <button onclick="checkAnswer('parallel-q1-input', ['keep', 'continue'], 'parallel-fb1', 3)">Check</button>
+                <span class="feedback" id="parallel-fb1"></span>
+            </div>
+             <div class="exercise" data-exercise-id="parallel-q2">
+                <label for="parallel-q2-select">2. In a parallel circuit, the potential difference is <select id="parallel-q2-select"><option value="">Select...</option><option value="same">the same</option><option value="shared">shared</option></select> across each branch.</label>
+                <button onclick="checkAnswer('parallel-q2-select', ['same', 'the same'], 'parallel-fb2', 3)">Check</button>
+                <span class="feedback" id="parallel-fb2"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(2)">Previous</button>
+                <button onclick="navigateToScreen(4)" id="next-btn-3" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Screen 5: The Atom -->
+        <div class="screen" id="screen-atom" data-screen-index="4">
+            <h2>The Atom</h2>
+            <ul>
+                <li>The atom consists of a central <strong>nucleus</strong> with electrons orbiting around the outside in shells.</li>
+                <li><strong>Electrons</strong> have a negative charge.</li>
+                <li><strong>Protons</strong> are inside the nucleus and have a positive charge.</li>
+                <li><strong>Neutrons</strong> are inside the nucleus and have a neutral charge.</li>
+            </ul>
+            <div class="exercise" data-exercise-id="atom-q1">
+                <p><strong>Quick Check 5.1:</strong></p>
+                <label for="atom-q1-select">1. Electrons have a <select id="atom-q1-select"><option value="">Select...</option><option value="positive">positive</option><option value="negative">negative</option><option value="neutral">neutral</option></select> charge.</label>
+                <button onclick="checkAnswer('atom-q1-select', ['negative'], 'atom-fb1', 4)">Check</button>
+                <span class="feedback" id="atom-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="atom-q2">
+                <label>2. Protons are found in the <input type="text" id="atom-q2a-input" size="10"> and have a <input type="text" id="atom-q2b-input" size="10"> charge.</label>
+                <button onclick="checkMultiAnswer(['atom-q2a-input', 'atom-q2b-input'], [['nucleus'], ['positive']], 'atom-fb2', 4)">Check</button>
+                <span class="feedback" id="atom-fb2"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(3)">Previous</button>
+                <button onclick="navigateToScreen(5)" id="next-btn-4" disabled>Next Section</button>
+            </div>
+        </div>
+        
+        <!-- Screen 6: Static Electricity -->
+        <div class="screen" id="screen-static" data-screen-index="5">
+            <h2>Static Electricity</h2>
+            <ul>
+                <li>Static electricity is the caused by the rubbing together of two <strong>insulators</strong>.</li>
+                <li>This causes electrons to be transferred, leaving one object with a positive charge, and one object with a negative charge.</li>
+                <li>Like charges will <strong>repel</strong>, opposite charges will <strong>attract</strong>.</li>
+            </ul>
+            <div class="exercise" data-exercise-id="static-q1">
+                <p><strong>Quick Check 6.1:</strong></p>
+                <label for="static-q1-input">1. Static electricity is often caused by rubbing two <input type="text" id="static-q1-input" size="12"> together.</label>
+                <button onclick="checkAnswer('static-q1-input', ['insulators', 'insulator'], 'static-fb1', 5)">Check</button>
+                <span class="feedback" id="static-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="static-q2">
+                 <label for="static-q2-select">2. Two positively charged objects will <select id="static-q2-select"><option value="">Select...</option><option value="attract">attract</option><option value="repel">repel</option></select> each other.</label>
+                <button onclick="checkAnswer('static-q2-select', ['repel'], 'static-fb2', 5)">Check</button>
+                <span class="feedback" id="static-fb2"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(4)">Previous</button>
+                <button onclick="navigateToScreen(6)" id="next-btn-5" disabled>Next Section</button>
+            </div>
+        </div>
+
+        <!-- Screen 7: Resistance -->
+        <div class="screen" id="screen-resistance" data-screen-index="6">
+            <h2>Resistance</h2>
+            <p>Resistance is a measure of how easy or how hard it is for charges to pass through a component in a circuit.</p>
+            <ul>
+                <li>Resistance has the unit of ohms (Ω).</li>
+                <li>Resistance is calculated by measuring potential difference and current and using the following equation:
+                    <br><strong>Resistance (Ω) = Potential difference (V) / Current (A)</strong>  or  <strong>R = V / I</strong>
+                </li>
+                <li>Materials with a high resistance are said to be <strong>insulators</strong>.</li>
+                <li>Materials with a low resistance are said to be <strong>conductors</strong>.</li>
+            </ul>
+            <div class="exercise" data-exercise-id="res-q1">
+                <p><strong>Quick Check 7.1:</strong></p>
+                <label>1. Resistance is measured in <input type="text" id="res-q1a-input" size="5"> (symbol: <input type="text" id="res-q1b-input" size="2">).</label>
+                <button onclick="checkMultiAnswer(['res-q1a-input', 'res-q1b-input'], [['ohms', 'ohm'], ['ω', 'omega']], 'res-fb1', 6, true)">Check</button>
+                <span class="feedback" id="res-fb1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="res-q2">
+                <p>2. Ohm's Law (use the calculator if needed!):</p>
+                <label for="res-calc1-r">If V = 6V and I = 2A, then R = <input type="text" id="res-calc1-r" size="3"> Ω.</label>
+                <button onclick="checkOhmLaw(6, 2, null, 'res-calc1-r', 'R', 'res-fb-calc1', 6)">Check R</button>
+                <span class="feedback" id="res-fb-calc1"></span>
+            </div>
+            <div class="exercise" data-exercise-id="res-q3">
+                <label for="res-q3-input">3. Materials with low resistance are called <input type="text" id="res-q3-input" size="12">.</label>
+                <button onclick="checkAnswer('res-q3-input', ['conductors', 'conductor'], 'res-fb3', 6)">Check</button>
+                <span class="feedback" id="res-fb3"></span>
+            </div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(5)">Previous</button>
+                <button onclick="navigateToScreen(7)" id="next-btn-6" disabled>Next Section</button>
+            </div>
+        </div>
+        
+        <!-- Screen 8: Multiple Choice Quiz -->
+        <div class="screen" id="screen-quiz" data-screen-index="7">
+            <h2>Electricity Quiz</h2>
+            <p>Test your knowledge with this 10-question quiz. You must answer all questions to see your score and proceed.</p>
+            <div id="quiz-container"></div>
+            <button onclick="submitQuiz()">Submit Quiz</button>
+            <div id="quiz-score"></div>
+            <div id="quiz-feedback-summary"></div>
+            <div class="navigation-buttons">
+                <button onclick="navigateToScreen(6)">Previous</button>
+                <button onclick="navigateToScreen(8)" id="next-btn-7" disabled>Next: Timed Challenge!</button>
+            </div>
+        </div>
+
+        <!-- Screen 9: Timed Challenge Game -->
+        <div class="screen" id="screen-game" data-screen-index="8">
+            <h2>Timed Challenge!</h2>
+            <div id="game-section">
+                <p>Answer as many questions as you can in 60 seconds! Type your answer and press Enter or click Check.</p>
+                <div id="game-timer">Time: 60s</div>
+                <div id="game-score">Score: 0</div>
+                <hr>
+                <div id="game-question-area">
+                    <p id="game-question"></p>
+                    <input type="text" id="game-answer-input" placeholder="Your answer...">
+                    <button id="game-check-btn" class="game-btn" onclick="checkGameAnswer()">Check Answer</button>
+                </div>
+                <div id="game-feedback"></div>
+                <button id="start-game-btn" class="game-btn" onclick="startGame()">Start Game</button>
+                <div id="game-over-message" style="display:none;">
+                    <h3>Game Over!</h3>
+                    <p>Your final score is: <span id="final-game-score"></span></p>
+                    <button class="game-btn" onclick="startGame()">Play Again?</button>
+                </div>
+            </div>
+            <div class="navigation-buttons">
+                 <button onclick="navigateToScreen(7)">Previous</button>
+                 <button onclick="navigateToScreen(0)" id="next-btn-8">Restart Lesson</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Screen Navigation & Completion ---
+        let currentScreenIndex = 0;
+        const screens = document.querySelectorAll('.screen');
+        // To track completion of exercises on each screen
+        // screenCompletionStatus[screenIndex] = { exerciseId1: false, exerciseId2: false, ... }
+        const screenCompletionStatus = [];
+
+        function initializeCompletionStatus() {
+            screens.forEach((screen, index) => {
+                const exercises = screen.querySelectorAll('.exercise');
+                const exerciseStatus = {};
+                exercises.forEach(exercise => {
+                    exerciseStatus[exercise.dataset.exerciseId] = false;
+                });
+                screenCompletionStatus[index] = exerciseStatus;
+
+                // Special case for quiz screen
+                if (screen.id === "screen-quiz") {
+                    screenCompletionStatus[index] = { quizCompleted: false };
+                }
+                 // Special case for game screen (no specific exercises to complete before moving on)
+                if (screen.id === "screen-game") {
+                    screenCompletionStatus[index] = { gameVisited: true }; // Mark as "completable" by default
+                }
+            });
+        }
+        
+        function updateScreenCompletion(screenIndex, exerciseId, isCorrect) {
+            if (screenCompletionStatus[screenIndex] && screenCompletionStatus[screenIndex].hasOwnProperty(exerciseId)) {
+                screenCompletionStatus[screenIndex][exerciseId] = isCorrect;
+            }
+            checkAllExercisesCompleted(screenIndex);
+        }
+
+        function checkAllExercisesCompleted(screenIndex) {
+            const currentScreenStatus = screenCompletionStatus[screenIndex];
+            if (!currentScreenStatus) return;
+
+            let allDone = true;
+            for (const exercise in currentScreenStatus) {
+                if (!currentScreenStatus[exercise]) {
+                    allDone = false;
+                    break;
+                }
+            }
+            
+            const nextButton = document.getElementById(`next-btn-${screenIndex}`);
+            if (nextButton) {
+                nextButton.disabled = !allDone;
+            }
+        }
+
+        function navigateToScreen(screenIndex) {
+            screens[currentScreenIndex].classList.remove('active');
+            screens[screenIndex].classList.add('active');
+            currentScreenIndex = screenIndex;
+            // Ensure next button status is correct for the newly displayed screen
+            if(screenIndex < screens.length -1) { // Not the last screen
+                 checkAllExercisesCompleted(screenIndex);
+            }
+        }
+        
+        // --- Answer Checking ---
+        function checkAnswer(inputId, correctAnswersArray, feedbackId, screenIdx, exerciseIdPassed) {
+            // If exerciseIdPassed is not given, derive it from inputId
+            const exerciseId = exerciseIdPassed || inputId.replace('-input', '').replace('-select', '');
+            const userAnswer = document.getElementById(inputId).value.trim().toLowerCase();
+            const feedbackEl = document.getElementById(feedbackId);
+            let isCorrect = false;
+
+            for (let correctAnswer of correctAnswersArray) {
+                if (userAnswer === correctAnswer.toLowerCase()) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+            
+            if (isCorrect) {
+                feedbackEl.textContent = "Correct!";
+                feedbackEl.className = "feedback correct";
+            } else {
+                feedbackEl.textContent = "Incorrect. Try again!";
+                feedbackEl.className = "feedback incorrect";
+            }
+            updateScreenCompletion(screenIdx, document.getElementById(inputId).closest('.exercise').dataset.exerciseId, isCorrect);
+        }
+
+        function checkMultiAnswer(inputIds, correctAnswersArrays, feedbackId, screenIdx, caseSensitive = false) {
+            const feedbackEl = document.getElementById(feedbackId);
+            let allCorrect = true;
+            for (let i = 0; i < inputIds.length; i++) {
+                let userAnswer = document.getElementById(inputIds[i]).value.trim();
+                if (!caseSensitive) {
+                    userAnswer = userAnswer.toLowerCase();
+                }
+                
+                let currentPartCorrect = false;
+                for (let correctAnswer of correctAnswersArrays[i]) {
+                     let comparableAnswer = caseSensitive ? correctAnswer : correctAnswer.toLowerCase();
+                     // Special handling for Ohm symbol
+                     if ((comparableAnswer === 'ω' || comparableAnswer === 'omega') && (userAnswer === 'ω' || userAnswer === 'ohm' || userAnswer === 'ohms')) {
+                        currentPartCorrect = true;
+                        break;
+                     }
+                    if (userAnswer === comparableAnswer) {
+                        currentPartCorrect = true;
+                        break;
+                    }
+                }
+                if (!currentPartCorrect) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            if (allCorrect) {
+                feedbackEl.textContent = "Correct!";
+                feedbackEl.className = "feedback correct";
+            } else {
+                feedbackEl.textContent = "Incorrect. Check all parts.";
+                feedbackEl.className = "feedback incorrect";
+            }
+            updateScreenCompletion(screenIdx, document.getElementById(inputIds[0]).closest('.exercise').dataset.exerciseId, allCorrect);
+        }
+        
+        function checkOhmLaw(v, i, r, inputId, calcFor, feedbackId, screenIdx) {
+            const userAnswer = parseFloat(document.getElementById(inputId).value);
+            const feedbackEl = document.getElementById(feedbackId);
+            let correctAnswerValue;
+            let isCorrect = false;
+
+            if (calcFor === 'R') correctAnswerValue = v / i;
+            else if (calcFor === 'V') correctAnswerValue = i * r;
+            else if (calcFor === 'I') correctAnswerValue = v / r;
+            
+            if (!isNaN(userAnswer) && Math.abs(userAnswer - correctAnswerValue) < 0.01) {
+                isCorrect = true;
+            }
+
+            if (isCorrect) {
+                feedbackEl.textContent = "Correct! (" + correctAnswerValue.toFixed(2) + ")";
+                feedbackEl.className = "feedback correct";
+            } else {
+                feedbackEl.textContent = "Incorrect. The answer is " + correctAnswerValue.toFixed(2);
+                feedbackEl.className = "feedback incorrect";
+            }
+             updateScreenCompletion(screenIdx, document.getElementById(inputId).closest('.exercise').dataset.exerciseId, isCorrect);
+        }
+
+        // --- Calculator Logic ---
+        const calculator = document.getElementById('calculator');
+        const calcDisplay = document.getElementById('calcDisplay');
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        document.getElementById('toggle-calculator-btn').onclick = () => {
+            calculator.style.display = calculator.style.display === 'none' || calculator.style.display === '' ? 'block' : 'none';
+        };
+
+        calculator.querySelector('.calc-header').onmousedown = (e) => {
+            isDragging = true;
+            calculator.classList.add('dragging');
+            offsetX = e.clientX - calculator.offsetLeft;
+            offsetY = e.clientY - calculator.offsetTop;
+            // Prevent text selection during drag
+            e.preventDefault(); 
+        };
+
+        document.onmousemove = (e) => {
+            if (!isDragging) return;
+            calculator.style.left = `${e.clientX - offsetX}px`;
+            calculator.style.top = `${e.clientY - offsetY}px`;
+        };
+
+        document.onmouseup = () => {
+            if (isDragging) {
+                isDragging = false;
+                calculator.classList.remove('dragging');
+            }
+        };
+        
+        function appendToDisplay(value) {
+            calcDisplay.value += value;
+        }
+
+        function clearDisplay() {
+            calcDisplay.value = '';
+        }
+        function deleteLast() {
+            calcDisplay.value = calcDisplay.value.slice(0, -1);
+        }
+
+        function calculateResult() {
+            try {
+                // Basic BIDMAS/BODMAS can be handled by eval if input is controlled (only from buttons)
+                // For more robust parsing, a custom function is needed.
+                // This simple eval is okay for this controlled educational tool.
+                let expression = calcDisplay.value;
+                
+                // A more robust (but still simple) BIDMAS without using eval:
+                // This handles chained operations but not parentheses.
+                const tokens = expression.match(/(\d+\.?\d*|\+|\-|\*|\/)/g);
+                if (!tokens) {
+                    calcDisplay.value = "Error"; return;
+                }
+
+                // Pass 1: Multiplication and Division
+                for (let i = 0; i < tokens.length; i++) {
+                    if (tokens[i] === '*' || tokens[i] === '/') {
+                        const left = parseFloat(tokens[i-1]);
+                        const right = parseFloat(tokens[i+1]);
+                        const result = tokens[i] === '*' ? left * right : left / right;
+                        if (isNaN(result) || !isFinite(result)) {
+                             calcDisplay.value = "Error"; return;
+                        }
+                        tokens.splice(i-1, 3, result.toString());
+                        i -= 2; // Adjust index after splice
+                    }
+                }
+                // Pass 2: Addition and Subtraction
+                 for (let i = 0; i < tokens.length; i++) {
+                    if (tokens[i] === '+' || tokens[i] === '-') {
+                        // Handle unary minus/plus if it's the first token
+                        if (i === 0 && (tokens[i] === '-' || tokens[i] === '+') && !isNaN(parseFloat(tokens[i+1]))) {
+                            if (tokens[i] === '-') tokens.splice(i, 2, (-parseFloat(tokens[i+1])).toString());
+                            else tokens.splice(i,1); // remove '+'
+                            i--;
+                            continue;
+                        }
+                        const left = parseFloat(tokens[i-1]);
+                        const right = parseFloat(tokens[i+1]);
+                         if (isNaN(left) || isNaN(right)) { // Check if previous op was also +/-
+                            if (!isNaN(left) && (tokens[i] === '-' || tokens[i] === '+') && !isNaN(parseFloat(tokens[i+1]))) { // e.g. 5--3 or 5-+3
+                                if (tokens[i] === '-') tokens.splice(i, 2, (left - (-parseFloat(tokens[i+1]))).toString()); // 5--3 -> 5+3
+                                else tokens.splice(i, 2, (left + parseFloat(tokens[i+1])).toString()); // 5-+3 -> 5-3 (error here logic)
+                                // This part gets complex quickly without a proper parser.
+                                // Simplified: assume valid sequence for now
+                            } else {
+                                // calcDisplay.value = "Error"; return;
+                            }
+                        }
+
+                        const result = tokens[i] === '+' ? left + right : left - right;
+                         if (isNaN(result)) {
+                             calcDisplay.value = "Error"; return;
+                        }
+                        tokens.splice(i-1, 3, result.toString());
+                        i -= 2; // Adjust index
+                    }
+                }
+                calcDisplay.value = tokens[0];
+
+            } catch (error) {
+                calcDisplay.value = 'Error';
+            }
+        }
+
+        // --- Quiz Data & Logic ---
+        const quizData = [
+            { question: "1. What is current?", options: ["The flow of protons", "The amount of energy transferred", "The amount of charge flowing per second", "The opposition to flow"], answer: "The amount of charge flowing per second"},
+            { question: "2. What is the unit of potential difference?", options: ["Amp (A)", "Ohm (Ω)", "Volt (V)", "Watt (W)"], answer: "Volt (V)"},
+            { question: "3. How should an ammeter be connected?", options: ["In parallel", "In series", "Across battery", "Doesn't matter"], answer: "In series"},
+            { question: "4. In a series circuit, current is...", options: ["Shared", "Highest near battery", "Same everywhere", "Decreases"], answer: "Same everywhere"},
+            { question: "5. Charge of an electron?", options: ["Positive", "Negative", "Neutral", "Variable"], answer: "Negative"},
+            { question: "6. Like charges will...", options: ["Attract", "Repel", "Nothing", "Neutralise"], answer: "Repel"},
+            { question: "7. Unit of resistance?", options: ["Amp (A)", "Ohm (Ω)", "Volt (V)", "Coulomb (C)"], answer: "Ohm (Ω)"},
+            { question: "8. If V=10V, I=2A, R=?", options: ["20 Ω", "0.2 Ω", "12 Ω", "5 Ω"], answer: "5 Ω"},
+            { question: "9. If one bulb breaks in a PARALLEL circuit, others will...", options: ["Stop working", "Get dimmer", "Still work", "Get brighter"], answer: "Still work"},
+            { question: "10. A voltmeter is connected in...", options: ["Series", "Parallel", "Anywhere", "The main loop"], answer: "Parallel"}
+        ];
+        const quizContainer = document.getElementById('quiz-container');
+
+        function buildQuiz() {
+            quizContainer.innerHTML = ''; // Clear previous if any
+            quizData.forEach((q, qNum) => {
+                const qDiv = document.createElement('div');
+                qDiv.classList.add('quiz-question');
+                qDiv.innerHTML = `<p>${q.question}</p><div class="quiz-options" id="q-options-${qNum}"></div>`;
+                q.options.forEach(opt => {
+                    qDiv.querySelector(`#q-options-${qNum}`).innerHTML += `
+                        <label><input type="radio" name="question${qNum}" value="${opt}"> ${opt}</label>`;
+                });
+                quizContainer.appendChild(qDiv);
+            });
+        }
+
+        function submitQuiz() {
+            let score = 0;
+            let allAnswered = true;
+            const feedbackSummaryEl = document.getElementById('quiz-feedback-summary');
+            feedbackSummaryEl.innerHTML = '<h4>Quiz Feedback:</h4>';
+
+            quizData.forEach((q, qNum) => {
+                const selector = `input[name=question${qNum}]:checked`;
+                const userAnswerNode = quizContainer.querySelector(selector);
+                if (!userAnswerNode) {
+                    allAnswered = false;
+                }
+                const userAnswer = userAnswerNode ? userAnswerNode.value : "No answer";
+                const qFeedback = document.createElement('p');
+                if (userAnswer === q.answer) {
+                    score++;
+                    qFeedback.innerHTML = `${q.question} <span class="correct">Your answer: ${userAnswer} (Correct!)</span>`;
+                } else {
+                    qFeedback.innerHTML = `${q.question} <span class="incorrect">Your answer: ${userAnswer} (Incorrect. Correct was: ${q.answer})</span>`;
+                }
+                feedbackSummaryEl.appendChild(qFeedback);
+            });
+
+            if (!allAnswered) {
+                 document.getElementById('quiz-score').textContent = "Please answer all questions before submitting.";
+                 document.getElementById('quiz-score').className = "incorrect";
+                 return; // Stop if not all answered
+            }
+
+            document.getElementById('quiz-score').textContent = `Your score: ${score} out of ${quizData.length}`;
+            document.getElementById('quiz-score').className = score === quizData.length ? "correct" : (score > quizData.length/2 ? "feedback" : "incorrect");
+            
+            screenCompletionStatus[7].quizCompleted = true; // Mark quiz as completed for navigation
+            checkAllExercisesCompleted(7);
+        }
+
+        // --- Timed Challenge Game ---
+        const gameQuestions = [ // Can reuse quizData or have specific ones
+            { q: "Unit of current?", a: ["amp", "amps", "a"] },
+            { q: "Charge of a proton?", a: ["positive", "+"] },
+            { q: "Material with high resistance?", a: ["insulator", "insulators"] },
+            { q: "R = V / ?", a: ["i", "current"] },
+            { q: "In series, if one bulb breaks, others...?", a: ["stop", "go out", "don't work"] },
+            { q: "Potential difference is measured in?", a: ["volts", "v", "volt"] },
+            { q: "Symbol for Ohms?", a: ["ω", "ohm", "omega"] },
+            { q: "Static charge builds up on?", a: ["insulators", "insulator"] },
+            { q: "Two negative charges will...?", a: ["repel"] },
+            { q: "An ammeter measures...?", a: ["current", "amps"] }
+        ];
+        let gameScore, gameTimerInterval, currentGameQuestionIndex, gameTimeLeft;
+        const gameTimerEl = document.getElementById('game-timer');
+        const gameScoreEl = document.getElementById('game-score');
+        const gameQuestionEl = document.getElementById('game-question');
+        const gameAnswerInput = document.getElementById('game-answer-input');
+        const gameFeedbackEl = document.getElementById('game-feedback');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const gameQuestionArea = document.getElementById('game-question-area');
+        const gameOverMessageEl = document.getElementById('game-over-message');
+
+        function startGame() {
+            gameScore = 0;
+            gameTimeLeft = 60; // 60 seconds
+            gameScoreEl.textContent = "Score: 0";
+            gameTimerEl.textContent = `Time: ${gameTimeLeft}s`;
+            gameFeedbackEl.textContent = "";
+            startGameBtn.style.display = 'none';
+            gameQuestionArea.style.display = 'block';
+            gameOverMessageEl.style.display = 'none';
+            
+            nextGameQuestion();
+            gameTimerInterval = setInterval(updateGameTimer, 1000);
+        }
+
+        function updateGameTimer() {
+            gameTimeLeft--;
+            gameTimerEl.textContent = `Time: ${gameTimeLeft}s`;
+            if (gameTimeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function nextGameQuestion() {
+            if (gameTimeLeft <= 0) return; // Prevent new question if time is up
+            currentGameQuestionIndex = Math.floor(Math.random() * gameQuestions.length);
+            gameQuestionEl.textContent = gameQuestions[currentGameQuestionIndex].q;
+            gameAnswerInput.value = "";
+            gameAnswerInput.focus();
+        }
+
+        gameAnswerInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkGameAnswer();
+            }
+        });
+
+        function checkGameAnswer() {
+            if (gameTimeLeft <= 0) return;
+            const userAnswer = gameAnswerInput.value.trim().toLowerCase();
+            const correctAnswers = gameQuestions[currentGameQuestionIndex].a;
+            let isCorrect = false;
+            for(let ans of correctAnswers) {
+                if (userAnswer === ans) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                gameScore++;
+                gameScoreEl.textContent = `Score: ${gameScore}`;
+                gameFeedbackEl.textContent = "Correct!";
+                gameFeedbackEl.className = "feedback correct";
+            } else {
+                gameFeedbackEl.textContent = `Incorrect. Answer was: ${correctAnswers[0]}`;
+                gameFeedbackEl.className = "feedback incorrect";
+            }
+            setTimeout(() => { 
+                gameFeedbackEl.textContent = ""; 
+                nextGameQuestion(); 
+            }, 1200);
+        }
+
+        function endGame() {
+            clearInterval(gameTimerInterval);
+            gameTimerEl.textContent = "Time's Up!";
+            gameQuestionArea.style.display = 'none';
+            gameOverMessageEl.style.display = 'block';
+            document.getElementById('final-game-score').textContent = gameScore;
+            startGameBtn.style.display = 'block'; // Show play again
+            startGameBtn.textContent = "Play Again?";
+        }
+
+
+        // --- Initial Setup ---
+        window.onload = () => {
+            initializeCompletionStatus();
+            buildQuiz(); // Build quiz on load
+            // Set up initial state for next buttons
+            screens.forEach((screen, index) => {
+                checkAllExercisesCompleted(index);
+            });
+        };
+
+    </script>
+</body>
+</html>
