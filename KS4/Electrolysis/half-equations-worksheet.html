@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Half-Equations for Electrolysis Worksheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .worksheet-container {
+            max-width: 850px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #2c3e50;
+        }
+        p, li {
+            margin-bottom: 10px;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        .question-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-left: 3px solid #eee;
+        }
+        .equation {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            margin-left: 20px;
+        }
+        input[type="text"], textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1em;
+        }
+        input[type="text"].small-blank {
+            width: 80px;
+        }
+        input[type="text"].medium-blank {
+            width: 120px;
+        }
+        textarea {
+            width: 95%;
+            min-height: 40px;
+            resize: vertical;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .answer-field-group {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        .answer-field-group label {
+            display: inline-block;
+            min-width: 80px;
+            font-weight: bold;
+        }
+
+        .controls-container {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+        button.check-button {
+            background-color: #27ae60;
+        }
+        button.check-button:hover {
+            background-color: #229954;
+        }
+        button.mark-correct {
+            background-color: #2ecc71; /* Green */
+        }
+        button.mark-correct:hover {
+            background-color: #27ae60;
+        }
+        button.mark-incorrect {
+            background-color: #e74c3c; /* Red */
+        }
+        button.mark-incorrect:hover {
+            background-color: #c0392b;
+        }
+
+
+        .feedback {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        .feedback.correct {
+            color: green;
+            font-weight: bold;
+        }
+        .feedback.incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .correct-answer-display {
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #e9f5ff;
+            border: 1px dashed #3498db;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            display: none; /* Hidden by default */
+        }
+        .mark-buttons button {
+            margin: 8px 5px 0 0;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        .score-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* Styles for printing */
+        @media print {
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+            .worksheet-container {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                border: none;
+                padding: 20px;
+            }
+            .controls-container, .score-display, .mark-buttons, .correct-answer-display {
+                display: none !important;
+            }
+            .feedback {
+                /* Optionally hide feedback on print or style it differently */
+                /* display: none; */
+                 border: 1px dotted #ccc; /* So it's clear it's feedback */
+            }
+            input[type="text"], textarea {
+                border: 1px solid #ccc !important;
+                background-color: #f9f9f9 !important;
+            }
+            h1, h2 {
+                page-break-after: avoid;
+            }
+            .question-item, p, li {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head><body>
+    <div class="worksheet-container">
+        <h1>Writing Half-Equations for Electrolysis</h1>
+
+        <p>Electrolysis is used to extract metals from molten compounds. During electrolysis:</p>
+        <ul>
+            <li>Positive metal ions go to the cathode (negative electrode) and gain electrons (reduction).</li>
+            <li>Negative non-metal ions go to the anode (positive electrode) and lose electrons (oxidation). A half-equation shows what happens at just one electrode. You must balance both the atoms and the charge by adding the correct number of electrons (e<sup>-</sup>).</li>
+        </ul>
+
+        <p>Use the following steps to write half-equations:</p>
+        <ol>
+            <li>Identify the ion involved.</li>
+            <li>Write the product (metal atom or non-metal molecule).</li>
+            <li>Balance the atoms.</li>
+            <li>Balance the charges with electrons.</li>
+        </ol>
+
+        <h2>Section A: Fill in the blanks in these half-equations</h2>
+        <div class="question-item">
+            1. Al<sup>3+</sup> + <input type="text" class="small-blank" id="a1-blank" aria-label="Blank for question A1"> → Al <span id="a1-feedback" class="feedback"></span>
+        </div>
+        <div class="question-item">
+            2. Pb<sup>2+</sup> + <input type="text" class="small-blank" id="a2-blank" aria-label="Blank for question A2"> → Pb <span id="a2-feedback" class="feedback"></span>
+        </div>
+        <div class="question-item">
+            3. <input type="text" class="small-blank" id="a3-blank" aria-label="Blank for question A3 part 1"> + 2e<sup>-</sup> → Mg <span id="a3-feedback" class="feedback"></span>
+        </div>
+        <div class="question-item">
+            4. 2Cl<sup>-</sup> → <input type="text" class="small-blank" id="a4-blank" aria-label="Blank for question A4"> + 2e<sup>-</sup> <span id="a4-feedback" class="feedback"></span>
+        </div>
+        <div class="question-item">
+            5. <input type="text" class="small-blank" id="a5-blank" aria-label="Blank for question A5 part 1"> + 3e<sup>-</sup> → Al <span id="a5-feedback" class="feedback"></span>
+        </div>
+        <div class="question-item">
+            6. 2O<sup>2-</sup> → O<sub>2</sub> + <input type="text" class="small-blank" id="a6-blank" aria-label="Blank for question A6"> <span id="a6-feedback" class="feedback"></span>
+        </div>
+
+        <h2>Section B: Write the half-equation</h2>
+        <p><em>For this section, after clicking "Check Answers", the correct answer will be shown. You then need to mark your own answer as correct or incorrect.</em></p>
+        <div class="question-item">
+            1. A calcium ion (Ca<sup>2+</sup>) is reduced to calcium metal.
+            <textarea id="b1-answer" aria-label="Answer for question B1" rows="2"></textarea>
+            <div id="b1-correct-answer-display" class="correct-answer-display"></div>
+            <div class="mark-buttons">
+                <button id="b1-mark-correct-btn" class="mark-correct" style="display:none;" aria-label="Mark B1 correct">✓ Correct</button>
+                <button id="b1-mark-incorrect-btn" class="mark-incorrect" style="display:none;" aria-label="Mark B1 incorrect">✗ Incorrect</button>
+                <span id="b1-mark-feedback" class="feedback"></span>
+            </div>
+        </div>
+        <div class="question-item">
+            2. A bromide ion (Br<sup>-</sup>) is oxidised to form bromine gas.
+            <textarea id="b2-answer" aria-label="Answer for question B2" rows="2"></textarea>
+            <div id="b2-correct-answer-display" class="correct-answer-display"></div>
+            <div class="mark-buttons">
+                <button id="b2-mark-correct-btn" class="mark-correct" style="display:none;" aria-label="Mark B2 correct">✓ Correct</button>
+                <button id="b2-mark-incorrect-btn" class="mark-incorrect" style="display:none;" aria-label="Mark B2 incorrect">✗ Incorrect</button>
+                <span id="b2-mark-feedback" class="feedback"></span>
+            </div>
+        </div>
+        <div class="question-item">
+            3. A magnesium ion (Mg<sup>2+</sup>) is discharged at the cathode.
+            <textarea id="b3-answer" aria-label="Answer for question B3" rows="2"></textarea>
+            <div id="b3-correct-answer-display" class="correct-answer-display"></div>
+            <div class="mark-buttons">
+                <button id="b3-mark-correct-btn" class="mark-correct" style="display:none;" aria-label="Mark B3 correct">✓ Correct</button>
+                <button id="b3-mark-incorrect-btn" class="mark-incorrect" style="display:none;" aria-label="Mark B3 incorrect">✗ Incorrect</button>
+                <span id="b3-mark-feedback" class="feedback"></span>
+            </div>
+        </div>
+        <div class="question-item">
+            4. Oxide ions (O<sup>2-</sup>) form oxygen gas at the anode.
+            <textarea id="b4-answer" aria-label="Answer for question B4" rows="2"></textarea>
+            <div id="b4-correct-answer-display" class="correct-answer-display"></div>
+            <div class="mark-buttons">
+                <button id="b4-mark-correct-btn" class="mark-correct" style="display:none;" aria-label="Mark B4 correct">✓ Correct</button>
+                <button id="b4-mark-incorrect-btn" class="mark-incorrect" style="display:none;" aria-label="Mark B4 incorrect">✗ Incorrect</button>
+                <span id="b4-mark-feedback" class="feedback"></span>
+            </div>
+        </div>
+
+        <h2>Section C: Identify the electrode and the type of reaction</h2>
+        <p>For each equation below, state:</p>
+        <ul>
+            <li>Which electrode it happens at (anode or cathode)</li>
+            <li>Whether it is oxidation or reduction</li>
+        </ul>
+
+        <div class="question-item">
+            1. Al<sup>3+</sup> + 3e<sup>-</sup> → Al
+            <div class="answer-field-group">
+                <label for="c1-electrode-input">Electrode:</label>
+                <input type="text" id="c1-electrode-input" class="medium-blank" aria-label="Electrode for question C1">
+                <span id="c1-electrode-feedback" class="feedback"></span>
+            </div>
+            <div class="answer-field-group">
+                <label for="c1-type-input">Type:</label>
+                <input type="text" id="c1-type-input" class="medium-blank" aria-label="Reaction type for question C1">
+                <span id="c1-type-feedback" class="feedback"></span>
+            </div>
+        </div>
+
+        <div class="question-item">
+            2. 2Br<sup>-</sup> → Br<sub>2</sub> + 2e<sup>-</sup>
+            <div class="answer-field-group">
+                <label for="c2-electrode-input">Electrode:</label>
+                <input type="text" id="c2-electrode-input" class="medium-blank" aria-label="Electrode for question C2">
+                <span id="c2-electrode-feedback" class="feedback"></span>
+            </div>
+            <div class="answer-field-group">
+                <label for="c2-type-input">Type:</label>
+                <input type="text" id="c2-type-input" class="medium-blank" aria-label="Reaction type for question C2">
+                <span id="c2-type-feedback" class="feedback"></span>
+            </div>
+        </div>
+
+        <div class="question-item">
+            3. Mg<sup>2+</sup> + 2e<sup>-</sup> → Mg
+            <div class="answer-field-group">
+                <label for="c3-electrode-input">Electrode:</label>
+                <input type="text" id="c3-electrode-input" class="medium-blank" aria-label="Electrode for question C3">
+                <span id="c3-electrode-feedback" class="feedback"></span>
+            </div>
+            <div class="answer-field-group">
+                <label for="c3-type-input">Type:</label>
+                <input type="text" id="c3-type-input" class="medium-blank" aria-label="Reaction type for question C3">
+                <span id="c3-type-feedback" class="feedback"></span>
+            </div>
+        </div>
+
+        <div class="question-item">
+            4. 2O<sup>2-</sup> → O<sub>2</sub> + 4e<sup>-</sup>
+            <div class="answer-field-group">
+                <label for="c4-electrode-input">Electrode:</label>
+                <input type="text" id="c4-electrode-input" class="medium-blank" aria-label="Electrode for question C4">
+                <span id="c4-electrode-feedback" class="feedback"></span>
+            </div>
+            <div class="answer-field-group">
+                <label for="c4-type-input">Type:</label>
+                <input type="text" id="c4-type-input" class="medium-blank" aria-label="Reaction type for question C4">
+                <span id="c4-type-feedback" class="feedback"></span>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <button id="checkAnswersButton" class="check-button">Check Answers</button>
+            <button id="printButton">Print / Save as PDF</button>
+        </div>
+
+        <div id="scoreDisplay" class="score-display" style="display:none;">
+            <h3>Calculating score...</h3>
+        </div>
+    </div>
+
+    <script>
+        // --- Global Variables ---
+        let currentScore = 0;
+        const totalPossibleScore = 18; // 6 (A) + 4 (B) + 8 (C)
+        let sectionBMarked = { b1: false, b2: false, b3: false, b4: false };
+
+        // --- Helper Functions ---
+        function normalizeString(str) {
+            if (typeof str !== 'string') return '';
+            return str.trim().toLowerCase().replace(/\s+/g, ' ');
+        }
+
+        function normalizeEquation(str) {
+            if (typeof str !== 'string') return '';
+            // Remove all spaces. Keep case for elements. Replace -> with →.
+            // Also handle superscripts/subscripts if typed as ^2+ or _2
+            return str.replace(/\s+/g, '')
+                      .replace(/->/g, '→')
+                      .replace(/\^(\d*[\+\-])/g, '$1') // e.g., Ca^2+ becomes Ca2+
+                      .replace(/_(\d+)/g, '$1');        // e.g., O_2 becomes O2
+        }
+        
+        const displayCorrectAnswers = {
+            a1: "3e⁻", a2: "2e⁻", a3: "Mg²⁺", a4: "Cl₂", a5: "Al³⁺", a6: "4e⁻",
+            b1: "Ca²⁺ + 2e⁻ → Ca",
+            b2: "2Br⁻ → Br₂ + 2e⁻",
+            b3: "Mg²⁺ + 2e⁻ → Mg",
+            b4: "2O²⁻ → O₂ + 4e⁻",
+            c1: { electrode: "cathode", type: "reduction" },
+            c2: { electrode: "anode", type: "oxidation" },
+            c3: { electrode: "cathode", type: "reduction" },
+            c4: { electrode: "anode", type: "oxidation" }
+        };
+
+        // Storing normalized correct answers for comparison
+        const correctAnswers = {
+            a1: normalizeString("3e-"), a2: normalizeString("2e-"), a3: normalizeString("Mg2+"),
+            a4: normalizeString("Cl2"), a5: normalizeString("Al3+"), a6: normalizeString("4e-"),
+            b1: normalizeEquation("Ca2+ + 2e- → Ca"), b2: normalizeEquation("2Br- → Br2 + 2e-"),
+            b3: normalizeEquation("Mg2+ + 2e- → Mg"), b4: normalizeEquation("2O2- → O2 + 4e-"),
+            c1: { electrode: normalizeString("cathode"), type: normalizeString("reduction") },
+            c2: { electrode: normalizeString("anode"), type: normalizeString("oxidation") },
+            c3: { electrode: normalizeString("cathode"), type: normalizeString("reduction") },
+            c4: { electrode: normalizeString("anode"), type: normalizeString("oxidation") }
+        };
+
+
+        // --- Event Listeners ---
+        document.getElementById('printButton').addEventListener('click', function() {
+            window.print();
+        });
+
+        document.getElementById('checkAnswersButton').addEventListener('click', function() {
+            checkAllAnswers();
+            this.disabled = true; // Disable after one check to prevent re-scoring issues easily
+            this.textContent = "Answers Checked";
+        });
+
+        // --- Core Logic ---
+        function checkAllAnswers() {
+            currentScore = 0;
+            // Reset section B marking status for a fresh check
+            sectionBMarked = { b1: false, b2: false, b3: false, b4: false };
+            Object.keys(sectionBMarked).forEach(id => {
+                 document.getElementById(`${id}-mark-feedback`).textContent = "";
+                 document.getElementById(`${id}-mark-feedback`).className = "feedback";
+            });
+
+
+            // --- Check Section A ---
+            const sectionAIds = ["a1", "a2", "a3", "a4", "a5", "a6"];
+            sectionAIds.forEach(id => {
+                const userInputEl = document.getElementById(`${id}-blank`);
+                const userInput = normalizeString(userInputEl.value);
+                const feedbackEl = document.getElementById(`${id}-feedback`);
+                if (userInput === correctAnswers[id]) {
+                    currentScore++;
+                    feedbackEl.textContent = "Correct!";
+                    feedbackEl.className = "feedback correct";
+                    userInputEl.style.borderColor = "green";
+                } else {
+                    feedbackEl.textContent = `Incorrect. Correct: ${displayCorrectAnswers[id]}`;
+                    feedbackEl.className = "feedback incorrect";
+                    userInputEl.style.borderColor = "red";
+                }
+            });
+
+            // --- Setup Section B for Manual Marking ---
+            const sectionBIds = ["b1", "b2", "b3", "b4"];
+            sectionBIds.forEach(id => {
+                const correctAnswerDisplayEl = document.getElementById(`${id}-correct-answer-display`);
+                const markCorrectBtn = document.getElementById(`${id}-mark-correct-btn`);
+                const markIncorrectBtn = document.getElementById(`${id}-mark-incorrect-btn`);
+
+                correctAnswerDisplayEl.innerHTML = `<strong>Correct Answer:</strong> ${displayCorrectAnswers[id]}`;
+                correctAnswerDisplayEl.style.display = "block";
+
+                markCorrectBtn.style.display = "inline-block";
+                markCorrectBtn.disabled = false;
+                markIncorrectBtn.style.display = "inline-block";
+                markIncorrectBtn.disabled = false;
+
+                // Clone and replace buttons to remove old listeners and add new ones
+                const newMarkCorrectBtn = markCorrectBtn.cloneNode(true);
+                markCorrectBtn.parentNode.replaceChild(newMarkCorrectBtn, markCorrectBtn);
+                newMarkCorrectBtn.addEventListener('click', () => handleSectionBMark(id, true));
+
+                const newMarkIncorrectBtn = markIncorrectBtn.cloneNode(true);
+                markIncorrectBtn.parentNode.replaceChild(newMarkIncorrectBtn, markIncorrectBtn);
+                newMarkIncorrectBtn.addEventListener('click', () => handleSectionBMark(id, false));
+            });
+
+            // --- Check Section C ---
+            const sectionCIds = ["c1", "c2", "c3", "c4"];
+            sectionCIds.forEach(id => {
+                const electrodeInputEl = document.getElementById(`${id}-electrode-input`);
+                const typeInputEl = document.getElementById(`${id}-type-input`);
+                const electrodeInput = normalizeString(electrodeInputEl.value);
+                const typeInput = normalizeString(typeInputEl.value);
+                const electrodeFeedbackEl = document.getElementById(`${id}-electrode-feedback`);
+                const typeFeedbackEl = document.getElementById(`${id}-type-feedback`);
+                const correctAnswerC = correctAnswers[id];
+                const displayCorrectAnswerC = displayCorrectAnswers[id];
+
+
+                if (electrodeInput === correctAnswerC.electrode) {
+                    currentScore++;
+                    electrodeFeedbackEl.textContent = "Correct!";
+                    electrodeFeedbackEl.className = "feedback correct";
+                    electrodeInputEl.style.borderColor = "green";
+                } else {
+                    electrodeFeedbackEl.textContent = `Incorrect. Correct: ${displayCorrectAnswerC.electrode}`;
+                    electrodeFeedbackEl.className = "feedback incorrect";
+                    electrodeInputEl.style.borderColor = "red";
+                }
+
+                if (typeInput === correctAnswerC.type) {
+                    currentScore++;
+                    typeFeedbackEl.textContent = "Correct!";
+                    typeFeedbackEl.className = "feedback correct";
+                    typeInputEl.style.borderColor = "green";
+                } else {
+                    typeFeedbackEl.textContent = `Incorrect. Correct: ${displayCorrectAnswerC.type}`;
+                    typeFeedbackEl.className = "feedback incorrect";
+                    typeInputEl.style.borderColor = "red";
+                }
+            });
+
+            document.getElementById("scoreDisplay").style.display = "block";
+            updateScoreDisplay(); // Update score after auto-checks (A & C)
+        }
+
+        function handleSectionBMark(questionId, isCorrect) {
+            if (sectionBMarked[questionId]) return; // Already marked
+
+            const markFeedbackEl = document.getElementById(`${questionId}-mark-feedback`);
+            const markCorrectBtn = document.getElementById(`${questionId}-mark-correct-btn`);
+            const markIncorrectBtn = document.getElementById(`${questionId}-mark-incorrect-btn`);
+            const userAnswerTextarea = document.getElementById(`${questionId}-answer`);
+
+
+            if (isCorrect) {
+                currentScore++;
+                markFeedbackEl.textContent = "Marked as Correct";
+                markFeedbackEl.className = "feedback correct";
+                userAnswerTextarea.style.borderColor = "green";
+
+            } else {
+                markFeedbackEl.textContent = "Marked as Incorrect";
+                markFeedbackEl.className = "feedback incorrect";
+                userAnswerTextarea.style.borderColor = "red";
+            }
+            sectionBMarked[questionId] = true;
+            markCorrectBtn.disabled = true;
+            markIncorrectBtn.disabled = true;
+
+            updateScoreDisplay();
+        }
+
+        function updateScoreDisplay() {
+            const scoreDisplayEl = document.getElementById("scoreDisplay");
+            const percentage = totalPossibleScore > 0 ? ((currentScore / totalPossibleScore) * 100).toFixed(1) : 0;
+            
+            let allBMarked = true;
+            Object.values(sectionBMarked).forEach(marked => {
+                if (!marked) allBMarked = false;
+            });
+
+            if (allBMarked || document.getElementById('checkAnswersButton').disabled) { // Show final score if check button is disabled (meaning A&C are done) and all B are marked
+                 scoreDisplayEl.innerHTML = `<h3>Final Score: ${currentScore} / ${totalPossibleScore} (${percentage}%)</h3>`;
+            } else {
+                 scoreDisplayEl.innerHTML = `<h3>Current Score (Mark Section B): ${currentScore} / ${totalPossibleScore}</h3>`;
+            }
+        }
+
+    </script>
+</body>
+</html>
