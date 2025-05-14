@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electromagnets Revision</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #3498db; /* Vibrant Blue */
+            --primary-darker: #2980b9;
+            --secondary-color: #2c3e50; /* Dark Slate Blue */
+            --accent-color: #1abc9c; /* Bright Teal */
+            --accent-darker: #16a085;
+            --light-bg: #ecf0f1; /* Very Light Grey */
+            --card-bg: #ffffff;
+            --dark-text: #34495e; /* Darker Grey Blue */
+            --light-text: #ffffff;
+            --correct-color: #27ae60; /* Emerald Green */
+            --incorrect-color: #c0392b; /* Pomegranate Red */
+            --info-bg: #e0f7fa; /* Light Cyan for info boxes */
+            --info-border: #00bcd4; /* Cyan border for info */
+            --border-radius: 8px;
+            --box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            --input-border: #bdc3c7; /* Silver */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 850px;
+            margin-bottom: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+        h1 { font-size: 2.4em; margin-bottom: 25px; }
+        h2 { font-size: 2em; margin-top: 25px; }
+        h3 { font-size: 1.5em; color: var(--primary-color); margin-bottom:10px;}
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-instructions, .self-check-prompt, .extra-drill, .prompt-understanding, .hints {
+            background-color: var(--info-bg);
+            padding: 18px;
+            border-radius: var(--border-radius);
+            margin: 25px 0;
+            border-left: 5px solid var(--info-border);
+            font-size: 0.95em;
+        }
+         .task-instructions p, .self-check-prompt p, .extra-drill p, .prompt-understanding p, .hints p {
+            margin-bottom: 8px;
+        }
+        .task-instructions strong, .self-check-prompt strong, .extra-drill strong, .prompt-understanding strong, .hints strong {
+            color: var(--secondary-color);
+        }
+
+
+        button, .btn, input[type="button"], input[type="submit"] {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 12px 28px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button:hover, .btn:hover, input[type="button"]:hover, input[type="submit"]:hover {
+            background-color: var(--primary-darker);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        button:active, .btn:active, input[type="button"]:active, input[type="submit"]:active {
+            transform: scale(0.97);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        button:disabled {
+            background-color: #bdc3c7; /* Silver */
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--accent-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--accent-darker);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 35px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 25px;
+        }
+        #screenIndicator {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+
+        .feedback {
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            text-align: center;
+            font-size: 0.95em;
+        }
+        .feedback.correct {
+            background-color: var(--correct-color);
+            color: var(--light-text);
+        }
+        .feedback.incorrect {
+            background-color: var(--incorrect-color);
+            color: var(--light-text);
+        }
+        .feedback.info {
+            background-color: var(--info-bg);
+            color: var(--primary-color);
+            border: 1px solid var(--info-border);
+        }
+
+        /* Drag and Drop Styles */
+        .drag-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+            padding: 15px;
+            background-color: #f8f9fa; /* Lighter than light-bg */
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef; /* Light border */
+        }
+        .drag-column, .drop-column {
+            padding: 10px;
+            min-width: 180px; /* Increased width */
+            background-color: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .drag-column h3, .drop-column h3 {
+            font-size: 1.1em;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .draggable {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: grab;
+            text-align: center;
+            font-weight: 500;
+            border: 1px solid var(--accent-darker);
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+        .draggable:hover {
+            background-color: var(--accent-darker);
+        }
+        .draggable.dragging {
+            opacity: 0.4;
+            background-color: #95a5a6; /* Mid grey */
+        }
+        .drop-target {
+            background-color: #e9ecef; /* Light grey */
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            min-height: 50px;
+            border: 2px dashed var(--input-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, border-color 0.2s;
+            color: #7f8c8d; /* Grey text for placeholder */
+            font-style: italic;
+        }
+        .drop-target.over {
+            background-color: #d1e0e0; /* Slightly darker on hover */
+            border-color: var(--primary-color);
+        }
+        .drop-target .draggable {
+            cursor: default;
+            background-color: var(--primary-color); /* Change color when dropped */
+            border-color: var(--primary-darker);
+        }
+
+        /* Fill in the Gaps */
+        .fill-gaps p {
+            font-size: 1.1em;
+            line-height: 2;
+        }
+        .fill-gaps input[type="text"] {
+            padding: 10px;
+            margin: 0 8px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            width: 120px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1em;
+            text-align: center;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .fill-gaps input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        /* MCQ / True-False / Checkbox lists */
+        .options-list label {
+            display: flex; /* For aligning checkbox/radio with text */
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .options-list label:hover {
+            background-color: #e9eef0;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .options-list input[type="radio"], .options-list input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: var(--primary-color); /* Modern way to style radio/checkbox */
+        }
+
+        /* Rank/Order List */
+        .order-list, .sequence-list {
+            list-style: none;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            min-height: 60px;
+            border: 1px solid #e9ecef;
+        }
+        .order-list li, .sequence-list li {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: grab;
+            border: 1px solid var(--primary-darker);
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+         .order-list li:hover, .sequence-list li:hover {
+            background-color: var(--primary-darker);
+        }
+        .order-list li:last-child, .sequence-list li:last-child {
+            margin-bottom: 0;
+        }
+
+
+        /* Flashcards */
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .flashcard {
+            width: 320px;
+            height: 200px;
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        .flashcard:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .flashcard .front, .flashcard .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        .flashcard .front {
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        .flashcard .back {
+            transform: rotateY(180deg);
+            background-color: var(--accent-color);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Quiz Styles */
+        .quiz-question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fdfdfe; /* Slightly off-white */
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 3px 7px rgba(0,0,0,0.07);
+        }
+        .quiz-question p { margin-bottom: 15px; font-weight: 500; font-size: 1.1em; color: var(--secondary-color); }
+
+        /* Game Styles */
+        #game-area { text-align: center; padding: 20px; background-color: #f8f9fa; border-radius: var(--border-radius); }
+        #game-timer, #game-score {
+            font-size: 1.6em;
+            margin: 10px 0 20px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        #game-question {
+            font-size: 1.3em;
+            margin: 25px 0;
+            min-height: 60px;
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+        #game-options button {
+            margin: 8px;
+            padding: 10px 20px;
+            font-size: 0.95em;
+        }
+        #game-feedback {
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+        #game-results h3 {
+            color: var(--accent-color);
+            font-size: 1.8em;
+        }
+        #game-results p {
+            font-size: 1.2em;
+            margin: 15px 0;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            overflow: hidden;
+            height: 24px;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-color) 100%);
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            font-weight: 500;
+            transition: width 0.4s ease-in-out;
+            font-size: 0.9em;
+        }
+
+        .screen-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+        }
+        .screen-title h2 { margin-bottom: 0; text-align: left;}
+        .screen-counter { font-size: 0.95em; color: var(--secondary-color); font-weight: 500; }
+
+        /* Ensure form elements inherit font */
+        input, select, textarea {
+            font-family: 'Poppins', sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Electromagnets Revision Exercise</h1>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+
+        <!-- Screen 1: What is a Magnet? -->
+        <div class="screen" id="screen-1">
+            <div class="screen-title">
+                <h2>What is a Magnet?</h2>
+                <span class="screen-counter" id="screenCounter1"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Match the magnetic pole interactions. Drag the "Match With" items to the correct "Statement".</p>
+            <div class="drag-container" id="magnet-poles-task">
+                <div class="drag-column">
+                    <h3>Statement</h3>
+                    <div class="drop-target" data-correct-match="South pole (attracts)">North pole attracts...</div>
+                    <div class="drop-target" data-correct-match="South pole (repels)">South pole repels...</div>
+                    <div class="drop-target" data-correct-match="North pole (repels)">North pole repels...</div>
+                    <div class="drop-target" data-correct-match="North pole (attracts)">South pole attracts...</div>
+                </div>
+                <div class="drag-column">
+                    <h3>Match With</h3>
+                    <div class="draggable" draggable="true" data-value="South pole (attracts)">South pole</div>
+                    <div class="draggable" draggable="true" data-value="South pole (repels)">South pole</div>
+                    <div class="draggable" draggable="true" data-value="North pole (repels)">North pole</div>
+                    <div class="draggable" draggable="true" data-value="North pole (attracts)">North pole</div>
+                </div>
+            </div>
+            <button onclick="checkMagnetPoles()">Check Matches</button>
+            <div class="feedback" id="magnet-poles-feedback"></div>
+            <div class="self-check-prompt">
+                <p>💡 <strong>Remember:</strong> Opposites attract, likes repel!</p>
+            </div>
+            <div class="extra-drill">
+                <h3>Extra Drill (MCQ)</h3>
+                <p>Which of these is <strong>not</strong> a magnetic material?</p>
+                <div class="options-list" id="mcq-magnetic-material">
+                    <label><input type="radio" name="magnetic_material" value="a"> a) Iron</label>
+                    <label><input type="radio" name="magnetic_material" value="b"> b) Aluminium</label>
+                    <label><input type="radio" name="magnetic_material" value="c"> c) Nickel</label>
+                    <label><input type="radio" name="magnetic_material" value="d"> d) Cobalt</label>
+                </div>
+                <button onclick="checkMagneticMaterial()">Check MCQ</button>
+                <div class="feedback" id="mcq-magnetic-material-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Magnetic Fields -->
+        <div class="screen" id="screen-2">
+            <div class="screen-title">
+                <h2>Magnetic Fields</h2>
+                <span class="screen-counter" id="screenCounter2"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Fill in the gaps.</p>
+            <div class="fill-gaps" id="magnetic-field-gaps">
+                <p>
+                    Magnetic field lines always travel from the <input type="text" id="gap1" data-answer="north" placeholder="e.g. north"> pole
+                    to the <input type="text" id="gap2" data-answer="south" placeholder="e.g. south"> pole.
+                    The field is strongest where the lines are <input type="text" id="gap3" data-answer="closest" placeholder="e.g. closest"> together.
+                </p>
+            </div>
+            <button onclick="checkMagneticFieldGaps()">Check Gaps</button>
+            <div class="feedback" id="magnetic-field-gaps-feedback"></div>
+            <div class="self-check-prompt">
+                <p>Click “Show Answer” to compare. Then try to recall from memory.</p>
+                <button onclick="showMagneticFieldGapsAnswers()">Show Answers</button>
+                <p id="magnetic-field-gaps-answers" style="display:none; margin-top:10px; font-weight:bold; color:var(--primary-color);">Answers: north, south, closest</p>
+            </div>
+            <div class="extra-drill">
+                <h3>Extra Drill (True/False)</h3>
+                <div class="options-list" id="tf-magnetic-fields">
+                    <label><input type="checkbox" data-correct="false"> Magnetic fields are strongest when lines are far apart</label>
+                    <label><input type="checkbox" data-correct="true"> Magnetic fields can be shown using iron filings</label>
+                    <label><input type="checkbox" data-correct="false"> Permanent magnets only work when connected to electricity</label>
+                </div>
+                <button onclick="checkTrueFalseMagneticFields()">Check T/F</button>
+                <div class="feedback" id="tf-magnetic-fields-feedback"></div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Investigating Magnetic Fields -->
+        <div class="screen" id="screen-3">
+            <div class="screen-title">
+                <h2>Investigating Magnetic Fields</h2>
+                <span class="screen-counter" id="screenCounter3"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> How can we see the direction and shape of magnetic fields?</p>
+            <div class="options-list" id="mcq-see-fields">
+                <label><input type="radio" name="see_fields" value="a"> a) With a microscope</label>
+                <label><input type="radio" name="see_fields" value="b"> b) With plotting compasses and iron filings</label>
+                <label><input type="radio" name="see_fields" value="c"> c) With a voltmeter</label>
+                <label><input type="radio" name="see_fields" value="d"> d) With X-rays</label>
+            </div>
+            <button onclick="checkSeeFields()">Check MCQ</button>
+            <div class="feedback" id="mcq-see-fields-feedback"></div>
+
+            <h3 style="margin-top: 30px;">Match-up Activity</h3>
+            <p class="task-instructions"><strong>Task:</strong> Match the tool to its specific purpose in investigating magnetic fields.</p>
+            <div class="drag-container" id="tool-purpose-task">
+                 <div class="drag-column">
+                    <h3>Tool</h3>
+                    <div class="drop-target" data-correct-match="Shows field direction">Compass...</div>
+                    <div class="drop-target" data-correct-match="Shows field shape and strength">Iron filings...</div>
+                </div>
+                <div class="drag-column">
+                    <h3>Purpose</h3>
+                    <div class="draggable" draggable="true" data-value="Shows field direction">Shows field direction</div>
+                    <div class="draggable" draggable="true" data-value="Shows field shape and strength">Shows field shape and strength</div>
+                </div>
+            </div>
+            <button onclick="checkToolPurpose()">Check Matches</button>
+            <div class="feedback" id="tool-purpose-feedback"></div>
+        </div>
+
+        <!-- Screen 4: Electromagnets – What Are They? -->
+        <div class="screen" id="screen-4">
+            <div class="screen-title">
+                <h2>Electromagnets – What Are They?</h2>
+                <span class="screen-counter" id="screenCounter4"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Tick <strong>all</strong> statements that are true about electromagnets:</p>
+            <div class="options-list" id="electromagnet-true-statements">
+                <label><input type="checkbox" data-correct="true"> Can be turned on and off</label>
+                <label><input type="checkbox" data-correct="false"> Always have a magnetic field, even without electricity</label>
+                <label><input type="checkbox" data-correct="true"> Are made by wrapping a coil of wire around a core</label>
+                <label><input type="checkbox" data-correct="true"> Can often be made stronger than permanent magnets</label>
+            </div>
+            <button onclick="checkElectromagnetStatements()">Check Statements</button>
+            <div class="feedback" id="electromagnet-statements-feedback"></div>
+            <div class="self-check-prompt">
+                <p>💡 <strong>Key difference:</strong> Permanent magnets always have a field. Electromagnets need an electric current to produce a magnetic field.</p>
+            </div>
+        </div>
+
+        <!-- Screen 5: Strengthening Electromagnets -->
+        <div class="screen" id="screen-5">
+            <div class="screen-title">
+                <h2>Strengthening Electromagnets</h2>
+                <span class="screen-counter" id="screenCounter5"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Put these methods in order of how you might try to strengthen an electromagnet. Drag the methods from "Methods to try" to "Your Order". (Any order is accepted as long as all three methods are included).</p>
+            <p><strong>Methods to try:</strong></p>
+            <ul class="order-list" id="strength-methods-source">
+                <li draggable="true" data-id="1">Increase the number of turns in the coil</li>
+                <li draggable="true" data-id="2">Increase the electric current flowing through the coil</li>
+                <li draggable="true" data-id="3">Use an iron core (instead of air or other materials)</li>
+            </ul>
+            <p style="margin-top:20px; font-weight:bold;">Your Order:</p>
+            <ul class="order-list" id="strength-methods-ordered" style="min-height: 150px;">
+                <!-- Drop items here -->
+            </ul>
+            <button onclick="checkStrengtheningOrder()">Check Order</button>
+            <div class="feedback" id="strengthening-order-feedback"></div>
+            <div class="prompt-understanding">
+                <p>🗣️ <strong>Challenge:</strong> Can you explain <strong>why</strong> each method works to strengthen an electromagnet to a friend or say it aloud?</p>
+            </div>
+        </div>
+
+        <!-- Screen 6: Using Electromagnets – Electric Bells -->
+        <div class="screen" id="screen-6">
+            <div class="screen-title">
+                <h2>Using Electromagnets – Electric Bells</h2>
+                <span class="screen-counter" id="screenCounter6"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Arrange the following steps in the correct order to describe how an electric bell works. Drag to reorder.</p>
+            <ul class="sequence-list" id="electric-bell-steps" style="min-height: 200px;">
+                <li draggable="true" data-step="5">The bell (gong) rings as the hammer strikes it.</li>
+                <li draggable="true" data-step="1">When the switch is closed, the electromagnet attracts the iron armature.</li>
+                <li draggable="true" data-step="2">The armature moves, causing the hammer to strike the gong, but this also breaks the circuit at the contact screw.</li>
+                <li draggable="true" data-step="3">With the circuit broken, the electromagnet loses its magnetism, and the spring pulls the armature back.</li>
+                <li draggable="true" data-step="4">The armature returning to its original position completes the circuit again at the contact screw.</li>
+            </ul>
+            <button onclick="checkElectricBellSequence()">Check Sequence</button>
+            <div class="feedback" id="electric-bell-feedback"></div>
+            <div class="self-check-prompt">
+                <p>🔁 "Can you recall this sequence without looking next time? Try visualizing it!"</p>
+            </div>
+        </div>
+
+        <!-- Screen 7: Using Electromagnets – Circuit Breakers -->
+        <div class="screen" id="screen-7">
+            <div class="screen-title">
+                <h2>Using Electromagnets – Circuit Breakers</h2>
+                <span class="screen-counter" id="screenCounter7"></span>
+            </div>
+            <div class="extra-drill">
+                <h3>Q1: What primarily causes the circuit to break in an electromagnetic circuit breaker?</h3>
+                <div class="options-list" id="cb-q1">
+                    <label><input type="radio" name="cb_q1" value="a"> a) A spring releasing suddenly</label>
+                    <label><input type="radio" name="cb_q1" value="b"> b) A large current creating a strong enough magnetic force</label>
+                    <label><input type="radio" name="cb_q1" value="c"> c) A fuse inside the breaker blowing</label>
+                </div>
+                <div class="feedback" id="cb-q1-feedback"></div>
+
+                <h3 style="margin-top:30px;">Q2: What is a key advantage of circuit breakers over traditional fuses?</h3>
+                <div class="options-list" id="cb-q2">
+                    <label><input type="radio" name="cb_q2" value="a"> a) They are much cheaper to manufacture</label>
+                    <label><input type="radio" name="cb_q2" value="b"> b) They work effectively without any electricity</label>
+                    <label><input type="radio" name="cb_q2" value="c"> c) They can be reset and reused after tripping</label>
+                </div>
+                <div class="feedback" id="cb-q2-feedback"></div>
+                <button onclick="checkCircuitBreakerQs()">Check Answers</button>
+            </div>
+        </div>
+
+        <!-- Screen 8: Key Terms -->
+        <div class="screen" id="screen-8">
+             <div class="screen-title">
+                <h2>Key Terms</h2>
+                <span class="screen-counter" id="screenCounter8"></span>
+            </div>
+            <p class="task-instructions"><strong>Task:</strong> Click on a card to flip it and see the definition. Use the "Next Term" button to cycle through important vocabulary.</p>
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="front" id="flashcard-term">Term</div>
+                    <div class="back" id="flashcard-definition">Definition</div>
+                </div>
+                <button onclick="nextFlashcard()" class="btn-secondary">Next Term</button>
+            </div>
+        </div>
+
+        <!-- Screen 9: 10 Mark Multiple-Choice Quiz -->
+        <div class="screen" id="screen-9">
+             <div class="screen-title">
+                <h2>10 Mark Multiple-Choice Quiz</h2>
+                <span class="screen-counter" id="screenCounter9"></span>
+            </div>
+            <p class="task-instructions">Test your overall understanding with this 10-mark quiz. Select the best answer for each question.</p>
+            <div id="final-quiz-area">
+                <!-- Questions will be injected here by JS -->
+            </div>
+            <button onclick="submitFinalQuiz()">Submit Quiz</button>
+            <div id="final-quiz-results" style="margin-top: 25px;"></div>
+        </div>
+
+        <!-- Screen 10: Timed Game Element -->
+        <div class="screen" id="screen-10">
+             <div class="screen-title">
+                <h2>Timed Electromagnet Challenge!</h2>
+                <span class="screen-counter" id="screenCounter10"></span>
+            </div>
+            <div id="game-area">
+                <p class="task-instructions">Get ready for a quick-fire challenge! Answer as many questions as you can in <strong>60 seconds</strong>.</p>
+                <button id="startGameBtn" onclick="startGame()" class="btn-secondary" style="font-size: 1.3em; padding: 18px 35px;">Start 60 Second Challenge!</button>
+                <div id="game-content" style="display:none;">
+                    <div id="game-timer">Time: 60s</div>
+                    <div id="game-score">Score: 0</div>
+                    <div id="game-question">Question will appear here.</div>
+                    <div id="game-options">
+                        <!-- Options will be buttons -->
+                    </div>
+                    <div id="game-feedback" class="feedback"></div>
+                </div>
+                <div id="game-results" style="display:none; margin-top: 25px;">
+                    <h3>Challenge Over!</h3>
+                    <p id="final-game-score"></p>
+                    <button onclick="resetGame()" class="btn-secondary">Play Again?</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation-buttons">
+            <button id="prevBtn" onclick="prevScreen()" disabled>Previous</button>
+            <span id="screenIndicator"></span>
+            <button id="nextBtn" onclick="nextScreen()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScreenIndex = 0;
+        const screens = document.querySelectorAll('.screen');
+        const totalScreens = screens.length; // This will now be 10
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const screenIndicator = document.getElementById('screenIndicator');
+        const progressBar = document.getElementById('progressBar');
+
+        function updateNavigation() {
+            screens.forEach((screen, index) => {
+                screen.classList.toggle('active', index === currentScreenIndex);
+                const screenCounter = screen.querySelector('.screen-counter');
+                if (screenCounter) {
+                    screenCounter.textContent = `Topic ${index + 1} of ${totalScreens}`;
+                }
+            });
+            prevBtn.disabled = currentScreenIndex === 0;
+            nextBtn.disabled = currentScreenIndex === totalScreens - 1;
+            screenIndicator.textContent = `Screen ${currentScreenIndex + 1} of ${totalScreens}`;
+            
+            const progressPercent = totalScreens > 0 ? ((currentScreenIndex + 1) / totalScreens) * 100 : 0;
+            progressBar.style.width = progressPercent + '%';
+            progressBar.textContent = Math.round(progressPercent) + '%';
+
+            // Initialize screen-specific JS if it's the first time or needs reset
+            if (currentScreenIndex === 0) initScreen1Draggables(); // What is a Magnet?
+            if (currentScreenIndex === 2) initScreen3Draggables(); // Investigating Magnetic Fields
+            if (currentScreenIndex === 4) initScreen5Draggables(); // Strengthening Electromagnets
+            if (currentScreenIndex === 5) initScreen6Draggables(); // Electric Bells
+            // Screen 7 (Circuit Breakers) is MCQ, no special init
+            if (currentScreenIndex === 7) initFlashcards(); // Key Terms (was screen 9, index 8)
+            if (currentScreenIndex === 8) initFinalQuiz(); // Final Quiz (was screen 10, index 9)
+            if (currentScreenIndex === 9) { /* Game screen (was screen 11, index 10), start button handles init */ }
+        }
+
+        function nextScreen() {
+            if (currentScreenIndex < totalScreens - 1) {
+                currentScreenIndex++;
+                updateNavigation();
+                 window.scrollTo(0, 0); // Scroll to top of new screen
+            }
+        }
+
+        function prevScreen() {
+            if (currentScreenIndex > 0) {
+                currentScreenIndex--;
+                updateNavigation();
+                 window.scrollTo(0, 0); // Scroll to top of new screen
+            }
+        }
+
+        // --- Drag and Drop Generic Helper ---
+        let draggedItem = null;
+
+        function makeDraggable(element) {
+            element.addEventListener('dragstart', (e) => {
+                draggedItem = e.target;
+                setTimeout(() => e.target.classList.add('dragging'), 0);
+                // For specific data transfer if needed for complex checks
+                let dataValue = e.target.dataset.value || e.target.dataset.label || e.target.dataset.id || e.target.dataset.step;
+                if (dataValue) e.dataTransfer.setData('text/plain', dataValue);
+            });
+            element.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+                draggedItem = null;
+            });
+        }
+
+        function makeDropZone(element, onDropCallback) {
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.target.classList.add('over');
+            });
+            element.addEventListener('dragleave', (e) => {
+                e.target.classList.remove('over');
+            });
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.target.classList.remove('over');
+                if (draggedItem && (draggedItem.parentElement !== e.target || e.target.classList.contains('order-list') || e.target.classList.contains('sequence-list'))) { // Allow dropping onto list itself
+                    onDropCallback(e.target, draggedItem);
+                }
+            });
+        }
+        
+        // --- Screen 1: What is a Magnet? ---
+        function initScreen1Draggables() {
+            document.querySelectorAll('#magnet-poles-task .draggable').forEach(makeDraggable);
+            document.querySelectorAll('#magnet-poles-task .drop-target').forEach(target => {
+                makeDropZone(target, (dropZone, item) => {
+                    if(dropZone.children.length > 0 && dropZone.firstChild.classList.contains('draggable')) { // If a draggable is already there
+                         // Return it to the source pool (the second drag-column)
+                         document.querySelector('#magnet-poles-task .drag-column:nth-child(2)').appendChild(dropZone.firstChild);
+                    }
+                    dropZone.innerHTML = ''; // Clear placeholder text like "North pole attracts..."
+                    dropZone.appendChild(item);
+                });
+            });
+        }
+        function checkMagnetPoles() {
+            const targets = document.querySelectorAll('#magnet-poles-task .drop-target');
+            let correctCount = 0;
+            targets.forEach(target => {
+                const droppedItem = target.querySelector('.draggable');
+                if (droppedItem && droppedItem.dataset.value === target.dataset.correctMatch) {
+                    correctCount++;
+                    target.style.borderColor = 'var(--correct-color)';
+                    target.style.backgroundColor = '#e6ffed';
+                } else if (droppedItem) {
+                    target.style.borderColor = 'var(--incorrect-color)';
+                    target.style.backgroundColor = '#ffebee';
+                } else {
+                    target.style.borderColor = 'var(--input-border)'; // Reset if empty
+                    target.style.backgroundColor = '#e9ecef';
+                    // Restore placeholder text if needed (e.g., target.textContent = originalPlaceholder)
+                }
+            });
+            const feedbackEl = document.getElementById('magnet-poles-feedback');
+            if (correctCount === targets.length) {
+                feedbackEl.textContent = 'All correct! Well done understanding pole interactions!';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = `You got ${correctCount} out of ${targets.length} correct. Remember: opposites attract, likes repel!`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        function checkMagneticMaterial() {
+            const selected = document.querySelector('#mcq-magnetic-material input[name="magnetic_material"]:checked');
+            const feedbackEl = document.getElementById('mcq-magnetic-material-feedback');
+            if (selected && selected.value === 'b') {
+                feedbackEl.textContent = 'Correct! Aluminium is not a magnetic material.';
+                feedbackEl.className = 'feedback correct';
+            } else if (selected) {
+                feedbackEl.textContent = 'Not quite. Aluminium is the non-magnetic one here. Iron, Nickel, and Cobalt are magnetic.';
+                feedbackEl.className = 'feedback incorrect';
+            } else {
+                feedbackEl.textContent = 'Please select an answer.';
+                feedbackEl.className = 'feedback info';
+            }
+        }
+
+        // --- Screen 2: Magnetic Fields ---
+        function checkMagneticFieldGaps() {
+            const gaps = [
+                { id: 'gap1', answer: 'north' },
+                { id: 'gap2', answer: 'south' },
+                { id: 'gap3', answer: 'closest' }
+            ];
+            let allCorrect = true;
+            let answeredCount = 0;
+            gaps.forEach(gap => {
+                const input = document.getElementById(gap.id);
+                if (input.value.trim() !== "") answeredCount++;
+                if (input.value.trim().toLowerCase() === gap.answer) {
+                    input.style.borderColor = 'var(--correct-color)';
+                    input.style.backgroundColor = '#e6ffed';
+                } else {
+                    input.style.borderColor = 'var(--incorrect-color)';
+                    input.style.backgroundColor = '#ffebee';
+                    allCorrect = false;
+                }
+            });
+            const feedbackEl = document.getElementById('magnetic-field-gaps-feedback');
+            if (answeredCount < gaps.length) {
+                feedbackEl.textContent = 'Please attempt to fill all the gaps.';
+                feedbackEl.className = 'feedback info';
+                return;
+            }
+            if (allCorrect) {
+                feedbackEl.textContent = 'Excellent! All gaps filled correctly.';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = 'Some answers are incorrect. Check the highlighted fields and try again.';
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        function showMagneticFieldGapsAnswers() {
+            document.getElementById('magnetic-field-gaps-answers').style.display = 'block';
+            document.getElementById('gap1').value = 'north';
+            document.getElementById('gap2').value = 'south';
+            document.getElementById('gap3').value = 'closest';
+             ['gap1', 'gap2', 'gap3'].forEach(id => {
+                document.getElementById(id).style.borderColor = 'var(--primary-color)';
+                document.getElementById(id).style.backgroundColor = 'var(--info-bg)';
+            });
+        }
+        function checkTrueFalseMagneticFields() {
+            const checkboxes = document.querySelectorAll('#tf-magnetic-fields input[type="checkbox"]');
+            let allCorrectlyEvaluated = true;
+            let answeredCount = 0;
+            checkboxes.forEach(cb => {
+                // Only count if an interaction happened (though for checkboxes, "not checked" is a state)
+                // For this type of T/F, we want to ensure they identified the truth value correctly
+                const label = cb.parentElement;
+                label.style.borderLeftColor = 'transparent'; // Reset previous
+                
+                const isCorrectlyIdentified = (cb.checked && cb.dataset.correct === 'true') || (!cb.checked && cb.dataset.correct === 'false');
+                if (isCorrectlyIdentified) {
+                    label.style.borderLeft = '4px solid var(--correct-color)';
+                } else {
+                    allCorrectlyEvaluated = false;
+                    label.style.borderLeft = '4px solid var(--incorrect-color)';
+                }
+                answeredCount++; // Consider each checkbox as an attempt
+            });
+            
+            const feedbackEl = document.getElementById('tf-magnetic-fields-feedback');
+             if (allCorrectlyEvaluated) {
+                feedbackEl.textContent = 'All True/False statements evaluated correctly!';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = 'Some evaluations are incorrect. Review the statements carefully.';
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        
+        // --- Screen 3: Investigating Magnetic Fields ---
+        function initScreen3Draggables() {
+            document.querySelectorAll('#tool-purpose-task .draggable').forEach(makeDraggable);
+            document.querySelectorAll('#tool-purpose-task .drop-target').forEach(target => {
+                makeDropZone(target, (dropZone, item) => {
+                    if(dropZone.children.length > 0 && dropZone.firstChild.classList.contains('draggable')) {
+                         document.querySelector('#tool-purpose-task .drag-column:nth-child(2)').appendChild(dropZone.firstChild);
+                    }
+                    dropZone.innerHTML = '';
+                    dropZone.appendChild(item);
+                });
+            });
+        }
+        function checkSeeFields() {
+            const selected = document.querySelector('#mcq-see-fields input[name="see_fields"]:checked');
+            const feedbackEl = document.getElementById('mcq-see-fields-feedback');
+            if (selected && selected.value === 'b') {
+                feedbackEl.textContent = 'Correct! Plotting compasses show field direction and iron filings show the field shape.';
+                feedbackEl.className = 'feedback correct';
+            } else if (selected) {
+                feedbackEl.textContent = 'Incorrect. The best answer is plotting compasses and iron filings for seeing different aspects of magnetic fields.';
+                feedbackEl.className = 'feedback incorrect';
+            } else {
+                 feedbackEl.textContent = 'Please select an answer.';
+                feedbackEl.className = 'feedback info';
+            }
+        }
+        function checkToolPurpose() {
+            const targets = document.querySelectorAll('#tool-purpose-task .drop-target');
+            let correctCount = 0;
+            let attempted = 0;
+            targets.forEach(target => {
+                const droppedItem = target.querySelector('.draggable');
+                if (droppedItem) attempted++;
+                if (droppedItem && droppedItem.dataset.value === target.dataset.correctMatch) {
+                    correctCount++;
+                    target.style.borderColor = 'var(--correct-color)';
+                    target.style.backgroundColor = '#e6ffed';
+                } else if (droppedItem) {
+                    target.style.borderColor = 'var(--incorrect-color)';
+                    target.style.backgroundColor = '#ffebee';
+                } else {
+                     target.style.borderColor = 'var(--input-border)';
+                     target.style.backgroundColor = '#e9ecef';
+                }
+            });
+            const feedbackEl = document.getElementById('tool-purpose-feedback');
+            if (attempted < targets.length) {
+                feedbackEl.textContent = 'Please try to match all items.';
+                feedbackEl.className = 'feedback info';
+                return;
+            }
+            if (correctCount === targets.length) {
+                feedbackEl.textContent = 'All tools matched correctly to their purpose!';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = `You got ${correctCount} out of ${targets.length} correct. Review their uses.`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+
+        // --- Screen 4: Electromagnets – What Are They? ---
+        function checkElectromagnetStatements() {
+            const checkboxes = document.querySelectorAll('#electromagnet-true-statements input[type="checkbox"]');
+            let allCorrectlyIdentified = true;
+            checkboxes.forEach(cb => {
+                const label = cb.parentElement;
+                label.style.borderLeftColor = 'transparent';
+                const shouldBeChecked = cb.dataset.correct === 'true';
+                if (cb.checked !== shouldBeChecked) {
+                    allCorrectlyIdentified = false;
+                    label.style.borderLeft = '4px solid var(--incorrect-color)';
+                } else {
+                    label.style.borderLeft = '4px solid var(--correct-color)';
+                }
+            });
+            const feedbackEl = document.getElementById('electromagnet-statements-feedback');
+            if (allCorrectlyIdentified) {
+                feedbackEl.textContent = 'Excellent! All statements about electromagnets correctly identified.';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = 'Some statements are incorrect. Review the properties of electromagnets.';
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+        
+        // --- Screen 5: Strengthening Electromagnets ---
+        function initScreen5Draggables() {
+            const sourceList = document.getElementById('strength-methods-source');
+            const orderedList = document.getElementById('strength-methods-ordered');
+
+            [...sourceList.querySelectorAll('li'), ...orderedList.querySelectorAll('li')].forEach(makeDraggable);
+
+            makeDropZone(orderedList, (list, item) => {
+                list.appendChild(item); // Simple append
+                setupReorder(orderedList); // Re-setup reordering for the target list
+            });
+            makeDropZone(sourceList, (list, item) => {
+                list.appendChild(item); // Allow dragging back
+                setupReorder(sourceList); // Re-setup reordering for the source list
+            });
+            
+            setupReorder(orderedList);
+            setupReorder(sourceList);
+        }
+        
+        function setupReorder(listElement) {
+            listElement.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (!draggedItem || draggedItem.parentElement !== listElement) return; // Only reorder within the same list
+                const afterElement = getDragAfterElement(listElement, e.clientY);
+                if (afterElement == null) {
+                    listElement.appendChild(draggedItem);
+                } else {
+                    listElement.insertBefore(draggedItem, afterElement);
+                }
+            });
+        }
+
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function checkStrengtheningOrder() {
+            const orderedList = document.getElementById('strength-methods-ordered');
+            const items = orderedList.querySelectorAll('li');
+            const feedbackEl = document.getElementById('strengthening-order-feedback');
+            const presentIds = new Set();
+            items.forEach(item => presentIds.add(item.dataset.id));
+
+            if (presentIds.size === 3 && items.length === 3) {
+                feedbackEl.textContent = 'Great! You have included all three crucial methods for strengthening an electromagnet.';
+                feedbackEl.className = 'feedback correct';
+            } else if (items.length > 0) {
+                feedbackEl.textContent = 'Make sure you drag all three distinct methods into the "Your Order" list.';
+                feedbackEl.className = 'feedback incorrect';
+            } else {
+                feedbackEl.textContent = 'Please drag the methods into the "Your Order" list.';
+                feedbackEl.className = 'feedback info';
+            }
+        }
+
+        // --- Screen 6: Electric Bell Sequence ---
+        function initScreen6Draggables() {
+            const sequenceList = document.getElementById('electric-bell-steps');
+            sequenceList.querySelectorAll('li').forEach(makeDraggable);
+            setupReorder(sequenceList); // Use the generalized setupReorder
+             makeDropZone(sequenceList, (list, item) => { 
+                if (item.parentElement !== list) {
+                    list.appendChild(item);
+                }
+                setupReorder(list);
+            });
+        }
+
+        function checkElectricBellSequence() {
+            const items = document.querySelectorAll('#electric-bell-steps li');
+            let correctOrder = true;
+            const correctSequence = ["1", "2", "3", "4", "5"];
+            
+            if (items.length !== correctSequence.length) {
+                correctOrder = false; // Not all items are in the list
+            } else {
+                items.forEach((item, index) => {
+                    if (item.dataset.step !== correctSequence[index]) {
+                        correctOrder = false;
+                        item.style.backgroundColor = 'var(--incorrect-color)';
+                        item.style.borderColor = '#a72c1f';
+                    } else {
+                        item.style.backgroundColor = 'var(--correct-color)'; 
+                        item.style.borderColor = '#208c49';
+                    }
+                });
+            }
+            
+            const feedbackEl = document.getElementById('electric-bell-feedback');
+            if (items.length < correctSequence.length) {
+                 feedbackEl.textContent = 'Please ensure all steps are in the list and ordered correctly.';
+                 feedbackEl.className = 'feedback info';
+                 return;
+            }
+            if (correctOrder) {
+                feedbackEl.textContent = 'Perfect sequence! You understand how an electric bell works.';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                feedbackEl.textContent = 'The sequence is incorrect. Think about the cause and effect for each step.';
+                feedbackEl.className = 'feedback incorrect';
+            }
+        }
+
+        // --- Screen 7: Circuit Breakers ---
+        function checkCircuitBreakerQs() {
+            let q1Correct = false;
+            let q2Correct = false;
+            let q1Attempted = false;
+            let q2Attempted = false;
+
+            const q1Selected = document.querySelector('#cb-q1 input[name="cb_q1"]:checked');
+            const q1FeedbackEl = document.getElementById('cb-q1-feedback');
+            if (q1Selected) {
+                q1Attempted = true;
+                if (q1Selected.value === 'b') {
+                    q1FeedbackEl.textContent = 'Q1 Correct! A large current triggers the electromagnet.';
+                    q1FeedbackEl.className = 'feedback correct';
+                    q1Correct = true;
+                } else {
+                    q1FeedbackEl.textContent = 'Q1 Incorrect. The primary cause is a large current strengthening the electromagnet enough to operate the trip mechanism.';
+                    q1FeedbackEl.className = 'feedback incorrect';
+                }
+            } else {
+                 q1FeedbackEl.textContent = 'Q1: Please select an answer.';
+                 q1FeedbackEl.className = 'feedback info';
+            }
+
+
+            const q2Selected = document.querySelector('#cb-q2 input[name="cb_q2"]:checked');
+            const q2FeedbackEl = document.getElementById('cb-q2-feedback');
+             if (q2Selected) {
+                q2Attempted = true;
+                if (q2Selected.value === 'c') {
+                    q2FeedbackEl.textContent = 'Q2 Correct! Circuit breakers can be reset, unlike fuses which need replacement.';
+                    q2FeedbackEl.className = 'feedback correct';
+                    q2Correct = true;
+                } else {
+                    q2FeedbackEl.textContent = 'Q2 Incorrect. The key advantage is their reusability.';
+                    q2FeedbackEl.className = 'feedback incorrect';
+                }
+            } else {
+                 q2FeedbackEl.textContent = 'Q2: Please select an answer.';
+                 q2FeedbackEl.className = 'feedback info';
+            }
+        }
+
+
+        // --- Screen 8 (was 9): Key Terms (Flashcards) ---
+        const flashcardData = [
+            { term: "Attract", definition: "To pull objects towards each other (e.g. opposite magnetic poles attract)." },
+            { term: "Repel", definition: "To push objects away from each other (e.g. like magnetic poles repel)." },
+            { term: "Magnet", definition: "An object that produces a magnetic field and has a north and south pole." },
+            { term: "Magnetic pole", definition: "The ends of a magnet where the magnetic force is strongest (north and south)." },
+            { term: "Magnetic material", definition: "A material that can be attracted by a magnet (e.g. iron, nickel, cobalt)." },
+            { term: "Magnetic field", definition: "The invisible area around a magnet where magnetic forces can act." },
+            { term: "Magnetic field lines", definition: "Lines that show the direction and strength of a magnetic field (from north to south)." },
+            { term: "Permanent magnet", definition: "A magnet that produces its own magnetic field all the time." },
+            { term: "Electromagnet", definition: "A magnet made by passing an electric current through a coil of wire." },
+            { term: "Core (of an electromagnet)", definition: "The magnetic material (usually iron) placed inside the coil of an electromagnet to strengthen it." },
+            { term: "Electric bell", definition: "A device that uses an electromagnet to repeatedly make and break a circuit, causing a hammer to strike a bell (gong)." },
+            { term: "Circuit breaker", definition: "A safety device that uses an electromagnet to automatically break a circuit if the current becomes too high, preventing damage or fire." },
+            { term: "Loudspeaker", definition: "A device that uses an electromagnet (interacting with a permanent magnet) and a cone/diaphragm to convert electrical signals into sound waves." }
+        ];
+        let currentFlashcardIndex = 0;
+        const flashcardEl = document.getElementById('flashcard');
+        const flashcardTermEl = document.getElementById('flashcard-term');
+        const flashcardDefEl = document.getElementById('flashcard-definition');
+
+        function initFlashcards() {
+            currentFlashcardIndex = 0; 
+            showFlashcard(currentFlashcardIndex);
+            flashcardEl.classList.remove('flipped'); 
+            // Add event listener only once, or remove and re-add if init can be called multiple times
+            if (!flashcardEl.hasEventListener) { // Simple flag to prevent multiple listeners
+                flashcardEl.addEventListener('click', () => {
+                    flashcardEl.classList.toggle('flipped');
+                });
+                flashcardEl.hasEventListener = true;
+            }
+        }
+        function showFlashcard(index) {
+            flashcardTermEl.textContent = flashcardData[index].term;
+            flashcardDefEl.textContent = flashcardData[index].definition;
+        }
+        function nextFlashcard() {
+            currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardData.length;
+            showFlashcard(currentFlashcardIndex);
+            flashcardEl.classList.remove('flipped');
+        }
+        
+        // --- Screen 9 (was 10): Final Quiz ---
+        const finalQuizQuestions = [
+            { q: "What happens when a North pole and a South pole of two magnets are brought near each other?", o: ["They repel", "They attract", "Nothing happens", "They both lose magnetism"], a: "They attract" },
+            { q: "Magnetic field lines are drawn to show they travel from:", o: ["South pole to North pole", "North pole to South pole", "The center outwards", "East to West"], a: "North pole to South pole" },
+            { q: "Which of the following materials is NOT ferromagnetic (strongly magnetic)?", o: ["Iron", "Nickel", "Aluminium", "Cobalt"], a: "Aluminium" },
+            { q: "An electromagnet is a type of:", o: ["Permanent magnet", "Temporary magnet", "Natural magnet (lodestone)", "Insulator"], a: "Temporary magnet" },
+            { q: "Which action would make an electromagnet WEAKER?", o: ["Increasing the current", "Adding an iron core", "Decreasing the number of turns in the coil", "Using thicker wire for the coil"], a: "Decreasing the number of turns in the coil" },
+            { q: "The purpose of an iron core in an electromagnet is primarily to:", o: ["Insulate the coil", "Conduct electricity better", "Concentrate and strengthen the magnetic field", "Make it lighter"], a: "Concentrate and strengthen the magnetic field" },
+            { q: "Which device uses an electromagnet to create a repeating striking action?", o: ["A loudspeaker", "An electric motor", "An electric bell", "A generator"], a: "An electric bell" },
+            { q: "A circuit breaker uses an electromagnet as a safety device to:", o: ["Boost the voltage in a circuit", "Store electrical charge", "Open the circuit if the current is too high", "Convert AC to DC"], a: "Open the circuit if the current is too high" },
+            { q: "In a simple loudspeaker, an electromagnet (coil) interacts with what to cause vibrations?", o: ["Another electromagnet", "A permanent magnet", "A capacitor", "A transformer"], a: "A permanent magnet" },
+            { q: "The term 'repel' in the context of magnetism means:", o: ["To pull towards", "To push away", "To induce magnetism", "To demagnetize"], a: "To push away" }
+        ];
+        let finalQuizInitialized = false;
+
+        function initFinalQuiz() {
+            if (finalQuizInitialized) { // If already initialized, just clear results
+                 document.getElementById('final-quiz-results').innerHTML = '';
+                 // Optionally, uncheck radio buttons
+                 document.querySelectorAll('#final-quiz-area input[type="radio"]').forEach(radio => radio.checked = false);
+                 document.querySelectorAll('#final-quiz-area .quiz-question').forEach(qBlock => qBlock.style.borderLeftColor = 'var(--primary-color)');
+                return;
+            }
+            const quizArea = document.getElementById('final-quiz-area');
+            quizArea.innerHTML = ''; 
+            finalQuizQuestions.forEach((item, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'quiz-question';
+                questionDiv.innerHTML = `<p>${index + 1}. ${item.q}</p>`;
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options-list';
+                item.o.forEach(option => {
+                    optionsDiv.innerHTML += `<label><input type="radio" name="quiz_q${index}" value="${option}"> ${option}</label>`;
+                });
+                questionDiv.appendChild(optionsDiv);
+                quizArea.appendChild(questionDiv);
+            });
+            finalQuizInitialized = true;
+            document.getElementById('final-quiz-results').innerHTML = '';
+        }
+
+        function submitFinalQuiz() {
+            let score = 0;
+            let allAnswered = true;
+            const resultsEl = document.getElementById('final-quiz-results');
+            resultsEl.innerHTML = '<h3>Quiz Results:</h3>';
+
+            finalQuizQuestions.forEach((item, index) => {
+                const selected = document.querySelector(`input[name="quiz_q${index}"]:checked`);
+                const questionBlock = document.querySelectorAll('#final-quiz-area .quiz-question')[index];
+
+                if (!selected) {
+                    allAnswered = false;
+                    questionBlock.style.borderLeftColor = 'var(--incorrect-color)'; // Highlight unanswered
+                } else {
+                    const questionFeedback = document.createElement('p');
+                    if (selected.value === item.a) {
+                        score++;
+                        questionFeedback.innerHTML = `<strong>Q${index + 1}: Correct!</strong>`;
+                        questionFeedback.style.color = 'var(--correct-color)';
+                        questionBlock.style.borderLeftColor = 'var(--correct-color)';
+                    } else {
+                        questionFeedback.innerHTML = `<strong>Q${index + 1}: Incorrect.</strong> Correct answer: <em>${item.a}</em>`;
+                        questionFeedback.style.color = 'var(--incorrect-color)';
+                        questionBlock.style.borderLeftColor = 'var(--incorrect-color)';
+                    }
+                     resultsEl.appendChild(questionFeedback);
+                }
+            });
+            
+            if (!allAnswered) {
+                resultsEl.innerHTML = '<p style="color: var(--incorrect-color); font-weight: bold;">Please answer all questions before submitting.</p>';
+                return;
+            }
+
+            const scoreP = document.createElement('p');
+            scoreP.innerHTML = `<strong>Your final score: ${score} out of ${finalQuizQuestions.length}</strong>`;
+            scoreP.style.marginTop = '20px';
+            scoreP.style.fontSize = '1.3em';
+            scoreP.style.textAlign = 'center';
+            resultsEl.appendChild(scoreP);
+
+             if(score === finalQuizQuestions.length) {
+                resultsEl.innerHTML += `<p style="color:var(--correct-color); font-weight:bold; text-align:center; font-size:1.1em;">🎉 Excellent! Perfect score! You're an electromagnet expert! 🎉</p>`;
+            } else if (score >= finalQuizQuestions.length * 0.7) { // 70% or more
+                resultsEl.innerHTML += `<p style="color:var(--primary-color); font-weight:bold; text-align:center; font-size:1.1em;">Great job! Very good understanding.</p>`;
+            } else if (score >= finalQuizQuestions.length / 2) { // 50% or more
+                resultsEl.innerHTML += `<p style="color:var(--accent-darker); font-weight:bold; text-align:center; font-size:1.1em;">Good effort! Review the incorrect answers to strengthen your knowledge.</p>`;
+            } else {
+                resultsEl.innerHTML += `<p style="color:var(--incorrect-color); font-weight:bold; text-align:center; font-size:1.1em;">Keep practicing! Review the material on the topics you missed and try again.</p>`;
+            }
+        }
+
+        // --- Screen 10 (was 11): Timed Game ---
+        const gameQuestions = [ // Kept questions general
+            { q: "True or False: An electromagnet's polarity can be reversed by changing current direction.", o: ["True", "False"], a: "True" },
+            { q: "Which of these would make an electromagnet stronger?", o: ["Fewer coils", "Plastic core", "More current"], a: "More current" },
+            { q: "True or False: Permanent magnets need electricity to work.", o: ["True", "False"], a: "False" },
+            { q: "The region around a magnet where its force is felt is called:", o: ["Electric field", "Magnetic field", "Gravitational field"], a: "Magnetic field" },
+            { q: "True or False: Like magnetic poles (e.g., North and North) attract each other.", o: ["True", "False"], a: "False" },
+            { q: "An electric bell uses an electromagnet to make and break a ____ repeatedly.", o: ["Light", "Circuit", "Sound wave"], a: "Circuit" },
+            { q: "True or False: Circuit breakers are single-use safety devices.", o: ["True", "False"], a: "False" },
+            { q: "Which material is commonly used for the core of an electromagnet?", o: ["Copper", "Iron", "Aluminium"], a: "Iron" },
+            { q: "Electromagnets are essential in devices like scrapyard cranes because they can be:", o: ["Very light", "Turned on/off", "Always magnetic"], a: "Turned on/off" },
+            { q: "True or False: Increasing the number of turns in the coil makes an electromagnet weaker.", o: ["True", "False"], a: "False" }
+        ];
+        let gameTimerInterval;
+        let gameTimeLeft;
+        let gameScore;
+        let currentGameQuestionIndex;
+        let shuffledGameQuestions;
+
+        function startGame() {
+            document.getElementById('startGameBtn').style.display = 'none';
+            document.getElementById('game-content').style.display = 'block';
+            document.getElementById('game-results').style.display = 'none';
+            document.getElementById('game-feedback').textContent = '';
+            document.getElementById('game-feedback').className = 'feedback'; // Reset class
+
+            gameTimeLeft = 60; 
+            gameScore = 0;
+            shuffledGameQuestions = [...gameQuestions].sort(() => 0.5 - Math.random()); 
+            currentGameQuestionIndex = 0;
+
+            updateGameDisplay();
+            displayGameQuestion();
+
+            gameTimerInterval = setInterval(() => {
+                gameTimeLeft--;
+                updateGameDisplay();
+                if (gameTimeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function updateGameDisplay() {
+            document.getElementById('game-timer').textContent = `Time: ${gameTimeLeft}s`;
+            document.getElementById('game-score').textContent = `Score: ${gameScore}`;
+        }
+
+        function displayGameQuestion() {
+            if (gameTimeLeft <= 0) return; // Stop if time ran out during a question transition
+            if (currentGameQuestionIndex >= shuffledGameQuestions.length) { 
+                // Cycle through questions if player is very fast
+                currentGameQuestionIndex = 0; 
+                shuffledGameQuestions.sort(() => 0.5 - Math.random()); // Re-shuffle for variety
+            }
+            const qData = shuffledGameQuestions[currentGameQuestionIndex];
+            document.getElementById('game-question').textContent = qData.q;
+            const optionsArea = document.getElementById('game-options');
+            optionsArea.innerHTML = '';
+            qData.o.forEach(optionText => {
+                const btn = document.createElement('button');
+                btn.textContent = optionText;
+                btn.onclick = () => handleGameAnswer(optionText, qData.a);
+                optionsArea.appendChild(btn);
+            });
+        }
+
+        function handleGameAnswer(selectedAnswer, correctAnswer) {
+            if (gameTimeLeft <= 0) return; // Don't process answers if time is up
+
+            const feedbackEl = document.getElementById('game-feedback');
+            if (selectedAnswer === correctAnswer) {
+                gameScore++;
+                feedbackEl.textContent = 'Correct! +1';
+                feedbackEl.className = 'feedback correct';
+            } else {
+                // Optional: Deduct points gameScore--;
+                feedbackEl.textContent = `Oops! The answer was ${correctAnswer}.`;
+                feedbackEl.className = 'feedback incorrect';
+            }
+            updateGameDisplay();
+            currentGameQuestionIndex++;
+            
+            // Disable option buttons immediately after answer
+            document.querySelectorAll('#game-options button').forEach(btn => btn.disabled = true);
+
+            setTimeout(() => { 
+                 if (gameTimeLeft > 0) { // Only clear and display next if game is still on
+                    feedbackEl.textContent = ''; 
+                    feedbackEl.className = 'feedback';
+                    displayGameQuestion();
+                 }
+            }, 1200); // Increased delay to read feedback
+        }
+
+        function endGame() {
+            clearInterval(gameTimerInterval);
+            document.getElementById('game-content').style.display = 'none';
+            document.getElementById('game-results').style.display = 'block';
+            document.getElementById('final-game-score').textContent = `Your final score is: ${gameScore}!`;
+            document.getElementById('startGameBtn').style.display = 'inline-block'; 
+        }
+
+        function resetGame() {
+             document.getElementById('game-results').style.display = 'none';
+             document.getElementById('startGameBtn').style.display = 'inline-block';
+             document.getElementById('game-feedback').textContent = '';
+             document.getElementById('game-feedback').className = 'feedback';
+        }
+
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNavigation();
+        });
+
+    </script>
+</body>
+</html>
