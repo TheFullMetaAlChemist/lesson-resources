@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Electrolysis Lesson - AQA GCSE</title>
+    <style>
+        /* Global Styles & Reset */
+        :root {
+            --primary-color: #005A9C; /* Professional Blue */
+            --secondary-color: #008080; /* Teal */
+            --accent-color: #FFD700; /* Gold for highlight/correct */
+            --light-bg: #f8f9fa;
+            --dark-text: #343a40;
+            --medium-text: #495057;
+            --light-text: #f8f9fa;
+            --border-color: #dee2e6;
+            --success-bg: #d4edda;
+            --success-text: #155724;
+            --danger-bg: #f8d7da;
+            --danger-text: #721c24;
+            --neutral-bg: #e2e3e5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.7;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.8em;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        h2 {
+            font-size: 2em;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            font-weight: 500;
+        }
+        h3 {
+            font-size: 1.5em;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        /* Tabs */
+        .tab-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-button {
+            padding: 12px 22px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            border-bottom: 3px solid transparent;
+            font-size: 1.05em;
+            font-weight: 500;
+            color: var(--medium-text);
+            transition: color 0.3s, border-bottom-color 0.3s;
+            margin-right: 5px;
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 5px;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Essential Notes Box */
+        .essential-notes {
+            background-color: #e7f3fe;
+            border-left: 6px solid var(--primary-color);
+            padding: 18px 22px;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+        .essential-notes ul { list-style-position: inside; padding-left: 5px; }
+        .essential-notes li { margin-bottom: 8px; }
+        .essential-notes strong { color: var(--primary-color); font-weight: 600; }
+        .essential-notes p { margin-bottom: 10px; }
+
+        /* Activity Specific Styles */
+        .activity-section { margin-bottom: 35px; }
+        .question-block {
+            background-color: #fdfdff;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            border: 1px solid #e9e9f3;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+        }
+        .question-block p { margin-bottom: 12px; line-height: 2; /* For better alignment with inputs */ }
+
+        input[type="text"], select {
+            padding: 10px 12px;
+            margin: 0 5px; /* Consistent margin */
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+            color: var(--dark-text);
+            min-width: 50px;
+            vertical-align: middle; /* Align with text */
+        }
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(0, 128, 128, 0.2);
+        }
+
+
+        button.check-btn, button.quiz-submit-btn {
+            padding: 10px 18px;
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s;
+            margin-top: 10px; /* Add some top margin */
+        }
+        button.check-btn:hover, button.quiz-submit-btn:hover {
+            background-color: #006666;
+        }
+        button.check-btn:active, button.quiz-submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .feedback {
+            font-weight: bold;
+            margin-left: 10px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 0.9em;
+            vertical-align: middle;
+        }
+        .feedback.correct { color: var(--success-text); background-color: var(--success-bg); border: 1px solid var(--success-text);}
+        .feedback.incorrect { color: var(--danger-text); background-color: var(--danger-bg); border: 1px solid var(--danger-text);}
+        .feedback:empty { display: none; } /* Hide if no text */
+
+        /* Electrolytic Cell SVG */
+        .electrolytic-cell-diagram {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 25px 0;
+            flex-direction: column;
+        }
+        .electrolytic-cell-diagram svg {
+            max-width: 450px;
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border-color);
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .label-input-group {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 700px;
+        }
+        .label-input-group div {
+            display: flex;
+            flex-direction: column;
+        }
+        .label-input-group label {
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            color: var(--medium-text);
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #e9ecef;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        table input[type="text"] { width: calc(100% - 10px); margin:0; } /* Adjust width in table */
+        td button.check-btn { margin-top: 0; } /* Align button in table cell */
+
+        /* Quiz Styles */
+        .quiz-question { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
+        .quiz-question:last-child { border-bottom: none; }
+        .quiz-options label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background-color 0.2s; }
+        .quiz-options label:hover { background-color: #f0f0f0; }
+        .quiz-options input[type="radio"] { margin-right: 10px; vertical-align: middle;}
+        #quiz-results {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.25em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .correct-answer-text { font-style: italic; color: #555; font-size: 0.9em; margin-top: 5px; display: block; }
+
+        /* Reactivity Series */
+        .reactivity-series {
+            background-color: #fffaf0;
+            border: 1px solid #ffe4b5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .reactivity-series strong { color: #d2691e; }
+
+        .input-short { width: 70px !important; text-align: center;}
+        .input-medium { width: 100px !important; text-align: center;}
+        .half-eq-text { display: inline-block; margin: 0 3px; } /* For text between inputs */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Electrolysis Lesson</h1>
+
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="openTab(event, 'essentials')">Core Essentials</button>
+            <button class="tab-button" onclick="openTab(event, 'activity1')">Activity 1: Diagram & Terms</button>
+            <button class="tab-button" onclick="openTab(event, 'activity2')">Activity 2: Molten Mania</button>
+            <button class="tab-button" onclick="openTab(event, 'activity3')">Activity 3: Aqueous Alert!</button>
+            <button class="tab-button" onclick="openTab(event, 'activity4')">Activity 4: Half-Equations</button>
+            <button class="tab-button" onclick="openTab(event, 'finalQuiz')">Final Quiz</button>
+        </div>
+
+        <!-- Core Essentials Tab -->
+        <div id="essentials" class="tab-content active">
+            <h2>Core Essentials for Electrolysis</h2>
+            <div class="essential-notes">
+                <ul>
+                    <li><strong>Electrolysis:</strong> Splitting an <strong>ionic compound</strong> (liquid or dissolved) using <strong>electricity</strong>.</li>
+                    <li><strong>Electrolyte:</strong> The <strong>ionic compound</strong> that is being broken down (must be molten or in solution so ions can move).</li>
+                    <li><strong>Electrodes:</strong> Rods that conduct electricity into the electrolyte.
+                        <ul>
+                            <li><strong>Anode:</strong> POSITIVE electrode. <strong>Anions</strong> (negative ions) go here. OXIDATION happens here. (Remember: <strong>PANIC</strong> - Positive Anode, Negative Is Cathode; <strong>ANOX</strong> - Anode Oxidation)</li>
+                            <li><strong>Cathode:</strong> NEGATIVE electrode. <strong>Cations</strong> (positive ions) go here. REDUCTION happens here. (Remember: <strong>RED CAT</strong> - Reduction at Cathode)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ions:</strong> Charged particles.
+                        <ul>
+                            <li><strong>Cations:</strong> POSITIVE ions (e.g., Na⁺, Cu²⁺, H⁺). Attracted to the CATHODE.</li>
+                            <li><strong>Anions:</strong> NEGATIVE ions (e.g., Cl⁻, O²⁻, OH⁻). Attracted to the ANODE.</li>
+                        </ul>
+                    </li>
+                    <li><strong>OILRIG:</strong> <strong>O</strong>xidation <strong>I</strong>s <strong>L</strong>oss (of electrons), <strong>R</strong>eduction <strong>I</strong>s <strong>G</strong>ain (of electrons).</li>
+                </ul>
+            </div>
+            <p>Welcome! This lesson will guide you through the essentials of electrolysis for your AQA GCSE Chemistry exam. Use the tabs above to navigate through the activities. Make sure you understand these core points before proceeding. Good luck!</p>
+        </div>
+
+        <!-- Activity 1: Label the Diagram & Key Terms Match-Up -->
+        <div id="activity1" class="tab-content">
+            <h2>Activity 1: Diagram Labels & Key Terms</h2>
+            <div class="essential-notes">
+                <p><strong>Key Points for this Activity:</strong></p>
+                <ul>
+                    <li><strong>PANIC:</strong> Positive Anode, Negative Is Cathode.</li>
+                    <li>Cations (+) are positive ions and move to the Cathode (-).</li>
+                    <li>Anions (-) are negative ions and move to the Anode (+).</li>
+                    <li>Electrons flow from the negative terminal of the power pack, through the external circuit (wires), to the positive terminal.</li>
+                </ul>
+            </div>
+
+            <div class="activity-section">
+                <h3>1.1 Label the Electrolytic Cell</h3>
+                <p>Enter the correct labels for the numbered parts of the electrolytic cell diagram.</p>
+                <div class="electrolytic-cell-diagram">
+                     <svg viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="75" y="5" width="50" height="20" fill="#bdc3c7" stroke="#2c3e50" stroke-width="0.5"/>
+                        <text x="100" y="18" font-size="4.5" text-anchor="middle" fill="#2c3e50">Power Supply</text>
+                        <text x="78" y="13" font-size="7" fill="#2c3e50" font-weight="bold">-</text>
+                        <text x="118" y="13" font-size="7" fill="#2c3e50" font-weight="bold">+</text>
+                        <line x1="50" y1="40" x2="80" y2="25" stroke="#2c3e50" stroke-width="1"/>
+                        <line x1="150" y1="40" x2="120" y2="25" stroke="#2c3e50" stroke-width="1"/>
+                        <rect id="cathode-svg" x="40" y="40" width="20" height="75" fill="#7f8c8d" stroke="#34495e" stroke-width="0.5"/>
+                        <rect id="anode-svg" x="140" y="40" width="20" height="75" fill="#7f8c8d" stroke="#34495e" stroke-width="0.5"/>
+                        <path d="M20 140 L20 70 Q20 50 30 50 L170 50 Q180 50 180 70 L180 140 Z" fill="rgba(173,216,230,0.3)" stroke="#34495e" stroke-width="0.5"/>
+                        <rect x="21" y="75" width="158" height="64" fill="rgba(135,206,250,0.6)"/>
+                        <text x="100" y="130" font-size="5" text-anchor="middle" fill="#003366">3. Electrolyte</text>
+                        <text x="50" y="35" font-size="5" text-anchor="middle" fill="var(--primary-color)">1. Electrode</text>
+                        <text x="150" y="35" font-size="5" text-anchor="middle" fill="var(--primary-color)">2. Electrode</text>
+                        <defs>
+                            <marker id="arrowhead" markerWidth="5" markerHeight="3.5" refX="0" refY="1.75" orient="auto">
+                                <polygon points="0 0, 5 1.75, 0 3.5" fill="#e74c3c"/>
+                            </marker>
+                        </defs>
+                        <path d="M75 20 Q90 30 100 20 Q110 10 125 20" stroke="#e74c3c" stroke-width="1" fill="none" marker-end="url(#arrowhead)"/>
+                        <text x="100" y="10" font-size="4" text-anchor="middle" fill="#e74c3c">4. Electron Flow</text>
+                        <circle cx="65" cy="90" r="2.5" fill="#2980b9"/> <text x="65" y="88" font-size="3.5" fill="#fff" text-anchor="middle">+</text>
+                        <text x="75" y="92" font-size="3" fill="#2980b9">Cation →</text>
+                        <circle cx="135" cy="100" r="2.5" fill="#c0392b"/> <text x="135" y="98" font-size="3.5" fill="#fff" text-anchor="middle">-</text>
+                        <text x="125" y="102" font-size="3" fill="#c0392b" text-anchor="end">← Anion</text>
+                    </svg>
+                </div>
+                <div class="label-input-group" id="diagram-labels-inputs">
+                    <div>
+                        <label for="label-cathode">1. Negative Electrode (Name):</label>
+                        <input type="text" id="label-cathode" data-answer="cathode"><span class="feedback"></span>
+                    </div>
+                    <div>
+                        <label for="label-anode">2. Positive Electrode (Name):</label>
+                        <input type="text" id="label-anode" data-answer="anode"><span class="feedback"></span>
+                    </div>
+                    <div>
+                        <label for="label-electrolyte">3. Liquid/Solution that conducts electricity:</label>
+                        <input type="text" id="label-electrolyte" data-answer="electrolyte"><span class="feedback"></span>
+                    </div>
+                     <div>
+                        <label for="label-electron-flow">4. Electron Flow Direction (in external wires):</label>
+                        <input type="text" id="label-electron-flow" placeholder="e.g., X to Y terminal" data-answer="negative to positive terminal"><span class="feedback"></span>
+                    </div>
+                </div>
+                <button class="check-btn" onclick="checkGroupAnswers('diagram-labels-inputs')">Check Diagram Labels</button>
+            </div>
+
+            <div class="activity-section">
+                <h3>1.2 Key Terms Match-Up</h3>
+                <p>Match the term to its correct definition by typing the definition letter (A-H).</p>
+                <ul style="list-style-type: upper-alpha; padding-left: 20px; margin-bottom:15px;">
+                    <li>The substance that is broken down by electrolysis.</li>
+                    <li>The negative electrode in electrolysis.</li>
+                    <li>The process of splitting ionic compounds using electricity.</li>
+                    <li>A positively charged ion.</li>
+                    <li>The positive electrode in electrolysis.</li>
+                    <li>A negatively charged ion.</li>
+                    <li>The loss of electrons.</li>
+                    <li>The gain of electrons.</li>
+                </ul>
+                <div id="key-terms-inputs">
+                    <div class="question-block">
+                        <label for="term-electrolysis">Electrolysis:</label>
+                        <input type="text" id="term-electrolysis" class="input-short" data-answer="C"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-electrolyte">Electrolyte:</label>
+                        <input type="text" id="term-electrolyte" class="input-short" data-answer="A"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-cathode">Cathode:</label>
+                        <input type="text" id="term-cathode" class="input-short" data-answer="B"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-anode">Anode:</label>
+                        <input type="text" id="term-anode" class="input-short" data-answer="E"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-cation">Cation:</label>
+                        <input type="text" id="term-cation" class="input-short" data-answer="D"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-anion">Anion:</label>
+                        <input type="text" id="term-anion" class="input-short" data-answer="F"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-oxidation">Oxidation:</label>
+                        <input type="text" id="term-oxidation" class="input-short" data-answer="G"><span class="feedback"></span>
+                    </div>
+                    <div class="question-block">
+                        <label for="term-reduction">Reduction:</label>
+                        <input type="text" id="term-reduction" class="input-short" data-answer="H"><span class="feedback"></span>
+                    </div>
+                </div>
+                <button class="check-btn" onclick="checkGroupAnswers('key-terms-inputs')">Check Key Terms</button>
+            </div>
+        </div>
+
+        <!-- Activity 2: Molten Mania -->
+        <div id="activity2" class="tab-content">
+            <h2>Activity 2: Molten Mania – Predicting Products</h2>
+            <div class="essential-notes">
+                <p><strong>Key Points for Molten Electrolytes:</strong></p>
+                <ul>
+                    <li><strong>Molten:</strong> Means MELTED. No water (H₂O) is present.</li>
+                    <li>Only two types of ions present: the metal cation (+) and the non-metal anion (-).</li>
+                    <li><strong>At the Cathode (-):</strong> Metal CATIONS (+) are attracted. They GAIN electrons (Reduction) to form neutral METAL ATOMS. (e.g., Pb²⁺ + 2e⁻ → Pb)</li>
+                    <li><strong>At the Anode (+):</strong> Non-metal ANIONS (-) are attracted. They LOSE electrons (Oxidation) to form neutral NON-METAL MOLECULES (often diatomic like Cl₂, Br₂, O₂). (e.g., 2Br⁻ → Br₂ + 2e⁻)</li>
+                </ul>
+            </div>
+            <p>Predict the products formed at the cathode and anode for these molten ionic compounds. Write the name of the element (e.g., Sodium, Chlorine).</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Molten Electrolyte</th>
+                        <th>Ions Present</th>
+                        <th>Product at Cathode (-)</th>
+                        <th>Product at Anode (+)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="molten1-row">
+                        <td>Lead Bromide (PbBr₂)</td>
+                        <td>Pb²⁺, Br⁻</td>
+                        <td><input type="text" id="molten1-cathode" data-answer="Lead"><span class="feedback"></span></td>
+                        <td><input type="text" id="molten1-anode" data-answer="Bromine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('molten1-row')">Check</button><span class="feedback" id="molten1-row-feedback"></span></td>
+                    </tr>
+                    <tr id="molten2-row">
+                        <td>Sodium Chloride (NaCl)</td>
+                        <td>Na⁺, Cl⁻</td>
+                        <td><input type="text" id="molten2-cathode" data-answer="Sodium"><span class="feedback"></span></td>
+                        <td><input type="text" id="molten2-anode" data-answer="Chlorine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('molten2-row')">Check</button><span class="feedback" id="molten2-row-feedback"></span></td>
+                    </tr>
+                    <tr id="molten3-row">
+                        <td>Aluminium Oxide (Al₂O₃)</td>
+                        <td>Al³⁺, O²⁻</td>
+                        <td><input type="text" id="molten3-cathode" data-answer="Aluminium"><span class="feedback"></span></td>
+                        <td><input type="text" id="molten3-anode" data-answer="Oxygen"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('molten3-row')">Check</button><span class="feedback" id="molten3-row-feedback"></span></td>
+                    </tr>
+                    <tr id="molten4-row">
+                        <td>Zinc Chloride (ZnCl₂)</td>
+                        <td>Zn²⁺, Cl⁻</td>
+                        <td><input type="text" id="molten4-cathode" data-answer="Zinc"><span class="feedback"></span></td>
+                        <td><input type="text" id="molten4-anode" data-answer="Chlorine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('molten4-row')">Check</button><span class="feedback" id="molten4-row-feedback"></span></td>
+                    </tr>
+                     <tr id="molten5-row">
+                        <td>Potassium Iodide (KI)</td>
+                        <td>K⁺, I⁻</td>
+                        <td><input type="text" id="molten5-cathode" data-answer="Potassium"><span class="feedback"></span></td>
+                        <td><input type="text" id="molten5-anode" data-answer="Iodine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('molten5-row')">Check</button><span class="feedback" id="molten5-row-feedback"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Activity 3: Aqueous Alert! -->
+        <div id="activity3" class="tab-content">
+            <h2>Activity 3: Aqueous Alert! – Predicting Products</h2>
+             <div class="essential-notes">
+                <p><strong>Key Rules for Aqueous Solutions:</strong></p>
+                <ul>
+                    <li><strong>Aqueous:</strong> Means the ionic compound is DISSOLVED IN WATER.</li>
+                    <li>Water itself provides some ions: H⁺ and OH⁻. So, you'll always have these two ions in addition to the ions from the dissolved compound.</li>
+                    <li><strong>At the CATHODE (-):</strong> (Positive ions: Metal ion from salt AND H⁺ from water are attracted)
+                        <ul>
+                            <li>If the metal from the salt is <strong>MORE reactive</strong> than Hydrogen → **HYDROGEN GAS (H₂)** is produced.</li>
+                            <li>If the metal from the salt is <strong>LESS reactive</strong> than Hydrogen → **THE METAL** itself is produced.</li>
+                        </ul>
+                    </li>
+                    <li><strong>At the ANODE (+):</strong> (Negative ions: Non-metal ion from salt AND OH⁻ from water are attracted)
+                        <ul>
+                            <li>If **HALIDE ions** (Cl⁻, Br⁻, I⁻ from the salt) are present AND the solution is **concentrated** → The **HALOGEN (Cl₂, Br₂, I₂)** is produced.</li>
+                            <li>**OTHERWISE** (if no halide is present, OR the halide is very dilute, OR other anions like SO₄²⁻, NO₃⁻ are present) → **OXYGEN GAS (O₂)** is produced (from the OH⁻ ions).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="reactivity-series">
+                <strong>Reactivity Series (Most reactive at top):</strong><br>
+                Potassium (K) <br> Sodium (Na) <br> Calcium (Ca) <br> Magnesium (Mg) <br> Aluminium (Al) <br>  (Carbon (C) - for reference) <br> Zinc (Zn) <br> Iron (Fe) <br> Lead (Pb) <br>
+                <strong>Hydrogen (H)</strong> <br>
+                Copper (Cu) <br> Silver (Ag) <br> Gold (Au)
+                <br><small>(Metals above Hydrogen are more reactive than Hydrogen. Metals below are less reactive.)</small>
+            </div>
+            <p>Predict the products for these aqueous solutions. Remember water (H⁺, OH⁻) is always present! Write the name of the element or simple compound (e.g., Copper, Hydrogen, Chlorine, Oxygen).</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aqueous Electrolyte</th>
+                        <th>Ions Present (Main ones)</th>
+                        <th>Product at Cathode (-)</th>
+                        <th>Product at Anode (+)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="aq1-row">
+                        <td>Sodium Chloride (NaCl(aq))<br><small>(Assume CONCENTRATED)</small></td>
+                        <td>Na⁺, Cl⁻, H⁺, OH⁻</td>
+                        <td><input type="text" id="aq1-cathode" data-answer="Hydrogen"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq1-anode" data-answer="Chlorine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq1-row')">Check</button><span class="feedback" id="aq1-row-feedback"></span></td>
+                    </tr>
+                    <tr id="aq2-row">
+                        <td>Copper Sulfate (CuSO₄(aq))</td>
+                        <td>Cu²⁺, SO₄²⁻, H⁺, OH⁻</td>
+                        <td><input type="text" id="aq2-cathode" data-answer="Copper"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq2-anode" data-answer="Oxygen"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq2-row')">Check</button><span class="feedback" id="aq2-row-feedback"></span></td>
+                    </tr>
+                    <tr id="aq3-row">
+                        <td>Potassium Bromide (KBr(aq))<br><small>(Assume CONCENTRATED)</small></td>
+                        <td>K⁺, Br⁻, H⁺, OH⁻</td>
+                        <td><input type="text" id="aq3-cathode" data-answer="Hydrogen"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq3-anode" data-answer="Bromine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq3-row')">Check</button><span class="feedback" id="aq3-row-feedback"></span></td>
+                    </tr>
+                     <tr id="aq4-row">
+                        <td>Silver Nitrate (AgNO₃(aq))</td>
+                        <td>Ag⁺, NO₃⁻, H⁺, OH⁻</td>
+                        <td><input type="text" id="aq4-cathode" data-answer="Silver"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq4-anode" data-answer="Oxygen"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq4-row')">Check</button><span class="feedback" id="aq4-row-feedback"></span></td>
+                    </tr>
+                    <tr id="aq5-row">
+                        <td>Dilute Sulfuric Acid (H₂SO₄(aq))</td>
+                        <td>H⁺, SO₄²⁻, (OH⁻ also from water)</td>
+                        <td><input type="text" id="aq5-cathode" data-answer="Hydrogen"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq5-anode" data-answer="Oxygen"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq5-row')">Check</button><span class="feedback" id="aq5-row-feedback"></span></td>
+                    </tr>
+                     <tr id="aq6-row">
+                        <td>Magnesium Iodide (MgI₂(aq))<br><small>(Assume CONCENTRATED)</small></td>
+                        <td>Mg²⁺, I⁻, H⁺, OH⁻</td>
+                        <td><input type="text" id="aq6-cathode" data-answer="Hydrogen"><span class="feedback"></span></td>
+                        <td><input type="text" id="aq6-anode" data-answer="Iodine"><span class="feedback"></span></td>
+                        <td><button class="check-btn" onclick="checkTableRow('aq6-row')">Check</button><span class="feedback" id="aq6-row-feedback"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Activity 4: Half-Equation Practice -->
+        <div id="activity4" class="tab-content">
+            <h2>Activity 4: Half-Equation Fill-in-the-Blanks</h2>
+            <div class="essential-notes">
+                <p><strong>Key Points for Half-Equations:</strong></p>
+                <ul>
+                    <li><strong>OILRIG:</strong> Oxidation Is Loss (of electrons), Reduction Is Gain (of electrons).</li>
+                    <li><strong>At Cathode (-): REDUCTION</strong> (Positive ions or H⁺ ions GAIN electrons).</li>
+                    <li><strong>At Anode (+): OXIDATION</strong> (Negative ions or OH⁻ ions LOSE electrons).</li>
+                    <li>Ensure both atoms AND charges are balanced. Use e⁻ or e- for electrons.</li>
+                </ul>
+            </div>
+            <p>Fill in the single missing part of these half-equations. Use chemical symbols/formulas (e.g., Na, Cl₂, 2e⁻, H⁺).</p>
+
+            <div id="half-equations-group">
+                <div class="question-block">
+                    <p><span class="half-eq-text">1. K⁺ +</span> <input type="text" id="heq1-e" class="input-short" data-answer="e⁻" placeholder="?"> <span class="half-eq-text">→ K</span> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">2. Mg²⁺ + 2e⁻ →</span> <input type="text" id="heq2-prod" class="input-short" data-answer="Mg" placeholder="?"> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">3. 2F⁻ → F₂ +</span> <input type="text" id="heq3-e" class="input-short" data-answer="2e⁻" placeholder="?"> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">4.</span> <input type="text" id="heq4-reactant" class="input-short" data-answer="2H⁺" placeholder="?"> <span class="half-eq-text">+ 2e⁻ → H₂</span> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">5. 2O²⁻ → O₂ +</span> <input type="text" id="heq5-e" class="input-short" data-answer="4e⁻" placeholder="?"> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">6. 4OH⁻ → O₂ +</span> <input type="text" id="heq6-h2o" class="input-medium" data-answer="2H₂O" placeholder="? H₂O"> <span class="half-eq-text">+ 4e⁻</span> <span class="feedback"></span></p>
+                </div>
+                 <div class="question-block">
+                    <p><span class="half-eq-text">7. Cu²⁺ +</span> <input type="text" id="heq7-e" class="input-short" data-answer="2e⁻" placeholder="?"> <span class="half-eq-text">→ Cu</span> <span class="feedback"></span></p>
+                </div>
+                 <div class="question-block">
+                    <p><span class="half-eq-text">8. 2Cl⁻ →</span> <input type="text" id="heq8-prod" class="input-short" data-answer="Cl₂" placeholder="?"> <span class="half-eq-text">+ 2e⁻</span> <span class="feedback"></span></p>
+                </div>
+                 <div class="question-block">
+                    <p><span class="half-eq-text">9. Al³⁺ + 3e⁻ →</span> <input type="text" id="heq9-prod" class="input-short" data-answer="Al" placeholder="?"> <span class="feedback"></span></p>
+                </div>
+                <div class="question-block">
+                    <p><span class="half-eq-text">10. 2H₂O → O₂ + 4H⁺ +</span> <input type="text" id="heq10-e" class="input-short" data-answer="4e⁻" placeholder="?"> <span class="half-eq-text">(Alternative for O₂ at anode)</span> <span class="feedback"></span></p>
+                </div>
+            </div>
+            <button class="check-btn" onclick="checkHalfEquations()">Check All Half-Equations</button>
+        </div>
+
+
+        <!-- Final Quiz -->
+        <div id="finalQuiz" class="tab-content">
+            <h2>Final Quiz (10 Marks)</h2>
+            <p>Test your understanding of electrolysis. Choose the best answer or type your short answer. All answers are 1 mark.</p>
+            <form id="electrolysisQuiz">
+                <div class="quiz-question">
+                    <p><strong>1. What is the general name for the positive electrode in any electrolytic cell?</strong></p>
+                    <input type="text" name="q1" data-answer="anode"> <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>2. During the electrolysis of molten potassium chloride (KCl), what substance is produced at the cathode?</strong></p>
+                    <div class="quiz-options">
+                        <label><input type="radio" name="q2" value="potassium" data-answer> Potassium</label>
+                        <label><input type="radio" name="q2" value="chlorine"> Chlorine</label>
+                        <label><input type="radio" name="q2" value="hydrogen"> Hydrogen</label>
+                        <label><input type="radio" name="q2" value="oxygen"> Oxygen</label>
+                    </div>
+                     <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>3. Which of these particles is an example of an anion?</strong></p>
+                     <div class="quiz-options">
+                        <label><input type="radio" name="q3" value="K⁺"> K⁺</label>
+                        <label><input type="radio" name="q3" value="Br⁻" data-answer> Br⁻</label>
+                        <label><input type="radio" name="q3" value="Ne"> Ne (Neon atom)</label>
+                        <label><input type="radio" name="q3" value="H₂O"> H₂O</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>4. In the electrolysis of aqueous copper(II) chloride (CuCl₂) solution, what is formed at the negative electrode (cathode)?</strong></p>
+                    <input type="text" name="q4" data-answer="copper"> <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>5. The mnemonic OILRIG helps us remember electron transfer. What does the 'RIG' part stand for?</strong></p>
+                    <input type="text" name="q5" data-answer="reduction is gain"> <span class="feedback"></span>
+                    <small class="correct-answer-text"> (Full: Oxidation Is Loss, Reduction Is Gain of electrons)</small>
+                </div>
+                 <div class="quiz-question">
+                    <p><strong>6. At which electrode (anode or cathode) does oxidation always occur?</strong></p>
+                    <input type="text" name="q6" data-answer="anode"> <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>7. If a metal in an aqueous salt solution is MORE reactive than hydrogen, what gas is typically produced at the cathode?</strong></p>
+                    <input type="text" name="q7" data-answer="hydrogen"> <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>8. During the electrolysis of aqueous sodium sulfate (Na₂SO₄), what gas is produced at the anode?</strong></p>
+                    <input type="text" name="q8" data-answer="oxygen"> <span class="feedback"></span>
+                </div>
+                 <div class="quiz-question">
+                    <p><strong>9. For electrolysis to happen, the ionic compound used as the electrolyte must be in a state where its ions are free to move. Which two states allow this?</strong></p>
+                     <div class="quiz-options">
+                        <label><input type="radio" name="q9" value="solid_gas"> Solid or Gas</label>
+                        <label><input type="radio" name="q9" value="powder_crystal"> Powder or Crystal</label>
+                        <label><input type="radio" name="q9" value="molten_dissolved" data-answer> Molten (liquid) or Dissolved in water (aqueous)</label>
+                        <label><input type="radio" name="q9" value="cold_hot"> Cold or Hot</label>
+                    </div>
+                    <span class="feedback"></span>
+                </div>
+                <div class="quiz-question">
+                    <p><strong>10. Complete the missing part of this common cathode half-equation: 2H⁺ + <input type="text" name="q10_fill" class="input-short" data-answer="2e⁻"> → H₂ </strong></p>
+                     <span class="feedback"></span>
+                </div>
+
+                <button type="button" class="quiz-submit-btn" onclick="submitQuiz()">Submit Quiz & See Score</button>
+            </form>
+            <div id="quiz-results"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Tab navigation
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Normalize answer: lower case, trim spaces, specific symbol replacements
+        function normalizeAnswer(answer) {
+            if (typeof answer !== 'string') return '';
+            return answer.trim().toLowerCase()
+                         .replace(/e⁻/g, 'e-')  // electron symbol
+                         .replace(/²/g, '2')   // superscript 2
+                         .replace(/³/g, '3')   // superscript 3
+                         .replace(/⁺/g, '+')   // superscript +
+                         .replace(/₂/g, '2');  // subscript 2
+        }
+        
+        // Generic function to check a single input and update its adjacent feedback span
+        function checkSingleInput(inputElement) {
+            if (!inputElement) return false;
+
+            const userAnswer = normalizeAnswer(inputElement.value);
+            const correctAnswer = normalizeAnswer(inputElement.dataset.answer);
+            // Find the NEXT sibling that is a feedback span
+            let feedbackElement = inputElement.nextElementSibling;
+            while(feedbackElement && !feedbackElement.classList.contains('feedback')) {
+                feedbackElement = feedbackElement.nextElementSibling;
+            }
+
+
+            if (!feedbackElement) {
+                // Fallback: check parent's child feedback span if input is last in a P, for half-equations
+                if (inputElement.parentElement.tagName === 'P') {
+                     feedbackElement = inputElement.parentElement.querySelector('.feedback');
+                }
+                if (!feedbackElement) {
+                    console.error("Feedback element not found for input:", inputElement.id);
+                    return false;
+                }
+            }
+            
+            if (userAnswer === correctAnswer) {
+                feedbackElement.textContent = "Correct!";
+                feedbackElement.className = "feedback correct";
+                feedbackElement.style.display = "inline-block";
+                return true;
+            } else {
+                feedbackElement.textContent = `Incorrect. Expected: ${inputElement.dataset.answer}`;
+                feedbackElement.className = "feedback incorrect";
+                feedbackElement.style.display = "inline-block";
+                return false;
+            }
+        }
+
+
+        // Function to check all inputs within a given parent element ID
+        function checkGroupAnswers(parentId) {
+            const parentElement = document.getElementById(parentId);
+            if (!parentElement) return;
+            const inputs = parentElement.querySelectorAll('input[type="text"][data-answer]');
+            inputs.forEach(input => {
+                checkSingleInput(input); // Pass the element itself
+            });
+        }
+
+        // Function to check inputs in a table row
+        function checkTableRow(rowId) {
+            const rowElement = document.getElementById(rowId);
+            if (!rowElement) return;
+
+            const inputs = rowElement.querySelectorAll('input[type="text"][data-answer]');
+            let allCorrectInRow = true;
+            inputs.forEach(input => {
+                if (!checkSingleInput(input)) { // Pass the element
+                    allCorrectInRow = false;
+                }
+            });
+            
+            const overallFeedback = document.getElementById(`${rowId}-feedback`); // e.g., molten1-row-feedback
+            if (overallFeedback) {
+                if (allCorrectInRow) {
+                    overallFeedback.textContent = "Row Correct!";
+                    overallFeedback.className = "feedback correct";
+                } else {
+                    overallFeedback.textContent = "Some incorrect in row.";
+                    overallFeedback.className = "feedback incorrect";
+                }
+                 overallFeedback.style.display = "inline-block";
+            }
+        }
+        
+        // Function to check all half-equation fill-in-the-blanks
+        function checkHalfEquations() {
+            const group = document.getElementById('half-equations-group');
+            const inputs = group.querySelectorAll('input[type="text"][data-answer]');
+            inputs.forEach(input => {
+                checkSingleInput(input); // Pass the element
+            });
+        }
+
+
+        // Final Quiz Submission
+        function submitQuiz() {
+            const quizForm = document.getElementById('electrolysisQuiz');
+            let score = 0;
+            const totalQuestions = 10;
+
+            // Helper for quiz text inputs
+            function checkQuizText(inputName) {
+                const inputElement = quizForm[inputName];
+                const feedback = inputElement.nextElementSibling;
+                const userAnswer = normalizeAnswer(inputElement.value);
+                const correctAnswer = normalizeAnswer(inputElement.dataset.answer);
+                if (userAnswer === correctAnswer) {
+                    score++;
+                    feedback.textContent = "Correct!"; feedback.className = "feedback correct";
+                } else {
+                    feedback.textContent = `Incorrect. Answer: ${inputElement.dataset.answer}`; feedback.className = "feedback incorrect";
+                }
+                feedback.style.display = "inline-block";
+            }
+
+            // Helper for quiz radio inputs
+            function checkQuizRadio(inputName) {
+                const radioButtons = quizForm[inputName];
+                const feedback = radioButtons[0].closest('.quiz-options').nextElementSibling;
+                let selectedValue = null;
+                let correctAnswerValue = null; // Ensure we get the value of the correct answer
+                for (let i = 0; i < radioButtons.length; i++) {
+                    if (radioButtons[i].checked) {
+                        selectedValue = radioButtons[i].value;
+                    }
+                    if (radioButtons[i].hasAttribute('data-answer')) {
+                        correctAnswerValue = radioButtons[i].value; // Store the value
+                    }
+                }
+
+                if (selectedValue === correctAnswerValue) { // Compare values
+                    score++;
+                    feedback.textContent = "Correct!"; feedback.className = "feedback correct";
+                } else {
+                    const correctLabel = document.querySelector(`input[name="${inputName}"][data-answer]`).parentElement.textContent.trim();
+                    feedback.textContent = `Incorrect. Answer: ${correctLabel}`; feedback.className = "feedback incorrect";
+                }
+                 feedback.style.display = "inline-block";
+            }
+            
+            // Check Questions
+            checkQuizText('q1');
+            checkQuizRadio('q2');
+            checkQuizRadio('q3');
+            checkQuizText('q4');
+            checkQuizText('q5');
+            checkQuizText('q6');
+            checkQuizText('q7');
+            checkQuizText('q8');
+            checkQuizRadio('q9');
+
+            // Question 10 (fill-in)
+            const q10Input = quizForm.q10_fill;
+            const q10Feedback = q10Input.parentElement.querySelector('.feedback');
+            const q10UserAnswer = normalizeAnswer(q10Input.value);
+            const q10CorrectAnswer = normalizeAnswer(q10Input.dataset.answer);
+            if (q10UserAnswer === q10CorrectAnswer) {
+                score++;
+                q10Feedback.textContent = "Correct!"; q10Feedback.className = "feedback correct";
+            } else {
+                q10Feedback.textContent = `Incorrect. Expected: ${q10Input.dataset.answer}`; q10Feedback.className = "feedback incorrect";
+            }
+            q10Feedback.style.display = "inline-block";
+
+
+            // Display results
+            const resultsDiv = document.getElementById('quiz-results');
+            resultsDiv.innerHTML = `You scored ${score} out of ${totalQuestions}.`;
+             resultsDiv.className = ''; // Reset classes
+            if (score === totalQuestions) {
+                resultsDiv.innerHTML += " 🎉 Perfect Score! Excellent work!";
+                resultsDiv.classList.add('feedback', 'correct');
+            } else if (score >= totalQuestions * 0.7) {
+                resultsDiv.innerHTML += " Great job! You're getting there.";
+                resultsDiv.style.backgroundColor = "#fff3cd";
+                resultsDiv.style.color = "#856404";
+                 resultsDiv.style.border = "1px solid #ffeeba";
+            } else if (score >= totalQuestions * 0.4) {
+                resultsDiv.innerHTML += " Good effort. Review the activities and notes for areas you missed.";
+                resultsDiv.style.backgroundColor = "#ffe0b2";
+                resultsDiv.style.color = "#8d5a0f";
+                resultsDiv.style.border = "1px solid #ffc107";
+            }
+            else {
+                resultsDiv.innerHTML += " Keep practicing! Go through the activities and essential notes again carefully.";
+                resultsDiv.classList.add('feedback', 'incorrect');
+            }
+            resultsDiv.style.display = "block"; // Make sure it's visible
+        }
+
+        // Default open first tab
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.tab-button').click();
+            // Hide all feedback spans initially
+            document.querySelectorAll('.feedback').forEach(span => span.style.display = 'none');
+        });
+
+    </script>
+</body>
+</html>
