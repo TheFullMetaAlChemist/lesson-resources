@@ -1,100 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>KS4 Science Landing Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KS4 Science - Resource Hub</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background-color: #f0f8ff;
-      color: #333;
+    /* ----------  Design tokens ---------- */
+    :root{
+      --primary-gradient:   linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      --physics-gradient:   linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);
+      --chemistry-gradient: linear-gradient(135deg,#f093fb 0%,#f5576c 100%);
+      --biology-gradient:   linear-gradient(135deg,#43e97b 0%,#38f9d7 100%);
+      --energy-gradient:    linear-gradient(135deg,#fa709a 0%,#fee140 100%);
+
+      --dark-bg:#0f0f23;
+      --card-bg:rgba(255,255,255,0.95);
+      --glass-bg:rgba(255,255,255,0.10);
+
+      --text-primary:#1a1a2e;
+      --text-secondary:#6b7280;
+
+      --shadow-medium:0 10px 15px -3px rgba(0,0,0,0.1);
+      --shadow-heavy:0 25px 50px -12px rgba(0,0,0,0.25);
     }
-    header {
-      background-color: #004466;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
+
+    /* ----------  Global reset ---------- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      background:var(--dark-bg);
+      background-image:
+        radial-gradient(circle at 20% 20%,rgba(120,119,198,.30) 0%,transparent 50%),
+        radial-gradient(circle at 80% 80%,rgba(255,119,198,.30) 0%,transparent 50%),
+        radial-gradient(circle at 40% 40%,rgba(120,200,255,.20) 0%,transparent 50%);
+      min-height:100vh;
+      color:white;
+      overflow-x:hidden;
     }
-    nav {
-      margin: 10px 0;
+
+    /* ----------  Floating particles ---------- */
+    .particles{
+      position:fixed;inset:0;pointer-events:none;z-index:1
     }
-    nav a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
+    .particle{
+      position:absolute;width:4px;height:4px;border-radius:50%;
+      background:rgba(255,255,255,.6);
+      animation:float 6s ease-in-out infinite;
     }
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      text-align: center;
+    @keyframes float{
+      0%,100%{transform:translateY(0) rotate(0);opacity:.4}
+      50%    {transform:translateY(-20px) rotate(180deg);opacity:1}
     }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      margin-top: 20px;
-      background-color: #004466;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
+
+    /* ----------  Header ---------- */
+    header{
+      position:relative;z-index:2;
+      background:var(--glass-bg);backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,.1);
+      padding:2rem 0;
     }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #004466;
-      color: #fff;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+    .header-content{max-width:1200px;margin:0 auto;padding:0 2rem;text-align:center}
+    .logo{
+      background:var(--primary-gradient);
+      -webkit-background-clip:text;background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-size:clamp(2.5rem,5vw,4rem);font-weight:700;
+      animation:glow 2s ease-in-out infinite alternate;
     }
+    @keyframes glow{
+      from{filter:drop-shadow(0 0 10px rgba(102,126,234,.5))}
+      to  {filter:drop-shadow(0 0 20px rgba(102,126,234,.8))}
+    }
+    .subtitle{font-size:1.25rem;font-weight:300;color:rgba(255,255,255,.8);margin-bottom:2rem}
+
+    /* ----------  Navigation ---------- */
+    .nav-container{
+      background:rgba(255,255,255,.05);
+      backdrop-filter:blur(10px);
+      border-radius:20px;
+      padding:1rem;
+      margin:2rem auto;
+      max-width:1000px;
+      border:1px solid rgba(255,255,255,.1);
+    }
+    .nav-grid{
+      display:grid;gap:1rem;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    }
+    .nav-link{
+      display:block;text-decoration:none;font-weight:500;font-size:.875rem;
+      padding:.75rem 1rem;text-align:center;border-radius:12px;
+      background:rgba(255,255,255,.1);color:white;
+      border:1px solid rgba(255,255,255,.1);overflow:hidden;position:relative;
+      transition:.3s all ease;
+    }
+    .nav-link::before{
+      content:\"\";position:absolute;inset:0;left:-100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+      transition:left .5s ease;
+    }
+    .nav-link:hover{background:rgba(255,255,255,.2);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+    .nav-link:hover::before{left:100%}
+    .nav-link.active{background:var(--primary-gradient)}
+
+    /* ----------  Main container ---------- */
+    .container{max-width:1200px;margin:4rem auto;padding:0 2rem;position:relative;z-index:2}
+
+    .section-title{
+      font-size:2.5rem;font-weight:600;text-align:center;margin-bottom:1rem;
+      background:linear-gradient(135deg,#fff 0%,#f0f0f0 100%);
+      -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .section-subtitle{
+      font-size:1.125rem;margin:0 auto 4rem;text-align:center;
+      color:rgba(255,255,255,.7);max-width:600px;line-height:1.6;
+    }
+
+    /* ----------  Topic cards ---------- */
+    .topics-grid{
+      display:grid;gap:2rem;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    }
+    .topic-card{
+      text-decoration:none;color:var(--text-primary);
+      background:var(--card-bg);backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:24px;box-shadow:var(--shadow-medium);
+      padding:2.5rem;overflow:hidden;position:relative;
+      transition:.4s cubic-bezier(.4,0,.2,1);
+      transform:translateY(0);opacity:0;
+      animation:slideUp .8s ease-out forwards;
+    }
+    @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+    /* Stagger entrance */
+    .topic-card:nth-child(1){animation-delay:.1s}
+    .topic-card:nth-child(2){animation-delay:.2s}
+    .topic-card:nth-child(3){animation-delay:.3s}
+    .topic-card:nth-child(4){animation-delay:.4s}
+    .topic-card:nth-child(5){animation-delay:.5s}
+    .topic-card:nth-child(6){animation-delay:.6s}
+    .topic-card:nth-child(7){animation-delay:.7s}
+    .topic-card:nth-child(8){animation-delay:.8s}
+    .topic-card:nth-child(9){animation-delay:.9s}
+    .topic-card:nth-child(10){animation-delay:1s}
+
+    .topic-card::before{
+      content:\"\";position:absolute;inset-inline:0;top:0;height:4px;
+      background:var(--physics-gradient);transform:scaleX(0);transition:transform .4s ease;
+    }
+    /* optional alt colours */
+    .topic-card.chemistry::before{background:var(--chemistry-gradient)}
+    .topic-card.biology::before{background:var(--biology-gradient)}
+    .topic-card.energy::before{background:var(--energy-gradient)}
+
+    .topic-card:hover{
+      transform:translateY(-10px) scale(1.02);
+      background:rgba(255,255,255,.98);
+      box-shadow:var(--shadow-heavy);
+    }
+    .topic-card:hover::before{transform:scaleX(1)}
+
+    .card-icon{
+      width:80px;height:80px;border-radius:20px;margin:0 auto 1.5rem;
+      display:flex;align-items:center;justify-content:center;font-size:2rem;
+      background:var(--physics-gradient);transition:.4s all ease;
+    }
+    .topic-card.chemistry .card-icon{background:var(--chemistry-gradient)}
+    .topic-card.biology   .card-icon{background:var(--biology-gradient)}
+    .topic-card.energy    .card-icon{background:var(--energy-gradient)}
+    .topic-card:hover .card-icon{transform:rotate(10deg) scale(1.1);box-shadow:0 10px 25px rgba(0,0,0,.2)}
+
+    .year-badge{
+      display:inline-block;margin-bottom:1rem;padding:.25rem .75rem;
+      border-radius:20px;font-size:.75rem;font-weight:600;letter-spacing:.5px;
+      background:rgba(102,126,234,.1);color:#667eea;text-transform:uppercase;
+    }
+    .card-title{text-align:center;font-size:1.5rem;font-weight:600;margin-bottom:.75rem}
+    .card-description{text-align:center;font-size:1rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1.5rem}
+
+    .cta-button{
+      display:block;width:100%;text-align:center;
+      padding:.875rem 2rem;border-radius:50px;font-size:1rem;font-weight:500;
+      background:var(--physics-gradient);color:white;border:none;cursor:pointer;
+      transition:.3s all ease;
+    }
+    .topic-card.chemistry .cta-button{background:var(--chemistry-gradient)}
+    .topic-card.biology   .cta-button{background:var(--biology-gradient)}
+    .topic-card.energy    .cta-button{background:var(--energy-gradient)}
+    .cta-button:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.2)}
+
+    /* ----------  Featured section ---------- */
+    .featured-section{margin:6rem 0;text-align:center}
+    .featured-card{
+      max-width:800px;margin:0 auto;padding:3rem;
+      background:var(--glass-bg);backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,.1);border-radius:24px;
+    }
+    .featured-title{font-size:2rem;font-weight:600;margin-bottom:1rem}
+    .featured-description{font-size:1.125rem;line-height:1.6;margin-bottom:2rem;color:rgba(255,255,255,.8)}
+    .featured-buttons{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+    .featured-btn{
+      padding:1rem 2rem;border-radius:50px;font-weight:500;text-decoration:none;
+      transition:.3s all ease;
+    }
+    .featured-btn.primary{background:var(--primary-gradient);color:white}
+    .featured-btn.secondary{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2)}
+    .featured-btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(0,0,0,.2)}
+
+    /* ----------  Footer ---------- */
+    footer{
+      margin-top:4rem;padding:2rem 0;text-align:center;
+      background:rgba(0,0,0,.3);backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6)
+    }
+
+    /* ----------  Responsive tweaks ---------- */
+    @media(max-width:768px){
+      .topics-grid{grid-template-columns:1fr;gap:1.5rem}
+      .topic-card{padding:2rem}
+      .nav-grid{gap:.5rem;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+      .nav-link{padding:.5rem;font-size:.75rem}
+      .container{margin:2rem auto;padding:0 1rem}
+      .featured-buttons{flex-direction:column;align-items:center}
+    }
+
+    /* ----------  Loading overlay ---------- */
+    .loading-overlay{
+      position:fixed;inset:0;background:var(--dark-bg);
+      display:flex;align-items:center;justify-content:center;
+      z-index:9999;transition:opacity .5s ease;
+    }
+    .loading-spinner{
+      width:50px;height:50px;border:3px solid rgba(255,255,255,.3);
+      border-top:3px solid #667eea;border-radius:50%;animation:spin 1s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>KS4 Science</h1>
-    <nav>
-      <a href="#">Home</a>
-      <!-- Link to your KS4 topic folder (adjust the path if needed) -->
-      <a href="KS4/4.%20Reactivity%20Series%20%26%20Reactions%20of%20acids/">Reactivity Series &amp; Reactions of acids</a>
-      <a href="KS4/2.%20Bonding/">Bonding, Structure &amp; Properties</a>
-      <a href="KS4/5.%20Quantitative%20Chemistry/">Quantitative Chemistry</a>
-      <a href="KS4/Organic%20Chemistry/">Organic Chemistry</a>
-      <a href="KS4/Electrolysis/">Electrolysis</a>
-      <a href="KS4/Energy%20Changes/">Energy Changes</a>
-      <a href="KS4/Qualitative%20Analysis/">Qualitative Analysis</a>
-      <a href="KS4/Atmosphere/">Atmosphere</a>
-      <a href="KS4/Mocks/">Mock Analysis</a>
-      <!-- Add more topic links here as needed -->
-    </nav>
-  </header>
-
-  <div class="container">
-    <h2>Welcome to the KS4 Science Resource Hub</h2>
-    <p>Explore various topics in science and discover interactive lessons, experiments, and activities designed for KS4 students.</p>
-    <p>Get started by exploring one of our exciting topics below.</p>
-    <!-- Button linking to Topic 4 folder -->
-    <a class="btn" href="KS4/4.%20Reactivity%20Series%20%26%20Reactions%20of%20acids/">Explore Reactivity Series &amp; Reactions of acids</a>
-    <a class="btn" href="KS4/2.%20Bonding/">Explore Bonding Structure &amp Properties</a>
-    <a class="btn" href="KS4/5.%20Quantitative%20Chemistry/">Explore Quantitative Chemistry</a>
-    <a class="btn" href="KS4/Organic%20Chemistry/">Explore Organic Chemistry</a>
-    <a class="btn" href="KS4/Electrolysis/">Explore Electrolysis</a>
-    <a class="btn" href="KS4/Energy%20Changes/">Explore Energy Changes</a>
-    <a class="btn" href="KS4/Qualitative%20Analysis/">Explore Qualitative Analysis</a>
-    <a class="btn" href="KS4/Atmosphere/">Explore Atmosphere</a>
-    <a class="btn" href="KS4/Ecology/">Ecology</a>
-    <a class="btn" href="KS4/Mocks/">Mock Analysis</a>
+  <!-- Loading screen -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
   </div>
 
+  <!-- Floating particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Header & navigation -->
+  <header>
+    <div class="header-content">
+      <h1 class="logo">KS4 Science</h1>
+      <p class="subtitle">Interactive Resource Hub</p>
+
+      <div class="nav-container">
+        <div class="nav-grid">
+          <a class="nav-link active" href="#">Home</a>
+          <a class="nav-link" href="KS4/4.%20Reactivity%20Series%20%26%20Reactions%20of%20acids/">Reactivity Series</a>
+          <a class="nav-link" href="KS4/2.%20Bonding/">Bonding &amp; Structure</a>
+          <a class="nav-link" href="KS4/5.%20Quantitative%20Chemistry/">Quantitative Chemistry</a>
+          <a class="nav-link" href="KS4/Organic%20Chemistry/">Organic Chemistry</a>
+          <a class="nav-link" href="KS4/Electrolysis/">Electrolysis</a>
+          <a class="nav-link" href="KS4/Energy%20Changes/">Energy Changes</a>
+          <a class="nav-link" href="KS4/Qualitative%20Analysis/">Qualitative Analysis</a>
+          <a class="nav-link" href="KS4/Atmosphere/">Atmosphere</a>
+          <a class="nav-link" href="KS4/Mocks/">Mocks</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <section class="container">
+    <h2 class="section-title">Explore KS4 Topics</h2>
+    <p class="section-subtitle">
+      Interactive lessons, simulations and assessments designed to help you master GCSE Science.
+    </p>
+
+    <!-- Topic cards -->
+    <div class="topics-grid">
+      <a href="KS4/4.%20Reactivity%20Series%20%26%20Reactions%20of%20acids/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">⚗️</div>
+        <h3 class="card-title">Reactivity Series &amp; Acids</h3>
+        <p class="card-description">Investigate metal reactivity, salt formation and practical applications.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/2.%20Bonding/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">🧬</div>
+        <h3 class="card-title">Bonding &amp; Structure</h3>
+        <p class="card-description">Delve into ionic, covalent and metallic bonding and how they shape properties.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/5.%20Quantitative%20Chemistry/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">📏</div>
+        <h3 class="card-title">Quantitative Chemistry</h3>
+        <p class="card-description">Master moles, equations and yield calculations through guided practice.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Organic%20Chemistry/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">🛢️</div>
+        <h3 class="card-title">Organic Chemistry</h3>
+        <p class="card-description">Explore hydrocarbons, polymers and functional groups in everyday life.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Electrolysis/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">⚡</div>
+        <h3 class="card-title">Electrolysis</h3>
+        <p class="card-description">Understand redox processes and industrial extraction methods.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Energy%20Changes/" class="topic-card energy">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">🔥</div>
+        <h3 class="card-title">Energy Changes</h3>
+        <p class="card-description">Investigate exothermic and endothermic reactions and energy profiles.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Qualitative%20Analysis/" class="topic-card chemistry">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">🔬</div>
+        <h3 class="card-title">Qualitative Analysis</h3>
+        <p class="card-description">Identify ions and compounds using modern analytical techniques.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Atmosphere/" class="topic-card biology">
+        <span class="year-badge">Chemistry</span>
+        <div class="card-icon">🌍</div>
+        <h3 class="card-title">Atmosphere</h3>
+        <p class="card-description">Trace atmospheric changes and their impact on climate and life.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+
+      <a href="KS4/Mocks/" class="topic-card">
+        <span class="year-badge">Assessment</span>
+        <div class="card-icon">📝</div>
+        <h3 class="card-title">Mocks &amp; Revision</h3>
+        <p class="card-description">Analyse past-paper performance and target your revision effectively.</p>
+        <span class="cta-button">Start Topic</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured call-out -->
+  <section class="featured-section">
+    <div class="featured-card">
+      <h2 class="featured-title">Ready to begin your KS4 journey?</h2>
+      <p class="featured-description">
+        Select any topic above to dive into interactive lessons, simulations and assessments that
+        will boost your GCSE success.
+      </p>
+      <div class="featured-buttons">
+        <a href="KS4/4.%20Reactivity%20Series%20%26%20Reactions%20of%20acids/" class="featured-btn primary">Start with Reactivity</a>
+        <a href="KS4/Energy%20Changes/" class="featured-btn secondary">Explore Energy Changes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
   <footer>
-    <p>&copy; 2025 KS4 Science. All rights reserved.</p>
+    &copy; 2025 KS4 Science. Empowering young scientists through interactive learning.
   </footer>
 
+  <!-- ----------  JavaScript ---------- -->
+  <script>
+    /* --------  Loading overlay  -------- */
+    window.addEventListener('load', () => {
+      const overlay = document.getElementById('loadingOverlay');
+      setTimeout(() => {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 500);
+      }, 1000);
+    });
+
+    /* --------  Floating particles  -------- */
+    (function createParticles(){
+      const container = document.getElementById('particles');
+      const count = 50;
+      for(let i=0;i<count;i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left  = Math.random()*100 + '%';
+        p.style.top   = Math.random()*100 + '%';
+        p.style.animationDelay = Math.random()*6 + 's';
+        p.style.animationDuration = (Math.random()*3+3) + 's';
+        container.appendChild(p);
+      }
+    })();
+
+    /* --------  Card hover restore (mobile taps sometimes keep transform) -------- */
+    document.querySelectorAll('.topic-card').forEach(card=>{
+      card.addEventListener('mouseleave',()=>card.style.transform='')
+    });
+
+    /* --------  Nav active state -------- */
+    document.querySelectorAll('.nav-link').forEach(link=>{
+      link.addEventListener('click',e=>{
+        if(link.getAttribute('href')==='#'){e.preventDefault()}
+        document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+        link.classList.add('active');
+      })
+    });
+
+    /* --------  Scroll reveal (featured) -------- */
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.style.opacity='1';
+          entry.target.style.transform='translateY(0)';
+        }
+      });
+    },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+    document.querySelectorAll('.featured-card').forEach(el=>{
+      el.style.opacity='0';el.style.transform='translateY(30px)';
+      el.style.transition='all .6s ease-out';
+      obs.observe(el);
+    });
+  </script>
 </body>
 </html>
