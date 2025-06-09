@@ -1,98 +1,690 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>KS3 Science Landing Page</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KS3 Science - Interactive Learning Hub</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
       margin: 0;
-      background-color: #f0f8ff;
-      color: #333;
+      padding: 0;
     }
-    header {
-      background-color: #004466;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
+
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --physics-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --chemistry-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --biology-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --energy-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      --dark-bg: #0f0f23;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --text-primary: #1a1a2e;
+      --text-secondary: #6b7280;
+      --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
-    nav {
-      margin: 10px 0;
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--dark-bg);
+      background-image: 
+        radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.2) 0%, transparent 50%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: white;
     }
-    nav a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      margin-top: 20px;
-      background-color: #004466;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    footer {
-      text-align: center;
-      padding: 15px;
-      background-color: #004466;
-      color: #fff;
+
+    /* Floating particles animation */
+    .particles {
       position: fixed;
-      bottom: 0;
+      top: 0;
+      left: 0;
       width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.4; }
+      50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+    }
+
+    header {
+      position: relative;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem 0;
+      z-index: 2;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .logo {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.8)); }
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 300;
+      margin-bottom: 2rem;
+    }
+
+    /* Navigation */
+    .nav-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1rem;
+      margin: 2rem auto;
+      max-width: 1000px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      font-size: 0.875rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-link:hover::before {
+      left: 100%;
+    }
+
+    .nav-link.active {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 4rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .topic-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: var(--shadow-medium);
+      transform: translateY(0);
+      opacity: 0;
+      animation: slideUp 0.8s ease-out forwards;
+    }
+
+    .topic-card:nth-child(1) { animation-delay: 0.1s; }
+    .topic-card:nth-child(2) { animation-delay: 0.2s; }
+    .topic-card:nth-child(3) { animation-delay: 0.3s; }
+    .topic-card:nth-child(4) { animation-delay: 0.4s; }
+    .topic-card:nth-child(5) { animation-delay: 0.5s; }
+    .topic-card:nth-child(6) { animation-delay: 0.6s; }
+    .topic-card:nth-child(7) { animation-delay: 0.7s; }
+    .topic-card:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .topic-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--physics-gradient);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .topic-card.chemistry::before { background: var(--chemistry-gradient); }
+    .topic-card.biology::before { background: var(--biology-gradient); }
+    .topic-card.energy::before { background: var(--energy-gradient); }
+
+    .topic-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: var(--shadow-heavy);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .topic-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: var(--physics-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topic-card.chemistry .card-icon { background: var(--chemistry-gradient); }
+    .topic-card.biology .card-icon { background: var(--biology-gradient); }
+    .topic-card.energy .card-icon { background: var(--energy-gradient); }
+
+    .topic-card:hover .card-icon {
+      transform: rotate(10deg) scale(1.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .card-description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .year-badge {
+      display: inline-block;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      background: var(--physics-gradient);
+      color: white;
+      padding: 0.875rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    }
+
+    .topic-card.chemistry .cta-button { background: var(--chemistry-gradient); }
+    .topic-card.biology .cta-button { background: var(--biology-gradient); }
+    .topic-card.energy .cta-button { background: var(--energy-gradient); }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .featured-section {
+      margin: 6rem 0;
+      text-align: center;
+    }
+
+    .featured-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 3rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .featured-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .featured-description {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .featured-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .featured-btn {
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .featured-btn.primary {
+      background: var(--primary-gradient);
+      color: white;
+    }
+
+    .featured-btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .featured-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .topics-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .topic-card {
+        padding: 2rem;
+      }
+      
+      .nav-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+      }
+      
+      .nav-link {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      .container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      
+      .featured-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    /* Loading Animation */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
 
   <header>
-    <h1>KS3 Science</h1>
-    <nav>
-      <a href="#">Home</a>
-      <a href="KS3/Contact%20Forces/contactforces.html">Contact Forces</a>
-      <a href="KS3/Y9%20Reactivity/index.html">Y9 Reactivity</a>
-      <a href="KS3/Y9%20Magnets/index.html">Y9 Magnets</a>
-      <a href="KS3/Y7%20Forces/">Y7 Forces</a>
-      <a href="KS3/Y7%20Reactions/index.html">Y7 Reactions</a>
-      <a href="KS3/Y7%20Energy/index.html">Y7 Energy</a>
-      <a href="KS3/Y7%20Variation/index.html">Y7 Variation</a>
-      <a href="KS3/Y7%20Electricity/index.html">Y7 Variation</a>
-      <!-- Add more topic links here as needed -->
-    </nav>
+    <div class="header-content">
+      <h1 class="logo">KS3 Science</h1>
+      <p class="subtitle">Interactive Learning Hub</p>
+      
+      <!-- Navigation -->
+      <div class="nav-container">
+        <div class="nav-grid">
+          <a href="#" class="nav-link active">Home</a>
+          <a href="KS3/Contact%20Forces/contactforces.html" class="nav-link">Contact Forces</a>
+          <a href="KS3/Y9%20Reactivity/index.html" class="nav-link">Y9 Reactivity</a>
+          <a href="KS3/Y9%20Magnets/index.html" class="nav-link">Y9 Magnets</a>
+          <a href="KS3/Y7%20Forces/" class="nav-link">Y7 Forces</a>
+          <a href="KS3/Y7%20Reactions/index.html" class="nav-link">Y7 Reactions</a>
+          <a href="KS3/Y7%20Energy/index.html" class="nav-link">Y7 Energy</a>
+          <a href="KS3/Y7%20Variation/index.html" class="nav-link">Y7 Variation</a>
+          <a href="KS3/Y7%20Electricity/index.html" class="nav-link">Y7 Electricity</a>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="container">
-    <h2>Welcome to the KS3 Science Resource Hub</h2>
-    <p>Explore various topics in science and discover interactive lessons, experiments, and activities designed for KS3 students.</p>
-    <p>Get started by exploring one of our exciting topics.</p>
-    <a class="btn" href="KS3/Contact%20Forces/contactforces.html">Explore Contact Forces</a>
-    <a class="btn" href="KS3/Y9%20Reactivity/index.html">Explore Y9 Reactivity</a>
-    <a class="btn" href="KS3/Y9%20Magnets/index.html">Explore Y9 Magnets</a>
-    <!-- Optionally, add a button for Y7 Forces as well -->
-    <a class="btn" href="KS3/Y7%20Forces/" style="margin-left: 10px;">Explore Y7 Forces</a>
-    <a class="btn" href="KS3/Y7%20Electricity/" style="margin-left: 10px;">Explore Y7 Electricity</a>
-    <a class="btn" href="KS3/Y7%20Reactions/index.html" style="margin-left: 10px;">Explore Y7 Reactions</a>
-    <a class="btn" href="KS3/Y7%20Energy/index.html" style="margin-left: 10px;">Explore Y7 Energy</a>
-    <a class="btn" href="KS3/Y7%20Variation/index.html" style="margin-left: 10px;">Explore Y7 Variation</a>
+    <h2 class="section-title">Explore Science Topics</h2>
+    <p class="section-subtitle">Discover interactive lessons, experiments, and activities designed specifically for KS3 students. Each topic combines engaging content with hands-on learning experiences.</p>
     
+    <div class="topics-grid">
+      <a href="KS3/Contact%20Forces/contactforces.html" class="topic-card">
+        <div class="year-badge">Physics</div>
+        <div class="card-icon">⚡</div>
+        <h3 class="card-title">Contact Forces</h3>
+        <p class="card-description">Explore the fascinating world of forces that act when objects touch, including friction, tension, and normal forces.</p>
+        <div class="cta-button">Start Learning</div>
+      </a>
+
+      <a href="KS3/Y9%20Reactivity/index.html" class="topic-card chemistry">
+        <div class="year-badge">Year 9 Chemistry</div>
+        <div class="card-icon">⚗️</div>
+        <h3 class="card-title">Chemical Reactivity</h3>
+        <p class="card-description">Discover how different elements and compounds react with each other in this advanced chemistry module.</p>
+        <div class="cta-button">Explore Reactions</div>
+      </a>
+
+      <a href="KS3/Y9%20Magnets/index.html" class="topic-card">
+        <div class="year-badge">Year 9 Physics</div>
+        <div class="card-icon">🧲</div>
+        <h3 class="card-title">Magnetism</h3>
+        <p class="card-description">Uncover the mysteries of magnetic fields, electromagnets, and the Earth's magnetic properties.</p>
+        <div class="cta-button">Discover Magnetism</div>
+      </a>
+
+      <a href="KS3/Y7%20Forces/" class="topic-card">
+        <div class="year-badge">Year 7 Physics</div>
+        <div class="card-icon">🚀</div>
+        <h3 class="card-title">Introduction to Forces</h3>
+        <p class="card-description">Learn the fundamental concepts of forces, motion, and how they affect our everyday world.</p>
+        <div class="cta-button">Begin Journey</div>
+      </a>
+
+      <a href="KS3/Y7%20Reactions/index.html" class="topic-card chemistry">
+        <div class="year-badge">Year 7 Chemistry</div>
+        <div class="card-icon">💥</div>
+        <h3 class="card-title">Chemical Reactions</h3>
+        <p class="card-description">Introduction to the exciting world of chemical reactions and how substances transform.</p>
+        <div class="cta-button">Start Exploring</div>
+      </a>
+
+      <a href="KS3/Y7%20Energy/index.html" class="topic-card energy">
+        <div class="year-badge">Year 7 Physics</div>
+        <div class="card-icon">⚡</div>
+        <h3 class="card-title">Energy</h3>
+        <p class="card-description">Understand different forms of energy, energy transfers, and conservation principles.</p>
+        <div class="cta-button">Power Up</div>
+      </a>
+
+      <a href="KS3/Y7%20Variation/index.html" class="topic-card biology">
+        <div class="year-badge">Year 7 Biology</div>
+        <div class="card-icon">🧬</div>
+        <h3 class="card-title">Variation</h3>
+        <p class="card-description">Explore how and why living organisms vary, from genetics to environmental factors.</p>
+        <div class="cta-button">Discover Life</div>
+      </a>
+
+      <a href="KS3/Y7%20Electricity/index.html" class="topic-card">
+        <div class="year-badge">Year 7 Physics</div>
+        <div class="card-icon">💡</div>
+        <h3 class="card-title">Electricity</h3>
+        <p class="card-description">Learn about electrical circuits, current, voltage, and the fundamentals of electrical energy.</p>
+        <div class="cta-button">Get Charged</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="featured-section">
+    <div class="container">
+      <div class="featured-card">
+        <h2 class="featured-title">Ready to Begin Your Science Journey?</h2>
+        <p class="featured-description">Choose any topic above to start your interactive learning experience. Each module includes engaging experiments, interactive simulations, and comprehensive assessments to help you master KS3 science concepts.</p>
+        <div class="featured-buttons">
+          <a href="KS3/Contact%20Forces/contactforces.html" class="featured-btn primary">Start with Forces</a>
+          <a href="KS3/Y7%20Energy/index.html" class="featured-btn secondary">Explore Energy</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <footer>
-    <p>&copy; 2025 KS3 Science. All rights reserved.</p>
+    <div class="footer-content">
+      <p>&copy; 2025 KS3 Science. Empowering young scientists through interactive learning.</p>
+    </div>
   </footer>
 
+  <script>
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const particleCount = 50;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Loading animation
+    window.addEventListener('load', function() {
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      setTimeout(() => {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+          loadingOverlay.style.display = 'none';
+        }, 500);
+      }, 1000);
+    });
+
+    // Card hover effects
+    document.querySelectorAll('.topic-card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Navigation active state
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        if (this.getAttribute('href') === '#') {
+          e.preventDefault();
+        }
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Initialize particles
+    createParticles();
+
+    // Add scroll-based animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for scroll animations
+    document.querySelectorAll('.featured-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease-out';
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
