@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revision Blast: Alkanes & Alkenes</title>
+  <style>
+    :root{
+      --bg1:#0ea5e9; /* sky-500 */
+      --bg2:#9333ea; /* purple-600 */
+      --card:#0b1020;
+      --text:#e6f0ff;
+      --muted:#a8b3cf;
+      --accent:#22c55e; /* green-500 */
+      --danger:#ef4444; /* red-500 */
+      --warning:#f59e0b; /* amber-500 */
+      --btn:#1f2937;
+      --btnText:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,0.09), transparent 40%),
+                  radial-gradient(1000px 500px at 80% 20%, rgba(255,255,255,0.06), transparent 40%),
+                  linear-gradient(135deg,var(--bg1),var(--bg2));
+      display:grid; place-items:center; padding:24px;
+    }
+    .container{
+      width: min(980px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      overflow:hidden;
+    }
+    header{
+      padding: 20px 24px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.25), rgba(0,0,0,0));
+      display:flex; align-items:center; gap:16px; justify-content:space-between;
+    }
+    .title{
+      display:flex; align-items:center; gap:14px;
+    }
+    .badge{
+      background: rgba(255,255,255,0.12);
+      color:#fff; padding:6px 10px; border-radius:999px; font-weight:600; font-size:12px; letter-spacing:.3px;
+      border:1px solid rgba(255,255,255,0.18);
+    }
+    .headline{font-weight:800; letter-spacing:.2px; margin:0; font-size: clamp(18px, 2vw, 22px)}
+    .meta{display:flex; gap:16px; align-items:center}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(255,255,255,0.08); border-radius:999px; border:1px solid rgba(255,255,255,0.14); font-weight:600}
+    .pill .big{font-size:18px}
+
+    main{padding: 22px 24px 28px; display:grid; grid-template-columns: 1.2fr .8fr; gap:18px}
+    @media (max-width:880px){ main{grid-template-columns: 1fr} }
+
+    .card{
+      background: rgba(7,12,28,0.6);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:16px; padding:20px; min-height: 240px;
+    }
+
+    .question-text{font-size: clamp(18px, 2.2vw, 24px); font-weight:700; line-height:1.2; margin:6px 0 14px}
+    .options{display:grid; gap:10px}
+    .option{
+      background: rgba(255,255,255,0.06); color:var(--text);
+      border:1px solid rgba(255,255,255,0.16); border-radius:12px;
+      padding:12px 14px; text-align:left; font-weight:600; cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .option:hover{ transform:translateY(-1px); background: rgba(255,255,255,0.10)}
+    .option.correct{ background: rgba(34,197,94,0.18); border-color: rgba(34,197,94,0.6)}
+    .option.wrong{ background: rgba(239,68,68,0.18); border-color: rgba(239,68,68,0.6)}
+
+    .side{display:grid; gap:18px}
+    .stat{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      background: rgba(255,255,255,0.06); padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.12);
+      font-weight:700
+    }
+    .timer{font-size: clamp(22px, 5vw, 28px); letter-spacing:.5px}
+    .progress{height:10px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden}
+    .progress>div{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), #16a34a); transition: width .2s ease}
+
+    .controls{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      background: var(--btn); color:var(--btnText); border:1px solid rgba(255,255,255,0.18);
+      padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; transition: transform .08s ease, background .15s ease;
+    }
+    .btn:hover{ background:#111827; transform: translateY(-1px)}
+    .btn.primary{ background: linear-gradient(180deg, #111827, #0b1224); border-color: rgba(255,255,255,0.22)}
+    .hint{color: var(--muted); font-size: 14px}
+
+    .feedback{min-height:28px; font-weight:800; letter-spacing:.3px}
+    .feedback.good{color:var(--accent)}
+    .feedback.bad{color:var(--danger)}
+
+    footer{padding:16px 24px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,0.25))}
+
+    .end-screen{display:none; text-align:center; padding:30px}
+    .end-screen h2{font-size:28px; margin:0 0 10px}
+    .stat-grid{display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin:16px 0}
+    .stat-card{background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); padding:14px; border-radius:12px; font-weight:800}
+    @media (max-width:560px){ .stat-grid{grid-template-columns: 1fr 1fr} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title">
+        <span class="badge">Chemistry • Hydrocarbons</span>
+        <h1 class="headline">Revision Blast: Alkanes & Alkenes</h1>
+      </div>
+      <div class="meta">
+        <div class="pill"><span>Mode:</span><span class="big">3‑minute sprint</span></div>
+        <button id="startBtn" class="btn primary">▶ Start / Restart</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="question-text" id="questionText">Press Start to begin.</div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="hint" id="hint"></div>
+      </section>
+
+      <aside class="side">
+        <div class="stat"><span>⏱️ Time</span><span class="timer" id="timer">3:00</span></div>
+        <div class="stat"><span>✅ Score</span><span id="score">0</span></div>
+        <div class="stat"><span>🔥 Streak</span><span id="streak">0</span></div>
+        <div>
+          <div class="hint">Round progress</div>
+          <div class="progress" aria-label="progress"><div id="progressBar"></div></div>
+        </div>
+        <div class="controls">
+          <button id="skipBtn" class="btn">Skip (S)</button>
+          <button id="infoBtn" class="btn">Alkane vs Alkene</button>
+        </div>
+      </aside>
+    </main>
+
+    <div class="end-screen" id="endScreen">
+      <h2>Time! ⏰</h2>
+      <p>Great effort. Here's how you did:</p>
+      <div class="stat-grid">
+        <div class="stat-card">Score<br><span id="finalScore">0</span></div>
+        <div class="stat-card">Best Streak<br><span id="finalStreak">0</span></div>
+        <div class="stat-card">Questions Answered<br><span id="finalQs">0</span></div>
+      </div>
+      <button id="playAgainBtn" class="btn primary">↻ Play Again</button>
+    </div>
+
+    <footer>
+      <span class="hint">Tips: Use A/B/C/D to answer quickly • S to skip</span>
+      <span class="hint">Alkanes: C n H 2n+2 • Alkenes: C n H 2n</span>
+    </footer>
+  </div>
+
+  <script>
+    // ---------------- Data ----------------
+    const prefixes = [null, 'meth', 'eth', 'prop', 'but', 'pent', 'hex']; // up to C6 for variety
+
+    const alkanes = [];
+    for (let n=1; n<=6; n++) alkanes.push({type:'alkane', n, name: `${prefixes[n]}ane`, formula: `C${n}H${2*n+2}`});
+
+    const alkenes = [];
+    for (let n=2; n<=6; n++) alkenes.push({type:'alkene', n, name: `${prefixes[n]}ene`, formula: `C${n}H${2*n}`});
+
+    const pool = [...alkanes, ...alkenes];
+
+    // Utility helpers
+    const shuffle = arr => arr.sort(() => Math.random() - 0.5);
+    const sample = (arr, k) => shuffle([...arr]).slice(0, k);
+
+    // Build a rich set of MCQ items focused on naming/formula mapping
+    function buildQuestionBank(){
+      const qs = [];
+
+      // Q1: Given name -> formula (both series)
+      pool.forEach(m => {
+        const correct = m.formula;
+        // plausible distractors
+        const d1 = m.type==='alkane' ? `C${m.n}H${2*m.n}` : `C${m.n}H${2*m.n+2}`; // swap series
+        const d2 = `C${m.n-1>0?m.n-1:m.n}H${m.type==='alkane'?2*(m.n-1)+2:2*(m.n-1)}`; // one fewer carbon
+        const d3 = `C${m.n+1}H${m.type==='alkane'?2*(m.n+1)+2:2*(m.n+1)}`; // one more carbon
+        qs.push({
+          id:`name→formula-${m.name}`,
+          text:`What is the molecular formula of <b>${cap(m.name)}</b>?`,
+          options: shuffle([correct, d1, d2, d3]),
+          answer: correct,
+          hint: m.type==='alkane' ? `Alkane general formula: CₙH₂ₙ₊₂ (n=${m.n}).` : `Alkene general formula: CₙH₂ₙ (n=${m.n}).`
+        });
+      });
+
+      // Q2: Given formula -> name
+      pool.forEach(m => {
+        const correct = cap(m.name);
+        const d1 = cap(m.type==='alkane' ? `${prefixes[m.n]}ene` : `${prefixes[m.n]}ane`); // swap series
+        const altN = Math.max( (m.n===6?5:m.n+1), 2 );
+        const d2 = cap(`${prefixes[altN]}${m.type==='alkane'?'ane':'ene'}`);
+        const d3 = cap(`${prefixes[Math.max(1,m.n-1)]}${m.type==='alkane'?'ane':'ene'}`);
+        qs.push({
+          id:`formula→name-${m.formula}`,
+          text:`What is the correct name for <b>${m.formula}</b>?`,
+          options: shuffle([correct, d1, d2, d3]),
+          answer: correct,
+          hint: m.type==='alkane' ? `Alkanes end with -ane and follow CₙH₂ₙ₊₂.` : `Alkenes end with -ene and follow CₙH₂ₙ.`
+        });
+      });
+
+      // Q3/Q4: Identify series from formula & general formula items (a few for spacing)
+      pool.forEach(m => {
+        const correct = m.type==='alkane' ? 'Alkane' : 'Alkene';
+        qs.push({
+          id:`series-${m.formula}`,
+          text:`Is <b>${m.formula}</b> an alkane or an alkene?`,
+          options: shuffle(['Alkane','Alkene','Alcohol','Alkyne']),
+          answer: correct,
+          hint: m.type==='alkane' ? `CₙH₂ₙ₊₂ → saturated → alkane.` : `CₙH₂ₙ → unsaturated (C=C) → alkene.`
+        });
+      });
+
+      qs.push(
+        { id:'g-alkanes', text:'What is the general formula for <b>alkanes</b>?', options: shuffle(['CₙH₂ₙ₊₂','CₙH₂ₙ','CₙH₂ₙ₋₂','CₙHₙ']), answer:'CₙH₂ₙ₊₂', hint:'Single bonds only → saturated.' },
+        { id:'g-alkenes', text:'What is the general formula for <b>alkenes</b>?', options: shuffle(['CₙH₂ₙ','CₙH₂ₙ₊₂','CₙH₂ₙ₋₂','CₙHₙ']), answer:'CₙH₂ₙ', hint:'Contains at least one C=C.' }
+      );
+
+      // Q5: Count carbons in the name → output n (reinforces prefixes)
+      pool.forEach(m => {
+        const correct = String(m.n);
+        const distractors = sample([1,2,3,4,5,6].filter(x=>x!==m.n),3).map(String);
+        qs.push({
+          id:`countC-${m.name}`,
+          text:`How many carbons are in <b>${cap(m.name)}</b>?`,
+          options: shuffle([correct, ...distractors]),
+          answer: correct,
+          hint: `Prefix guide: 1 meth, 2 eth, 3 prop, 4 but, 5 pent, 6 hex.`
+        });
+      });
+
+      // Q6: Given n, pick the correct formula for series (quick compute practice)
+      for (let n=1; n<=6; n++){
+        // Alkanes
+        const corrA = `C${n}H${2*n+2}`;
+        const wrongsA = shuffle([`C${n}H${2*n}`, `C${n}H${2*n-2<0?0:2*n-2}`, `C${n+1}H${2*(n+1)+2}`]);
+        qs.push({ id:`n→formula-alkane-${n}`, text:`Select the correct formula for the <b>alkane</b> with ${n} carbon(s).`, options: shuffle([corrA, ...wrongsA.slice(0,3)]), answer:corrA, hint:`Use CₙH₂ₙ₊₂ with n=${n}.`});
+        // Alkenes (from n>=2)
+        if (n>=2){
+          const corrE = `C${n}H${2*n}`;
+          const wrongsE = shuffle([`C${n}H${2*n+2}`, `C${n}H${2*n-2}`, `C${n+1}H${2*(n+1)}`]);
+          qs.push({ id:`n→formula-alkene-${n}`, text:`Select the correct formula for the <b>alkene</b> with ${n} carbon(s).`, options: shuffle([corrE, ...wrongsE.slice(0,3)]), answer:corrE, hint:`Use CₙH₂ₙ with n=${n}.`});
+        }
+      }
+
+      return shuffle(qs);
+    }
+
+    function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+    // ---------------- Quiz Engine ----------------
+    let bank = buildQuestionBank();
+    let index = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let answered = 0;
+    let running = false;
+    let timerId = null;
+    let timeLeft = 180; // seconds
+
+    const questionText = document.getElementById('questionText');
+    const optionsDiv = document.getElementById('options');
+    const feedback = document.getElementById('feedback');
+    const hint = document.getElementById('hint');
+    const scoreEl = document.getElementById('score');
+    const streakEl = document.getElementById('streak');
+    const timerEl = document.getElementById('timer');
+    const progressBar = document.getElementById('progressBar');
+    const endScreen = document.getElementById('endScreen');
+
+    function start(){
+      running = true;
+      score = 0; streak = 0; bestStreak = 0; answered = 0; index = 0; timeLeft = 180;
+      bank = buildQuestionBank();
+      endScreen.style.display = 'none';
+      document.querySelector('main').style.display = '';
+      renderQuestion();
+      updateStats();
+      startTimer();
+    }
+
+    function startTimer(){
+      renderTime();
+      clearInterval(timerId);
+      timerId = setInterval(()=>{
+        timeLeft--;
+        renderTime();
+        if (timeLeft<=0){
+          clearInterval(timerId);
+          finish();
+        }
+      },1000);
+    }
+
+    function renderTime(){
+      const m = Math.floor(timeLeft/60).toString();
+      const s = (timeLeft%60).toString().padStart(2,'0');
+      timerEl.textContent = `${m}:${s}`;
+    }
+
+    function renderQuestion(){
+      if (index>=bank.length){
+        // cycle finished → reshuffle and continue
+        bank = buildQuestionBank();
+        index = 0;
+      }
+      const q = bank[index];
+      questionText.innerHTML = q.text;
+      optionsDiv.innerHTML = '';
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      hint.textContent = '';
+
+      q.options.forEach((opt, i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = `<span style="opacity:.7; margin-right:8px; font-weight:800">${String.fromCharCode(65+i)}</span> ${opt}`;
+        btn.addEventListener('click', ()=>grade(opt, q));
+        optionsDiv.appendChild(btn);
+      });
+
+      updateProgress();
+    }
+
+    function grade(selected, q){
+      if (!running) return;
+      const children = [...optionsDiv.children];
+      children.forEach(b=>{
+        const chosen = b.textContent.slice(1).trim();
+        const raw = b.innerText.replace(/^[A-D]\s/,'');
+        const txt = b.textContent.replace(/^.[ ]/,'');
+        const val = b.textContent.replace(/^[A-D]\s/,'');
+      });
+
+      children.forEach(b=>{
+        const label = b.innerText.replace(/^[A-D]\s/,'').trim();
+        if (label === q.answer){ b.classList.add('correct'); }
+        if (label === selected && label !== q.answer){ b.classList.add('wrong'); }
+        b.disabled = true;
+      });
+
+      answered++;
+      if (selected === q.answer){
+        score += 1;
+        streak += 1; bestStreak = Math.max(bestStreak, streak);
+        feedback.textContent = 'Correct!';
+        feedback.classList.add('good');
+        hint.textContent = q.hint || '';
+      } else {
+        streak = 0;
+        feedback.textContent = `Incorrect. Answer: ${q.answer}`;
+        feedback.classList.add('bad');
+        hint.textContent = q.hint || '';
+      }
+
+      // next after short delay
+      setTimeout(()=>{ index++; renderQuestion(); updateStats(); }, 700);
+    }
+
+    function updateStats(){
+      scoreEl.textContent = score;
+      streakEl.textContent = streak;
+    }
+
+    function updateProgress(){
+      const pct = ((index % bank.length) / bank.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    function finish(){
+      running = false;
+      document.querySelector('main').style.display = 'none';
+      endScreen.style.display = 'block';
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalStreak').textContent = bestStreak;
+      document.getElementById('finalQs').textContent = answered;
+    }
+
+    // Keyboard shortcuts A-D, S to skip
+    window.addEventListener('keydown', (e)=>{
+      if (!running) return;
+      const key = e.key.toLowerCase();
+      const map = {a:0,b:1,c:2,d:3};
+      if (key in map){
+        const idx = map[key];
+        const btn = optionsDiv.children[idx];
+        if (btn) btn.click();
+      } else if (key==='s'){
+        skip();
+      }
+    });
+
+    function skip(){
+      if (!running) return;
+      index++;
+      renderQuestion();
+      updateStats();
+    }
+
+    // Info dialog (simple alert for now)
+    document.getElementById('infoBtn').addEventListener('click', ()=>{
+      alert('Alkanes: saturated (single bonds), general formula CₙH₂ₙ₊₂.\nAlkenes: unsaturated (≥1 C=C), general formula CₙH₂ₙ.\nPrefixes: 1 meth, 2 eth, 3 prop, 4 but, 5 pent, 6 hex.');
+    });
+
+    // Buttons
+    document.getElementById('startBtn').addEventListener('click', start);
+    document.getElementById('skipBtn').addEventListener('click', skip);
+    document.getElementById('playAgainBtn').addEventListener('click', start);
+
+  </script>
+</body>
+</html>
