@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C1 Starter Diagnostic Quiz — Particles & Their Behaviour (Year 7)</title>
+<style>
+  :root {
+    --bg: #f7f7fb;
+    --card: #ffffff;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --good: #059669;
+    --warn: #d97706;
+    --bad: #dc2626;
+    --chip: #eef2ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    line-height: 1.5;
+  }
+  header {
+    padding: 24px 16px;
+    background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 16px; }
+  h1 { margin: 0 0 8px; font-size: 26px; }
+  .sub { color: var(--muted); margin-top: 0; }
+  .card {
+    background: var(--card);
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .q {
+    border-top: 1px dashed #e5e7eb;
+    padding-top: 16px; margin-top: 16px;
+  }
+  .q:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+  .topic-chip {
+    display: inline-block;
+    padding: 2px 10px; border-radius: 999px;
+    background: var(--chip);
+    color: #3730a3; font-weight: 600; font-size: 12px;
+    margin-left: 6px;
+  }
+  fieldset { border: 0; padding: 0; margin: 8px 0 0; }
+  label { display: block; padding: 8px 10px; margin: 6px 0; border-radius: 10px; border: 1px solid #e5e7eb; cursor: pointer; }
+  input[type="radio"] { margin-right: 8px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  button {
+    appearance: none; border: 0; cursor: pointer;
+    padding: 12px 18px; border-radius: 12px; font-weight: 700;
+    background: var(--accent); color: white;
+  }
+  button.secondary { background: #111827; }
+  button.ghost { background: transparent; color: var(--ink); border: 1px solid #e5e7eb; }
+  .result {
+    display: none;
+  }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+  .pill.good { background: #ecfdf5; color: var(--good); }
+  .pill.ok { background: #fffbeb; color: var(--warn); }
+  .pill.bad { background: #fef2f2; color: var(--bad); }
+  details { background: #fafafa; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 12px; }
+  summary { cursor: pointer; font-weight: 700; }
+  .explain { margin-top: 8px; color: #374151; }
+  .muted { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .small { font-size: 12px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>C1 Starter Diagnostic Quiz</h1>
+      <p class="sub">Particles & Their Behaviour (Year 7) • 18 MCQs • Self-marking • Personalised revision targets</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <p><strong>Instructions:</strong> Choose one answer for each question. When you click <em>Mark my quiz</em>, you’ll see your score, a topic-by-topic breakdown, and advice on what to revise first. This is a quick diagnostic — don’t overthink it!</p>
+      <div class="actions">
+        <button id="mark">Mark my quiz</button>
+        <button class="ghost" id="reset">Clear answers</button>
+      </div>
+    </section>
+
+    <section id="quiz" class="card">
+      <!-- Questions injected here -->
+    </section>
+
+    <section id="results" class="card result" aria-live="polite">
+      <h2>Your results</h2>
+      <p id="scoreline"></p>
+      <div id="topicBreakdown" class="grid"></div>
+      <hr style="margin:16px 0;">
+      <h3>What to revise first</h3>
+      <div id="advice"></div>
+      <p class="small muted">Tip: Use your C1 Checklist (Developing → Secure → Extending), Glossary, and the Knowledge Organiser to target weak areas.</p>
+    </section>
+  </main>
+
+<script>
+// Quiz data
+const TOPICS = {
+  "particle_model": "1) Particle model & properties",
+  "states": "2) States of matter",
+  "density": "3) Density",
+  "melting_freezing": "4) Melting & Freezing",
+  "boiling": "5) Boiling",
+  "changes": "6) More changes of state",
+  "diffusion": "7) Diffusion"
+};
+
+const QUESTIONS = [
+  // Particle model & properties
+  {
+    id: "q1",
+    topic: "particle_model",
+    text: "What does the particle model describe about a substance?",
+    options: [
+      "Only the colour and hardness of the substance",
+      "The movement and arrangement of its particles",
+      "Its ability to conduct electricity",
+      "How reactive it is with acids"
+    ],
+    answer: 1,
+    explain: "The particle model explains the movement and arrangement of particles; properties then follow from these."
+  },
+  {
+    id: "q2",
+    topic: "particle_model",
+    text: "Which factor does NOT directly affect a substance’s properties in the particle model?",
+    options: [
+      "How particles are arranged",
+      "How particles move",
+      "Forces between particles",
+      "Its brand or manufacturer"
+    ],
+    answer: 3,
+    explain: "Properties depend on particle size/shape (at this level), arrangement, motion, and forces — not brand names."
+  },
+
+  // States of matter
+  {
+    id: "q3",
+    topic: "states",
+    text: "Which row correctly matches the state with ‘can it be compressed?’ and ‘can it flow?’",
+    options: [
+      "Solid: yes compressed, yes flows",
+      "Liquid: no compressed, yes flows",
+      "Gas: no compressed, no flows",
+      "Liquid: yes compressed, no flows"
+    ],
+    answer: 1,
+    explain: "Liquids cannot be compressed (particles are touching) and can flow (particles can slide past each other)."
+  },
+  {
+    id: "q4",
+    topic: "states",
+    text: "In a solid, particles mainly…",
+    options: [
+      "are far apart and move in straight lines",
+      "touch but slide around freely",
+      "vibrate on the spot in a fixed arrangement",
+      "form bubbles throughout the material"
+    ],
+    answer: 2,
+    explain: "Solid particles vibrate about fixed positions in a regular arrangement."
+  },
+
+  // Density
+  {
+    id: "q5",
+    topic: "density",
+    text: "Density is best described as…",
+    options: [
+      "mass ÷ volume (how heavy something is for its size)",
+      "volume ÷ mass",
+      "mass × volume",
+      "how fast particles move"
+    ],
+    answer: 0,
+    explain: "Density = mass/volume and tells us how heavy something is for its size."
+  },
+  {
+    id: "q6",
+    topic: "density",
+    text: "Which usually has the lowest density for the same substance?",
+    options: [
+      "Solid",
+      "Liquid",
+      "Gas",
+      "They all have the same density"
+    ],
+    answer: 2,
+    explain: "Gases have particles far apart, so the mass per volume is smallest."
+  },
+  {
+    id: "q7",
+    topic: "density",
+    text: "A block has mass 200 g and volume 50 cm³. Its density is…",
+    options: [
+      "0.25 g/cm³",
+      "2 g/cm³",
+      "4 g/cm³",
+      "10000 g/cm³"
+    ],
+    answer: 1,
+    explain: "Density = m/v = 200/50 = 4; wait, check units: 200 ÷ 50 = 4, so 4 g/cm³ (Option C)."
+  },
+
+  // Melting & Freezing
+  {
+    id: "q8",
+    topic: "melting_freezing",
+    text: "Melting is the change of state from…",
+    options: [
+      "gas → liquid",
+      "solid → liquid",
+      "liquid → gas",
+      "solid → gas"
+    ],
+    answer: 1,
+    explain: "Melting: solid to liquid."
+  },
+  {
+    id: "q9",
+    topic: "melting_freezing",
+    text: "On a heating curve of a pure substance, the temperature stays flat at the melting point because…",
+    options: [
+      "the thermometer is broken",
+      "heat energy is used to break particle bonds rather than raise temperature",
+      "the room is cooling the substance",
+      "melting only happens in mixtures"
+    ],
+    answer: 1,
+    explain: "During melting, energy goes into changing state (overcoming forces), not raising temperature."
+  },
+  {
+    id: "q10",
+    topic: "melting_freezing",
+    text: "Which statement about freezing is correct?",
+    options: [
+      "Particles speed up and spread out",
+      "Particles gain energy from surroundings",
+      "Particles get closer and arrange more regularly",
+      "Mass is not conserved"
+    ],
+    answer: 2,
+    explain: "Freezing: particles lose energy, come closer together, and form an ordered structure; mass is conserved."
+  },
+
+  // Boiling
+  {
+    id: "q11",
+    topic: "boiling",
+    text: "Boiling is best defined as…",
+    options: [
+      "particles leaving only from the surface at any temperature",
+      "bubbles of gas forming throughout the liquid at its boiling point",
+      "a chemical reaction that makes gas",
+      "evaporation below 0 °C only"
+    ],
+    answer: 1,
+    explain: "Boiling: bubbles of the substance’s gas form throughout the liquid at its boiling point."
+  },
+  {
+    id: "q12",
+    topic: "boiling",
+    text: "At a temperature between a substance’s melting point and boiling point (at room pressure), it will be…",
+    options: [
+      "a solid",
+      "a liquid",
+      "a gas",
+      "a plasma"
+    ],
+    answer: 1,
+    explain: "Between melting point and boiling point, the state is liquid."
+  },
+
+  // More changes of state
+  {
+    id: "q13",
+    topic: "changes",
+    text: "Which statement is true about evaporation compared with boiling?",
+    options: [
+      "Evaporation happens only at the boiling point",
+      "Evaporation happens at any temperature from the surface",
+      "Boiling happens at any temperature from the surface",
+      "Both occur only in mixtures"
+    ],
+    answer: 1,
+    explain: "Evaporation can occur at any temperature and from the liquid’s surface."
+  },
+  {
+    id: "q14",
+    topic: "changes",
+    text: "Sublimation is the change of state from…",
+    options: [
+      "solid → gas",
+      "gas → solid",
+      "liquid → gas",
+      "solid → liquid"
+    ],
+    answer: 0,
+    explain: "Sublimation: solid directly to gas (some substances don’t exist as liquids)."
+  },
+
+  // Diffusion
+  {
+    id: "q15",
+    topic: "diffusion",
+    text: "Diffusion is best described as particles moving…",
+    options: [
+      "from low concentration to high concentration",
+      "randomly but overall from high to low concentration",
+      "in straight lines only",
+      "by vibrating in fixed positions"
+    ],
+    answer: 1,
+    explain: "Overall movement is from high to low concentration, via random motion."
+  },
+  {
+    id: "q16",
+    topic: "diffusion",
+    text: "Which factor makes diffusion happen faster?",
+    options: [
+      "Lower temperature",
+      "Larger, heavier particles",
+      "Higher temperature",
+      "Being a solid"
+    ],
+    answer: 2,
+    explain: "Higher temperature → faster particles → faster diffusion."
+  },
+  {
+    id: "q17",
+    topic: "diffusion",
+    text: "In which state does diffusion NOT occur (under typical conditions)?",
+    options: [
+      "Solid",
+      "Liquid",
+      "Gas",
+      "Both liquids and gases"
+    ],
+    answer: 0,
+    explain: "In solids, particles vibrate in fixed positions; diffusion doesn’t occur."
+  },
+
+  // Mixed application (cross-check)
+  {
+    id: "q18",
+    topic: "particle_model",
+    text: "A liquid is gently heated but still below its boiling point. Which is most likely true?",
+    options: [
+      "Its density becomes the same as a gas",
+      "Some particles at the surface escape into the air",
+      "Bubbles of gas form throughout the liquid",
+      "The mass is not conserved"
+    ],
+    answer: 1,
+    explain: "Below boiling point, evaporation can occur from the surface; mass is conserved in physical changes."
+  }
+];
+
+// Quick fix mistake in Q7 explanation (ensure correct answer index aligns with option list)
+QUESTIONS.forEach(q => {
+  if(q.id === "q7"){
+    q.answer = 2; // 4 g/cm³ is Option index 2
+  }
+});
+
+// Render questions
+const quizEl = document.getElementById('quiz');
+QUESTIONS.forEach((q, idx) => {
+  const el = document.createElement('div');
+  el.className = 'q';
+  el.innerHTML = `
+    <div><strong>Q${idx+1}.</strong> ${q.text} <span class="topic-chip">${TOPICS[q.topic]}</span></div>
+    <fieldset>
+      ${q.options.map((opt,i)=>`
+        <label>
+          <input type="radio" name="${q.id}" value="${i}"> ${opt}
+        </label>
+      `).join('')}
+    </fieldset>
+    <details class="explain" id="exp-${q.id}" hidden>
+      <summary>Explanation</summary>
+      <div>${q.explain}</div>
+    </details>
+  `;
+  quizEl.appendChild(el);
+});
+
+// Marking logic
+function markQuiz(){
+  let total = QUESTIONS.length;
+  let correct = 0;
+  const byTopic = {};
+  const byTopicTotals = {};
+  Object.keys(TOPICS).forEach(t => { byTopic[t]=0; byTopicTotals[t]=0; });
+
+  QUESTIONS.forEach(q => {
+    const chosen = document.querySelector(`input[name="${q.id}"]:checked`);
+    byTopicTotals[q.topic]++;
+    const exp = document.getElementById(`exp-${q.id}`);
+    if(!chosen){
+      exp.hidden = false; // show explanations for unanswered as feedback
+      return;
+    }
+    if(parseInt(chosen.value, 10) === q.answer){
+      correct++;
+      byTopic[q.topic]++;
+      exp.hidden = true; // hide correct explanations to save space
+    } else {
+      exp.hidden = false;
+    }
+  });
+
+  // Overall score line
+  const pct = Math.round((correct/total)*100);
+  const scoreline = document.getElementById('scoreline');
+  scoreline.innerHTML = `<strong>Score:</strong> ${correct}/${total} (${pct}%)`;
+
+  // Topic breakdown
+  const tb = document.getElementById('topicBreakdown');
+  tb.innerHTML = '';
+  Object.keys(TOPICS).forEach(t => {
+    const got = byTopic[t], outof = byTopicTotals[t];
+    const p = outof ? Math.round(got/outof*100) : 0;
+    let cls = 'ok';
+    if(p >= 80) cls='good'; else if(p < 60) cls='bad';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div><strong>${TOPICS[t]}</strong></div>
+      <div class="muted small">Correct: ${got}/${outof}</div>
+      <div style="margin-top:6px;">
+        <span class="pill ${cls}">${p}%</span>
+      </div>
+    `;
+    tb.appendChild(card);
+  });
+
+  // Advice
+  const weak = Object.keys(TOPICS).filter(t => {
+    const got = byTopic[t], outof = byTopicTotals[t];
+    const p = outof ? (got/outof) : 0;
+    return p < 0.6; // below 60%
+  });
+
+  const adviceEl = document.getElementById('advice');
+  if(weak.length === 0){
+    adviceEl.innerHTML = `<p><strong>Great job!</strong> You’re secure across the board. For extension, try ‘Extending’ tasks on your C1 Checklist and practise explanation questions using the Knowledge Organiser.</p>`;
+  } else {
+    const items = weak.map(t => {
+      // Map topic code to targeted advice
+      const msg = {
+        "particle_model": "Review how particle arrangement, movement and forces link to properties.",
+        "states": "Revisit properties of solids, liquids and gases (flow, compression, particle motion).",
+        "density": "Practise density = mass ÷ volume, units (g, kg, cm³) and compare densities by state.",
+        "melting_freezing": "Study heating/cooling curves for pure substances and what happens to energy during melting/freezing.",
+        "boiling": "Know the definition of boiling (bubbles throughout at boiling point) vs liquid state range.",
+        "changes": "Compare evaporation vs boiling; learn the definition and examples of sublimation.",
+        "diffusion": "Focus on definition (high → low concentration), and how temperature/particle size/state affect rate."
+      }[t];
+      return `<li><strong>${TOPICS[t]}:</strong> ${msg} Use the Glossary for key terms and complete the gaps KO before checking the full KO.</li>`;
+    }).join('');
+    adviceEl.innerHTML = `<ul>${items}</ul>`;
+  }
+
+  // Reveal results
+  document.getElementById('results').style.display = 'block';
+  // Scroll to results
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Reset
+function resetQuiz(){
+  document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('details.explain').forEach(d => d.hidden = true);
+  document.getElementById('results').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('mark').addEventListener('click', markQuiz);
+document.getElementById('reset').addEventListener('click', resetQuiz);
+</script>
+</body>
+</html>
