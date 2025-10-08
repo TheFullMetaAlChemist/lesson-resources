@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rates of Reaction – Feedback & Follow-up</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#111827;        /* gray-900 */
+      --panel:#0b1225;       /* deep panel */
+      --accent:#22d3ee;      /* cyan-400 */
+      --accent-2:#a78bfa;    /* violet-400 */
+      --text:#e5e7eb;        /* gray-200 */
+      --muted:#9ca3af;       /* gray-400 */
+      --ok:#34d399;          /* emerald-400 */
+      --warn:#f59e0b;        /* amber-500 */
+      --err:#f87171;         /* red-400 */
+      --shadow:0 10px 25px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:linear-gradient(180deg,#0a0f22 0%,#0f172a 60%,#0a0f22 100%);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue","Noto Sans",Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.5}
+    a{color:var(--accent)}
+    header{
+      position:sticky;top:0;z-index:40;
+      background:rgba(10,15,34,.85);backdrop-filter:blur(8px);
+      border-bottom:1px solid #1f2937;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 20px}
+    h1{margin:0;font-size:clamp(20px,2.4vw,28px);letter-spacing:.2px}
+    .tabs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .tablink{
+      border:1px solid #1f2937;background:var(--card);color:var(--text);
+      padding:10px 14px;border-radius:12px;cursor:pointer;transition:.2s;
+      box-shadow:var(--shadow)
+    }
+    .tablink[aria-selected="true"]{outline:2px solid var(--accent);background:#0b1225}
+    main{padding:28px 20px}
+    .section{display:none}
+    .section.active{display:block}
+
+    /* Cards */
+    .card{
+      background:linear-gradient(180deg,#0c142c 0%, #0a0f22 100%);
+      border:1px solid #1f2937;border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:18px 18px 8px 18px;margin:18px 0;
+    }
+    .card h3{margin:0 0 8px 0;font-size:18px}
+    .meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;font-size:12px;color:#cbd5e1;
+      background:#0a0f22;border:1px solid #20304a
+    }
+    .badge .dot{width:7px;height:7px;border-radius:50%}
+    .dot.spec{background:var(--accent)}
+    .dot.ao{background:var(--accent-2)}
+    .dot.marks{background:var(--ok)}
+    .index{display:flex;flex-wrap:wrap;gap:8px}
+    .index a{
+      text-decoration:none;color:#cbd5e1;background:#0b1225;border:1px solid #1f2937;
+      padding:6px 10px;border-radius:10px;transition:.2s
+    }
+    .index a:hover{color:white;outline:1px solid var(--accent)}
+    .subtle{color:var(--muted);font-size:14px;margin:2px 0 12px 0}
+
+    /* details / summary panels */
+    details{
+      background:var(--panel);border:1px solid #1f2937;border-radius:12px;
+      margin:10px 0;overflow:hidden
+    }
+    summary{
+      list-style:none; cursor:pointer; padding:14px 16px; position:relative;
+      display:flex; align-items:center; gap:10px; font-weight:600;
+    }
+    summary::-webkit-details-marker{display:none}
+    .pill{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #22314f;background:#0a0f22;color:#cbd5e1}
+    .panel{padding:0 16px 14px 16px;color:#d1d5db}
+    .hint{border-left:4px solid var(--warn);padding-left:10px}
+    .ok{border-left:4px solid var(--ok);padding-left:10px}
+    .err{border-left:4px solid var(--err);padding-left:10px}
+
+    /* utility */
+    .grid-2{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:920px){.grid-2{grid-template-columns:1fr 1fr}}
+    .srch{display:flex;gap:10px;margin-top:12px}
+    .srch input{
+      flex:1;padding:10px 12px;border-radius:10px;border:1px solid #1f2937;background:#0b1225;color:#e5e7eb
+    }
+    .btn{
+      padding:10px 14px;border-radius:10px;border:1px solid #1f2937;
+      background:#0b1225;color:#e5e7eb;cursor:pointer
+    }
+    .btn:hover{outline:1px solid var(--accent)}
+    footer{color:#9aa4b2;font-size:12px;margin:40px 0 10px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Rates of Reaction – Model Answers & Follow-up</h1>
+      <div class="tabs" role="tablist" aria-label="Sections">
+        <button class="tablink" role="tab" aria-selected="true" aria-controls="models" id="tab-models">1) Model Answers</button>
+        <button class="tablink" role="tab" aria-selected="false" aria-controls="followups" id="tab-followups">2) Follow-up Questions</button>
+      </div>
+
+      <!-- quick index & search -->
+      <div class="srch">
+        <input id="search" type="search" placeholder="Search by question, keyword, or spec code…" aria-label="Search content">
+        <button id="clear" class="btn">Clear</button>
+      </div>
+      <div class="subtle">Jump to a question:</div>
+      <div class="index" id="qindex">
+        <!-- anchors auto-filled by JS -->
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- SECTION 1: MODEL ANSWERS -->
+    <section id="models" class="section active" role="tabpanel" aria-labelledby="tab-models">
+      <!-- Cards for each sub-question -->
+      <!-- Q1a(i) -->
+      <article class="card" id="Q1a(i)" data-tags="4.1.1.1 word equation sulfur dioxide oxygen sulfur trioxide">
+        <h3>Q1(a)(i) • Complete the word equation</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.1.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details>
+          <summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">sulfur dioxide + oxygen → <strong>sulfur trioxide</strong></div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">This is the word equation for oxidation of sulfur dioxide (SO₂) to sulfur trioxide (SO₃): list both reactants and the product in words.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">
+            • Writing a symbol equation when the question asks for words.<br>
+            • Writing “sulfur oxide” instead of <em>sulfur trioxide</em>.<br>
+            • Missing oxygen as a reactant.
+          </div>
+        </details>
+      </article>
+
+      <!-- Q1a(ii) -->
+      <article class="card" id="Q1a(ii)" data-tags="4.1.1.1 classify compound element mixture SO2">
+        <h3>Q1(a)(ii) • Classification of SO₂</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.1.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details>
+          <summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok"><strong>compound</strong></div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">SO₂ contains the elements sulfur and oxygen chemically bonded in fixed proportions, so it is a compound.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Choosing “element” because the name sounds singular; choosing “mixture” (mixtures aren’t chemically bonded).</div>
+        </details>
+      </article>
+
+      <!-- Q1b -->
+      <article class="card" id="Q1b" data-tags="4.6.1.3 pressure gases collision frequency">
+        <h3>Q1(b) • Effect of increasing pressure (gases)</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.3</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">It <strong>increases</strong> the frequency of collisions.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Higher pressure pushes gas particles closer together so collisions happen more often.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Saying pressure makes particles “more energetic” (it mainly changes collision frequency, not particle energy).</div>
+        </details>
+      </article>
+
+      <!-- Q1c -->
+      <article class="card" id="Q1c" data-tags="4.6.1.3 activation energy minimum energy">
+        <h3>Q1(c) • Minimum energy to react</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.3</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok"><strong>activation energy</strong></div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Activation energy (Eₐ) is the minimum energy colliding particles must have for a reaction to occur.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Writing “catalyst” or “rate” instead of the energy term.</div>
+        </details>
+      </article>
+
+      <!-- Q1d -->
+      <article class="card" id="Q1d" data-tags="4.6.1.2 increase rate temperature catalyst">
+        <h3>Q1(d) • One way to increase the rate (not pressure)</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.2</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Use a <strong>catalyst</strong> or increase the <strong>temperature</strong>.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Catalyst lowers Eₐ (more successful collisions). Higher temperature increases particle kinetic energy and collision frequency.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">“Add more reactant” (must be linked to concentration); saying “increase pressure” when reactants aren’t gases.</div>
+        </details>
+      </article>
+
+      <!-- Q2a(i) -->
+      <article class="card" id="Q2a(i)" data-tags="4.6.1.1 graph line of best fit anomalies thiosulfate">
+        <h3>Q2(a)(i) • Line of best fit</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO3</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Draw one straight line that follows the trend and <strong>misses the anomalous point</strong>.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">For a linear relationship, a straight best-fit summarises the trend; clear outliers shouldn’t control the line.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Dot-to-dot; forcing the line through an outlier; drawing a curve when the data trend is linear.</div>
+        </details>
+      </article>
+
+      <!-- Q2a(ii) -->
+      <article class="card" id="Q2a(ii)" data-tags="4.6.1.1 errors anomalies reliability">
+        <h3>Q2(a)(ii) • Why don’t all points lie on the line?</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO3</span>
+          <span class="badge"><span class="dot marks"></span> 2 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Any two sensible reasons: timing judgement; deciding when the cross disappears; reading/measurement error; temperature fluctuations; recording/plotting mistakes; apparatus limitations; an anomalous result.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Rate experiments are affected by random and measurement errors; small differences lead to scatter around the trend.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Vague answers like “it went wrong” without naming a specific error source.</div>
+        </details>
+      </article>
+
+      <!-- Q2b(i) -->
+      <article class="card" id="Q2b(i)" data-tags="4.6.1.1 proportional direct through origin">
+        <h3>Q2(b)(i) • Evidence for direct proportionality</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO3</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">A straight line (approximately) that passes through the <strong>origin</strong> shows rate ∝ concentration.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Doubling concentration doubles rate if the relationship is proportional; the graph test is a straight line through (0,0).</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Saying only “it increases” without mentioning straight line and origin.</div>
+        </details>
+      </article>
+
+      <!-- Q2b(ii) -->
+      <article class="card" id="Q2b(ii)" data-tags="4.6.1.3 concentration collision frequency collision theory">
+        <h3>Q2(b)(ii) • Why concentration increases rate</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.3</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 2 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">More particles per unit volume ⇒ <strong>more frequent collisions</strong> and therefore more <strong>successful collisions</strong> each second.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Collision theory: increasing concentration raises collision frequency; the number of effective collisions per second increases.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Claiming particles are more energetic (concentration doesn’t change energy); confusing with pressure.</div>
+        </details>
+      </article>
+
+      <!-- Q3a(i) -->
+      <article class="card" id="Q3a(i)" data-tags="4.6.1.1 rate calculation gradient mean rate 2.25">
+        <h3>Q3(a)(i) • Calculate mean rate (30–50 s)</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.1</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 3 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok"><strong>2.25 cm³ s⁻¹</strong></div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Read volumes at 30 s and 50 s (175 and 130 cm³). ΔV = 45 cm³ over 20 s ⇒ 45 ÷ 20 = 2.25 cm³ s⁻¹.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Wrong times; dividing by 50 instead of 20; missing units.</div>
+        </details>
+      </article>
+
+      <!-- Q3a(ii) -->
+      <article class="card" id="Q3a(ii)" data-tags="4.6.1.3 rate decreases time collision frequency">
+        <h3>Q3(a)(ii) • Why is the later rate lower?</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.3</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 2 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Reactant concentration falls as it’s used up ⇒ fewer collisions per second ⇒ lower mean rate.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Fewer particles in a given volume means reduced collision frequency and fewer effective collisions.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Non-scientific statements (e.g., “reaction gets tired”).</div>
+        </details>
+      </article>
+
+      <!-- Q3b -->
+      <article class="card" id="Q3b" data-tags="4.6.1.4 continuous vs batch labour enzymes cost efficiency">
+        <h3>Q3(b) • Why continuous processing can be more efficient</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.4</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Lower labour/operating costs (e.g., lower enzyme costs) and avoids stop–start.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Continuous plants run steadily, improving resource use and output per worker.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Answering only “it’s faster” without any cost/efficiency idea.</div>
+        </details>
+      </article>
+
+      <!-- Q4a -->
+      <article class="card" id="Q4a" data-tags="4.6.1.2 surface area calcium carbonate acid gas syringe method control variables eal">
+  <h3>Q4(a) • Method: particle size vs rate (CaCO₃ + HCl)</h3>
+  <div class="meta">
+    <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.2</strong></span>
+    <span class="badge"><span class="dot ao"></span> AO3</span>
+    <span class="badge"><span class="dot marks"></span> 6 marks</span>
+  </div>
+
+  <details open>
+    <summary><span class="pill">Model answer</span></summary>
+    <div class="panel ok">
+      <ul>
+        <li><strong>Independent:</strong> <em>size</em> of CaCO₃ particles (large chips → small chips → powder). Keep the <strong>mass the same</strong> each time (e.g. 5.00&nbsp;g).</li>
+        <li><strong>Dependent:</strong> rate of gas produced (cm³&nbsp;s⁻¹)
+        <li><strong>Control:</strong> volume and concentration of acid (e.g. 50&nbsp;cm³ of 1.0&nbsp;mol&nbsp;dm⁻³), temperature (keep ~25&nbsp;°C or use a water bath), same mass of solid, same conical flask/apparatus, quick and airtight bung, same measuring times.</li>
+      </ul>
+
+      <p class="subtle"><strong>Method</strong> — short, clear steps</p>
+      <ol>
+        <li>Measure <strong>50&nbsp;cm³</strong> of 1.0&nbsp;mol&nbsp;dm⁻³ HCl into a conical flask using a measuring cylinder.</li>
+        <li>Weigh <strong>5.00&nbsp;g</strong> of CaCO₃ <em>(large chips)</em>. Prepare the <strong>same mass</strong> for small chips and for powder.</li>
+        <li>Add the CaCO₃ to the acid, <strong>immediately</strong> put in the bung, and start the <strong>stopwatch</strong>.</li>
+        <li>Record the gas volume <strong>every 10–15&nbsp;s</strong> for about <strong>2&nbsp;minutes</strong> (or until readings stop changing).</li>
+        <li>Rinse the flask; use <strong>fresh acid</strong> each time. Repeat steps 1–5 for <em>small chips</em> and then <em>powder</em>.</li>
+        <li><strong>Repeat</strong> each size (at least twice) and work out the <strong>mean</strong> values.</li>
+      </ol>
+
+  <details>
+    <summary><span class="pill">Explanation / working</span></summary>
+    <div class="panel">
+      Only the <strong>independent variable</strong> (particle size) changes; all other factors are controlled. Repeats and means improve <strong>reliability</strong>. The <strong>initial gradient</strong> of volume–time graphs compares rates fairly because it is taken before reactant concentration changes much.
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="pill">Common errors & misconceptions</span></summary>
+    <div class="panel err">
+      • Changing both <em>mass</em> and <em>size</em> between trials.<br>
+      • Leaks (loose bung), not replacing bung quickly → low volumes.<br>
+      • Reusing the same acid (concentration falls).<br>
+      • Not controlling temperature / total volume.<br>
+      • Writing “collect gas” without <strong>how</strong> (apparatus + timings).<br>
+      • Comparing <em>final volumes</em> only instead of <strong>rate/gradient</strong>.
+    </div>
+  </details>
+</article>
+
+      <!-- Q4b -->
+      <article class="card" id="Q4b" data-tags="4.6.1.3 temperature collisions activation energy">
+        <h3>Q4(b) • Explain the effect of temperature on rate</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.3</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 3 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Higher temperature → particles move faster and a bigger fraction has E ≥ Eₐ → more frequent and more energetic effective collisions → faster rate.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Temperature raises mean kinetic energy; both collision frequency and the fraction of successful collisions increase.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Saying “collisions are stronger” without linking to activation energy; confusing temperature with concentration.</div>
+        </details>
+      </article>
+
+      <!-- Q4c -->
+      <article class="card" id="Q4c" data-tags="4.6.1.4 definition catalyst not used up">
+        <h3>Q4(c) • What is a catalyst?</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.4</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 2 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">A substance that increases the rate of reaction and is <strong>not used up</strong>.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Definition requires <em>two parts</em>: effect on rate + not consumed overall.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Missing one part; saying a catalyst adds energy to particles.</div>
+        </details>
+      </article>
+
+      <!-- Q4d -->
+      <article class="card" id="Q4d" data-tags="4.6.1.4 lower activation energy alternative pathway reaction profile">
+        <h3>Q4(d) • How a catalyst works</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.4</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO2</span>
+          <span class="badge"><span class="dot marks"></span> 2 marks</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok">Provides an <strong>alternative pathway</strong> with a <strong>lower activation energy</strong>, so a greater fraction of collisions is successful at the same temperature.</div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">On a reaction profile, the peak is lower with a catalyst; therefore the rate increases.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Claiming a catalyst increases the number of collisions (its main role is reducing Eₐ).</div>
+        </details>
+      </article>
+
+      <!-- Q4e -->
+      <article class="card" id="Q4e" data-tags="4.6.1.4 enzymes biological catalysts">
+        <h3>Q4(e) • Biological catalysts</h3>
+        <div class="meta">
+          <span class="badge"><span class="dot spec"></span> Spec: <strong>4.6.1.4</strong></span>
+          <span class="badge"><span class="dot ao"></span> AO1</span>
+          <span class="badge"><span class="dot marks"></span> 1 mark</span>
+        </div>
+        <details><summary><span class="pill">Model answer</span></summary>
+          <div class="panel ok"><strong>enzymes</strong></div>
+        </details>
+        <details><summary><span class="pill">Explanation / working</span></summary>
+          <div class="panel">Enzymes are catalysts in biological systems.</div>
+        </details>
+        <details><summary><span class="pill">Common errors & misconceptions</span></summary>
+          <div class="panel err">Answering “proteins” or “hormones” without linking to catalysis.</div>
+        </details>
+      </article>
+    </section>
+
+    <!-- SECTION 2: FOLLOW-UPS -->
+    <section id="followups" class="section" role="tabpanel" aria-labelledby="tab-followups">
+      <!-- FU 4.1.1.1 -->
+      <article class="card" id="FU-4.1.1.1" data-tags="follow up 4.1.1.1 compound word equation so2 so3">
+        <h3>Follow-up • Spec 4.1.1.1</h3>
+        <p class="subtle"><em>How do you know that SO₂ is a compound rather than an element or mixture — and what word equation shows how SO₃ is made?</em></p>
+        <details open>
+          <summary><span class="pill">Things to Think About</span></summary>
+          <div class="panel hint">
+            • Compounds are two or more elements <strong>chemically bonded</strong> in fixed ratios.<br>
+            • Mixtures are not chemically bonded; composition can vary.<br>
+            • Word-equation format: <em>reactant + reactant → product</em>.
+          </div>
+        </details>
+        <details>
+          <summary><span class="pill">Model Answer</span></summary>
+          <div class="panel ok">
+            SO₂ is a <strong>compound</strong> because it contains sulfur and oxygen chemically bonded. Word equation:
+            <strong>sulfur dioxide + oxygen → sulfur trioxide</strong>.
+          </div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation</span></summary>
+          <div class="panel">A formula with more than one element symbol indicates a compound. Oxidising sulfur dioxide by adding oxygen forms sulfur trioxide.</div>
+        </details>
+      </article>
+
+      <!-- FU 4.6.1.1 -->
+      <article class="card" id="FU-4.6.1.1" data-tags="follow up 4.6.1.1 proportional graph origin repeats">
+        <h3>Follow-up • Spec 4.6.1.1</h3>
+        <p class="subtle"><em>How would you show that the rate is directly proportional to concentration and make your data more reliable?</em></p>
+        <details open>
+          <summary><span class="pill">Things to Think About</span></summary>
+          <div class="panel hint">
+            • What shows proportionality on a graph?<br>
+            • Which calculations (mean rate, gradient) help?<br>
+            • Repeats, anomalies, and control variables.
+          </div>
+        </details>
+        <details>
+          <summary><span class="pill">Model Answer</span></summary>
+          <div class="panel ok">Plot rate vs concentration: a straight line through <strong>(0,0)</strong> shows proportionality. Improve reliability by <strong>repeating</strong> runs, averaging, <strong>identifying anomalies</strong>, and keeping temperature/total volume constant.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation</span></summary>
+          <div class="panel">A constant gradient and line through the origin indicate direct proportionality. Reliability comes from repeatability and controlled variables.</div>
+        </details>
+      </article>
+
+      <!-- FU 4.6.1.2 -->
+      <article class="card" id="FU-4.6.1.2" data-tags="follow up 4.6.1.2 factors change one control variables fair test">
+        <h3>Follow-up • Spec 4.6.1.2</h3>
+        <p class="subtle"><em>If a reaction is too slow, which single factor would you change first and which two controls would you keep the same to make a fair test?</em></p>
+        <details open>
+          <summary><span class="pill">Things to Think About</span></summary>
+          <div class="panel hint">• Choose <strong>one factor</strong> (concentration, temperature, surface area, or catalyst) and justify with particle ideas.<br>• Name two <strong>control variables</strong> to hold constant.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Model Answer</span></summary>
+          <div class="panel ok">Increase the <strong>temperature</strong> first (often most effective) because it increases particle kinetic energy and the frequency of effective collisions. Keep, for example, <strong>concentration/volume</strong> of acid and the <strong>mass of solid</strong> the same.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation</span></summary>
+          <div class="panel">Only one factor should change so any rate difference can be attributed to that factor. Controls prevent confounding.</div>
+        </details>
+      </article>
+
+      <!-- FU 4.6.1.3 -->
+      <article class="card" id="FU-4.6.1.3" data-tags="follow up 4.6.1.3 collision theory rate decreases">
+        <h3>Follow-up • Spec 4.6.1.3</h3>
+        <p class="subtle"><em>As a reaction proceeds, why does the mean rate usually decrease? Explain using collision theory.</em></p>
+        <details open>
+          <summary><span class="pill">Things to Think About</span></summary>
+          <div class="panel hint">• What happens to <strong>reactant concentration</strong> with time?<br>• How do collision <strong>frequency</strong> and the fraction with <strong>E ≥ Eₐ</strong> change?</div>
+        </details>
+        <details>
+          <summary><span class="pill">Model Answer</span></summary>
+          <div class="panel ok">As reactants are used up, their concentration falls, so collisions are less frequent and fewer are successful each second — the rate falls.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation</span></summary>
+          <div class="panel">Rate depends on the number of effective collisions per second. Lower concentration → fewer meetings → lower rate.</div>
+        </details>
+      </article>
+
+      <!-- FU 4.6.1.4 -->
+      <article class="card" id="FU-4.6.1.4" data-tags="follow up 4.6.1.4 catalyst lower activation energy reaction profile">
+        <h3>Follow-up • Spec 4.6.1.4</h3>
+        <p class="subtle"><em>How does a catalyst change the reaction profile, and why does that make the reaction faster?</em></p>
+        <details open>
+          <summary><span class="pill">Things to Think About</span></summary>
+          <div class="panel hint">• What happens to the <strong>activation energy</strong> on the profile?<br>• Does the catalyst get used up?<br>• Link <strong>Eₐ</strong> to the number of successful collisions.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Model Answer</span></summary>
+          <div class="panel ok">A catalyst provides an alternative pathway with a <strong>lower Eₐ</strong> (lower peak). At the same temperature a larger fraction of particles has enough energy, so the reaction is faster. The catalyst is <strong>not used up</strong>.</div>
+        </details>
+        <details>
+          <summary><span class="pill">Explanation</span></summary>
+          <div class="panel">Lowering Eₐ increases the proportion of collisions that are successful per second (Maxwell–Boltzmann idea).</div>
+        </details>
+      </article>
+    </section>
+
+    <footer>Built for Year 11 – clean, fast, and fully offline. Tip: use the search bar to filter by spec code, keyword, or question.</footer>
+  </main>
+
+  <script>
+    // Tab logic
+    const tabs = document.querySelectorAll('.tablink');
+    const sections = document.querySelectorAll('.section');
+    tabs.forEach(t=>{
+      t.addEventListener('click',()=>{
+        tabs.forEach(x=>x.setAttribute('aria-selected','false'));
+        t.setAttribute('aria-selected','true');
+        sections.forEach(s=>s.classList.remove('active'));
+        document.getElementById(t.getAttribute('aria-controls')).classList.add('active');
+        window.scrollTo({top:0,behavior:'smooth'});
+      })
+    });
+
+    // Build index of questions (from Model section)
+    const index = document.getElementById('qindex');
+    const articles = [...document.querySelectorAll('#models .card')];
+    articles.forEach(a=>{
+      const link = document.createElement('a');
+      link.href = '#'+a.id;
+      link.textContent = a.id;
+      index.appendChild(link);
+    });
+
+    // Simple client-side search filter
+    const search = document.getElementById('search');
+    const clearBtn = document.getElementById('clear');
+    const allCards = [...document.querySelectorAll('.card')];
+    function applyFilter(q){
+      const term = q.trim().toLowerCase();
+      allCards.forEach(c=>{
+        const hay = (c.textContent + ' ' + (c.dataset.tags||'')).toLowerCase();
+        c.style.display = hay.includes(term) ? '' : 'none';
+      });
+    }
+    search.addEventListener('input',e=>applyFilter(e.target.value));
+    clearBtn.addEventListener('click',()=>{
+      search.value=''; applyFilter('');
+    });
+  </script>
+</body>
+</html>
