@@ -170,7 +170,6 @@
       transform: translate(-50%, -50%);
       z-index: 1;
     }
-    /* Mark inner shells for toggling */
     .inner-shell { }
     .electron {
       width: 12px; height: 12px;
@@ -184,7 +183,6 @@
     .metal-electrons .electron {
       background-color: #e74c3c;
     }
-    /* Mark inner electrons for toggling */
     .inner-electron { }
     /* Ion brackets (square brackets) */
     .ion-bracket {
@@ -336,12 +334,12 @@
   </div>
 
   <script>
-    // Helper function to pluralize electron text.
+    // Helper: pluralize electron text (kept for future UX use)
     function pluralizeElectron(count) {
       return count === 1 ? "one electron" : count + " electrons";
     }
 
-    // Helper function to convert digits to Unicode subscripts.
+    // Helper: convert digits to Unicode subscripts.
     function formatFormula(formula) {
       return formula.replace(/\d/g, d => {
         const subscripts = {
@@ -390,7 +388,7 @@
       F: "fluoride",
       Cl: "chloride",
       O: "oxide",
-      S: "sulfide"
+      S: "sulfide" // We'll accept "sulphide" as well via normalization.
     };
 
     // DOM elements
@@ -421,6 +419,13 @@
     let reacted        = false;
     let showInnerShell = true;
 
+    // Utility: normalize free text for comparisons
+    const norm = s => (s || "")
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/-+/g, "-"); // keep hyphens normalized if used
+
     // Switches mode and shows start screen again
     function switchMode() {
       resetSimulation();
@@ -439,6 +444,7 @@
       nonmetalSelect.value    = "";
       selectedMetal           = null;
       selectedNonmetal        = null;
+      reactBtn.disabled       = false; // tutorial: allow react after display
       explanation.innerHTML   = `
         <h3>Tutorial Mode: Instructions</h3>
         <p>Please select a metal and a non-metal atom from the dropdown menus above.</p>
@@ -467,6 +473,7 @@
       nonmetalSelect.disabled = true;
       selectedMetal      = { ...elements[example.metal], symbol: example.metal };
       selectedNonmetal   = { ...elements[example.nonmetal], symbol: example.nonmetal };
+      reactBtn.disabled  = true; // disable until pre-quiz correct
       explanation.innerHTML = `
         <h3>Check Understanding Mode</h3>
         <p>For this exercise, react ${selectedMetal.name} (${selectedMetal.symbol}) and ${selectedNonmetal.name} (${selectedNonmetal.symbol}) to form a neutral compound.</p>
@@ -480,12 +487,10 @@
       const shellRadius = 40 + (shellIndex + 1) * 30;
       const positions   = [];
       if (shellIndex === 0) {
-        // First shell (up to 2 e-)
         if (electronCount >= 1) positions.push({ x: 0, y: -shellRadius });
         if (electronCount >= 2) positions.push({ x: 0, y: shellRadius });
       }
       else if (shellIndex === 1 || shellIndex === 2) {
-        // Second/third shell (up to 8 e-)
         const electronSpacing = 18;
         if (electronCount >= 1) positions.push({ x: -electronSpacing/2, y: -shellRadius });
         if (electronCount >= 2) positions.push({ x:  electronSpacing/2, y: -shellRadius });
@@ -497,7 +502,6 @@
         if (electronCount >= 8) positions.push({ x: -shellRadius,       y: -electronSpacing/2 });
       }
       else if (shellIndex === 3) {
-        // Fourth shell (simplified)
         if (electronCount >= 1) positions.push({ x: 0, y: -shellRadius });
         if (electronCount >= 2) positions.push({ x: 0, y:  shellRadius });
       }
@@ -686,6 +690,7 @@
         nonmetalSelect.value = example.nonmetal;
         selectedMetal      = { ...elements[example.metal], symbol: example.metal };
         selectedNonmetal   = { ...elements[example.nonmetal], symbol: example.nonmetal };
+        reactBtn.disabled  = true; // enforce pre-quiz first
       }
       else {
         // Use user-chosen atoms
@@ -697,6 +702,7 @@
         }
         selectedMetal      = { ...elements[metalSymbol], symbol: metalSymbol };
         selectedNonmetal   = { ...elements[nonmetalSymbol], symbol: nonmetalSymbol };
+        reactBtn.disabled  = false;
       }
       try {
         createAtomLayout();
@@ -713,8 +719,7 @@
             <p>For this exercise, react ${selectedMetal.name} (${selectedMetal.symbol})
                and ${selectedNonmetal.name} (${selectedNonmetal.symbol})
                to form a neutral compound.</p>
-            <p>Please click "Display" to see the reaction setup
-               and then answer the pre-reaction questions below:</p>
+            <p>Please answer the pre-reaction questions below, then click "React".</p>
           `;
           showQuiz();
         }
@@ -730,7 +735,6 @@
             ${counts.nonmetal} ${selectedNonmetal.symbol} atom(s) to form a neutral compound.</p>`;
           }
           if (!reacted) {
-            // Pre-reaction explanation
             explanation.innerHTML = `
               <h3>Pre-Reaction Information</h3>
               <p>You have selected ${selectedMetal.name} (${selectedMetal.symbol}), which has
@@ -743,9 +747,7 @@
                  electron(s) to form ions.</p>
               ${ratioInfo}
             `;
-          }
-          else {
-            // Detailed post-reaction explanation for tutorial mode
+          } else {
             const metalLoss    = Math.abs(selectedMetal.valence);
             const nonmetalGain = Math.abs(selectedNonmetal.valence);
             let detailedText   = `<h3>Ionic Bond Formed!</h3>
@@ -758,7 +760,6 @@
               </p>
               <p>The ions attract each other strongly because they are oppositely charged.
                  They now each have a full outer shell so are more stable.</p>`;
-            // If ratio > 1:1
             if (counts.metal > 1 || counts.nonmetal > 1) {
               detailedText += `
                 <p>Because each ${selectedMetal.name} loses ${metalLoss} electron${metalLoss > 1 ? "s" : ""}
@@ -767,7 +768,6 @@
                    ${counts.nonmetal} ${selectedNonmetal.symbol} atom(s) to form a neutral compound.</p>
               `;
             }
-            // Name + formula
             const compoundName  = selectedMetal.name.toLowerCase() + " " +
                                   (compoundNames[selectedNonmetal.symbol] || selectedNonmetal.name.toLowerCase());
             const computed      = selectedMetal.symbol + (counts.metal > 1 ? counts.metal : "") +
@@ -832,7 +832,6 @@
             metalCount === expectedMetalCount &&
             nonmetalAction === expectedNonmetalAction &&
             nonmetalCount === expectedNonmetalCount) {
-          // Update instructions to tell user to click React
           explanation.innerHTML = `
             <h3>Check Understanding Mode</h3>
             <p>Pre-reaction quiz correct. Please click "React" to continue.</p>
@@ -935,15 +934,17 @@
 
       let expectedMetalIon       = (selectedMetal.valence > 0 ? "positive" : "negative");
       let expectedMetalAction    = (selectedMetal.valence > 0 ? "lost" : "gained");
-      let expectedMetalElectron  = (Math.abs(selectedMetal.valence) === 1 ? "one electron" : "two electrons");
+      // FIX: match select values ("one"/"two")
+      let expectedMetalElectron  = (Math.abs(selectedMetal.valence) === 1 ? "one" : "two");
       let expectedNonmetalIon    = (selectedNonmetal.valence < 0 ? "negative" : "positive");
       let expectedNonmetalAction = (selectedNonmetal.valence < 0 ? "gained" : "lost");
-      let expectedNonmetalElectron = (Math.abs(selectedNonmetal.valence) === 1 ? "one electron" : "two electrons");
+      // FIX: match select values ("one"/"two")
+      let expectedNonmetalElectron = (Math.abs(selectedNonmetal.valence) === 1 ? "one" : "two");
       let expectedAttraction     = "strongly";
       let expectedChargeType     = "oppositely";
       let expectedStability      = "more stable";
       
-      // Expected compound name
+      // Expected compound name (with UK spelling tolerance for sulphide)
       let expectedCompoundName = selectedMetal.name.toLowerCase() + " " +
         (compoundNames[selectedNonmetal.symbol] || selectedNonmetal.name.toLowerCase());
 
@@ -979,9 +980,16 @@
         const attraction       = document.getElementById("fu-attraction-strength").value;
         const chargeType       = document.getElementById("fu-charge-type").value;
         const stability        = document.getElementById("fu-stability").value;
-        const compoundNameInput= document.getElementById("fu-compound-name").value.trim().toLowerCase();
+        const compoundNameInput= document.getElementById("fu-compound-name").value;
         const formulaAnswer    = document.getElementById("fu-formula").value;
         const feedback         = document.getElementById("fu-feedback");
+
+        // Name normalization & UK spelling acceptance
+        const normalizedInput = norm(compoundNameInput);
+        const normalizedExpected = norm(expectedCompoundName);
+        // If expected is "... sulfide", also allow "... sulphide"
+        let altExpected = normalizedExpected.replace(" sulfide", " sulphide");
+        const nameOk = (normalizedInput === normalizedExpected) || (normalizedInput === altExpected);
 
         if (
           metalIon            === expectedMetalIon &&
@@ -995,25 +1003,30 @@
           attraction          === expectedAttraction &&
           chargeType          === expectedChargeType &&
           stability           === expectedStability &&
-          compoundNameInput   === expectedCompoundName &&
+          nameOk &&
           formulaAnswer       === correctFormula
         ) {
           feedback.textContent = "Correct! Click 'Next Reaction' to continue.";
-          let nextBtn = document.createElement('button');
-          nextBtn.textContent = "Next Reaction";
-          nextBtn.addEventListener('click', () => {
-            currentExampleIndex++;
-            if (currentExampleIndex < checkExamples.length) {
-              resetSimulation();
-              displayAtoms();
-              let fuQuiz = document.getElementById("followupQuiz");
-              if (fuQuiz) fuQuiz.remove();
-            } else {
-              feedback.textContent = "Well done, you've completed all examples in Check Understanding Mode!";
-              nextBtn.disabled = true;
-            }
-          });
-          followupDiv.appendChild(nextBtn);
+          // Avoid stacking multiple Next buttons
+          if (!document.getElementById("next-reaction-btn")) {
+            let nextBtn = document.createElement('button');
+            nextBtn.id = "next-reaction-btn";
+            nextBtn.style.marginLeft = "10px";
+            nextBtn.textContent = "Next Reaction";
+            nextBtn.addEventListener('click', () => {
+              currentExampleIndex++;
+              if (currentExampleIndex < checkExamples.length) {
+                resetSimulation();
+                displayAtoms();
+                let fuQuiz = document.getElementById("followupQuiz");
+                if (fuQuiz) fuQuiz.remove();
+              } else {
+                feedback.textContent = "Well done, you've completed all examples in Check Understanding Mode!";
+                nextBtn.disabled = true;
+              }
+            });
+            followupDiv.appendChild(nextBtn);
+          }
         } else {
           feedback.textContent = "Some answers are incorrect, please try again.";
         }
@@ -1084,7 +1097,6 @@
           `;
         } else {
           if (!hasReacted) {
-            // Pre-reaction
             const counts = getAtomCounts(selectedMetal, selectedNonmetal);
             let ratioInfo = "";
             if (counts.metal > 1 || counts.nonmetal > 1) {
@@ -1107,15 +1119,12 @@
               ${ratioInfo}
             `;
           } else {
-            // Post-reaction: the "quiz style" explanation with correct answers
             const counts = getAtomCounts(selectedMetal, selectedNonmetal);
             const metalLoss    = Math.abs(selectedMetal.valence);
             const nonmetalGain = Math.abs(selectedNonmetal.valence);
 
-            // Ion charges
             const metalIonCharge     = (selectedMetal.valence > 0 ? "positive" : "negative");
             const nonmetalIonCharge  = (selectedNonmetal.valence < 0 ? "negative" : "positive");
-            // Ion electron actions
             const metalAction        = (selectedMetal.valence > 0 ? "lost" : "gained");
             const nonmetalAction     = (selectedNonmetal.valence < 0 ? "gained" : "lost");
 
@@ -1135,7 +1144,6 @@
               <p>They now each have a full outer shell so are
                  <strong>more stable</strong>.</p>`;
 
-            // If ratio is not 1:1
             if (counts.metal > 1 || counts.nonmetal > 1) {
               detailedText += `
                 <p>Because each ${selectedMetal.name} atom
@@ -1148,7 +1156,6 @@
               `;
             }
 
-            // Compound name + formula
             const compoundName = selectedMetal.name.toLowerCase() + " " +
               (compoundNames[selectedNonmetal.symbol] || selectedNonmetal.name.toLowerCase());
             const computed     = selectedMetal.symbol +
@@ -1178,7 +1185,6 @@
           `;
         }
         else {
-          // Show the follow-up quiz
           explanation.innerHTML = `<h3>Ionic Bond Formed!</h3>`;
           showFollowupQuiz();
         }
@@ -1287,7 +1293,8 @@
       quizDiv.style.display   = "none";
       let followupQuiz        = document.getElementById("followupQuiz");
       if (followupQuiz) followupQuiz.remove();
-      reactBtn.disabled = false;
+      // In check mode, keep React disabled until pre-quiz passes
+      reactBtn.disabled       = (currentMode === "check");
 
       if (currentMode === "check") {
         let example = checkExamples[currentExampleIndex];
