@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Intermolecular Forces — Progressive Reveal Revision</title>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --card:#ffffff;
+    --text:#1f2430;
+    --muted:#596273;
+    --subtle:#8892a6;
+    --accent:#3b7ddd; /* subtle OCR-ish blue */
+    --accent-ink:#123a76;
+    --border:#e3e7ef;
+    --hint:#f1f5ff;
+    --answer:#f9fbff;
+    --radius:14px;
+    --shadow:0 6px 18px rgba(20,40,80,.07);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:linear-gradient(180deg, var(--bg) 0%, #fff 100%);
+  }
+  .container{
+    max-width:1000px;
+    margin: clamp(16px, 3vw, 32px) auto 96px;
+    padding: 0 16px;
+  }
+  header{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px clamp(18px, 3vw, 28px);
+    margin-bottom: 18px;
+  }
+  header h1{
+    margin:0 0 6px 0;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height:1.2;
+    letter-spacing: .2px;
+  }
+  header p{
+    margin:6px 0 0 0;
+    color:var(--muted);
+  }
+  .toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .btn{
+    appearance:none;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--accent-ink);
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.15s ease-in-out;
+  }
+  .btn:hover{ border-color: var(--accent); box-shadow:0 2px 10px rgba(59,125,221,.12) }
+  .btn.secondary{ color:var(--muted) }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+  @media (min-width:820px){
+    .grid{ grid-template-columns: 1fr 1fr }
+  }
+  .card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(16px, 2.2vw, 20px);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .meta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--subtle);
+    font-size:.9rem;
+    letter-spacing:.2px;
+  }
+  .qid{
+    font-family: var(--mono);
+    color: var(--accent-ink);
+    background: #eef4ff;
+    border:1px solid #dbe7ff;
+    padding:2px 8px;
+    border-radius:7px;
+  }
+  h2{
+    margin:.2rem 0 .4rem 0;
+    font-size: clamp(18px, 2.1vw, 22px);
+    line-height:1.3;
+  }
+  .question{ color:var(--text) }
+  .section{
+    border:1px dashed var(--border);
+    border-radius: 12px;
+    padding:12px;
+    display:none;
+  }
+  .section.prompts{ background: var(--hint) }
+  .section.answer{ background: var(--answer) }
+  .section h3{
+    margin:.2rem 0 .6rem 0;
+    font-size:1rem;
+    letter-spacing:.2px;
+    color:var(--accent-ink);
+  }
+  ul{
+    margin:.2rem 0 .2rem 1.2rem;
+    padding:0;
+  }
+  li{ margin:.25rem 0 }
+  .controls{
+    display:flex;
+    gap:8px;
+    margin-top:4px;
+  }
+  .note{
+    font-size:.92rem;
+    color:var(--muted);
+  }
+  .toggle{ margin-left:auto }
+  footer{
+    margin-top:26px;
+    color:var(--subtle);
+    text-align:center;
+    font-size:.92rem;
+  }
+  @media print {
+    body{ background:#fff }
+    header, .toolbar { box-shadow:none; border: none }
+    .card{ break-inside: avoid; box-shadow:none }
+    .controls .btn, .toolbar .btn { display:none !important }
+    .section{ display:block !important } /* print everything revealed */
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Intermolecular Forces — Guided Practice</h1>
+      <p>Progressive reveal: <strong>Show prompts</strong> → <strong>Show model answer</strong> → <strong>Hide</strong>. Covering polarity, IMF identification, solubility, boiling-point trends, hydrogen bonding, and structure–property links.</p>
+      <div class="toolbar">
+        <button class="btn" id="revealAllPrompts">Reveal all prompts</button>
+        <button class="btn" id="revealAllAnswers">Reveal all answers</button>
+        <button class="btn secondary" id="hideAll">Hide all</button>
+      </div>
+    </header>
+
+    <section class="grid" id="cards"><!-- Cards injected here --></section>
+
+    <footer>
+      OCR Chemistry A (H432): Polarity & IMFs — dispersion, dipole–dipole, hydrogen bonding; structure, symmetry, solubility and bulk properties.
+    </footer>
+  </div>
+
+<script>
+/* ========= DATA ========= */
+const items = [
+  /* Q1 */
+  {
+    id: "Q1",
+    title: "Permanent Dipoles — Which molecules are polar?",
+    question: "Which of the following molecules possess a permanent dipole? i) CHCl\u2083, ii) SiH\u2084, iii) ICl, iv) CS\u2082, v) HBr, vi) CO\u2082.",
+    prompts: [
+      "Define a permanent dipole: polar bonds + asymmetric molecular shape so dipoles do not cancel.",
+      "Use electronegativity differences to judge bond polarity.",
+      "Assess molecular symmetry (linear, trigonal planar, tetrahedral with identical ligands → cancellation).",
+      "Tick each molecule: Are bonds polar? Do dipoles cancel?"
+    ],
+    answer: [
+      "<strong>CHCl\u2083</strong>: Polar C–Cl bonds, tetrahedral but asymmetric substituents → <strong>permanent dipole</strong>.",
+      "<strong>SiH\u2084</strong>: Tetrahedral, all Si–H equivalent → dipoles cancel → <strong>no permanent dipole</strong>.",
+      "<strong>ICl</strong>: Heteronuclear diatomic → <strong>permanent dipole</strong>.",
+      "<strong>CS\u2082</strong>: Linear, two polar C=S bonds cancel → <strong>no permanent dipole</strong>.",
+      "<strong>HBr</strong>: Heteronuclear diatomic → <strong>permanent dipole</strong>.",
+      "<strong>CO\u2082</strong>: Linear, two polar C=O bonds cancel → <strong>no permanent dipole</strong>.",
+      "<strong>Answer:</strong> CHCl\u2083, ICl, HBr."
+    ]
+  },
+
+  /* Q2 */
+  {
+    id: "Q2",
+    title: "Hydrogen Bonding — Where does it occur?",
+    question: "In which molecules does hydrogen bonding occur? i) CHCl\u2083, ii) CH\u2083–O–CH\u2083, iii) CH\u2083CH\u2082NH\u2082, iv) HF, v) CF\u2084, vi) HCl, vii) CH\u2083CH\u2082OH, viii) BF\u2083.",
+    prompts: [
+      "Requirements: H directly bonded to N, O, or F; and a lone pair on an electronegative atom to accept the H-bond.",
+      "Scan each: Is there an H–N, H–O, or H–F bond? Are lone pairs available?"
+    ],
+    answer: [
+      "<strong>iii CH\u2083CH\u2082NH\u2082</strong> (N–H present, lone pair on N): <strong>H-bonding</strong>.",
+      "<strong>iv HF</strong> (H–F, lone pairs on F): <strong>H-bonding</strong>.",
+      "<strong>vii CH\u2083CH\u2082OH</strong> (O–H, lone pairs on O): <strong>H-bonding</strong>.",
+      "Others lack H–N/O/F (e.g. dimethyl ether has O but no O–H): <strong>no H-bonding</strong>.",
+      "<strong>Answer:</strong> iii, iv, vii."
+    ]
+  },
+
+  /* Q3 */
+  {
+    id: "Q3",
+    title: "No Permanent Dipole — What are the shapes?",
+    question: "The molecules CCl\u2084, GeCl\u2084, BF\u2083 and CO\u2082 have no permanent dipole. State their shapes.",
+    prompts: [
+      "Link lack of permanent dipole to high symmetry.",
+      "Identify electron-pair geometry at the central atom and convert to molecular shape.",
+      "State precise shape names."
+    ],
+    answer: [
+      "<strong>CCl\u2084</strong>: <strong>Tetrahedral</strong> (109.5°).",
+      "<strong>GeCl\u2084</strong>: <strong>Tetrahedral</strong> (109.5°).",
+      "<strong>BF\u2083</strong>: <strong>Trigonal planar</strong> (120°).",
+      "<strong>CO\u2082</strong>: <strong>Linear</strong> (180°).",
+      "High symmetry explains cancellation of bond dipoles."
+    ]
+  },
+
+  /* Q4 */
+  {
+    id: "Q4",
+    title: "Group 16 Hydrides — Mr vs Boiling Point",
+    question: "Plot and explain the trend in boiling temperature for H\u2082O, H\u2082S, H\u2082Se and H\u2082Te versus relative molecular mass.",
+    prompts: [
+      "Graph: X-axis Mr (g mol⁻¹); Y-axis boiling temperature (K). Use sensible scales and label axes.",
+      "Trend H\u2082S → H\u2082Se → H\u2082Te: increasing size/polarisability → stronger London dispersion forces → higher boiling points.",
+      "Why H\u2082O is anomalously high: hydrogen bonding vs dispersion-only hydrides."
+    ],
+    answer: [
+      "Across H\u2082S → H\u2082Se → H\u2082Te, Mr and electron count increase, so molecules are more polarisable; <strong>dispersion forces strengthen</strong> and <strong>boiling temperature rises</strong>.",
+      "<strong>Water</strong> forms an extensive <strong>H-bonding network</strong> (O–H + lone pairs), giving a <strong>much higher</strong> boiling temperature than H\u2082S despite its lower Mr."
+    ]
+  },
+
+  /* Q5 */
+  {
+    id: "Q5",
+    title: "Iodine, Water, CCl\u2084 & Hexane — Polarity, Solubility, Observation",
+    question: "Answer the following: (a) Is I\u2082 polar? (b) Is water polar? (c) Is CCl\u2084 polar? (d) Why are water and CCl\u2084 immiscible? (e) Why is iodine more soluble in CCl\u2084? (f) Add hexane to aqueous iodine and shake — what do you see?",
+    prompts: [
+      "(a) Same atoms → ΔEN ≈ 0; linear → non-polar molecule.",
+      "(b) O–H polar and <em>bent</em> geometry → net dipole; H-bonding possible.",
+      "(c) Polar C–Cl bonds but <em>tetrahedral symmetry</em> → cancellation.",
+      "(d) Like dissolves like: polar water vs non-polar CCl\u2084; poor intermolecular match.",
+      "(e) Solute–solvent IMF match: I\u2082 (non-polar) stabilised by London forces in CCl\u2084.",
+      "(f) Consider densities (hexane < water, CCl\u2084 > water) and iodine partition: layer colours?"
+    ],
+    answer: [
+      "(a) <strong>I\u2082 is non-polar</strong>; only London forces operate.",
+      "(b) <strong>Water is polar</strong> and forms H-bonds; bent shape → net dipole.",
+      "(c) <strong>CCl\u2084 is non-polar overall</strong>; symmetric tetrahedral cancels dipoles.",
+      "(d) <strong>Immiscible</strong> because polar–nonpolar interactions are unfavourable; CCl\u2084 forms the <strong>denser lower layer</strong> when layered with water.",
+      "(e) <strong>I\u2082 dissolves better in CCl\u2084</strong> due to effective London-force interactions; water’s polar network does not stabilise I\u2082.",
+      "(f) Adding <strong>hexane</strong> (less dense) gives a top layer. On shaking, I\u2082 partitions into hexane, turning the <strong>upper hexane layer purple</strong> and leaving the lower aqueous layer pale yellow."
+    ]
+  },
+
+  /* Q6 */
+  {
+    id: "Q6",
+    title: "Identify Bonding Type from Properties",
+    question: "Substances A–E show the following typical properties. Identify the bonding/structure type for each.",
+    prompts: [
+      "Ionic: very high mp/bp; soluble in water; <strong>conducts when molten/aqueous</strong>, not as solid.",
+      "Metallic: very high mp/bp; <strong>conducts as solid and liquid</strong>; insoluble.",
+      "Giant covalent: extremely high mp/bp; insoluble; <strong>insulator</strong> (graphite is an exception).",
+      "Simple molecular (polar): moderate bp; often water-soluble; non-conducting.",
+      "Simple molecular (non-polar): low bp; hexane-soluble; non-conducting."
+    ],
+    answer: [
+      "<strong>A — Ionic</strong>: very high bp; water-soluble; <strong>conducts when liquid</strong> only.",
+      "<strong>B — Polar simple molecular</strong>: moderate bp; water-soluble; non-conducting.",
+      "<strong>C — Metallic</strong>: very high bp; <strong>conducts as solid & liquid</strong>.",
+      "<strong>D — Giant covalent</strong>: extremely high bp; insoluble; non-conducting.",
+      "<strong>E — Non-polar simple molecular</strong>: low bp; hexane-soluble; non-conducting."
+    ]
+  },
+
+  /* Q7 */
+  {
+    id: "Q7",
+    title: "Why is Ice Less Dense than Liquid Water?",
+    question: "Explain, using structure and bonding, why ice is less dense than liquid water.",
+    prompts: [
+      "Contrast liquid water (H-bonds constantly breaking/forming) with ice (fixed H-bonded lattice).",
+      "Open hexagonal framework in ice → larger average separations.",
+      "Link larger volume at constant mass → lower density; consequence: ice floats."
+    ],
+    answer: [
+      "On freezing, water molecules are fixed by <strong>hydrogen bonds</strong> into an <strong>open hexagonal lattice</strong> with greater average separation than in the liquid.",
+      "This open structure occupies a <strong>larger volume</strong> for the same mass, so <strong>ice is less dense</strong> and <strong>floats</strong>, insulating water beneath."
+    ]
+  }
+];
+
+/* ========= RENDER ========= */
+const cardsEl = document.getElementById('cards');
+
+function createCard(item){
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.state = 'hidden';
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.innerHTML = `<span class="qid">${item.id}</span><span>${item.title}</span>`;
+  card.appendChild(meta);
+
+  const h2 = document.createElement('h2');
+  h2.className = 'question';
+  h2.textContent = item.question;
+  card.appendChild(h2);
+
+  const prompts = document.createElement('div');
+  prompts.className = 'section prompts';
+  prompts.innerHTML = `<h3>Guided prompts — include these ideas</h3>${ul(item.prompts)}`;
+  card.appendChild(prompts);
+
+  const answer = document.createElement('div');
+  answer.className = 'section answer';
+  answer.innerHTML = `<h3>Model A* answer</h3>${ul(item.answer)}`;
+  card.appendChild(answer);
+
+  const controls = document.createElement('div');
+  controls.className = 'controls';
+  const note = document.createElement('div');
+  note.className = 'note';
+  note.textContent = 'Use progressive reveal to self-check before marking.';
+  const btn = document.createElement('button');
+  btn.className = 'btn toggle';
+  btn.textContent = 'Show prompts';
+  btn.addEventListener('click', () => advance(card));
+  controls.appendChild(note);
+  controls.appendChild(btn);
+  card.appendChild(controls);
+
+  return card;
+}
+
+function ul(arr){
+  const items = arr.map(x => `<li>${x}</li>`).join('');
+  return `<ul>${items}</ul>`;
+}
+
+function advance(card){
+  const btn = card.querySelector('.toggle');
+  const prompts = card.querySelector('.section.prompts');
+  const answer = card.querySelector('.section.answer');
+  const state = card.dataset.state;
+
+  if(state === 'hidden'){
+    prompts.style.display = 'block';
+    answer.style.display = 'none';
+    card.dataset.state = 'prompts';
+    btn.textContent = 'Show model answer';
+  } else if(state === 'prompts'){
+    prompts.style.display = 'block';
+    answer.style.display = 'block';
+    card.dataset.state = 'answer';
+    btn.textContent = 'Hide prompts & answer';
+  } else {
+    prompts.style.display = 'none';
+    answer.style.display = 'none';
+    card.dataset.state = 'hidden';
+    btn.textContent = 'Show prompts';
+  }
+}
+
+/* Render all cards */
+items.forEach(item => cardsEl.appendChild(createCard(item)));
+
+/* Toolbar actions */
+document.getElementById('revealAllPrompts').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'prompts';
+    card.querySelector('.section.prompts').style.display = 'block';
+    card.querySelector('.section.answer').style.display = 'none';
+    card.querySelector('.toggle').textContent = 'Show model answer';
+  });
+});
+document.getElementById('revealAllAnswers').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'answer';
+    card.querySelector('.section.prompts').style.display = 'block';
+    card.querySelector('.section.answer').style.display = 'block';
+    card.querySelector('.toggle').textContent = 'Hide prompts & answer';
+  });
+});
+document.getElementById('hideAll').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'hidden';
+    card.querySelector('.section.prompts').style.display = 'none';
+    card.querySelector('.section.answer').style.display = 'none';
+    card.querySelector('.toggle').textContent = 'Show prompts';
+  });
+});
+</script>
+</body>
+</html>
