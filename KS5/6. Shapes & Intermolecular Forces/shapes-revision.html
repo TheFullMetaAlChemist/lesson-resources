@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Shapes of Molecules & Ions — Progressive Reveal Revision</title>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --card:#ffffff;
+    --text:#1f2430;
+    --muted:#596273;
+    --subtle:#8892a6;
+    --accent:#3b7ddd; /* subtle OCR-ish blue */
+    --accent-ink:#123a76;
+    --border:#e3e7ef;
+    --hint:#f1f5ff;
+    --answer:#f9fbff;
+    --radius:14px;
+    --shadow:0 6px 18px rgba(20,40,80,.07);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--text);
+    background:linear-gradient(180deg, var(--bg) 0%, #fff 100%);
+  }
+  .container{
+    max-width:1000px;
+    margin: clamp(16px, 3vw, 32px) auto 96px;
+    padding: 0 16px;
+  }
+  header{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px clamp(18px, 3vw, 28px);
+    margin-bottom: 18px;
+  }
+  header h1{
+    margin:0 0 6px 0;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height:1.2;
+    letter-spacing: .2px;
+  }
+  header p{
+    margin:6px 0 0 0;
+    color:var(--muted);
+  }
+  .toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .btn{
+    appearance:none;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--accent-ink);
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.15s ease-in-out;
+  }
+  .btn:hover{ border-color: var(--accent); box-shadow:0 2px 10px rgba(59,125,221,.12) }
+  .btn.secondary{ color:var(--muted) }
+  .btn.ghost{ background:transparent }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:16px;
+  }
+  @media (min-width:820px){
+    .grid{ grid-template-columns: 1fr 1fr }
+  }
+  .card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: clamp(16px, 2.2vw, 20px);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .meta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:var(--subtle);
+    font-size:.9rem;
+    letter-spacing:.2px;
+  }
+  .qid{
+    font-family: var(--mono);
+    color: var(--accent-ink);
+    background: #eef4ff;
+    border:1px solid #dbe7ff;
+    padding:2px 8px;
+    border-radius:7px;
+  }
+  h2{
+    margin:.2rem 0 .4rem 0;
+    font-size: clamp(18px, 2.1vw, 22px);
+    line-height:1.3;
+  }
+  .question{
+    color:var(--text);
+  }
+  .section{
+    border:1px dashed var(--border);
+    border-radius: 12px;
+    padding:12px;
+    display:none;
+  }
+  .section.prompts{ background: var(--hint) }
+  .section.answer{ background: var(--answer) }
+  .section h3{
+    margin:.2rem 0 .6rem 0;
+    font-size:1rem;
+    letter-spacing:.2px;
+    color:var(--accent-ink);
+  }
+  ul{
+    margin:.2rem 0 .2rem 1.2rem;
+    padding:0;
+  }
+  li{ margin:.25rem 0 }
+  .controls{
+    display:flex;
+    gap:8px;
+    margin-top:4px;
+  }
+  .toggle{
+    margin-left:auto;
+  }
+  .note{
+    font-size:.92rem;
+    color:var(--muted);
+  }
+  .kbd{
+    font-family:var(--mono);
+    font-size:.9em;
+    border:1px solid var(--border);
+    padding: 2px 6px;
+    border-radius:6px;
+    background:#fff;
+  }
+  footer{
+    margin-top:26px;
+    color:var(--subtle);
+    text-align:center;
+    font-size:.92rem;
+  }
+  /* Print friendly */
+  @media print {
+    body{ background:#fff }
+    header, .toolbar { box-shadow:none; border: none }
+    .card{ break-inside: avoid; box-shadow:none }
+    .controls .btn, .toolbar .btn { display:none !important }
+    .section{ display:block !important } /* print everything revealed */
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Shapes of Molecules &amp; Ions — Guided Practice</h1>
+      <p>Use the <span class="kbd">Show prompts</span> → <span class="kbd">Show model answer</span> → <span class="kbd">Hide</span> progressive reveal to practise like an A* candidate. Include shape names, electron-pair counts, and precise bond angles.</p>
+      <div class="toolbar">
+        <button class="btn" id="revealAllPrompts">Reveal all prompts</button>
+        <button class="btn" id="revealAllAnswers">Reveal all answers</button>
+        <button class="btn secondary" id="hideAll">Hide all</button>
+      </div>
+    </header>
+
+    <section class="grid" id="cards"><!-- Cards inserted here --></section>
+
+    <footer>
+      Built for OCR Chemistry A (H432): 2.2.2 e), g), h). Lone pairs repel more than bonding pairs; use 2.5° per lone pair from 109.5° as a guide where appropriate.
+    </footer>
+  </div>
+
+<script>
+/* ========= DATA ========= */
+const items = [
+  {
+    id: "Q1",
+    title: "AlCl\u2083 — Predict the shape and bond angle",
+    question: "Draw a dot-and-cross diagram for aluminium chloride and deduce the molecular shape and bond angle.",
+    prompts: [
+      "Count valence electrons (Al = 3, each Cl contributes one bonding pair).",
+      "How many electron pairs around Al? Distinguish bonding vs lone pairs.",
+      "Apply electron-pair repulsion theory: pairs arrange to maximise separation.",
+      "Name the molecular shape and give the bond angle (justify briefly)."
+    ],
+    answer: [
+      "Al provides three valence electrons and forms three Al–Cl bonds: <strong>3 bonding pairs, 0 lone pairs</strong> around Al.",
+      "Bonding pairs repel equally to maximise separation, giving a <strong>trigonal planar</strong> arrangement.",
+      "The <strong>bond angle is 120°</strong> throughout the plane.",
+      "This minimises repulsion for three electron domains with no lone pairs."
+    ]
+  },
+  {
+    id: "Q2",
+    title: "NH\u2083 — Shape, bond angle, explanation",
+    question: "Explain the shape and bond angle of ammonia.",
+    prompts: [
+      "Nitrogen’s valence electrons? How many bonding pairs? Lone pairs?",
+      "State the electron-pair geometry (all domains) and the molecular shape (atoms only).",
+      "Recall: lone pairs repel more than bonding pairs → angle compression.",
+      "Quote the bond angle to the nearest degree and justify."
+    ],
+    answer: [
+      "N has five valence electrons and forms three N–H bonds with one lone pair: <strong>3 bonding + 1 lone pair</strong>.",
+      "Four electron pairs give a <strong>tetrahedral electron geometry</strong>; with one lone pair, the <strong>molecular shape</strong> is <strong>trigonal pyramidal</strong>.",
+      "The lone pair exerts greater repulsion than bonding pairs, compressing the angle from 109.5° to <strong>107°</strong>."
+    ]
+  },
+  {
+    id: "Q3",
+    title: "PF\u2085 — Axial vs equatorial angles",
+    question: "State and explain the shape and bond angles in phosphorus pentafluoride.",
+    prompts: [
+      "Can P expand its octet? How many bonding pairs? Lone pairs?",
+      "Which arrangement minimises repulsion for five electron domains?",
+      "Identify axial and equatorial positions and their angles."
+    ],
+    answer: [
+      "P forms <strong>five bonding pairs</strong> with no lone pairs.",
+      "To minimise repulsion, pairs adopt a <strong>trigonal bipyramidal</strong> geometry.",
+      "Angles: <strong>120°</strong> between equatorial bonds and <strong>90°</strong> between axial and equatorial bonds."
+    ]
+  },
+  {
+    id: "Q4",
+    title: "BeCl\u2082 — Minimal repulsion arrangement",
+    question: "Predict the shape and bond angle of beryllium chloride.",
+    prompts: [
+      "Beryllium valence electrons? Bonds formed? Any lone pairs on Be?",
+      "What shape do two electron domains adopt to maximise separation?"
+    ],
+    answer: [
+      "Be forms <strong>two bonding pairs</strong> and has <strong>no lone pairs</strong> on the central atom.",
+      "Two electron domains repel to opposite sides, giving a <strong>linear</strong> shape with a <strong>bond angle of 180°</strong>."
+    ]
+  },
+  {
+    id: "Q5",
+    title: "ClF\u2083 — Lone-pair positions & shape",
+    question: "Account for the shape and bond angles in chlorine trifluoride.",
+    prompts: [
+      "Count electron domains around Cl (bonding + lone pairs).",
+      "For five domains, which positions do lone pairs prefer (equatorial vs axial) and why?",
+      "Name the molecular shape (atoms only). State approximate angles."
+    ],
+    answer: [
+      "Cl has <strong>five electron pairs</strong>: <strong>3 bonding</strong> + <strong>2 lone pairs</strong>.",
+      "Five domains give a trigonal bipyramidal <em>electron-pair</em> geometry. Lone pairs occupy <strong>equatorial</strong> sites to minimise repulsion.",
+      "The <strong>molecular shape</strong> is <strong>T-shaped</strong>, with bond angles approximately <strong>87–90°</strong>. The molecule is polar."
+    ]
+  },
+  /* ---- Molecular ions ---- */
+  {
+    id: "Q6",
+    title: "PH\u2084\u207a — Compare with NH\u2084\u207a",
+    question: "Determine the shape and bond angle of the phosphonium ion.",
+    prompts: [
+      "Account for the positive charge (subtract one electron overall).",
+      "How many bonding pairs? Any lone pairs on P?",
+      "State the geometry and bond angle; link to electron-pair repulsion."
+    ],
+    answer: [
+      "Positive charge removes one electron from P’s five; with four P–H bonds that gives <strong>4 bonding pairs, 0 lone pairs</strong>.",
+      "Pairs repel equally to form a <strong>tetrahedral</strong> shape with <strong>bond angles of 109.5°</strong>."
+    ]
+  },
+  {
+    id: "Q7",
+    title: "H\u2083O\u207a — Lone-pair compression",
+    question: "Explain the shape and bond angle of the oxonium (hydronium) ion.",
+    prompts: [
+      "Count oxygen’s valence electrons and bonding to H (remember the extra proton).",
+      "How many bonding pairs and lone pairs around O?",
+      "Name electron-pair geometry vs molecular shape; state bond angle and reason."
+    ],
+    answer: [
+      "O forms <strong>3 bonding pairs</strong> and retains <strong>1 lone pair</strong>.",
+      "Four domains → <strong>tetrahedral electron geometry</strong>; with one lone pair the <strong>molecular shape</strong> is <strong>trigonal pyramidal</strong>.",
+      "Lone-pair repulsion compresses the angle to about <strong>107°</strong> (similar to NH\u2083)."
+    ]
+  },
+  {
+    id: "Q8",
+    title: "IF\u2086\u207a — Six identical regions",
+    question: "Predict the shape and bond angles of iodine hexafluoride cation.",
+    prompts: [
+      "Adjust iodine’s electron count for the positive charge.",
+      "How many bonding pairs and lone pairs?",
+      "What arrangement minimises repulsion for six domains?"
+    ],
+    answer: [
+      "I forms <strong>six bonding pairs</strong> with no lone pairs after losing one electron overall.",
+      "<strong>Octahedral</strong> geometry with <strong>90°</strong> bond angles throughout due to equal repulsions."
+    ]
+  },
+  {
+    id: "Q9",
+    title: "AsF\u2086\u207b — Symmetry & polarity",
+    question: "State the shape and bond angles for hexafluoroarsenate.",
+    prompts: [
+      "Add one electron for the negative charge.",
+      "How many bonding pairs? Any lone pairs on As?",
+      "Name the shape; state angles; comment on symmetry."
+    ],
+    answer: [
+      "As forms <strong>six bonding pairs</strong> and has <strong>no lone pairs</strong>.",
+      "An <strong>octahedral</strong> arrangement results with <strong>90°</strong> bond angles; the ion is highly symmetrical and overall non-polar."
+    ]
+  },
+  {
+    id: "Q10",
+    title: "XeCl\u2083\u207b — AX\u2083E\u2083 case",
+    question: "Explain the shape and approximate bond angles of xenon trichloride anion.",
+    prompts: [
+      "Xe can exceed the octet; add one electron for the negative charge.",
+      "Determine bonding vs lone pairs (AX\u2083E\u2083 overall: 6 domains).",
+      "Electron-pair geometry vs molecular shape; which positions do lone pairs occupy?",
+      "State approximate bond angles and polarity."
+    ],
+    answer: [
+      "Xe has <strong>6 electron domains</strong>: <strong>3 bonding</strong> + <strong>3 lone pairs</strong> (AX\u2083E\u2083).",
+      "Electron-pair geometry is <strong>octahedral</strong>, with the three lone pairs arranged to minimise repulsion.",
+      "The <strong>molecular shape</strong> is <strong>T-shaped</strong> with angles ~<strong>87–90°</strong>; the ion is polar due to asymmetric charge distribution."
+    ]
+  },
+  {
+    id: "Q11",
+    title: "CH\u2083Cl — Shape + polarity",
+    question: "Draw a Lewis structure for chloromethane and state the shape, bond angle and polarity.",
+    prompts: [
+      "How many bonding pairs and lone pairs around carbon?",
+      "What shape minimises repulsion for four identical domains?",
+      "Quote the bond angle precisely; then address polarity.",
+      "Explain why a polar bond does (or does not) make the whole molecule polar."
+    ],
+    answer: [
+      "C forms <strong>four single bonds</strong> (3×C–H, 1×C–Cl): <strong>4 bonding pairs, 0 lone pairs</strong> around C.",
+      "Pairs repel equally to give a <strong>tetrahedral</strong> shape with bond angles of <strong>109.5°</strong>.",
+      "Because Cl is more electronegative than H, the C–Cl bond is polar and the molecule is overall <strong>polar</strong> (asymmetric)."
+    ]
+  }
+];
+
+/* ========= RENDER ========= */
+const cardsEl = document.getElementById('cards');
+
+function createCard(item){
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.state = 'hidden';
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.innerHTML = `<span class="qid">${item.id}</span><span>${item.title}</span>`;
+  card.appendChild(meta);
+
+  const h2 = document.createElement('h2');
+  h2.className = 'question';
+  h2.textContent = item.question;
+  card.appendChild(h2);
+
+  // Prompts
+  const prompts = document.createElement('div');
+  prompts.className = 'section prompts';
+  prompts.innerHTML = `<h3>Guided prompts — include these ideas</h3>${
+    ul(item.prompts)
+  }`;
+  card.appendChild(prompts);
+
+  // Answer
+  const answer = document.createElement('div');
+  answer.className = 'section answer';
+  answer.innerHTML = `<h3>Model A* answer</h3>${ul(item.answer)}`;
+  card.appendChild(answer);
+
+  // Controls
+  const controls = document.createElement('div');
+  controls.className = 'controls';
+  const note = document.createElement('div');
+  note.className = 'note';
+  note.textContent = 'Use progressive reveal to self-check before marking.';
+  const btn = document.createElement('button');
+  btn.className = 'btn toggle';
+  btn.textContent = 'Show prompts';
+  btn.addEventListener('click', () => advance(card));
+  controls.appendChild(note);
+  controls.appendChild(btn);
+  card.appendChild(controls);
+
+  return card;
+}
+
+function ul(arr){
+  const items = arr.map(x => `<li>${x}</li>`).join('');
+  return `<ul>${items}</ul>`;
+}
+
+function advance(card){
+  const btn = card.querySelector('.toggle');
+  const prompts = card.querySelector('.section.prompts');
+  const answer = card.querySelector('.section.answer');
+  const state = card.dataset.state;
+
+  if(state === 'hidden'){
+    prompts.style.display = 'block';
+    answer.style.display = 'none';
+    card.dataset.state = 'prompts';
+    btn.textContent = 'Show model answer';
+  } else if(state === 'prompts'){
+    prompts.style.display = 'block';
+    answer.style.display = 'block';
+    card.dataset.state = 'answer';
+    btn.textContent = 'Hide prompts & answer';
+  } else {
+    prompts.style.display = 'none';
+    answer.style.display = 'none';
+    card.dataset.state = 'hidden';
+    btn.textContent = 'Show prompts';
+  }
+}
+
+/* Render all cards */
+items.forEach(item => cardsEl.appendChild(createCard(item)));
+
+/* Toolbar actions */
+document.getElementById('revealAllPrompts').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'prompts';
+    card.querySelector('.section.prompts').style.display = 'block';
+    card.querySelector('.section.answer').style.display = 'none';
+    card.querySelector('.toggle').textContent = 'Show model answer';
+  });
+});
+document.getElementById('revealAllAnswers').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'answer';
+    card.querySelector('.section.prompts').style.display = 'block';
+    card.querySelector('.section.answer').style.display = 'block';
+    card.querySelector('.toggle').textContent = 'Hide prompts & answer';
+  });
+});
+document.getElementById('hideAll').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(card => {
+    card.dataset.state = 'hidden';
+    card.querySelector('.section.prompts').style.display = 'none';
+    card.querySelector('.section.answer').style.display = 'none';
+    card.querySelector('.toggle').textContent = 'Show prompts';
+  });
+});
+</script>
+</body>
+</html>
