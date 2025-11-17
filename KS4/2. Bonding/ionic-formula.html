@@ -523,308 +523,357 @@
     </div>
     
     <script>
-        // Ion data
-        const cations = [
-            // Group 1
-            { symbol: "Li", name: "Lithium", charge: 1 },
-            { symbol: "Na", name: "Sodium", charge: 1 },
-            { symbol: "K", name: "Potassium", charge: 1 },
-            { symbol: "Rb", name: "Rubidium", charge: 1 },
-            { symbol: "Cs", name: "Caesium", charge: 1 },
-            
-            // Group 2
-            { symbol: "Be", name: "Beryllium", charge: 2 },
-            { symbol: "Mg", name: "Magnesium", charge: 2 },
-            { symbol: "Ca", name: "Calcium", charge: 2 },
-            { symbol: "Sr", name: "Strontium", charge: 2 },
-            { symbol: "Ba", name: "Barium", charge: 2 }
-        ];
+    // Ion data
+    const cations = [
+        // Group 1
+        { symbol: "Li", name: "Lithium", charge: 1 },
+        { symbol: "Na", name: "Sodium", charge: 1 },
+        { symbol: "K", name: "Potassium", charge: 1 },
+        { symbol: "Rb", name: "Rubidium", charge: 1 },
+        { symbol: "Cs", name: "Caesium", charge: 1 },
         
-        const anions = [
-            // Group 6
-            { symbol: "O", name: "Oxide", charge: 2 },
-            { symbol: "S", name: "Sulfide", charge: 2 },
-            { symbol: "Se", name: "Selenide", charge: 2 },
-            
-            // Group 7
-            { symbol: "F", name: "Fluoride", charge: 1 },
-            { symbol: "Cl", name: "Chloride", charge: 1 },
-            { symbol: "Br", name: "Bromide", charge: 1 },
-            { symbol: "I", name: "Iodide", charge: 1 },
-            
-            // Polyatomic ions
-            { symbol: "OH", name: "Hydroxide", charge: 1 },
-            { symbol: "CO₃", name: "Carbonate", charge: 2 },
-            { symbol: "SO₄", name: "Sulfate", charge: 2 },
-            { symbol: "NO₃", name: "Nitrate", charge: 1 }
-        ];
+        // Group 2
+        { symbol: "Be", name: "Beryllium", charge: 2 },
+        { symbol: "Mg", name: "Magnesium", charge: 2 },
+        { symbol: "Ca", name: "Calcium", charge: 2 },
+        { symbol: "Sr", name: "Strontium", charge: 2 },
+        { symbol: "Ba", name: "Barium", charge: 2 }
+    ];
+    
+    const anions = [
+        // Group 6
+        { symbol: "O", name: "Oxide", charge: 2 },
+        { symbol: "S", name: "Sulfide", charge: 2 },
+        { symbol: "Se", name: "Selenide", charge: 2 },
         
-        // Game variables
-        let currentLevel = 1;
-        let currentCation;
-        let currentAnion;
-        let correctFormula;
-        let correctCount = 0;
-        let attemptCount = 0;
+        // Group 7
+        { symbol: "F", name: "Fluoride", charge: 1 },
+        { symbol: "Cl", name: "Chloride", charge: 1 },
+        { symbol: "Br", name: "Bromide", charge: 1 },
+        { symbol: "I", name: "Iodide", charge: 1 },
         
-        // DOM elements
-        const cationSymbol = document.getElementById('cation-symbol');
-        const cationName = document.getElementById('cation-name');
-        const cationCharge = document.getElementById('cation-charge');
-        const anionSymbol = document.getElementById('anion-symbol');
-        const anionName = document.getElementById('anion-name');
-        const anionCharge = document.getElementById('anion-charge');
-        const formulaInput = document.getElementById('formula-input');
-        const feedback = document.getElementById('feedback');
-        const correctCountEl = document.getElementById('correct-count');
-        const attemptsCountEl = document.getElementById('attempts-count');
-        const accuracyEl = document.getElementById('accuracy');
+        // Polyatomic ions
+        { symbol: "OH", name: "Hydroxide", charge: 1 },
+        { symbol: "CO₃", name: "Carbonate", charge: 2 },
+        { symbol: "SO₄", name: "Sulfate", charge: 2 },
+        { symbol: "NO₃", name: "Nitrate", charge: 1 }
+    ];
+    
+    // Game variables
+    let currentLevel = 1;
+    let currentCation;
+    let currentAnion;
+    let correctFormula;
+    let correctCount = 0;
+    let attemptCount = 0;
+    
+    // DOM elements
+    const cationSymbol = document.getElementById('cation-symbol');
+    const cationName = document.getElementById('cation-name');
+    const cationCharge = document.getElementById('cation-charge');
+    const anionSymbol = document.getElementById('anion-symbol');
+    const anionName = document.getElementById('anion-name');
+    const anionCharge = document.getElementById('anion-charge');
+    const formulaInput = document.getElementById('formula-input');
+    const feedback = document.getElementById('feedback');
+    const correctCountEl = document.getElementById('correct-count');
+    const attemptsCountEl = document.getElementById('attempts-count');
+    const accuracyEl = document.getElementById('accuracy');
+    
+    // Add live preview with subscripts
+    formulaInput.addEventListener('input', function() {
+        const input = this.value;
+        const preview = document.getElementById('formula-preview');
         
-        // Add live preview with subscripts
-        formulaInput.addEventListener('input', function() {
-            const input = this.value;
-            const preview = document.getElementById('formula-preview');
-            
-            // Format with subscripts for numbers that follow letters
-            let formatted = input.replace(/([A-Za-z])(\d+)/g, '$1<sub>$2</sub>');
-            
-            // Handle parentheses followed by numbers
-            formatted = formatted.replace(/\)(\d+)/g, ')<sub>$1</sub>');
-            
-            // If empty, show placeholder
-            if (input.trim() === '') {
-                preview.innerHTML = 'Formula preview';
-                preview.style.color = '#999';
+        // Format with subscripts for numbers that follow letters
+        let formatted = input.replace(/([A-Za-z])(\d+)/g, '$1<sub>$2</sub>');
+        
+        // Handle parentheses followed by numbers
+        formatted = formatted.replace(/\)(\d+)/g, ')<sub>$1</sub>');
+        
+        // If empty, show placeholder
+        if (input.trim() === '') {
+            preview.innerHTML = 'Formula preview';
+            preview.style.color = '#999';
+        } else {
+            preview.innerHTML = formatted;
+            preview.style.color = '#000';
+        }
+    });
+    
+    // Generate a new question
+    function generateQuestion() {
+        let cationPool, anionPool;
+        
+        // NEW: Level 3 uses a dedicated advanced generator that guarantees brackets
+        if (currentLevel === 3) {
+            generateAdvancedQuestion();
+            return;
+        }
+        
+        // Filter ions based on level (Level 1 and 2 as before)
+        switch (currentLevel) {
+            case 1: // Basic: Group 1 cations with Group 7 anions
+                cationPool = cations.filter(ion => ion.charge === 1);
+                anionPool = anions.filter(
+                    ion => ion.charge === 1 && ["F", "Cl", "Br", "I"].includes(ion.symbol)
+                );
+                break;
+            case 2: // Intermediate: Add Group 2 cations and oxide/sulfide anions
+                cationPool = cations.slice(0, 7); // First 7 cations
+                anionPool = anions.filter(ion => !["CO₃", "SO₄"].includes(ion.symbol));
+                break;
+            default:
+                cationPool = cations;
+                anionPool = anions;
+        }
+        
+        // Select random cation and anion
+        currentCation = cationPool[Math.floor(Math.random() * cationPool.length)];
+        currentAnion = anionPool[Math.floor(Math.random() * anionPool.length)];
+        
+        // Calculate the correct formula
+        correctFormula = calculateFormula(currentCation, currentAnion);
+        
+        // Update the display
+        updateDisplayedQuestion();
+    }
+    
+    // NEW: Advanced generator – only pairs that produce brackets, e.g. Ca(OH)2, Mg(NO3)2
+    function generateAdvancedQuestion() {
+        const bracketPairs = [];
+        
+        // Look through all possible combinations and keep only those where
+        // the formula contains parentheses (i.e. needs brackets for polyatomic ions)
+        for (let i = 0; i < cations.length; i++) {
+            for (let j = 0; j < anions.length; j++) {
+                const testFormula = calculateFormula(cations[i], anions[j]);
+                if (testFormula.includes('(')) {
+                    bracketPairs.push({
+                        cation: cations[i],
+                        anion: anions[j],
+                        formula: testFormula
+                    });
+                }
+            }
+        }
+        
+        // Fallback just in case, though there *will* be some bracket pairs
+        if (bracketPairs.length === 0) {
+            currentCation = cations[Math.floor(Math.random() * cations.length)];
+            currentAnion = anions[Math.floor(Math.random() * anions.length)];
+            correctFormula = calculateFormula(currentCation, currentAnion);
+        } else {
+            const pair = bracketPairs[Math.floor(Math.random() * bracketPairs.length)];
+            currentCation = pair.cation;
+            currentAnion = pair.anion;
+            correctFormula = pair.formula;
+        }
+        
+        // Update the display
+        updateDisplayedQuestion();
+    }
+    
+    // Shared display reset/update function
+    function updateDisplayedQuestion() {
+        cationSymbol.textContent = currentCation.symbol;
+        cationName.textContent = currentCation.name;
+        cationCharge.textContent = currentCation.charge + "+";
+        
+        anionSymbol.textContent = currentAnion.symbol;
+        anionName.textContent = currentAnion.name;
+        anionCharge.textContent = currentAnion.charge + "-";
+        
+        // Clear previous input and feedback
+        formulaInput.value = "";
+        const preview = document.getElementById('formula-preview');
+        preview.innerHTML = 'Formula preview';
+        preview.style.color = '#999';
+        feedback.classList.add('hidden');
+        
+        // Focus input
+        formulaInput.focus();
+    }
+    
+    // Calculate the correct formula for the current ions
+    function calculateFormula(cation, anion) {
+        const cationCharge = cation.charge;
+        const anionCharge = anion.charge;
+        
+        // Find the least common multiple of the charges
+        const lcm = leastCommonMultiple(cationCharge, anionCharge);
+        
+        // Calculate how many of each ion we need
+        let numCations = lcm / cationCharge;
+        let numAnions = lcm / anionCharge;
+        
+        // Reduce to simplest form (find GCD and divide both)
+        const gcd = greatestCommonDivisor(numCations, numAnions);
+        numCations = numCations / gcd;
+        numAnions = numAnions / gcd;
+        
+        // Construct the formula
+        let formula = "";
+        
+        // Add cation
+        formula += cation.symbol;
+        if (numCations > 1) {
+            formula += numCations;
+        }
+        
+        // Add anion
+        if (anion.symbol.length > 1 && numAnions > 1) {
+            formula += "(" + anion.symbol + ")";
+            formula += numAnions;
+        } else {
+            formula += anion.symbol;
+            if (numAnions > 1) {
+                formula += numAnions;
+            }
+        }
+        
+        return formula;
+    }
+    
+    // Check the user's answer
+    function checkAnswer() {
+        const userAnswer = formulaInput.value.trim();
+        
+        if (userAnswer === "") {
+            feedback.textContent = "Please enter a formula.";
+            feedback.classList.remove('correct');
+            feedback.classList.add('incorrect');
+            feedback.classList.remove('hidden');
+            return;
+        }
+        
+        // Get plain answers for comparison
+        const plainCorrect = correctFormula;
+        
+        // First, handle exact matches (ignoring case and spaces)
+        const standardizedUser = userAnswer.replace(/\s+/g, '').toLowerCase();
+        const standardizedCorrect = plainCorrect.replace(/\s+/g, '').toLowerCase();
+        
+        // Additional matching for common formats
+        const cleanedUser = cleanFormulaForComparison(standardizedUser);
+        const cleanedCorrect = cleanFormulaForComparison(standardizedCorrect);
+        
+        // Update attempt count
+        attemptCount++;
+        attemptsCountEl.textContent = attemptCount;
+        
+        // Various ways to check if the answer is correct
+        const isExactMatch = standardizedUser === standardizedCorrect;
+        const isCleanMatch = cleanedUser === cleanedCorrect;
+        const isAlternateNotation = checkAlternateNotations(standardizedUser, standardizedCorrect);
+        
+        if (isExactMatch || isCleanMatch || isAlternateNotation) {
+            feedback.textContent = "Correct! The formula is " + plainCorrect + ".";
+            feedback.classList.remove('incorrect');
+            feedback.classList.add('correct');
+            correctCount++;
+            correctCountEl.textContent = correctCount;
+        } else {
+            feedback.textContent = "Not quite right. Try again or click 'Next Question'.";
+            feedback.classList.remove('correct');
+            feedback.classList.add('incorrect');
+        }
+        
+        // Update accuracy
+        const accuracy = Math.round((correctCount / attemptCount) * 100);
+        accuracyEl.textContent = accuracy + "%";
+        
+        // Show feedback
+        feedback.classList.remove('hidden');
+    }
+    
+    // Clean formula for more reliable comparison
+    function cleanFormulaForComparison(formula) {
+        let cleaned = formula;
+        
+        // Remove any special subscript characters (if they sneak in)
+        cleaned = cleaned.replace(/[₁₂₃₄₅₆₇₈₉]/g, function(match) {
+            return '123456789'.charAt('₁₂₃₄₅₆₇₈₉'.indexOf(match));
+        });
+        
+        // Normalize polyatomic ions
+        cleaned = cleaned.replace(/no3/g, 'no3').replace(/so4/g, 'so4').replace(/co3/g, 'co3');
+        cleaned = cleaned.replace(/oh/g, 'oh');
+        
+        // Handle parentheses consistently: treat (OH)2 and OH2 as equivalent after cleaning
+        cleaned = cleaned.replace(/\[([^\]]+)\]/g, '($1)'); // Convert [] to ()
+        cleaned = cleaned.replace(/\(([^)]+)\)/g, '$1');    // Remove parentheses
+        
+        return cleaned;
+    }
+    
+    // Check for valid alternate notations
+    function checkAlternateNotations(userInput, correctAnswer) {
+        // For special cases like CaCl2 vs CaCl₂
+        if (userInput.replace(/[₁₂₃₄₅₆₇₈₉]/g, function(match) {
+            return '123456789'.charAt('₁₂₃₄₅₆₇₈₉'.indexOf(match));
+        }) === correctAnswer) {
+            return true;
+        }
+        
+        // For Ca(OH)2 vs CaOH2
+        if (correctAnswer.toLowerCase().includes('oh') && correctAnswer.includes('(')) {
+            const simplified = correctAnswer.replace(/\(([^)]+)\)/g, '$1');
+            if (userInput === simplified.toLowerCase()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    // Greatest Common Divisor (for simplifying the formula)
+    function greatestCommonDivisor(a, b) {
+        return b === 0 ? a : greatestCommonDivisor(b, a % b);
+    }
+    
+    // Least Common Multiple (for finding how many of each ion we need)
+    function leastCommonMultiple(a, b) {
+        return (a * b) / greatestCommonDivisor(a, b);
+    }
+    
+    // Set the game level
+    function setLevel(level) {
+        currentLevel = level;
+        
+        // Update the active button
+        const levelBtns = document.querySelectorAll('.level-btn');
+        levelBtns.forEach((btn, index) => {
+            if (index + 1 === level) {
+                btn.classList.add('active');
             } else {
-                preview.innerHTML = formatted;
-                preview.style.color = '#000';
+                btn.classList.remove('active');
             }
         });
         
         // Generate a new question
-        function generateQuestion() {
-            let cationPool, anionPool;
-            
-            // Filter ions based on level
-            switch (currentLevel) {
-                case 1: // Basic: Group 1 cations with Group 7 anions
-                    cationPool = cations.filter(ion => ion.charge === 1);
-                    anionPool = anions.filter(ion => ion.charge === 1 && ["F", "Cl", "Br", "I"].includes(ion.symbol));
-                    break;
-                case 2: // Intermediate: Add Group 2 cations and oxide/sulfide anions
-                    cationPool = cations.slice(0, 7); // First 7 cations
-                    anionPool = anions.filter(ion => !["CO₃", "SO₄"].includes(ion.symbol));
-                    break;
-                case 3: // Advanced: All ions including polyatomic ions
-                    cationPool = cations;
-                    anionPool = anions;
-                    break;
-            }
-            
-            // Select random cation and anion
-            currentCation = cationPool[Math.floor(Math.random() * cationPool.length)];
-            currentAnion = anionPool[Math.floor(Math.random() * anionPool.length)];
-            
-            // Update the display
-            cationSymbol.textContent = currentCation.symbol;
-            cationName.textContent = currentCation.name;
-            cationCharge.textContent = currentCation.charge + "+";
-            
-            anionSymbol.textContent = currentAnion.symbol;
-            anionName.textContent = currentAnion.name;
-            anionCharge.textContent = currentAnion.charge + "-";
-            
-            // Calculate the correct formula
-            correctFormula = calculateFormula(currentCation, currentAnion);
-            
-            // Clear previous input and feedback
-            formulaInput.value = "";
-            document.getElementById('formula-preview').innerHTML = 'Formula preview';
-            document.getElementById('formula-preview').style.color = '#999';
-            feedback.classList.add('hidden');
-            
-            // Allow the user to submit by pressing Enter
-            formulaInput.focus();
-        }
-        
-        // Calculate the correct formula for the current ions
-        function calculateFormula(cation, anion) {
-            const cationCharge = cation.charge;
-            const anionCharge = anion.charge;
-            
-            // Find the least common multiple of the charges
-            const lcm = leastCommonMultiple(cationCharge, anionCharge);
-            
-            // Calculate how many of each ion we need
-            let numCations = lcm / cationCharge;
-            let numAnions = lcm / anionCharge;
-            
-            // Reduce to simplest form (find GCD and divide both)
-            const gcd = greatestCommonDivisor(numCations, numAnions);
-            numCations = numCations / gcd;
-            numAnions = numAnions / gcd;
-            
-            // Construct the formula
-            let formula = "";
-            
-            // Add cation
-            formula += cation.symbol;
-            if (numCations > 1) {
-                formula += numCations;
-            }
-            
-            // Add anion
-            if (anion.symbol.length > 1 && numAnions > 1) {
-                formula += "(" + anion.symbol + ")";
-                formula += numAnions;
-            } else {
-                formula += anion.symbol;
-                if (numAnions > 1) {
-                    formula += numAnions;
-                }
-            }
-            
-            return formula;
-        }
-        
-        // Check the user's answer
-        function checkAnswer() {
-            const userAnswer = formulaInput.value.trim();
-            
-            if (userAnswer === "") {
-                feedback.textContent = "Please enter a formula.";
-                feedback.classList.remove('correct');
-                feedback.classList.add('incorrect');
-                feedback.classList.remove('hidden');
-                return;
-            }
-            
-            // Get plain answers for comparison
-            const plainCorrect = correctFormula;
-            
-            // First, handle exact matches (ignoring case and spaces)
-            const standardizedUser = userAnswer.replace(/\s+/g, '').toLowerCase();
-            const standardizedCorrect = plainCorrect.replace(/\s+/g, '').toLowerCase();
-            
-            // Additional matching for common formats
-            const cleanedUser = cleanFormulaForComparison(standardizedUser);
-            const cleanedCorrect = cleanFormulaForComparison(standardizedCorrect);
-            
-            // Update attempt count
-            attemptCount++;
-            attemptsCountEl.textContent = attemptCount;
-            
-            // Various ways to check if the answer is correct
-            const isExactMatch = standardizedUser === standardizedCorrect;
-            const isCleanMatch = cleanedUser === cleanedCorrect;
-            const isAlternateNotation = checkAlternateNotations(standardizedUser, standardizedCorrect);
-            
-            if (isExactMatch || isCleanMatch || isAlternateNotation) {
-                feedback.textContent = "Correct! The formula is " + plainCorrect + ".";
-                feedback.classList.remove('incorrect');
-                feedback.classList.add('correct');
-                correctCount++;
-                correctCountEl.textContent = correctCount;
-            } else {
-                feedback.textContent = "Not quite right. Try again or click 'Next Question'.";
-                feedback.classList.remove('correct');
-                feedback.classList.add('incorrect');
-            }
-            
-            // Update accuracy
-            const accuracy = Math.round((correctCount / attemptCount) * 100);
-            accuracyEl.textContent = accuracy + "%";
-            
-            // Show feedback
-            feedback.classList.remove('hidden');
-        }
-        
-        // Clean formula for more reliable comparison
-        function cleanFormulaForComparison(formula) {
-            let cleaned = formula;
-            
-            // Remove any special characters
-            cleaned = cleaned.replace(/[₁₂₃₄₅₆₇₈₉]/g, function(match) {
-                return '123456789'.charAt('₁₂₃₄₅₆₇₈₉'.indexOf(match));
-            });
-            
-            // Normalize polyatomic ions
-            cleaned = cleaned.replace(/no3/g, 'no3').replace(/so4/g, 'so4').replace(/co3/g, 'co3');
-            cleaned = cleaned.replace(/oh/g, 'oh');
-            
-            // Handle parentheses consistently
-            cleaned = cleaned.replace(/\[([^\]]+)\]/g, '($1)'); // Convert [] to ()
-            cleaned = cleaned.replace(/\(([^)]+)\)/g, '$1');    // Remove parentheses
-            
-            return cleaned;
-        }
-        
-        // Check for valid alternate notations
-        function checkAlternateNotations(userInput, correctAnswer) {
-            // For special cases like CaCl2 vs CaCl₂
-            if (userInput.replace(/[₁₂₃₄₅₆₇₈₉]/g, function(match) {
-                return '123456789'.charAt('₁₂₃₄₅₆₇₈₉'.indexOf(match));
-            }) === correctAnswer) {
-                return true;
-            }
-            
-            // For Ca(OH)2 vs CaOH2
-            if (correctAnswer.includes('oh') && correctAnswer.includes('(')) {
-                const simplified = correctAnswer.replace(/\(([^)]+)\)/g, '$1');
-                if (userInput === simplified) {
-                    return true;
-                }
-            }
-            
-            return false;
-        }
-        
-        // Greatest Common Divisor (for simplifying the formula)
-        function greatestCommonDivisor(a, b) {
-            return b === 0 ? a : greatestCommonDivisor(b, a % b);
-        }
-        
-        // Least Common Multiple (for finding how many of each ion we need)
-        function leastCommonMultiple(a, b) {
-            return (a * b) / greatestCommonDivisor(a, b);
-        }
-        
-        // Set the game level
-        function setLevel(level) {
-            currentLevel = level;
-            
-            // Update the active button
-            const levelBtns = document.querySelectorAll('.level-btn');
-            levelBtns.forEach((btn, index) => {
-                if (index + 1 === level) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // Generate a new question
-            generateQuestion();
-        }
-        
-        // Show/hide reference modal
-        function showReference() {
-            document.getElementById('reference-modal').style.display = 'block';
-        }
-        
-        function hideReference() {
-            document.getElementById('reference-modal').style.display = 'none';
-        }
-        
-        // Allow Enter key to submit answer
-        formulaInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                checkAnswer();
-            }
-        });
-        
-        // Initialize the game
         generateQuestion();
-    </script>
+    }
+    
+    // Show/hide reference modal
+    function showReference() {
+        document.getElementById('reference-modal').style.display = 'block';
+    }
+    
+    function hideReference() {
+        document.getElementById('reference-modal').style.display = 'none';
+    }
+    
+    // Allow Enter key to submit answer
+    formulaInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            checkAnswer();
+        }
+    });
+    
+    // Initialize the game
+    generateQuestion();
+</script>
+
 </body>
 </html>
