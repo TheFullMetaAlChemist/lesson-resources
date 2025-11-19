@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titration Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Professional Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        /* --- Advanced Liquid Physics & Visuals --- */
+        .liquid-container {
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .liquid-color {
+            transition: background-color 0.6s ease;
+        }
+
+        /* Meniscus effect (surface of liquid) */
+        .liquid-surface {
+            width: 100%;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: 0;
+            background-color: inherit;
+            opacity: 0.5;
+            transform: scaleX(1.1); /* Slight stretch to fit glass curve perspective */
+        }
+
+        /* Glass reflection effect */
+        .glass-reflection {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0) 40%);
+        }
+
+        /* Drop Animation */
+        .drop {
+            animation: dropFall 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53);
+        }
+        @keyframes dropFall {
+            0% { transform: translateY(0) scale(1); opacity: 0.8; }
+            100% { transform: translateY(180px) scale(0.5); opacity: 0; }
+        }
+
+        /* Custom Scrollbar for the sidebar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #cbd5e1; }
+
+        /* Universal Indicator Gradient */
+        .rainbow-gradient {
+            background: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #6366f1, #a855f7);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 h-screen flex flex-col overflow-hidden selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- Professional Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shrink-0 z-20 relative">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="font-semibold text-lg text-gray-900 leading-tight">Titration Lab</h1>
+                <p class="text-xs text-gray-500 font-medium">Equilibrium Simulator v2.0</p>
+            </div>
+        </div>
+        <div class="hidden md:flex items-center gap-4 text-sm text-gray-500">
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span> Charge Balance Solver
+            </span>
+            <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span> Newton-Raphson
+            </span>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- SIDEBAR: Configuration & Visuals -->
+        <aside class="w-full md:w-[380px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-10 relative">
+            
+            <div class="p-6 space-y-8">
+                
+                <!-- Section: Setup -->
+                <div>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Reaction Setup</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-medium text-gray-600">Analyte (Acid)</label>
+                                <div class="relative">
+                                    <select id="acidType" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-8 transition-shadow outline-none" onchange="resetSimulation()">
+                                        <option value="strong">Strong (HCl)</option>
+                                        <option value="weak">Weak (CH₃COOH)</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i class="fas fa-chevron-down text-xs"></i></div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-medium text-gray-600">Titrant (Base)</label>
+                                <div class="relative">
+                                    <select id="baseType" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-8 transition-shadow outline-none" onchange="resetSimulation()">
+                                        <option value="strong">Strong (NaOH)</option>
+                                        <option value="weak">Weak (NH₃)</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i class="fas fa-chevron-down text-xs"></i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase">Conc. Acid</label>
+                                <input type="number" id="concAcid" value="0.1" step="0.01" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded px-2 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow text-center" onchange="resetSimulation()">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase">Vol. Acid</label>
+                                <input type="number" id="volAcid" value="25" step="1" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded px-2 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow text-center" onchange="resetSimulation()">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase">Conc. Base</label>
+                                <input type="number" id="concBase" value="0.1" step="0.01" class="w-full bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded px-2 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow text-center" onchange="resetSimulation()">
+                            </div>
+                        </div>
+                        
+                        <button onclick="resetSimulation()" class="w-full py-2 bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 text-gray-600 text-xs font-semibold uppercase tracking-wide rounded-md transition-all duration-200 shadow-sm active:translate-y-px">
+                            <span class="mr-1">↻</span> Reset Experiment
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <!-- Section: Indicator -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Indicator</h3>
+                    </div>
+                   
+                    <div class="relative mb-4">
+                        <select id="indicatorSelect" class="w-full appearance-none bg-white border border-gray-200 text-gray-700 text-sm rounded-md focus:ring-2 focus:ring-blue-500 block p-2.5 pr-8 shadow-sm outline-none transition-all" onchange="updateIndicatorDisplay()">
+                            <!-- Options populated by JS -->
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg border border-gray-100 overflow-hidden">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-gray-100/50 text-gray-500 border-b border-gray-200">
+                                <tr>
+                                    <th class="py-2 px-3 font-medium">Name</th>
+                                    <th class="py-2 px-3 font-medium whitespace-nowrap">Range (pH)</th>
+                                    <th class="py-2 px-3 font-medium text-right">Transition</th>
+                                </tr>
+                            </thead>
+                            <tbody id="indicatorTableBody" class="divide-y divide-gray-100">
+                                <!-- Rows populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sticky Footer: Beaker Visual -->
+            <div class="mt-auto p-6 bg-gradient-to-b from-transparent to-gray-50/50 border-t border-gray-100 flex justify-center relative">
+                
+                <!-- Status Floating Label (Updated to include [H+]) -->
+                <div class="absolute top-4 right-6 text-right">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Current pH</div>
+                    <div id="ph-display-beaker" class="text-3xl font-light text-gray-800 tabular-nums tracking-tight">1.00</div>
+                    
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2 mb-0.5">[H⁺] Conc. (M)</div>
+                    <div id="h-conc-display" class="text-xs font-medium text-gray-600 tabular-nums tracking-tight"></div>
+                </div>
+
+                <!-- Beaker Container -->
+                <div class="relative w-40 h-48 group">
+                    <!-- Burette Tip -->
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-3 h-10 bg-gray-200 rounded-b-sm z-20 shadow-sm border-x border-b border-gray-300"></div>
+                    <div id="drop-zone" class="absolute top-4 left-1/2 -translate-x-1/2 w-4 h-32 z-0 pointer-events-none"></div>
+
+                    <!-- The Glassware -->
+                    <div class="relative w-full h-full bg-blue-50/20 backdrop-blur-sm rounded-b-[2rem] border-x border-b-2 border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04),inset_0_0_20px_rgba(255,255,255,0.8)] overflow-hidden z-10 ring-1 ring-gray-900/5">
+                        
+                        <!-- Reflection Highlights -->
+                        <div class="absolute top-0 left-3 w-1 h-full bg-white/40 rounded-full blur-[1px]"></div>
+                        <div class="absolute top-0 right-3 w-2 h-full glass-reflection rounded-full"></div>
+
+                        <!-- Graduations -->
+                        <div class="absolute bottom-10 right-0 w-4 h-[1px] bg-gray-400/30"></div>
+                        <div class="absolute bottom-20 right-0 w-6 h-[1px] bg-gray-400/30"></div>
+                        <div class="absolute bottom-30 right-0 w-4 h-[1px] bg-gray-400/30"></div>
+
+                        <!-- The Liquid -->
+                        <div class="absolute bottom-0 left-0 w-full liquid-container flex items-end" id="liquid-wrapper" style="height: 40%;">
+                            <div id="liquid" class="w-full h-full liquid-color relative opacity-90">
+                                <!-- Meniscus Surface -->
+                                <div class="liquid-surface liquid-color"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Base Shadow -->
+                    <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 w-32 h-4 bg-black/5 blur-md rounded-[100%]"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN: Chart & Controls -->
+        <section class="flex-1 flex flex-col relative bg-gray-50/50">
+            
+            <!-- Chart Container -->
+            <div class="flex-1 p-6 md:p-8 relative">
+                <div class="w-full h-full bg-white rounded-2xl border border-gray-200 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] p-4 relative overflow-hidden">
+                    <canvas id="titrationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Control Bar -->
+            <div class="px-8 py-6 bg-white border-t border-gray-200 z-20 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.03)]">
+                <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
+                    
+                    <!-- Volume Display -->
+                    <div class="flex items-center gap-8 text-sm shrink-0">
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Total Volume</span>
+                            <span id="total-vol" class="text-xl font-medium text-gray-700 tabular-nums">25.00 mL</span>
+                        </div>
+                        <div class="h-8 w-px bg-gray-100"></div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Added Base</span>
+                            <span id="base-added" class="text-xl font-medium text-blue-600 tabular-nums">0.00 mL</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex-1 w-full grid grid-cols-4 gap-3">
+                        <button onclick="addBase(0.05)" class="group relative overflow-hidden rounded-xl bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 p-2 flex flex-col items-center justify-center active:scale-[0.98]">
+                            <span class="text-blue-600 font-semibold text-lg leading-none mb-1 group-hover:-translate-y-0.5 transition-transform">+</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">0.05 mL</span>
+                            <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        </button>
+                        
+                        <button onclick="addBase(0.1)" class="group relative overflow-hidden rounded-xl bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all duration-200 p-2 flex flex-col items-center justify-center active:scale-[0.98]">
+                            <span class="text-blue-600 font-semibold text-lg leading-none mb-1 group-hover:-translate-y-0.5 transition-transform">+</span>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wide">0.10 mL</span>
+                            <div class="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                        </button>
+
+                        <button onclick="addBase(0.5)" class="group relative overflow-hidden rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 hover:border-blue-200 hover:shadow-md transition-all duration-200 p-2 flex flex-col items-center justify-center active:scale-[0.98]">
+                            <span class="text-blue-700 font-semibold text-lg leading-none mb-1 group-hover:-translate-y-0.5 transition-transform">+</span>
+                            <span class="text-[10px] font-bold text-blue-700/70 uppercase tracking-wide">0.50 mL</span>
+                        </button>
+
+                        <button onclick="addBase(1.0)" class="group relative overflow-hidden rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:shadow-lg transition-all duration-200 p-2 flex flex-col items-center justify-center active:scale-[0.98]">
+                            <span class="text-white font-semibold text-lg leading-none mb-1 group-hover:-translate-y-0.5 transition-transform">+</span>
+                            <span class="text-[10px] font-bold text-slate-300 uppercase tracking-wide">1.00 mL</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // --- Logic remains robust, purely styling updates below ---
+        const Kw = 1.0e-14;
+        const Ka_acetic = 1.75e-5;
+        const Kb_ammonia = 1.78e-5;
+        const Ka_ammonium = Kw / Kb_ammonia;
+
+        let chart;
+        let state = {
+            Va_initial: 25, Ca: 0.1, Cb: 0.1, Vb_added: 0,
+            acidType: 'strong', baseType: 'strong',
+            dataPoints: [], currentPH: 0, selectedIndicator: null, last_h: 1e-7
+        };
+
+        const indicatorData = [
+            { name: "No Indicator", type: "none" },
+            { name: "Methyl Orange", pH_min: 3.1, pH_max: 4.4, color_acid: [255, 0, 0], color_base: [255, 165, 0] },
+            { name: "Bromophenol Blue", pH_min: 3.0, pH_max: 4.6, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
+            { name: "Methyl Red", pH_min: 4.4, pH_max: 6.2, color_acid: [255, 0, 0], color_base: [255, 255, 0] },
+            { name: "Bromothymol Blue", pH_min: 6.0, pH_max: 7.6, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
+            { name: "Phenolphthalein", pH_min: 8.2, pH_max: 10.0, color_acid: [255, 255, 255], color_base: [255, 0, 255] },
+            { name: "Thymolphthalein", pH_min: 9.3, pH_max: 10.5, color_acid: [255, 255, 255], color_base: [0, 0, 255] },
+            { name: "Universal Indicator", type: "universal" }
+        ];
+
+        /* --- Core Math Engine (Unchanged) --- */
+        function calculatePH(Vb_added) {
+            const Va = parseFloat(state.Va_initial)/1000, Vb = parseFloat(Vb_added)/1000;
+            const totalVol = Va + Vb;
+            const Ca_dil = (parseFloat(state.Ca)*Va)/totalVol;
+            const Cb_dil = (parseFloat(state.Cb)*Vb)/totalVol;
+
+            let h = state.last_h;
+            if(Vb_added===0) h = state.acidType==='strong' ? (Ca_dil||1e-7) : (Math.sqrt(Ka_acetic*Ca_dil)||1e-5);
+
+            for(let i=0; i<50; i++){
+                let f = h - Kw/h, df = 1 + Kw/(h*h);
+                if(state.acidType==='strong'){ f -= Ca_dil; } 
+                else { const num = Ca_dil*Ka_acetic, den = h+Ka_acetic; f -= num/den; df += num/(den*den); }
+                
+                if(state.baseType==='strong'){ f += Cb_dil; } 
+                else { const term = (Cb_dil*h)/(h+Ka_ammonium); f += term; df += (Cb_dil*Ka_ammonium)/((h+Ka_ammonium)**2); }
+
+                const step = f/df; h -= step;
+                if(h<=0) h=1e-14; if(Math.abs(step/h)<1e-12) break;
+            }
+            state.last_h = h;
+            return -Math.log10(h);
+        }
+
+        /* --- Visuals --- */
+        function interpolateColor(c1, c2, f) {
+            return c1.map((c,i) => Math.round(c + f*(c2[i]-c)));
+        }
+        function getUniversalColor(ph) {
+            const stops = [
+                { ph: 0, color: [239,68,68] }, { ph: 4, color: [249,115,22] }, { ph: 6, color: [234,179,8] },
+                { ph: 7, color: [34,197,94] }, { ph: 9, color: [59,130,246] }, { ph: 11, color: [99,102,241] }, { ph: 14, color: [168,85,247] }
+            ];
+            for(let i=0; i<stops.length-1; i++){
+                if(ph>=stops[i].ph && ph<=stops[i+1].ph){
+                    const rgb = interpolateColor(stops[i].color, stops[i+1].color, (ph-stops[i].ph)/(stops[i+1].ph-stops[i].ph));
+                    return `rgb(${rgb.join(',')})`;
+                }
+            }
+            return ph<0 ? 'rgb(239,68,68)' : 'rgb(168,85,247)';
+        }
+        function getIndicatorColor(ph, ind) {
+            if(ind.type==='none') return 'rgba(241, 245, 249, 0.5)'; // Clear/water-like
+            if(ind.type==='universal') return getUniversalColor(ph);
+            if(ph<=ind.pH_min) return `rgb(${ind.color_acid.join(',')})`;
+            if(ph>=ind.pH_max) return `rgb(${ind.color_base.join(',')})`;
+            const rgb = interpolateColor(ind.color_acid, ind.color_base, (ph-ind.pH_min)/(ind.pH_max-ind.pH_min));
+            return `rgb(${rgb.join(',')})`;
+        }
+
+        /* --- Initialization & UI --- */
+        function initChart() {
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+            chart = new Chart(document.getElementById('titrationChart'), {
+                type: 'line',
+                data: { datasets: [{
+                    label: 'pH Curve',
+                    data: [],
+                    borderColor: '#2563eb', // Blue-600
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#2563eb',
+                    pointBorderWidth: 2,
+                    pointRadius: 0, // Clean line, show points on hover
+                    pointHoverRadius: 6,
+                    tension: 0.4, fill: false
+                }]},
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                    interaction: { intersect: false, mode: 'index' },
+                    scales: {
+                        x: { 
+                            type: 'linear', min: 0, max: 50, 
+                            grid: { color: '#f1f5f9', tickLength: 0 }, 
+                            title: { display: true, text: 'Volume Base Added (mL)', font: {weight: 600, size: 11}, color: '#94a3b8' } 
+                        },
+                        y: { 
+                            min: 0, max: 14, 
+                            grid: { color: '#e2e8f0', borderDash: [4, 4] }, 
+                            title: { display: true, text: 'pH Level', font: {weight: 600, size: 11}, color: '#94a3b8' } 
+                        }
+                    },
+                    plugins: {
+                        tooltip: { 
+                            backgroundColor: '#1e293b', titleFont: {size: 13}, bodyFont: {size: 13}, padding: 10, cornerRadius: 8, displayColors: false,
+                            callbacks: { label: (c) => `pH: ${c.parsed.y.toFixed(2)}` } 
+                        },
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function populateIndicatorDropdown() {
+            const select = document.getElementById('indicatorSelect');
+            select.innerHTML = '';
+            indicatorData.forEach((ind, i) => {
+                let opt = document.createElement('option');
+                opt.value = i; opt.innerText = ind.name;
+                select.appendChild(opt);
+            });
+            select.value = 0;
+            updateIndicatorDisplay();
+        }
+
+        function updateIndicatorDisplay() {
+            const idx = parseInt(document.getElementById('indicatorSelect').value);
+            state.selectedIndicator = indicatorData[idx];
+            const tbody = document.getElementById('indicatorTableBody');
+            tbody.innerHTML = '';
+
+            indicatorData.forEach((ind, i) => {
+                let row = tbody.insertRow();
+                row.className = i === idx ? "bg-blue-50/50 transition-colors duration-200" : "transition-colors duration-200";
+                
+                let cName = row.insertCell(); cName.className="py-2.5 px-3 font-medium text-gray-700"; cName.innerText = ind.name;
+                let cRange = row.insertCell(); cRange.className="py-2.5 px-3 text-gray-500 whitespace-nowrap";
+                let cTrans = row.insertCell(); cTrans.className="py-2.5 px-3 text-right";
+
+                if(ind.type==='none') {
+                    cRange.innerText = "—";
+                    cTrans.innerHTML = `<span class="inline-block w-3 h-3 rounded-full border border-gray-200 bg-slate-100"></span>`;
+                } else if(ind.type==='universal') {
+                    cRange.innerText = "0 - 14";
+                    cTrans.innerHTML = `<div class="inline-block w-12 h-2 rounded-sm rainbow-gradient opacity-80"></div>`;
+                } else {
+                    cRange.innerText = `${ind.pH_min} - ${ind.pH_max}`;
+                    const c1 = `rgb(${ind.color_acid.join(',')})`;
+                    const c2 = `rgb(${ind.color_base.join(',')})`;
+                    cTrans.innerHTML = `
+                        <span class="inline-block w-3 h-3 rounded-full border border-gray-200 shadow-sm" style="background-color:${c1}"></span>
+                        <span class="text-gray-400 mx-1 text-[10px]">→</span>
+                        <span class="inline-block w-3 h-3 rounded-full border border-gray-200 shadow-sm" style="background-color:${c2}"></span>
+                    `;
+                }
+            });
+            updateUI(state.currentPH);
+        }
+
+        function updateUI(ph) {
+            state.currentPH = ph;
+            document.getElementById('base-added').innerText = state.Vb_added.toFixed(2) + " mL";
+            document.getElementById('total-vol').innerText = (parseFloat(state.Va_initial) + state.Vb_added).toFixed(2) + " mL";
+            document.getElementById('ph-display-beaker').innerText = ph.toFixed(2);
+
+            // --- NEW: Calculate and Display [H+] Concentration ---
+            const h_conc = Math.pow(10, -ph);
+            const parts = h_conc.toExponential(2).split('e'); // e.g., ["1.00", "-1"]
+            const coefficient = parts[0];
+            const exponent = parts[1];
+            
+            // Format as standard scientific notation with HTML superscript
+            const h_conc_formatted = `${coefficient} &times; 10<sup>${exponent}</sup> M`;
+            document.getElementById('h-conc-display').innerHTML = h_conc_formatted;
+            // ----------------------------------------------------
+
+            const liquidDiv = document.getElementById('liquid');
+            const color = state.selectedIndicator ? getIndicatorColor(ph, state.selectedIndicator) : 'rgba(241, 245, 249, 0.5)';
+            liquidDiv.style.backgroundColor = color;
+
+            // Liquid Height Logic
+            const maxVol = parseFloat(state.Va_initial) * 3.5; 
+            const currentVol = parseFloat(state.Va_initial) + state.Vb_added;
+            const percentFill = 35 + ((currentVol - state.Va_initial) / (maxVol - state.Va_initial)) * 60;
+            document.getElementById('liquid-wrapper').style.height = Math.min(percentFill, 95) + "%";
+
+            // Update Chart Data
+            chart.data.datasets[0].data = state.dataPoints;
+            // X-Axis Logic
+            if (state.Vb_added > 50 && chart.options.scales.x.max === 50) delete chart.options.scales.x.max;
+            else if (state.Vb_added <= 50 && chart.options.scales.x.max !== 50) chart.options.scales.x.max = 50;
+            chart.update();
+        }
+
+        function addDropAnimation() {
+            const dropZone = document.getElementById('drop-zone');
+            const drop = document.createElement('div');
+            drop.className = 'drop absolute left-1/2 -translate-x-1/2 w-1.5 h-2 rounded-full bg-gray-300 opacity-70';
+            dropZone.appendChild(drop);
+            setTimeout(() => drop.remove(), 400);
+        }
+
+        function addBase(amt) {
+            state.Vb_added += amt;
+            const ph = calculatePH(state.Vb_added);
+            state.dataPoints.push({x: state.Vb_added, y: ph});
+            addDropAnimation();
+            updateUI(ph);
+        }
+
+        function resetSimulation() {
+            state.Ca = parseFloat(document.getElementById('concAcid').value)||0.1;
+            state.Va_initial = parseFloat(document.getElementById('volAcid').value)||25;
+            state.Cb = parseFloat(document.getElementById('concBase').value)||0.1;
+            state.acidType = document.getElementById('acidType').value;
+            state.baseType = document.getElementById('baseType').value;
+            
+            state.Vb_added = 0; state.dataPoints = [];
+            state.last_h = state.acidType==='strong' ? state.Ca : Math.sqrt(Ka_acetic*state.Ca);
+
+            const initialPH = calculatePH(0);
+            state.dataPoints.push({x: 0, y: initialPH});
+            
+            if(chart){
+                chart.options.scales.x.max = 50;
+                chart.data.datasets[0].data = [];
+                chart.update();
+            }
+            updateUI(initialPH);
+        }
+
+        window.addEventListener('load', () => {
+            initChart();
+            populateIndicatorDropdown();
+            resetSimulation();
+        });
+    </script>
+</body>
+</html>
