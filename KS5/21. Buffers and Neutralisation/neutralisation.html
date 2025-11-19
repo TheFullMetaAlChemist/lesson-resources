@@ -87,8 +87,8 @@
 
     <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
         
-        <!-- SIDEBAR: Configuration & Visuals -->
-        <aside class="w-full md:w-[380px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-10 relative">
+        <!-- SIDEBAR: Configuration & Visuals (Wider to accommodate pKin column) -->
+        <aside class="w-full md:w-[420px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-10 relative">
             
             <div class="p-6 space-y-8">
                 
@@ -163,6 +163,7 @@
                                 <tr>
                                     <th class="py-2 px-3 font-medium">Name</th>
                                     <th class="py-2 px-3 font-medium whitespace-nowrap">Range (pH)</th>
+                                    <th class="py-2 px-3 font-medium text-right whitespace-nowrap">pKin</th>
                                     <th class="py-2 px-3 font-medium text-right">Transition</th>
                                 </tr>
                             </thead>
@@ -178,8 +179,8 @@
             <!-- Sticky Footer: Beaker Visual -->
             <div class="mt-auto p-6 bg-gradient-to-b from-transparent to-gray-50/50 border-t border-gray-100 flex justify-center relative">
                 
-                <!-- Status Floating Label (Updated to include [H+]) -->
-                <div class="absolute top-4 right-6 text-right">
+                <!-- Status Floating Label (Positioned high and inward to avoid overlap) -->
+                <div class="absolute top-0 right-6 text-right pt-6">
                     <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Current pH</div>
                     <div id="ph-display-beaker" class="text-3xl font-light text-gray-800 tabular-nums tracking-tight">1.00</div>
                     
@@ -278,7 +279,7 @@
     </main>
 
     <script>
-        // --- Logic remains robust, purely styling updates below ---
+        // --- Core Math Engine & Data ---
         const Kw = 1.0e-14;
         const Ka_acetic = 1.75e-5;
         const Kb_ammonia = 1.78e-5;
@@ -291,14 +292,15 @@
             dataPoints: [], currentPH: 0, selectedIndicator: null, last_h: 1e-7
         };
 
+        // Added pKin values (calculated as the midpoint of the pH range)
         const indicatorData = [
             { name: "No Indicator", type: "none" },
-            { name: "Methyl Orange", pH_min: 3.1, pH_max: 4.4, color_acid: [255, 0, 0], color_base: [255, 165, 0] },
-            { name: "Bromophenol Blue", pH_min: 3.0, pH_max: 4.6, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
-            { name: "Methyl Red", pH_min: 4.4, pH_max: 6.2, color_acid: [255, 0, 0], color_base: [255, 255, 0] },
-            { name: "Bromothymol Blue", pH_min: 6.0, pH_max: 7.6, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
-            { name: "Phenolphthalein", pH_min: 8.2, pH_max: 10.0, color_acid: [255, 255, 255], color_base: [255, 0, 255] },
-            { name: "Thymolphthalein", pH_min: 9.3, pH_max: 10.5, color_acid: [255, 255, 255], color_base: [0, 0, 255] },
+            { name: "Methyl Orange", pH_min: 3.1, pH_max: 4.4, pKin: 3.75, color_acid: [255, 0, 0], color_base: [255, 165, 0] },
+            { name: "Bromophenol Blue", pH_min: 3.0, pH_max: 4.6, pKin: 3.80, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
+            { name: "Methyl Red", pH_min: 4.4, pH_max: 6.2, pKin: 5.30, color_acid: [255, 0, 0], color_base: [255, 255, 0] },
+            { name: "Bromothymol Blue", pH_min: 6.0, pH_max: 7.6, pKin: 6.80, color_acid: [255, 255, 0], color_base: [0, 0, 255] },
+            { name: "Phenolphthalein", pH_min: 8.2, pH_max: 10.0, pKin: 9.10, color_acid: [255, 255, 255], color_base: [255, 0, 255] },
+            { name: "Thymolphthalein", pH_min: 9.3, pH_max: 10.5, pKin: 9.90, color_acid: [255, 255, 255], color_base: [0, 0, 255] },
             { name: "Universal Indicator", type: "universal" }
         ];
 
@@ -413,24 +415,33 @@
             const idx = parseInt(document.getElementById('indicatorSelect').value);
             state.selectedIndicator = indicatorData[idx];
             const tbody = document.getElementById('indicatorTableBody');
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; // Clear previous rows
 
             indicatorData.forEach((ind, i) => {
-                let row = tbody.insertRow();
+                // FIX: Use insertRow() on the tbody to create a new row (<tr>)
+                const row = tbody.insertRow(); 
                 row.className = i === idx ? "bg-blue-50/50 transition-colors duration-200" : "transition-colors duration-200";
                 
+                // Now insert cells (<td>) into the newly created row
                 let cName = row.insertCell(); cName.className="py-2.5 px-3 font-medium text-gray-700"; cName.innerText = ind.name;
                 let cRange = row.insertCell(); cRange.className="py-2.5 px-3 text-gray-500 whitespace-nowrap";
+                
+                // pKin Cell
+                let cPKin = row.insertCell(); cPKin.className="py-2.5 px-3 text-right text-gray-700 font-medium tabular-nums";
+                
                 let cTrans = row.insertCell(); cTrans.className="py-2.5 px-3 text-right";
 
                 if(ind.type==='none') {
                     cRange.innerText = "—";
+                    cPKin.innerText = "—"; // No pKin
                     cTrans.innerHTML = `<span class="inline-block w-3 h-3 rounded-full border border-gray-200 bg-slate-100"></span>`;
                 } else if(ind.type==='universal') {
                     cRange.innerText = "0 - 14";
+                    cPKin.innerText = "N/A"; // No single pKin
                     cTrans.innerHTML = `<div class="inline-block w-12 h-2 rounded-sm rainbow-gradient opacity-80"></div>`;
                 } else {
                     cRange.innerText = `${ind.pH_min} - ${ind.pH_max}`;
+                    cPKin.innerText = ind.pKin.toFixed(2); // Display pKin
                     const c1 = `rgb(${ind.color_acid.join(',')})`;
                     const c2 = `rgb(${ind.color_base.join(',')})`;
                     cTrans.innerHTML = `
@@ -449,7 +460,7 @@
             document.getElementById('total-vol').innerText = (parseFloat(state.Va_initial) + state.Vb_added).toFixed(2) + " mL";
             document.getElementById('ph-display-beaker').innerText = ph.toFixed(2);
 
-            // --- NEW: Calculate and Display [H+] Concentration ---
+            // --- Calculate and Display [H+] Concentration ---
             const h_conc = Math.pow(10, -ph);
             const parts = h_conc.toExponential(2).split('e'); // e.g., ["1.00", "-1"]
             const coefficient = parts[0];
