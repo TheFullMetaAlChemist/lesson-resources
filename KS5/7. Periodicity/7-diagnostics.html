@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Topic 7 | Periodicity Diagnostic Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f8fafc;          /* slate-50 */
+      --bg-card: #ffffff;
+      --border: #e2e8f0;      /* slate-200 */
+      --text: #0f172a;        /* slate-900 */
+      --muted: #64748b;       /* slate-500 */
+      --accent: #0f766e;      /* teal-700 */
+      --accent-soft: #ccfbf1; /* teal-100 */
+      --accent-hover: #0d9488;/* teal-600 */
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --radius-lg: 0.85rem;
+      --radius-sm: 0.55rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: var(--accent);
+      color: #ffffff;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.3rem, 2.6vw, 1.8rem);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    header .tagline {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Main layout */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.75rem 1rem 3rem;
+    }
+
+    .intro {
+      max-width: 70ch;
+      margin: 0 auto 1.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr);
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 3fr) minmax(260px, 1.1fr);
+      }
+    }
+
+    /* Quiz section */
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.25rem 1.25rem 1.5rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .quiz-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .quiz-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .spec-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .spec-pill {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: #f9fafb;
+      cursor: default;
+    }
+
+    .current-spec-pill {
+      background: var(--accent-soft);
+      color: #134e4a;
+      border-color: #a5f3fc;
+    }
+
+    .question-wrapper {
+      border-top: 1px dashed var(--border);
+      padding-top: 0.9rem;
+      margin-top: 0.5rem;
+      min-height: 180px;
+    }
+
+    .spec-heading {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .spec-subheading {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .question-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      padding: 0.9rem 0.9rem 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .q-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.25rem;
+    }
+
+    .q-text {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .options {
+      display: grid;
+      gap: 0.3rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
+      font-size: 0.87rem;
+      padding: 0.25rem 0.35rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .option:hover {
+      background: #f1f5f9;
+    }
+
+    .option input[type="radio"] {
+      margin-top: 0.12rem;
+    }
+
+    .option-text {
+      flex: 1;
+    }
+
+    .required-hint {
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    /* Buttons */
+    .quiz-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 5px 12px rgba(15, 118, 110, 0.35);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #111827;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #cbd5f1;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Sidebar summary */
+    .summary-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1rem 1rem 1.2rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .summary-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .summary-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #134e4a;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-list {
+      margin-top: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .bar-label {
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+
+    .bar-track {
+      height: 7px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease-out;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Results area */
+    #results {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .results-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1.1rem 1.1rem 1.4rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .results-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .results-overview {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+    }
+
+    .results-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .results-columns {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      }
+    }
+
+    .results-section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .results-section-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .wrong-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .wrong-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.7rem;
+      background: #f9fafb;
+      font-size: 0.85rem;
+    }
+
+    .wrong-q-label {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 0.1rem;
+    }
+
+    .wrong-q-text {
+      margin-bottom: 0.3rem;
+    }
+
+    .wrong-answers {
+      margin-bottom: 0.3rem;
+    }
+
+    .wrong-answers span {
+      display: block;
+    }
+
+    .wrong-answers .user {
+      color: var(--danger);
+    }
+
+    .wrong-answers .correct {
+      color: #166534;
+    }
+
+    .explanation {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Topic 7: Periodicity – Diagnostic Quiz</h1>
+  <div class="tagline">
+    3.1.1 Periodicity · OCR A Level Chemistry
+  </div>
+</header>
+
+<main>
+  <p class="intro">
+    Work through the questions one at a time. There are
+    <strong>3 questions for each specification point</strong>. You can move back and forth
+    between questions. After the final question, click <strong>Submit</strong> to see
+    your diagnostic breakdown and explanations.
+  </p>
+
+  <div class="layout">
+    <!-- QUIZ COLUMN -->
+    <section class="quiz-card" id="quiz-section">
+      <div class="quiz-header">
+        <h2>Diagnostic Questions</h2>
+        <div class="quiz-meta" id="quiz-meta">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <div class="spec-pill-row" id="spec-pill-row">
+        <!-- Filled by JS -->
+      </div>
+
+      <div id="question-wrapper" class="question-wrapper">
+        <!-- One question at a time -->
+      </div>
+
+      <div class="required-hint" id="unanswered-hint">
+        You still have unanswered questions. Taking you to the first one that needs an answer.
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" type="button" id="reset-btn">
+          ↺ Reset quiz
+        </button>
+        <div class="nav-group">
+          <button class="btn btn-secondary" type="button" id="back-btn">
+            ← Previous
+          </button>
+          <button class="btn btn-primary" type="button" id="next-btn">
+            Next question →
+          </button>
+          <button class="btn btn-primary hidden" type="button" id="submit-btn">
+            ✓ Submit for feedback
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY COLUMN -->
+    <aside class="summary-card" id="summary-card">
+      <h3>Your Progress</h3>
+      <div class="summary-meta" id="summary-meta">
+        0/0 answered so far.
+      </div>
+      <div class="score-pill hidden" id="score-pill">
+        Overall: <span id="score-text"></span>
+      </div>
+      <div class="results-section-title">Spec point strengths</div>
+      <div class="results-section-subtitle">
+        Ranked once you submit your answers.
+      </div>
+      <div class="bar-list" id="skill-bars">
+        <!-- Filled after submit -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- RESULTS + REVIEW -->
+  <section id="results">
+    <div class="results-card">
+      <div class="results-header">
+        <h2>Your Diagnostic Feedback</h2>
+      </div>
+      <div class="results-overview" id="results-overview">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="results-columns">
+        <!-- Column 1: ranked spec strengths -->
+        <div>
+          <div class="results-section-title">Strength by specification point</div>
+          <div class="results-section-subtitle">
+            Ordered from strongest to weakest. Aim to bring weaker areas up.
+          </div>
+          <div class="bar-list" id="ranked-skills">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- Column 2: review wrong answers -->
+        <div>
+          <div class="results-section-title">Review your incorrect answers</div>
+          <div class="results-section-subtitle">
+            Revisit only the questions you got wrong, with correct answers and explanations.
+          </div>
+          <div class="wrong-list" id="wrong-list">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ---------------------
+  // Spec metadata
+  // ---------------------
+  const specInfo = {
+    a: { code: "3.1.1(a)", title: "Structure of the Periodic Table" },
+    b: { code: "3.1.1(b)", title: "Electron Configuration & Block Classification" },
+    c: { code: "3.1.1(c)", title: "Ionisation Energies & Successive IE" },
+    d: { code: "3.1.1(d)", title: "Metallic Bonding & Giant Metallic Lattices" },
+    e: { code: "3.1.1(e)", title: "Giant Covalent Lattices of C and Si" },
+    f: { code: "3.1.1(f)", title: "Properties of Giant Metallic & Giant Covalent Lattices" },
+    g: { code: "3.1.1(g)", title: "Variation in Melting Points Across Periods 2 & 3" }
+  };
+
+  // ---------------------
+  // Question data
+  // ---------------------
+  const questions = [
+    // 3.1.1(a)
+    {
+      id: "a1",
+      spec: "a",
+      label: "Q1",
+      text: "What is the fundamental quantity used to order elements in the modern Periodic Table?",
+      options: [
+        "Relative atomic mass",
+        "Number of neutrons",
+        "Atomic (proton) number",
+        "Number of outer-shell electrons"
+      ],
+      correctIndex: 2,
+      explanation:
+        "The modern Periodic Table is arranged by increasing atomic (proton) number, which is the number of protons in the nucleus. This gives a consistent pattern of electronic configurations and properties."
+    },
+    {
+      id: "a2",
+      spec: "a",
+      label: "Q2",
+      text: "Why do elements in the same group of the Periodic Table show similar chemical properties?",
+      options: [
+        "They have the same number of neutrons",
+        "They have similar atomic radii",
+        "They have the same number of electrons in their outer shell",
+        "They have similar densities"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Elements in the same group have the same number of outer-shell electrons. Chemical behaviour is largely determined by outer electrons, so this gives them similar reactions and compound types."
+    },
+    {
+      id: "a3",
+      spec: "a",
+      label: "Q3",
+      text: "What is meant by ‘periodicity’ in the context of the Periodic Table?",
+      options: [
+        "The increase in relative atomic mass down a group",
+        "The repeating pattern in physical and chemical properties across periods",
+        "The presence of noble gases at the end of each period",
+        "The repetition of group numbers in each period"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Periodicity refers to the repeating pattern in physical and chemical properties of elements across different periods, caused by repeating outer-electron configurations."
+    },
+
+    // 3.1.1(b)
+    {
+      id: "b1",
+      spec: "b",
+      label: "Q4",
+      text: "Which electron configuration corresponds to an element in Period 3?",
+      options: [
+        "1s² 2s² 2p⁵",
+        "1s² 2s² 2p⁶ 3s² 3p⁴",
+        "1s² 2s² 2p⁶ 3s²",
+        "1s² 2s² 2p⁶ 3s² 3p⁶ 4s²"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Period number corresponds to the highest principal energy level with electrons. 1s² 2s² 2p⁶ 3s² 3p⁴ has its highest shell at n = 3, so it is a Period 3 element (sulfur)."
+    },
+    {
+      id: "b2",
+      spec: "b",
+      label: "Q5",
+      text: "An element has the configuration: 1s² 2s² 2p⁶ 3s². To which block of the Periodic Table does it belong?",
+      options: ["s-block", "p-block", "d-block", "f-block"],
+      correctIndex: 0,
+      explanation:
+        "The highest-energy sub-shell containing electrons is 3s. Elements with their outer electrons in an s sub-shell are in the s-block."
+    },
+    {
+      id: "b3",
+      spec: "b",
+      label: "Q6",
+      text: "Which statement correctly describes the periodic trend in electron configurations across Period 2 (Li → Ne)?",
+      options: [
+        "Electrons are added to a new shell each time",
+        "Electrons are added to the 2s then 2p sub-shells, filling them across the period",
+        "Electrons are added to the 3s then 3p sub-shells",
+        "Electrons are removed from the 2p sub-shell across the period"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Across Period 2, electrons are added to the n = 2 shell. First the 2s sub-shell is filled (Li, Be), then electrons are added to the 2p sub-shell (B → Ne)."
+    },
+
+    // 3.1.1(c)
+    {
+      id: "c1",
+      spec: "c",
+      label: "Q7",
+      text: "Which is the correct definition of the first ionisation energy of an element?",
+      options: [
+        "The energy required to remove one mole of electrons from one mole of gaseous ions",
+        "The energy required to remove one electron from a single atom in the solid state",
+        "The energy required to remove one mole of electrons from one mole of gaseous atoms",
+        "The energy released when one mole of atoms gains one mole of electrons in the gas phase"
+      ],
+      correctIndex: 2,
+      explanation:
+        "First ionisation energy is defined as the energy required to remove one mole of electrons from one mole of gaseous atoms to form one mole of gaseous 1+ ions."
+    },
+    {
+      id: "c2",
+      spec: "c",
+      label: "Q8",
+      text: "Which factor does NOT directly increase the first ionisation energy of an element?",
+      options: [
+        "Increasing nuclear charge with similar shielding",
+        "Decreasing atomic radius",
+        "Greater distance of the outer electrons from the nucleus",
+        "Decreasing the amount of electron shielding"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Greater distance of outer electrons from the nucleus decreases the attraction, making electrons easier to remove, so it does NOT increase ionisation energy. The other factors all strengthen attraction and raise ionisation energy."
+    },
+    {
+      id: "c3",
+      spec: "c",
+      label: "Q9",
+      text: "An element has the successive ionisation energies (kJ mol⁻¹): 735, 1445, 7730, 10500, 13600. What can you deduce?",
+      options: [
+        "The element has one electron in its outer shell and is in Group 1",
+        "The element has two electrons in its outer shell and is in Group 2",
+        "The element has three electrons in its outer shell and is in Group 3",
+        "The element has four electrons in its outer shell and is in Group 4"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The large jump between the 2nd and 3rd ionisation energies shows that after removing two electrons, the next electron is from an inner shell. This means there were two outer-shell electrons: a Group 2 element."
+    },
+
+    // 3.1.1(d)
+    {
+      id: "d1",
+      spec: "d",
+      label: "Q10",
+      text: "Which statement best describes metallic bonding?",
+      options: [
+        "Electrostatic attraction between positive ions and negative ions",
+        "Electrostatic attraction between cations and delocalised electrons",
+        "Sharing of electron pairs between two non-metal atoms",
+        "Attraction between dipoles on neighbouring molecules"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Metallic bonding is defined as the strong electrostatic attraction between a lattice of positive metal ions (cations) and a sea of delocalised electrons."
+    },
+    {
+      id: "d2",
+      spec: "d",
+      label: "Q11",
+      text: "Which of the following best describes a ‘giant metallic lattice’?",
+      options: [
+        "A regular arrangement of positive ions surrounded by shared electron pairs",
+        "A three-dimensional network of atoms joined by covalent bonds",
+        "A lattice of positive metal ions surrounded by delocalised electrons",
+        "Individual metal atoms weakly attracted to each other by London forces"
+      ],
+      correctIndex: 2,
+      explanation:
+        "A giant metallic lattice consists of positive metal ions arranged in a regular 3D structure, surrounded by a sea of delocalised electrons that hold the lattice together."
+    },
+    {
+      id: "d3",
+      spec: "d",
+      label: "Q12",
+      text: "Why do metals typically have high melting points?",
+      options: [
+        "Because they contain only weak forces between atoms",
+        "Because metallic bonds involve strong attractions between ions and delocalised electrons",
+        "Because there are strong attractions between permanent dipoles",
+        "Because electrons are fixed in position and cannot move"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Metals have high melting points because metallic bonding involves strong electrostatic attraction between positive metal ions and delocalised electrons, requiring a lot of energy to overcome."
+    },
+
+    // 3.1.1(e)
+    {
+      id: "e1",
+      spec: "e",
+      label: "Q13",
+      text: "Which substance is NOT a giant covalent lattice?",
+      options: ["Diamond", "Graphite", "Silicon", "Iodine"],
+      correctIndex: 3,
+      explanation:
+        "Iodine exists as I₂ molecules in a simple molecular lattice. Diamond, graphite and silicon all have giant covalent lattice structures."
+    },
+    {
+      id: "e2",
+      spec: "e",
+      label: "Q14",
+      text: "Which feature allows graphite and graphene (but not diamond) to conduct electricity?",
+      options: [
+        "Presence of delocalised electrons within the layers",
+        "Presence of ionic bonds between carbon atoms",
+        "Presence of free-moving ions in the structure",
+        "Presence of hydrogen bonds between layers"
+      ],
+      correctIndex: 0,
+      explanation:
+        "In graphite and graphene, each carbon atom forms only three covalent bonds and the fourth electron is delocalised within the layers or sheet, allowing electrical conductivity. In diamond, all four electrons are used in bonds, so there are no delocalised electrons."
+    },
+    {
+      id: "e3",
+      spec: "e",
+      label: "Q15",
+      text: "Why does silicon have a very high melting point?",
+      options: [
+        "It has strong metallic bonds",
+        "It contains a giant covalent lattice with many strong Si–Si bonds",
+        "It has strong intermolecular forces between Si₂ molecules",
+        "It forms hydrogen bonds between Si–H groups"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Silicon forms a giant covalent lattice similar to diamond, with each Si atom bonded to four others. Many strong covalent bonds must be broken to melt silicon, requiring a very large amount of energy."
+    },
+
+    // 3.1.1(f)
+    {
+      id: "f1",
+      spec: "f",
+      label: "Q16",
+      text: "Why are most metals insoluble in water and other solvents?",
+      options: [
+        "Metallic bonds are too strong to be broken by interactions with solvent molecules",
+        "Metallic ions are always polar",
+        "Water cannot interact with delocalised electrons",
+        "Metals are simple molecular substances"
+      ],
+      correctIndex: 0,
+      explanation:
+        "Metallic bonds are very strong and involve many ions and delocalised electrons. Interactions with polar or non-polar solvents are not strong enough to break the metallic lattice, so metals are generally insoluble."
+    },
+    {
+      id: "f2",
+      spec: "f",
+      label: "Q17",
+      text: "Which combination of properties is typical of a giant covalent lattice like diamond?",
+      options: [
+        "High melting point, conducts electricity, soluble in water",
+        "Low melting point, does not conduct electricity, soluble in organic solvents",
+        "High melting point, does not conduct electricity, insoluble in most solvents",
+        "Low melting point, conducts electricity, insoluble in most solvents"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Diamond (a giant covalent lattice) has a very high melting point, does not conduct electricity (no delocalised electrons), and is insoluble in water and most solvents because breaking its covalent network requires too much energy."
+    },
+    {
+      id: "f3",
+      spec: "f",
+      label: "Q18",
+      text: "Why do metals conduct electricity in the solid state, but most giant covalent lattices do not?",
+      options: [
+        "Metals have delocalised electrons that can move, whereas most giant covalent lattices have all electrons fixed in bonds",
+        "Metals contain ions but giant covalent lattices do not",
+        "Metals have no bonds whereas giant covalent lattices have too many",
+        "Metals have weaker bonds than giant covalent lattices"
+      ],
+      correctIndex: 0,
+      explanation:
+        "In metals, delocalised electrons can move throughout the lattice and carry charge. In most giant covalent lattices (e.g. diamond, silicon), all outer electrons are involved in covalent bonds, so there are no free charge carriers."
+    },
+
+    // 3.1.1(g)
+    {
+      id: "g1",
+      spec: "g",
+      label: "Q19",
+      text: "Which is the best description of the trend in melting points across Period 3 (Na → Ar)?",
+      options: [
+        "They steadily increase from Na to Ar",
+        "They steadily decrease from Na to Ar",
+        "They increase from Na to Si, then fall sharply from P to Ar",
+        "They are all similar across the period"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Melting points increase from Na → Mg → Al as metallic bonding strengthens, are highest at Si (giant covalent lattice), then decrease sharply for P, S, Cl and Ar, which are simple molecular or atomic substances with weaker intermolecular forces."
+    },
+    {
+      id: "g2",
+      spec: "g",
+      label: "Q20",
+      text: "Which statement best explains why magnesium has a higher melting point than sodium?",
+      options: [
+        "Magnesium atoms are larger, so they have stronger London forces",
+        "Magnesium forms Mg²⁺ ions with more delocalised electrons and stronger metallic bonds than Na⁺",
+        "Magnesium has more neutrons than sodium",
+        "Magnesium has a smaller number of protons than sodium"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Magnesium forms Mg²⁺ ions and contributes two delocalised electrons per atom, giving stronger metallic bonding than Na⁺ with one delocalised electron per atom, so Mg has a higher melting point."
+    },
+    {
+      id: "g3",
+      spec: "g",
+      label: "Q21",
+      text: "Why is the melting point of sulfur (S₈) higher than that of phosphorus (P₄) in Period 3?",
+      options: [
+        "Sulfur forms a giant covalent lattice whereas phosphorus is molecular",
+        "Sulfur has stronger metallic bonding than phosphorus",
+        "S₈ molecules are larger with more electrons, so they have stronger London forces than P₄",
+        "Sulfur has a lower atomic number than phosphorus"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Both sulfur and phosphorus exist as simple molecules (S₈ and P₄). S₈ is larger and has more electrons, so London forces between molecules are stronger, giving sulfur a higher melting point."
+    }
+  ];
+
+  // ---------------------
+  // State
+  // ---------------------
+  const totalQuestions = questions.length;
+  let currentIndex = 0; // 0-based
+  let userAnswers = {}; // { qid: optionIndex }
+
+  // ---------------------
+  // Elements
+  // ---------------------
+  const quizMeta = document.getElementById("quiz-meta");
+  const specPillRow = document.getElementById("spec-pill-row");
+  const questionWrapper = document.getElementById("question-wrapper");
+  const unansweredHint = document.getElementById("unanswered-hint");
+  const backBtn = document.getElementById("back-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const submitBtn = document.getElementById("submit-btn");
+  const resetBtn = document.getElementById("reset-btn");
+
+  const summaryMeta = document.getElementById("summary-meta");
+  const scorePill = document.getElementById("score-pill");
+  const scoreText = document.getElementById("score-text");
+  const skillBars = document.getElementById("skill-bars");
+
+  const resultsSection = document.getElementById("results");
+  const resultsOverview = document.getElementById("results-overview");
+  const rankedSkillsDiv = document.getElementById("ranked-skills");
+  const wrongListDiv = document.getElementById("wrong-list");
+
+  // ---------------------
+  // Render spec pills
+  // ---------------------
+  function renderSpecPills() {
+    specPillRow.innerHTML = "";
+    const specOrder = ["a", "b", "c", "d", "e", "f", "g"];
+    specOrder.forEach(key => {
+      const pill = document.createElement("span");
+      pill.className = "spec-pill";
+      pill.dataset.spec = key;
+      pill.textContent = specInfo[key].code;
+      specPillRow.appendChild(pill);
+    });
+  }
+
+  // Highlight current spec pill
+  function updateSpecPillHighlight(specKey) {
+    const pills = specPillRow.querySelectorAll(".spec-pill");
+    pills.forEach(p => {
+      if (p.dataset.spec === specKey) {
+        p.classList.add("current-spec-pill");
+      } else {
+        p.classList.remove("current-spec-pill");
+      }
+    });
+  }
+
+  // ---------------------
+  // Progress
+  // ---------------------
+  function updateProgressMeta() {
+    const answeredCount = Object.keys(userAnswers).length;
+    quizMeta.textContent =
+      `Question ${currentIndex + 1} of ${totalQuestions} · ${answeredCount}/${totalQuestions} answered`;
+    summaryMeta.textContent = `${answeredCount}/${totalQuestions} answered so far.`;
+  }
+
+  // ---------------------
+  // Render current question
+  // ---------------------
+  function renderCurrentQuestion() {
+    const q = questions[currentIndex];
+    unansweredHint.style.display = "none";
+
+    questionWrapper.innerHTML = "";
+
+    const specHeading = document.createElement("div");
+    specHeading.className = "spec-heading";
+    specHeading.textContent = `${specInfo[q.spec].code} – ${specInfo[q.spec].title}`;
+    questionWrapper.appendChild(specHeading);
+
+    const specSub = document.createElement("div");
+    specSub.className = "spec-subheading";
+    specSub.textContent = "3 diagnostic questions for this specification point across the quiz.";
+    questionWrapper.appendChild(specSub);
+
+    const qCard = document.createElement("div");
+    qCard.className = "question-card";
+    qCard.dataset.qid = q.id;
+
+    const label = document.createElement("div");
+    label.className = "q-label";
+    label.textContent = `${q.label} (${specInfo[q.spec].code})`;
+    qCard.appendChild(label);
+
+    const text = document.createElement("div");
+    text.className = "q-text";
+    text.textContent = q.text;
+    qCard.appendChild(text);
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options";
+
+    q.options.forEach((opt, optIndex) => {
+      const optionLabel = document.createElement("label");
+      optionLabel.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = `q-${q.id}`;
+      radio.value = String(optIndex);
+
+      // Pre-fill if previously answered
+      if (userAnswers[q.id] === optIndex) {
+        radio.checked = true;
+      }
+
+      radio.addEventListener("change", () => {
+        userAnswers[q.id] = optIndex;
+        updateProgressMeta();
+      });
+
+      const span = document.createElement("span");
+      span.className = "option-text";
+      span.textContent = opt;
+
+      optionLabel.appendChild(radio);
+      optionLabel.appendChild(span);
+      optionsDiv.appendChild(optionLabel);
+    });
+
+    qCard.appendChild(optionsDiv);
+    questionWrapper.appendChild(qCard);
+
+    // Update nav buttons and spec pill highlight
+    backBtn.disabled = currentIndex === 0;
+    if (currentIndex === totalQuestions - 1) {
+      nextBtn.classList.add("hidden");
+      submitBtn.classList.remove("hidden");
+    } else {
+      nextBtn.classList.remove("hidden");
+      submitBtn.classList.add("hidden");
+    }
+
+    updateSpecPillHighlight(q.spec);
+    updateProgressMeta();
+  }
+
+  // ---------------------
+  // Results calculation
+  // ---------------------
+  function computeResults(answers) {
+    let totalCorrect = 0;
+    const specStats = {};
+    const wrongQuestions = [];
+
+    Object.keys(specInfo).forEach(key => {
+      specStats[key] = { correct: 0, total: 0 };
+    });
+
+    questions.forEach(q => {
+      const userIndex = answers[q.id];
+      const isCorrect = userIndex === q.correctIndex;
+
+      specStats[q.spec].total += 1;
+      if (isCorrect) {
+        specStats[q.spec].correct += 1;
+        totalCorrect += 1;
+      } else {
+        wrongQuestions.push({ question: q, userIndex, isCorrect });
+      }
+    });
+
+    return { totalCorrect, specStats, wrongQuestions };
+  }
+
+  function renderSkillBars(specStats) {
+    skillBars.innerHTML = "";
+    Object.keys(specInfo).forEach(key => {
+      const { correct, total } = specStats[key];
+      const percent = total ? Math.round((correct / total) * 100) : 0;
+
+      const barRow = document.createElement("div");
+      barRow.className = "bar-row";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+
+      const left = document.createElement("span");
+      left.textContent = specInfo[key].code;
+
+      const right = document.createElement("span");
+      right.textContent = `${percent}%`;
+
+      label.appendChild(left);
+      label.appendChild(right);
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = percent + "%";
+
+      track.appendChild(fill);
+      barRow.appendChild(label);
+      barRow.appendChild(track);
+      skillBars.appendChild(barRow);
+    });
+  }
+
+  function renderRankedSkills(specStats) {
+    rankedSkillsDiv.innerHTML = "";
+
+    const entries = Object.keys(specStats).map(key => {
+      const { correct, total } = specStats[key];
+      const percent = total ? (correct / total) * 100 : 0;
+      return { key, correct, total, percent };
+    });
+
+    entries.sort((a, b) => b.percent - a.percent);
+
+    entries.forEach(entry => {
+      const row = document.createElement("div");
+      row.className = "bar-row";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+
+      const left = document.createElement("span");
+      left.textContent = `${specInfo[entry.key].code} – ${specInfo[entry.key].title}`;
+
+      const right = document.createElement("span");
+      const pct = Math.round(entry.percent);
+      right.textContent = `${pct}% (${entry.correct}/${entry.total})`;
+
+      label.appendChild(left);
+      label.appendChild(right);
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = pct + "%";
+
+      track.appendChild(fill);
+      row.appendChild(label);
+      row.appendChild(track);
+      rankedSkillsDiv.appendChild(row);
+    });
+  }
+
+  function renderWrongList(wrongQuestions) {
+    wrongListDiv.innerHTML = "";
+
+    if (wrongQuestions.length === 0) {
+      const msg = document.createElement("div");
+      msg.className = "results-section-subtitle";
+      msg.textContent = "Great work – you answered every question correctly on this attempt.";
+      wrongListDiv.appendChild(msg);
+      return;
+    }
+
+    wrongQuestions.forEach(item => {
+      const { question, userIndex } = item;
+
+      const card = document.createElement("div");
+      card.className = "wrong-card";
+
+      const label = document.createElement("div");
+      label.className = "wrong-q-label";
+      label.textContent = `${question.label} (${specInfo[question.spec].code})`;
+      card.appendChild(label);
+
+      const text = document.createElement("div");
+      text.className = "wrong-q-text";
+      text.textContent = question.text;
+      card.appendChild(text);
+
+      const answersDiv = document.createElement("div");
+      answersDiv.className = "wrong-answers";
+
+      const userSpan = document.createElement("span");
+      userSpan.className = "user";
+      userSpan.textContent =
+        userIndex === undefined
+          ? "Your answer: (no answer selected)"
+          : `Your answer: ${question.options[userIndex]}`;
+
+      const correctSpan = document.createElement("span");
+      correctSpan.className = "correct";
+      correctSpan.textContent = `Correct answer: ${question.options[question.correctIndex]}`;
+
+      answersDiv.appendChild(userSpan);
+      answersDiv.appendChild(correctSpan);
+      card.appendChild(answersDiv);
+
+      const expl = document.createElement("div");
+      expl.className = "explanation";
+      expl.textContent = question.explanation;
+      card.appendChild(expl);
+
+      wrongListDiv.appendChild(card);
+    });
+  }
+
+  // ---------------------
+  // Navigation handlers
+  // ---------------------
+  backBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderCurrentQuestion();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < totalQuestions - 1) {
+      currentIndex++;
+      renderCurrentQuestion();
+    }
+  });
+
+  submitBtn.addEventListener("click", () => {
+    // Check all answered
+    const answeredCount = Object.keys(userAnswers).length;
+    if (answeredCount < totalQuestions) {
+      // Find first unanswered and jump there
+      const firstUnansweredIndex = questions.findIndex(q => !(q.id in userAnswers));
+      if (firstUnansweredIndex !== -1) {
+        currentIndex = firstUnansweredIndex;
+        renderCurrentQuestion();
+      }
+      unansweredHint.style.display = "block";
+      return;
+    } else {
+      unansweredHint.style.display = "none";
+    }
+
+    const { totalCorrect, specStats, wrongQuestions } = computeResults(userAnswers);
+    const percent = Math.round((totalCorrect / totalQuestions) * 100);
+
+    // Sidebar summary
+    scorePill.classList.remove("hidden");
+    scoreText.textContent = `${totalCorrect}/${totalQuestions} (${percent}%)`;
+    summaryMeta.textContent = "Spec-by-spec strengths based on your latest attempt.";
+    renderSkillBars(specStats);
+
+    // Results section
+    resultsSection.style.display = "block";
+    resultsOverview.textContent =
+      `You scored ${totalCorrect} out of ${totalQuestions} (${percent}%). `
+      + `Your strengths and weaknesses by specification point are shown below, and `
+      + `you can review every incorrect question with explanations.`;
+
+    renderRankedSkills(specStats);
+    renderWrongList(wrongQuestions);
+
+    // Scroll to results
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  resetBtn.addEventListener("click", () => {
+    userAnswers = {};
+    currentIndex = 0;
+    unansweredHint.style.display = "none";
+    resultsSection.style.display = "none";
+    scorePill.classList.add("hidden");
+    summaryMeta.textContent = `${0}/${totalQuestions} answered so far.`;
+    skillBars.innerHTML = "";
+    rankedSkillsDiv.innerHTML = "";
+    wrongListDiv.innerHTML = "";
+    renderCurrentQuestion();
+  });
+
+  // ---------------------
+  // Initial render
+  // ---------------------
+  renderSpecPills();
+  renderCurrentQuestion();
+</script>
+</body>
+</html>
