@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>B1 Cells | Diagnostic Quiz (Year 7)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #f8fafc;          /* slate-50 */
+      --bg-card: #ffffff;
+      --border: #e2e8f0;      /* slate-200 */
+      --text: #0f172a;        /* slate-900 */
+      --muted: #64748b;       /* slate-500 */
+      --accent: #0f766e;      /* teal-700 */
+      --accent-soft: #ccfbf1; /* teal-100 */
+      --accent-hover: #0d9488;/* teal-600 */
+      --danger: #b91c1c;
+      --danger-soft: #fee2e2;
+      --radius-lg: 0.85rem;
+      --radius-sm: 0.55rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: var(--accent);
+      color: #ffffff;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    header .tagline {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Main layout */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.75rem 1rem 3rem;
+    }
+
+    .intro {
+      max-width: 70ch;
+      margin: 0 auto 1.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr);
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 3fr) minmax(260px, 1.1fr);
+      }
+    }
+
+    /* Quiz section */
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.25rem 1.25rem 1.5rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .quiz-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .quiz-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .quiz-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .spec-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .spec-pill {
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: #f9fafb;
+      cursor: default;
+    }
+
+    .current-spec-pill {
+      background: var(--accent-soft);
+      color: #134e4a;
+      border-color: #a5f3fc;
+    }
+
+    .question-wrapper {
+      border-top: 1px dashed var(--border);
+      padding-top: 0.9rem;
+      margin-top: 0.5rem;
+      min-height: 200px;
+    }
+
+    .spec-heading {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #0f172a;
+      margin-bottom: 0.25rem;
+    }
+
+    .spec-subheading {
+      font-size: 0.83rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .question-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      padding: 0.9rem 0.9rem 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .q-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.25rem;
+    }
+
+    .q-text {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .options {
+      display: grid;
+      gap: 0.3rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
+      font-size: 0.87rem;
+      padding: 0.25rem 0.35rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .option:hover {
+      background: #f1f5f9;
+    }
+
+    .option input[type="radio"] {
+      margin-top: 0.12rem;
+    }
+
+    .option-text {
+      flex: 1;
+    }
+
+    .required-hint {
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    /* Buttons */
+    .quiz-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 5px 12px rgba(15, 118, 110, 0.35);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #111827;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #cbd5f1;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Sidebar summary */
+    .summary-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1rem 1rem 1.2rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .summary-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1rem;
+    }
+
+    .summary-meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #134e4a;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .bar-list {
+      margin-top: 0.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .bar-label {
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+
+    .bar-track {
+      height: 7px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease-out;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Results area */
+    #results {
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .results-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      padding: 1.1rem 1.1rem 1.4rem;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .results-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .results-overview {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+    }
+
+    .results-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .results-columns {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      }
+    }
+
+    .results-section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .results-section-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .wrong-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .wrong-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.7rem;
+      background: #f9fafb;
+      font-size: 0.85rem;
+    }
+
+    .wrong-q-label {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 0.1rem;
+    }
+
+    .wrong-q-text {
+      margin-bottom: 0.3rem;
+    }
+
+    .wrong-answers {
+      margin-bottom: 0.3rem;
+    }
+
+    .wrong-answers span {
+      display: block;
+    }
+
+    .wrong-answers .user {
+      color: var(--danger);
+    }
+
+    .wrong-answers .correct {
+      color: #166534;
+    }
+
+    .explanation {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>B1 Cells – Diagnostic Quiz (Year 7)</h1>
+  <div class="tagline">
+    Chapter 1: Cells · KS3 Science
+  </div>
+</header>
+
+<main>
+  <p class="intro">
+    Work through the questions one at a time. There are
+    <strong>5 questions for each topic area</strong> (25 questions in total). You can move
+    back and forth between questions. After the final question, click
+    <strong>Submit</strong> to see your diagnostic breakdown by topic, plus explanations.
+  </p>
+
+  <div class="layout">
+    <!-- QUIZ COLUMN -->
+    <section class="quiz-card" id="quiz-section">
+      <div class="quiz-header">
+        <h2>Diagnostic Questions</h2>
+        <div class="quiz-meta" id="quiz-meta">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <div class="spec-pill-row" id="spec-pill-row">
+        <!-- Filled by JS -->
+      </div>
+
+      <div id="question-wrapper" class="question-wrapper">
+        <!-- One question at a time -->
+      </div>
+
+      <div class="required-hint" id="unanswered-hint">
+        You still have unanswered questions. Taking you to the first one that needs an answer.
+      </div>
+
+      <div class="quiz-actions">
+        <button class="btn btn-secondary" type="button" id="reset-btn">
+          ↺ Reset quiz
+        </button>
+        <div class="nav-group">
+          <button class="btn btn-secondary" type="button" id="back-btn">
+            ← Previous
+          </button>
+          <button class="btn btn-primary" type="button" id="next-btn">
+            Next question →
+          </button>
+          <button class="btn btn-primary hidden" type="button" id="submit-btn">
+            ✓ Submit for feedback
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY COLUMN -->
+    <aside class="summary-card" id="summary-card">
+      <h3>Your Progress</h3>
+      <div class="summary-meta" id="summary-meta">
+        0/0 answered so far.
+      </div>
+      <div class="score-pill hidden" id="score-pill">
+        Overall: <span id="score-text"></span>
+      </div>
+      <div class="results-section-title">Topic strengths</div>
+      <div class="results-section-subtitle">
+        Ranked once you submit your answers.
+      </div>
+      <div class="bar-list" id="skill-bars">
+        <!-- Filled after submit -->
+      </div>
+    </aside>
+  </div>
+
+  <!-- RESULTS + REVIEW -->
+  <section id="results">
+    <div class="results-card">
+      <div class="results-header">
+        <h2>Your Diagnostic Feedback</h2>
+      </div>
+      <div class="results-overview" id="results-overview">
+        <!-- Filled by JS -->
+      </div>
+
+      <div class="results-columns">
+        <!-- Column 1: ranked topic strengths -->
+        <div>
+          <div class="results-section-title">Strength by topic area</div>
+          <div class="results-section-subtitle">
+            Ordered from strongest to weakest. Use this to decide what to revise next.
+          </div>
+          <div class="bar-list" id="ranked-skills">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- Column 2: review wrong answers -->
+        <div>
+          <div class="results-section-title">Review your incorrect answers</div>
+          <div class="results-section-subtitle">
+            Revisit only the questions you got wrong, with correct answers and explanations.
+          </div>
+          <div class="wrong-list" id="wrong-list">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // ---------------------
+  // Topic metadata
+  // ---------------------
+  const specInfo = {
+    a: { code: "B1.1", title: "Plant and animal cells" },
+    b: { code: "B1.2", title: "Specialised cells" },
+    c: { code: "B1.3", title: "Microscopes" },
+    d: { code: "B1.4", title: "Unicellular organisms" },
+    e: { code: "B1.5", title: "Movement in and out of cells" }
+  };
+
+  // ---------------------
+  // Question data (MCQs)
+  // ---------------------
+  const questions = [
+    // B1.1 Plant and animal cells
+    {
+      id: "a1",
+      spec: "a",
+      label: "Q1",
+      text: "Which part of a cell controls what enters and leaves the cell?",
+      options: [
+        "Nucleus",
+        "Cytoplasm",
+        "Cell membrane",
+        "Cell wall"
+      ],
+      correctIndex: 2,
+      explanation:
+        "The cell membrane controls which substances can move into and out of the cell."
+    },
+    {
+      id: "a2",
+      spec: "a",
+      label: "Q2",
+      text: "Which cell component contains the genetic material (DNA)?",
+      options: [
+        "Vacuole",
+        "Nucleus",
+        "Chloroplast",
+        "Mitochondria"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The nucleus controls the cell and contains the genetic material."
+    },
+    {
+      id: "a3",
+      spec: "a",
+      label: "Q3",
+      text: "Which plant cell structure is filled with cell sap and helps keep the cell firm?",
+      options: [
+        "Vacuole",
+        "Cytoplasm",
+        "Mitochondria",
+        "Cell membrane"
+      ],
+      correctIndex: 0,
+      explanation:
+        "The vacuole contains cell sap and helps keep the plant cell firm (turgid)."
+    },
+    {
+      id: "a4",
+      spec: "a",
+      label: "Q4",
+      text: "Where does respiration mainly take place inside a cell?",
+      options: [
+        "Nucleus",
+        "Chloroplasts",
+        "Mitochondria",
+        "Cell wall"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Mitochria are the site of respiration, where food and oxygen are converted into energy."
+    },
+    {
+      id: "a5",
+      spec: "a",
+      label: "Q5",
+      text: "Which structure is found in plant cells but not in animal cells and helps support the cell?",
+      options: [
+        "Cell membrane",
+        "Cell wall",
+        "Cytoplasm",
+        "Nucleus"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The cell wall surrounds plant cells and provides support and strength. Animal cells do not have a cell wall."
+    },
+
+    // B1.2 Specialised cells
+    {
+      id: "b1",
+      spec: "b",
+      label: "Q6",
+      text: "Which feature of a root hair cell helps it absorb lots of water and minerals?",
+      options: [
+        "Many nuclei",
+        "Disc-shaped surface",
+        "Large vacuole",
+        "Long root hair that increases surface area"
+      ],
+      correctIndex: 3,
+      explanation:
+        "The long root hair gives a big surface area so the cell can absorb more water and minerals from the soil."
+    },
+    {
+      id: "b2",
+      spec: "b",
+      label: "Q7",
+      text: "Red blood cells are adapted to transport oxygen. Which adaptation helps them carry more haemoglobin?",
+      options: [
+        "They have no nucleus",
+        "They have a long tail",
+        "They are packed with chloroplasts",
+        "They have a root hair"
+      ],
+      correctIndex: 0,
+      explanation:
+        "Red blood cells have no nucleus, leaving more space for haemoglobin, which carries oxygen."
+    },
+    {
+      id: "b3",
+      spec: "b",
+      label: "Q8",
+      text: "Which specialised cell carries electrical impulses around the body?",
+      options: [
+        "Leaf cell",
+        "Root hair cell",
+        "Nerve cell (neurone)",
+        "Sperm cell"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Nerve cells (neurones) are long and thin with connections at each end, allowing them to carry electrical impulses."
+    },
+    {
+      id: "b4",
+      spec: "b",
+      label: "Q9",
+      text: "What feature of a sperm cell helps it swim towards the egg?",
+      options: [
+        "A large vacuole",
+        "A long tail (flagellum)",
+        "Chloroplasts",
+        "A thick cell wall"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The sperm cell has a streamlined head and a long tail (flagellum) so it can swim to reach the egg."
+    },
+    {
+      id: "b5",
+      spec: "b",
+      label: "Q10",
+      text: "Leaf (palisade) cells are adapted for photosynthesis. Which adaptation is most important for this job?",
+      options: [
+        "They have no chloroplasts",
+        "They are found at the bottom of the leaf",
+        "They are packed with chloroplasts near the top of the leaf",
+        "They have a long tail"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Palisade cells are packed with chloroplasts and are near the top surface of the leaf, so they absorb lots of light for photosynthesis."
+    },
+
+    // B1.3 Microscopes
+    {
+      id: "c1",
+      spec: "c",
+      label: "Q11",
+      text: "Why does a specimen on a microscope slide need to be thin?",
+      options: [
+        "So it fits on the stage",
+        "So light can pass through it",
+        "So it does not move",
+        "So it can be kept for a long time"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The specimen must be thin so that light can pass through it and the image can be seen clearly."
+    },
+    {
+      id: "c2",
+      spec: "c",
+      label: "Q12",
+      text: "What is often added to a slide to make cell structures easier to see?",
+      options: [
+        "Water",
+        "Oil",
+        "Dye or stain",
+        "Salt"
+      ],
+      correctIndex: 2,
+      explanation:
+        "A dye or stain is added to colour parts of the cell so they stand out under the microscope."
+    },
+    {
+      id: "c3",
+      spec: "c",
+      label: "Q13",
+      text: "When you first look at a slide, which objective lens should you choose?",
+      options: [
+        "Highest magnification lens",
+        "Lowest magnification lens",
+        "No lens at all",
+        "Any lens – it does not matter"
+      ],
+      correctIndex: 1,
+      explanation:
+        "You should start with the lowest magnification lens to find the specimen easily and then move to higher magnification."
+    },
+    {
+      id: "c4",
+      spec: "c",
+      label: "Q14",
+      text: "Which focusing knob should you use first when you start to focus the microscope?",
+      options: [
+        "Fine-focus knob",
+        "Zoom knob",
+        "Coarse-focus knob",
+        "Light knob"
+      ],
+      correctIndex: 2,
+      explanation:
+        "The coarse-focus knob is used first to bring the image roughly into focus. Then the fine-focus knob is used to sharpen it."
+    },
+    {
+      id: "c5",
+      spec: "c",
+      label: "Q15",
+      text: "Which focusing knob should you use to sharpen a slightly blurry image?",
+      options: [
+        "Coarse-focus knob",
+        "Fine-focus knob",
+        "Stage knob",
+        "Light switch"
+      ],
+      correctIndex: 1,
+      explanation:
+        "The fine-focus knob makes small adjustments to bring a slightly blurry image into sharp focus."
+    },
+
+    // B1.4 Unicellular organisms
+    {
+      id: "d1",
+      spec: "d",
+      label: "Q16",
+      text: "What does the word 'unicellular' mean?",
+      options: [
+        "Made of many cells",
+        "Made of only one cell",
+        "Made of no cells",
+        "Made of two types of cells"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Unicellular organisms are made of just one cell."
+    },
+    {
+      id: "d2",
+      spec: "d",
+      label: "Q17",
+      text: "Which unicellular organism in this topic can make its own food by photosynthesis?",
+      options: [
+        "Amoeba",
+        "Red blood cell",
+        "Euglena",
+        "Sperm cell"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Euglena contains chloroplasts and can carry out photosynthesis to make its own food."
+    },
+    {
+      id: "d3",
+      spec: "d",
+      label: "Q18",
+      text: "What is the tail-like structure that helps Euglena move through water called?",
+      options: [
+        "Flagellum",
+        "Pseudopod",
+        "Vacuole",
+        "Cell wall"
+      ],
+      correctIndex: 0,
+      explanation:
+        "The flagellum is a tail-like structure that beats to move Euglena through the water."
+    },
+    {
+      id: "d4",
+      spec: "d",
+      label: "Q19",
+      text: "How does an amoeba move and surround its food?",
+      options: [
+        "Using a flagellum",
+        "Using pseudopods that flow around the food",
+        "Using cilia to sweep food in",
+        "Using a thick cell wall"
+      ],
+      correctIndex: 1,
+      explanation:
+        "An amoeba forms temporary extensions called pseudopods that flow around food particles and help it move."
+    },
+    {
+      id: "d5",
+      spec: "d",
+      label: "Q20",
+      text: "What is the name of the process where a unicellular organism splits into two identical cells?",
+      options: [
+        "Diffusion",
+        "Photosynthesis",
+        "Binary fission",
+        "Respiration"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Binary fission is when a unicellular organism divides into two identical cells."
+    },
+
+    // B1.5 Movement in and out of cells
+    {
+      id: "e1",
+      spec: "e",
+      label: "Q21",
+      text: "What is diffusion?",
+      options: [
+        "Particles moving from low to high concentration",
+        "Particles moving randomly with no pattern",
+        "Particles spreading out from high concentration to low concentration",
+        "Water moving through a partially permeable membrane"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Diffusion is the movement of particles from an area of high concentration to an area of low concentration."
+    },
+    {
+      id: "e2",
+      spec: "e",
+      label: "Q22",
+      text: "Which substances move from the blood into cells by diffusion in this topic?",
+      options: [
+        "Carbon dioxide only",
+        "Glucose and oxygen",
+        "Water and salt",
+        "Protein and DNA"
+      ],
+      correctIndex: 1,
+      explanation:
+        "Glucose and oxygen diffuse from the blood into cells so that respiration can happen."
+    },
+    {
+      id: "e3",
+      spec: "e",
+      label: "Q23",
+      text: "Which gas moves out of cells into the blood by diffusion after respiration?",
+      options: [
+        "Oxygen",
+        "Nitrogen",
+        "Hydrogen",
+        "Carbon dioxide"
+      ],
+      correctIndex: 3,
+      explanation:
+        "Carbon dioxide is a waste gas from respiration and diffuses out of cells into the blood."
+    },
+    {
+      id: "e4",
+      spec: "e",
+      label: "Q24",
+      text: "If the difference in concentration is bigger, how does this affect the rate of diffusion?",
+      options: [
+        "Diffusion is slower",
+        "Diffusion is faster",
+        "Diffusion stops completely",
+        "It makes no difference"
+      ],
+      correctIndex: 1,
+      explanation:
+        "A bigger concentration difference (gradient) makes diffusion happen faster."
+    },
+    {
+      id: "e5",
+      spec: "e",
+      label: "Q25",
+      text: "Does diffusion require energy from the cell?",
+      options: [
+        "Yes, it needs lots of energy",
+        "Yes, but only in plant cells",
+        "No, it is a passive process",
+        "Only at night"
+      ],
+      correctIndex: 2,
+      explanation:
+        "Diffusion is a passive process and does not require energy from the cell."
+    }
+  ];
+
+  // ---------------------
+  // State
+  // ---------------------
+  const totalQuestions = questions.length;
+  let currentIndex = 0; // 0-based
+  let userAnswers = {}; // { qid: optionIndex }
+
+  // ---------------------
+  // Elements
+  // ---------------------
+  const quizMeta = document.getElementById("quiz-meta");
+  const specPillRow = document.getElementById("spec-pill-row");
+  const questionWrapper = document.getElementById("question-wrapper");
+  const unansweredHint = document.getElementById("unanswered-hint");
+  const backBtn = document.getElementById("back-btn");
+  const nextBtn = document.getElementById("next-btn");
+  const submitBtn = document.getElementById("submit-btn");
+  const resetBtn = document.getElementById("reset-btn");
+
+  const summaryMeta = document.getElementById("summary-meta");
+  const scorePill = document.getElementById("score-pill");
+  const scoreText = document.getElementById("score-text");
+  const skillBars = document.getElementById("skill-bars");
+
+  const resultsSection = document.getElementById("results");
+  const resultsOverview = document.getElementById("results-overview");
+  const rankedSkillsDiv = document.getElementById("ranked-skills");
+  const wrongListDiv = document.getElementById("wrong-list");
+
+  // ---------------------
+  // Render topic pills
+  // ---------------------
+  function renderSpecPills() {
+    specPillRow.innerHTML = "";
+    const specOrder = ["a", "b", "c", "d", "e"];
+    specOrder.forEach(key => {
+      const pill = document.createElement("span");
+      pill.className = "spec-pill";
+      pill.dataset.spec = key;
+      pill.textContent = specInfo[key].code;
+      specPillRow.appendChild(pill);
+    });
+  }
+
+  // Highlight current topic pill
+  function updateSpecPillHighlight(specKey) {
+    const pills = specPillRow.querySelectorAll(".spec-pill");
+    pills.forEach(p => {
+      if (p.dataset.spec === specKey) {
+        p.classList.add("current-spec-pill");
+      } else {
+        p.classList.remove("current-spec-pill");
+      }
+    });
+  }
+
+  // ---------------------
+  // Progress
+  // ---------------------
+  function updateProgressMeta() {
+    const answeredCount = Object.keys(userAnswers).length;
+    quizMeta.textContent =
+      `Question ${currentIndex + 1} of ${totalQuestions} · ${answeredCount}/${totalQuestions} answered`;
+    summaryMeta.textContent = `${answeredCount}/${totalQuestions} answered so far.`;
+  }
+
+  // ---------------------
+  // Render current question
+  // ---------------------
+  function renderCurrentQuestion() {
+    const q = questions[currentIndex];
+    unansweredHint.style.display = "none";
+
+    questionWrapper.innerHTML = "";
+
+    const specHeading = document.createElement("div");
+    specHeading.className = "spec-heading";
+    specHeading.textContent = `${specInfo[q.spec].code} – ${specInfo[q.spec].title}`;
+    questionWrapper.appendChild(specHeading);
+
+    const specSub = document.createElement("div");
+    specSub.className = "spec-subheading";
+    specSub.textContent = "5 diagnostic questions for this topic area are included in the quiz.";
+    questionWrapper.appendChild(specSub);
+
+    const qCard = document.createElement("div");
+    qCard.className = "question-card";
+    qCard.dataset.qid = q.id;
+
+    const label = document.createElement("div");
+    label.className = "q-label";
+    label.textContent = `${q.label} (${specInfo[q.spec].code})`;
+    qCard.appendChild(label);
+
+    const text = document.createElement("div");
+    text.className = "q-text";
+    text.textContent = q.text;
+    qCard.appendChild(text);
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options";
+
+    q.options.forEach((opt, optIndex) => {
+      const optionLabel = document.createElement("label");
+      optionLabel.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = `q-${q.id}`;
+      radio.value = String(optIndex);
+
+      // Pre-fill if previously answered
+      if (userAnswers[q.id] === optIndex) {
+        radio.checked = true;
+      }
+
+      radio.addEventListener("change", () => {
+        userAnswers[q.id] = optIndex;
+        updateProgressMeta();
+      });
+
+      const span = document.createElement("span");
+      span.className = "option-text";
+      span.textContent = opt;
+
+      optionLabel.appendChild(radio);
+      optionLabel.appendChild(span);
+      optionsDiv.appendChild(optionLabel);
+    });
+
+    qCard.appendChild(optionsDiv);
+    questionWrapper.appendChild(qCard);
+
+    // Update nav buttons and topic pill highlight
+    backBtn.disabled = currentIndex === 0;
+    if (currentIndex === totalQuestions - 1) {
+      nextBtn.classList.add("hidden");
+      submitBtn.classList.remove("hidden");
+    } else {
+      nextBtn.classList.remove("hidden");
+      submitBtn.classList.add("hidden");
+    }
+
+    updateSpecPillHighlight(q.spec);
+    updateProgressMeta();
+  }
+
+  // ---------------------
+  // Results calculation
+  // ---------------------
+  function computeResults(answers) {
+    let totalCorrect = 0;
+    const specStats = {};
+    const wrongQuestions = [];
+
+    Object.keys(specInfo).forEach(key => {
+      specStats[key] = { correct: 0, total: 0 };
+    });
+
+    questions.forEach(q => {
+      const userIndex = answers[q.id];
+      const isCorrect = userIndex === q.correctIndex;
+
+      specStats[q.spec].total += 1;
+      if (isCorrect) {
+        specStats[q.spec].correct += 1;
+        totalCorrect += 1;
+      } else {
+        wrongQuestions.push({ question: q, userIndex, isCorrect });
+      }
+    });
+
+    return { totalCorrect, specStats, wrongQuestions };
+  }
+
+  function renderSkillBars(specStats) {
+    skillBars.innerHTML = "";
+    Object.keys(specInfo).forEach(key => {
+      const { correct, total } = specStats[key];
+      const percent = total ? Math.round((correct / total) * 100) : 0;
+
+      const barRow = document.createElement("div");
+      barRow.className = "bar-row";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+
+      const left = document.createElement("span");
+      left.textContent = specInfo[key].code;
+
+      const right = document.createElement("span");
+      right.textContent = `${percent}%`;
+
+      label.appendChild(left);
+      label.appendChild(right);
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = percent + "%";
+
+      track.appendChild(fill);
+      barRow.appendChild(label);
+      barRow.appendChild(track);
+      skillBars.appendChild(barRow);
+    });
+  }
+
+  function renderRankedSkills(specStats) {
+    rankedSkillsDiv.innerHTML = "";
+
+    const entries = Object.keys(specStats).map(key => {
+      const { correct, total } = specStats[key];
+      const percent = total ? (correct / total) * 100 : 0;
+      return { key, correct, total, percent };
+    });
+
+    entries.sort((a, b) => b.percent - a.percent);
+
+    entries.forEach(entry => {
+      const row = document.createElement("div");
+      row.className = "bar-row";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+
+      const left = document.createElement("span");
+      left.textContent = `${specInfo[entry.key].code} – ${specInfo[entry.key].title}`;
+
+      const right = document.createElement("span");
+      const pct = Math.round(entry.percent);
+      right.textContent = `${pct}% (${entry.correct}/${entry.total})`;
+
+      label.appendChild(left);
+      label.appendChild(right);
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = pct + "%";
+
+      track.appendChild(fill);
+      row.appendChild(label);
+      row.appendChild(track);
+      rankedSkillsDiv.appendChild(row);
+    });
+  }
+
+  function renderWrongList(wrongQuestions) {
+    wrongListDiv.innerHTML = "";
+
+    if (wrongQuestions.length === 0) {
+      const msg = document.createElement("div");
+      msg.className = "results-section-subtitle";
+      msg.textContent = "Great work – you answered every question correctly on this attempt.";
+      wrongListDiv.appendChild(msg);
+      return;
+    }
+
+    wrongQuestions.forEach(item => {
+      const { question, userIndex } = item;
+
+      const card = document.createElement("div");
+      card.className = "wrong-card";
+
+      const label = document.createElement("div");
+      label.className = "wrong-q-label";
+      label.textContent = `${question.label} (${specInfo[question.spec].code})`;
+      card.appendChild(label);
+
+      const text = document.createElement("div");
+      text.className = "wrong-q-text";
+      text.textContent = question.text;
+      card.appendChild(text);
+
+      const answersDiv = document.createElement("div");
+      answersDiv.className = "wrong-answers";
+
+      const userSpan = document.createElement("span");
+      userSpan.className = "user";
+      userSpan.textContent =
+        userIndex === undefined
+          ? "Your answer: (no answer selected)"
+          : `Your answer: ${question.options[userIndex]}`;
+
+      const correctSpan = document.createElement("span");
+      correctSpan.className = "correct";
+      correctSpan.textContent = `Correct answer: ${question.options[question.correctIndex]}`;
+
+      answersDiv.appendChild(userSpan);
+      answersDiv.appendChild(correctSpan);
+      card.appendChild(answersDiv);
+
+      const expl = document.createElement("div");
+      expl.className = "explanation";
+      expl.textContent = question.explanation;
+      card.appendChild(expl);
+
+      wrongListDiv.appendChild(card);
+    });
+  }
+
+  // ---------------------
+  // Navigation handlers
+  // ---------------------
+  backBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderCurrentQuestion();
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < totalQuestions - 1) {
+      currentIndex++;
+      renderCurrentQuestion();
+    }
+  });
+
+  submitBtn.addEventListener("click", () => {
+    // Check all answered
+    const answeredCount = Object.keys(userAnswers).length;
+    if (answeredCount < totalQuestions) {
+      // Find first unanswered and jump there
+      const firstUnansweredIndex = questions.findIndex(q => !(q.id in userAnswers));
+      if (firstUnansweredIndex !== -1) {
+        currentIndex = firstUnansweredIndex;
+        renderCurrentQuestion();
+      }
+      unansweredHint.style.display = "block";
+      return;
+    } else {
+      unansweredHint.style.display = "none";
+    }
+
+    const { totalCorrect, specStats, wrongQuestions } = computeResults(userAnswers);
+    const percent = Math.round((totalCorrect / totalQuestions) * 100);
+
+    // Sidebar summary
+    scorePill.classList.remove("hidden");
+    scoreText.textContent = `${totalCorrect}/${totalQuestions} (${percent}%)`;
+    summaryMeta.textContent = "Topic-by-topic strengths based on your latest attempt.";
+    renderSkillBars(specStats);
+
+    // Results section
+    resultsSection.style.display = "block";
+    resultsOverview.textContent =
+      `You scored ${totalCorrect} out of ${totalQuestions} (${percent}%). ` +
+      `Your strongest and weakest topic areas are shown below, and you can review every incorrect question with explanations.`;
+
+    renderRankedSkills(specStats);
+    renderWrongList(wrongQuestions);
+
+    // Scroll to results
+    resultsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  resetBtn.addEventListener("click", () => {
+    userAnswers = {};
+    currentIndex = 0;
+    unansweredHint.style.display = "none";
+    resultsSection.style.display = "none";
+    scorePill.classList.add("hidden");
+    summaryMeta.textContent = `${0}/${totalQuestions} answered so far.`;
+    skillBars.innerHTML = "";
+    rankedSkillsDiv.innerHTML = "";
+    wrongListDiv.innerHTML = "";
+    renderCurrentQuestion();
+  });
+
+  // ---------------------
+  // Initial render
+  // ---------------------
+  renderSpecPills();
+  renderCurrentQuestion();
+</script>
+</body>
+</html>
