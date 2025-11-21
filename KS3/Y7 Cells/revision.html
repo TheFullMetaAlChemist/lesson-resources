@@ -5,70 +5,210 @@
   <title>B1 Cells – Revision Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      --bg: #f4faf7;
+      --bg-alt: #ffffff;
+      --accent: #059669;     /* green */
+      --accent-dark: #047857;
+      --accent-soft: #dcfce7;
+      --text-main: #123024;
+      --text-muted: #4b5563;
+      --border-soft: #d1fae5;
+      --shadow-soft: 0 8px 20px rgba(15, 118, 110, 0.08);
+      --radius-card: 1rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
-      background: #f5f7fb;
-      color: #222;
+      background: radial-gradient(circle at top left, #bbf7d0 0, var(--bg) 45%, #ecfdf5 100%);
+      color: var(--text-main);
     }
 
     header {
-      background: #1f3b73;
-      color: #fff;
-      padding: 1.5rem 1rem;
+      background: linear-gradient(135deg, #065f46, #059669);
+      color: #ecfdf5;
+      padding: 1.8rem 1rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background-image:
+        radial-gradient(circle at 20% 10%, rgba(209, 250, 229, 0.35) 0, transparent 55%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.35) 0, transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    header .inner {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      z-index: 1;
     }
 
     header h1 {
-      margin: 0 0 0.25rem;
-      font-size: 1.9rem;
+      margin: 0 0 0.5rem;
+      font-size: 2.1rem;
+      letter-spacing: 0.03em;
     }
 
     header p {
-      margin: 0;
+      margin: 0 0 1rem;
       max-width: 800px;
+      font-size: 0.98rem;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(6, 95, 70, 0.2);
+      backdrop-filter: blur(6px);
+    }
+
+    .tagline span.icon {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 999px;
+      background: #bbf7d0;
+    }
+
+    nav {
+      margin-top: 1.4rem;
+    }
+
+    .nav-links {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.4rem;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.22);
+      list-style: none;
+      margin: 0;
+    }
+
+    .nav-links a {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #ecfdf5;
+      opacity: 0.95;
+      transition: background 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus {
+      background: rgba(16, 185, 129, 0.9);
+      opacity: 1;
+      transform: translateY(-1px);
     }
 
     main {
       max-width: 1100px;
-      margin: 1.5rem auto 2.5rem;
-      padding: 0 1rem;
+      margin: -1.2rem auto 2.5rem;
+      padding: 0 1rem 2.5rem;
+      position: relative;
+      z-index: 2;
     }
 
     section {
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-card {
+      background: var(--bg-alt);
+      border-radius: 1.2rem;
+      padding: 1.4rem 1.6rem 1.6rem;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(16, 185, 129, 0.08);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
 
     h2 {
-      margin-top: 0;
-      border-bottom: 2px solid #dde2f0;
-      padding-bottom: 0.35rem;
-      color: #1f3b73;
+      margin: 0;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #064e3b;
+    }
+
+    h2 span.dot {
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .section-subtitle {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 1rem;
     }
 
     .card {
-      background: #fff;
-      border-radius: 0.8rem;
-      padding: 1rem 1.1rem;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+      background: var(--bg-alt);
+      border-radius: var(--radius-card);
+      padding: 1.05rem 1.1rem;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      border: 1px solid var(--border-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.16), transparent 60%);
+      opacity: 0.85;
+      pointer-events: none;
     }
 
     .card h3 {
       margin: 0 0 0.4rem;
-      font-size: 1.05rem;
+      font-size: 1.03rem;
     }
 
     .card p {
       margin: 0 0 0.7rem;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
+      color: var(--text-muted);
     }
 
     .tag {
@@ -76,13 +216,17 @@
       font-size: 0.8rem;
       padding: 0.15rem 0.5rem;
       border-radius: 999px;
-      background: #e5ecff;
-      color: #1f3b73;
-      margin-bottom: 0.4rem;
+      background: var(--accent-soft);
+      color: var(--accent-dark);
+      margin-bottom: 0.35rem;
+      font-weight: 500;
     }
 
     a.button-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
       margin-top: 0.25rem;
       padding: 0.45rem 0.9rem;
       border-radius: 999px;
@@ -90,84 +234,190 @@
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 600;
-      background: #1f3b73;
-      color: #fff;
+      background: var(--accent);
+      color: #ecfdf5;
+      box-shadow: 0 2px 6px rgba(4, 120, 87, 0.4);
+      transition: background 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
     }
 
     a.button-link:hover,
     a.button-link:focus {
-      background: #27488e;
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(4, 120, 87, 0.55);
     }
 
-    /* Videos & links */
-    .video-list,
-    .link-list {
+    a.button-link span.chevron {
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+
+    /* Videos */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-top: 0.5rem;
       list-style: none;
       padding: 0;
-      margin: 0;
     }
 
-    .video-list li,
-    .link-list li {
-      margin-bottom: 0.75rem;
+    .video-item {
+      background: #f0fdf4;
+      border-radius: var(--radius-card);
+      padding: 0.8rem 0.9rem 1rem;
+      border: 1px solid #bbf7d0;
+      box-shadow: 0 3px 9px rgba(22, 163, 74, 0.08);
+    }
+
+    .video-item h3 {
+      margin: 0 0 0.4rem;
+      font-size: 0.98rem;
+      color: #166534;
     }
 
     .video-note {
       font-size: 0.85rem;
-      color: #555;
+      color: var(--text-muted);
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-top: 56.25%; /* 16:9 */
+      border-radius: 0.7rem;
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Useful links */
+    .link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.3rem 0 0;
+    }
+
+    .link-list li {
+      margin-bottom: 0.6rem;
+    }
+
+    .link-list a {
+      text-decoration: none;
+      font-size: 0.93rem;
+      color: #065f46;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.45rem;
+      border-radius: 0.5rem;
+      transition: background 0.12s ease, transform 0.08s ease;
+    }
+
+    .link-list a::before {
+      content: "🔗";
+      font-size: 0.9rem;
+    }
+
+    .link-list a:hover,
+    .link-list a:focus {
+      background: #ecfdf5;
+      transform: translateY(-1px);
     }
 
     /* Quiz */
     #quiz-intro {
-      font-size: 0.95rem;
-      margin-bottom: 0.8rem;
+      font-size: 0.9rem;
+      margin-bottom: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr);
+      gap: 1.4rem;
+    }
+
+    @media (max-width: 800px) {
+      .quiz-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     .question {
-      margin-bottom: 1.1rem;
+      margin-bottom: 1rem;
       padding: 0.8rem 0.9rem;
-      border-radius: 0.6rem;
-      background: #ffffff;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+      border-radius: 0.8rem;
+      background: #f0fdf4;
+      box-shadow: 0 1px 4px rgba(22, 163, 74, 0.08);
+      border: 1px solid #bbf7d0;
     }
 
     .question p {
-      margin: 0 0 0.4rem;
+      margin: 0 0 0.45rem;
       font-weight: 600;
+      font-size: 0.95rem;
+      color: #064e3b;
     }
 
     .question label {
       display: block;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin-bottom: 0.25rem;
       cursor: pointer;
+      color: var(--text-main);
     }
 
     #diagnostic-quiz button[type="submit"] {
       margin-top: 0.5rem;
-      padding: 0.5rem 1.1rem;
+      padding: 0.55rem 1.2rem;
       border-radius: 999px;
       border: none;
-      background: #10b981;
-      color: #fff;
+      background: #22c55e;
+      color: #ecfdf5;
       font-weight: 600;
       font-size: 0.95rem;
       cursor: pointer;
+      box-shadow: 0 3px 8px rgba(22, 163, 74, 0.5);
+      transition: background 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
     }
 
     #diagnostic-quiz button[type="submit"]:hover,
     #diagnostic-quiz button[type="submit"]:focus {
-      background: #0f9a6d;
+      background: #16a34a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.7);
     }
 
     #quiz-result {
-      margin-top: 0.9rem;
-      padding: 0.75rem 0.9rem;
-      border-radius: 0.6rem;
+      margin-top: 0.6rem;
+      padding: 0.8rem 0.9rem;
+      border-radius: 0.9rem;
       background: #ecfeff;
       border: 1px solid #bae6fd;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       display: none;
+      color: #0f172a;
+    }
+
+    .quiz-hint {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6b7280;
+      padding: 0.5rem 1rem 1.2rem;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -176,171 +426,384 @@
         transition: none !important;
       }
     }
+
+    html {
+      scroll-behavior: smooth;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>B1 Cells – Revision Hub</h1>
-    <p>
-      Use this page to revise everything from microscopes and plant &amp; animal cells to
-      specialised cells, diffusion, and unicellular organisms. Work through the resources,
-      then test yourself with the diagnostic quiz at the bottom.
-    </p>
+    <div class="inner">
+      <div class="tagline">
+        <span class="icon"></span>
+        <span>B1 Cells • KS3 Biology Revision</span>
+      </div>
+      <h1>B1 Cells – Revision Hub</h1>
+      <p>
+        Revise everything from microscopes and plant &amp; animal cells to specialised cells,
+        diffusion, and unicellular organisms. Work through the resources, watch the videos,
+        use the external links for extra help, then test yourself with the diagnostic quiz.
+      </p>
+
+      <nav aria-label="Page sections">
+        <ul class="nav-links">
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="#videos">Videos</a></li>
+          <li><a href="#useful-links">BBC Bitesize Links</a></li>
+          <li><a href="#quiz">Diagnostic Quiz</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
   <main>
     <!-- REVISION RESOURCES -->
-<section id="resources">
-  <h2>Revision Resources</h2>
-  <div class="grid">
-    
-    <article class="card">
-      <span class="tag">Self-assessment</span>
-      <h3>B1 Checklist</h3>
-      <p>
-        Check your understanding of each lesson in Chapter 1: observing cells, plant and
-        animal cells, specialised cells, movement of substances, and unicellular organisms.
-      </p>
-      <a class="button-link" href="files/B1 Checklist.pdf" target="_blank" rel="noopener">
-        Open checklist
-      </a>
-    </article>
+    <section id="resources">
+      <div class="section-card">
+        <div class="section-header">
+          <h2><span class="dot"></span>Revision Resources</h2>
+          <p class="section-subtitle">
+            Start here – check what you know, then fill any gaps using the organiser and vocab builder.
+          </p>
+        </div>
 
-    <article class="card">
-      <span class="tag">Keywords</span>
-      <h3>Glossary</h3>
-      <p>
-        All key words for B1 Cells, including cell components, specialised cells, diffusion,
-        unicellular organisms and more – with clear definitions.
-      </p>
-      <a class="button-link" href="files/B1 Glossary.docx" target="_blank" rel="noopener">
-        Open glossary
-      </a>
-    </article>
+        <div class="grid">
+          <article class="card">
+            <span class="tag">Self-assessment</span>
+            <h3>B1 Checklist</h3>
+            <p>
+              Check your understanding of each lesson in Chapter 1: observing cells, plant and
+              animal cells, specialised cells, movement of substances, and unicellular organisms.
+            </p>
+            <a class="button-link" href="files/B1 Checklist.pdf" target="_blank" rel="noopener">
+              <span>Open checklist</span><span class="chevron">↗</span>
+            </a>
+          </article>
 
-    <article class="card">
-      <span class="tag">Knowledge organiser</span>
-      <h3>Knowledge Organiser (complete)</h3>
-      <p>
-        A one-page summary of the whole topic: diagrams of plant and animal cells,
-        tables of specialised cells and their adaptations, unicellular organisms, diffusion
-        examples, and microscope steps plus a key word list.
-      </p>
-      <a class="button-link" href="files/B1 Knowledge Organiser (complete).pdf" target="_blank" rel="noopener">
-        View organiser
-      </a>
-    </article>
+          <article class="card">
+            <span class="tag">Keywords</span>
+            <h3>Glossary</h3>
+            <p>
+              All key words for B1 Cells, including cell components, specialised cells, diffusion,
+              unicellular organisms and more – with clear, student-friendly definitions.
+            </p>
+            <a class="button-link" href="files/B1 Glossary.docx" target="_blank" rel="noopener">
+              <span>Open glossary</span><span class="chevron">↗</span>
+            </a>
+          </article>
 
-    <article class="card">
-      <span class="tag">Challenge</span>
-      <h3>Knowledge Organiser (with blanks)</h3>
-      <p>
-        The same organiser but with missing labels and key words so you can test what
-        you remember from memory before checking the answers.
-      </p>
-      <a class="button-link" href="files/B1 Knowledge Organiser (with blanks).pdf" target="_blank" rel="noopener">
-        Practice organiser
-      </a>
-    </article>
+          <article class="card">
+            <span class="tag">Knowledge organiser</span>
+            <h3>Knowledge Organiser (complete)</h3>
+            <p>
+              A one-page summary of the whole topic: diagrams of plant and animal cells,
+              tables of specialised cells and their adaptations, unicellular organisms, diffusion
+              examples, and microscope steps plus a key word list.
+            </p>
+            <a class="button-link" href="files/B1 Knowledge Organiser (complete).pdf" target="_blank" rel="noopener">
+              <span>View organiser</span><span class="chevron">↗</span>
+            </a>
+          </article>
 
-    <article class="card">
-      <span class="tag">Practice questions</span>
-      <h3>Vocab Builder</h3>
-      <p>
-        Short questions to practise using key terms in sentences, covering cell structures
-        and their jobs, unicellular organisms, specialised cells and diffusion.
-      </p>
-      <a class="button-link" href="files/B1 Vocab Builder.pdf" target="_blank" rel="noopener">
-        Open vocab builder
-      </a>
-    </article>
+          <article class="card">
+            <span class="tag">Challenge</span>
+            <h3>Knowledge Organiser (with blanks)</h3>
+            <p>
+              The same organiser but with missing labels and key words so you can test what
+              you remember from memory before checking the answers.
+            </p>
+            <a class="button-link" href="files/B1 Knowledge Organiser (with blanks).pdf" target="_blank" rel="noopener">
+              <span>Practice organiser</span><span class="chevron">↗</span>
+            </a>
+          </article>
 
-  </div>
-</section>
-
+          <article class="card">
+            <span class="tag">Practice questions</span>
+            <h3>Vocab Builder</h3>
+            <p>
+              Short questions to practise using key terms in sentences, covering cell structures
+              and their jobs, unicellular organisms, specialised cells and diffusion.
+            </p>
+            <a class="button-link" href="files/B1 Vocab Builder.pdf" target="_blank" rel="noopener">
+              <span>Open vocab builder</span><span class="chevron">↗</span>
+            </a>
+          </article>
+        </div>
+      </div>
+    </section>
 
     <!-- VIDEOS -->
-<section id="videos">
-  <h2>Videos</h2>
-  <p class="video-note">
-    These videos cover all key content for B1 Cells: microscopes, plant & animal cells,
-    specialised cells, diffusion, and unicellular organisms.
-  </p>
+    <section id="videos">
+      <div class="section-card">
+        <div class="section-header">
+          <h2><span class="dot"></span>Lesson Videos</h2>
+          <p class="section-subtitle">
+            Watch these clips to revisit the main ideas before or after using your written resources.
+          </p>
+        </div>
+        <p class="video-note">
+          Tip: pause and sketch key diagrams (e.g. plant &amp; animal cells, specialised cells) as you watch.
+        </p>
 
-  <ul class="video-list">
+        <ul class="video-grid">
+          <li class="video-item">
+            <h3>Microscopes</h3>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/rHT7muCqMXE"
+                title="Microscopes"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </li>
 
-    <li>
-      <strong>Microscopes</strong><br>
-      <iframe width="360" height="203"
-              src="https://www.youtube.com/embed/rHT7muCqMXE"
-              title="Microscopes"
-              frameborder="0"
-              allowfullscreen></iframe>
-    </li>
+          <li class="video-item">
+            <h3>Animal &amp; Plant Cells</h3>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/bLeDekGNI_c"
+                title="Animal and Plant Cells"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </li>
 
-    <li>
-      <strong>Animal &amp; Plant Cells</strong><br>
-      <iframe width="360" height="203"
-              src="https://www.youtube.com/embed/bLeDekGNI_c"
-              title="Animal and Plant Cells"
-              frameborder="0"
-              allowfullscreen></iframe>
-    </li>
+          <li class="video-item">
+            <h3>Specialised Cells</h3>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/u87QpOOkdxI"
+                title="Specialised Cells"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </li>
 
-    <li>
-      <strong>Specialised Cells</strong><br>
-      <iframe width="360" height="203"
-              src="https://www.youtube.com/embed/u87QpOOkdxI"
-              title="Specialised Cells"
-              frameborder="0"
-              allowfullscreen></iframe>
-    </li>
+          <li class="video-item">
+            <h3>Diffusion</h3>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/EKt4afCtO8U"
+                title="Diffusion"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </li>
 
-    <li>
-      <strong>Diffusion</strong><br>
-      <iframe width="360" height="203"
-              src="https://www.youtube.com/embed/EKt4afCtO8U"
-              title="Diffusion"
-              frameborder="0"
-              allowfullscreen></iframe>
-    </li>
-
-    <li>
-      <strong>Unicellular Organisms</strong><br>
-      <iframe width="360" height="203"
-              src="https://www.youtube.com/embed/EcqKXm6X7eI"
-              title="Unicellular Organisms"
-              frameborder="0"
-              allowfullscreen></iframe>
-    </li>
-
-  </ul>
-</section>
-
+          <li class="video-item">
+            <h3>Unicellular Organisms</h3>
+            <div class="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/EcqKXm6X7eI"
+                title="Unicellular Organisms"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
 
     <!-- USEFUL LINKS -->
     <section id="useful-links">
-      <h2>Useful Links</h2>
-      <ul class="link-list">
-        <li>
-          <a href="#" target="_blank" rel="noopener">
-            Link 1 – Interactive plant and animal cell labeller
-          </a>
-        </li>
-        <li>
-          <a href="#" target="_blank" rel="noopener">
-            Link 2 – Revision notes on specialised cells and their functions
-          </a>
-        </li>
-        <li>
-          <a href="#" target="_blank" rel="noopener">
-            Link 3 – Diffusion animations and practice questions
-          </a>
-        </li>
-      </ul>
-      <p class="video-note">
-        Replace the <code>#</code> with real URLs (e.g. BBC Bitesize, school VLE pages, or trusted
-        revision sites).
+      <div class="section-card">
+        <div class="section-header">
+          <h2><span class="dot"></span>BBC Bitesize – Extra Revision</h2>
+          <p class="section-subtitle">
+            Use these trusted pages for extra explanations, animations and quick quizzes.
+          </p>
+        </div>
+
+        <ul class="link-list">
+          <li>
+            <a href="https://www.bbc.co.uk/bitesize/articles/zbm48mn#zm33f82"
+               target="_blank" rel="noopener">
+              Microscopes – BBC Bitesize article and activities
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bbc.co.uk/bitesize/articles/zkm7wnb#z28sg2p"
+               target="_blank" rel="noopener">
+              Animal &amp; Plant Cells – structure and function
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bbc.co.uk/bitesize/articles/zfj3rwx"
+               target="_blank" rel="noopener">
+              Specialised Cells – examples and adaptations
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bbc.co.uk/bitesize/articles/z8cqqfr#zdmxm39"
+               target="_blank" rel="noopener">
+              Diffusion – how substances move in and out of cells
+            </a>
+          </li>
+          <li>
+            <a href="https://www.bbc.co.uk/bitesize/articles/z4f26yc"
+               target="_blank" rel="noopener">
+              Unicellular Organisms – single-celled life
+            </a>
+          </li>
+        </ul>
+        <p class="video-note">
+          Try to match each page to the checklist and knowledge organiser so you revise every part of the topic.
+        </p>
+      </div>
+    </section>
+
+    <!-- DIAGNOSTIC QUIZ -->
+    <section id="quiz">
+      <div class="section-card">
+        <div class="section-header">
+          <h2><span class="dot"></span>Diagnostic Quiz – How Ready Are You?</h2>
+          <p class="section-subtitle">
+            Quick check of key ideas. Use your score to decide what to revise next.
+          </p>
+        </div>
+
+        <p id="quiz-intro">
+          Answer the questions, then check your score. If you miss some, use the checklist and
+          BBC Bitesize links above to fill any gaps.
+        </p>
+
+        <div class="quiz-layout">
+          <form id="diagnostic-quiz">
+            <div class="question">
+              <p>1. Which part of a cell controls what enters and leaves the cell?</p>
+              <label><input type="radio" name="q1" value="a" /> Nucleus</label>
+              <label><input type="radio" name="q1" value="b" /> Cell membrane</label>
+              <label><input type="radio" name="q1" value="c" /> Cytoplasm</label>
+            </div>
+
+            <div class="question">
+              <p>2. Which component is present in plant cells but not animal cells?</p>
+              <label><input type="radio" name="q2" value="a" /> Mitochondria</label>
+              <label><input type="radio" name="q2" value="b" /> Nucleus</label>
+              <label><input type="radio" name="q2" value="c" /> Cell wall</label>
+            </div>
+
+            <div class="question">
+              <p>3. What is the best definition of diffusion?</p>
+              <label><input type="radio" name="q3" value="a" />
+                Movement of particles from low concentration to high concentration</label>
+              <label><input type="radio" name="q3" value="b" />
+                Movement of liquid from one cell to another</label>
+              <label><input type="radio" name="q3" value="c" />
+                Movement of particles from high concentration to low concentration</label>
+            </div>
+
+            <div class="question">
+              <p>4. Which specialised cell is adapted to carry electrical impulses around the body?</p>
+              <label><input type="radio" name="q4" value="a" /> Red blood cell</label>
+              <label><input type="radio" name="q4" value="b" /> Nerve cell (neurone)</label>
+              <label><input type="radio" name="q4" value="c" /> Root hair cell</label>
+            </div>
+
+            <div class="question">
+              <p>5. Which feature helps a root hair cell absorb water efficiently?</p>
+              <label><input type="radio" name="q5" value="a" /> Many chloroplasts</label>
+              <label><input type="radio" name="q5" value="b" /> Large surface area from the root hair</label>
+              <label><input type="radio" name="q5" value="c" /> A disc shape</label>
+            </div>
+
+            <div class="question">
+              <p>6. What is a unicellular organism?</p>
+              <label><input type="radio" name="q6" value="a" />
+                An organism made of many specialised cells</label>
+              <label><input type="radio" name="q6" value="b" />
+                An organism made of only one cell</label>
+              <label><input type="radio" name="q6" value="c" />
+                A cell with a nucleus</label>
+            </div>
+
+            <div class="question">
+              <p>7. What do you do first when focusing a microscope on a slide?</p>
+              <label><input type="radio" name="q7" value="a" />
+                Use the highest-power objective lens straight away</label>
+              <label><input type="radio" name="q7" value="b" />
+                Move the stage to its lowest position and use the lowest-power lens</label>
+              <label><input type="radio" name="q7" value="c" />
+                Add more stain until the specimen is dark</label>
+            </div>
+
+            <div class="question">
+              <p>8. Why do red blood cells not have a nucleus?</p>
+              <label><input type="radio" name="q8" value="a" />
+                To give more space to carry oxygen</label>
+              <label><input type="radio" name="q8" value="b" />
+                So they can carry out photosynthesis</label>
+              <label><input type="radio" name="q8" value="c" />
+                Because they do not need to respire</label>
+            </div>
+
+            <button type="submit">Check my score</button>
+          </form>
+
+          <div>
+            <div id="quiz-result" tabindex="-1" role="status" aria-live="polite"></div>
+            <p class="quiz-hint">
+              Rough guide:
+              <br><strong>0–3</strong> – Start with the complete knowledge organiser and “Microscopes/Cells” BBC pages.
+              <br><strong>4–6</strong> – Use the checklist to find weak spots, then revisit those videos and links.
+              <br><strong>7–8</strong> – Try the blank organiser and vocab builder to push yourself further.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    B1 Cells Revision • Biology Theme Page
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const quizForm = document.getElementById("diagnostic-quiz");
+      const resultDiv = document.getElementById("quiz-result");
+
+      const answers = {
+        q1: "b",
+        q2: "c",
+        q3: "c",
+        q4: "b",
+        q5: "b",
+        q6: "b",
+        q7: "b",
+        q8: "a",
+      };
+
+      quizForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        let score = 0;
+        const total = Object.keys(answers).length;
+
+        for (const [name, correct] of Object.entries(answers)) {
+          const chosen = quizForm.querySelector('input[name="' + name + '"]:checked');
+          if (chosen && chosen.value === correct) {
+            score++;
+          }
+        }
+
+        let message;
+        if (score <= 3) {
+          message =
+            "Keep practising – start with the complete knowledge organiser and the microscopes / plant & animal cells BBC pages.";
+        } else if (score <= 6) {
+          message =
+            "Developing – use the checklist to spot any weak areas, then revisit those topics using the organiser, vocab builder and BBC links.";
+        } else {
+          message =
+            "Secure/Extending – great work! Challenge yourself with the blank knowledge organiser, vocab builder and harder questions from your teacher.";
+        }
+
+        resultDiv.textContent = "You scored " + score + " out of " + total + ". " + message;
+        resultDiv.style.display = "block";
+        resultDiv.focus();
+      });
+    });
   </script>
 </body>
 </html>
