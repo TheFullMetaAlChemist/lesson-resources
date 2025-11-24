@@ -1,754 +1,1488 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Interactive Lesson: Introducing Forces</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Year 7 Science: Mastering Forces</title>
   <style>
-    /* Import a modern sans-serif font */
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --accent: #f72585;
+      --success: #4cc9f0;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #2b2d42;
+      --text-light: #8d99ae;
+      --book-task-bg: #fffbf0;
+      --book-task-border: #f5c518;
+    }
 
+    /* --- Base Styles --- */
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       margin: 0;
       padding: 0;
-      color: #333;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
     }
-    .container {
+
+    .app-container {
+      width: 100%;
       max-width: 900px;
-      margin: 40px auto;
-      background-color: #fff;
-      padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin: 20px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       position: relative;
     }
-    h1 {
-      text-align: center;
-      color: #01579b;
-      margin-bottom: 20px;
+
+    /* --- Header & Progress --- */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    h2 {
-      text-align: center;
-      color: #0277bd;
-      margin-top: 30px;
-      border-bottom: 2px solid #81d4fa;
-      padding-bottom: 5px;
+
+    .progress-track {
+      flex-grow: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 4px;
+      margin: 0 20px;
+      overflow: hidden;
     }
-    h3 {
-      text-align: center;
-      color: #0288d1;
-      margin-top: 20px;
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      width: 10%;
+      transition: width 0.5s ease;
     }
-    p, li {
-      line-height: 1.6;
-      font-size: 1.1em;
+
+    .badge-container {
+      display: flex;
+      gap: 5px;
+      font-size: 0.8rem;
+      flex-wrap: wrap;
     }
-    ul {
-      margin-left: 20px;
+
+    .badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 8px;
+      border-radius: 12px;
+      opacity: 0.5;
     }
+
+    .badge.earned {
+      opacity: 1;
+      background: var(--accent);
+      font-weight: bold;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    /* --- Content Area --- */
+    .content-area {
+      padding: 30px;
+      flex-grow: 1;
+      position: relative;
+      overflow-y: auto;
+    }
+
     .screen {
       display: none;
+      animation: fadeIn 0.4s ease;
     }
-    .active {
+
+    .screen.active {
       display: block;
     }
-    .question, .practice-question {
-      margin: 15px 0;
-      padding: 15px;
-      border: 1px solid #b3e5fc;
-      border-radius: 8px;
-      background-color: #e1f5fe;
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .hidden {
-      display: none;
-    }
-    button {
-      padding: 10px 16px;
+
+    h2 { color: var(--secondary); border-bottom: 2px solid #edf2f4; padding-bottom: 10px; }
+    h3 { color: var(--primary); font-size: 1.1rem; margin-top: 20px; }
+    p { line-height: 1.6; font-size: 1.05rem; color: #4a4e69; }
+
+    /* --- Interactive Components --- */
+    .btn {
+      background: var(--primary);
+      color: white;
       border: none;
-      background-color: #0277bd;
-      color: #fff;
-      border-radius: 5px;
+      padding: 12px 24px;
+      border-radius: 8px;
       cursor: pointer;
-      margin: 5px;
-      font-size: 1em;
-      transition: background-color 0.3s ease;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
-    button:hover {
-      background-color: #01579b;
+
+    .btn:hover { background: var(--secondary); transform: translateY(-2px); }
+    .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+    .btn-outline:hover { background: #edf2f4; }
+    
+    .nav-bar {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #edf2f4;
+      padding-top: 20px;
     }
-    button:disabled {
-      background-color: #90caf9;
-      color: #e3f2fd;
-      cursor: not-allowed;
-    }
-    .feedback {
-      color: #d32f2f;
-      margin-left: 10px;
-      font-weight: 500;
-    }
-    select, input[type="number"], input[type="text"], textarea {
-      padding: 8px;
-      margin-top: 5px;
-      font-size: 1em;
-      border: 1px solid #90caf9;
-      border-radius: 4px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+
+    /* Choice Cards */
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
       margin: 20px 0;
     }
-    table, th, td {
-      border: 1px solid #81d4fa;
-    }
-    th, td {
-      padding: 12px;
+
+    .choice-card {
+      border: 2px solid #edf2f4;
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
       text-align: center;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 60px;
     }
-    .equation-help {
-      background-color: #e0f2f1;
-      border: 1px solid #80cbc4;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      font-style: italic;
+
+    .choice-card:hover { border-color: var(--primary); background: #f0f4ff; }
+    .choice-card.selected { border-color: var(--primary); background: #e0e7ff; font-weight: bold; }
+    .choice-card.correct { border-color: #2ec4b6; background: #cbfffd; color: #006d64; }
+    .choice-card.wrong { border-color: #ef233c; background: #ffe5ec; color: #d90429; }
+
+    /* Visualizations (SVG Containers) */
+    .visual-container {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+      min-height: 220px;
     }
-    .toggle-btn {
-      background-color: #039be5;
-    }
-    .nav-btn {
-      background-color: #f57c00;
-    }
-    /* Calculator styling */
+
+    /* --- Calculator --- */
     #calculator {
       display: none;
       position: absolute;
-      top: 120px;
-      left: 120px;
-      z-index: 1000;
-      border: 2px solid #01579b;
-      background-color: #e1f5fe;
-      padding: 10px;
-      width: 300px;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.3);
-      border-radius: 8px;
+      top: 100px;
+      right: 20px;
+      width: 260px;
+      background: #2b2d42;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      z-index: 100;
     }
+
     #calculator-header {
-      cursor: move;
-      background-color: #0277bd;
-      color: #fff;
-      padding: 8px;
-      font-weight: 700;
-      text-align: center;
-      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      margin-bottom: 10px;
+      cursor: grab;
+      display: flex;
+      justify-content: space-between;
     }
+
     #calc-display {
       width: 100%;
-      height: 40px;
-      font-size: 1.4em;
-      margin: 10px 0;
+      height: 50px;
+      background: #8d99ae;
+      color: #000;
+      font-size: 1.5em;
       text-align: right;
-      padding-right: 10px;
-      border: 1px solid #81d4fa;
-      border-radius: 4px;
-      background-color: #fff;
+      padding: 10px;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
     }
-    #calc-buttons button {
-      width: 60px;
-      height: 60px;
-      margin: 4px;
-      font-size: 1.2em;
-      border: 1px solid #81d4fa;
-      border-radius: 4px;
-      background-color: #0277bd;
-      color: #fff;
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
-    /* Performance Descriptor screen */
-    #descriptorMessage {
-      font-size: 2em;
-      font-weight: 700;
+
+    .calc-btn {
+      background: #4a4e69;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 1.1em;
+      cursor: pointer;
+    }
+
+    .calc-btn:hover { background: #9a8c98; }
+    .calc-btn.op { background: var(--accent); }
+    .calc-btn.eq { grid-column: span 4; background: var(--success); }
+
+    /* --- Data Table --- */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.95rem;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    .data-table th { background: var(--primary); color: white; }
+    .data-table input, .data-table select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+    }
+
+    /* --- Feedback Box --- */
+    .feedback-box {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 500;
+      display: none;
+    }
+    .feedback-box.show { display: block; animation: fadeIn 0.3s; }
+    .feedback-box.correct { color: #006d64; background: #cbfffd; border-left: 4px solid #2ec4b6; }
+    .feedback-box.wrong { color: #d90429; background: #ffe5ec; border-left: 4px solid #ef233c; }
+
+    /* --- Cloze (Fill in blanks) Styles --- */
+    .cloze-container {
+      background: #fff;
+      padding: 20px;
+      border: 2px solid #edf2f4;
+      border-radius: 12px;
+      line-height: 2.2;
+    }
+    .cloze-input {
+      border: none;
+      border-bottom: 2px solid var(--primary);
+      background: #f0f4ff;
+      width: 120px;
       text-align: center;
-      color: #2e7d32;
-      margin-top: 30px;
+      padding: 4px;
+      margin: 0 5px;
+      font-weight: bold;
+      color: var(--secondary);
     }
+    .cloze-input.correct { background: #cbfffd; border-color: #2ec4b6; }
+    .cloze-input.wrong { background: #ffe5ec; border-color: #ef233c; }
+
+    /* --- Book Activity / Digital Worksheet Styles --- */
+    .book-activity {
+      margin-top: 30px;
+      background-color: var(--book-task-bg);
+      border: 2px dashed var(--book-task-border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .book-activity h4 {
+      margin-top: 0;
+      color: #947600; /* Dark yellow/gold */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-help {
+      background-color: #ffca28;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-help:hover { background-color: #ffc107; }
+
+    .btn-check {
+      background-color: #26a69a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-check:hover { background-color: #00897b; }
+
+    .hidden-panel {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+
+    .help-panel {
+      background-color: #fff8e1;
+      border-left: 4px solid #ffca28;
+      color: #5d4037;
+    }
+
+    .mark-scheme-panel {
+      background-color: #e0f2f1;
+      border-left: 4px solid #26a69a;
+      color: #004d40;
+    }
+
+    /* --- GAME STYLES (New for Knowledge Blitz) --- */
+    .game-area {
+        background: #2b2d42;
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 20px;
+        text-align: center;
+    }
+    .game-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .game-card {
+        background: #4a4e69;
+        padding: 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+        border: 2px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80px;
+        font-weight: bold;
+    }
+    .game-card:hover { transform: scale(1.02); background: #5c6185; }
+    .game-card.selected { border-color: #f72585; background: #3f37c9; }
+    .game-card.matched { background: #4cc9f0; color: #000; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+    .game-card.wrong { background: #ef233c; animation: shake 0.4s; }
+
+    .timer-bar {
+        width: 100%;
+        height: 10px;
+        background: #333;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .timer-fill {
+        height: 100%;
+        background: #f72585;
+        width: 100%;
+        transition: width 1s linear;
+    }
+
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+    }
+
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>Introducing Forces</h1>
-  <!-- Persistent Navigation -->
-  <div style="text-align:right;">
-    <button class="nav-btn" onclick="showScreen(9)">Practical Data</button>
-    <button class="nav-btn" onclick="showPerformanceDescriptor()">How did I do?</button>
-    <button class="nav-btn" onclick="toggleCalculator()">Calculator</button>
-  </div>
-  
-  <!-- Screen 1: What Is a Force? -->
-  <div id="screen1" class="screen active">
-    <h2>1. What Is a Force?</h2>
-    <p><strong>Concept:</strong> A force is a push or a pull that acts on an object. Forces can be caused by contact (like pushing a swing) or from a distance (like gravity pulling you down). In space, a rocket lifts off because its engines exert a huge force pushing it upward, overcoming gravity.</p>
-    <p>Forces can cause objects to start moving, stop moving, speed up, slow down, or change direction. They can also change an object’s shape.</p>
-    <button onclick="showScreen(2)">Next</button>
-  </div>
-  
-  <!-- Screen 2: Check Understanding: Forces -->
-  <div id="screen2" class="screen">
-    <h2>2. Check Understanding: Forces</h2>
-    <div class="question">
-      <p>Which of the following best describes a force?</p>
-      <select id="q2a">
-        <option value="">--Select--</option>
-        <option value="A push or pull on an object.">A push or pull on an object.</option>
-        <option value="A measure of distance traveled.">A measure of distance traveled.</option>
-        <option value="A type of energy.">A type of energy.</option>
-        <option value="Only something that happens in space.">Only something that happens in space.</option>
-      </select>
-      <span id="feedback2a" class="feedback"></span>
+
+<!-- GLOBAL SVG DEFS -->
+<svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Pink Arrowhead -->
+    <marker id="arrowhead-pink" markerWidth="5" markerHeight="3.5" refX="4.5" refY="1.75" orient="auto">
+      <polygon points="0 0, 5 1.75, 0 3.5" fill="#f72585" />
+    </marker>
+    <!-- Blue Arrowhead -->
+    <marker id="arrowhead-blue" markerWidth="5" markerHeight="3.5" refX="4.5" refY="1.75" orient="auto">
+      <polygon points="0 0, 5 1.75, 0 3.5" fill="#4361ee" />
+    </marker>
+    <!-- Black Arrowhead -->
+    <marker id="arrowhead-black" markerWidth="5" markerHeight="3.5" refX="4.5" refY="1.75" orient="auto">
+      <polygon points="0 0, 5 1.75, 0 3.5" fill="#333" />
+    </marker>
+    <!-- Patterns -->
+    <pattern id="brickPattern" x="0" y="0" width="20" height="10" patternUnits="userSpaceOnUse">
+       <rect width="20" height="10" fill="#ced4da" stroke="#adb5bd" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="boxGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3f37c9;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="app-container">
+  <header>
+    <div style="font-weight: 700; font-size: 1.2rem;">Forces Lab</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar"></div>
     </div>
-    <div class="question">
-      <p>What can forces do to an object? (Choose the <em>best</em> answer)</p>
-      <select id="q2b">
-        <option value="">--Select--</option>
-        <option value="Nothing, unless the object is already moving.">Nothing, unless the object is already moving.</option>
-        <option value="Only speed it up.">Only speed it up.</option>
-        <option value="Change its motion or shape.">Change its motion or shape.</option>
-        <option value="Turn it into another substance.">Turn it into another substance.</option>
-      </select>
-      <span id="feedback2b" class="feedback"></span>
+    <div class="badge-container">
+      <div id="badge-concept" class="badge">Concept</div>
+      <div id="badge-vector" class="badge">Vectors</div>
+      <div id="badge-types" class="badge">Types</div>
+      <div id="badge-newton" class="badge">Newton's 3rd</div>
+      <div id="badge-measure" class="badge">Measure</div>
     </div>
-    <button onclick="checkScreen2()">Check Answers</button>
-    <br><br>
-    <button onclick="showScreen(1)">Back</button>
-    <button id="next2" disabled onclick="showScreen(3)">Next</button>
-  </div>
-  
-  <!-- Screen 3: Describing Forces -->
-  <div id="screen3" class="screen">
-    <h2>3. Describing Forces</h2>
-    <p>We often describe forces by their size (measured in newtons, N) and the direction in which they act. For example, a 5 N force acting upwards on a book can balance a 5 N weight pulling down.</p>
-    <p>Sometimes we use arrows to show forces: the length of the arrow can represent how big the force is, and the arrow points in the direction of the force.</p>
-    <p>Remember: If forces are equal in size and opposite in direction, they can balance each other out.</p>
-    <button onclick="showScreen(4)">Next</button>
-    <br><br>
-    <button onclick="showScreen(2)">Back</button>
-  </div>
-  
-  <!-- Screen 4: Practice – Describing Forces -->
-  <div id="screen4" class="screen">
-    <h2>4. Practice: Describing Forces</h2>
-    <button class="toggle-btn" onclick="toggleHelp('help4')">Toggle Help: Describing Forces</button>
-    <div id="help4" class="equation-help hidden">
-      <p><strong>Tip:</strong> Remember to consider both the size (in newtons) and the direction of a force.</p>
+    <div style="margin-left: 15px;">
+      <button class="btn btn-outline" style="padding: 5px 10px; font-size:0.8rem;" onclick="toggleCalculator()">Calc</button>
     </div>
-    <div id="s4q1" class="practice-question">
-      <p><strong>Question 1:</strong> You push a door with 10 N to the east. How might we represent this force?</p>
-      <select id="s4q1-answer">
-        <option value="">--Select--</option>
-        <option value="A 10 N arrow pointing east.">A 10 N arrow pointing east.</option>
-        <option value="A 10 m/s arrow pointing east.">A 10 m/s arrow pointing east.</option>
-        <option value="A 10 kg arrow pointing east.">A 10 kg arrow pointing east.</option>
-        <option value="We don't use arrows for force.">We don't use arrows for force.</option>
-      </select>
-      <button onclick="checkS4Q1()">Check Answer</button>
-      <span id="s4q1-feedback" class="feedback"></span>
+  </header>
+
+  <div class="content-area">
+
+    <!-- Screen 1: Introduction -->
+    <div id="screen1" class="screen active">
+      <h2>1. What Is a Force?</h2>
+      <p>A force is simply a <strong>push</strong> or a <strong>pull</strong>.</p>
+      
+      <div class="visual-container">
+        <!-- Improved Rocket Diagram -->
+        <svg width="250" height="220" viewBox="0 0 200 170">
+          <g transform="translate(100, 100)">
+            <path d="M-15,-40 C-15,-70 15,-70 15,-40 L15,10 L-15,10 Z" fill="#e0e0e0" stroke="#333" stroke-width="2"/>
+            <path d="M-15,0 L-25,20 L-15,10 Z" fill="#f72585" stroke="#333" stroke-width="1"/>
+            <path d="M15,0 L25,20 L15,10 Z" fill="#f72585" stroke="#333" stroke-width="1"/>
+            <circle cx="0" cy="-25" r="8" fill="#4cc9f0" stroke="#333" stroke-width="2"/>
+            <path d="M-10,10 Q0,40 10,10" fill="#f72585" class="thrust-anim">
+              <animate attributeName="d" values="M-10,10 Q0,35 10,10;M-10,10 Q0,50 10,10;M-10,10 Q0,35 10,10" dur="0.15s" repeatCount="indefinite" />
+            </path>
+          </g>
+          <!-- Labels with Arrows -->
+          <line x1="100" y1="30" x2="100" y2="5" stroke="#f72585" stroke-width="3" marker-end="url(#arrowhead-pink)"/>
+          <text x="110" y="20" font-size="12" fill="#333" font-weight="bold">Thrust (Push)</text>
+          
+          <line x1="100" y1="110" x2="100" y2="150" stroke="#333" stroke-width="3" marker-end="url(#arrowhead-black)"/>
+          <text x="110" y="140" font-size="12" fill="#333" font-weight="bold">Gravity (Pull)</text>
+        </svg>
+      </div>
+
+      <p>Forces can start objects moving, stop them, change their direction, or change their shape.</p>
+
+      <!-- Book Activity 1 -->
+      <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 1</h4>
+        <p><strong>In your book:</strong></p>
+        <ol>
+          <li>Write the title: <u>What is a Force?</u></li>
+          <li>Write a one-sentence definition of a force.</li>
+          <li>List 4 effects a force can have on an object.</li>
+        </ol>
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-1')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-1')">✅ Check Mark Scheme</button>
+        </div>
+        <div id="help-1" class="hidden-panel help-panel">
+          <strong>Prompts:</strong>
+          <ul>
+            <li>Think about the two P-words: P___ or P___.</li>
+            <li>Think about a car driving: How does it start? How does it turn? What happens in a crash?</li>
+          </ul>
+        </div>
+        <div id="ans-1" class="hidden-panel mark-scheme-panel">
+          <strong>Mark Scheme:</strong>
+          <ul>
+            <li><strong>Definition:</strong> A force is a push or a pull.</li>
+            <li><strong>4 Effects:</strong> Start moving, Stop moving, Change direction, Change shape.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <span></span>
+        <button class="btn" onclick="nextScreen(2)">Start Learning &rarr;</button>
+      </div>
     </div>
-    <div id="s4q2" class="practice-question hidden">
-      <p><strong>Question 2:</strong> Two people pull on opposite sides of a rope, each with 50 N. How would you describe these forces?</p>
-      <select id="s4q2-answer">
-        <option value="">--Select--</option>
-        <option value="Equal in size, opposite in direction.">Equal in size, opposite in direction.</option>
-        <option value="Same direction, same size.">Same direction, same size.</option>
-        <option value="No forces acting.">No forces acting.</option>
-        <option value="They cancel each other out, so 0 N in total.">They cancel each other out, so 0 N in total.</option>
-      </select>
-      <button onclick="checkS4Q2()">Check Answer</button>
-      <span id="s4q2-feedback" class="feedback"></span>
+
+    <!-- Screen 2: Check Understanding (Expanded) -->
+    <div id="screen2" class="screen">
+      <h2>2. Quick Check</h2>
+      
+      <p><strong>Q1: Which definition is best?</strong></p>
+      <div class="choice-grid" id="q2a-options">
+        <div class="choice-card" onclick="checkQ2A(this, false)">A type of bright energy</div>
+        <div class="choice-card" onclick="checkQ2A(this, true)">A push or a pull</div>
+        <div class="choice-card" onclick="checkQ2A(this, false)">The speed of an object</div>
+      </div>
+      <div id="fb-2a" class="feedback-box"></div>
+
+      <div id="q2b-container" style="display:none; margin-top:20px;">
+        <p><strong>Q2: What can a force do to a football?</strong></p>
+        <div class="choice-grid">
+          <div class="choice-card" onclick="checkQ2B(this, false)">Change its mass</div>
+          <div class="choice-card" onclick="checkQ2B(this, true)">Change its direction</div>
+          <div class="choice-card" onclick="checkQ2B(this, false)">Turn it into gold</div>
+        </div>
+        <div id="fb-2b" class="feedback-box"></div>
+      </div>
+
+      <div id="q2c-container" style="display:none; margin-top:20px;">
+        <p><strong>Q3: Can a force change an object's shape?</strong></p>
+        <div class="choice-grid">
+            <div class="choice-card" onclick="checkQ2C(this, true)">Yes</div>
+            <div class="choice-card" onclick="checkQ2C(this, false)">No</div>
+        </div>
+        <div id="fb-2c" class="feedback-box"></div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(1)">Back</button>
+        <button class="btn" id="btn-next-2" disabled onclick="nextScreen(3)">Next &rarr;</button>
+      </div>
     </div>
-    <div id="s4q3" class="practice-question hidden">
-      <p><strong>Question 3:</strong> If a 5 N arrow points upward, and a 3 N arrow points downward on the same object, how would you describe the resultant force?</p>
-      <select id="s4q3-answer">
-        <option value="">--Select--</option>
-        <option value="2 N upwards.">2 N upwards.</option>
-        <option value="2 N downwards.">2 N downwards.</option>
-        <option value="8 N upwards.">8 N upwards.</option>
-        <option value="No resultant force.">No resultant force.</option>
-      </select>
-      <button onclick="checkS4Q3()">Check Answer</button>
-      <span id="s4q3-feedback" class="feedback"></span>
+
+    <!-- Screen 3: Describing Forces (Vectors) -->
+    <div id="screen3" class="screen">
+      <h2>3. Visualising Forces (Vectors)</h2>
+      <p>Forces have a <strong>size</strong> (Newtons, N) and a <strong>direction</strong>.</p>
+      <p>We draw arrows to show this. <strong>Important rule:</strong> The arrow must <strong>touch</strong> the object.</p>
+
+      <div class="visual-container">
+        <svg width="400" height="180">
+          <rect x="50" y="130" width="300" height="10" fill="#e9ecef" />
+          <line x1="50" y1="130" x2="350" y2="130" stroke="#adb5bd" stroke-width="2"/>
+          <rect x="170" y="70" width="60" height="60" fill="url(#boxGradient)" stroke="#2b2d42" stroke-width="2" rx="4" />
+          
+          <g id="demo-arrows">
+            <line x1="170" y1="100" x2="110" y2="100" stroke="#333" stroke-width="3" marker-end="url(#arrowhead-black)"/>
+            <text x="70" y="90" class="force-text" fill="#333">Friction (10N)</text>
+            <line x1="230" y1="100" x2="310" y2="100" stroke="#f72585" stroke-width="5" marker-end="url(#arrowhead-pink)"/>
+            <text x="250" y="85" class="force-text" fill="#f72585">Push (20N)</text>
+          </g>
+        </svg>
+      </div>
+      <p><em>Notice how the arrows start exactly on the box.</em></p>
+
+       <!-- Book Activity 3 -->
+       <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 2</h4>
+        <p><strong>In your book:</strong></p>
+        <p>Draw a diagram of a box sitting on the floor.</p>
+        <ol>
+          <li>Draw a <strong>Push force</strong> of 20N acting to the right.</li>
+          <li>Draw a <strong>Friction force</strong> of 10N acting to the left.</li>
+        </ol>
+        <p><em>Make sure your arrows follow the rules!</em></p>
+        
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-3')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-3')">✅ Check Mark Scheme</button>
+        </div>
+        <div id="help-3" class="hidden-panel help-panel">
+          <strong>Prompts:</strong>
+          <ul>
+            <li>Draw a square for the box and a line for the floor.</li>
+            <li>Where must the arrow start? (It must touch the box).</li>
+            <li>Which arrow should be longer? (20N is bigger than 10N).</li>
+            <li>Friction always goes opposite to movement.</li>
+          </ul>
+        </div>
+        <div id="ans-3" class="hidden-panel mark-scheme-panel">
+          <strong>Mark Scheme:</strong>
+          <ul>
+            <li>Square box drawn on a straight line.</li>
+            <li>Arrow pointing RIGHT labelled "20N" or "Push".</li>
+            <li>Arrow pointing LEFT labelled "10N" or "Friction".</li>
+            <li>The Right arrow should be longer than the Left arrow.</li>
+            <li><strong>Critical:</strong> Both arrows must physically touch the box outline.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(2)">Back</button>
+        <button class="btn" onclick="nextScreen(4)">Practice &rarr;</button>
+      </div>
     </div>
-    <br>
-    <button id="next4" disabled onclick="showScreen(5)">Next</button>
-    <br><br>
-    <button onclick="showScreen(3)">Back</button>
-  </div>
-  
-  <!-- Screen 5: Different Types of Forces -->
-  <div id="screen5" class="screen">
-    <h2>5. Different Types of Forces</h2>
-    <p>We can group forces into different types:</p>
-    <ul>
-      <li><strong>Contact forces:</strong> friction, air resistance, tension, normal contact force (the push from a surface), etc.</li>
-      <li><strong>Non-contact forces:</strong> gravity, magnetism, and electrostatic forces, which act at a distance.</li>
-    </ul>
-    <p>For instance, gravity is always pulling you down, while the floor pushes you up with a contact force. A magnet can pull a piece of metal without touching it—that’s a non-contact force.</p>
-    <button onclick="showScreen(6)">Next</button>
-    <br><br>
-    <button onclick="showScreen(4)">Back</button>
-  </div>
-  
-  <!-- Screen 6: Practice – Different Types of Forces -->
-  <div id="screen6" class="screen">
-    <h2>6. Practice: Different Types of Forces</h2>
-    <button class="toggle-btn" onclick="toggleHelp('help6')">Toggle Help: Contact vs. Non-contact</button>
-    <div id="help6" class="equation-help hidden">
-      <p><strong>Reminder:</strong> Contact forces require physical contact between objects. Non-contact forces can act at a distance.</p>
+
+    <!-- Screen 4: Vector Practice (Expanded) -->
+    <div id="screen4" class="screen">
+      <h2>4. Practice: Force Diagrams</h2>
+      
+      <!-- Part 1: Calculation -->
+      <div id="vec-p1">
+          <h3>Part 1: Resultant Force</h3>
+          <div class="visual-container">
+            <svg width="300" height="180">
+              <line x1="20" y1="140" x2="280" y2="140" stroke="#888" stroke-width="2"/>
+              <rect x="125" y="90" width="50" height="50" fill="url(#boxGradient)" stroke="#333" stroke-width="2" rx="4"/>
+              <line x1="150" y1="90" x2="150" y2="30" stroke="#f72585" stroke-width="4" marker-end="url(#arrowhead-pink)"/>
+              <text x="160" y="50" class="force-text" fill="#f72585">5N (Up)</text>
+              <line x1="150" y1="140" x2="150" y2="175" stroke="#333" stroke-width="4" marker-end="url(#arrowhead-black)"/>
+              <text x="160" y="170" class="force-text" fill="#333">3N (Down)</text>
+            </svg>
+          </div>
+          <p><strong>Calculate the Resultant Force:</strong></p>
+          <div class="choice-grid">
+            <div class="choice-card" onclick="checkVector(this, false)">8N Down</div>
+            <div class="choice-card" onclick="checkVector(this, true)">2N Up</div>
+            <div class="choice-card" onclick="checkVector(this, false)">2N Down</div>
+            <div class="choice-card" onclick="checkVector(this, false)">0N (Balanced)</div>
+          </div>
+          <div id="fb-vector" class="feedback-box"></div>
+      </div>
+
+      <!-- Part 2: Diagram Rules -->
+      <div id="vec-p2" style="display:none; margin-top:30px; border-top:1px solid #ddd;">
+          <h3>Part 2: Drawing Rules</h3>
+          <p><strong>Which rule about force arrows is correct?</strong></p>
+          <div class="choice-grid">
+            <div class="choice-card" onclick="checkVectorRule(this, false)">They can float near the object</div>
+            <div class="choice-card" onclick="checkVectorRule(this, true)">They must touch the object</div>
+            <div class="choice-card" onclick="checkVectorRule(this, false)">They must be curvy</div>
+          </div>
+          <div id="fb-vector-rule" class="feedback-box"></div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(3)">Back</button>
+        <button class="btn" id="btn-next-4" disabled onclick="nextScreen(5)">Next &rarr;</button>
+      </div>
     </div>
-    <div id="s6q1" class="practice-question">
-      <p><strong>Question 1:</strong> Which of these is a non-contact force?</p>
-      <select id="s6q1-answer">
-        <option value="">--Select--</option>
-        <option value="Friction">Friction</option>
-        <option value="Gravity">Gravity</option>
-        <option value="Tension in a rope">Tension in a rope</option>
-        <option value="Normal contact force from a table">Normal contact force from a table</option>
-      </select>
-      <button onclick="checkS6Q1()">Check Answer</button>
-      <span id="s6q1-feedback" class="feedback"></span>
+
+    <!-- Screen 5: Types of Forces (Expanded) -->
+    <div id="screen5" class="screen">
+      <h2>5. Contact vs. Non-Contact</h2>
+      
+      <p style="margin-top:20px;"><strong>Task 1: Sort these forces.</strong></p>
+      <table class="data-table">
+        <tr>
+          <th>Scenario</th>
+          <th>Type?</th>
+        </tr>
+        <tr>
+          <td>Apple falling from tree (Gravity)</td>
+          <td>
+            <select id="type-select-1" onchange="checkTypes()">
+              <option value="">Select...</option>
+              <option value="C">Contact</option>
+              <option value="NC">Non-Contact</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Kicking a ball</td>
+          <td>
+            <select id="type-select-2" onchange="checkTypes()">
+              <option value="">Select...</option>
+              <option value="C">Contact</option>
+              <option value="NC">Non-Contact</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Magnet picking up a clip</td>
+          <td>
+            <select id="type-select-3" onchange="checkTypes()">
+              <option value="">Select...</option>
+              <option value="C">Contact</option>
+              <option value="NC">Non-Contact</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <div id="fb-types" class="feedback-box"></div>
+
+      <!-- Task 2: Swimming Example -->
+      <div id="types-p2" style="display:none; margin-top:30px; border-top:1px solid #ddd;">
+        <h3>Task 2: Applied Knowledge</h3>
+        <p><strong>You are swimming. Name a CONTACT force acting on you.</strong></p>
+        <div class="choice-grid">
+            <div class="choice-card" onclick="checkSwimming(this, false)">Gravity</div>
+            <div class="choice-card" onclick="checkSwimming(this, true)">Water Resistance (Friction)</div>
+            <div class="choice-card" onclick="checkSwimming(this, false)">Magnetic Force</div>
+        </div>
+        <div id="fb-swim" class="feedback-box"></div>
+      </div>
+
+       <!-- Book Activity 5 -->
+       <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 3</h4>
+        <p><strong>In your book:</strong></p>
+        <p>Create a T-Table with two columns: <strong>Contact Forces</strong> and <strong>Non-Contact Forces</strong>.</p>
+        <p>Sort these forces into the correct column:</p>
+        <p style="background:#fff; padding:10px; border:1px solid #ddd;">Friction, Gravity, Magnetic Force, Air Resistance, Tension, Static Electricity</p>
+        
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-5')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-5')">✅ Check Mark Scheme</button>
+        </div>
+        <div id="help-5" class="hidden-panel help-panel">
+          <strong>Prompts:</strong>
+          <ul>
+            <li>Ask yourself: Does the object need to physically TOUCH the source of the force?</li>
+            <li>If I drop a pen, does the Earth touch it to pull it down? (No -> Non-contact).</li>
+            <li>If I pull a rope, do I touch the rope? (Yes -> Contact).</li>
+          </ul>
+        </div>
+        <div id="ans-5" class="hidden-panel mark-scheme-panel">
+          <strong>Mark Scheme:</strong>
+          <ul>
+            <li><strong>Contact:</strong> Friction, Air Resistance, Tension.</li>
+            <li><strong>Non-Contact:</strong> Gravity, Magnetic Force, Static Electricity.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(4)">Back</button>
+        <button class="btn" id="btn-next-5" disabled onclick="nextScreen(6)">Next &rarr;</button>
+      </div>
     </div>
-    <div id="s6q2" class="practice-question hidden">
-      <p><strong>Question 2:</strong> A magnet pulling a paper clip is an example of which force type?</p>
-      <select id="s6q2-answer">
-        <option value="">--Select--</option>
-        <option value="Contact force.">Contact force.</option>
-        <option value="Non-contact force.">Non-contact force.</option>
-        <option value="Neither.">Neither.</option>
-        <option value="Both contact and non-contact.">Both contact and non-contact.</option>
-      </select>
-      <button onclick="checkS6Q2()">Check Answer</button>
-      <span id="s6q2-feedback" class="feedback"></span>
+
+    <!-- Screen 6: Newton's 3rd (Expanded) -->
+    <div id="screen6" class="screen">
+      <h2>6. Interaction Pairs</h2>
+      <p>"Forces always come in pairs."</p>
+      
+      <div class="visual-container">
+        <svg width="350" height="200">
+          <rect x="250" y="20" width="30" height="150" fill="url(#brickPattern)" stroke="#888"/>
+          <line x1="100" y1="170" x2="250" y2="170" stroke="#888" stroke-width="2"/>
+          <circle cx="170" cy="70" r="18" stroke="#333" fill="#fff" stroke-width="2"/>
+          <line x1="170" y1="88" x2="170" y2="130" stroke="#333" stroke-width="2"/>
+          <line x1="170" y1="130" x2="150" y2="170" stroke="#333" stroke-width="2"/>
+          <line x1="170" y1="130" x2="190" y2="170" stroke="#333" stroke-width="2"/>
+          <line x1="170" y1="100" x2="250" y2="100" stroke="#333" stroke-width="2"/>
+          
+          <line x1="200" y1="90" x2="240" y2="90" stroke="#f72585" stroke-width="3" marker-end="url(#arrowhead-pink)"/>
+          <text x="180" y="80" fill="#f72585" class="force-text">Push (10N)</text>
+          
+          <line x1="240" y1="110" x2="200" y2="110" stroke="#4361ee" stroke-width="3" marker-end="url(#arrowhead-blue)"/>
+          <text x="210" y="130" fill="#4361ee" class="force-text">Reaction (10N)</text>
+        </svg>
+      </div>
+
+      <!-- Part 1: Wall -->
+      <p><strong>Q1:</strong> If you push the wall with 50N, how hard does the wall push back?</p>
+      <div class="choice-grid">
+        <div class="choice-card" onclick="checkNewton(this, false)">0N</div>
+        <div class="choice-card" onclick="checkNewton(this, false)">25N</div>
+        <div class="choice-card" onclick="checkNewton(this, true)">50N (Opposite way)</div>
+      </div>
+      <div id="fb-newton" class="feedback-box"></div>
+
+      <!-- Part 2: Earth/Child (Textbook specific) -->
+      <div id="newton-p2" style="display:none; margin-top:30px; border-top:1px solid #ddd;">
+          <h3>Q2: Tricky Pairs</h3>
+          <p><strong>Gravity pulls a child down. This is the "Earth pulling the child". What is the interaction pair?</strong></p>
+          <div class="choice-grid">
+            <div class="choice-card" onclick="checkEarth(this, false)">The child pushing the air</div>
+            <div class="choice-card" onclick="checkEarth(this, true)">The child pulling the Earth up</div>
+            <div class="choice-card" onclick="checkEarth(this, false)">There is no pair for gravity</div>
+          </div>
+          <div id="fb-earth" class="feedback-box"></div>
+      </div>
+
+      <!-- Book Activity 6 -->
+      <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 4</h4>
+        <p><strong>In your book:</strong></p>
+        <p>Write down the interaction pair for a runner.</p>
+        <p>Action: "The runner pushes the ground backwards."</p>
+        <p>Reaction: ___________________________________</p>
+        
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-6')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-6')">✅ Check Mark Scheme</button>
+        </div>
+        <div id="help-6" class="hidden-panel help-panel">
+          <strong>Prompts:</strong>
+          <ul>
+            <li>Use the rule: Swap the nouns!</li>
+            <li>If Object A pushes Object B... then Object B pushes Object A.</li>
+            <li>Don't forget the direction must be opposite (Backwards becomes Forwards).</li>
+          </ul>
+        </div>
+        <div id="ans-6" class="hidden-panel mark-scheme-panel">
+          <strong>Mark Scheme:</strong>
+          <ul>
+            <li>"The ground pushes the runner forwards."</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(5)">Back</button>
+        <button class="btn" id="btn-next-6" disabled onclick="nextScreen(7)">Next &rarr;</button>
+      </div>
     </div>
-    <div id="s6q3" class="practice-question hidden">
-      <p><strong>Question 3:</strong> Pushing a shopping trolley across the floor involves which forces? (Pick the best description.)</p>
-      <select id="s6q3-answer">
-        <option value="">--Select--</option>
-        <option value="Only non-contact forces (gravity).">Only non-contact forces (gravity).</option>
-        <option value="Contact force (push), friction, and weight.">Contact force (push), friction, and weight.</option>
-        <option value="No forces act if the trolley is moving.">No forces act if the trolley is moving.</option>
-        <option value="Air resistance is the only force.">Air resistance is the only force.</option>
-      </select>
-      <button onclick="checkS6Q3()">Check Answer</button>
-      <span id="s6q3-feedback" class="feedback"></span>
+
+    <!-- Screen 7: Measurement (NEW SECTION) -->
+    <div id="screen7" class="screen">
+      <h2>7. Measuring Forces</h2>
+      <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+        <div style="flex:1;">
+            <p>We measure forces using a tool called a <strong>Newtonmeter</strong> (or spring balance).</p>
+            <p>The unit of force is the <strong>Newton (N)</strong>.</p>
+        </div>
+        <div class="visual-container" style="flex:1;">
+            <!-- Simple Newtonmeter SVG -->
+            <svg width="100" height="200">
+                <rect x="35" y="10" width="30" height="150" fill="#fff" stroke="#333" rx="5"/>
+                <line x1="50" y1="10" x2="50" y2="160" stroke="#ccc" />
+                <!-- Hook -->
+                <path d="M50,160 Q50,190 70,180" fill="none" stroke="#333" stroke-width="2"/>
+                <!-- Spring marks -->
+                <line x1="40" y1="30" x2="60" y2="30" stroke="#333"/>
+                <text x="65" y="35" font-size="10">0N</text>
+                <line x1="40" y1="80" x2="60" y2="80" stroke="#333"/>
+                <text x="65" y="85" font-size="10">5N</text>
+                <line x1="40" y1="130" x2="60" y2="130" stroke="#333"/>
+                <text x="65" y="135" font-size="10">10N</text>
+                <!-- Red indicator -->
+                <rect x="38" y="75" width="24" height="5" fill="#f72585"/>
+            </svg>
+        </div>
+      </div>
+
+      <p><strong>Quiz: What instrument and unit do we use?</strong></p>
+      <div class="choice-grid">
+        <div class="choice-card" onclick="checkMeasure(this, false)">Thermometer / Degrees</div>
+        <div class="choice-card" onclick="checkMeasure(this, true)">Newtonmeter / Newtons</div>
+        <div class="choice-card" onclick="checkMeasure(this, false)">Ruler / Meters</div>
+      </div>
+      <div id="fb-measure" class="feedback-box"></div>
+
+      <!-- Book Activity 7 -->
+      <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 5</h4>
+        <p><strong>In your book:</strong></p>
+        <ol>
+          <li>Name the instrument used to measure force.</li>
+          <li>Name the unit of force.</li>
+          <li>Estimate the weight (force) of a small apple.</li>
+        </ol>
+        
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-7')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-7')">✅ Check Mark Scheme</button>
+        </div>
+        <div id="help-7" class="hidden-panel help-panel">
+          <strong>Prompts:</strong>
+          <ul>
+            <li>The instrument sounds like the unit!</li>
+            <li>The unit is named after Isaac ______.</li>
+            <li>An apple is very light. Think small numbers.</li>
+          </ul>
+        </div>
+        <div id="ans-7" class="hidden-panel mark-scheme-panel">
+          <strong>Mark Scheme:</strong>
+          <ul>
+            <li>1. Newtonmeter (or Spring Balance).</li>
+            <li>2. Newtons (N).</li>
+            <li>3. Approx 1N (Accept 0.8N - 1.5N).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(6)">Back</button>
+        <button class="btn" id="btn-next-7" disabled onclick="nextScreen(8)">Practical &rarr;</button>
+      </div>
     </div>
-    <br>
-    <button id="next6" disabled onclick="showScreen(7)">Next</button>
-    <br><br>
-    <button onclick="showScreen(5)">Back</button>
-  </div>
-  
-  <!-- Screen 7: Interaction Pairs -->
-  <div id="screen7" class="screen">
-    <h2>7. Interaction Pairs</h2>
-    <p>Forces come in pairs (Newton’s Third Law): when one object exerts a force on another, the second object exerts an equal and opposite force back.</p>
-    <p>For example, if you push against the wall with 10 N, the wall pushes back on you with 10 N in the opposite direction. These forces act on different objects but are equal in size.</p>
-    <p>In a playground, if two students hang from each other’s arms, each student exerts a force on the other—and each student experiences an equal and opposite pull in return.</p>
-    <button onclick="showScreen(8)">Next</button>
-    <br><br>
-    <button onclick="showScreen(6)">Back</button>
-  </div>
-  
-  <!-- Screen 8: Practice – Interaction Pairs -->
-  <div id="screen8" class="screen">
-    <h2>8. Practice: Interaction Pairs</h2>
-    <button class="toggle-btn" onclick="toggleHelp('help8')">Toggle Help: Newton's Third Law</button>
-    <div id="help8" class="equation-help hidden">
-      <p><strong>Key Idea:</strong> "For every action, there is an equal and opposite reaction." The forces are equal in size, opposite in direction, and act on different objects.</p>
+
+    <!-- Screen 8: Practical Data -->
+    <div id="screen8" class="screen">
+      <h2>8. Practical Investigation</h2>
+      <p>Now it's time to use a real Newtonmeter to measure forces around the classroom.</p>
+      
+      <!-- Book Activity 6 -->
+      <div class="book-activity">
+        <h4><span style="font-size:1.5em;">📖</span> Book Activity 6: Lab Results</h4>
+        <p><strong>In your book:</strong></p>
+        <ol>
+          <li>Copy the table structure below into your book.</li>
+          <li>Use a Newtonmeter to measure the force for different actions.</li>
+          <li><strong>Challenge:</strong> Add as many extra rows as you can with your own ideas!</li>
+          <li><strong>Conclusion:</strong> Beneath your table, write a sentence explaining which action required the most force and why you think that is.</li>
+        </ol>
+
+        <!-- Example Table for Copying -->
+        <table class="data-table" style="background:#fff; margin-top:10px;">
+          <tr>
+            <th style="width:40%;">Action</th>
+            <th style="width:20%;">Force (N)</th>
+            <th style="width:40%;">Type (Contact / Non-Contact)</th>
+          </tr>
+          <tr>
+            <td>Lifting a pencil case</td>
+            <td></td>
+            <td>Gravity (Non-Contact)</td>
+          </tr>
+          <tr>
+            <td>Pulling a shoe across the floor</td>
+            <td></td>
+            <td>Friction (Contact)</td>
+          </tr>
+          <tr>
+            <td>Opening a drawer</td>
+            <td></td>
+            <td>Contact</td>
+          </tr>
+          <tr>
+            <td>... (Add your own) ...</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </table>
+        
+        <div class="task-controls">
+          <button class="btn-help" onclick="toggleVis('help-8')">💡 Need a Hint?</button>
+          <button class="btn-check" onclick="toggleVis('ans-8')">✅ See Example Data</button>
+        </div>
+        
+        <div id="help-8" class="hidden-panel help-panel">
+          <strong>Tips for Success:</strong>
+          <ul>
+            <li>Make sure your Newtonmeter reads '0' before you start.</li>
+            <li>Pull slowly and smoothly to get an accurate reading.</li>
+            <li><strong>Conclusion Starter:</strong> "I found that ... required the most force because..." (Think about mass or friction).</li>
+          </ul>
+        </div>
+        
+        <div id="ans-8" class="hidden-panel mark-scheme-panel">
+          <strong>Example Results (Yours will vary):</strong>
+          <ul>
+            <li>Lifting pencil case: approx 2N - 5N</li>
+            <li>Pulling shoe: approx 1N - 3N (Depends on the floor!)</li>
+            <li>Opening door: approx 10N - 20N</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn btn-outline" onclick="prevScreen(7)">Back</button>
+        <button class="btn" style="background-color:#f72585;" onclick="nextScreen(9)">Play Knowledge Blitz &rarr;</button>
+      </div>
     </div>
-    <div id="s8q1" class="practice-question">
-      <p><strong>Question 1:</strong> You push a wall with 10 N. According to Newton’s Third Law, the wall...</p>
-      <select id="s8q1-answer">
-        <option value="">--Select--</option>
-        <option value="Pushes back with 10 N in the same direction.">Pushes back with 10 N in the same direction.</option>
-        <option value="Pushes back with 10 N in the opposite direction.">Pushes back with 10 N in the opposite direction.</option>
-        <option value="Does not push back at all.">Does not push back at all.</option>
-        <option value="Pushes back with 5 N in the opposite direction.">Pushes back with 5 N in the opposite direction.</option>
-      </select>
-      <button onclick="checkS8Q1()">Check Answer</button>
-      <span id="s8q1-feedback" class="feedback"></span>
+
+    <!-- Screen 9: Knowledge Blitz Game (NEW) -->
+    <div id="screen9" class="screen">
+        <h2>⚡ Knowledge Blitz ⚡</h2>
+        <p><strong>Timed Challenge!</strong> Match the definitions to the correct terms.</p>
+        <p>You have 45 seconds.</p>
+
+        <div id="game-intro">
+             <button class="btn" style="background:#f72585; font-size:1.2rem; padding:15px 30px;" onclick="startGame()">START GAME</button>
+        </div>
+
+        <div id="game-active" style="display:none;">
+            <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+            <div id="game-message" style="height:30px; font-weight:bold; color:#4cc9f0;"></div>
+            <div class="game-grid" id="gameGrid">
+                <!-- Cards injected via JS -->
+            </div>
+        </div>
+
+        <div class="nav-bar">
+            <button class="btn btn-outline" onclick="prevScreen(8)">Back</button>
+            <button class="btn" id="btn-next-9" disabled onclick="nextScreen(10)">Next: Summary &rarr;</button>
+        </div>
     </div>
-    <div id="s8q2" class="practice-question hidden">
-      <p><strong>Question 2:</strong> A book rests on a table. The book pushes down on the table. The table...</p>
-      <select id="s8q2-answer">
-        <option value="">--Select--</option>
-        <option value="Pushes back on the book with the same force.">Pushes back on the book with the same force.</option>
-        <option value="Doesn't push the book at all.">Doesn't push the book at all.</option>
-        <option value="Pushes the book sideways.">Pushes the book sideways.</option>
-        <option value="Only friction acts on the book.">Only friction acts on the book.</option>
-      </select>
-      <button onclick="checkS8Q2()">Check Answer</button>
-      <span id="s8q2-feedback" class="feedback"></span>
+
+    <!-- Screen 10: Summary & Cloze (Was Screen 9) -->
+    <div id="screen10" class="screen">
+        <h2>9. Lesson Summary</h2>
+        <p>Complete the sentences below to finish the lesson!</p>
+        
+        <div class="cloze-container">
+            Forces can be sorted into <input type="text" class="cloze-input" id="cloze1" placeholder="..."> (touching) and <input type="text" class="cloze-input" id="cloze2" placeholder="..."> forces. We use <input type="text" class="cloze-input" id="cloze3" placeholder="..."> to show the size and direction. Forces always come in <input type="text" class="cloze-input" id="cloze4" placeholder="...">. To measure force, you use a <input type="text" class="cloze-input" id="cloze5" placeholder="...">.
+        </div>
+        <div style="margin-top:15px; font-size:0.9em; color:#666;">
+            <em>Word Bank: Contact, Non-contact, Pairs, Arrows, Newtonmeter</em>
+        </div>
+
+        <button class="btn" style="margin-top:20px;" onclick="checkCloze()">Check Answers</button>
+        <div id="fb-cloze" class="feedback-box"></div>
+
+        <div class="nav-bar">
+            <button class="btn btn-outline" onclick="prevScreen(9)">Back</button>
+            <button class="btn" id="btn-finish" disabled onclick="showResults()">See Results &rarr;</button>
+        </div>
     </div>
-    <div id="s8q3" class="practice-question hidden">
-      <p><strong>Question 3:</strong> In a tug of war, team A pulls on the rope. Team B pulls equally hard in the opposite direction. These forces are an example of:</p>
-      <select id="s8q3-answer">
-        <option value="">--Select--</option>
-        <option value="Interaction pairs, equal and opposite.">Interaction pairs, equal and opposite.</option>
-        <option value="Forces acting on the same object.">Forces acting on the same object.</option>
-        <option value="No force at all.">No force at all.</option>
-        <option value="A single force with no reaction.">A single force with no reaction.</option>
-      </select>
-      <button onclick="checkS8Q3()">Check Answer</button>
-      <span id="s8q3-feedback" class="feedback"></span>
+
+    <!-- Screen 11: Results (Was Screen 10) -->
+    <div id="screen11" class="screen" style="text-align:center;">
+      <h2>Lesson Complete!</h2>
+      <div style="font-size: 5rem; margin: 20px;">🏆</div>
+      <p id="final-message" style="font-size: 1.5rem; color: var(--primary);">Loading results...</p>
+      <p>You have collected the following badges:</p>
+      <div id="final-badges" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;"></div>
+      <br>
+      <button class="btn" onclick="nextScreen(1)">Restart Lesson</button>
     </div>
-    <br>
-    <button id="next8" disabled onclick="showScreen(9)">Next</button>
-    <br><br>
-    <button onclick="showScreen(7)">Back</button>
-  </div>
-  
-  <!-- Screen 9: Practical Data – Measuring Forces with a Newton Meter -->
-  <div id="screen9" class="screen">
-    <h2>9. Practical Data: Using a Newton Meter</h2>
-    <p>In this practical activity, you'll use a Newton meter to measure the force involved in moving different objects or performing different actions.</p>
-    <p>Examples:</p>
-    <ul>
-      <li>Measuring the force needed to lift a small object (e.g., a pencil case) off a table.</li>
-      <li>Measuring the force needed to pull a shoe across the floor.</li>
-      <li>Measuring the force you exert when you stretch an elastic band.</li>
-    </ul>
-    <p>Record your data below. Try to identify whether these are contact or non-contact forces, and consider the direction in which each force acts.</p>
-    <table>
-      <tr>
-        <th>Action / Object</th>
-        <th>Force Measured (N)</th>
-        <th>Contact or Non-contact?</th>
-        <th>Check</th>
-      </tr>
-      <tr>
-        <td><input type="text" id="pd1-action" placeholder="e.g., Lifting pencil case"></td>
-        <td><input type="number" id="pd1-force" placeholder="Force (N)"></td>
-        <td><select id="pd1-type">
-          <option value="">--Select--</option>
-          <option value="Contact">Contact</option>
-          <option value="Non-contact">Non-contact</option>
-        </select></td>
-        <td><button onclick="checkPD(1)">Check</button></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="pd2-action" placeholder="e.g., Pulling shoe"></td>
-        <td><input type="number" id="pd2-force" placeholder="Force (N)"></td>
-        <td><select id="pd2-type">
-          <option value="">--Select--</option>
-          <option value="Contact">Contact</option>
-          <option value="Non-contact">Non-contact</option>
-        </select></td>
-        <td><button onclick="checkPD(2)">Check</button></td>
-      </tr>
-      <tr>
-        <td><input type="text" id="pd3-action" placeholder="e.g., Stretching rubber band"></td>
-        <td><input type="number" id="pd3-force" placeholder="Force (N)"></td>
-        <td><select id="pd3-type">
-          <option value="">--Select--</option>
-          <option value="Contact">Contact</option>
-          <option value="Non-contact">Non-contact</option>
-        </select></td>
-        <td><button onclick="checkPD(3)">Check</button></td>
-      </tr>
-    </table>
-    <h3>Conclusion</h3>
-    <p>Based on your practical observations, which actions required the most force? Why do you think this is?  Think of the forces acting against you and the mass of the object involved</p>
-    <textarea id="conclusion" rows="4" style="width:100%;" placeholder="Type your conclusion here..."></textarea>
-    <br>
-    <button onclick="showSentenceStarter()">Show Sentence Starter</button>
-    <br><br>
-    <button onclick="showScreen(8)">Back</button>
-  </div>
-  
-  <!-- Screen 10: Performance Descriptor -->
-  <div id="screen10" class="screen">
-    <h2>Performance Descriptor</h2>
-    <p id="descriptorMessage"></p>
-    <button onclick="showScreen(prevScreen)">Back to Lesson</button>
-  </div>
+
+  </div> <!-- End Content -->
 </div>
 
-<!-- Calculator (Draggable) -->
+<!-- Draggable Calculator -->
 <div id="calculator">
-  <div id="calculator-header">Calculator</div>
+  <div id="calculator-header">
+    <span>Calculator</span>
+    <span style="cursor:pointer;" onclick="toggleCalculator()">×</span>
+  </div>
   <input type="text" id="calc-display" readonly>
-  <div id="calc-buttons">
-    <button onclick="calcAppend('7')">7</button>
-    <button onclick="calcAppend('8')">8</button>
-    <button onclick="calcAppend('9')">9</button>
-    <button onclick="calcAppend('/')">/</button>
-    <br>
-    <button onclick="calcAppend('4')">4</button>
-    <button onclick="calcAppend('5')">5</button>
-    <button onclick="calcAppend('6')">6</button>
-    <button onclick="calcAppend('*')">*</button>
-    <br>
-    <button onclick="calcAppend('1')">1</button>
-    <button onclick="calcAppend('2')">2</button>
-    <button onclick="calcAppend('3')">3</button>
-    <button onclick="calcAppend('-')">-</button>
-    <br>
-    <button onclick="calcAppend('0')">0</button>
-    <button onclick="calcAppend('.')">.</button>
-    <button onclick="calcClear()">C</button>
-    <button onclick="calcAppend('+')">+</button>
-    <br>
-    <button onclick="calcEquals()" style="width:248px;">=</button>
+  <div class="calc-grid">
+    <button class="calc-btn" onclick="calcAppend('7')">7</button>
+    <button class="calc-btn" onclick="calcAppend('8')">8</button>
+    <button class="calc-btn" onclick="calcAppend('9')">9</button>
+    <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
+    
+    <button class="calc-btn" onclick="calcAppend('4')">4</button>
+    <button class="calc-btn" onclick="calcAppend('5')">5</button>
+    <button class="calc-btn" onclick="calcAppend('6')">6</button>
+    <button class="calc-btn op" onclick="calcAppend('*')">×</button>
+    
+    <button class="calc-btn" onclick="calcAppend('1')">1</button>
+    <button class="calc-btn" onclick="calcAppend('2')">2</button>
+    <button class="calc-btn" onclick="calcAppend('3')">3</button>
+    <button class="calc-btn op" onclick="calcAppend('-')">-</button>
+    
+    <button class="calc-btn" onclick="calcAppend('0')">0</button>
+    <button class="calc-btn" onclick="calcAppend('.')">.</button>
+    <button class="calc-btn" onclick="calcClear()">C</button>
+    <button class="calc-btn op" onclick="calcAppend('+')">+</button>
+    
+    <button class="calc-btn eq" onclick="calcEquals()">=</button>
   </div>
 </div>
 
 <script>
-  // Track completion of different lesson milestones
-  var conceptForcesCompleted = false;
-  var describingForcesCompleted = false;
-  var typesForcesCompleted = false;
-  var interactionPairsCompleted = false;
+  /* --- State Management --- */
+  let progress = 0;
+  let badges = {
+    concept: false,
+    vector: false,
+    types: false,
+    newton: false,
+    measure: false
+  };
 
-  var currentScreen = 1;
-  var prevScreen = 1;  // For returning from descriptor screen
+  /* --- Navigation --- */
+  function nextScreen(n) {
+    showScreen(n);
+    updateProgress(n);
+  }
 
-  // Show a specific screen
+  function prevScreen(n) {
+    showScreen(n);
+  }
+
   function showScreen(n) {
-    if(n !== 10) {
-      prevScreen = n;
-    }
-    currentScreen = n;
-    for (let i = 1; i <= 10; i++) {
-      document.getElementById("screen" + i)?.classList.remove("active");
-    }
-    document.getElementById("screen" + n).classList.add("active");
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    document.getElementById('screen' + n).classList.add('active');
   }
 
-  // Toggle help
-  function toggleHelp(helpId) {
-    const helpDiv = document.getElementById(helpId);
-    helpDiv.classList.toggle("hidden");
+  function updateProgress(n) {
+    let pct = (n / 11) * 100; // Updated for 11 screens
+    document.getElementById('progressBar').style.width = pct + "%";
   }
 
-  /* --- Screen 2 Checks (What is a Force) --- */
-  function checkScreen2() {
-    let correct = true;
+  /* --- Feedback Helpers --- */
+  function showFeedback(elementId, isCorrect, message) {
+    const el = document.getElementById(elementId);
+    el.className = 'feedback-box show ' + (isCorrect ? 'correct' : 'wrong');
+    el.innerHTML = (isCorrect ? '✔ ' : '✘ ') + message;
+  }
 
-    let q2a = document.getElementById("q2a").value;
-    if(q2a === "A push or pull on an object.") {
-      document.getElementById("feedback2a").innerText = "Correct!";
+  function awardBadge(id) {
+    document.getElementById('badge-' + id).classList.add('earned');
+    badges[id] = true;
+  }
+
+  /* --- Toggle Helper for Book Tasks --- */
+  function toggleVis(id) {
+    const el = document.getElementById(id);
+    if (el.style.display === "block") {
+      el.style.display = "none";
     } else {
-      document.getElementById("feedback2a").innerText = "Try again.";
-      alert("Hint: A force is defined as a push or a pull.");
-      correct = false;
-    }
-
-    let q2b = document.getElementById("q2b").value;
-    if(q2b === "Change its motion or shape.") {
-      document.getElementById("feedback2b").innerText = "Correct!";
-    } else {
-      document.getElementById("feedback2b").innerText = "Try again.";
-      alert("Hint: Forces can cause changes in movement or shape.");
-      correct = false;
-    }
-
-    if(correct) {
-      document.getElementById("next2").disabled = false;
-      conceptForcesCompleted = true;
+      el.style.display = "block";
     }
   }
 
-  /* --- Screen 4: Practice – Describing Forces --- */
-  function checkS4Q1() {
-    let ans = document.getElementById("s4q1-answer").value;
-    if(ans === "A 10 N arrow pointing east.") {
-      document.getElementById("s4q1-feedback").innerText = "Correct!";
-      document.getElementById("s4q2").classList.remove("hidden");
+  /* --- Screen 2 Logic --- */
+  function checkQ2A(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-2a', true, "Correct! A force is a push or a pull.");
+      document.getElementById('q2b-container').style.display = 'block';
     } else {
-      document.getElementById("s4q1-feedback").innerText = "Try again.";
-      alert("We describe forces in newtons (N) and direction with an arrow.");
-    }
-  }
-  function checkS4Q2() {
-    let ans = document.getElementById("s4q2-answer").value;
-    if(ans === "Equal in size, opposite in direction.") {
-      document.getElementById("s4q2-feedback").innerText = "Correct!";
-      document.getElementById("s4q3").classList.remove("hidden");
-    } else {
-      document.getElementById("s4q2-feedback").innerText = "Try again.";
-      alert("Opposite sides of a rope, same magnitude => opposite direction.");
-    }
-  }
-  function checkS4Q3() {
-    let ans = document.getElementById("s4q3-answer").value;
-    if(ans === "2 N upwards.") {
-      document.getElementById("s4q3-feedback").innerText = "Correct!";
-      document.getElementById("next4").disabled = false;
-      describingForcesCompleted = true;
-    } else {
-      document.getElementById("s4q3-feedback").innerText = "Try again.";
-      alert("5 N up minus 3 N down leaves 2 N upward as the resultant.");
+      card.classList.add('wrong');
+      showFeedback('fb-2a', false, "Try again. Think about what you do to a door.");
     }
   }
 
-  /* --- Screen 6: Practice – Different Types of Forces --- */
-  function checkS6Q1() {
-    let ans = document.getElementById("s6q1-answer").value;
-    if(ans === "Gravity") {
-      document.getElementById("s6q1-feedback").innerText = "Correct!";
-      document.getElementById("s6q2").classList.remove("hidden");
+  function checkQ2B(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-2b', true, "Correct! Forces affect motion.");
+      document.getElementById('q2c-container').style.display = 'block';
     } else {
-      document.getElementById("s6q1-feedback").innerText = "Try again.";
-      alert("Gravity acts at a distance, so it’s a non-contact force.");
-    }
-  }
-  function checkS6Q2() {
-    let ans = document.getElementById("s6q2-answer").value;
-    if(ans === "Non-contact force.") {
-      document.getElementById("s6q2-feedback").innerText = "Correct!";
-      document.getElementById("s6q3").classList.remove("hidden");
-    } else {
-      document.getElementById("s6q2-feedback").innerText = "Try again.";
-      alert("A magnet can pull without touching, so it's non-contact.");
-    }
-  }
-  function checkS6Q3() {
-    let ans = document.getElementById("s6q3-answer").value;
-    if(ans === "Contact force (push), friction, and weight.") {
-      document.getElementById("s6q3-feedback").innerText = "Correct!";
-      document.getElementById("next6").disabled = false;
-      typesForcesCompleted = true;
-    } else {
-      document.getElementById("s6q3-feedback").innerText = "Try again.";
-      alert("Pushing the trolley is a contact force, friction opposes motion, and weight (gravity) acts downward.");
+      card.classList.add('wrong');
+      showFeedback('fb-2b', false, "Not quite. Forces affect motion.");
     }
   }
 
-  /* --- Screen 8: Practice – Interaction Pairs --- */
-  function checkS8Q1() {
-    let ans = document.getElementById("s8q1-answer").value;
-    if(ans === "Pushes back with 10 N in the opposite direction.") {
-      document.getElementById("s8q1-feedback").innerText = "Correct!";
-      document.getElementById("s8q2").classList.remove("hidden");
+  function checkQ2C(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-2c', true, "Yes! A force can squash or stretch an object.");
+      document.getElementById('btn-next-2').disabled = false;
+      awardBadge('concept');
     } else {
-      document.getElementById("s8q1-feedback").innerText = "Try again.";
-      alert("Newton’s Third Law: The reaction is equal and opposite.");
-    }
-  }
-  function checkS8Q2() {
-    let ans = document.getElementById("s8q2-answer").value;
-    if(ans === "Pushes back on the book with the same force.") {
-      document.getElementById("s8q2-feedback").innerText = "Correct!";
-      document.getElementById("s8q3").classList.remove("hidden");
-    } else {
-      document.getElementById("s8q2-feedback").innerText = "Try again.";
-      alert("The table exerts an equal and opposite force on the book.");
-    }
-  }
-  function checkS8Q3() {
-    let ans = document.getElementById("s8q3-answer").value;
-    if(ans === "Interaction pairs, equal and opposite.") {
-      document.getElementById("s8q3-feedback").innerText = "Correct!";
-      document.getElementById("next8").disabled = false;
-      interactionPairsCompleted = true;
-    } else {
-      document.getElementById("s8q3-feedback").innerText = "Try again.";
-      alert("Tug of war involves each team pulling in opposite directions with equal force.");
+      card.classList.add('wrong');
+      showFeedback('fb-2c', false, "Actually, they can! Think of squashing a sponge.");
     }
   }
 
-  /* --- Practical Data Check (Screen 9) --- */
-  function checkPD(row) {
-    let forceVal = parseFloat(document.getElementById("pd" + row + "-force").value);
-    let typeVal = document.getElementById("pd" + row + "-type").value;
-    if(!isNaN(forceVal) && forceVal >= 0 && typeVal !== "") {
-      alert("Row " + row + ": Data recorded. Force = " + forceVal + " N, " + typeVal + " force.");
+  /* --- Screen 4 Logic (Vectors) --- */
+  function checkVector(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-vector', true, "Spot on! 5N Up - 3N Down = 2N Up.");
+      document.getElementById('vec-p2').style.display = 'block';
     } else {
-      alert("Row " + row + ": Please enter a valid force value and select contact or non-contact.");
+      card.classList.add('wrong');
+      showFeedback('fb-vector', false, "Subtract the smaller force from the larger one.");
     }
   }
 
-  /* --- Sentence Starter for Conclusion --- */
-  function showSentenceStarter() {
-    document.getElementById("conclusion").value =
-      "In my observations with the Newton meter, I found that the action requiring the greatest force was ...  This is because";
+  function checkVectorRule(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-vector-rule', true, "Correct! The arrow must start from the object.");
+      document.getElementById('btn-next-4').disabled = false;
+      awardBadge('vector');
+    } else {
+      card.classList.add('wrong');
+      showFeedback('fb-vector-rule', false, "The textbook says arrows must touch the object to show where force acts.");
+    }
   }
 
-  /* --- Performance Descriptor --- */
-  function showPerformanceDescriptor() {
-    let descriptor = "";
-    if (interactionPairsCompleted) {
-      descriptor = "<span style='font-size:2.2em;'>Excelling</span>: You understand interaction pairs deeply and can explain how forces act in equal and opposite pairs!";
-    } else if (typesForcesCompleted) {
-      descriptor = "<span style='font-size:2.2em;'>Exceeding</span>: You can identify different types of forces (contact vs. non-contact) with confidence.";
-    } else if (describingForcesCompleted) {
-      descriptor = "<span style='font-size:2.2em;'>Expected</span>: You can describe forces in terms of size and direction.";
-    } else if (conceptForcesCompleted) {
-      descriptor = "<span style='font-size:2.2em;'>Working Towards</span>: You understand what a force is and some of its effects, but keep practicing to describe them in more detail.";
-    } else {
-      descriptor = "No level achieved yet. Please complete the lesson questions to see your performance.";
+  /* --- Screen 5 Logic (Types) --- */
+  function checkTypes() {
+    const s1 = document.getElementById('type-select-1').value;
+    const s2 = document.getElementById('type-select-2').value;
+    const s3 = document.getElementById('type-select-3').value;
+
+    if(s1 === "NC" && s2 === "C" && s3 === "NC") {
+      showFeedback('fb-types', true, "All correct!");
+      document.getElementById('types-p2').style.display = 'block';
+    } else if (s1 !== "" && s2 !== "" && s3 !== "") {
+       showFeedback('fb-types', false, "Check again. Remember gravity and magnetism act at a distance.");
     }
+  }
+
+  function checkSwimming(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-swim', true, "Correct! The water touches you to resist movement.");
+      document.getElementById('btn-next-5').disabled = false;
+      awardBadge('types');
+    } else {
+      card.classList.add('wrong');
+      showFeedback('fb-swim', false, "Gravity pulls you, but it's non-contact.");
+    }
+  }
+
+  /* --- Screen 6 Logic (Newton) --- */
+  function checkNewton(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-newton', true, "Correct. Equal size, opposite direction.");
+      document.getElementById('newton-p2').style.display = 'block';
+    } else {
+      card.classList.add('wrong');
+      showFeedback('fb-newton', false, "The reaction is EQUAL in size.");
+    }
+  }
+
+  function checkEarth(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+      card.classList.add('correct');
+      showFeedback('fb-earth', true, "Yes! If Earth pulls Child, Child pulls Earth.");
+      document.getElementById('btn-next-6').disabled = false;
+      awardBadge('newton');
+    } else {
+      card.classList.add('wrong');
+      showFeedback('fb-earth', false, "Swap the names: Earth pulls Child -> Child pulls Earth.");
+    }
+  }
+
+  /* --- Screen 7 Logic (Measurement) --- */
+  function checkMeasure(card, isCorrect) {
+    card.parentNode.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected', 'correct', 'wrong'));
+    card.classList.add('selected');
+    if(isCorrect) {
+        card.classList.add('correct');
+        showFeedback('fb-measure', true, "Correct! Newtonmeter and Newtons.");
+        document.getElementById('btn-next-7').disabled = false;
+        awardBadge('measure');
+    } else {
+        card.classList.add('wrong');
+        showFeedback('fb-measure', false, "Try again.");
+    }
+  }
+
+  /* --- Practical Logic --- */
+  function checkPractical() {
+    /* Offline now, but keeping helper if user clicks button */
+    alert("Have you recorded all the data in your book?");
+  }
+
+  /* --- GAME LOGIC: Knowledge Blitz --- */
+  const gameData = [
+      { text: "Friction", type: "term", id: 1 },
+      { text: "Opposes Motion", type: "def", id: 1 },
+      { text: "Gravity", type: "term", id: 2 },
+      { text: "Non-Contact Pull", type: "def", id: 2 },
+      { text: "Newton", type: "term", id: 3 },
+      { text: "Unit of Force", type: "def", id: 3 },
+      { text: "Contact Force", type: "term", id: 4 },
+      { text: "Needs Touching", type: "def", id: 4 }
+  ];
+
+  let selectedGameCard = null;
+  let matchesFound = 0;
+  let gameTimer = null;
+
+  function startGame() {
+      document.getElementById('game-intro').style.display = 'none';
+      document.getElementById('game-active').style.display = 'block';
+      
+      const grid = document.getElementById('gameGrid');
+      grid.innerHTML = "";
+      
+      // Shuffle array
+      let shuffled = [...gameData].sort(() => 0.5 - Math.random());
+      
+      shuffled.forEach(item => {
+          let div = document.createElement('div');
+          div.className = 'game-card';
+          div.innerText = item.text;
+          div.onclick = () => selectCard(div, item.id, item.type);
+          div.dataset.id = item.id;
+          div.dataset.type = item.type;
+          grid.appendChild(div);
+      });
+
+      // Start Timer (45s)
+      let timeLeft = 45;
+      document.getElementById('timerFill').style.width = "100%";
+      document.getElementById('timerFill').style.transition = "width 45s linear";
+      
+      // Force reflow
+      void document.getElementById('timerFill').offsetWidth; 
+      document.getElementById('timerFill').style.width = "0%";
+
+      gameTimer = setTimeout(() => {
+          endGame(false);
+      }, 45000);
+  }
+
+  function selectCard(el, id, type) {
+      if(el.classList.contains('matched')) return;
+
+      if(!selectedGameCard) {
+          // First selection
+          selectedGameCard = { el, id, type };
+          el.classList.add('selected');
+      } else {
+          // Second selection
+          if(selectedGameCard.el === el) return; // Clicked same card
+
+          if(selectedGameCard.id === id && selectedGameCard.type !== type) {
+              // Match!
+              el.classList.add('matched');
+              selectedGameCard.el.classList.add('matched');
+              selectedGameCard = null;
+              matchesFound++;
+              if(matchesFound === 4) endGame(true);
+          } else {
+              // Wrong
+              el.classList.add('wrong');
+              selectedGameCard.el.classList.add('wrong');
+              let temp1 = el;
+              let temp2 = selectedGameCard.el;
+              setTimeout(() => {
+                  temp1.classList.remove('selected', 'wrong');
+                  temp2.classList.remove('selected', 'wrong');
+              }, 500);
+              selectedGameCard = null;
+          }
+      }
+  }
+
+  function endGame(win) {
+      clearTimeout(gameTimer);
+      const msg = document.getElementById('game-message');
+      if(win) {
+          msg.innerText = "SUCCESS! You matched all terms!";
+          msg.style.color = "#4cc9f0";
+          document.getElementById('btn-next-9').disabled = false;
+      } else {
+          msg.innerText = "TIME'S UP! Try again or move on.";
+          msg.style.color = "#ef233c";
+          document.getElementById('btn-next-9').disabled = false;
+      }
+  }
+
+  /* --- Cloze Logic --- */
+  function checkCloze() {
+      const answers = {
+          cloze1: ["contact"],
+          cloze2: ["non-contact", "noncontact"],
+          cloze3: ["arrows", "arrow"],
+          cloze4: ["pairs", "pair"],
+          cloze5: ["newtonmeter", "newton meter"]
+      };
+
+      let allCorrect = true;
+
+      for(let id in answers) {
+          let el = document.getElementById(id);
+          let val = el.value.toLowerCase().trim();
+          if(answers[id].includes(val)) {
+              el.classList.add("correct");
+              el.classList.remove("wrong");
+          } else {
+              el.classList.add("wrong");
+              el.classList.remove("correct");
+              allCorrect = false;
+          }
+      }
+
+      if(allCorrect) {
+          showFeedback('fb-cloze', true, "Perfect! You've mastered the summary.");
+          document.getElementById('btn-finish').disabled = false;
+      } else {
+          showFeedback('fb-cloze', false, "Check the red boxes again. Look at the Word Bank!");
+      }
+  }
+
+  function showResults() {
+    showScreen(11); // Updated for 11 screens
+    let score = 0;
+    let badgeHTML = "";
+    if(badges.concept) { score++; badgeHTML += '<span class="badge earned">Concept</span>'; }
+    if(badges.vector) { score++; badgeHTML += '<span class="badge earned">Vectors</span>'; }
+    if(badges.types) { score++; badgeHTML += '<span class="badge earned">Types</span>'; }
+    if(badges.newton) { score++; badgeHTML += '<span class="badge earned">Newton</span>'; }
+    if(badges.measure) { score++; badgeHTML += '<span class="badge earned">Measure</span>'; }
+
+    document.getElementById('final-badges').innerHTML = badgeHTML;
     
-    document.getElementById("descriptorMessage").innerHTML = descriptor;
-    showScreen(10);
+    let msg = "";
+    if(score === 5) msg = "Physicist Status: Expert! (5/5 Badges)";
+    else if(score >= 3) msg = "Physicist Status: Apprentice";
+    else msg = "Physicist Status: Beginner";
+    
+    document.getElementById('final-message').innerText = msg;
   }
 
-  /* --- Calculator Functions --- */
+  /* --- Calculator Logic --- */
   function toggleCalculator() {
-    var calc = document.getElementById("calculator");
-    if (calc.style.display === "none" || calc.style.display === "") {
-      calc.style.display = "block";
-    } else {
-      calc.style.display = "none";
-    }
+    const calc = document.getElementById('calculator');
+    calc.style.display = (calc.style.display === 'block') ? 'none' : 'block';
   }
-  function calcAppend(val) {
-    document.getElementById("calc-display").value += val;
-  }
-  function calcClear() {
-    document.getElementById("calc-display").value = "";
-  }
+  
+  function calcAppend(val) { document.getElementById('calc-display').value += val; }
+  function calcClear() { document.getElementById('calc-display').value = ""; }
   function calcEquals() {
     try {
-      var result = eval(document.getElementById("calc-display").value);
-      document.getElementById("calc-display").value = result;
-    } catch(e) {
-      document.getElementById("calc-display").value = "Error";
+      document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value);
+    } catch {
+      document.getElementById('calc-display').value = "Error";
     }
   }
 
-  // Make calculator draggable
-  dragElement(document.getElementById("calculator"));
-  function dragElement(elmnt) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    var header = document.getElementById(elmnt.id + "-header");
-    if (header) {
-      header.onmousedown = dragMouseDown;
-    } else {
-      elmnt.onmousedown = dragMouseDown;
-    }
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      document.onmousemove = elementDrag;
-    }
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-    }
-    function closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
+  // Draggable
+  const calcEl = document.getElementById("calculator");
+  const header = document.getElementById("calculator-header");
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  header.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
   }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    calcEl.style.top = (calcEl.offsetTop - pos2) + "px";
+    calcEl.style.left = (calcEl.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+
 </script>
+
 </body>
 </html>
