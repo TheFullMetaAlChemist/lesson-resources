@@ -25,6 +25,48 @@
             z-index: 10;
         }
 
+        /* Camera Controls Overlay (Bottom Right) */
+        #cam-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .cam-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid #ccc;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .cam-btn:hover { background: #f0f0f0; }
+        .cam-btn:active { background: #e0e0e0; }
+        
+        /* Mode toggle button specifically */
+        #btn-pan-mode {
+            border-radius: 12px;
+            width: auto;
+            padding: 0 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #btn-pan-mode.active {
+            background: #007acc;
+            color: white;
+            border-color: #005a9e;
+        }
+
         /* Right UI Overlay (Quiz) */
         #quiz-container {
             position: absolute;
@@ -39,8 +81,8 @@
             pointer-events: auto;
             display: none; /* Hidden by default */
             flex-direction: column;
-            max-height: 90vh;
-            z-index: 10;
+            max-height: 80vh;
+            z-index: 20;
         }
 
         #quiz-header {
@@ -194,6 +236,13 @@
         </div>
     </div>
 
+    <!-- Camera Controls (New) -->
+    <div id="cam-controls">
+        <button class="cam-btn" id="btn-pan-mode" onclick="app.togglePanMode()" title="Toggle Move/Rotate Mode">🖐️</button>
+        <button class="cam-btn" onclick="app.zoomIn()" title="Zoom In">+</button>
+        <button class="cam-btn" onclick="app.zoomOut()" title="Zoom Out">−</button>
+    </div>
+
     <!-- Right Panel: Quiz -->
     <div id="quiz-container">
         <div id="quiz-header">
@@ -227,7 +276,13 @@
                     { q: "How many bonds does each carbon form in Graphite?", opts: ["3", "4", "5", "2"], a: 0 }
                 ];
                 this.userAnswers = new Array(this.questions.length).fill(null);
-                this.loadProgress();
+                
+                // Safely load progress
+                try {
+                    this.loadProgress();
+                } catch (e) {
+                    console.warn("Local Storage not available", e);
+                }
                 this.render();
             }
 
@@ -237,15 +292,19 @@
             }
 
             saveProgress() {
-                localStorage.setItem('carbon_quiz_answers', JSON.stringify(this.userAnswers));
+                try {
+                    localStorage.setItem('carbon_quiz_answers', JSON.stringify(this.userAnswers));
+                } catch(e) { /* ignore if storage blocked */ }
                 this.updateScore();
             }
 
             loadProgress() {
-                const saved = localStorage.getItem('carbon_quiz_answers');
-                if (saved) {
-                    this.userAnswers = JSON.parse(saved);
-                }
+                try {
+                    const saved = localStorage.getItem('carbon_quiz_answers');
+                    if (saved) {
+                        this.userAnswers = JSON.parse(saved);
+                    }
+                } catch(e) { /* ignore */ }
                 this.updateScore();
             }
 
@@ -265,11 +324,12 @@
             selectAnswer(qIndex, optIndex) {
                 this.userAnswers[qIndex] = optIndex;
                 this.saveProgress();
-                this.render(); // Re-render to show styling
+                this.render(); 
             }
 
             render() {
                 const container = document.getElementById('questions-list');
+                if(!container) return;
                 container.innerHTML = '';
 
                 this.questions.forEach((q, qIdx) => {
@@ -289,11 +349,10 @@
                         btn.className = 'option-btn';
                         btn.innerText = opt;
                         
-                        // Check State
                         const userSelected = this.userAnswers[qIdx];
                         if (userSelected !== null) {
                             if (optIdx === q.a) {
-                                btn.classList.add('correct'); // Always show correct if answered
+                                btn.classList.add('correct'); 
                             }
                             if (userSelected === optIdx && userSelected !== q.a) {
                                 btn.classList.add('incorrect');
@@ -310,7 +369,10 @@
             }
         }
 
-        window.quizApp = new QuizManager();
+        // Initialize Quiz safely
+        try {
+            window.quizApp = new QuizManager();
+        } catch(e) { console.error("Quiz failed to init", e); }
 
 
         // --- Main 3D App ---
@@ -319,7 +381,8 @@
                 this.state = {
                     structure: 'diamond', 
                     property: 'none',
-                    time: 0
+                    time: 0,
+                    panMode: false
                 };
                 
                 this.objects = {
@@ -331,7 +394,6 @@
                     electrons: new THREE.Group()
                 };
 
-                // Interaction State
                 this.raycaster = new THREE.Raycaster();
                 this.mouse = new THREE.Vector2();
                 this.isDragging = false;
@@ -343,27 +405,28 @@
             }
 
             init() {
-                // Scene
                 this.scene = new THREE.Scene();
                 this.scene.background = new THREE.Color(0xf5f5f5);
 
-                // Camera
                 this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
                 this.camera.position.set(8, 6, 8);
 
-                // Renderer
                 this.renderer = new THREE.WebGLRenderer({ antialias: true });
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
                 this.renderer.setPixelRatio(window.devicePixelRatio);
                 document.getElementById('canvas-container').appendChild(this.renderer.domElement);
 
-                // Controls
                 this.controls = new OrbitControls(this.camera, this.renderer.domElement);
                 this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
                 this.controls.autoRotate = true;
                 this.controls.autoRotateSpeed = 0.5;
+                
+                // IMPROVEMENT: Screen Space Panning makes movement feel much more natural/up-down-left-right
+                this.controls.screenSpacePanning = true; 
+                this.controls.minDistance = 2;
+                this.controls.maxDistance = 50;
 
-                // Lighting (High contrast for light background)
                 const ambient = new THREE.AmbientLight(0xffffff, 0.8);
                 const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
                 dirLight.position.set(5, 10, 7);
@@ -371,17 +434,14 @@
                 backLight.position.set(-5, -2, -5);
                 this.scene.add(ambient, dirLight, backLight);
 
-                // Build All Structures
                 this.buildDiamond();
                 this.buildGraphite(); 
                 this.buildGraphene();
                 this.buildC60();
                 this.buildNanotube();
 
-                // Initial State
                 this.scene.add(this.objects.diamond);
                 
-                // Event Listeners
                 window.addEventListener('resize', () => this.onResize());
                 const canvas = this.renderer.domElement;
                 canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
@@ -392,7 +452,62 @@
                 window.app = this;
             }
 
-            // --- Interaction Handling ---
+            // --- Camera Controls ---
+            togglePanMode() {
+                this.state.panMode = !this.state.panMode;
+                const btn = document.getElementById('btn-pan-mode');
+                
+                if (this.state.panMode) {
+                    // Enable Pan on Left Click
+                    this.controls.mouseButtons = {
+                        LEFT: THREE.MOUSE.PAN,
+                        MIDDLE: THREE.MOUSE.DOLLY,
+                        RIGHT: THREE.MOUSE.ROTATE
+                    }
+                    // Make touch pan instead of rotate
+                    this.controls.touches = {
+                        ONE: THREE.TOUCH.PAN,
+                        TWO: THREE.TOUCH.DOLLY_ROTATE
+                    }
+                    btn.classList.add('active');
+                    btn.innerHTML = "🔄"; 
+                    btn.title = "Switch back to Rotate";
+                    this.controls.autoRotate = false;
+                } else {
+                    // Default (Rotate on Left Click)
+                    this.controls.mouseButtons = {
+                        LEFT: THREE.MOUSE.ROTATE,
+                        MIDDLE: THREE.MOUSE.DOLLY,
+                        RIGHT: THREE.MOUSE.PAN
+                    }
+                    this.controls.touches = {
+                        ONE: THREE.TOUCH.ROTATE,
+                        TWO: THREE.TOUCH.DOLLY_PAN
+                    }
+                    btn.classList.remove('active');
+                    btn.innerHTML = "🖐️"; 
+                    btn.title = "Switch to Pan/Move";
+                    if(this.state.property === 'none') this.controls.autoRotate = true;
+                }
+            }
+
+            zoomIn() {
+                // Move camera forward
+                const vec = new THREE.Vector3();
+                this.camera.getWorldDirection(vec);
+                this.camera.position.addScaledVector(vec, 2);
+                this.controls.update();
+            }
+
+            zoomOut() {
+                // Move camera back
+                const vec = new THREE.Vector3();
+                this.camera.getWorldDirection(vec);
+                this.camera.position.addScaledVector(vec, -2);
+                this.controls.update();
+            }
+
+            // --- Interaction ---
 
             getMouse(event) {
                 const rect = this.renderer.domElement.getBoundingClientRect();
@@ -454,7 +569,7 @@
             // --- Builders ---
 
             createAtom(pos) {
-                const geo = new THREE.SphereGeometry(0.25, 32, 32);
+                const geo = new THREE.SphereGeometry(0.25, 16, 16);
                 const mat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.1, metalness: 0.7 });
                 const mesh = new THREE.Mesh(geo, mat);
                 mesh.position.copy(pos);
@@ -464,7 +579,7 @@
 
             createBond(p1, p2) {
                 const dist = p1.distanceTo(p2);
-                const geo = new THREE.CylinderGeometry(0.06, 0.06, dist, 12);
+                const geo = new THREE.CylinderGeometry(0.06, 0.06, dist, 8);
                 const mat = new THREE.MeshStandardMaterial({ color: 0x999999, roughness: 0.3 });
                 const mesh = new THREE.Mesh(geo, mat);
                 const axis = new THREE.Vector3(0, 1, 0);
@@ -633,8 +748,6 @@
                 this.objects.nano.scale.set(0.7, 0.7, 0.7);
             }
 
-            // --- Animation & Logic ---
-
             setStructure(type) {
                 this.state.structure = type;
                 this.setProperty('none'); 
@@ -664,13 +777,14 @@
                 if(prop === 'hard') activeId = 'btn-hard';
                 document.getElementById(activeId).classList.add('active');
 
-                // Toggle Interaction Hint
                 document.getElementById('interaction-hint').style.display = (prop === 'hard') ? 'block' : 'none';
 
+                // Reset pan mode if property changed to ensure correct state
+                if(this.state.panMode && prop !== 'hard') this.togglePanMode(); // Turn off pan mode
+
                 if(prop !== 'none' && prop !== 'hard') this.controls.autoRotate = false;
-                else this.controls.autoRotate = true;
+                else if(!this.state.panMode) this.controls.autoRotate = true;
                 
-                // If Hardness mode enabled, stop rotation to allow easy clicking
                 if(prop === 'hard') this.controls.autoRotate = false;
 
                 this.updateInfo();
@@ -725,47 +839,36 @@
                 const s = this.state.structure;
                 const p = this.state.property;
 
-                // --- Hardness / Interaction Physics ---
                 if (p === 'hard') {
-                    // Diamond: Rigidity simulation (Shake slightly if dragging, then snap back)
                     if (s === 'diamond') {
                          if(this.isDragging) {
-                             // Tiny vibration to show resistance
                              this.objects.diamond.position.x = (Math.random()-0.5)*0.05;
                              this.objects.diamond.position.y = (Math.random()-0.5)*0.05;
                          } else {
-                             // Snap back
                              this.objects.diamond.position.set(0,0,0);
                          }
                     }
                     
-                    // Graphene: Ripple
                     if (s === 'graphene') {
-                        let waveAmp = this.isDragging ? 0.5 : 0.0;
-                        
                         this.objects.graphene.children.forEach(child => {
-                            // Added safety check for missing basePos
+                            // SAFETY CHECK: Ensure basePos exists
                             if(!child.userData.basePos) return;
 
                             if (this.isDragging) {
                                 const dist = child.position.x - 0; 
                                 child.position.y = Math.sin(dist + this.state.time * 5) * (this.dragDelta.x * 20);
                             } else {
-                                // Lerp back to 0
                                 child.position.y = THREE.MathUtils.lerp(child.position.y, 0, 0.1);
                             }
                         });
                     }
 
-                    // Nanotube: Bend
                     if (s === 'nano') {
                         this.objects.nano.children.forEach(child => {
-                             // Added safety check for missing basePos
+                             // SAFETY CHECK: Ensure basePos exists
                              if(!child.userData.basePos) return;
 
                              if(this.isDragging) {
-                                 // Simple bend: x displacement affects y rotation or position
-                                 // Let's just curve coordinates
                                  const bendAmount = this.dragDelta.x * 2;
                                  const yNorm = child.userData.basePos.y / 5;
                                  child.position.x = child.userData.basePos.x + (bendAmount * yNorm * yNorm * 5);
@@ -775,7 +878,6 @@
                         });
                     }
 
-                    // C60: Squish
                     if (s === 'c60') {
                         if(this.isDragging) {
                             const scale = 1.0 + Math.sin(this.state.time * 20) * 0.1;
@@ -785,15 +887,15 @@
                         }
                     }
                 } else {
-                    // Reset positions if switching away from Hard mode
                     if(s === 'diamond') this.objects.diamond.position.set(0,0,0);
-                    // Graphite layers are not reset automatically to show they have moved
                 }
 
-                // --- Vibration / Melt ---
                 if(p === 'melt') {
                     const shake = (obj, intensity) => {
                         obj.children.forEach(child => {
+                            // SAFETY CHECK: Ensure basePos exists
+                            if(!child.userData.basePos) return;
+
                             if(child.geometry && child.geometry.type === 'SphereGeometry') {
                                 child.position.x = child.userData.basePos.x + (Math.random()-0.5)*intensity;
                                 child.position.y = child.userData.basePos.y + (Math.random()-0.5)*intensity;
@@ -812,7 +914,6 @@
                     else if(s === 'nano') shake(this.objects.nano, 0.05);
                 }
 
-                // --- Conductivity ---
                 if(p === 'cond') {
                     if(!this.electronCloud) {
                          this.electronCloud = new THREE.Group();
