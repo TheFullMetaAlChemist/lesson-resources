@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Structures: Allotropes & Uses</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; }
+        
+        /* Left UI Overlay (Controls) */
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #e0e0e0;
+            pointer-events: auto;
+            backdrop-filter: blur(5px);
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        /* Right UI Overlay (Quiz) */
+        #quiz-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #e0e0e0;
+            pointer-events: auto;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            max-height: 90vh;
+            z-index: 10;
+        }
+
+        #quiz-header {
+            padding: 15px 20px;
+            background: #007acc;
+            color: white;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #quiz-header h2 { margin: 0; font-size: 16px; color: white; border: none; }
+        
+        #quiz-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0;
+        }
+
+        h1 { margin: 0 0 15px 0; font-size: 20px; color: #222; font-weight: 700; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { font-size: 13px; text-transform: uppercase; color: #666; margin: 15px 0 8px 0; letter-spacing: 1px; font-weight: 600; }
+
+        /* Button Grids */
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .controls-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .controls.single { grid-template-columns: 1fr; }
+
+        button {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #444;
+            padding: 10px 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        button:hover { background: #e0e0e0; border-color: #bbb; }
+        button.active { background: #007acc; color: white; border-color: #008be6; box-shadow: 0 2px 5px rgba(0, 122, 204, 0.3); }
+
+        #btn-quiz-toggle {
+            background: #28a745; color: white; border: none; margin-top: 10px; width: 100%; padding: 12px; font-size: 14px;
+        }
+        #btn-quiz-toggle:hover { background: #218838; }
+
+        /* Quiz Styles */
+        .question-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-weight: 600; margin-bottom: 8px; font-size: 13px; }
+        .options { display: flex; flex-direction: column; gap: 5px; }
+        .option-btn {
+            text-align: left; background: #f9f9f9; border: 1px solid #ddd; padding: 8px; font-weight: normal;
+        }
+        .option-btn:hover { background: #f0f0f0; }
+        .option-btn.correct { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .option-btn.incorrect { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        
+        #score-display { margin-bottom: 15px; font-weight: bold; color: #007acc; }
+        #btn-reset-quiz { background: #6c757d; color: white; width: 100%; margin-top: 10px; }
+
+        /* Info Box */
+        #info-panel {
+            margin-top: 15px;
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #007acc;
+            font-size: 13px;
+            line-height: 1.5;
+            min-height: 80px;
+            border: 1px solid #eee;
+            border-left-width: 4px;
+        }
+
+        .highlight { color: #007acc; font-weight: bold; }
+
+        /* Legend */
+        .legend { display: flex; gap: 15px; margin-top: 15px; font-size: 12px; color: #666; align-items: center; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .dot-c { background: #555; border: 1px solid #333; }
+        .dot-e { background: #ffcc00; box-shadow: 0 0 4px #ffcc00; }
+
+        #canvas-container { width: 100vw; height: 100vh; }
+        
+        #interaction-hint {
+            display: none;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #d32f2f;
+            font-weight: bold;
+            text-align: center;
+            background: #ffebee;
+            padding: 5px;
+            border-radius: 4px;
+        }
+    </style>
+
+    <!-- Import Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Left Panel: Visuals -->
+    <div id="ui-container">
+        <h1>Carbon Allotropes</h1>
+        
+        <h2>Structure Selector</h2>
+        <div class="controls">
+            <button id="btn-diamond" class="active" onclick="app.setStructure('diamond')">Diamond</button>
+            <button id="btn-graphite" onclick="app.setStructure('graphite')">Graphite</button>
+        </div>
+        <div class="controls controls-3">
+            <button id="btn-graphene" onclick="app.setStructure('graphene')">Graphene</button>
+            <button id="btn-c60" onclick="app.setStructure('c60')">C60 Fullerene</button>
+            <button id="btn-nano" onclick="app.setStructure('nano')">Nanotube</button>
+        </div>
+
+        <h2>Interactive Modes</h2>
+        <div class="controls single">
+            <button id="btn-reset" class="active" onclick="app.setProperty('none')">View Structure (Reset)</button>
+        </div>
+        <div class="controls controls-3">
+            <button id="btn-hard" onclick="app.setProperty('hard')">Hardness / Flex</button>
+            <button id="btn-melt" onclick="app.setProperty('melt')">Melting Pt.</button>
+            <button id="btn-cond" onclick="app.setProperty('cond')">Conductivity</button>
+        </div>
+        
+        <div id="interaction-hint">Try dragging the structure!</div>
+
+        <div id="info-panel">
+            <strong>Diamond:</strong> A giant covalent lattice. Each carbon atom forms 4 strong covalent bonds in a rigid tetrahedral arrangement.
+        </div>
+
+        <button id="btn-quiz-toggle" onclick="quizApp.toggleQuiz()">📝 Test Knowledge (Quiz)</button>
+
+        <div class="legend">
+            <div><span class="dot dot-c"></span>Carbon Atom</div>
+            <div><span class="dot dot-e"></span>Electron</div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Quiz -->
+    <div id="quiz-container">
+        <div id="quiz-header">
+            <h2>GCSE Carbon Quiz</h2>
+            <button class="close-btn" onclick="quizApp.toggleQuiz()">×</button>
+        </div>
+        <div id="quiz-content">
+            <div id="score-display">Progress: 0/8 Correct</div>
+            <div id="questions-list"></div>
+            <button id="btn-reset-quiz" onclick="quizApp.resetProgress()">Reset Progress</button>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Quiz Logic ---
+        class QuizManager {
+            constructor() {
+                this.questions = [
+                    { q: "How many covalent bonds does each carbon atom form in Diamond?", opts: ["2", "3", "4", "5"], a: 2 },
+                    { q: "Why does Graphite conduct electricity?", opts: ["It contains metal ions", "It has delocalized electrons", "The layers can slide", "It melts at high temperatures"], a: 1 },
+                    { q: "Which statement describes Graphene?", opts: ["A spherical molecule of C60", "A single layer of graphite one atom thick", "A giant 3D lattice like diamond", "A lubricant used in pencils"], a: 1 },
+                    { q: "Why is Graphite soft and slippery?", opts: ["Weak intermolecular forces between layers", "Strong covalent bonds within layers", "It has a low melting point", "The atoms are arranged in tetrahedrons"], a: 0 },
+                    { q: "What is the main use of C60 Buckminsterfullerene?", opts: ["Cutting tools", "Wiring", "Drug delivery systems", "Building bridges"], a: 2 },
+                    { q: "Which allotrope has the highest tensile strength?", opts: ["Graphite", "Diamond", "Carbon Nanotube", "C60"], a: 2 },
+                    { q: "Why does Diamond have a very high melting point?", opts: ["Weak forces between molecules", "Strong covalent bonds throughout the lattice", "Delocalized electrons hold it together", "It is made of ions"], a: 1 },
+                    { q: "How many bonds does each carbon form in Graphite?", opts: ["3", "4", "5", "2"], a: 0 }
+                ];
+                this.userAnswers = new Array(this.questions.length).fill(null);
+                this.loadProgress();
+                this.render();
+            }
+
+            toggleQuiz() {
+                const el = document.getElementById('quiz-container');
+                el.style.display = el.style.display === 'none' || el.style.display === '' ? 'flex' : 'none';
+            }
+
+            saveProgress() {
+                localStorage.setItem('carbon_quiz_answers', JSON.stringify(this.userAnswers));
+                this.updateScore();
+            }
+
+            loadProgress() {
+                const saved = localStorage.getItem('carbon_quiz_answers');
+                if (saved) {
+                    this.userAnswers = JSON.parse(saved);
+                }
+                this.updateScore();
+            }
+
+            resetProgress() {
+                this.userAnswers = new Array(this.questions.length).fill(null);
+                this.saveProgress();
+                this.render();
+            }
+
+            updateScore() {
+                const correct = this.userAnswers.reduce((acc, val, idx) => {
+                    return acc + (val === this.questions[idx].a ? 1 : 0);
+                }, 0);
+                document.getElementById('score-display').innerText = `Progress: ${correct}/${this.questions.length} Correct`;
+            }
+
+            selectAnswer(qIndex, optIndex) {
+                this.userAnswers[qIndex] = optIndex;
+                this.saveProgress();
+                this.render(); // Re-render to show styling
+            }
+
+            render() {
+                const container = document.getElementById('questions-list');
+                container.innerHTML = '';
+
+                this.questions.forEach((q, qIdx) => {
+                    const qBlock = document.createElement('div');
+                    qBlock.className = 'question-block';
+                    
+                    const qText = document.createElement('div');
+                    qText.className = 'question-text';
+                    qText.innerText = `${qIdx + 1}. ${q.q}`;
+                    qBlock.appendChild(qText);
+
+                    const optsDiv = document.createElement('div');
+                    optsDiv.className = 'options';
+
+                    q.opts.forEach((opt, optIdx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn';
+                        btn.innerText = opt;
+                        
+                        // Check State
+                        const userSelected = this.userAnswers[qIdx];
+                        if (userSelected !== null) {
+                            if (optIdx === q.a) {
+                                btn.classList.add('correct'); // Always show correct if answered
+                            }
+                            if (userSelected === optIdx && userSelected !== q.a) {
+                                btn.classList.add('incorrect');
+                            }
+                        }
+
+                        btn.onclick = () => this.selectAnswer(qIdx, optIdx);
+                        optsDiv.appendChild(btn);
+                    });
+
+                    qBlock.appendChild(optsDiv);
+                    container.appendChild(qBlock);
+                });
+            }
+        }
+
+        window.quizApp = new QuizManager();
+
+
+        // --- Main 3D App ---
+        class CarbonLab {
+            constructor() {
+                this.state = {
+                    structure: 'diamond', 
+                    property: 'none',
+                    time: 0
+                };
+                
+                this.objects = {
+                    diamond: new THREE.Group(),
+                    graphite: new THREE.Group(),
+                    graphene: new THREE.Group(),
+                    c60: new THREE.Group(),
+                    nano: new THREE.Group(),
+                    electrons: new THREE.Group()
+                };
+
+                // Interaction State
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+                this.isDragging = false;
+                this.dragTarget = null;
+                this.dragStart = new THREE.Vector2();
+                this.dragDelta = new THREE.Vector2();
+
+                this.init();
+            }
+
+            init() {
+                // Scene
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0xf5f5f5);
+
+                // Camera
+                this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+                this.camera.position.set(8, 6, 8);
+
+                // Renderer
+                this.renderer = new THREE.WebGLRenderer({ antialias: true });
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                document.getElementById('canvas-container').appendChild(this.renderer.domElement);
+
+                // Controls
+                this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.autoRotate = true;
+                this.controls.autoRotateSpeed = 0.5;
+
+                // Lighting (High contrast for light background)
+                const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+                const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+                dirLight.position.set(5, 10, 7);
+                const backLight = new THREE.DirectionalLight(0xaaccff, 0.5);
+                backLight.position.set(-5, -2, -5);
+                this.scene.add(ambient, dirLight, backLight);
+
+                // Build All Structures
+                this.buildDiamond();
+                this.buildGraphite(); 
+                this.buildGraphene();
+                this.buildC60();
+                this.buildNanotube();
+
+                // Initial State
+                this.scene.add(this.objects.diamond);
+                
+                // Event Listeners
+                window.addEventListener('resize', () => this.onResize());
+                const canvas = this.renderer.domElement;
+                canvas.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+                canvas.addEventListener('pointermove', (e) => this.onPointerMove(e));
+                canvas.addEventListener('pointerup', (e) => this.onPointerUp(e));
+
+                this.animate();
+                window.app = this;
+            }
+
+            // --- Interaction Handling ---
+
+            getMouse(event) {
+                const rect = this.renderer.domElement.getBoundingClientRect();
+                return {
+                    x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                    y: -((event.clientY - rect.top) / rect.height) * 2 + 1
+                };
+            }
+
+            onPointerDown(event) {
+                if (this.state.property !== 'hard') return;
+
+                const m = this.getMouse(event);
+                this.raycaster.setFromCamera(m, this.camera);
+                
+                const currentObj = this.objects[this.state.structure];
+                const intersects = this.raycaster.intersectObjects(currentObj.children, true);
+
+                if (intersects.length > 0) {
+                    this.isDragging = true;
+                    this.controls.enabled = false; 
+                    this.dragStart.set(event.clientX, event.clientY);
+                    
+                    let target = intersects[0].object;
+                    
+                    if (this.state.structure === 'graphite') {
+                        while(target.parent && !target.userData.isLayer) {
+                            target = target.parent;
+                        }
+                    }
+                    this.dragTarget = target;
+                }
+            }
+
+            onPointerMove(event) {
+                if (!this.isDragging) return;
+
+                const deltaX = (event.clientX - this.dragStart.x) * 0.01;
+                const deltaY = (event.clientY - this.dragStart.y) * 0.01;
+                this.dragDelta.set(deltaX, deltaY);
+
+                const s = this.state.structure;
+
+                if (s === 'graphite') {
+                    if(this.dragTarget && this.dragTarget.userData.isLayer) {
+                        this.dragTarget.position.x += deltaX;
+                    }
+                }
+                this.dragStart.set(event.clientX, event.clientY);
+            }
+
+            onPointerUp() {
+                this.isDragging = false;
+                this.controls.enabled = true;
+                this.dragTarget = null;
+                this.dragDelta.set(0, 0);
+            }
+
+            // --- Builders ---
+
+            createAtom(pos) {
+                const geo = new THREE.SphereGeometry(0.25, 32, 32);
+                const mat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.1, metalness: 0.7 });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.copy(pos);
+                mesh.userData.basePos = pos.clone(); 
+                return mesh;
+            }
+
+            createBond(p1, p2) {
+                const dist = p1.distanceTo(p2);
+                const geo = new THREE.CylinderGeometry(0.06, 0.06, dist, 12);
+                const mat = new THREE.MeshStandardMaterial({ color: 0x999999, roughness: 0.3 });
+                const mesh = new THREE.Mesh(geo, mat);
+                const axis = new THREE.Vector3(0, 1, 0);
+                const dir = new THREE.Vector3().subVectors(p2, p1).normalize();
+                mesh.quaternion.setFromUnitVectors(axis, dir);
+                mesh.position.copy(p1).add(dir.multiplyScalar(dist / 2));
+                mesh.userData.basePos = mesh.position.clone(); 
+                return mesh;
+            }
+
+            // 1. Diamond
+            buildDiamond() {
+                const a = 1.8; 
+                const points = [];
+                const range = 1;
+                for(let x = -range; x <= range; x++) {
+                    for(let y = -range; y <= range; y++) {
+                        for(let z = -range; z <= range; z++) {
+                            const offsets = [[0,0,0], [0.5,0.5,0], [0.5,0,0.5], [0,0.5,0.5]];
+                            offsets.forEach(off => {
+                                let p1 = new THREE.Vector3((x + off[0])*a, (y + off[1])*a, (z + off[2])*a);
+                                let p2 = new THREE.Vector3((x + off[0] + 0.25)*a, (y + off[1] + 0.25)*a, (z + off[2] + 0.25)*a);
+                                if(p1.length() < 2.5) points.push(p1);
+                                if(p2.length() < 2.5) points.push(p2);
+                            });
+                        }
+                    }
+                }
+                points.forEach(p => this.objects.diamond.add(this.createAtom(p)));
+                const bondThresh = (Math.sqrt(3)/4) * a * 1.1;
+                for(let i=0; i<points.length; i++) {
+                    for(let j=i+1; j<points.length; j++) {
+                        if(points[i].distanceTo(points[j]) < bondThresh) {
+                            this.objects.diamond.add(this.createBond(points[i], points[j]));
+                        }
+                    }
+                }
+            }
+
+            // 2. Graphite
+            buildGraphite() {
+                const layerDist = 2.5;
+                const layers = [-layerDist, 0, layerDist];
+                layers.forEach((yPos, layerIdx) => {
+                    const layerGroup = new THREE.Group();
+                    layerGroup.userData.isLayer = true;
+                    layerGroup.userData.layerIdx = layerIdx;
+                    this.buildHexSheet(layerGroup, yPos, layerIdx === 1, false);
+                    this.objects.graphite.add(layerGroup);
+                });
+            }
+
+            // 3. Graphene
+            buildGraphene() {
+                this.buildHexSheet(this.objects.graphene, 0, false, false);
+            }
+
+            // Helper for flat hex sheets
+            buildHexSheet(group, yPos, shift, isCylindrical) {
+                const points = [];
+                const r = 0.5; 
+                for(let q = -6; q <= 6; q++) {
+                    for(let r_coord = -6; r_coord <= 6; r_coord++) {
+                        let x = r * 1.5 * q;
+                        let z = r * Math.sqrt(3) * (r_coord + q/2);
+                        if (Math.sqrt(x*x + z*z) > 4.5 && !isCylindrical) continue;
+                        if ((q - r_coord) % 3 !== 0) {
+                            if(shift) x += r; 
+                            points.push(new THREE.Vector3(x, yPos, z));
+                        }
+                    }
+                }
+                points.forEach(p => group.add(this.createAtom(p)));
+                const bondThresh = 1.0; 
+                for(let i=0; i<points.length; i++) {
+                    for(let j=i+1; j<points.length; j++) {
+                        const d = points[i].distanceTo(points[j]);
+                        if(d > 0.01 && d < bondThresh) group.add(this.createBond(points[i], points[j]));
+                    }
+                }
+            }
+
+            // 4. C60 Fullerene
+            buildC60() {
+                const phi = (1 + Math.sqrt(5)) / 2;
+                const rawVerts = [
+                    new THREE.Vector3(0, 1, phi), new THREE.Vector3(0, -1, phi), new THREE.Vector3(0, 1, -phi), new THREE.Vector3(0, -1, -phi),
+                    new THREE.Vector3(1, phi, 0), new THREE.Vector3(-1, phi, 0), new THREE.Vector3(1, -phi, 0), new THREE.Vector3(-1, -phi, 0),
+                    new THREE.Vector3(phi, 0, 1), new THREE.Vector3(phi, 0, -1), new THREE.Vector3(-phi, 0, 1), new THREE.Vector3(-phi, 0, -1)
+                ];
+                rawVerts.forEach(v => v.normalize().multiplyScalar(2));
+                const vertices = rawVerts; 
+                const edges = [];
+                for(let i=0; i<vertices.length; i++) {
+                    for(let j=i+1; j<vertices.length; j++) {
+                        const d = vertices[i].distanceTo(vertices[j]);
+                        if(d > 1.5 && d < 2.5) edges.push([vertices[i], vertices[j]]);
+                    }
+                }
+                const c60Atoms = [];
+                edges.forEach(edge => {
+                    const v1 = edge[0];
+                    const v2 = edge[1];
+                    const dir = new THREE.Vector3().subVectors(v2, v1);
+                    c60Atoms.push(v1.clone().add(dir.clone().multiplyScalar(1/3)));
+                    c60Atoms.push(v1.clone().add(dir.clone().multiplyScalar(2/3)));
+                });
+                // Dedupe C60 atoms slightly
+                const finalAtoms = [];
+                c60Atoms.forEach(a => {
+                    let exists = false;
+                    for(let b of finalAtoms) if(a.distanceTo(b) < 0.1) exists = true;
+                    if(!exists) finalAtoms.push(a);
+                });
+
+                finalAtoms.forEach(p => this.objects.c60.add(this.createAtom(p)));
+                for(let i=0; i<finalAtoms.length; i++) {
+                    for(let j=i+1; j<finalAtoms.length; j++) {
+                        if(finalAtoms[i].distanceTo(finalAtoms[j]) < 0.8) this.objects.c60.add(this.createBond(finalAtoms[i], finalAtoms[j]));
+                    }
+                }
+                this.objects.c60.scale.set(0.8, 0.8, 0.8);
+            }
+
+            // 5. Nanotube
+            buildNanotube() {
+                const points = [];
+                const r = 0.8; 
+                const w = 3 * r; 
+                const h = Math.sqrt(3) * r;
+                const cols = 8; 
+                const rows = 6; 
+                const circumference = cols * w;
+                const tubeRad = circumference / (2 * Math.PI);
+                
+                for(let i=0; i<cols; i++) {
+                    for(let j=-rows/2; j<rows/2; j++) {
+                        const baseX = i * w;
+                        const baseY = j * h;
+                        const offsets = [{x: 0, y: 0}, {x: r, y: 0}, {x: 1.5*r, y: 0.5*h}, {x: 2.5*r, y: 0.5*h}];
+                        offsets.forEach(off => {
+                            let xFlat = baseX + off.x;
+                            let yFlat = baseY + off.y;
+                            const angle = (xFlat / circumference) * Math.PI * 2;
+                            const x3 = tubeRad * Math.cos(angle);
+                            const z3 = tubeRad * Math.sin(angle);
+                            const y3 = yFlat;
+                            const newP = new THREE.Vector3(x3, y3, z3);
+                            let exists = false;
+                            for(let k=0; k<points.length; k++) {
+                                if(points[k].distanceTo(newP) < 0.1) { exists = true; break; }
+                            }
+                            if(!exists) points.push(newP);
+                        });
+                    }
+                }
+                points.forEach(p => this.objects.nano.add(this.createAtom(p)));
+                const bondThresh = 1.1 * r; 
+                const lowerBound = 0.5 * r;
+                for(let i=0; i<points.length; i++) {
+                    for(let j=i+1; j<points.length; j++) {
+                        const d = points[i].distanceTo(points[j]);
+                        if(d > lowerBound && d < bondThresh) this.objects.nano.add(this.createBond(points[i], points[j]));
+                    }
+                }
+                this.objects.nano.scale.set(0.7, 0.7, 0.7);
+            }
+
+            // --- Animation & Logic ---
+
+            setStructure(type) {
+                this.state.structure = type;
+                this.setProperty('none'); 
+                
+                Object.values(this.objects).forEach(o => this.scene.remove(o));
+                this.scene.add(this.objects[type]);
+                if(type === 'graphite' && this.state.property === 'cond') this.scene.add(this.objects.electrons);
+                
+                document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+                document.getElementById('btn-'+type).classList.add('active');
+                document.getElementById('btn-reset').classList.add('active');
+
+                this.updateInfo();
+            }
+
+            setProperty(prop) {
+                this.state.property = prop;
+                
+                ['btn-reset', 'btn-melt', 'btn-cond', 'btn-hard'].forEach(id => {
+                     const el = document.getElementById(id);
+                     if(el) el.classList.remove('active');
+                });
+                
+                let activeId = 'btn-reset';
+                if(prop === 'melt') activeId = 'btn-melt';
+                if(prop === 'cond') activeId = 'btn-cond';
+                if(prop === 'hard') activeId = 'btn-hard';
+                document.getElementById(activeId).classList.add('active');
+
+                // Toggle Interaction Hint
+                document.getElementById('interaction-hint').style.display = (prop === 'hard') ? 'block' : 'none';
+
+                if(prop !== 'none' && prop !== 'hard') this.controls.autoRotate = false;
+                else this.controls.autoRotate = true;
+                
+                // If Hardness mode enabled, stop rotation to allow easy clicking
+                if(prop === 'hard') this.controls.autoRotate = false;
+
+                this.updateInfo();
+            }
+
+            updateInfo() {
+                const el = document.getElementById('info-panel');
+                const s = this.state.structure;
+                const p = this.state.property;
+                let text = "";
+
+                if(s === 'diamond') {
+                    if(p === 'none') text = "<strong>Diamond Structure:</strong> A giant covalent lattice. Each carbon atom forms <strong>4 strong covalent bonds</strong> with other carbon atoms in a rigid tetrahedral arrangement. There are no free electrons.<br><span class='highlight'>GCSE Use:</span> Cutting tools (drill bits) and jewelry.";
+                    if(p === 'hard') text = "<strong>Hardness:</strong> <span class='highlight'>Very Hard.</span> Diamond is the hardest natural substance. The rigid network of carbon atoms held by strong covalent bonds requires huge force to break. This is why it is used for cutting tools.";
+                    if(p === 'melt') text = "<strong>Melting Point:</strong> <span class='highlight'>Very High (>3500°C).</span> A massive amount of energy is required to break the strong covalent bonds throughout the giant lattice structure.";
+                    if(p === 'cond') text = "<strong>Conductivity:</strong> <span class='highlight'>Does Not Conduct.</span> There are no free ions or delocalized electrons to carry an electrical charge. All 4 outer electrons are involved in bonding.";
+                } 
+                else if(s === 'graphite') {
+                    if(p === 'none') text = "<strong>Graphite Structure:</strong> A giant covalent structure made of layers. Each carbon atom forms <strong>3 covalent bonds</strong> forming hexagonal rings. There are no covalent bonds between the layers.<br><span class='highlight'>GCSE Use:</span> Pencils and lubricants.";
+                    if(p === 'hard') text = "<strong>Hardness:</strong> <span class='highlight'>Soft & Slippery.</span> The layers are held together by weak intermolecular forces. This allows the layers to slide over each other easily, making graphite ideal as a lubricant.";
+                    if(p === 'melt') text = "<strong>Melting Point:</strong> <span class='highlight'>Very High.</span> Although the layers slide, the covalent bonds *within* the layers are extremely strong and need a lot of energy to break.";
+                    if(p === 'cond') text = "<strong>Conductivity:</strong> <span class='highlight'>Good Conductor.</span> Each carbon atom uses 3 electrons for bonding. The 4th electron is <strong>delocalized</strong> and free to move through the structure carrying charge.";
+                }
+                else if(s === 'graphene') {
+                     if(p === 'none') text = "<strong>Graphene Structure:</strong> A single layer of graphite. It is a sheet of carbon atoms joined together in hexagons. It is just <strong>one atom thick</strong>, making it a 2D material.<br><span class='highlight'>GCSE Use:</span> Electronics and composites.";
+                     if(p === 'hard') text = "<strong>Strength:</strong> <span class='highlight'>Strong & Flexible.</span> The strong covalent bonds make it incredibly strong for its mass. It can flex without breaking, useful for advanced materials.";
+                     if(p === 'melt') text = "<strong>Thermal:</strong> Graphene is an excellent thermal conductor, allowing heat to dissipate quickly. It has a very high melting point due to the strong covalent bonds.";
+                     if(p === 'cond') text = "<strong>Conductivity:</strong> <span class='highlight'>Excellent Conductor.</span> Like graphite, it has delocalized electrons that are free to move across the surface to conduct electricity.";
+                }
+                else if(s === 'c60') {
+                    if(p === 'none') text = "<strong>Buckminsterfullerene (C<sub>60</sub>):</strong> The first fullerene discovered. It consists of 60 carbon atoms arranged in a hollow sphere. It is a simple molecular structure.<br><span class='highlight'>GCSE Use:</span> Drug delivery, lubricants, and catalysts.";
+                    if(p === 'hard') text = "<strong>Properties:</strong> <span class='highlight'>Soft Solid.</span> Molecules of C<sub>60</sub> are held together by weak intermolecular forces, so they can slide past each other (slippery).";
+                    if(p === 'melt') text = "<strong>Melting Point:</strong> <span class='highlight'>Low (relative to Diamond).</span> It has weak intermolecular forces *between* the molecules which do not take much energy to overcome.";
+                    if(p === 'cond') text = "<strong>Conductivity:</strong> Semi-conductor. It has delocalized electrons but they cannot move between molecules as easily as in graphite. The hollow cage can trap other atoms (drugs).";
+                }
+                else if(s === 'nano') {
+                    if(p === 'none') text = "<strong>Carbon Nanotube:</strong> A cylindrical fullerene with a very high length-to-diameter ratio. Think of it as a layer of graphene rolled into a tube.<br><span class='highlight'>GCSE Use:</span> Nanotechnology, electronics, and strengthening materials (tennis rackets).";
+                    if(p === 'hard') text = "<strong>Strength:</strong> <span class='highlight'>High Tensile Strength.</span> Nanotubes are extremely strong and resist being stretched (tension) due to the strong covalent bonds.";
+                    if(p === 'melt') text = "<strong>Thermal:</strong> High thermal conductivity. Useful for heat sinks.";
+                    if(p === 'cond') text = "<strong>Conductivity:</strong> <span class='highlight'>Conductor.</span> Like graphene, they have delocalized electrons and are used in miniature electric circuits.";
+                }
+                el.innerHTML = text;
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                const dt = 0.05;
+                this.state.time += dt;
+                this.controls.update();
+
+                const s = this.state.structure;
+                const p = this.state.property;
+
+                // --- Hardness / Interaction Physics ---
+                if (p === 'hard') {
+                    // Diamond: Rigidity simulation (Shake slightly if dragging, then snap back)
+                    if (s === 'diamond') {
+                         if(this.isDragging) {
+                             // Tiny vibration to show resistance
+                             this.objects.diamond.position.x = (Math.random()-0.5)*0.05;
+                             this.objects.diamond.position.y = (Math.random()-0.5)*0.05;
+                         } else {
+                             // Snap back
+                             this.objects.diamond.position.set(0,0,0);
+                         }
+                    }
+                    
+                    // Graphene: Ripple
+                    if (s === 'graphene') {
+                        let waveAmp = this.isDragging ? 0.5 : 0.0;
+                        
+                        this.objects.graphene.children.forEach(child => {
+                            // Added safety check for missing basePos
+                            if(!child.userData.basePos) return;
+
+                            if (this.isDragging) {
+                                const dist = child.position.x - 0; 
+                                child.position.y = Math.sin(dist + this.state.time * 5) * (this.dragDelta.x * 20);
+                            } else {
+                                // Lerp back to 0
+                                child.position.y = THREE.MathUtils.lerp(child.position.y, 0, 0.1);
+                            }
+                        });
+                    }
+
+                    // Nanotube: Bend
+                    if (s === 'nano') {
+                        this.objects.nano.children.forEach(child => {
+                             // Added safety check for missing basePos
+                             if(!child.userData.basePos) return;
+
+                             if(this.isDragging) {
+                                 // Simple bend: x displacement affects y rotation or position
+                                 // Let's just curve coordinates
+                                 const bendAmount = this.dragDelta.x * 2;
+                                 const yNorm = child.userData.basePos.y / 5;
+                                 child.position.x = child.userData.basePos.x + (bendAmount * yNorm * yNorm * 5);
+                             } else {
+                                 child.position.x = THREE.MathUtils.lerp(child.position.x, child.userData.basePos.x, 0.1);
+                             }
+                        });
+                    }
+
+                    // C60: Squish
+                    if (s === 'c60') {
+                        if(this.isDragging) {
+                            const scale = 1.0 + Math.sin(this.state.time * 20) * 0.1;
+                            this.objects.c60.scale.set(scale, 1/scale, scale).multiplyScalar(0.8);
+                        } else {
+                            this.objects.c60.scale.lerp(new THREE.Vector3(0.8, 0.8, 0.8), 0.2);
+                        }
+                    }
+                } else {
+                    // Reset positions if switching away from Hard mode
+                    if(s === 'diamond') this.objects.diamond.position.set(0,0,0);
+                    // Graphite layers are not reset automatically to show they have moved
+                }
+
+                // --- Vibration / Melt ---
+                if(p === 'melt') {
+                    const shake = (obj, intensity) => {
+                        obj.children.forEach(child => {
+                            if(child.geometry && child.geometry.type === 'SphereGeometry') {
+                                child.position.x = child.userData.basePos.x + (Math.random()-0.5)*intensity;
+                                child.position.y = child.userData.basePos.y + (Math.random()-0.5)*intensity;
+                                child.position.z = child.userData.basePos.z + (Math.random()-0.5)*intensity;
+                            }
+                        });
+                    };
+                    
+                    if(s === 'diamond') shake(this.objects.diamond, 0.03);
+                    else if(s === 'graphite') this.objects.graphite.children.forEach(l => shake(l, 0.05));
+                    else if(s === 'graphene') shake(this.objects.graphene, 0.05);
+                    else if(s === 'c60') {
+                        this.objects.c60.rotation.y += 0.1; 
+                        this.objects.c60.rotation.z += 0.05; 
+                    }
+                    else if(s === 'nano') shake(this.objects.nano, 0.05);
+                }
+
+                // --- Conductivity ---
+                if(p === 'cond') {
+                    if(!this.electronCloud) {
+                         this.electronCloud = new THREE.Group();
+                         for(let i=0; i<40; i++) {
+                            const el = new THREE.Mesh(new THREE.SphereGeometry(0.08), new THREE.MeshBasicMaterial({color: 0xffcc00}));
+                            el.userData.v = new THREE.Vector3((Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2);
+                            this.electronCloud.add(el);
+                         }
+                         this.scene.add(this.electronCloud);
+                    }
+                    this.electronCloud.visible = true;
+                    
+                    this.electronCloud.children.forEach(el => {
+                        el.position.add(el.userData.v);
+                        
+                        let boundY = 3.0;
+                        if(s === 'graphene') boundY = 0.3; 
+                        let boxLimit = 3.0;
+
+                        if(s === 'c60') {
+                            const dist = el.position.length();
+                            if(dist > 1.6) { 
+                                el.position.multiplyScalar(0.95);
+                                el.userData.v.negate();
+                            }
+                        } else {
+                            if(Math.abs(el.position.x) > boxLimit) el.position.x *= -1;
+                            if(Math.abs(el.position.y) > boundY) {
+                                if(s === 'graphene') el.position.y = (Math.random()-0.5)*0.2; 
+                                else el.position.y *= -1; 
+                            }
+                            if(Math.abs(el.position.z) > boxLimit) el.position.z *= -1;
+                            
+                            if(s === 'nano') {
+                                 const r = Math.sqrt(el.position.x*el.position.x + el.position.z*el.position.z);
+                                 if(r > 1.4) { el.position.x *= 0.9; el.position.z *= 0.9; }
+                            }
+                        }
+                    });
+
+                    if(s === 'diamond') this.electronCloud.visible = false;
+                } else {
+                    if(this.electronCloud) this.electronCloud.visible = false;
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            onResize() {
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        }
+
+        new CarbonLab();
+    </script>
+</body>
+</html>
