@@ -72,16 +72,19 @@
                 <label class="block text-sm font-semibold mb-2 text-gray-300">Select Structure</label>
                 <div class="flex rounded-md shadow-sm" role="group">
                     <button id="btn-nacl" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-amber-600 text-white border border-amber-600 rounded-l-lg hover:bg-amber-700 active transition-colors">
-                        Ionic (NaCl)
+                        NaCl
                     </button>
                     <button id="btn-water" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 transition-colors">
-                        Simple (H₂O)
+                        H₂O
                     </button>
                     <button id="btn-sio2" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 transition-colors">
-                        Giant (SiO₂)
+                        SiO₂
                     </button>
-                    <button id="btn-metal" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-gray-700 text-gray-300 border border-gray-600 rounded-r-lg hover:bg-gray-600 transition-colors">
-                        Metal (Mg)
+                    <button id="btn-metal" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-gray-700 text-gray-300 border border-gray-600 hover:bg-gray-600 transition-colors">
+                        Metal
+                    </button>
+                    <button id="btn-alloy" class="flex-1 px-2 py-2 text-[10px] sm:text-xs font-bold bg-gray-700 text-gray-300 border border-gray-600 rounded-r-lg hover:bg-gray-600 transition-colors">
+                        Alloy
                     </button>
                 </div>
             </div>
@@ -103,6 +106,18 @@
                         Solution (Water)
                     </button>
                 </div>
+            </div>
+
+            <!-- Malleability Test Control (Visible for Metal/Alloy) -->
+            <div id="malleability-control" class="hidden bg-gray-800 p-3 rounded-lg border border-gray-600">
+                <label class="block text-sm font-semibold mb-2 text-pink-300">Malleability Test</label>
+                <button id="btn-hit" class="w-full px-4 py-2 text-sm font-bold bg-pink-600 text-white border border-pink-600 rounded hover:bg-pink-700 active:bg-pink-800 transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M9.972 2.508a.5.5 0 0 0-.16-.556l-.178-.129a5 5 0 0 0-2.076-.783C6.215.862 4.504 1.229 2.84 3.133H1.786a.5.5 0 0 0-.354.147L.146 4.567a.5.5 0 0 0 0 .706l2.571 2.579a.5.5 0 0 0 .708 0l1.286-1.29a.5.5 0 0 0 .146-.353V5.57l8.387 8.873A.5.5 0 0 0 14 14.5l1.5-1.5a.5.5 0 0 0 .017-.689l-9.129-8.63c.747-.456 1.772-.839 3.112-.839a.5.5 0 0 0 .472-.334"/>
+                    </svg>
+                    Hit with Hammer
+                </button>
+                <p id="malleability-result" class="text-xs text-gray-400 mt-2 italic text-center">Applies force to slide layers.</p>
             </div>
 
             <!-- Temperature Control -->
@@ -229,7 +244,7 @@
         // --- Configuration ---
         // Common
         const state = {
-            compound: 'nacl', // 'nacl', 'water', 'sio2', 'metal'
+            compound: 'nacl', // 'nacl', 'water', 'sio2', 'metal', 'alloy'
             temp: 20,
             time: 0,
             isPowerOn: false,
@@ -257,11 +272,13 @@
                 viewMode: 'ballstick'
             },
 
-            // Metal Specific
+            // Metal & Alloy Specific
             metal: {
                 isMolten: false,
-                meltingPoint: 650, // Magnesium approx
-                viewMode: 'ballstick' // Doesn't really apply but kept for consistency in code structure
+                meltingPoint: 650,
+                viewMode: 'ballstick',
+                isAlloy: false,
+                hitTime: -100 // Time since last hit
             }
         };
 
@@ -273,6 +290,7 @@
             sio2_bond: 0x999999,
             interForce: 0x88ccff,
             metalIon: 0xe5e7eb, // Bright Silver for Magnesium
+            alloyIon: 0xb87333, // Copper/Bronze for Alloy Impurity - High contrast
             electron: 0xfacc15 // Yellow
         };
 
@@ -282,9 +300,12 @@
             btnWater: document.getElementById('btn-water'),
             btnSio2: document.getElementById('btn-sio2'),
             btnMetal: document.getElementById('btn-metal'),
+            btnAlloy: document.getElementById('btn-alloy'),
             title: document.getElementById('compound-title'),
             desc: document.getElementById('compound-desc'),
             envControls: document.getElementById('env-controls'),
+            malleabilityControl: document.getElementById('malleability-control'),
+            malleabilityResult: document.getElementById('malleability-result'),
             viewOptions: document.getElementById('view-options'),
             tempSlider: document.getElementById('temp-slider'),
             tempDisplay: document.getElementById('temp-display'),
@@ -292,6 +313,7 @@
             stateText: document.getElementById('state-text'),
             btnPure: document.getElementById('btn-pure'),
             btnSolution: document.getElementById('btn-solution'),
+            btnHit: document.getElementById('btn-hit'),
             bulb: document.getElementById('bulb-icon'),
             condStatus: document.getElementById('conductivity-status'),
             condReason: document.getElementById('conductivity-reason'),
@@ -334,25 +356,18 @@
 
         // Navigation Logic
         function zoomCamera(direction) {
-            // Direction: 1 for in, -1 for out
             const dist = camera.position.distanceTo(controls.target);
             const newDist = THREE.MathUtils.clamp(dist - (direction * 5), 5, 100);
-            
             const vec = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
             camera.position.copy(controls.target).add(vec.multiplyScalar(newDist));
         }
 
         function rotateCamera(x, y) {
-            // Orbit around the target
             const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
             const spherical = new THREE.Spherical().setFromVector3(offset);
-            
-            spherical.theta -= x * 0.2; // Left/Right
-            spherical.phi -= y * 0.2;   // Up/Down
-            
-            // Clamp phi to avoid locking at poles
+            spherical.theta -= x * 0.2; 
+            spherical.phi -= y * 0.2;   
             spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
-
             offset.setFromSpherical(spherical);
             camera.position.copy(controls.target).add(offset);
             camera.lookAt(controls.target);
@@ -365,60 +380,37 @@
         }
 
         function setInteractionMode(mode) {
-            // Default OrbitControls: LEFT = ROTATE, MIDDLE = DOLLY, RIGHT = PAN
             if (mode === 'rotate') {
-                controls.mouseButtons = {
-                    LEFT: THREE.MOUSE.ROTATE,
-                    MIDDLE: THREE.MOUSE.DOLLY,
-                    RIGHT: THREE.MOUSE.PAN
-                };
-                // UI
-                els.btnModeRotate.classList.add('bg-blue-600');
-                els.btnModeRotate.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                els.btnModePan.classList.remove('bg-blue-600');
-                els.btnModePan.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+                els.btnModeRotate.classList.add('bg-blue-600'); els.btnModeRotate.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                els.btnModePan.classList.remove('bg-blue-600'); els.btnModePan.classList.add('bg-gray-700', 'hover:bg-gray-600');
             } else if (mode === 'pan') {
-                controls.mouseButtons = {
-                    LEFT: THREE.MOUSE.PAN,
-                    MIDDLE: THREE.MOUSE.DOLLY,
-                    RIGHT: THREE.MOUSE.ROTATE
-                };
-                // UI
-                els.btnModePan.classList.add('bg-blue-600');
-                els.btnModePan.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                els.btnModeRotate.classList.remove('bg-blue-600');
-                els.btnModeRotate.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
+                els.btnModePan.classList.add('bg-blue-600'); els.btnModePan.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                els.btnModeRotate.classList.remove('bg-blue-600'); els.btnModeRotate.classList.add('bg-gray-700', 'hover:bg-gray-600');
             }
         }
 
         // Nav Event Listeners
         els.btnZoomIn.addEventListener('click', () => zoomCamera(1));
         els.btnZoomOut.addEventListener('click', () => zoomCamera(-1));
-        
         els.btnRotLeft.addEventListener('click', () => rotateCamera(1, 0));
         els.btnRotRight.addEventListener('click', () => rotateCamera(-1, 0));
         els.btnRotUp.addEventListener('click', () => rotateCamera(0, 1));
         els.btnRotDown.addEventListener('click', () => rotateCamera(0, -1));
-        
         els.btnResetCam.addEventListener('click', resetCamera);
-
         els.btnModeRotate.addEventListener('click', () => setInteractionMode('rotate'));
         els.btnModePan.addEventListener('click', () => setInteractionMode('pan'));
 
         // UI Toggle
         els.btnToggleUI.addEventListener('click', () => {
             state.isUIVisible = !state.isUIVisible;
-            
             if (state.isUIVisible) {
-                els.uiLayer.classList.remove('ui-hidden');
-                els.uiLayer.classList.add('ui-visible');
-                els.iconEye.classList.remove('hidden');
-                els.iconEyeOff.classList.add('hidden');
+                els.uiLayer.classList.remove('ui-hidden'); els.uiLayer.classList.add('ui-visible');
+                els.iconEye.classList.remove('hidden'); els.iconEyeOff.classList.add('hidden');
             } else {
-                els.uiLayer.classList.remove('ui-visible');
-                els.uiLayer.classList.add('ui-hidden');
-                els.iconEye.classList.add('hidden');
-                els.iconEyeOff.classList.remove('hidden');
+                els.uiLayer.classList.remove('ui-visible'); els.uiLayer.classList.add('ui-hidden');
+                els.iconEye.classList.add('hidden'); els.iconEyeOff.classList.remove('hidden');
             }
         });
 
@@ -452,7 +444,7 @@
         let electrons = [];
 
         // --- Shared Geometry ---
-        const sphereGeo = new THREE.SphereGeometry(1, 16, 16); // Reduced detail for perf
+        const sphereGeo = new THREE.SphereGeometry(1, 16, 16); 
         const bondGeo = new THREE.CylinderGeometry(0.2, 0.2, 1, 8);
         const electronGeo = new THREE.SphereGeometry(0.15, 8, 8);
         
@@ -466,6 +458,7 @@
         const matSiBond = new THREE.MeshStandardMaterial({ color: COLORS.sio2_bond });
         const matInter = new THREE.LineDashedMaterial({ color: COLORS.interForce, dashSize: 0.2, gapSize: 0.1, opacity: 0.5, transparent: true });
         const matMetalIon = new THREE.MeshStandardMaterial({ color: COLORS.metalIon, roughness: 0.2, metalness: 0.8 });
+        const matAlloyIon = new THREE.MeshStandardMaterial({ color: COLORS.alloyIon, roughness: 0.2, metalness: 0.6 });
         const matElectron = new THREE.MeshBasicMaterial({ color: COLORS.electron });
 
         // --- Electrodes Setup ---
@@ -640,7 +633,7 @@
         }
 
         // --- Giant Metallic Lattice Logic ---
-        function initMetal() {
+        function initMetal(isAlloy = false) {
             metalIons.forEach(i => metalGroup.remove(i.mesh));
             electrons.forEach(e => metalGroup.remove(e.mesh));
             metalIons = []; electrons = [];
@@ -653,15 +646,41 @@
             for (let x = 0; x < GRID; x++) {
                 for (let y = 0; y < GRID; y++) {
                     for (let z = 0; z < GRID; z++) {
-                        const mesh = new THREE.Mesh(sphereGeo, matMetalIon);
+                        
+                        // Determine if this atom is an impurity (for Alloy)
+                        let isImpurity = false;
+                        if (isAlloy && Math.random() < 0.2) { // 20% Impurity
+                            isImpurity = true;
+                        }
+
+                        const mesh = new THREE.Mesh(sphereGeo, isImpurity ? matAlloyIon : matMetalIon);
                         const basePos = new THREE.Vector3(x*SPACING - offset, y*SPACING - offset, z*SPACING - offset);
+                        
+                        // Add position disruption for alloy to simulate lack of layers
+                        if (isAlloy) {
+                            basePos.add(new THREE.Vector3(
+                                (Math.random()-0.5)*0.8, 
+                                (Math.random()-0.5)*0.8, 
+                                (Math.random()-0.5)*0.8
+                            ));
+                        }
+
                         mesh.position.copy(basePos);
                         
+                        // Impurities are larger
+                        if (isImpurity) {
+                            mesh.scale.setScalar(1.5);
+                        } else {
+                            mesh.scale.setScalar(1.0);
+                        }
+
                         metalIons.push({
                             mesh: mesh,
                             basePos: basePos,
                             liquidPos: basePos.clone(),
-                            velocity: new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize().multiplyScalar(0.04)
+                            velocity: new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize().multiplyScalar(0.04),
+                            isImpurity: isImpurity,
+                            hitOffset: new THREE.Vector3(0,0,0) // For malleability animation
                         });
                         metalGroup.add(mesh);
                     }
@@ -669,11 +688,9 @@
             }
 
             // Create Sea of Delocalised Electrons
-            // More electrons than ions to visualize the "sea"
             const electronCount = metalIons.length * 3;
             for(let i=0; i<electronCount; i++) {
                 const mesh = new THREE.Mesh(electronGeo, matElectron);
-                // Scatter randomly within the box
                 const px = (Math.random() - 0.5) * GRID * SPACING;
                 const py = (Math.random() - 0.5) * GRID * SPACING;
                 const pz = (Math.random() - 0.5) * GRID * SPACING;
@@ -694,7 +711,7 @@
             if (state.compound === 'nacl') updateNaClPhysics(boundary);
             else if (state.compound === 'water') updateWaterPhysics(boundary);
             else if (state.compound === 'sio2') updateSiO2Physics(boundary);
-            else if (state.compound === 'metal') updateMetalPhysics(boundary);
+            else if (state.compound === 'metal' || state.compound === 'alloy') updateMetalPhysics(boundary);
         }
 
         function updateNaClPhysics(boundary) {
@@ -806,10 +823,15 @@
         function updateMetalPhysics(boundary) {
             const vib = (state.temp / 1000) * 0.3;
             
-            // Ions Logic
+            // Malleability Animation Logic
+            const timeSinceHit = state.time - state.metal.hitTime;
+            const slideDuration = 15;
+            const isSliding = timeSinceHit < slideDuration;
+            const isResetting = timeSinceHit >= slideDuration && timeSinceHit < slideDuration + 20;
+            
             metalIons.forEach(ion => {
                 if (state.metal.isMolten) {
-                    // Molten: Ions flow
+                    // Molten Physics (Flow)
                     let move = ion.velocity.clone();
                     ion.liquidPos.add(move);
                     ['x', 'y', 'z'].forEach(ax => { 
@@ -818,17 +840,50 @@
                             ion.liquidPos[ax] = Math.sign(ion.liquidPos[ax]) * boundary * 0.99; 
                         } 
                     });
-                    
-                    // Simple collision between ions in liquid
-                    // (Simplified loop here or just basic avoidance handled by box logic + visuals)
-                    
                     ion.mesh.position.lerp(ion.liquidPos, 0.2);
+                
                 } else {
-                    // Solid: Vibrate in lattice
-                    ion.liquidPos.lerp(ion.basePos, 0.1);
-                    ion.mesh.position.x = ion.liquidPos.x + Math.sin(state.time * 10 + ion.basePos.y) * vib;
-                    ion.mesh.position.y = ion.liquidPos.y + Math.cos(state.time * 12 + ion.basePos.z) * vib;
-                    ion.mesh.position.z = ion.liquidPos.z + Math.sin(state.time * 11 + ion.basePos.x) * vib;
+                    // Solid Physics (Vibration + Sliding)
+                    
+                    if (isSliding || isResetting) {
+                        // Sliding Logic
+                        if (state.metal.isAlloy) {
+                            // Alloy: Stuck / Vibrate vigorously
+                            if (ion.basePos.y > 0) { // Top half tries to move
+                                // Jitter to simulate getting stuck
+                                ion.hitOffset.x = (Math.random() - 0.5) * 0.5; 
+                                // Very slight drift to show force attempt, but blocked
+                                ion.hitOffset.x += 0.2 * Math.min(1, timeSinceHit / 10);
+                            }
+                        } else {
+                            // Pure Metal: Slide Smoothly
+                            if (ion.basePos.y > 0) { // Top half
+                                // Slide to the right by exactly one atom spacing (2.8)
+                                const slideTarget = 2.8; 
+                                
+                                if (isSliding) {
+                                    // Fast slide out
+                                    const progress = timeSinceHit / slideDuration;
+                                    // Ease out cubic
+                                    ion.hitOffset.x = slideTarget * (1 - Math.pow(1 - progress, 3));
+                                } 
+                                // During 'isResetting', we just hold position or let the lerp below handle the return
+                            }
+                        }
+                    }
+
+                    // Return to original position after animation
+                    if (!isSliding && !isResetting) {
+                        ion.hitOffset.lerp(new THREE.Vector3(0,0,0), 0.05);
+                    }
+
+                    // Calculate final position
+                    // Base + Vibration + HitOffset
+                    const targetX = ion.basePos.x + ion.hitOffset.x + Math.sin(state.time * 10 + ion.basePos.y) * vib;
+                    const targetY = ion.basePos.y + ion.hitOffset.y + Math.cos(state.time * 12 + ion.basePos.z) * vib;
+                    const targetZ = ion.basePos.z + ion.hitOffset.z + Math.sin(state.time * 11 + ion.basePos.x) * vib;
+
+                    ion.mesh.position.set(targetX, targetY, targetZ);
                 }
             });
             
@@ -843,31 +898,21 @@
                 }
             }
 
-            // Electron Logic (Always Moving)
+            // Electron Logic
             const electronSpeed = 0.2;
             const driftSpeed = 0.15;
             
             electrons.forEach(e => {
                 let move = e.velocity.clone().multiplyScalar(electronSpeed);
-                
-                // Conduction: Electrons drift to Anode (+X)
-                // Wait, Anode is Left (-X) in our setup (Red box at x=-8)
-                // Cathode is Right (+X) (Blue box at x=8)
-                // Electrons (Negative) are attracted to Anode (Positive/Left)
                 if (state.isPowerOn) {
-                    move.x -= driftSpeed; // Move Left
+                    move.x -= driftSpeed;
                 }
-                
                 e.mesh.position.add(move);
-                
-                // Boundaries for electrons
                 const eBound = boundary + 0.5;
                 ['x', 'y', 'z'].forEach(ax => {
                     if (Math.abs(e.mesh.position[ax]) > eBound) {
-                        // Warp around or bounce? Bounce is better for box containment
-                        // If power is on, they might "cycle" (enter right, leave left)
                         if (state.isPowerOn && ax === 'x') {
-                            if (e.mesh.position.x < -eBound) e.mesh.position.x = eBound; // Loop back to cathode
+                            if (e.mesh.position.x < -eBound) e.mesh.position.x = eBound;
                             if (e.mesh.position.x > eBound) e.mesh.position.x = -eBound;
                         } else {
                              e.velocity[ax] *= -1;
@@ -875,8 +920,6 @@
                         }
                     }
                 });
-                
-                // Random pertubation
                 e.velocity.x += (Math.random()-0.5)*0.1;
                 e.velocity.y += (Math.random()-0.5)*0.1;
                 e.velocity.z += (Math.random()-0.5)*0.1;
@@ -891,9 +934,10 @@
             naclGroup.visible = false; waterGroup.visible = false; sio2Group.visible = false; metalGroup.visible = false;
             els.envControls.style.display = "none";
             els.viewOptions.style.display = "block";
+            els.malleabilityControl.style.display = "none";
             
             // Button Styles Reset
-            [els.btnNacl, els.btnWater, els.btnSio2, els.btnMetal].forEach(b => {
+            [els.btnNacl, els.btnWater, els.btnSio2, els.btnMetal, els.btnAlloy].forEach(b => {
                  b.className = b.className.replace('bg-amber-600', 'bg-gray-700').replace('border-amber-600', 'border-gray-600');
             });
 
@@ -934,18 +978,34 @@
                     <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-red-500"></div><span class="text-xs">Oxygen</span></div>
                     <div class="flex items-center gap-2"><div class="w-8 h-1 bg-gray-400"></div><span class="text-[10px]">Covalent Bond</span></div>
                 `;
-            } else if (state.compound === 'metal') {
+            } else if (state.compound === 'metal' || state.compound === 'alloy') {
+                state.metal.isAlloy = (state.compound === 'alloy');
                 metalGroup.visible = true;
                 els.viewOptions.style.display = "none";
-                styleActiveBtn(els.btnMetal);
-                els.title.innerText = "Magnesium (Mg)";
-                els.desc.innerText = "Giant Metallic Lattice";
+                styleActiveBtn(state.compound === 'metal' ? els.btnMetal : els.btnAlloy);
+                els.malleabilityControl.style.display = "block"; // Show Malleability Test
+                
+                if (state.compound === 'metal') {
+                    els.title.innerText = "Magnesium (Pure Metal)";
+                    els.desc.innerText = "Giant Metallic Lattice";
+                    els.malleabilityResult.innerText = "Layers slide easily over each other (Malleable).";
+                    els.legend.innerHTML = `
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-slate-500"></div><span class="text-xs">Mg²⁺ Ion</span></div>
+                        <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-400"></div><span class="text-xs">Delocalised Electron</span></div>
+                    `;
+                } else {
+                    els.title.innerText = "Magnesium Alloy";
+                    els.desc.innerText = "Mixture of Metal Elements";
+                    els.malleabilityResult.innerText = "Different sized atoms disrupt layers; they cannot slide easily (Harder).";
+                    els.legend.innerHTML = `
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-slate-500"></div><span class="text-xs">Mg²⁺</span></div>
+                        <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-orange-600 scale-110"></div><span class="text-xs">Impurity</span></div>
+                        <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-400"></div><span class="text-xs">Electron</span></div>
+                    `;
+                }
+                
                 els.tempSlider.min = 20; els.tempSlider.max = 1200;
                 els.tempLabels.innerHTML = `<span>20°C</span><span class="text-red-500 font-bold">MP: 650°C</span><span>1200°C</span>`;
-                els.legend.innerHTML = `
-                    <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-slate-500"></div><span class="text-xs">Mg²⁺ Ion</span></div>
-                    <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-400"></div><span class="text-xs">Delocalised Electron</span></div>
-                `;
             }
 
             updateStateCalculation();
@@ -981,7 +1041,7 @@
                 // SiO2 never conducts in this context
                 if (state.isPowerOn) setConducting(false, "No ions or free electrons to carry charge.");
                 else setConducting(false, "Switch on power to test.");
-            } else if (state.compound === 'metal') {
+            } else if (state.compound === 'metal' || state.compound === 'alloy') {
                 state.metal.isMolten = state.temp >= state.metal.meltingPoint;
                 els.stateText.innerHTML = state.metal.isMolten ? 'State: <span class="text-orange-400">Liquid (Molten)</span>' : 'State: <span class="text-green-400">Solid Lattice</span>';
                 
@@ -1010,10 +1070,29 @@
         els.btnNacl.addEventListener('click', () => { state.compound = 'nacl'; state.temp = 20; els.tempSlider.value = 20; updateUI(); });
         els.btnWater.addEventListener('click', () => { state.compound = 'water'; state.temp = -20; els.tempSlider.value = -20; updateUI(); });
         els.btnSio2.addEventListener('click', () => { state.compound = 'sio2'; state.temp = 20; els.tempSlider.value = 20; updateUI(); });
-        els.btnMetal.addEventListener('click', () => { state.compound = 'metal'; state.temp = 20; els.tempSlider.value = 20; updateUI(); });
+        els.btnMetal.addEventListener('click', () => { 
+            state.compound = 'metal'; 
+            state.temp = 20; els.tempSlider.value = 20; 
+            initMetal(false); // Re-init as pure
+            updateUI(); 
+        });
+        els.btnAlloy.addEventListener('click', () => { 
+            state.compound = 'alloy'; 
+            state.temp = 20; els.tempSlider.value = 20; 
+            initMetal(true); // Re-init as alloy
+            updateUI(); 
+        });
 
         els.btnPure.addEventListener('click', () => { state.nacl.inSolution = false; els.btnPure.className = els.btnPure.className.replace('bg-gray-700', 'bg-blue-600').replace('text-gray-300', 'text-white').replace('border-gray-600', 'border-blue-600'); els.btnSolution.className = els.btnSolution.className.replace('bg-blue-600', 'bg-gray-700').replace('text-white', 'text-gray-300').replace('border-blue-600', 'border-gray-600'); if(state.temp < state.nacl.meltingPoint) ions.forEach(i => i.liquidPos.copy(i.basePos)); updateStateCalculation(); });
         els.btnSolution.addEventListener('click', () => { state.nacl.inSolution = true; els.btnSolution.className = els.btnSolution.className.replace('bg-gray-700', 'bg-blue-600').replace('text-gray-300', 'text-white').replace('border-gray-600', 'border-blue-600'); els.btnPure.className = els.btnPure.className.replace('bg-blue-600', 'bg-gray-700').replace('text-white', 'text-gray-300').replace('border-blue-600', 'border-gray-600'); updateStateCalculation(); });
+
+        // Malleability Hit Button
+        els.btnHit.addEventListener('click', () => {
+            if ((state.compound === 'metal' || state.compound === 'alloy') && !state.metal.isMolten) {
+                state.metal.hitTime = state.time;
+                // Camera shake removed for cleaner visualization
+            }
+        });
 
         els.tempSlider.addEventListener('input', (e) => { state.temp = parseInt(e.target.value); updateStateCalculation(); });
         els.powerToggle.addEventListener('change', (e) => { state.isPowerOn = e.target.checked; updateStateCalculation(); });
