@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Skill: Drawing Trend Lines</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --primary-light: #34495e;
+            --accent: #3498db;
+            --accent-dark: #2980b9;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .phase-indicator {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: #eef7fc;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+            overflow: hidden;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            background-color: #fff;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        select:focus { border-color: var(--accent); }
+
+        .instruction-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--accent);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #475569;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Table Area */
+        .table-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .table-wrapper {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow-y: auto;
+            height: 100%;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        /* Canvas Area */
+        .canvas-area {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .canvas-container {
+            position: relative;
+            box-shadow: 0 0 0 1px #e2e8f0;
+            border-radius: 4px;
+            cursor: crosshair;
+            background-color: #fff;
+            overflow: hidden;
+            flex-shrink: 0; 
+            touch-action: none; /* Crucial for preventing scrolling on touch */
+        }
+
+        canvas { display: block; }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 700px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-width: 120px;
+        }
+
+        button:active { transform: translateY(1px); }
+
+        .btn-primary { background: var(--accent); color: white; flex: 1.5; }
+        .btn-primary:hover { background: var(--accent-dark); box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2); }
+
+        .btn-tool { background: var(--warning); color: white; }
+        .btn-tool:hover { background: #e67e22; }
+        
+        .btn-info { background: #8e44ad; color: white; }
+        .btn-info:hover { background: #732d91; }
+        .btn-info:disabled { background: #d2b4de; cursor: not-allowed; }
+
+        .btn-undo { background: var(--danger); color: white; }
+        .btn-undo:hover { background: #c0392b; }
+
+        .btn-reset { background: #95a5a6; color: white; }
+        .btn-reset:hover { background: #7f8c8d; }
+
+        .legend {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            padding: 8px 20px;
+            background: #f8fafc;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        @media (max-height: 700px) {
+            .main-grid { padding: 10px; gap: 10px; }
+            header { padding: 10px; }
+            .sidebar { padding: 15px; gap: 10px; }
+            canvas { transform: scale(0.9); transform-origin: center; }
+            .toolbar { margin-top: 10px; }
+            button { padding: 8px 12px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Science Skills: Line of Best Fit</h1>
+        <div id="phaseDisplay" class="phase-indicator">Phase 1: Prediction</div>
+    </header>
+
+    <div class="main-grid">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <div class="control-group">
+                <label for="scenarioSelect">Experiment Scenario</label>
+                <select id="scenarioSelect" onchange="loadScenario()">
+                    <!-- Populated by JS -->
+                </select>
+            </div>
+
+            <div id="instructions" class="instruction-box">
+                <!-- Instructions injected here -->
+            </div>
+
+            <div class="table-area">
+                <label>Data Table</label>
+                <div class="table-wrapper">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th id="xLabel">X</th>
+                                <th id="yLabel">Y</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Canvas -->
+        <main class="canvas-area">
+            <div class="canvas-container">
+                <canvas id="graphCanvas" width="550" height="400"></canvas>
+            </div>
+
+            <div class="toolbar">
+                <button id="actionBtn" class="btn-primary" onclick="nextPhase()">👀 Reveal Points</button>
+                <button id="rulerBtn" class="btn-tool" onclick="toggleRuler()">📏 Ruler</button>
+                <button id="relBtn" class="btn-info" onclick="revealRelationship()" style="display:none;">📝 Reveal Relationship</button>
+                <button class="btn-undo" onclick="undoLine()">↩ Undo</button>
+                <button class="btn-reset" onclick="resetSim()">🔄 Reset</button>
+            </div>
+            
+            <div class="legend" id="legend" style="opacity: 0; transition: opacity 0.3s;">
+                <div class="legend-item">
+                    <span class="dot" style="background:black"></span> Your Attempt
+                </div>
+                <div class="legend-item" id="idealLegend" style="display:none;">
+                    <span class="dot" style="background:var(--success)"></span> True Trend
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const instructions = document.getElementById('instructions');
+        const actionBtn = document.getElementById('actionBtn');
+        const rulerBtn = document.getElementById('rulerBtn');
+        const relBtn = document.getElementById('relBtn');
+        const legend = document.getElementById('legend');
+        const idealLegend = document.getElementById('idealLegend');
+        const tableBody = document.getElementById('tableBody');
+        const xLabelHeader = document.getElementById('xLabel');
+        const yLabelHeader = document.getElementById('yLabel');
+        const scenarioSelect = document.getElementById('scenarioSelect');
+        const phaseDisplay = document.getElementById('phaseDisplay');
+
+        // Graph Settings
+        const margin = 50;
+        const width = canvas.width;
+        const height = canvas.height;
+        let xMax = 10;
+        let yMax = 10;
+
+        // State Management
+        let phase = 1;
+        let isDrawing = false;
+        let userPath = []; 
+        let currentScenario = null;
+        let dataPoints = [];
+
+        // --- Scenarios Bank (17 Scenarios) ---
+        const scenarios = [
+            // 1. Linear Positive
+            { name: "Hooke's Law", xLabel: "Force (N)", yLabel: "Ext. (mm)", type: 'linear', xMax: 10, yMax: 10, idealFn: x => 1.1*x+0.5, noise: 0.8, relationship: "Directly Proportional" },
+            { name: "Ohm's Law", xLabel: "Current (A)", yLabel: "Voltage (V)", type: 'linear', xMax: 5, yMax: 10, idealFn: x => 1.8*x+0.2, noise: 0.5, relationship: "Directly Proportional" },
+            { name: "Density", xLabel: "Volume (cm³)", yLabel: "Mass (g)", type: 'linear', xMax: 50, yMax: 100, idealFn: x => 1.9*x+1, noise: 4.0, relationship: "Directly Proportional" },
+
+            // 2. Linear Negative
+            { name: "Candle Burning", xLabel: "Time (min)", yLabel: "Height (cm)", type: 'linear', xMax: 10, yMax: 12, idealFn: x => -1.0*x+11, noise: 0.6, relationship: "Negative Linear Relationship" },
+            { name: "Journey Home", xLabel: "Time (hrs)", yLabel: "Dist. Left (km)", type: 'linear', xMax: 4, yMax: 200, idealFn: x => -45*x+190, noise: 8.0, relationship: "Negative Linear Relationship" },
+            { name: "Fuel Tank", xLabel: "Dist. (km)", yLabel: "Fuel (L)", type: 'linear', xMax: 100, yMax: 10, idealFn: x => -0.08*x+9.5, noise: 0.4, relationship: "Negative Linear Relationship" },
+
+            // 3. Curve Growth
+            { name: "Bacteria Growth", xLabel: "Time (h)", yLabel: "Count (x1000)", type: 'curve', xMax: 8, yMax: 20, idealFn: x => 0.5*Math.pow(1.6, x), noise: 1.5, relationship: "Exponential Growth" },
+            { name: "Kinetic Energy", xLabel: "Velocity (m/s)", yLabel: "Energy (J)", type: 'curve', xMax: 10, yMax: 50, idealFn: x => 0.45*x*x, noise: 2.0, relationship: "Non-linear (Square Relationship)" },
+            { name: "Distance Fallen", xLabel: "Time (s)", yLabel: "Dist. (m)", type: 'curve', xMax: 4, yMax: 80, idealFn: x => 4.9*x*x, noise: 3.0, relationship: "Non-linear (Square Relationship)" },
+
+            // 4. Curve Leveling
+            { name: "Photosynthesis", xLabel: "Light (lux)", yLabel: "Rate (bub/min)", type: 'curve', xMax: 100, yMax: 50, idealFn: x => 48*(1-Math.exp(-0.05*x)), noise: 2.0, relationship: "Non-linear Increase (Leveling off)" },
+            { name: "Capacitor Charge", xLabel: "Time (s)", yLabel: "Voltage (V)", type: 'curve', xMax: 10, yMax: 10, idealFn: x => 9*(1-Math.exp(-0.5*x)), noise: 0.4, relationship: "Non-linear Increase (Leveling off)" },
+            { name: "Terminal Velocity", xLabel: "Time (s)", yLabel: "Speed (m/s)", type: 'curve', xMax: 15, yMax: 30, idealFn: x => 28*(1-Math.exp(-0.3*x)), noise: 1.5, relationship: "Non-linear Increase (Leveling off)" },
+
+            // 5. Curve Decay
+            { name: "Cooling Curve", xLabel: "Time (min)", yLabel: "Temp (°C)", type: 'curve', xMax: 10, yMax: 80, idealFn: x => 60*Math.exp(-0.3*x)+20, noise: 3.0, relationship: "Exponential Decay" },
+            { name: "Radioactive Decay", xLabel: "Time (yrs)", yLabel: "Activity (Bq)", type: 'curve', xMax: 20, yMax: 100, idealFn: x => 95*Math.exp(-0.15*x), noise: 4.0, relationship: "Exponential Decay" },
+            { name: "Light Intensity", xLabel: "Dist. (m)", yLabel: "Intensity (lux)", type: 'curve', xMax: 10, yMax: 100, idealFn: x => 90/(0.2*x*x+1), noise: 3.0, relationship: "Inversely Proportional (Inverse Square)" },
+
+            // 6. Complex Shapes
+            { name: "Enzyme Activity", xLabel: "Temp (°C)", yLabel: "Rate", type: 'curve', xMax: 60, yMax: 100, idealFn: x => Math.max(0, -0.22*(x-40)*(x-40)+90), noise: 5.0, relationship: "Optimum (Bell Shape)" },
+            { name: "Shadow Length", xLabel: "Time (h)", yLabel: "Length (cm)", type: 'curve', xMax: 8, yMax: 120, idealFn: x => 6*(x-4)*(x-4)+15, noise: 4.0, relationship: "Non-linear (Parabolic)" }
+        ];
+
+        // --- Initialization ---
+        function populateScenarioSelect() {
+            scenarioSelect.innerHTML = "";
+            scenarios.forEach((s, index) => {
+                const opt = document.createElement("option");
+                opt.value = index;
+                opt.textContent = `Experiment: ${s.name}`;
+                scenarioSelect.appendChild(opt);
+            });
+        }
+
+        function generateData(scenario) {
+            let points = [];
+            let steps = 8;
+            let stepSize = scenario.xMax / steps;
+            
+            for(let i=1; i<=steps; i++) {
+                let x = i * stepSize;
+                let idealY = scenario.idealFn(x);
+                let noise = (Math.random() - 0.5) * 2 * scenario.noise;
+                let y = idealY + noise;
+                y = Math.max(0, Math.min(scenario.yMax, y));
+                points.push({ x: parseFloat(x.toFixed(1)), y: parseFloat(y.toFixed(1)) });
+            }
+            return points;
+        }
+
+        function loadScenario() {
+            const index = scenarioSelect.value;
+            currentScenario = scenarios[index];
+            
+            xMax = currentScenario.xMax;
+            yMax = currentScenario.yMax;
+            xLabelHeader.textContent = currentScenario.xLabel;
+            yLabelHeader.textContent = currentScenario.yLabel;
+
+            dataPoints = generateData(currentScenario);
+
+            tableBody.innerHTML = "";
+            dataPoints.forEach(p => {
+                const row = `<tr><td>${p.x}</td><td>${p.y}</td></tr>`;
+                tableBody.innerHTML += row;
+            });
+
+            rulerBtn.disabled = false;
+            rulerBtn.title = "Toggle Ruler";
+            
+            resetSim();
+        }
+
+        // --- Ruler State ---
+        const ruler = {
+            visible: false,
+            x: 275, y: 225, width: 300, height: 60, angle: 0,
+            isDragging: false, isAdjusting: false, adjustSide: null,
+            dragStartX: 0, dragStartY: 0, handleRadius: 12
+        };
+
+        // --- Coordinate Helpers ---
+        function toCanvasX(val) {
+            return margin + (val / xMax) * (width - 2 * margin);
+        }
+        function toCanvasY(val) {
+            return height - margin - (val / yMax) * (height - 2 * margin);
+        }
+
+        // --- Ruler Logic ---
+        function toggleRuler() {
+            ruler.visible = !ruler.visible;
+            if(ruler.visible) {
+                ruler.x = width / 2; ruler.y = height / 2; ruler.angle = -0.1;
+            }
+            refreshCanvas();
+        }
+
+        function undoLine() {
+            userPath = [];
+            refreshCanvas();
+        }
+
+        function drawRuler() {
+            if (!ruler.visible) return;
+            ctx.save();
+            ctx.translate(ruler.x, ruler.y);
+            ctx.rotate(ruler.angle);
+
+            // Shadow
+            ctx.shadowColor = "rgba(0,0,0,0.2)";
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetY = 5;
+
+            // Body
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.roundRect(-ruler.width/2, -ruler.height/2, ruler.width, ruler.height, 4);
+            ctx.fill();
+            
+            // Remove shadow for details
+            ctx.shadowColor = "transparent";
+            ctx.strokeStyle = "#95a5a6";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Ticks
+            ctx.fillStyle = "rgba(255, 250, 205, 0.3)"; 
+            ctx.fill();
+
+            ctx.fillStyle = "#2c3e50";
+            const tickCount = Math.floor(ruler.width / 10);
+            const startX = -ruler.width/2 + 10;
+            
+            ctx.beginPath();
+            for(let i=0; i<tickCount-1; i++) {
+                let x = startX + i * 10;
+                let h = (i % 5 === 0) ? 15 : 8;
+                ctx.moveTo(x, -ruler.height/2);
+                ctx.lineTo(x, -ruler.height/2 + h);
+                ctx.moveTo(x, ruler.height/2);
+                ctx.lineTo(x, ruler.height/2 - h);
+            }
+            ctx.stroke();
+
+            // Handles
+            ctx.fillStyle = "#e74c3c";
+            ctx.beginPath(); ctx.arc(-ruler.width/2, 0, ruler.handleRadius, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(ruler.width/2, 0, ruler.handleRadius, 0, Math.PI*2); ctx.fill();
+            
+            // Handle Icons
+            ctx.fillStyle = "white"; 
+            ctx.font = "bold 14px Arial"; 
+            ctx.textAlign = "center"; 
+            ctx.textBaseline = "middle";
+            ctx.fillText("↔", -ruler.width/2, 1); 
+            ctx.fillText("↔", ruler.width/2, 1);
+
+            ctx.restore();
+        }
+
+        function getRulerLocalPos(globalX, globalY) {
+            let dx = globalX - ruler.x;
+            let dy = globalY - ruler.y;
+            let cos = Math.cos(-ruler.angle), sin = Math.sin(-ruler.angle);
+            return { x: dx * cos - dy * sin, y: dx * sin + dy * cos };
+        }
+
+        // --- Drawing ---
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            
+            ctx.strokeStyle = '#f0f2f5';
+            ctx.lineWidth = 1;
+            const axisColor = '#bdc3c7';
+
+            ctx.font = "11px 'Segoe UI', sans-serif";
+            ctx.fillStyle = "#7f8c8d";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            let ySteps = 10;
+            for (let i = 0; i <= ySteps; i++) {
+                let val = (i / ySteps) * yMax;
+                let y = toCanvasY(val);
+                
+                ctx.beginPath(); 
+                ctx.moveTo(margin, y); 
+                ctx.lineTo(width - margin, y); 
+                ctx.strokeStyle = (i === 0) ? axisColor : '#f0f2f5';
+                ctx.stroke();
+                ctx.fillText(Math.round(val), margin - 25, y);
+            }
+            let xSteps = 10;
+            for (let i = 0; i <= xSteps; i++) {
+                let val = (i / xSteps) * xMax;
+                let x = toCanvasX(val);
+                
+                ctx.beginPath(); 
+                ctx.moveTo(x, margin); 
+                ctx.lineTo(x, height - margin); 
+                ctx.strokeStyle = (i === 0) ? axisColor : '#f0f2f5';
+                ctx.stroke();
+                ctx.fillText(Math.round(val), x, height - margin + 20);
+            }
+
+            ctx.save();
+            ctx.font = "600 13px 'Segoe UI', sans-serif"; 
+            ctx.fillStyle = "#2c3e50";
+            ctx.fillText(currentScenario.xLabel, width / 2, height - 15);
+            ctx.translate(20, height / 2); ctx.rotate(-Math.PI / 2);
+            ctx.fillText(currentScenario.yLabel, 0, 0);
+            ctx.restore();
+        }
+
+        function drawPoints() {
+            dataPoints.forEach(p => {
+                const cx = toCanvasX(p.x);
+                const cy = toCanvasY(p.y);
+                
+                ctx.beginPath();
+                ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(231, 76, 60, 0.2)";
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+                ctx.fillStyle = "#e74c3c";
+                ctx.fill();
+            });
+        }
+
+        function drawUserPath() {
+            if (userPath.length === 0) return;
+            ctx.beginPath();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#2c3e50";
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            
+            if (userPath.length === 1) {
+                // Draw a simple dot for 1 point
+                ctx.fillStyle = "#2c3e50";
+                ctx.arc(userPath[0].x, userPath[0].y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.moveTo(userPath[0].x, userPath[0].y);
+                for (let i = 1; i < userPath.length; i++) {
+                    ctx.lineTo(userPath[i].x, userPath[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function drawTrueTrend() {
+            ctx.beginPath();
+            ctx.strokeStyle = "#27ae60";
+            ctx.lineWidth = 4;
+            ctx.setLineDash([10, 6]);
+            ctx.lineCap = "round";
+
+            let steps = 60;
+            for(let i=0; i<=steps; i++) {
+                let x = (i/steps) * xMax;
+                let y = currentScenario.idealFn(x);
+                
+                if (y >= -5 && y <= yMax * 1.2) {
+                    let cx = toCanvasX(x);
+                    let cy = toCanvasY(y);
+                    if (i===0) ctx.moveTo(cx, cy);
+                    else ctx.lineTo(cx, cy);
+                }
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function refreshCanvas() {
+            drawGrid();
+            if (phase >= 2) drawPoints();
+            drawUserPath();
+            if (phase === 3) drawTrueTrend();
+            drawRuler();
+        }
+
+        // --- Interaction ---
+        function handleInputStart(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (clientX - rect.left) * scaleX;
+            const mouseY = (clientY - rect.top) * scaleY;
+
+            if (ruler.visible) {
+                const local = getRulerLocalPos(mouseX, mouseY);
+                const distLeft = Math.sqrt(Math.pow(local.x - (-ruler.width/2), 2) + Math.pow(local.y, 2));
+                const distRight = Math.sqrt(Math.pow(local.x - (ruler.width/2), 2) + Math.pow(local.y, 2));
+                const hitRadius = ruler.handleRadius * 2.5;
+
+                if (distRight < hitRadius) { ruler.isAdjusting = true; ruler.adjustSide = 'right'; return; }
+                else if (distLeft < hitRadius) { ruler.isAdjusting = true; ruler.adjustSide = 'left'; return; }
+                if (Math.abs(local.x) < ruler.width/2 && Math.abs(local.y) < ruler.height/2) {
+                    ruler.isDragging = true;
+                    ruler.dragStartX = mouseX - ruler.x;
+                    ruler.dragStartY = mouseY - ruler.y;
+                    return;
+                }
+            }
+
+            if (phase === 3) return;
+            isDrawing = true;
+            userPath = []; 
+            addPointToPath(mouseX, mouseY);
+            refreshCanvas(); // Important: Render initial dot
+        }
+
+        function handleInputMove(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (clientX - rect.left) * scaleX;
+            const mouseY = (clientY - rect.top) * scaleY;
+
+            if (ruler.isDragging) {
+                ruler.x = mouseX - ruler.dragStartX;
+                ruler.y = mouseY - ruler.dragStartY;
+                refreshCanvas();
+                return;
+            }
+
+            if (ruler.isAdjusting) {
+                const dx = mouseX - ruler.x;
+                const dy = mouseY - ruler.y;
+                let angle = Math.atan2(dy, dx);
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (ruler.adjustSide === 'left') angle += Math.PI;
+                ruler.angle = angle;
+                ruler.width = Math.max(100, dist * 2);
+                refreshCanvas();
+                return;
+            }
+
+            if (isDrawing) {
+                addPointToPath(mouseX, mouseY);
+                refreshCanvas();
+            }
+        }
+
+        function handleInputEnd() {
+            isDrawing = false;
+            ruler.isDragging = false;
+            ruler.isAdjusting = false;
+            ruler.adjustSide = null;
+        }
+
+        function addPointToPath(x, y) {
+            let finalX = x;
+            let finalY = y;
+
+            if (ruler.visible) {
+                const local = getRulerLocalPos(x, y);
+                const snapDist = 30; 
+                const halfHeight = ruler.height / 2;
+                const halfWidth = ruler.width / 2;
+
+                if (Math.abs(local.x) < halfWidth + 15) {
+                    if (Math.abs(local.y - (-halfHeight)) < snapDist) {
+                        const snappedLocalY = -halfHeight;
+                        const cos = Math.cos(ruler.angle), sin = Math.sin(ruler.angle);
+                        finalX = ruler.x + (local.x * cos - snappedLocalY * sin);
+                        finalY = ruler.y + (local.x * sin + snappedLocalY * cos);
+                    }
+                    else if (Math.abs(local.y - halfHeight) < snapDist) {
+                        const snappedLocalY = halfHeight;
+                        const cos = Math.cos(ruler.angle), sin = Math.sin(ruler.angle);
+                        finalX = ruler.x + (local.x * cos - snappedLocalY * sin);
+                        finalY = ruler.y + (local.x * sin + snappedLocalY * cos);
+                    }
+                }
+            }
+            userPath.push({ x: finalX, y: finalY });
+        }
+
+        // --- Interaction Logic ---
+        function revealRelationship() {
+            const rel = currentScenario.relationship;
+            // Append to instructions if not present
+            if (!instructions.innerHTML.includes("Relationship:")) {
+                instructions.innerHTML += `<div style="margin-top:10px; padding-top:10px; border-top:1px solid #ccc;"><strong>Type of Relationship:</strong><br><span style='color:#8e44ad; font-size:1.1em; font-weight:bold;'>${rel}</span></div>`;
+            }
+            relBtn.disabled = true;
+        }
+
+        // --- Phase Controller ---
+        function updateUI() {
+            phaseDisplay.textContent = `Phase ${phase}: ${phase === 1 ? 'Prediction' : (phase === 2 ? 'Draw Trend' : 'Analysis')}`;
+            if(phase === 2) {
+                actionBtn.innerHTML = "👀 Reveal True Trend";
+                actionBtn.style.display = "flex";
+                legend.style.opacity = 1;
+                relBtn.style.display = "none";
+            } else if(phase === 3) {
+                actionBtn.style.display = "none";
+                idealLegend.style.display = "flex";
+                relBtn.style.display = "flex";
+                relBtn.disabled = false;
+            } else {
+                actionBtn.innerHTML = "👀 Reveal Points";
+                actionBtn.style.display = "flex";
+                legend.style.opacity = 0;
+                idealLegend.style.display = "none";
+                relBtn.style.display = "none";
+            }
+        }
+
+        function nextPhase() {
+            if (phase === 1) {
+                phase = 2;
+                userPath = [];
+                refreshCanvas();
+                instructions.innerHTML = `<strong>Phase 2:</strong> Points are visible.<br>Decide if the trend is straight or curved, then draw your line.`;
+            } 
+            else if (phase === 2) {
+                phase = 3;
+                if(ruler.visible) ruler.visible = false;
+                refreshCanvas();
+                let shape = currentScenario.type === 'linear' ? "Linear (Straight)" : "Curved";
+                instructions.innerHTML = `<strong>Phase 3:</strong> Compare!<br><span style='color:var(--success)'>Green Dashed</span> = Ideal (${shape}).<br><strong>Black Solid</strong> = Yours.`;
+            }
+            updateUI();
+        }
+
+        function resetSim() {
+            phase = 1;
+            userPath = [];
+            ruler.visible = false;
+            instructions.innerHTML = `<strong>Phase 1:</strong> Look at the table.<br>Sketch the shape you expect to see on the blank graph.`;
+            updateUI();
+            refreshCanvas();
+        }
+
+        // --- Event Listeners ---
+        canvas.addEventListener('mousedown', e => handleInputStart(e.clientX, e.clientY));
+        window.addEventListener('mousemove', e => handleInputMove(e.clientX, e.clientY)); 
+        window.addEventListener('mouseup', handleInputEnd);
+
+        canvas.addEventListener('touchstart', (e) => {
+            if(e.target === canvas) e.preventDefault();
+            handleInputStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, {passive: false});
+
+        canvas.addEventListener('touchmove', (e) => {
+            if(e.target === canvas) e.preventDefault();
+            handleInputMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, {passive: false});
+
+        window.addEventListener('touchend', handleInputEnd);
+
+        // Start
+        populateScenarioSelect();
+        loadScenario();
+
+    </script>
+</body>
+</html>
