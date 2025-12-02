@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metal Bonding Explorer | GCSE Chemistry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Slate 50 */
+            color: #1e293b; /* Slate 800 */
+            touch-action: manipulation;
+        }
+        
+        canvas {
+            background-color: #ffffff;
+            cursor: default;
+            touch-action: none;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Circuit Overlay */
+        #circuit-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            pointer-events: none;
+            display: none;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+        
+        .bulb-off { fill: #475569; stroke: #1e293b; stroke-width: 2; }
+        .bulb-on { fill: #facc15; stroke: #ca8a04; filter: drop-shadow(0 0 15px #facc15); }
+        .wire { stroke: #334155; stroke-width: 6; stroke-linecap: round; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #3b82f6; 
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+            margin-top: -8px; 
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+
+        /* Button States */
+        .btn-active {
+            background-color: #0f172a !important; 
+            color: #fff !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-animate { animation: fadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="flex flex-col items-center p-4 min-h-screen">
+
+    <!-- Header -->
+    <header class="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center mb-6 border-b border-slate-200 pb-4 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Metal Bonding Explorer</h1>
+            <p class="text-slate-500 text-sm">GCSE Chemistry Interactive Tutorial</p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <!-- Mode Toggles -->
+            <div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-sm">
+                <button id="btn-mode-sim" class="px-3 py-1.5 text-sm font-medium rounded bg-slate-100 text-slate-800">Simulation</button>
+                <button id="btn-mode-quiz" class="px-3 py-1.5 text-sm font-medium rounded text-slate-500 hover:text-slate-700">Quiz Mode</button>
+            </div>
+
+            <!-- Tutorial Toggle -->
+            <label class="flex items-center gap-2 cursor-pointer bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                <input type="checkbox" id="tutorial-toggle" checked class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                <span class="text-sm font-semibold text-blue-700">Tutorial Explanations</span>
+            </label>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="relative w-full max-w-4xl">
+        
+        <!-- SIMULATION VIEW -->
+        <div id="view-simulation">
+            <div class="relative bg-white p-1 rounded-xl shadow-xl border border-slate-200 overflow-hidden mb-8">
+                <div class="relative w-full">
+                    <canvas id="simCanvas" width="800" height="400" class="w-full h-auto rounded-lg block"></canvas>
+                    
+                    <svg id="circuit-overlay" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+                        <path d="M 40 200 L -20 200 L -20 420 L 820 420 L 820 200 L 760 200" class="wire" fill="none" />
+                        <line x1="380" y1="420" x2="420" y2="420" stroke="#94a3b8" stroke-width="2" />
+                        <g transform="translate(400, 420)">
+                            <rect x="-12" y="-10" width="24" height="15" fill="#64748b" />
+                            <circle cx="0" cy="-25" r="22" class="bulb-off" id="bulb" />
+                        </g>
+                    </svg>
+                </div>
+                
+                <!-- Status Badge Overlay -->
+                <div class="absolute top-4 right-4">
+                     <div id="status-badge" class="px-3 py-1 rounded-full bg-slate-100/90 backdrop-blur text-slate-600 text-xs font-bold border border-slate-200 flex items-center gap-2 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-slate-400" id="status-dot"></span>
+                        <span id="status-text">Solid Metal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                
+                <!-- Panel 1: Structure -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
+                    <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <div class="p-1.5 bg-indigo-100 rounded text-indigo-600">
+                            <!-- Icon -->
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-slate-700">Structure</h3>
+                    </div>
+                    
+                    <button id="btn-delocalise" class="w-full py-2.5 px-4 rounded-lg bg-indigo-600 text-white font-medium shadow-sm hover:bg-indigo-700 transition-all text-sm">
+                        Delocalise Electrons
+                    </button>
+                    
+                    <div class="bg-slate-100 p-1 rounded-lg flex text-sm font-medium">
+                        <button id="btn-pure" class="flex-1 py-1.5 rounded-md transition-all shadow-sm bg-white text-slate-800">Pure</button>
+                        <button id="btn-alloy" class="flex-1 py-1.5 rounded-md text-slate-500 hover:text-slate-700 transition-all">Alloy</button>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Energy -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
+                    <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <div class="p-1.5 bg-orange-100 rounded text-orange-600">
+                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-slate-700">Properties</h3>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-semibold uppercase text-slate-400">
+                            <label>Heat</label>
+                            <span><span id="temp-val" class="text-slate-700">20</span>°C</span>
+                        </div>
+                        <input type="range" id="slider-temp" min="20" max="1500" value="20">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <button id="btn-heat" class="py-2 px-3 rounded-lg border border-slate-200 text-slate-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-colors text-xs font-bold uppercase tracking-wide">
+                            Apply Heat
+                        </button>
+                        <button id="btn-circuit" class="py-2 px-3 rounded-lg border border-slate-200 text-slate-600 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200 transition-colors text-xs font-bold uppercase tracking-wide">
+                            Circuit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel 3: Mechanics -->
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
+                    <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                        <div class="p-1.5 bg-emerald-100 rounded text-emerald-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                        </div>
+                        <h3 class="font-semibold text-slate-700">Mechanics</h3>
+                    </div>
+                    
+                    <button id="btn-hammer" class="w-full py-2.5 px-4 rounded-lg bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-all flex justify-center items-center gap-2 group text-sm">
+                        <span class="group-hover:scale-110 transition-transform">🔨</span> Toggle Force Tool
+                    </button>
+                    
+                    <button id="btn-reset" class="mt-auto w-full py-2 rounded-lg text-red-500 text-xs font-bold hover:bg-red-50 transition-colors uppercase tracking-wide">
+                        Reset Simulation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUIZ VIEW (Hidden by default) -->
+        <div id="view-quiz" class="hidden bg-white rounded-xl shadow-xl border border-slate-200 p-8 min-h-[400px]">
+            <div class="max-w-2xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Knowledge Check</h2>
+                    <p class="text-slate-500">Test your understanding of metallic bonding, structure, and properties.</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Questions injected by JS -->
+                </div>
+
+                <div id="quiz-results" class="hidden text-center p-6 bg-slate-50 rounded-xl mt-8">
+                    <h3 class="text-2xl font-bold mb-2">Score: <span id="quiz-score" class="text-indigo-600">0</span>/5</h3>
+                    <p id="quiz-feedback" class="text-slate-600 mb-4"></p>
+                    <button id="btn-retry-quiz" class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">Retry Quiz</button>
+                </div>
+                
+                <div class="mt-8 flex justify-end">
+                    <button id="btn-submit-quiz" class="px-6 py-3 bg-green-600 text-white rounded-lg font-bold shadow-md hover:bg-green-700 transition transform hover:-translate-y-0.5">Submit Answers</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- EDUCATIONAL MODAL -->
+    <div id="edu-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 modal-animate relative">
+            <button id="btn-close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            
+            <div class="flex flex-col items-center text-center">
+                <div id="modal-icon" class="p-3 bg-blue-100 text-blue-600 rounded-full mb-4">
+                    <!-- Icon injected JS -->
+                </div>
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800 mb-2">Concept Title</h3>
+                <div id="modal-content" class="text-slate-600 text-sm leading-relaxed mb-6 space-y-2">
+                    <!-- Content injected JS -->
+                </div>
+                <button id="btn-got-it" class="w-full py-2.5 bg-slate-800 text-white rounded-lg font-medium hover:bg-slate-900 transition-colors">
+                    Got it, let me see!
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+/* =========================================
+   EDUCATIONAL CONTENT & DATA
+   ========================================= */
+const CONCEPTS = {
+    delocalise: {
+        title: "Metallic Bonding",
+        icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`,
+        text: `
+            <p><strong>What is happening?</strong> The outer shell electrons of the metal atoms are released, becoming free to move throughout the structure.</p>
+            <p class="mt-2 text-indigo-700 bg-indigo-50 p-2 rounded text-xs font-semibold">Key Term: "Sea of Delocalised Electrons"</p>
+            <p class="mt-2">The metal is held together by the strong electrostatic attraction between these negative electrons and the positive metal ions.</p>`
+    },
+    alloy: {
+        title: "Alloys vs Pure Metals",
+        icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>`,
+        text: `
+            <p><strong>Pure Metal:</strong> Atoms are the same size and arranged in regular layers that slide over each other easily (Malleable).</p>
+            <p><strong>Alloy:</strong> Contains atoms of different sizes. This disrupts the regular layers, making it much harder for them to slide.</p>
+            <p class="mt-2 text-green-700 bg-green-50 p-2 rounded text-xs font-semibold">Observation: Try using the Hammer tool on both types!</p>`
+    },
+    heat: {
+        title: "Thermal Conductivity",
+        icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>`,
+        text: `
+            <p>When heated, the metal ions gain <strong>kinetic energy</strong> and vibrate more vigorously.</p>
+            <p>This energy is transferred to neighboring ions and by the free-moving delocalised electrons, allowing heat to travel quickly through the metal.</p>`
+    },
+    circuit: {
+        title: "Electrical Conductivity",
+        icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>`,
+        text: `
+            <p>Metals conduct electricity because the <strong>delocalised electrons</strong> are free to move.</p>
+            <p>When placed in a circuit, these electrons drift towards the positive terminal, creating a current (flow of charge).</p>`
+    },
+    hammer: {
+        title: "Malleability",
+        icon: `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`,
+        text: `
+            <p>Metals are <strong>malleable</strong> (can be bent or hammered into shape).</p>
+            <p>This is because the atoms are arranged in regular layers that can slide over each other without breaking the metallic bond.</p>`
+    }
+};
+
+const QUIZ_DATA = [
+    { q: "What holds the atoms together in a metal?", a: ["Gravity", "Magnetic force", "Electrostatic attraction", "Intermolecular forces"], correct: 2 },
+    { q: "Why do metals conduct electricity?", a: ["Atoms vibrate", "Ions move to the negative terminal", "Delocalised electrons are free to move", "They are shiny"], correct: 2 },
+    { q: "Why are alloys harder than pure metals?", a: ["They are heavier", "The distorted layers cannot slide easily", "They have more electrons", "The atoms are softer"], correct: 1 },
+    { q: "What happens to metal ions when heated?", a: ["They vibrate more vigorously", "They stop moving", "They shrink", "They lose electrons"], correct: 0 },
+    { q: "Which property describes a metal's ability to be hammered into shape?", a: ["Ductility", "Malleability", "Solubility", "Conductivity"], correct: 1 }
+];
+
+/* =========================================
+   SIMULATION ENGINE
+   ========================================= */
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 800; canvas.height = 400;
+
+const STATES = { BONDED: 0, DELOCALISED: 1 };
+let currentState = STATES.BONDED;
+let isAlloy = false;
+let isCircuitActive = false;
+let isHeating = false;
+let isHammerMode = false;
+let temperature = 20;
+const meltingPoint = 1000;
+
+let atoms = [];
+let electrons = [];
+let draggedRowIndex = -1;
+let lastMouseX = 0;
+
+class Atom {
+    constructor(r, c, x, y, isImpurity = false) {
+        this.r = r; this.c = c; this.x = x; this.y = y;
+        this.baseX = x; this.baseY = y;
+        this.vx = 0; this.vy = 0; this.offsetY = 0;
+        this.isImpurity = isImpurity;
+        this.radius = isImpurity ? 34 : 24;
+        this.heat = 0;
+    }
+
+    draw() {
+        let baseVibe = (temperature / 100);
+        let totalVibe = baseVibe + (this.heat * 3.5);
+        let dx = (Math.random() - 0.5) * totalVibe;
+        let dy = (Math.random() - 0.5) * totalVibe;
+
+        let drawX, drawY;
+        if (temperature > meltingPoint) {
+            this.x += this.vx; this.y += this.vy;
+            if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            drawX = this.x; drawY = this.y;
+        } else {
+            this.x = this.baseX + dx;
+            this.y = this.baseY + this.offsetY + dy;
+            this.offsetY *= 0.8;
+            drawX = this.x; drawY = this.y;
+        }
+
+        // Draw Sphere
+        let rBase, gBase, bBase;
+        if (this.isImpurity) {
+            rBase = 100 + (this.heat * 155); gBase = 116 - (this.heat * 116); bBase = 139 - (this.heat * 139);
+        } else {
+            rBase = 148 + (this.heat * 107); gBase = 163 - (this.heat * 120); bBase = 184 - (this.heat * 140);
+        }
+        
+        let sphereGrad = ctx.createRadialGradient(drawX - this.radius * 0.3, drawY - this.radius * 0.3, this.radius * 0.1, drawX, drawY, this.radius);
+        sphereGrad.addColorStop(0, `rgb(${Math.min(255, rBase+80)}, ${Math.min(255, gBase+80)}, ${Math.min(255, bBase+80)})`);
+        sphereGrad.addColorStop(0.5, `rgb(${rBase}, ${gBase}, ${bBase})`);
+        sphereGrad.addColorStop(1, `rgb(${Math.max(0, rBase-50)}, ${Math.max(0, gBase-50)}, ${Math.max(0, bBase-50)})`);
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = sphereGrad;
+        ctx.fill();
+
+        if (currentState === STATES.DELOCALISED) {
+            ctx.fillStyle = "rgba(255,255,255,0.6)";
+            ctx.font = "600 20px Inter, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("+", drawX, drawY + 1);
+        }
+    }
+}
+
+class Electron {
+    constructor(hostAtom) {
+        this.hostAtom = hostAtom;
+        this.x = hostAtom.x + hostAtom.radius + 5;
+        this.y = hostAtom.y;
+        this.angle = Math.random() * Math.PI * 2;
+        this.dx = (Math.random() - 0.5) * 4;
+        this.dy = (Math.random() - 0.5) * 4;
+    }
+
+    draw() {
+        let glowSize = 6;
+        let grad = ctx.createRadialGradient(this.x, this.y, 1, this.x, this.y, glowSize);
+        grad.addColorStop(0, "rgba(253, 224, 71, 0.9)");
+        grad.addColorStop(1, "rgba(253, 224, 71, 0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(this.x, this.y, glowSize, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2); ctx.fillStyle = "#fef08a"; ctx.fill();
+    }
+
+    update() {
+        if (currentState === STATES.BONDED) {
+            this.angle += 0.15;
+            let r = this.hostAtom.radius + 6; 
+            this.x = this.hostAtom.x + Math.cos(this.angle) * r;
+            this.y = this.hostAtom.y + Math.sin(this.angle) * r;
+        } else {
+            if (isCircuitActive) {
+                this.dx += 0.3; this.dy += (Math.random() - 0.5) * 0.5;
+                if(this.dx > 9) this.dx = 9;
+            } else {
+                this.dx += (Math.random() - 0.5); this.dy += (Math.random() - 0.5);
+                this.dx *= 0.98; this.dy *= 0.98;
+            }
+            this.x += this.dx; this.y += this.dy;
+            if (this.y < 0 || this.y > canvas.height) this.dy *= -1;
+            if (isCircuitActive) {
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+            } else {
+                if (this.x < 0 || this.x > canvas.width) this.dx *= -1;
+            }
+        }
+    }
+}
+
+function initGrid() {
+    atoms = []; electrons = [];
+    const rows = 5; const cols = 9; const startX = 70; const startY = 65; const gap = 70;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            let xOffset = (r % 2 === 0) ? 0 : 35; 
+            let px = startX + (c * gap) + xOffset;
+            let py = startY + (r * (gap * 0.85));
+            let isImpurity = isAlloy && Math.random() < 0.35;
+            atoms.push(new Atom(r, c, px, py, isImpurity));
+        }
+    }
+
+    if (isAlloy) {
+        for (let i = 0; i < 50; i++) { 
+            atoms.forEach(a1 => {
+                atoms.forEach(a2 => {
+                    if (a1 === a2) return;
+                    let dx = a2.baseX - a1.baseX; let dy = a2.baseY - a1.baseY;
+                    let dist = Math.sqrt(dx*dx + dy*dy); let minDist = a1.radius + a2.radius + 2; 
+                    if (dist < minDist && dist > 0) {
+                        let force = (minDist - dist) / 2;
+                        let angle = Math.atan2(dy, dx);
+                        let mx = Math.cos(angle) * force * 0.8; let my = Math.sin(angle) * force * 0.8;
+                        a2.baseX += mx; a2.baseY += my; a1.baseX -= mx; a1.baseY -= my;
+                    }
+                });
+            });
+            atoms.forEach(a => {
+               if(a.baseX < 40) a.baseX = 40; if(a.baseX > canvas.width - 40) a.baseX = canvas.width - 40;
+            });
+        }
+    }
+
+    atoms.forEach(atom => {
+        electrons.push(new Electron(atom));
+        if(Math.random() > 0.5) electrons.push(new Electron(atom));
+        if (temperature > meltingPoint) {
+            atom.vx = (Math.random() -0.5) * 2; atom.vy = (Math.random() -0.5) * 2;
+        }
+    });
+}
+
+function drawFlame() {
+    ctx.save();
+    let flicker = Math.random() * 5;
+    let grad = ctx.createLinearGradient(0, 0, 80, 0);
+    grad.addColorStop(0, "rgba(249, 115, 22, 0.6)");
+    grad.addColorStop(0.4, "rgba(251, 146, 60, 0.3)");
+    grad.addColorStop(1, "rgba(251, 146, 60, 0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 60 + flicker, canvas.height);
+    ctx.restore();
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (isHeating) {
+        drawFlame();
+        atoms.forEach(a => { if (a.c < 2) a.heat = Math.min(a.heat + 0.005, 1); });
+        for(let i=0; i<atoms.length; i++) {
+            let a1 = atoms[i];
+            if(a1.heat > 0.01) {
+                let neighbors = atoms.filter(a2 => a2 !== a1 && Math.abs(a2.x - a1.x) < 85 && Math.abs(a2.y - a1.y) < 85 && a2.x > a1.x);
+                neighbors.forEach(n => {
+                    if (n.heat < a1.heat) {
+                        let transfer = (a1.heat - n.heat) * 0.008; n.heat += transfer; a1.heat -= transfer * 0.01;
+                    }
+                });
+            }
+        }
+    } else {
+        atoms.forEach(a => a.heat *= 0.98);
+    }
+    atoms.forEach(atom => atom.draw());
+    electrons.forEach(electron => { electron.update(); electron.draw(); });
+    requestAnimationFrame(animate);
+}
+
+// Drag Logic (Shared for Mouse and Touch)
+function handleStartDrag(clientX, clientY) {
+    if (!isHammerMode || temperature > meltingPoint) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleY = canvas.height / rect.height;
+    const mouseY = (clientY - rect.top) * scaleY;
+    lastMouseX = (clientX - rect.left) * (canvas.width / rect.width);
+    
+    let closestDist = 1000;
+    atoms.forEach(a => {
+        let dist = Math.abs(a.baseY - mouseY);
+        if(dist < 30 && dist < closestDist) { closestDist = dist; draggedRowIndex = a.r; }
+    });
+}
+
+function handleMoveDrag(clientX, clientY) {
+    if (draggedRowIndex === -1) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const mouseX = (clientX - rect.left) * scaleX;
+    let deltaX = mouseX - lastMouseX;
+    let resistance = 0;
+    
+    atoms.forEach(a1 => {
+        if (a1.r === draggedRowIndex) {
+            let nextX = a1.baseX + deltaX;
+            atoms.forEach(a2 => {
+                if (Math.abs(a2.r - a1.r) === 1) { 
+                    let dx = nextX - a2.baseX; let dy = a1.baseY - a2.baseY; 
+                    let dist = Math.sqrt(dx*dx + dy*dy); let minDist = a1.radius + a2.radius - 2; 
+                    if (dist < minDist) {
+                        resistance += 2.0; 
+                        let bumpDir = (a2.r > a1.r) ? -1 : 1;
+                        let severity = (minDist - dist);
+                        a1.offsetY = bumpDir * severity; a2.offsetY = -bumpDir * (severity * 0.5);
+                    }
+                }
+            });
+        }
+    });
+
+    let speedFactor = 1.0 / (1 + resistance * 0.5);
+    if (isAlloy) speedFactor *= 0.15;
+
+    atoms.forEach(a => { if (a.r === draggedRowIndex) a.baseX += deltaX * speedFactor; });
+    lastMouseX = mouseX;
+}
+
+// Mouse Listeners
+canvas.addEventListener('mousedown', (e) => handleStartDrag(e.clientX, e.clientY));
+canvas.addEventListener('mousemove', (e) => handleMoveDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', () => draggedRowIndex = -1);
+
+// Touch Listeners (Added Back)
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleStartDrag(touch.clientX, touch.clientY);
+}, {passive: false});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleMoveDrag(touch.clientX, touch.clientY);
+}, {passive: false});
+
+window.addEventListener('touchend', () => draggedRowIndex = -1);
+
+
+/* =========================================
+   UI & INTERACTION CONTROLLERS
+   ========================================= */
+
+// --- Tutorial System ---
+const modal = document.getElementById('edu-modal');
+const tutorialToggle = document.getElementById('tutorial-toggle');
+let pendingAction = null; // Store action to run after modal closes
+
+function handleAction(key, actionFn) {
+    if (tutorialToggle.checked && key) {
+        // Show tutorial first, defer action
+        showTutorial(key);
+        pendingAction = actionFn;
+    } else {
+        // Run immediately if toggle is off
+        actionFn();
+    }
+}
+
+function showTutorial(key) {
+    const data = CONCEPTS[key];
+    document.getElementById('modal-title').innerText = data.title;
+    document.getElementById('modal-content').innerHTML = data.text;
+    document.getElementById('modal-icon').innerHTML = data.icon;
+    modal.classList.remove('hidden');
+}
+
+// When closing modal, run the pending action
+document.getElementById('btn-close-modal').addEventListener('click', () => {
+    modal.classList.add('hidden');
+    // We don't run action on 'close', only on 'got it' usually, 
+    // but good UX implies closing without 'got it' might cancel or run. 
+    // Let's run it to not break flow.
+    if(pendingAction) { pendingAction(); pendingAction = null; }
+});
+
+document.getElementById('btn-got-it').addEventListener('click', () => {
+    modal.classList.add('hidden');
+    if(pendingAction) { pendingAction(); pendingAction = null; }
+});
+
+function updateStatus(text, type = 'neutral') {
+    const badge = document.getElementById('status-badge');
+    const dot = document.getElementById('status-dot');
+    document.getElementById('status-text').innerText = text;
+    
+    const map = {
+        'neutral': ['bg-slate-400', 'bg-slate-100', 'text-slate-600'],
+        'hot': ['bg-orange-500', 'bg-orange-50', 'text-orange-700'],
+        'active': ['bg-green-500', 'bg-green-50', 'text-green-700'],
+        'hammer': ['bg-indigo-500', 'bg-indigo-50', 'text-indigo-700']
+    };
+    const c = map[type] || map['neutral'];
+    dot.className = `w-2 h-2 rounded-full ${c[0]}`;
+    badge.className = `px-3 py-1 rounded-full text-xs font-bold border border-slate-200 flex items-center gap-2 shadow-sm ${c[1]} ${c[2]}`;
+}
+
+// --- Sim Controls ---
+function toggleBtn(btnId, isActive) {
+    const btn = document.getElementById(btnId);
+    if(isActive) {
+        btn.classList.add('btn-active', 'border-transparent');
+        btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+    } else {
+        btn.classList.remove('btn-active', 'border-transparent');
+        btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+    }
+}
+
+document.getElementById('btn-delocalise').addEventListener('click', (e) => {
+    handleAction('delocalise', () => {
+        currentState = STATES.DELOCALISED;
+        const btn = document.getElementById('btn-delocalise');
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.innerText = "✔ Electrons Delocalised";
+        updateStatus("Metal Lattice & Sea of Electrons");
+    });
+});
+
+document.getElementById('btn-pure').addEventListener('click', () => {
+    // No tutorial for Pure switch back, just do it
+    isAlloy = false; 
+    document.getElementById('btn-pure').classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+    document.getElementById('btn-alloy').classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+    updateStatus("Pure Metal (Regular Layers)");
+    initGrid();
+});
+
+document.getElementById('btn-alloy').addEventListener('click', () => {
+    // Only show tutorial if switching TO alloy (not if already selected)
+    const tutorialKey = !isAlloy ? 'alloy' : null;
+    handleAction(tutorialKey, () => {
+        isAlloy = true;
+        document.getElementById('btn-alloy').classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+        document.getElementById('btn-pure').classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+        updateStatus("Alloy (Distorted Layers)");
+        initGrid();
+    });
+});
+
+document.getElementById('slider-temp').addEventListener('input', (e) => {
+    temperature = parseInt(e.target.value);
+    const val = document.getElementById('temp-val');
+    val.innerText = temperature;
+    if(temperature > 800) val.classList.add('text-red-600'); else val.classList.remove('text-red-600');
+    
+    if (temperature > meltingPoint) {
+        updateStatus("Molten Metal (Liquid)", 'hot');
+        // Give atoms velocity if they are currently stationary
+        atoms.forEach(a => {
+            if(a.vx === 0) {
+                a.vx = (Math.random() -0.5) * 2;
+                a.vy = (Math.random() -0.5) * 2;
+            }
+        });
+    }
+    else if (atoms[0]?.vx !== 0) initGrid();
+});
+
+document.getElementById('btn-heat').addEventListener('click', () => {
+    // Only show tutorial if turning heat ON
+    const tutorialKey = !isHeating ? 'heat' : null;
+    handleAction(tutorialKey, () => {
+        isHeating = !isHeating;
+        toggleBtn('btn-heat', isHeating);
+        document.getElementById('btn-heat').innerText = isHeating ? "Remove Heat" : "Apply Heat";
+        updateStatus(isHeating ? "Heating..." : "Cooling", isHeating ? 'hot' : 'neutral');
+    });
+});
+
+document.getElementById('btn-circuit').addEventListener('click', () => {
+    if(currentState !== STATES.DELOCALISED) { alert("Delocalise electrons first!"); return; }
+    
+    // Only show tutorial if turning circuit ON
+    const tutorialKey = !isCircuitActive ? 'circuit' : null;
+    handleAction(tutorialKey, () => {
+        isCircuitActive = !isCircuitActive;
+        toggleBtn('btn-circuit', isCircuitActive);
+        document.getElementById('btn-circuit').innerText = isCircuitActive ? "Stop Circuit" : "Circuit";
+        document.getElementById('circuit-overlay').style.display = isCircuitActive ? 'block' : 'none';
+        document.getElementById('bulb').setAttribute('class', isCircuitActive ? 'bulb-on' : 'bulb-off');
+        updateStatus(isCircuitActive ? "Conducting Electricity" : "Solid Metal", isCircuitActive ? 'active' : 'neutral');
+    });
+});
+
+document.getElementById('btn-hammer').addEventListener('click', () => {
+    // Only show tutorial if activating the tool
+    const tutorialKey = !isHammerMode ? 'hammer' : null;
+    handleAction(tutorialKey, () => {
+        isHammerMode = !isHammerMode;
+        toggleBtn('btn-hammer', isHammerMode);
+        canvas.style.cursor = isHammerMode ? "ew-resize" : "default";
+        updateStatus(isHammerMode ? "Force Tool Active" : "Solid Metal", isHammerMode ? 'hammer' : 'neutral');
+    });
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => location.reload());
+
+// --- Quiz System ---
+const viewSim = document.getElementById('view-simulation');
+const viewQuiz = document.getElementById('view-quiz');
+const btnSim = document.getElementById('btn-mode-sim');
+const btnQuiz = document.getElementById('btn-mode-quiz');
+
+btnSim.addEventListener('click', () => {
+    viewSim.classList.remove('hidden'); viewQuiz.classList.add('hidden');
+    btnSim.classList.replace('text-slate-500', 'bg-slate-100'); btnSim.classList.replace('text-slate-500', 'text-slate-800');
+    btnQuiz.classList.replace('bg-slate-100', 'text-slate-500'); btnQuiz.classList.replace('text-slate-800', 'text-slate-500');
+});
+
+btnQuiz.addEventListener('click', () => {
+    viewSim.classList.add('hidden'); viewQuiz.classList.remove('hidden');
+    btnQuiz.classList.replace('text-slate-500', 'bg-slate-100'); btnQuiz.classList.replace('text-slate-500', 'text-slate-800');
+    btnSim.classList.replace('bg-slate-100', 'text-slate-500'); btnSim.classList.replace('text-slate-800', 'text-slate-500');
+    initQuiz();
+});
+
+function initQuiz() {
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    QUIZ_DATA.forEach((item, idx) => {
+        let html = `
+            <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                <p class="font-semibold text-slate-800 mb-3">${idx+1}. ${item.q}</p>
+                <div class="space-y-2">`;
+        item.a.forEach((ans, aIdx) => {
+            html += `
+                <label class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded cursor-pointer hover:bg-indigo-50 transition">
+                    <input type="radio" name="q${idx}" value="${aIdx}" class="w-4 h-4 text-indigo-600">
+                    <span class="text-sm text-slate-700">${ans}</span>
+                </label>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
+    });
+    document.getElementById('quiz-results').classList.add('hidden');
+}
+
+document.getElementById('btn-submit-quiz').addEventListener('click', () => {
+    let score = 0;
+    QUIZ_DATA.forEach((item, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        
+        // Highlight logic
+        const inputs = document.querySelectorAll(`input[name="q${idx}"]`);
+        inputs.forEach(inp => {
+            const label = inp.parentElement;
+            if (parseInt(inp.value) === item.correct) label.classList.add('border-green-500', 'bg-green-50');
+            else if (inp.checked) label.classList.add('border-red-500', 'bg-red-50');
+        });
+
+        if (selected && parseInt(selected.value) === item.correct) score++;
+    });
+
+    const resultBox = document.getElementById('quiz-results');
+    resultBox.classList.remove('hidden');
+    document.getElementById('quiz-score').innerText = score;
+    let msg = score === 5 ? "Perfect! You're a chemistry pro!" : score > 3 ? "Great job! Almost there." : "Keep practicing!";
+    document.getElementById('quiz-feedback').innerText = msg;
+    window.scrollTo(0, document.body.scrollHeight);
+});
+
+document.getElementById('btn-retry-quiz').addEventListener('click', initQuiz);
+
+// Start
+initGrid();
+animate();
+
+</script>
+</body>
+</html>
