@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periodicity Test Review Tool</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .chem-sub {
+            vertical-align: sub;
+            font-size: 0.75em;
+        }
+        .chem-sup {
+            vertical-align: super;
+            font-size: 0.75em;
+        }
+        /* Custom scrollbar for sidebar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Data Content ---
+        const questionsData = [
+            {
+                id: 1,
+                title: "Allotropes of Carbon",
+                parts: [
+                    {
+                        id: "1a",
+                        label: "1(a)",
+                        question: "Similarity & difference between graphene and graphite",
+                        modelAnswer: `<strong>Similarity:</strong> Both have layers of carbon atoms arranged in hexagons / hexagonal rings (each C bonded to three others).<br/><br/><strong>Difference:</strong> Graphene is a single two-dimensional layer, whereas graphite consists of many layers with weak forces between the layers (a three-dimensional structure).`,
+                        explanation: `Both structures are based on sp²-hybridised carbon in hexagonal sheets. Graphene is just one sheet; graphite is many sheets stacked, with weak intermolecular (London) forces between them. That’s exactly what the mark scheme is looking for: “layers of hexagons” plus either 2D vs 3D or presence of forces between layers.`,
+                        examTip: `When asked for similarities and differences, make sure you clearly signal both – for example start each sentence with “Similarity:” and “Difference:”. Don’t repeat the information already given in the stem (single C–C bonds).`,
+                        revisionTip: `Practise drawing simple diagrams of diamond, graphite and graphene and annotate:<br/>• number of bonds per carbon<br/>• whether there are layers<br/>• whether there are delocalised electrons`
+                    },
+                    {
+                        id: "1bi",
+                        label: "1(b)(i)",
+                        question: "C–C–C bond angles",
+                        modelAnswer: `<strong>Graphene:</strong> 120°<br/><strong>Diamond:</strong> 109.5° (allow 109–110°)`,
+                        explanation: `In graphene, each carbon forms three σ bonds in a trigonal planar arrangement (sp²), giving 120° bond angles. In diamond, each carbon is tetrahedral (sp³) with four single bonds and a bond angle of about 109.5°.`,
+                        examTip: `If you see “three bonds around the atom in a plane” think 120°; if you see “four single bonds in 3D” think 109.5°. Those two angles come up all over A-level.`,
+                        revisionTip: `Make a mini table for common shapes: linear (180°), trigonal planar (120°), tetrahedral (109.5°), trigonal pyramidal (~107°), bent (~104.5°). Test yourself quickly before each exam.`
+                    },
+                    {
+                        id: "1bii",
+                        label: "1(b)(ii)",
+                        question: "Conductivity of diamond",
+                        modelAnswer: `Diamond is a <strong>poor conductor of electricity</strong> because all four outer-shell electrons on each carbon atom are used in covalent bonds, so there are <strong>no delocalised electrons</strong> to carry charge.`,
+                        explanation: `Graphite and graphene conduct because they each have one delocalised electron per carbon that can move through the lattice. Diamond has no free electrons or ions, so there’s no mobile charge carrier and it cannot conduct.`,
+                        examTip: `Whenever a question asks whether something conducts, your explanation must mention mobile charge carriers (delocalised electrons or ions) explicitly.`,
+                        revisionTip: `For each key structure (ionic solid, simple molecular, giant covalent, metal), write:<br/>“Conducts?” – solid / liquid / solution<br/>“Why?” – name the particles that move.`
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Gallium and its Oxide",
+                parts: [
+                    {
+                        id: "2a",
+                        label: "2(a)",
+                        question: "Structure and bonding of gallium",
+                        modelAnswer: `Gallium has a <strong>giant metallic lattice</strong> with <strong>metallic bonding</strong>.`,
+                        explanation: `Gallium is a metal in Group 13. Metals form structures with positive metal ions in a lattice surrounded by a sea of delocalised electrons – that’s a giant metallic lattice.`,
+                        examTip: `If the element is a metal in the main block, “giant metallic lattice” is almost always the safe default unless the question specifically leads you to an exception.`,
+                        revisionTip: `Learn the three main “giant” structures you use a lot:<br/>1. Giant ionic lattice<br/>2. Giant covalent lattice<br/>3. Giant metallic lattice<br/>...and be clear which type each part of the periodic table tends to form.`
+                    },
+                    {
+                        id: "2b",
+                        label: "2(b)",
+                        question: "Solubility of gallium in water",
+                        modelAnswer: `Gallium would be <strong>insoluble in water</strong> because the metallic bonds in the lattice are very strong and the attraction between water molecules and the metal atoms is <strong>not strong enough to overcome these metallic bonds</strong>.`,
+                        explanation: `Most pure metals are not soluble. Dissolving would involve water molecules pulling the lattice apart; here, the metal–metal attractions are much stronger than the water’s ability to stabilise individual metal ions.`,
+                        examTip: `Solubility questions often want you to compare strength of existing bonds vs new interactions with water. Use the phrase “not strong enough to overcome…”.`,
+                        revisionTip: `Make a one-page summary:<br/>• what tends to dissolve in water (ionic compounds, some polar covalent)<br/>• what doesn’t (most metals, non-polar molecular substances)<br/>...and the reason in each case.`
+                    },
+                    {
+                        id: "2c",
+                        label: "2(c)",
+                        question: "Formula of gallium oxide",
+                        modelAnswer: `Formula of gallium oxide: <strong>Ga₂O₃</strong>`,
+                        explanation: `In Group 13, gallium most commonly forms Ga³⁺ ions. Oxygen forms O²⁻. The formula must balance charge: 2 × (+3) = +6 and 3 × (−2) = −6 → overall neutral → Ga₂O₃.`,
+                        examTip: `For metal oxides, use group number to guess oxidation state, then cross-over charges to get the formula.`,
+                        revisionTip: `Practise writing formulae for oxides and chlorides of Groups 1–3 and 15–17 until it feels automatic.`
+                    },
+                    {
+                        id: "2d",
+                        label: "2(d)",
+                        question: "Structure and bonding of gallium oxide",
+                        modelAnswer: `Gallium oxide has a <strong>giant ionic lattice</strong> with <strong>ionic bonding</strong> between Ga³⁺ cations and O²⁻ anions.`,
+                        explanation: `Metal + non-metal → ionic compound. The mark scheme wants “giant lattice” and “ionic bonding”; naming the ions shows a high-level understanding.`,
+                        examTip: `If a compound is made from a metallic cation and a non-metal anion, describe its structure as a giant ionic lattice unless told otherwise.`,
+                        revisionTip: `Draw a simple labelled sketch of an ionic lattice showing alternating cations and anions and electrostatic attractions in all directions.`
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "First Ionisation Energy & Group 16",
+                parts: [
+                    {
+                        id: "3a",
+                        label: "3(a)",
+                        question: "Definition of first ionisation energy",
+                        modelAnswer: `First ionisation energy is the <strong>energy required to remove 1 mole of electrons from 1 mole of gaseous atoms</strong>.<br/>(You can also write: “…energy required to remove 1 mole of electrons from each atom in 1 mole of gaseous atoms.”)`,
+                        explanation: `The key words are: energy, 1 mole of electrons, 1 mole of atoms, and gaseous state. Leaving out “gaseous” loses marks.`,
+                        examTip: `Learn this definition word-for-word and practise writing it quickly. Definitions are easy marks.`,
+                        revisionTip: `Make flashcards for all required definitions (first ionisation energy, standard enthalpy change of combustion, etc.) and drill them regularly.`
+                    },
+                    {
+                        id: "3b",
+                        label: "3(b)",
+                        question: "Equation for first ionisation of oxygen",
+                        modelAnswer: `O(g) → O⁺(g) + e⁻`,
+                        explanation: `We show one atom in the gaseous state losing one electron to form a unipositive gaseous ion. State symbols are required for O and O⁺; the electron’s state symbol can be ignored in marking.`,
+                        examTip: `For first ionisation energy equations:<br/>• start with X(g)<br/>• form X⁺(g)<br/>• add e⁻ on the right.<br/>Don’t add coefficients – one atom is enough.`,
+                        revisionTip: `Practise writing ionisation equations for several elements (Na, Mg, Al, etc.) until the pattern is fixed.`
+                    },
+                    {
+                        id: "3c",
+                        label: "3(c)",
+                        question: "Trend down Group 16",
+                        modelAnswer: `The <strong>first ionisation energy decreases down Group 16</strong> from oxygen to polonium.<br/>• As you go down the group, the <strong>atomic radius increases</strong> and the outer electrons are further from the nucleus.<br/>• There are <strong>more inner shells</strong>, so <strong>electron shielding increases</strong>.<br/>• The outer electron therefore experiences a <strong>weaker nuclear attraction</strong>, so less energy is needed to remove it.`,
+                        explanation: `Even though nuclear charge increases, the combined effect of greater distance and more shielding is a reduced attraction between nucleus and outer electron, so IE₁ falls.`,
+                        examTip: `Whenever you explain ionisation-energy trends, always talk about:<br/>1. Distance of outer electron from nucleus (atomic radius)<br/>2. Shielding<br/>3. Nuclear charge / attraction<br/>Then conclude with “so more/less energy is needed to remove the electron.”`,
+                        revisionTip: `Draw a simple diagram for a top-of-group element and one lower down showing: more shells, larger radius, labelled “weaker attraction”. Use this for any “down the group” ionisation question.`
+                    },
+                    {
+                        id: "3d",
+                        label: "3(d)",
+                        question: "Successive ionisation energies of oxygen",
+                        modelAnswer: `The <strong>successive ionisation energies would show a very large jump between the 6th and 7th ionisation energies</strong>.<br/>This big increase shows that, after removing six electrons, the next electron is being removed from a <strong>new, inner shell closer to the nucleus</strong>, so much more energy is needed – consistent with oxygen having six outer-shell electrons (Group 16).`,
+                        explanation: `Oxygen has electron configuration 1s² 2s² 2p⁴. Removing six electrons removes all the second-shell electrons; the 7th ionisation removes a 1s electron, which is much closer to the nucleus, hence the huge jump.`,
+                        examTip: `For “how would successive ionisation energies show the group?”, look for where the big jump would be: after the number of outer electrons.`,
+                        revisionTip: `Practise for different groups (e.g. Mg, Al, Cl): write the electron configuration, then decide after which ionisation the big jump would appear.`
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Melting Points Across Period 3",
+                parts: [
+                    {
+                        id: "4a",
+                        label: "4(a)",
+                        question: "Higher melting points of Na, Mg, Al, Si vs P, S",
+                        modelAnswer: `• Na, Mg, Al and Si all form <strong>giant lattices</strong> (giant metallic lattices for Na, Mg and Al; a giant covalent lattice for Si).<br/>• P and S exist as <strong>simple molecular substances</strong> (P₄ and S₈).<br/>• In the giant lattices, strong metallic or covalent bonds must be broken to melt the substance, which requires a lot of energy, so melting points are high.<br/>• In P₄ and S₈, only weak intermolecular (London) forces between molecules are broken, which require much less energy, so the melting points are lower.`,
+                        explanation: `The question wants you to link type of structure to type of force that must be overcome. Giants → strong bonds; simple molecular → weak intermolecular forces.`,
+                        examTip: `For melting-point questions, always ask two things:<br/>1. What particles are present? (ions, atoms, molecules)<br/>2. What forces or bonds must be overcome to melt?<br/>Never say you are “breaking covalent bonds” in a simple molecular substance when you are just melting it.`,
+                        revisionTip: `Create a table for Period 3 elements with columns: structure, particle type, forces broken on melting, and typical melting point (high/low).`
+                    },
+                    {
+                        id: "4bi",
+                        label: "4(b)(i)",
+                        question: "Mg vs Na melting point",
+                        modelAnswer: `Magnesium has a <strong>higher melting point than sodium</strong> because:<br/>• Mg forms Mg²⁺ ions, whereas Na forms Na⁺ ions, so magnesium ions have a greater charge.<br/>• Magnesium contributes more delocalised electrons to the metallic lattice.<br/>• Therefore, there is a stronger electrostatic attraction between Mg²⁺ ions and delocalised electrons (stronger metallic bonding), so more energy is needed to break the lattice.`,
+                        explanation: `Both are metals with metallic bonding, but the higher charge and electron density in Mg strengthen the metallic bonds.`,
+                        examTip: `When comparing metallic melting points, talk comparatively: “Mg has greater charge / more electrons / stronger attraction than Na”, not just “Mg has strong metallic bonding”.`,
+                        revisionTip: `Remember: for Period-3 metals, melting point increases from Na → Mg → Al because of increasing charge and number of delocalised electrons.`
+                    },
+                    {
+                        id: "4bii",
+                        label: "4(b)(ii)",
+                        question: "P₄ vs S₈ melting point",
+                        modelAnswer: `• S₈ molecules are larger than P₄ molecules, so sulfur has <strong>more electrons</strong>.<br/>• Therefore, sulfur has <strong>stronger London (dispersion) forces</strong> between its molecules than phosphorus does.<br/>• More energy is needed to overcome these intermolecular forces in sulfur, so S₈ has a higher melting point than P₄.`,
+                        explanation: `Both are simple covalent molecules; the difference is size and number of electrons, which controls the strength of London forces.`,
+                        examTip: `Never talk about “breaking covalent bonds” when explaining why S₈ has a higher melting point than P₄. It’s intermolecular forces only.`,
+                        revisionTip: `Memorise the idea: bigger molecules → more electrons → stronger London forces → higher boiling/melting point (for similar substances).`
+                    },
+                    {
+                        id: "4biii",
+                        label: "4(b)(iii)",
+                        question: "Melting point of chlorine",
+                        modelAnswer: `A good prediction is between <strong>85 K and 391 K</strong>, for example around 170 K.`,
+                        explanation: `The mark scheme accepts any value between 85 K (Ar) and S’s 392 K; the actual melting point of Cl₂ is about 172 K. You’re using the trend for simple molecular substances: Cl₂ is smaller than P₄ and S₈ but still molecular, so its melting point lies lower than theirs but above Ar.`,
+                        examTip: `When asked to predict a value from a table:<br/>• look at where the element sits relative to the others<br/>• give a sensible number in the correct range, not an extreme outlier.`,
+                        revisionTip: `Practise plotting simple graphs of melting point vs atomic number for Period 2 or 3 and sketching the pattern. This helps you remember the general trend.`
+                    },
+                    {
+                        id: "4c",
+                        label: "4(c)",
+                        question: "Structure and bonding of aluminium",
+                        modelAnswer: `Aluminium has a <strong>giant metallic lattice</strong>. The bonding is <strong>metallic bonding</strong>, which is the electrostatic attraction between aluminium cations (Al³⁺ positive ions) and delocalised electrons.`,
+                        explanation: `This wording directly matches the mark scheme: structure (“giant lattice”), bonding (“metallic”), and named particles (“cations” and “delocalised electrons”).`,
+                        examTip: `When asked to “describe the structure and bonding” of a metal, always mention:<br/>• giant metallic lattice<br/>• positive ions (cations) + delocalised electrons<br/>• electrostatic attraction between them.`,
+                        revisionTip: `Be ready to reuse this description for any metallic element and to link it to properties like conductivity and malleability.`
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Ionisation Energies Across Period 2",
+                parts: [
+                    {
+                        id: "5ai",
+                        label: "5(a)(i)",
+                        question: "Full electron configuration of nitrogen",
+                        modelAnswer: `Nitrogen: 1s² 2s² 2p³`,
+                        explanation: `Nitrogen has 7 electrons: 2 fill the 1s, 2 fill the 2s and 3 go into the 2p sub-shell.`,
+                        examTip: `Write the total number of electrons above the symbol (e.g. N: 7) on rough paper, then fill the orbitals in order: 1s, 2s, 2p, 3s, 3p…`,
+                        revisionTip: `Practise writing full configurations for all Period-2 elements (Li → Ne) until you can do them quickly.`
+                    },
+                    {
+                        id: "5aii",
+                        label: "5(a)(ii)",
+                        question: "O vs N first ionisation energy",
+                        modelAnswer: `• In oxygen, the <strong>2p sub-shell contains a pair of electrons in one orbital</strong>, whereas in nitrogen all three 2p electrons occupy separate orbitals.<br/>• In oxygen, the <strong>paired electrons repel each other</strong>, so it is easier to remove one, giving oxygen a lower first ionisation energy than nitrogen.`,
+                        explanation: `The question tests the paired-electron repulsion anomaly. More repulsion → less energy needed to remove an electron.`,
+                        examTip: `Across a period, IE normally increases. Memorise the two standard anomalies:<br/>1. Be → B: new sub-shell (2p vs 2s)<br/>2. N → O: electron pairing in 2p<br/>...and always mention sub-shells and pairing in your explanation.`,
+                        revisionTip: `Sketch the 2p orbital diagrams for N (↑ ↑ ↑) and O (↑↓ ↑ ↑) to visualise the pairing effect.`
+                    },
+                    {
+                        id: "5aiii",
+                        label: "5(a)(iii)",
+                        question: "N vs C first ionisation energy",
+                        modelAnswer: `• Nitrogen has <strong>more protons</strong> in its nucleus than carbon, so it has a greater nuclear charge.<br/>• The outer-shell electrons in carbon and nitrogen experience similar shielding and are in the same shell (2nd shell).<br/>• Therefore, in nitrogen there is a <strong>stronger attraction between the nucleus and the outer electrons</strong>, so more energy is required to remove an electron, giving a higher first ionisation energy than carbon.`,
+                        explanation: `Across a period, increasing nuclear charge with similar shielding → greater attraction → higher IE.`,
+                        examTip: `For “across the period” comparisons:<br/>• same shell → similar shielding<br/>• more protons → stronger attraction → higher IE<br/>Always finish with “so more/less energy is needed”.`,
+                        revisionTip: `Write a simple rule in your notes: “Across the period, IE generally increases due to increasing nuclear charge and similar shielding.”`
+                    },
+                    {
+                        id: "5b",
+                        label: "5(b)",
+                        question: "What did Period-2 IE data provide evidence for?",
+                        modelAnswer: `It provided evidence for the existence of <strong>sub-shells</strong> within electron shells.`,
+                        explanation: `The pattern of rises and falls (e.g. Be → B and N → O) can’t be explained by simple shells only; it shows that there are different energy sub-shells (s and p).`,
+                        examTip: `Don’t just write “shells” – you must say <strong>sub-shells</strong> to get the mark.`,
+                        revisionTip: `Link this idea to the electron configuration work you did in Module 2 (1s, 2s, 2p, etc.).`
+                    },
+                    {
+                        id: "5c",
+                        label: "5(c)",
+                        question: "Position of Na on the graph",
+                        modelAnswer: `On the graph, place a cross at atomic number 11 (after neon) with a value of <strong>first ionisation energy lower than that of lithium</strong>. Label the cross “Na”.`,
+                        explanation: `Sodium is in Period 3, with its outer electron in 3s, further from the nucleus and more shielded than Li’s 2s electron, so its first ionisation energy is smaller than Li’s.`,
+                        examTip: `Even if you’re not expected to know the exact IE value, use trend logic:<br/>• new period → sharp drop in IE<br/>• then it rises again across the period.`,
+                        revisionTip: `Look at typical exam graphs of IE across Period 2 and 3 and make sure you can sketch the general shape from memory.`
+                    },
+                    {
+                        id: "5d",
+                        label: "5(d)",
+                        question: "Largest second ionisation energy: Li, Be or F?",
+                        modelAnswer: `Prediction: <strong>Lithium</strong><br/><br/>Explanation:<br/>• After lithium loses one electron, it forms Li⁺ with electron configuration 1s².<br/>• The second electron to be removed is now in the <strong>1s shell</strong>, which is closer to the nucleus and experiences <strong>very little shielding</strong>.<br/>• This means there is a very strong attraction between the nucleus and this electron, so a lot of energy is needed for the second ionisation.`,
+                        explanation: `The mark scheme requires: prediction “Lithium”, explanation that the second electron is in the first shell, closer to the nucleus, less shielding, stronger attraction.`,
+                        examTip: `When comparing second ionisation energies, think: after removing the first electron, which ion now looks like a noble-gas configuration with electrons in a very low shell? That one is hardest to ionise again.`,
+                        revisionTip: `Practise for other triplets (e.g. Na, Mg, Al) which would have the largest third ionisation energy, and explain using shell diagrams.`
+                    }
+                ]
+            }
+        ];
+
+        // --- Icons ---
+        const ChevronDown = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>;
+        const ChevronUp = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>;
+        const Beaker = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-flask-conical"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>;
+        const Lightbulb = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-lightbulb"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5A6 6 0 0 0 6 8c0 1 .5 2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
+        const Brain = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-brain"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>;
+        const Info = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>;
+        const Check = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check-circle-2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>;
+
+        // --- Components ---
+
+        const TipBox = ({ type, content }) => {
+            const isExam = type === 'exam';
+            const bgColor = isExam ? 'bg-amber-50' : 'bg-emerald-50';
+            const borderColor = isExam ? 'border-amber-200' : 'border-emerald-200';
+            const textColor = isExam ? 'text-amber-900' : 'text-emerald-900';
+            const iconColor = isExam ? 'text-amber-600' : 'text-emerald-600';
+            const title = isExam ? 'Exam Tip' : 'Revision Tip';
+            const Icon = isExam ? Lightbulb : Brain;
+
+            return (
+                <div className={`mt-4 border rounded-lg p-4 ${bgColor} ${borderColor} ${textColor} text-sm flex gap-3 shadow-sm`}>
+                    <div className={`mt-0.5 shrink-0 ${iconColor}`}>
+                        <Icon />
+                    </div>
+                    <div>
+                        <h4 className="font-bold mb-1 uppercase tracking-wide text-xs opacity-80">{title}</h4>
+                        <div dangerouslySetInnerHTML={{ __html: content }} className="leading-relaxed" />
+                    </div>
+                </div>
+            );
+        };
+
+        const QuestionCard = ({ part }) => {
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [showExplanation, setShowExplanation] = useState(false);
+
+            // Reset state when question changes
+            useEffect(() => {
+                setShowAnswer(false);
+                setShowExplanation(false);
+            }, [part.id]);
+
+            return (
+                <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6 transition-all duration-300 hover:shadow-lg fade-in">
+                    <div className="p-5 md:p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded text-sm font-mono">
+                                {part.label}
+                            </span>
+                        </div>
+                        <h3 className="text-lg md:text-xl text-gray-800 font-medium mb-6">
+                            {part.question}
+                        </h3>
+
+                        {!showAnswer ? (
+                            <button 
+                                onClick={() => setShowAnswer(true)}
+                                className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 group"
+                            >
+                                <Check className="w-5 h-5 group-hover:scale-110 transition-transform"/>
+                                Reveal Model Answer
+                            </button>
+                        ) : (
+                            <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                                {/* Model Answer Section */}
+                                <div className="bg-slate-50 p-5 rounded-lg border border-slate-200 border-l-4 border-l-indigo-500">
+                                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Model Answer</h4>
+                                    <div className="text-gray-800 leading-relaxed" dangerouslySetInnerHTML={{ __html: part.modelAnswer }}></div>
+                                </div>
+
+                                {/* Tips Row */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {part.examTip && <TipBox type="exam" content={part.examTip} />}
+                                    {part.revisionTip && <TipBox type="revision" content={part.revisionTip} />}
+                                </div>
+
+                                {/* Deep Dive Accordion */}
+                                <div className="border border-gray-200 rounded-lg overflow-hidden">
+                                    <button 
+                                        onClick={() => setShowExplanation(!showExplanation)}
+                                        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                                    >
+                                        <div className="flex items-center gap-2 text-gray-700 font-medium">
+                                            <Info className="w-5 h-5 text-blue-500" />
+                                            <span>Why is this the answer? (Explanation)</span>
+                                        </div>
+                                        {showExplanation ? <ChevronUp /> : <ChevronDown />}
+                                    </button>
+                                    
+                                    {showExplanation && (
+                                        <div className="p-5 bg-white text-gray-600 leading-relaxed border-t border-gray-200 text-sm">
+                                            <div dangerouslySetInnerHTML={{ __html: part.explanation }} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState(1);
+
+            const activeQuestion = questionsData.find(q => q.id === activeTab);
+
+            return (
+                <div className="min-h-screen flex flex-col md:flex-row max-w-7xl mx-auto">
+                    
+                    {/* Sidebar / Topbar Navigation */}
+                    <aside className="bg-white md:w-72 md:h-screen md:fixed shadow-lg z-10 flex-shrink-0 flex flex-col">
+                        <div className="p-6 border-b border-gray-100 bg-gradient-to-br from-indigo-600 to-blue-600 text-white">
+                            <div className="flex items-center gap-2 mb-1">
+                                <Beaker className="w-6 h-6" />
+                                <h1 className="font-bold text-xl tracking-tight">ChemRev</h1>
+                            </div>
+                            <p className="text-blue-100 text-xs font-medium opacity-90">A-Level Periodicity Review</p>
+                        </div>
+                        
+                        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+                            {questionsData.map((q) => (
+                                <button
+                                    key={q.id}
+                                    onClick={() => {
+                                        setActiveTab(q.id);
+                                        window.scrollTo(0,0);
+                                    }}
+                                    className={`w-full text-left p-3 rounded-lg transition-all duration-200 flex items-start gap-3 group ${
+                                        activeTab === q.id 
+                                        ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200' 
+                                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                    }`}
+                                >
+                                    <span className={`flex items-center justify-center w-6 h-6 rounded text-xs font-bold mt-0.5 transition-colors ${
+                                        activeTab === q.id ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500 group-hover:bg-gray-300'
+                                    }`}>
+                                        {q.id}
+                                    </span>
+                                    <span className="text-sm font-medium">{q.title}</span>
+                                </button>
+                            ))}
+                        </nav>
+                        
+                        <div className="p-4 border-t border-gray-100 text-center">
+                            <p className="text-xs text-gray-400">© 2024 Chemistry Dept.</p>
+                        </div>
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="flex-1 md:ml-72 p-4 md:p-8 lg:p-12">
+                        <div className="max-w-3xl mx-auto">
+                            
+                            {/* Header for Mobile only (adds spacing) */}
+                            <div className="md:hidden h-2"></div>
+
+                            {/* Section Header */}
+                            <header className="mb-8 fade-in">
+                                <div className="flex items-center gap-3 text-sm font-medium text-gray-400 mb-2 uppercase tracking-wide">
+                                    <span>Question {activeQuestion.id}</span>
+                                    <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                    <span>{activeQuestion.parts.length} parts</span>
+                                </div>
+                                <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{activeQuestion.title}</h2>
+                            </header>
+
+                            {/* Question Cards */}
+                            <div className="space-y-8">
+                                {activeQuestion.parts.map((part) => (
+                                    <QuestionCard key={part.id} part={part} />
+                                ))}
+                            </div>
+
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
