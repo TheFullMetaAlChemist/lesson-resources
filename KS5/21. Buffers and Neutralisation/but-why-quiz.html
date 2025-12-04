@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR A-Level Chemistry: 5.1.3 Ultimate Revision</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <!-- MathJax for nice formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background-color: #f0fdfa; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal-enter { animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes modalPop { 
+            from { opacity: 0; transform: scale(0.9); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #0d9488; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden min-h-[700px] flex flex-col relative border border-gray-100">
+        
+        <!-- Header -->
+        <header class="bg-teal-800 text-white p-6 flex justify-between items-center shadow-md">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">OCR Module 5.1.3</h1>
+                <p class="text-teal-200 text-xs uppercase tracking-wider font-semibold mt-1">Complete Acids, Bases & Buffers Revision</p>
+            </div>
+            <div id="progress-badge" class="hidden bg-teal-900 bg-opacity-50 px-4 py-1 rounded-full text-sm font-mono border border-teal-600">
+                Q <span id="current-q-num">1</span> / <span id="total-q-num">19</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="content" class="flex-grow p-8 flex flex-col justify-center relative">
+            <!-- Content Injected Here -->
+        </main>
+
+        <!-- Footer -->
+        <footer id="footer" class="bg-gray-50 p-6 border-t border-gray-100 flex justify-end hidden">
+            <button id="next-btn" class="bg-teal-700 hover:bg-teal-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition duration-200 transform hover:-translate-y-0.5 flex items-center gap-3">
+                Next Question <i class="fas fa-chevron-right"></i>
+            </button>
+        </footer>
+
+        <!-- "But Why?" Modal Overlay -->
+        <div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div id="modal-content" class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-600"></div>
+                <div class="text-center mb-6">
+                    <div class="inline-block p-3 rounded-full bg-blue-50 text-blue-600 mb-3">
+                        <i class="fas fa-brain text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">Check Your Understanding</h3>
+                    <p class="text-gray-500 text-sm mt-1">Don't rely on luck! Explain your answer.</p>
+                </div>
+                
+                <h4 id="modal-question" class="text-lg font-semibold text-gray-800 mb-4 text-center"></h4>
+                
+                <div id="modal-options" class="space-y-3">
+                    <!-- Options injected here -->
+                </div>
+                
+                <div id="modal-feedback" class="hidden mt-4 p-3 rounded-lg text-sm text-center font-medium"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- COMPLETE MERGED QUIZ DATA WITH FOLLOW-UP QUESTIONS ---
+        const quizData = [
+            {
+                id: 1,
+                topic: "Buffer Action (Concept)",
+                question: "A student adds 2 cm<sup>3</sup> of 1.0 mol dm<sup>-3</sup> HCl to a buffer solution of Ethanoic Acid and Sodium Ethanoate. Which statement describes the pH change correctly?",
+                options: [
+                    "The pH remains exactly constant.",
+                    "The pH decreases slightly.",
+                    "The pH increases slightly.",
+                    "The pH decreases drastically."
+                ],
+                correctIndex: 1,
+                advice: "Remember: Buffers MINIMISE pH change by shifting equilibrium, but the new ratio of [A-]/[HA] will mathematically result in a slightly different pH.",
+                feedback: { 1: "Correct! The pH drops, but only by a tiny amount." }, // Short feedback, main learning in modal
+                followUp: {
+                    question: "Why does the pH decrease slightly rather than staying exactly the same?",
+                    options: [
+                        "Because the added H<sup>+</sup> neutralises the water.",
+                        "Because the ratio [A<sup>-</sup>]/[HA] changes, altering the log value in the Henderson-Hasselbalch equation.",
+                        "Because the salt precipitates out of solution."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 2,
+                topic: "Buffer Preparation (Stoichiometry)",
+                question: "You mix 1 mole of Ethanoic Acid with 1 mole of Sodium Hydroxide. Have you created a buffer solution?",
+                options: [
+                    "Yes, this is an acidic buffer.",
+                    "Yes, this is a basic buffer.",
+                    "No, this is just a salt solution.",
+                    "No, because you used a strong base."
+                ],
+                correctIndex: 2,
+                advice: "To make a buffer, you need a reservoir of weak acid (HA) and conjugate base (A-). A 1:1 reaction leaves only Salt (A-) and Water.",
+                feedback: { 2: "Spot on. This is complete neutralisation." },
+                followUp: {
+                    question: "What specific change to the quantities would create a functional buffer?",
+                    options: [
+                        "Use 2 moles of NaOH.",
+                        "Use 2 moles of Ethanoic Acid (Excess Acid).",
+                        "Add 1 mole of HCl."
+                    ],
+                    correctIndex: 1
+                }
+            },
+             {
+                id: 3,
+                topic: "Titration Curves (Equivalence Point)",
+                question: "In a titration of a Weak Acid (in flask) against a Strong Base (in burette), where does the Equivalence Point lie?",
+                options: [
+                    "Exactly at pH 7",
+                    "Below pH 7",
+                    "Above pH 7",
+                    "It depends on the indicator used"
+                ],
+                correctIndex: 2,
+                advice: "The salt formed (A-) acts as a weak base by hydrolysing water.",
+                feedback: { 2: "Correct! The equivalence point is in the alkaline region." },
+                followUp: {
+                    question: "Which chemical interaction causes the pH to be > 7 at equivalence?",
+                    options: [
+                        "The dissociation of the weak acid.",
+                        "The reaction of the conjugate base A<sup>-</sup> with water to produce OH<sup>-</sup>.",
+                        "The excess NaOH present in the solution."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 4,
+                topic: "pH Calculations (Approximations)",
+                question: "When calculating pH of a weak acid, we assume dissociation is negligible: [HA]<sub>equilibrium</sub> ≈ [HA]<sub>initial</sub>. When does this specific assumption break down?",
+                options: [
+                    "When the acid is very weak.",
+                    "When the acid is very concentrated.",
+                    "When the acid dissociates significantly (stronger weak acids).",
+                    "When the temperature is not 298K."
+                ],
+                correctIndex: 2,
+                advice: "If Ka is high ('stronger' weak acid), a significant amount of HA dissociates. Therefore [HA]eq is significantly lower than [HA]initial.",
+                feedback: { 2: "Correct. For stronger weak acids, we often need the quadratic formula." },
+                followUp: {
+                    question: "Which OTHER assumption breaks down if the acid is extremely dilute?",
+                    options: [
+                        "The assumption that [H<sup>+</sup>] ≈ [A<sup>-</sup>] (ignoring water's contribution).",
+                        "The assumption that Kw is constant.",
+                        "The assumption that pH is a logarithmic scale."
+                    ],
+                    correctIndex: 0
+                }
+            },
+            {
+                id: 5,
+                topic: "Half-Equivalence Point (Theory)",
+                question: "At the half-equivalence point of a weak acid titration, which statement is mathematically true?",
+                options: [
+                    "pH = 7",
+                    "pH = pKa",
+                    "[HA] = 0",
+                    "The solution is neutral"
+                ],
+                correctIndex: 1,
+                advice: "At half-neutralisation, [HA] = [A-].",
+                feedback: { 1: "Correct! This allows us to read pKa directly from a graph." },
+                followUp: {
+                    question: "Why does pH = pKa at this specific point?",
+                    options: [
+                        "Because the acid is fully neutralised.",
+                        "Because [HA] equals [A<sup>-</sup>], making the ratio 1, and log(1) is 0.",
+                        "Because the concentration of H<sup>+</sup> is zero."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 6,
+                topic: "Indicators (Suitability)",
+                question: "Why is Methyl Orange (pH range 3.1 - 4.4) unsuitable for a Weak Acid / Strong Base titration?",
+                options: [
+                    "It is an acid itself.",
+                    "The colour change is too slow.",
+                    "The equivalence point is at pH 9, but Methyl Orange changes colour in the acid region.",
+                    "It turns colourless which is hard to see."
+                ],
+                correctIndex: 2,
+                advice: "The indicator must change colour on the VERTICAL section of the curve.",
+                feedback: { 2: "Correct. Methyl orange would change colour far too early." },
+                followUp: {
+                    question: "What would you observe if you used Methyl Orange in this titration?",
+                    options: [
+                        "The solution would turn yellow immediately.",
+                        "The colour would change slowly from red to yellow long before the equivalence point.",
+                        "The solution would never change colour."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 7,
+                topic: "Dilution Effects",
+                question: "If you dilute a buffer solution with a large volume of water, what happens to its pH?",
+                options: [
+                    "It increases significantly.",
+                    "It decreases significantly.",
+                    "It shifts immediately to 7.",
+                    "It stays largely the same."
+                ],
+                correctIndex: 3,
+                advice: "pH depends on the ratio of acid to salt, not just the volume.",
+                feedback: { 3: "Correct. The pH remains constant." },
+                followUp: {
+                    question: "Mathematically, why does the pH stay the same?",
+                    options: [
+                        "Because water has a pH of 7.",
+                        "Because both [A<sup>-</sup>] and [HA] are diluted by the same factor, so their ratio remains unchanged.",
+                        "Because Kw is constant."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 8,
+                topic: "Buffer Formation (Spec Point j-ii)",
+                question: "Which of the following mixtures will result in a buffer solution?",
+                options: [
+                    "25 cm³ 1.0 M CH<sub>3</sub>COOH + 25 cm³ 1.0 M NaOH",
+                    "50 cm³ 1.0 M CH<sub>3</sub>COOH + 25 cm³ 1.0 M NaOH",
+                    "25 cm³ 1.0 M CH<sub>3</sub>COOH + 50 cm³ 1.0 M NaOH",
+                    "25 cm³ 1.0 M HCl + 25 cm³ 1.0 M NaCl"
+                ],
+                correctIndex: 1,
+                advice: "You need Excess Acid to form a buffer from weak acid + strong base.",
+                feedback: { 1: "Correct. You have excess acid remaining." },
+                followUp: {
+                    question: "In this specific mixture (50cm³ acid + 25cm³ base), what is the ratio of [A<sup>-</sup>] to [HA]?",
+                    options: [
+                        "1 : 1 (Perfect Buffer)",
+                        "2 : 1",
+                        "1 : 2"
+                    ],
+                    correctIndex: 0
+                }
+            },
+            {
+                id: 9,
+                topic: "Blood Buffer (Spec Point m)",
+                question: "The blood buffer system is: H<sub>2</sub>CO<sub>3</sub> ⇌ H<sup>+</sup> + HCO<sub>3</sub><sup>-</sup>. If a patient creates excess lactic acid during exercise, how does the system respond?",
+                options: [
+                    "Equilibrium shifts right; H<sub>2</sub>CO<sub>3</sub> concentration increases.",
+                    "Equilibrium shifts left; HCO<sub>3</sub><sup>-</sup> acts as the base.",
+                    "Equilibrium shifts right; HCO<sub>3</sub><sup>-</sup> acts as the acid.",
+                    "Equilibrium shifts left; H<sub>2</sub>CO<sub>3</sub> acts as the base."
+                ],
+                correctIndex: 1,
+                advice: "Added H+ must be removed by the Conjugate Base.",
+                feedback: { 1: "Correct. The equilibrium shifts left." },
+                followUp: {
+                    question: "What happens to the H<sub>2</sub>CO<sub>3</sub> produced in this reaction?",
+                    options: [
+                        "It precipitates as a solid.",
+                        "It decomposes into CO<sub>2</sub> and H<sub>2</sub>O, and the CO<sub>2</sub> is exhaled.",
+                        "It remains in the blood permanently."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 10,
+                topic: "Indicator Theory (Spec Point n-iii)",
+                question: "An indicator is a weak acid (HIn). <br/>Equation: HIn (Red) ⇌ H<sup>+</sup> + In<sup>-</sup> (Yellow). <br/>Why does adding alkali turn this indicator Yellow?",
+                options: [
+                    "The OH<sup>-</sup> reacts with In<sup>-</sup>, shifting equilibrium right.",
+                    "The alkali acts as a catalyst for the forward reaction.",
+                    "The OH<sup>-</sup> removes H<sup>+</sup> ions, shifting equilibrium to the right.",
+                    "The alkali adds H<sup>+</sup> ions, shifting equilibrium to the left."
+                ],
+                correctIndex: 2,
+                advice: "Le Chatelier's Principle: Removing a product pulls the equilibrium forward.",
+                feedback: { 2: "Correct. OH- neutralises H+, pulling the equilibrium right." },
+                followUp: {
+                    question: "What principle describes this shift in position of equilibrium?",
+                    options: [
+                        "Hess's Law",
+                        "Le Chatelier's Principle",
+                        "The Arrhenius Equation"
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 11,
+                topic: "Weak Acid / Weak Base (Spec Point n-i)",
+                question: "Why is there no suitable indicator for a titration between a Weak Acid and a Weak Base?",
+                options: [
+                    "The pH change is too rapid.",
+                    "The equivalence point is at exactly pH 7.",
+                    "There is no vertical section on the titration curve.",
+                    "The chemicals react too slowly."
+                ],
+                correctIndex: 2,
+                advice: "Indicators need a sharp pH jump to show a distinct colour change.",
+                feedback: { 2: "Correct. The curve is S-shaped with no steep cliff." },
+                followUp: {
+                    question: "Since no indicator works, how would you detect the end point in this titration?",
+                    options: [
+                        "By using a pH meter.",
+                        "By measuring the temperature change.",
+                        "By guessing."
+                    ],
+                    correctIndex: 0
+                }
+            },
+            {
+                id: 12,
+                topic: "pH Meter Techniques (Spec Point o)",
+                question: "When calibrating a pH meter before use, why is a 'two-point calibration' (e.g., using buffer 7.0 and buffer 4.0) necessary?",
+                options: [
+                    "To clean the probe.",
+                    "To determine the 'slope' of the calibration line ensures accuracy across a range.",
+                    "To make sure the buffer solutions are fresh.",
+                    "Because pH meters cannot read above pH 7 without it."
+                ],
+                correctIndex: 1,
+                advice: "One point sets the position (offset), the second sets the scale (slope).",
+                feedback: { 1: "Correct. This accounts for the sensitivity of the probe." },
+                followUp: {
+                    question: "If you only calibrated with buffer pH 7.0, and then measured a solution of pH 2, your reading would likely be...",
+                    options: [
+                        "Perfectly accurate.",
+                        "Inaccurate because the 'slope' of the probe might be incorrect.",
+                        "Impossible to read."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 13,
+                topic: "Half-Neutralisation (Application)",
+                question: "You are titrating a Weak Acid with a Strong Base. You stop exactly halfway to the equivalence point. If the pKa of the acid is 4.76, what is the pH of the solution?",
+                options: [
+                    "2.38 (Half of pKa)",
+                    "7.00 (Neutral)",
+                    "4.76 (Equal to pKa)",
+                    "9.24 (14 - pKa)"
+                ],
+                correctIndex: 2,
+                advice: "At half-neutralisation pH = pKa.",
+                feedback: { 2: "Correct. pH equals pKa here." },
+                followUp: {
+                    question: "Which term in the expression Ka = [H<sup>+</sup>][A<sup>-</sup>]/[HA] cancels out to make this true?",
+                    options: [
+                        "[H<sup>+</sup>] and [HA]",
+                        "[A<sup>-</sup>] and [HA]",
+                        "[H<sup>+</sup>] and Ka"
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 14,
+                topic: "Buffer pH Calculation Logic (Spec Point l)",
+                question: "In a buffer calculation, we often assume the equilibrium concentration of acid [HA]<sub>eq</sub> is the same as the initial concentration [HA]<sub>initial</sub>. Why is this assumption valid?",
+                options: [
+                    "Because weak acids are strong.",
+                    "Because the presence of the salt (A<sup>-</sup>) suppresses the dissociation of the acid.",
+                    "Because the acid completely dissociates.",
+                    "Because the temperature is constant."
+                ],
+                correctIndex: 1,
+                advice: "High [A-] pushes the equilibrium HA ⇌ H+ + A- to the left.",
+                feedback: { 1: "Correct. The Common Ion Effect suppresses dissociation." },
+                followUp: {
+                    question: "What is the name of the effect that describes this suppression of ionisation?",
+                    options: [
+                        "The Common Ion Effect",
+                        "The Greenhouse Effect",
+                        "The Shielding Effect"
+                    ],
+                    correctIndex: 0
+                }
+            },
+            {
+                id: 15,
+                topic: "Conjugate Pairs (Spec Point k)",
+                question: "Identify the conjugate base in this reaction: <br/> HCl + H<sub>2</sub>O ⇌ H<sub>3</sub>O<sup>+</sup> + Cl<sup>-</sup>",
+                options: [
+                    "HCl",
+                    "H<sub>2</sub>O",
+                    "H<sub>3</sub>O<sup>+</sup>",
+                    "Cl<sup>-</sup>"
+                ],
+                correctIndex: 3,
+                advice: "Conjugate base = Acid minus a proton.",
+                feedback: { 3: "Correct. Cl- is the remains of HCl." },
+                followUp: {
+                    question: "If Cl<sup>-</sup> is the conjugate base, what is H<sub>3</sub>O<sup>+</sup>?",
+                    options: [
+                        "The Conjugate Acid",
+                        "The Conjugate Base",
+                        "A spectator ion"
+                    ],
+                    correctIndex: 0
+                }
+            },
+            {
+                id: 16,
+                topic: "Titration Curve Shapes (Spec Point n-i)",
+                question: "You are titrating 25cm³ of Strong Acid with Strong Base. You repeat the experiment with a Weak Acid of the same concentration. How does the curve change?",
+                options: [
+                    "The start pH is higher, and the vertical section is shorter.",
+                    "The start pH is lower, and the vertical section is longer.",
+                    "The equivalence volume doubles.",
+                    "The final pH is lower."
+                ],
+                correctIndex: 0,
+                advice: "Weak acids start at higher pH. The buffer region creates a slope, shortening the vertical jump.",
+                feedback: { 0: "Correct. Higher start pH, shorter jump." },
+                followUp: {
+                    question: "Why is the volume of base needed for neutralisation exactly the same for both?",
+                    options: [
+                        "Because they have the same pH.",
+                        "Because they release the same number of moles of H<sup>+</sup> overall, regardless of strength.",
+                        "Because the indicator changes it."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 17,
+                topic: "Indicator Selection (Spec Point n-ii)",
+                question: "A titration curve has a vertical section from pH 7 to pH 10. Which indicator is most suitable?",
+                options: [
+                    "Methyl Orange (pH 3.1 - 4.4)",
+                    "Bromothymol Blue (pH 6.0 - 7.6)",
+                    "Phenolphthalein (pH 8.3 - 10.0)",
+                    "Universal Indicator"
+                ],
+                correctIndex: 2,
+                advice: "Range must be within the vertical section.",
+                feedback: { 2: "Correct. Phenolphthalein fits perfectly." },
+                followUp: {
+                    question: "Why is Bromothymol Blue (pH 6.0 - 7.6) a risky choice here?",
+                    options: [
+                        "It is blue, which is hard to see.",
+                        "Its range starts below the vertical section (pH 7), so it might change colour too early.",
+                        "It reacts with the base."
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 18,
+                topic: "Role of Conjugate Pair (Spec Point k)",
+                question: "In an acidic buffer containing HA and A<sup>-</sup>, what is the specific role of the A<sup>-</sup> ion?",
+                options: [
+                    "To react with added acid (H<sup>+</sup>).",
+                    "To react with added alkali (OH<sup>-</sup>).",
+                    "To maintain the water equilibrium.",
+                    "To dissociate into HA."
+                ],
+                correctIndex: 0,
+                advice: "A- is a base. Bases accept protons.",
+                feedback: { 0: "Correct. A- removes added H+." },
+                followUp: {
+                    question: "When A<sup>-</sup> reacts with H<sup>+</sup>, what is formed?",
+                    options: [
+                        "Water",
+                        "The weak acid HA",
+                        "A precipitate"
+                    ],
+                    correctIndex: 1
+                }
+            },
+            {
+                id: 19,
+                topic: "Buffer Capacity (Deep Understanding)",
+                question: "Which of these buffer solutions would be most effective at resisting pH change?",
+                options: [
+                    "0.1 M HA and 0.1 M A<sup>-</sup>",
+                    "0.001 M HA and 0.001 M A<sup>-</sup>",
+                    "1.0 M HA and 1.0 M A<sup>-</sup>",
+                    "1.0 M HA and 0.1 M A<sup>-</sup>"
+                ],
+                correctIndex: 2,
+                advice: "Higher concentration = Larger reservoir to mop up added acid/base.",
+                feedback: { 2: "Correct. High concentration means high capacity." },
+                followUp: {
+                    question: "Why is option 4 (1.0 M HA and 0.1 M A<sup>-</sup>) less effective?",
+                    options: [
+                        "It has too much acid.",
+                        "It would run out of A<sup>-</sup> very quickly if acid was added.",
+                        "It is not a buffer."
+                    ],
+                    correctIndex: 1
+                }
+            }
+        ];
+
+        // --- GAME STATE ---
+        let currentIdx = 0;
+        let score = 0;
+        let incorrectTopics = new Set();
+        let answeredCurrent = false;
+
+        const contentDiv = document.getElementById('content');
+        const nextBtn = document.getElementById('next-btn');
+        const footer = document.getElementById('footer');
+        const progressBadge = document.getElementById('progress-badge');
+        
+        // Modal Elements
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalQuestion = document.getElementById('modal-question');
+        const modalOptions = document.getElementById('modal-options');
+        const modalFeedback = document.getElementById('modal-feedback');
+
+        function init() {
+            document.getElementById('total-q-num').innerText = quizData.length;
+            renderWelcome();
+        }
+
+        function renderWelcome() {
+            contentDiv.innerHTML = `
+                <div class="text-center space-y-6 fade-in max-w-lg mx-auto">
+                    <div class="inline-block p-5 rounded-full bg-teal-100 text-teal-700 mb-2">
+                        <i class="fas fa-layer-group text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Complete 5.1.3 Revision</h2>
+                    <p class="text-gray-600 text-lg leading-relaxed">
+                        This quiz tests your <strong>deep understanding</strong>.
+                        <br/>
+                        <span class="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-full mt-2 inline-block font-semibold">
+                            <i class="fas fa-brain mr-1"></i> "But Why?" Mode Active
+                        </span>
+                    </p>
+                    <button onclick="startQuiz()" class="bg-teal-600 hover:bg-teal-700 text-white text-xl font-bold py-4 px-12 rounded-full shadow-xl transition transform hover:scale-105 mt-4">
+                        Start <i class="fas fa-play ml-2 text-sm"></i>
+                    </button>
+                </div>
+            `;
+            footer.classList.add('hidden');
+            progressBadge.classList.add('hidden');
+        }
+
+        function startQuiz() {
+            currentIdx = 0;
+            score = 0;
+            incorrectTopics.clear();
+            renderQuestion();
+            progressBadge.classList.remove('hidden');
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentIdx];
+            answeredCurrent = false;
+            footer.classList.add('hidden');
+            
+            document.getElementById('current-q-num').innerText = currentIdx + 1;
+
+            contentDiv.innerHTML = `
+                <div class="w-full fade-in">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded uppercase tracking-wide">
+                            ${q.topic}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-800 mb-8 leading-snug">
+                        ${q.question}
+                    </h3>
+                    
+                    <div class="grid gap-3">
+                        ${q.options.map((opt, i) => `
+                            <button onclick="handleAnswer(${i})" id="btn-${i}" class="text-left w-full p-5 rounded-xl border-2 border-gray-100 hover:border-teal-500 hover:bg-teal-50 transition-all duration-200 group flex items-start">
+                                <div class="flex-shrink-0 mt-1 mr-4">
+                                    <div class="w-6 h-6 rounded-full border-2 border-gray-300 group-hover:border-teal-500 flex items-center justify-center status-icon">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-teal-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    </div>
+                                </div>
+                                <span class="text-gray-700 font-medium text-lg">${opt}</span>
+                            </button>
+                            <div id="feedback-${i}" class="hidden ml-12 mb-2 text-sm p-4 rounded-lg border-l-4 shadow-sm"></div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            if(window.MathJax) MathJax.typesetPromise();
+        }
+
+        window.handleAnswer = function(selectedIdx) {
+            if (answeredCurrent) return;
+            
+            const q = quizData[currentIdx];
+            const btn = document.getElementById(`btn-${selectedIdx}`);
+            
+            if (selectedIdx === q.correctIndex) {
+                // CORRECT - Trigger "But Why?" Modal
+                btn.classList.add("border-blue-500", "bg-blue-50"); // Highlight selection pending verification
+                openModal(q);
+            } else {
+                // INCORRECT
+                incorrectTopics.add(q.topic);
+                markIncorrect(selectedIdx, q);
+            }
+        };
+
+        function markIncorrect(selectedIdx, q) {
+            const btn = document.getElementById(`btn-${selectedIdx}`);
+            const feedback = document.getElementById(`feedback-${selectedIdx}`);
+            const icon = btn.querySelector('.status-icon');
+            
+            btn.className = "text-left w-full p-5 rounded-xl border-2 border-red-300 bg-red-50 transition-all flex items-start";
+            icon.className = "w-6 h-6 rounded-full border-2 border-red-400 flex items-center justify-center mr-4 mt-1 text-red-500";
+            icon.innerHTML = '<i class="fas fa-times text-xs"></i>';
+            
+            // For main question, show advice immediately if wrong
+            feedback.className = "ml-12 mb-4 text-sm p-4 rounded-r-lg border-l-4 border-red-400 bg-red-50 text-red-900 shadow-sm fade-in";
+            feedback.innerHTML = `<strong class="block mb-1 text-red-700">Not quite.</strong>${q.feedback[selectedIdx] || "Review the concept below."} <div class="mt-2 text-xs text-gray-600">${q.advice}</div>`;
+            feedback.classList.remove('hidden');
+        }
+
+        function markCorrect(selectedIdx, q) {
+            answeredCurrent = true;
+            const btn = document.getElementById(`btn-${selectedIdx}`);
+            const feedback = document.getElementById(`feedback-${selectedIdx}`);
+            const icon = btn.querySelector('.status-icon');
+
+            btn.className = "text-left w-full p-5 rounded-xl border-2 border-green-500 bg-green-50 transition-all flex items-start shadow-md";
+            icon.className = "w-6 h-6 rounded-full border-2 border-green-600 bg-green-600 flex items-center justify-center mr-4 mt-1 text-white";
+            icon.innerHTML = '<i class="fas fa-check text-xs"></i>';
+            
+            feedback.className = "ml-12 mb-4 text-sm p-4 rounded-r-lg border-l-4 border-green-500 bg-green-50 text-green-900 shadow-sm fade-in";
+            feedback.innerHTML = `<strong class="block mb-1 text-green-700">Correct!</strong>${q.feedback[selectedIdx]}`;
+            feedback.classList.remove('hidden');
+
+            // Disable others
+            q.options.forEach((_, i) => {
+                if (i !== selectedIdx) {
+                    document.getElementById(`btn-${i}`).classList.add('opacity-40', 'pointer-events-none');
+                }
+            });
+
+            footer.classList.remove('hidden');
+            nextBtn.onclick = () => {
+                currentIdx++;
+                if (currentIdx < quizData.length) renderQuestion();
+                else renderResults();
+            };
+        }
+
+        // --- MODAL LOGIC ---
+        function openModal(q) {
+            const followUp = q.followUp;
+            modalQuestion.innerHTML = followUp.question;
+            modalFeedback.classList.add('hidden');
+            
+            modalOptions.innerHTML = followUp.options.map((opt, i) => `
+                <button onclick="handleModalAnswer(${i}, ${q.id})" class="w-full text-left p-3 rounded border hover:bg-gray-50 transition text-gray-700 text-sm">
+                    ${opt}
+                </button>
+            `).join('');
+            
+            modalOverlay.classList.remove('hidden');
+            document.getElementById('modal-content').classList.add('modal-enter');
+            
+            if(window.MathJax) MathJax.typesetPromise();
+        }
+
+        window.handleModalAnswer = function(idx, qId) {
+            const q = quizData.find(x => x.id === qId);
+            const isCorrect = idx === q.followUp.correctIndex;
+            
+            if (isCorrect) {
+                // Passed the Check
+                modalFeedback.className = "mt-4 p-3 rounded-lg text-sm text-center font-medium bg-green-100 text-green-800 fade-in";
+                modalFeedback.innerHTML = "<i class='fas fa-check-circle mr-1'></i> Spot on! You truly understand this.";
+                modalFeedback.classList.remove('hidden');
+                
+                // If main question wasn't already marked wrong (first try), increment score
+                if (!incorrectTopics.has(q.topic)) score++;
+
+                setTimeout(() => {
+                    modalOverlay.classList.add('hidden');
+                    markCorrect(q.correctIndex, q);
+                }, 1000);
+            } else {
+                // Failed the check
+                incorrectTopics.add(q.topic); // Even if main answer was right, understanding is flawed
+                modalFeedback.className = "mt-4 p-3 rounded-lg text-sm text-center font-medium bg-red-100 text-red-800 fade-in";
+                modalFeedback.innerHTML = "<i class='fas fa-exclamation-circle mr-1'></i> Incorrect reasoning. Check the revision notes.";
+                modalFeedback.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    modalOverlay.classList.add('hidden');
+                    // Mark main question as needing revision, but show correct state to proceed
+                    markCorrect(q.correctIndex, q);
+                }, 1500);
+            }
+        };
+
+        function renderResults() {
+            progressBadge.classList.add('hidden');
+            footer.classList.add('hidden');
+            
+            const pct = Math.round((score / quizData.length) * 100);
+            
+            let revisionHTML = '';
+            if (incorrectTopics.size > 0) {
+                revisionHTML = `
+                    <div class="bg-orange-50 border border-orange-200 rounded-xl p-6 text-left mt-8 max-h-96 overflow-y-auto">
+                        <h3 class="text-orange-800 font-bold mb-4 flex items-center sticky top-0 bg-orange-50 pb-2 border-b border-orange-200">
+                            <i class="fas fa-clipboard-list mr-2"></i> Targeted Revision Plan
+                        </h3>
+                        <ul class="space-y-4">
+                            ${Array.from(incorrectTopics).map(topic => {
+                                const qData = quizData.find(q => q.topic === topic);
+                                return `
+                                    <li class="bg-white p-4 rounded-lg border border-orange-100 shadow-sm">
+                                        <div class="text-xs font-bold text-orange-600 uppercase mb-1">${topic}</div>
+                                        <div class="text-gray-700 text-sm mb-2">${qData.advice}</div>
+                                        <div class="text-xs text-gray-400 bg-gray-50 p-2 rounded">
+                                            <span class="font-semibold">Check Concept:</span> ${qData.followUp.question}
+                                        </div>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                revisionHTML = `
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-8 mt-8">
+                        <i class="fas fa-medal text-4xl text-green-600 mb-2"></i>
+                        <p class="text-green-800 font-medium">Perfect Score! Your reasoning is solid.</p>
+                    </div>
+                `;
+            }
+
+            contentDiv.innerHTML = `
+                <div class="text-center w-full fade-in">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2">Quiz Complete</h2>
+                    <div class="text-6xl font-bold text-teal-600 my-6">${pct}%</div>
+                    <p class="text-gray-500 mb-6">You got ${score} out of ${quizData.length} correct with valid reasoning.</p>
+                    
+                    ${revisionHTML}
+                    
+                    <button onclick="startQuiz()" class="mt-8 text-gray-500 hover:text-teal-600 font-semibold transition">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+        }
+
+        init();
+    </script>
+</body>
+</html>
