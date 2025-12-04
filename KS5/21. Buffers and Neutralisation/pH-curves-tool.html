@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive pH Titration Sketcher</title>
+    <!-- Import Chart.js for the graphing -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --success: #16a34a;
+            --guide: #94a3b8;
+            --accent: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 { margin: 0; font-size: 1.4rem; }
+
+        .mode-toggle {
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem;
+            border-radius: 6px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .mode-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            opacity: 0.7;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: none;
+            font-size: 1rem;
+            min-width: 250px;
+        }
+
+        /* Main Layout */
+        main {
+            display: flex;
+            flex: 1;
+            overflow: hidden; /* Prevent body scroll */
+        }
+
+        /* Left Panel: Instructions */
+        .panel-left {
+            width: 40%;
+            padding: 2rem;
+            overflow-y: auto;
+            border-right: 1px solid #ddd;
+            background: white;
+        }
+
+        /* Right Panel: Graph */
+        .panel-right {
+            width: 60%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f1f5f9;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 95%;
+            height: 80%;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Step Cards */
+        .step-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: white;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .step-card.active {
+            opacity: 1;
+            pointer-events: all;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        /* Different color for Test Mode */
+        .test-mode .step-card.active {
+            border-left-color: var(--accent);
+        }
+
+        .step-card.completed {
+            opacity: 1;
+            border-left: 5px solid var(--success);
+            background-color: #f0fdf4;
+        }
+
+        .step-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+
+        .step-question {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .reveal-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+        
+        .test-mode .reveal-btn {
+            background-color: var(--accent);
+            color: #451a03;
+        }
+
+        .reveal-btn:hover { opacity: 0.9; }
+
+        .answer-section {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #ccc;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .chem-context {
+            background: #e0f2fe;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            border: 1px solid #bae6fd;
+        }
+        
+        .test-mode .chem-context {
+            background: #fffbeb;
+            border-color: #fcd34d;
+        }
+
+        .chem-context h3 { margin-top: 0; font-size: 1rem; }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 8px;
+            background: #cbd5e1;
+            color: #475569;
+        }
+        .badge-hard { background: #fee2e2; color: #b91c1c; }
+
+        /* Indicator Table Styles */
+        .indicator-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+        .indicator-table th, .indicator-table td {
+            border: 1px solid #cbd5e1;
+            padding: 6px;
+            text-align: center;
+        }
+        .indicator-table th {
+            background-color: #f1f5f9;
+        }
+        .indicator-select-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Superscript fix */
+        sup { font-size: 0.75em; vertical-align: super; line-height: 0; }
+        sub { font-size: 0.75em; vertical-align: sub; line-height: 0; }
+
+        @media (max-width: 768px) {
+            main { flex-direction: column; overflow-y: auto; }
+            .panel-left, .panel-right { width: 100%; height: auto; }
+            .chart-container { height: 400px; }
+            header { flex-direction: column; align-items: stretch; }
+        }
+
+    </style>
+</head>
+<body class="tutorial-mode">
+
+<header>
+    <h1>pH Titration Sketcher</h1>
+    
+    <div class="mode-toggle">
+        <button class="mode-btn active" id="btnTutorial" onclick="setMode('tutorial')">Tutorial Mode</button>
+        <button class="mode-btn" id="btnTest" onclick="setMode('test')">Test Yourself</button>
+    </div>
+
+    <div class="controls">
+        <select id="scenarioSelect" onchange="loadScenario()">
+            <!-- Options populated by JS -->
+        </select>
+        <button onclick="resetTool()" style="padding: 0.5rem; cursor: pointer;">Reset</button>
+    </div>
+</header>
+
+<main>
+    <!-- INSTRUCTION PANEL -->
+    <div class="panel-left" id="instructionPanel">
+        <div class="chem-context">
+            <h3>Scenario</h3>
+            <p id="scenarioDescription">Loading...</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-card active" id="step1">
+            <div class="step-title">Step 1: The Start (V = 0)</div>
+            <div class="step-question" id="q1">...</div>
+            <button class="reveal-btn" onclick="reveal(1)">Check Calculation & Plot Point</button>
+            <div class="answer-section" id="ans1"></div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card" id="step2">
+            <div class="step-title">Step 2: Equivalence Volume (V<sub>eq</sub>)</div>
+            <div class="step-question" id="q2">...</div>
+            <button class="reveal-btn" onclick="reveal(2)">Check Volume & Mark Line</button>
+            <div class="answer-section" id="ans2"></div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card" id="step3">
+            <div class="step-title">Step 3: The Pre-Equivalence Region</div>
+            <div class="step-question" id="q3">...</div>
+            <button class="reveal-btn" onclick="reveal(3)">Check Reasoning & Draw Curve</button>
+            <div class="answer-section" id="ans3"></div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card" id="step4">
+            <div class="step-title">Step 4: The Equivalence Point pH</div>
+            <div class="step-question" id="q4">...</div>
+            <button class="reveal-btn" onclick="reveal(4)">Check pH & Draw Vertical Section</button>
+            <div class="answer-section" id="ans4"></div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-card" id="step5">
+            <div class="step-title">Step 5: The End (Excess Titrant)</div>
+            <div class="step-question" id="q5">...</div>
+            <button class="reveal-btn" onclick="reveal(5)">Check Final pH & Complete Curve</button>
+            <div class="answer-section" id="ans5"></div>
+        </div>
+
+        <!-- Step 6 (NEW: Indicator Selection) -->
+        <div class="step-card" id="step6">
+            <div class="step-title">Step 6: Select Indicator</div>
+            <div class="step-question">
+                Look at the <strong>vertical section</strong> of your graph. Choose an indicator whose pK<sub>in</sub> falls within this steep change.
+                
+                <table class="indicator-table">
+                    <thead>
+                        <tr>
+                            <th>Indicator</th>
+                            <th>pH Range</th>
+                            <th>pK<sub>in</sub></th>
+                            <th>Change (Acid &rarr; Base)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Methyl Orange</td>
+                            <td>3.1 - 4.4</td>
+                            <td>3.7</td>
+                            <td>Red &rarr; Yellow</td>
+                        </tr>
+                        <tr>
+                            <td>Methyl Red</td>
+                            <td>4.4 - 6.2</td>
+                            <td>5.1</td>
+                            <td>Red &rarr; Yellow</td>
+                        </tr>
+                        <tr>
+                            <td>Bromothymol Blue</td>
+                            <td>6.0 - 7.6</td>
+                            <td>7.0</td>
+                            <td>Yellow &rarr; Blue</td>
+                        </tr>
+                        <tr>
+                            <td>Phenolphthalein</td>
+                            <td>8.3 - 10.0</td>
+                            <td>9.3</td>
+                            <td>Colourless &rarr; Pink</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="indicator-select-area">
+                    <label><strong>Best Indicator:</strong></label>
+                    <select id="indicatorChoice">
+                        <option value="">-- Select --</option>
+                        <option value="methyl_orange">Methyl Orange</option>
+                        <option value="methyl_red">Methyl Red</option>
+                        <option value="bromothymol_blue">Bromothymol Blue</option>
+                        <option value="phenolphthalein">Phenolphthalein</option>
+                        <option value="none">None (Use pH Meter)</option>
+                    </select>
+                </div>
+            </div>
+            <button class="reveal-btn" onclick="checkIndicator()">Check Indicator & End-Point Colour</button>
+            <div class="answer-section" id="ans6"></div>
+        </div>
+
+    </div>
+
+    <!-- GRAPH PANEL -->
+    <div class="panel-right">
+        <div class="chart-container">
+            <canvas id="titrationChart"></canvas>
+        </div>
+    </div>
+</main>
+
+<script>
+    // --- DATA ---
+    // Added indicator data to each scenario
+    // flow: 'up' (Acid in Flask) or 'down' (Base in Flask) determines colour change text
+    const allScenarios = {
+        tutorial: [
+            {
+                id: "sasb",
+                title: "25 cm³ 0.1 M HCl + 0.1 M NaOH",
+                maxVol: 55,
+                flow: 'up', 
+                indicator: { valid: ['phenolphthalein', 'methyl_orange', 'bromothymol_blue', 'methyl_red'], reason: "Since the vertical section is huge (pH 3-11), almost any indicator works. Phenolphthalein is commonly used." },
+                steps: [
+                    { q: "We start with 0.1 M Strong Acid. Calculate the pH.", a: "<strong>pH = 1.0</strong><br>[H<sup>+</sup>] = 0.1 M. pH = 1.", dataPoints: [{x:0, y:1}] },
+                    { q: "Calculate V needed to neutralize 25 cm³ of 0.1 M HCl with 0.1 M NaOH.", a: "<strong>V = 25.0 cm³</strong><br>Equal concentrations = Equal volumes.", guideLine: [{x:25, y:0}, {x:25, y:14}] },
+                    { q: "Up to 24 cm³, is there a buffer?", a: "<strong>No Buffer.</strong><br>Strong acid curves rise very slowly.", dataPoints: [{x:10, y:1.5}, {x:20, y:2}, {x:24, y:2.7}] },
+                    { q: "At 25 cm³ (Equivalence), what is the pH?", a: "<strong>pH = 7.0</strong><br>Strong Acid + Strong Base = Neutral Salt.", dataPoints: [{x:24.9, y:3}, {x:25, y:7}, {x:25.1, y:11}] },
+                    { q: "With excess 0.1 M NaOH, where does the curve end?", a: "<strong>pH ≈ 13.0</strong><br>pOH = 1, so pH = 13.", dataPoints: [{x:30, y:12}, {x:40, y:12.6}, {x:50, y:13}] }
+                ]
+            },
+            {
+                id: "wasb",
+                title: "25 cm³ 0.1 M Ethanoic Acid + 0.1 M NaOH",
+                maxVol: 55,
+                flow: 'up',
+                indicator: { valid: ['phenolphthalein'], reason: "Vertical section is pH 7-11 (Basic). We need an indicator with pK<sub>in</sub> > 7. Phenolphthalein (pK<sub>in</sub> 9.3) is ideal. Methyl orange would change too early." },
+                steps: [
+                    { q: "Start with 0.1 M Weak Acid (K<sub>a</sub> ≈ 1.7×10<sup>-5</sup>).", a: "<strong>pH ≈ 2.9</strong><br>Use [H<sup>+</sup>] = √(K<sub>a</sub> × C).", dataPoints: [{x:0, y:2.9}] },
+                    { q: "Calculate V<sub>eq</sub> for 25 cm³ acid with equal conc base.", a: "<strong>V = 25.0 cm³</strong>", guideLine: [{x:25, y:0}, {x:25, y:14}] },
+                    { q: "What happens at half-equivalence (12.5 cm³)?", a: "<strong>Buffer Region (pH = pK<sub>a</sub>)</strong><br>pH ≈ 4.8 at 12.5 cm³.", dataPoints: [{x:2, y:3.8}, {x:12.5, y:4.8}, {x:23, y:5.8}] },
+                    { q: "Is the equivalence point neutral?", a: "<strong>pH ≈ 8.8 (Basic)</strong><br>Salt hydrolysis occurs.", dataPoints: [{x:24.5, y:6.5}, {x:25, y:8.8}, {x:25.5, y:11}] },
+                    { q: "Final pH with excess base?", a: "<strong>pH ≈ 13.0</strong>", dataPoints: [{x:35, y:12.5}, {x:50, y:13}] }
+                ]
+            },
+            {
+                id: "sawb",
+                title: "25 cm³ 0.1 M Ammonia + 0.1 M HCl",
+                maxVol: 55,
+                flow: 'down',
+                indicator: { valid: ['methyl_orange', 'methyl_red'], reason: "Vertical section is pH 7 down to 4 (Acidic). We need an indicator with pK<sub>in</sub> < 7. Methyl Orange (pK<sub>in</sub> 3.7) is ideal. Phenolphthalein would change too early." },
+                steps: [
+                    { q: "Start with 0.1 M Weak Base (K<sub>b</sub> ≈ 1.8×10<sup>-5</sup>).", a: "<strong>pH ≈ 11.1</strong><br>pOH ≈ 2.9.", dataPoints: [{x:0, y:11.1}] },
+                    { q: "Calculate V<sub>eq</sub>.", a: "<strong>V = 25.0 cm³</strong>", guideLine: [{x:25, y:0}, {x:25, y:14}] },
+                    { q: "What happens at half-equivalence (12.5 cm³)?", a: "<strong>Buffer Region</strong><br>pOH = pK<sub>b</sub> (4.74) → pH = 9.26.", dataPoints: [{x:2, y:10.5}, {x:12.5, y:9.26}, {x:23, y:8.2}] },
+                    { q: "Is the equivalence point neutral?", a: "<strong>pH ≈ 5.3 (Acidic)</strong><br>Ammonium ion is acidic.", dataPoints: [{x:24.5, y:7}, {x:25, y:5.3}, {x:25.5, y:3}] },
+                    { q: "Final pH with excess acid?", a: "<strong>pH ≈ 1.0</strong>", dataPoints: [{x:35, y:1.5}, {x:50, y:1}] }
+                ]
+            },
+            {
+                id: "wawb",
+                title: "25 cm³ 0.1 M Ethanoic Acid + 0.1 M Ammonia",
+                maxVol: 55,
+                flow: 'up',
+                indicator: { valid: ['none'], reason: "There is <strong>no vertical section</strong>. The pH changes gradually. No indicator gives a sharp endpoint. We must use a pH meter." },
+                steps: [
+                    { q: "Start with 0.1 M Weak Acid.", a: "<strong>pH ≈ 2.9</strong>", dataPoints: [{x:0, y:2.9}] },
+                    { q: "Calculate V<sub>eq</sub>.", a: "<strong>V = 25.0 cm³</strong>", guideLine: [{x:25, y:0}, {x:25, y:14}] },
+                    { q: "Add Weak Base. Does it buffer?", a: "<strong>Yes.</strong><br>pH rises to pK<sub>a</sub> (4.8) at half-equivalence.", dataPoints: [{x:12.5, y:4.8}, {x:20, y:6}] },
+                    { q: "At 25 cm³. Weak Acid + Weak Base. Where is the vertical section?", a: "<strong>pH ≈ 7.0 ... But NO Vertical Section!</strong><br>Just a 'point of inflexion'.", dataPoints: [{x:24, y:6.8}, {x:25, y:7.0}, {x:26, y:7.2}] },
+                    { q: "Excess Weak Base added.", a: "<strong>pH ≈ 10-11</strong><br>Levels off at pH of weak base.", dataPoints: [{x:35, y:9}, {x:50, y:10.5}] }
+                ]
+            }
+        ],
+        test: [
+            {
+                id: "test1",
+                title: "20 cm³ 0.1 M HCl + 0.2 M NaOH (High Conc Base)",
+                maxVol: 40,
+                flow: 'up',
+                indicator: { valid: ['phenolphthalein', 'methyl_orange', 'methyl_red', 'bromothymol_blue'], reason: "Strong Acid vs Strong Base has a long vertical section. Any indicator in the table works." },
+                steps: [
+                    { q: "<strong>Q1:</strong> Calculate initial pH for 0.1 M HCl.", a: "<strong>pH = 1.0</strong>", dataPoints: [{x:0, y:1}] },
+                    { q: "<strong>Q2 (Tricky):</strong> Calculate V<sub>eq</sub>. <br>Flask: 20 cm³ of 0.1 M Acid.<br>Burette: 0.2 M Base.", a: "<strong>V = 10.0 cm³</strong><br>Moles Acid = 0.002.<br>Vol Base = 0.002 / 0.2 = 0.01 dm³ = 10 cm³.", guideLine: [{x:10, y:0}, {x:10, y:14}] },
+                    { q: "<strong>Q3:</strong> Draw the pre-equivalence section.", a: "<strong>Strong Acid = No Buffer</strong><br>Gradual rise.", dataPoints: [{x:5, y:1.3}, {x:9, y:2}] },
+                    { q: "<strong>Q4:</strong> What is the pH at 10 cm³? Draw vertical section.", a: "<strong>pH = 7.0</strong><br>Strong/Strong is always 7.", dataPoints: [{x:9.9, y:3}, {x:10, y:7}, {x:10.1, y:11}] },
+                    { q: "<strong>Q5:</strong> Final pH with excess 0.2 M NaOH?", a: "<strong>pH ≈ 13.3</strong><br>[OH<sup>-</sup>] = 0.2 M. pOH = 0.7.", dataPoints: [{x:15, y:13}, {x:25, y:13.3}, {x:30, y:13.3}] }
+                ]
+            },
+            {
+                id: "test2",
+                title: "25 cm³ 0.1 M Methanoic Acid + 0.1 M NaOH",
+                maxVol: 55,
+                flow: 'up',
+                indicator: { valid: ['phenolphthalein'], reason: "Weak Acid vs Strong Base. Equivalence is basic (pH > 7). Vertical section is high. Phenolphthalein is required." },
+                steps: [
+                    { q: "<strong>Q1:</strong> Methanoic Acid K<sub>a</sub> = 1.8×10<sup>-4</sup> (Stronger than Ethanoic).<br>Calculate start pH.", a: "<strong>pH ≈ 2.4</strong><br>[H<sup>+</sup>] = √(1.8×10<sup>-4</sup> × 0.1).", dataPoints: [{x:0, y:2.4}] },
+                    { q: "<strong>Q2:</strong> Calculate V<sub>eq</sub>.", a: "<strong>V = 25.0 cm³</strong><br>Equal concs = Equal volumes.", guideLine: [{x:25, y:0}, {x:25, y:14}] },
+                    { q: "<strong>Q3:</strong> Calculate pH at Half-Equivalence (12.5 cm³).", a: "<strong>pH = 3.74</strong><br>pH = pK<sub>a</sub> = -log(1.8×10<sup>-4</sup>). <br>Note: This is lower than Ethanoic acid!", dataPoints: [{x:5, y:3.1}, {x:12.5, y:3.74}, {x:22, y:4.8}] },
+                    { q: "<strong>Q4:</strong> Equivalence pH?", a: "<strong>pH ≈ 8.3 (Basic)</strong><br>Slightly less basic than Ethanoate.", dataPoints: [{x:24.5, y:6}, {x:25, y:8.3}, {x:25.5, y:11}] },
+                    { q: "<strong>Q5:</strong> Final pH?", a: "<strong>pH ≈ 13.0</strong>", dataPoints: [{x:35, y:12.5}, {x:50, y:13}] }
+                ]
+            },
+            {
+                id: "test3",
+                title: "50 cm³ 0.05 M Ammonia + 0.05 M HCl (Dilute)",
+                maxVol: 100,
+                flow: 'down',
+                indicator: { valid: ['methyl_orange', 'methyl_red'], reason: "Strong Acid vs Weak Base. Equivalence is acidic (pH < 7). Methyl Orange is required." },
+                steps: [
+                    { q: "<strong>Q1:</strong> Dilute Weak Base (0.05 M). Estimate Start pH.", a: "<strong>pH ≈ 11.0</strong><br>Lower conc means slightly lower pH than 0.1 M NH<sub>3</sub>.", dataPoints: [{x:0, y:11}] },
+                    { q: "<strong>Q2:</strong> Calculate V<sub>eq</sub> for 50 cm³ analyte.", a: "<strong>V = 50.0 cm³</strong><br>Equal concs (0.05 M).", guideLine: [{x:50, y:0}, {x:50, y:14}] },
+                    { q: "<strong>Q3:</strong> Where is the buffer region centered?", a: "<strong>At 25 cm³</strong><br>Half-equivalence. pH = 9.26 (unchanged by dilution).", dataPoints: [{x:10, y:10}, {x:25, y:9.26}, {x:45, y:8}] },
+                    { q: "<strong>Q4:</strong> Equivalence pH?", a: "<strong>pH ≈ 5.5 (Acidic)</strong>", dataPoints: [{x:49, y:7}, {x:50, y:5.5}, {x:51, y:3}] },
+                    { q: "<strong>Q5:</strong> Final pH (Excess 0.05 M HCl)?", a: "<strong>pH ≈ 1.3</strong><br>-log(0.05) = 1.3.", dataPoints: [{x:75, y:1.5}, {x:100, y:1.3}] }
+                ]
+            },
+            {
+                id: "test4",
+                title: "20 cm³ 0.1 M Methylamine + 0.2 M HCl",
+                maxVol: 40,
+                flow: 'down',
+                indicator: { valid: ['methyl_orange', 'methyl_red'], reason: "Strong Acid vs Weak Base. Equivalence is acidic (pH < 7). Vertical section drops through 6-4." },
+                steps: [
+                    { q: "<strong>Q1:</strong> Methylamine is a stronger base than Ammonia (pK<sub>b</sub> = 3.36).<br>Calculate Start pH.", a: "<strong>pH ≈ 11.8</strong><br>pOH ≈ 2.2.", dataPoints: [{x:0, y:11.8}] },
+                    { q: "<strong>Q2:</strong> Calculate V<sub>eq</sub>. <br>Flask: 20 cm³ 0.1 M Base.<br>Burette: 0.2 M Acid.", a: "<strong>V = 10.0 cm³</strong><br>Acid is double conc, so half volume needed.", guideLine: [{x:10, y:0}, {x:10, y:14}] },
+                    { q: "<strong>Q3:</strong> Half-Equivalence pH at 5 cm³?", a: "<strong>pH = 10.64</strong><br>pH = 14 - 3.36.", dataPoints: [{x:2, y:11}, {x:5, y:10.64}, {x:9, y:9.5}] },
+                    { q: "<strong>Q4:</strong> Equivalence pH?", a: "<strong>pH ≈ 5.8 (Acidic)</strong>", dataPoints: [{x:9.8, y:8}, {x:10, y:5.8}, {x:10.2, y:2}] },
+                    { q: "<strong>Q5:</strong> Final pH (Excess 0.2 M HCl)?", a: "<strong>pH ≈ 0.7</strong>", dataPoints: [{x:20, y:0.8}, {x:30, y:0.7}] }
+                ]
+            }
+        ]
+    };
+
+    // Indicator Definitions for feedback
+    const indicators = {
+        methyl_orange: { name: "Methyl Orange", acid: "Red", base: "Yellow" },
+        methyl_red: { name: "Methyl Red", acid: "Red", base: "Yellow" },
+        bromothymol_blue: { name: "Bromothymol Blue", acid: "Yellow", base: "Blue" },
+        phenolphthalein: { name: "Phenolphthalein", acid: "Colourless", base: "Pink" },
+        none: { name: "No Indicator", acid: "", base: "" }
+    };
+
+    let chartInstance = null;
+    let currentScenarioData = null;
+    let currentDataPoints = [];
+    let currentMode = 'tutorial';
+
+    // --- SETUP ---
+    function initChart() {
+        const ctx = document.getElementById('titrationChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    { label: 'pH Curve', data: [], showLine: true, borderColor: '#2563eb', backgroundColor: '#2563eb', borderWidth: 3, tension: 0.3, pointRadius: 4, order: 1 },
+                    { label: 'Equivalence Vol', data: [], showLine: true, borderColor: '#94a3b8', borderDash: [5, 5], borderWidth: 2, pointRadius: 0, order: 2 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Volume Added (cm³)', font: {size: 14, weight:'bold'} }, min: 0, max: 55, grid: { color: '#e2e8f0' } },
+                    y: { title: { display: true, text: 'pH', font: {size: 14, weight:'bold'} }, min: 0, max: 14, ticks: { stepSize: 1 }, grid: { color: '#e2e8f0' } }
+                },
+                plugins: {
+                    tooltip: { callbacks: { label: function(context) { return `Vol: ${context.parsed.x} cm³, pH: ${context.parsed.y}`; } } }
+                }
+            }
+        });
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btnTutorial').classList.toggle('active', mode === 'tutorial');
+        document.getElementById('btnTest').classList.toggle('active', mode === 'test');
+        document.body.classList.toggle('test-mode', mode === 'test');
+        
+        // Update styling variables for chart if needed
+        const curveColor = mode === 'test' ? '#d97706' : '#2563eb'; // Orange for test, Blue for tutorial
+        if(chartInstance) {
+            chartInstance.data.datasets[0].borderColor = curveColor;
+            chartInstance.data.datasets[0].backgroundColor = curveColor;
+            chartInstance.update();
+        }
+
+        populateSelect();
+        loadScenario();
+    }
+
+    function populateSelect() {
+        const select = document.getElementById('scenarioSelect');
+        select.innerHTML = '';
+        const list = allScenarios[currentMode];
+        
+        list.forEach((sc, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.text = sc.title;
+            select.appendChild(opt);
+        });
+    }
+
+    function loadScenario() {
+        const index = document.getElementById('scenarioSelect').value || 0;
+        currentScenarioData = allScenarios[currentMode][index];
+        
+        document.getElementById('scenarioDescription').innerHTML = currentScenarioData.title;
+
+        // Update Chart Scale X
+        if(chartInstance) {
+            chartInstance.options.scales.x.max = currentScenarioData.maxVol || 55;
+        }
+
+        // Reset Steps (Now 6 Steps)
+        for (let i = 1; i <= 6; i++) {
+            const card = document.getElementById(`step${i}`);
+            
+            card.classList.remove('active', 'completed');
+            
+            // Handle Steps 1-5 (Question/Answer) vs Step 6 (Select Logic)
+            if (i <= 5) {
+                const ans = document.getElementById(`ans${i}`);
+                const question = document.getElementById(`q${i}`);
+                ans.style.display = 'none';
+                ans.innerHTML = "";
+                question.innerHTML = currentScenarioData.steps[i-1].q;
+                
+                const btn = card.querySelector('.reveal-btn');
+                btn.style.display = "inline-block";
+                btn.innerText = getBtnText(i);
+            } else {
+                // Step 6 Reset
+                const ans = document.getElementById(`ans${i}`);
+                ans.style.display = 'none';
+                ans.innerHTML = "";
+                document.getElementById('indicatorChoice').value = "";
+                const btn = card.querySelector('.reveal-btn');
+                btn.style.display = "inline-block";
+            }
+        }
+
+        document.getElementById('step1').classList.add('active');
+
+        // Reset Chart Data
+        currentDataPoints = [];
+        if(chartInstance) {
+            chartInstance.data.datasets[0].data = [];
+            chartInstance.data.datasets[1].data = [];
+            chartInstance.update();
+        }
+    }
+
+    function getBtnText(step) {
+        if(step === 1) return "Check Calculation & Plot Point";
+        if(step === 2) return "Check Volume & Mark Line";
+        if(step === 3) return "Check Reasoning & Draw Curve";
+        if(step === 4) return "Check pH & Draw Vertical Section";
+        if(step === 5) return "Check Final pH & Complete Curve";
+    }
+
+    function reveal(stepNum) {
+        const stepData = currentScenarioData.steps[stepNum - 1];
+        const ansDiv = document.getElementById(`ans${stepNum}`);
+        ansDiv.innerHTML = stepData.a;
+        ansDiv.style.display = 'block';
+
+        if (stepData.dataPoints) {
+            stepData.dataPoints.forEach(p => currentDataPoints.push(p));
+            currentDataPoints.sort((a, b) => a.x - b.x);
+            chartInstance.data.datasets[0].data = [...currentDataPoints];
+        }
+
+        if (stepData.guideLine) {
+            chartInstance.data.datasets[1].data = stepData.guideLine;
+        }
+        
+        chartInstance.update();
+
+        const currentCard = document.getElementById(`step${stepNum}`);
+        currentCard.classList.remove('active');
+        currentCard.classList.add('completed');
+        currentCard.querySelector('.reveal-btn').style.display = 'none';
+
+        if (stepNum < 6) {
+            const nextCard = document.getElementById(`step${stepNum + 1}`);
+            nextCard.classList.add('active');
+            nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function checkIndicator() {
+        const choice = document.getElementById('indicatorChoice').value;
+        const ansDiv = document.getElementById('ans6');
+        const correctOptions = currentScenarioData.indicator.valid;
+        const reason = currentScenarioData.indicator.reason;
+        
+        if (!choice) {
+            alert("Please select an indicator first.");
+            return;
+        }
+
+        let feedbackHTML = "";
+        let isCorrect = correctOptions.includes(choice);
+
+        // Determine Colour Change Text
+        // Flow 'up': Acid -> Base (e.g. Colourless -> Pink)
+        // Flow 'down': Base -> Acid (e.g. Pink -> Colourless)
+        let colorText = "";
+        if (choice === 'none') {
+            colorText = "N/A";
+        } else {
+            const ind = indicators[choice];
+            if (currentScenarioData.flow === 'up') {
+                colorText = `${ind.acid} &rarr; ${ind.base}`;
+            } else {
+                colorText = `${ind.base} &rarr; ${ind.acid}`;
+            }
+        }
+
+        if (isCorrect) {
+            feedbackHTML = `<div style="color: var(--success); font-weight: bold; margin-bottom: 0.5rem;">Correct!</div>`;
+            feedbackHTML += `<div><strong>Colour Change at End-Point:</strong> ${colorText}</div>`;
+        } else {
+             feedbackHTML = `<div style="color: #ef4444; font-weight: bold; margin-bottom: 0.5rem;">Incorrect.</div>`;
+             feedbackHTML += `<div>This indicator's pH range does not align well with the vertical section of this curve.</div>`;
+        }
+        
+        feedbackHTML += `<br><em>Reason: ${reason}</em>`;
+
+        ansDiv.innerHTML = feedbackHTML;
+        ansDiv.style.display = 'block';
+
+        const currentCard = document.getElementById('step6');
+        currentCard.classList.remove('active');
+        if(isCorrect) currentCard.classList.add('completed');
+        
+        // Hide button
+        currentCard.querySelector('.reveal-btn').style.display = 'none';
+    }
+
+    function resetTool() {
+        loadScenario();
+    }
+
+    window.onload = function() {
+        initChart();
+        populateSelect();
+        loadScenario();
+    };
+
+</script>
+
+</body>
+</html>
