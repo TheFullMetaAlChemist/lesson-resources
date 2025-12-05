@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQA Chemistry: Resource Reduction Lab</title>
+    
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slider-thumb::-webkit-slider-thumb { appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ea580c; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- Main App Component ---
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('intro');
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'intro': return <IntroView onStart={() => setActiveTab('sorter')} />;
+                    case 'sorter': return <SorterView />;
+                    case 'furnace': return <FurnaceView />;
+                    case 'exam': return <ExamView />;
+                    case 'quiz': return <QuizView />;
+                    default: return <IntroView />;
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col max-w-5xl mx-auto bg-white shadow-2xl my-4 rounded-xl overflow-hidden">
+                    {/* Header */}
+                    <header className="bg-teal-700 text-white p-4 flex justify-between items-center shadow-md z-10">
+                        <div className="flex items-center gap-3">
+                            <i className="fa-solid fa-flask text-2xl"></i>
+                            <div>
+                                <h1 className="text-xl font-bold">Resource Reduction Lab</h1>
+                                <p className="text-xs text-teal-200 uppercase tracking-wider">AQA GCSE Chemistry &bullet; Topic 10</p>
+                            </div>
+                        </div>
+                        {activeTab !== 'intro' && (
+                            <button onClick={() => setActiveTab('intro')} className="text-sm bg-teal-800 hover:bg-teal-600 px-3 py-1 rounded-full transition">
+                                <i className="fa-solid fa-house mr-1"></i> Home
+                            </button>
+                        )}
+                    </header>
+
+                    {/* Navigation */}
+                    {activeTab !== 'intro' && (
+                        <nav className="bg-slate-100 p-2 border-b border-slate-200 flex overflow-x-auto gap-2 justify-center">
+                            <NavBtn id="sorter" icon="fa-layer-group" label="1. Sorting Line" active={activeTab} set={setActiveTab} />
+                            <NavBtn id="furnace" icon="fa-fire" label="2. Blast Furnace" active={activeTab} set={setActiveTab} />
+                            <NavBtn id="exam" icon="fa-pen-to-square" label="3. Exam Eval" active={activeTab} set={setActiveTab} />
+                            <NavBtn id="quiz" icon="fa-list-check" label="4. Quiz" active={activeTab} set={setActiveTab} />
+                        </nav>
+                    )}
+
+                    {/* Main Content Area */}
+                    <main className="flex-grow p-6 bg-slate-50 overflow-y-auto">
+                        {renderContent()}
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-slate-800 text-slate-400 p-3 text-center text-xs">
+                        Interactive Lesson Material &bullet; Reducing Use of Resources
+                    </footer>
+                </div>
+            );
+        };
+
+        const NavBtn = ({ id, icon, label, active, set }) => (
+            <button 
+                onClick={() => set(id)}
+                className={`px-4 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2 whitespace-nowrap ${
+                    active === id 
+                    ? 'bg-white text-teal-700 shadow-sm border-b-2 border-teal-600' 
+                    : 'text-slate-600 hover:bg-white hover:text-teal-600'
+                }`}
+            >
+                <i className={`fa-solid ${icon}`}></i> {label}
+            </button>
+        );
+
+        // --- 1. Intro View ---
+        const IntroView = ({ onStart }) => (
+            <div className="flex flex-col items-center justify-center h-full text-center fade-in p-8">
+                <div className="bg-teal-100 text-teal-700 p-6 rounded-full mb-6 text-4xl shadow-inner">
+                    <i className="fa-solid fa-earth-americas"></i>
+                </div>
+                <h2 className="text-3xl font-bold text-slate-800 mb-2">Welcome to the Lab</h2>
+                <p className="text-slate-600 mb-8 max-w-lg">
+                    Your mission: Evaluate methods to reduce the use of limited resources, energy, and environmental impact.
+                </p>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-left max-w-2xl w-full mb-8">
+                    <h3 className="font-bold text-teal-800 border-b pb-2 mb-4"><i className="fa-solid fa-clipboard-list mr-2"></i> Specification Briefing</h3>
+                    <ul className="space-y-3 text-slate-700 text-sm">
+                        <li className="flex gap-3"><i className="fa-solid fa-triangle-exclamation text-amber-500 mt-1"></i> <span><strong>Finite Resources:</strong> Metals, glass, plastics, and clay ceramics come from limited raw materials.</span></li>
+                        <li className="flex gap-3"><i className="fa-solid fa-industry text-slate-500 mt-1"></i> <span><strong>Extraction Impact:</strong> Mining and quarrying destroy habitats and produce pollution (noise, dust).</span></li>
+                        <li className="flex gap-3"><i className="fa-solid fa-bolt text-yellow-500 mt-1"></i> <span><strong>Energy Cost:</strong> Processing raw materials is energy-intensive. Recycling usually saves energy.</span></li>
+                        <li className="flex gap-3"><i className="fa-solid fa-rotate-right text-green-500 mt-1"></i> <span><strong>Reuse > Recycle:</strong> Reusing (e.g., glass bottles) is better than recycling because it skips the melting stage.</span></li>
+                    </ul>
+                </div>
+
+                <button onClick={onStart} className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition transform hover:scale-105">
+                    Start Activities <i className="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        );
+
+        // --- 2. Sorter View ---
+        const SorterView = () => {
+            const items = [
+                { 
+                    id: 1, name: "Glass Milk Bottle", type: "reuse", icon: "fa-wine-bottle", 
+                    hint: "Can be washed and refilled.", 
+                    reasoning: { 
+                        q: "Why is reuse better than recycling here?", 
+                        options: ["It uses less energy (no melting needed)", "Glass makes milk taste better", "It is lighter to transport"], 
+                        correct: 0, 
+                        explain: "Correct! Melting glass requires heating to over 1500°C. Washing requires much less energy (only hot water). This is the most efficient option." 
+                    } 
+                },
+                { 
+                    id: 2, name: "Aluminium Can", type: "recycle", icon: "fa-can-food", 
+                    hint: "Metals can be melted and reformed.", 
+                    reasoning: { 
+                        q: "Why recycle aluminium instead of extracting it?", 
+                        options: ["Aluminium ore is infinite", "Recycling saves 95% of the energy vs extraction", "Cans are too hard to reuse"], 
+                        correct: 1, 
+                        explain: "Correct! Extracting aluminium (Electrolysis) uses massive electricity. Melting scrap uses far less energy and preserves the finite bauxite ore." 
+                    } 
+                },
+                { 
+                    id: 3, name: "Plastic Bag", type: "recycle", icon: "fa-bag-shopping", 
+                    hint: "Derived from crude oil.", 
+                    reasoning: { 
+                        q: "What raw material do we save by recycling plastic?", 
+                        options: ["Sand", "Crude Oil", "Wood"], 
+                        correct: 1, 
+                        explain: "Correct! Plastics are polymers made from hydrocarbons in crude oil. Crude oil is a finite, non-renewable resource." 
+                    } 
+                },
+                { 
+                    id: 4, name: "Gold from Circuit Board", type: "recycle", icon: "fa-microchip", 
+                    hint: "E-waste contains precious metals.", 
+                    reasoning: { 
+                        q: "Why is 'Urban Mining' (recycling electronics) critical for Gold?", 
+                        options: ["Gold in electronics is purer than natural gold", "It prevents computers from rusting", "High-grade gold ore is becoming very rare"], 
+                        correct: 2, 
+                        explain: "Correct! We have mined most easy-to-reach gold. Extracting gold from E-waste yields more metal per tonne than digging up raw ore from the ground." 
+                    } 
+                },
+                { 
+                    id: 5, name: "Steel Car Body", type: "recycle", icon: "fa-car", 
+                    hint: "Magnetic metal, easily separated.", 
+                    reasoning: { 
+                        q: "How does this help the blast furnace process?", 
+                        options: ["It cools the furnace down", "It reduces the need for iron ore reduction", "It acts as a fuel source"], 
+                        correct: 1, 
+                        explain: "Correct! Adding scrap steel means you don't need to use carbon to remove oxygen from iron ore. This saves fuel and raw materials." 
+                    } 
+                },
+                { 
+                    id: 6, name: "Broken Ceramic", type: "landfill", icon: "fa-mug-hot", 
+                    hint: "Hard to recycle chemically.", 
+                    reasoning: { 
+                        q: "Why is this difficult to recycle?", 
+                        options: ["It dissolves in water", "It doesn't melt like glass/metal", "It is too sharp"], 
+                        correct: 1, 
+                        explain: "Correct! Ceramics have high melting points and don't reform easily. Unlike glass, you can't just melt a mug to make a new one. They are often crushed for rubble or landfilled." 
+                    } 
+                },
+                { 
+                    id: 7, name: "Copper Wire", type: "recycle", icon: "fa-bolt", 
+                    hint: "Valuable metal.", 
+                    reasoning: { 
+                        q: "Mining copper causes...", 
+                        options: ["No environmental impact", "Large open-cast mines (habitat loss)", "Increased tree growth"], 
+                        correct: 1, 
+                        explain: "Correct! Copper ores are low-grade (often <1% copper), meaning we dig up huge amounts of rock for a tiny bit of copper, creating massive waste piles." 
+                    } 
+                },
+                { 
+                    id: 8, name: "Cardboard Box", type: "recycle", icon: "fa-box-open", 
+                    hint: "Made from wood pulp.", 
+                    reasoning: { 
+                        q: "Recycling paper/cardboard helps primarily by...", 
+                        options: ["Reducing deforestation", "Making the cardboard waterproof", "Increasing the weight of the box"], 
+                        correct: 0, 
+                        explain: "Correct! Recycling paper fibres reduces the number of new trees that need to be cut down, preserving habitats and carbon sinks." 
+                    } 
+                }
+            ];
+
+            const [idx, setIdx] = useState(0);
+            const [stage, setStage] = useState('sort'); // sort | reasoning | feedback
+            const [feedback, setFeedback] = useState(null);
+            const [finished, setFinished] = useState(false);
+
+            const handleSort = (choice) => {
+                if (choice === items[idx].type) {
+                    setFeedback({ status: 'correct', msg: "Correct Category! Now explain why..." });
+                    setTimeout(() => { setFeedback(null); setStage('reasoning'); }, 1500);
+                } else {
+                    setFeedback({ status: 'wrong', msg: `Try again! ${items[idx].name} is not best suited for ${choice}.` });
+                }
+            };
+
+            const handleReasoning = (optIdx) => {
+                if (optIdx === items[idx].reasoning.correct) {
+                    setFeedback({ status: 'correct', msg: items[idx].reasoning.explain });
+                } else {
+                    setFeedback({ status: 'wrong', msg: "Not the primary reason. Try again." });
+                }
+            };
+
+            const next = () => {
+                setFeedback(null);
+                setStage('sort');
+                if (idx < items.length - 1) setIdx(idx + 1);
+                else setFinished(true);
+            };
+
+            if (finished) return (
+                <div className="text-center p-10 fade-in">
+                    <i className="fa-solid fa-circle-check text-6xl text-green-500 mb-4"></i>
+                    <h2 className="text-2xl font-bold">Training Complete!</h2>
+                    <p className="mb-6">You've mastered the Reduce/Reuse/Recycle hierarchy.</p>
+                    <button onClick={() => { setFinished(false); setIdx(0); }} className="bg-teal-600 text-white px-6 py-2 rounded">Restart</button>
+                </div>
+            );
+
+            const item = items[idx];
+
+            return (
+                <div className="max-w-2xl mx-auto fade-in">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="font-bold text-xl">The Sorting Line</h2>
+                        <span className="text-sm bg-slate-200 px-2 py-1 rounded">Item {idx + 1}/{items.length}</span>
+                    </div>
+
+                    <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-slate-200 text-center relative overflow-hidden min-h-[400px] flex flex-col justify-center">
+                        
+                        {/* Feedback Overlay */}
+                        {feedback && (
+                            <div className={`absolute inset-0 flex flex-col items-center justify-center bg-opacity-95 z-20 ${feedback.status === 'correct' ? 'bg-green-50' : 'bg-red-50'}`}>
+                                <i className={`fa-solid ${feedback.status === 'correct' ? 'fa-check text-green-600' : 'fa-xmark text-red-600'} text-5xl mb-4`}></i>
+                                <p className={`font-bold text-lg p-4 ${feedback.status === 'correct' ? 'text-green-800' : 'text-red-800'}`}>{feedback.msg}</p>
+                                {feedback.status === 'correct' && stage === 'reasoning' && (
+                                    <button onClick={next} className="mt-4 bg-green-600 text-white px-6 py-2 rounded font-bold">Next Item <i className="fa-solid fa-arrow-right"></i></button>
+                                )}
+                                {feedback.status === 'wrong' && (
+                                    <button onClick={() => setFeedback(null)} className="mt-4 bg-red-600 text-white px-6 py-2 rounded font-bold">Try Again</button>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="mb-6">
+                            <i className={`fa-solid ${item.icon} text-6xl text-slate-700`}></i>
+                            <h3 className="text-2xl font-bold mt-2 text-slate-800">{item.name}</h3>
+                        </div>
+
+                        {stage === 'sort' && (
+                            <div className="grid grid-cols-3 gap-4">
+                                <button onClick={() => handleSort('reuse')} className="p-4 bg-green-100 text-green-800 rounded-lg hover:bg-green-200 font-bold border border-green-300 shadow-sm hover:shadow-md transition">Reuse</button>
+                                <button onClick={() => handleSort('recycle')} className="p-4 bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200 font-bold border border-blue-300 shadow-sm hover:shadow-md transition">Recycle</button>
+                                <button onClick={() => handleSort('landfill')} className="p-4 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 font-bold border border-gray-300 shadow-sm hover:shadow-md transition">Landfill</button>
+                            </div>
+                        )}
+
+                        {stage === 'reasoning' && (
+                            <div className="text-left fade-in">
+                                <p className="font-bold mb-4 text-center text-lg">{item.reasoning.q}</p>
+                                <div className="space-y-3">
+                                    {item.reasoning.options.map((opt, i) => (
+                                        <button key={i} onClick={() => handleReasoning(i)} className="w-full text-left p-4 border rounded-lg hover:bg-teal-50 hover:border-teal-500 transition shadow-sm">{opt}</button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 3. Blast Furnace View ---
+        const FurnaceView = () => {
+            const [scrap, setScrap] = useState(0);
+            const [expandedMetric, setExpandedMetric] = useState(null);
+
+            // Metrics Data
+            const metricData = [
+                { 
+                    id: 'ore',
+                    label: "Ore Extracted", 
+                    val: 100 - scrap, 
+                    color: "bg-stone-600", 
+                    icon: "fa-mountain",
+                    desc: "Every tonne of scrap steel used saves about 1.5 tonnes of iron ore. Quarrying leaves massive visual scars on the landscape."
+                },
+                { 
+                    id: 'energy',
+                    label: "Energy Used", 
+                    val: 100 - (scrap * 0.9), // Recycling saves ~75-90% energy depending on study, simplified here
+                    color: "bg-red-500", 
+                    icon: "fa-bolt",
+                    desc: "Melting scrap requires much less heat than chemically reducing iron ore. This saves vast amounts of fossil fuels."
+                },
+                { 
+                    id: 'co2',
+                    label: "CO2 Emissions", 
+                    val: 100 - (scrap * 0.85), 
+                    color: "bg-gray-500", 
+                    icon: "fa-cloud",
+                    desc: "Less energy burned means less CO2. Also, extracting iron uses coke (carbon) to remove oxygen, which releases CO2 directly."
+                },
+                { 
+                    id: 'waste',
+                    label: "Waste Rock", 
+                    val: 100 - (scrap * 0.95), 
+                    color: "bg-yellow-600", 
+                    icon: "fa-dumpster",
+                    desc: "Mining produces huge piles of waste rock (gangue) that must be disposed of. Recycling produces very little solid waste."
+                },
+                { 
+                    id: 'habitat',
+                    label: "Habitat Impact", 
+                    val: 100 - (scrap * 0.95), 
+                    color: "bg-green-600", 
+                    icon: "fa-tree",
+                    desc: "New mines destroy forests and animal habitats. Recycling plants have a much smaller land footprint."
+                }
+            ];
+
+            const toggleMetric = (id) => {
+                setExpandedMetric(expandedMetric === id ? null : id);
+            };
+
+            return (
+                <div className="grid md:grid-cols-2 gap-8 fade-in">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                            <i className="fa-solid fa-sliders text-orange-600"></i> Furnace Controls
+                        </h2>
+                        <label className="block text-slate-600 mb-2 font-semibold">Percentage of Scrap Steel added:</label>
+                        <div className="flex items-center gap-4 mb-6">
+                            <span className="font-bold text-slate-400">0%</span>
+                            <input 
+                                type="range" min="0" max="80" 
+                                value={scrap} onChange={(e) => setScrap(Number(e.target.value))}
+                                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <span className="font-bold text-orange-600">{scrap}%</span>
+                        </div>
+                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 text-sm text-blue-800">
+                            <strong>Note:</strong> Adding scrap steel reduces the need to chemically reduce iron ore. Less reduction = Less carbon (coke) used = Less CO2.
+                        </div>
+                        <div className="mt-8 text-center text-8xl text-orange-500 opacity-20 animate-pulse">
+                            <i className="fa-solid fa-fire-burner"></i>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <h2 className="text-xl font-bold mb-2">Environmental Impact</h2>
+                        <p className="text-xs text-slate-500 mb-4">Click on a metric to see why it changes.</p>
+                        
+                        <div className="space-y-4">
+                            {metricData.map((m) => (
+                                <div key={m.id} onClick={() => toggleMetric(m.id)} className="cursor-pointer group">
+                                    <div className="flex justify-between text-sm font-bold text-slate-700 mb-1 group-hover:text-teal-600 transition">
+                                        <span className="flex items-center gap-2"><i className={`fa-solid ${m.icon} w-5 text-center`}></i> {m.label}</span>
+                                        <span>{Math.round(m.val)}%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-200 rounded-full h-3">
+                                        <div className={`h-3 rounded-full transition-all duration-300 ${m.color}`} style={{ width: `${m.val}%` }}></div>
+                                    </div>
+                                    {expandedMetric === m.id && (
+                                        <div className="mt-2 text-xs text-slate-600 bg-slate-50 p-2 rounded border border-slate-200 fade-in">
+                                            {m.desc}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- 4. Exam View ---
+        const ExamView = () => {
+            const [calcInput, setCalcInput] = useState('');
+            const [calcFeedback, setCalcFeedback] = useState(null);
+            const [showScheme, setShowScheme] = useState(false);
+
+            const checkCalc = () => {
+                const val = parseInt(calcInput.replace(/,/g, ''));
+                if (val === 265000) {
+                    setCalcFeedback('correct');
+                } else {
+                    setCalcFeedback('wrong');
+                }
+            };
+
+            return (
+                <div className="fade-in max-w-4xl mx-auto space-y-8">
+                    
+                    {/* Part 1: Calculation */}
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <div className="flex justify-between items-start mb-4">
+                            <h2 className="text-lg font-bold">Part 1: Data Analysis (2 Marks)</h2>
+                            <span className="bg-slate-100 text-xs font-bold px-2 py-1 rounded text-slate-500">Maths Skill</span>
+                        </div>
+                        
+                        <p className="mb-4 text-sm">A student evaluates the energy data for producing Aluminium. Use the table to calculate the energy saved.</p>
+                        
+                        <div className="overflow-x-auto mb-6">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-teal-700 text-white">
+                                    <tr>
+                                        <th className="p-3">Process</th>
+                                        <th className="p-3">Energy (MJ per kg)</th>
+                                        <th className="p-3">Raw Material</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="border border-slate-200">
+                                    <tr className="border-b">
+                                        <td className="p-3 font-bold">Extraction from Ore</td>
+                                        <td className="p-3">280</td>
+                                        <td className="p-3">Bauxite (Finite)</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="p-3 font-bold">Recycling Cans</td>
+                                        <td className="p-3">15</td>
+                                        <td className="p-3">Scrap Metal</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded-lg">
+                            <p className="font-bold mb-2">Question: Calculate the energy saved by producing 1,000 kg (1 tonne) of recycled aluminium compared to extraction.</p>
+                            <div className="flex gap-2 items-center">
+                                <input 
+                                    type="number" 
+                                    placeholder="Enter value in MJ" 
+                                    className="border p-2 rounded w-48"
+                                    value={calcInput}
+                                    onChange={(e) => {setCalcInput(e.target.value); setCalcFeedback(null);}}
+                                />
+                                <button onClick={checkCalc} className="bg-teal-600 text-white px-4 py-2 rounded font-bold">Check</button>
+                                {calcFeedback === 'correct' && <span className="text-green-600 font-bold"><i className="fa-solid fa-check"></i> Correct! (265,000 MJ)</span>}
+                                {calcFeedback === 'wrong' && <span className="text-red-600 font-bold"><i className="fa-solid fa-xmark"></i> Try again. (Diff = 265 * 1000)</span>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Part 2: Extended Response */}
+                    <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <div className="flex justify-between items-start mb-4">
+                            <h2 className="text-lg font-bold">Part 2: Extended Response (6 Marks)</h2>
+                            <span className="bg-slate-100 text-xs font-bold px-2 py-1 rounded text-slate-500">Written Skill</span>
+                        </div>
+                        
+                        <p className="mb-4 font-bold text-slate-800">
+                            "Evaluate the advantages of recycling aluminium cans rather than producing aluminium from aluminium ore."
+                        </p>
+                        <p className="text-sm text-slate-500 mb-4 italic">Use the data above and your own knowledge. Consider energy, resources, and environmental impacts.</p>
+
+                        <textarea className="w-full h-32 border border-slate-300 rounded p-3 mb-4 focus:ring-2 focus:ring-teal-500 outline-none" placeholder="Type your answer plan here..."></textarea>
+
+                        <button 
+                            onClick={() => setShowScheme(!showScheme)} 
+                            className="text-teal-700 font-bold text-sm flex items-center gap-2 hover:underline"
+                        >
+                            <i className={`fa-solid ${showScheme ? 'fa-eye-slash' : 'fa-eye'}`}></i> 
+                            {showScheme ? 'Hide Mark Scheme' : 'Reveal Mark Scheme'}
+                        </button>
+
+                        {showScheme && (
+                            <div className="mt-4 bg-green-50 border-l-4 border-green-500 p-4 rounded animate-pulse-once">
+                                <h4 className="font-bold text-green-900 mb-2">Mark Scheme Points:</h4>
+                                <ul className="list-disc list-inside text-sm text-green-800 space-y-1">
+                                    <li><strong>Energy:</strong> Recycling uses significantly less energy (data: 265 MJ less per kg). Reduces fossil fuel use.</li>
+                                    <li><strong>Resources:</strong> Conserves Bauxite (aluminium ore), which is a finite resource.</li>
+                                    <li><strong>Emissions:</strong> Less energy used = Less CO2 released (Reduced Global Warming).</li>
+                                    <li><strong>Mining Impact:</strong> Avoids quarrying/mining impacts (Noise, dust, habitat destruction, visual pollution).</li>
+                                    <li><strong>Waste:</strong> Reduces landfill waste.</li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Part 3: General Evaluation Reference (Restored) */}
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div className="bg-red-50 border border-red-200 p-4 rounded-xl">
+                            <h3 className="font-bold text-red-800 mb-3 flex items-center gap-2"><i className="fa-solid fa-triangle-exclamation"></i> Problems with Extraction</h3>
+                            <ul className="text-sm space-y-2 text-slate-700">
+                                <li><i className="fa-solid fa-xmark text-red-500 w-4"></i> <strong>Finite:</strong> Uses up limited resources (ores/crude oil).</li>
+                                <li><i className="fa-solid fa-xmark text-red-500 w-4"></i> <strong>Energy:</strong> High energy cost (Electrolysis/Furnaces).</li>
+                                <li><i className="fa-solid fa-xmark text-red-500 w-4"></i> <strong>Damage:</strong> Mining destroys habitats & creates scars.</li>
+                                <li><i className="fa-solid fa-xmark text-red-500 w-4"></i> <strong>Pollution:</strong> Noise, dust, and toxic waste rock.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-green-50 border border-green-200 p-4 rounded-xl">
+                            <h3 className="font-bold text-green-800 mb-3 flex items-center gap-2"><i className="fa-solid fa-recycle"></i> Benefits of Recycling</h3>
+                            <ul className="text-sm space-y-2 text-slate-700">
+                                <li><i className="fa-solid fa-check text-green-500 w-4"></i> <strong>Conserves:</strong> Saves raw materials for future.</li>
+                                <li><i className="fa-solid fa-check text-green-500 w-4"></i> <strong>Energy:</strong> Uses much less energy than new production.</li>
+                                <li><i className="fa-solid fa-check text-green-500 w-4"></i> <strong>Landfill:</strong> Reduces waste sent to landfill sites.</li>
+                                <li><i className="fa-solid fa-check text-green-500 w-4"></i> <strong>Climate:</strong> Lower CO2 emissions (less Global Warming).</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            );
+        };
+
+        // --- 5. Quiz View ---
+        const QuizView = () => {
+            const questions = [
+                { q: "Which process uses the most energy?", opts: ["Recycling glass", "Extracting aluminium from ore", "Reusing plastic"], correct: 1 },
+                { q: "What is the main advantage of reuse over recycling?", opts: ["It saves energy by skipping the melting stage", "It creates more jobs", "It uses more water"], correct: 0 },
+                { q: "What material is added to a blast furnace to reduce iron ore use?", opts: ["Sand", "Limestone", "Scrap Steel"], correct: 2 },
+                { q: "Which of these is NOT an impact of quarrying?", opts: ["Habitat destruction", "Noise pollution", "Reduced landfill"], correct: 2 }
+            ];
+
+            const [qIdx, setQIdx] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showRes, setShowRes] = useState(false);
+
+            const handleAns = (optI) => {
+                if (optI === questions[qIdx].correct) setScore(score + 1);
+                if (qIdx < questions.length - 1) setQIdx(qIdx + 1);
+                else setShowRes(true);
+            };
+
+            if (showRes) return (
+                <div className="text-center p-10 fade-in">
+                    <h2 className="text-3xl font-bold mb-4">Quiz Results</h2>
+                    <div className="text-6xl mb-4">{score === 4 ? '🏆' : score > 2 ? '😎' : '📚'}</div>
+                    <p className="text-xl">You scored {score} out of {questions.length}</p>
+                    <button onClick={() => {setScore(0); setQIdx(0); setShowRes(false)}} className="mt-6 bg-teal-600 text-white px-6 py-2 rounded">Retry</button>
+                </div>
+            );
+
+            return (
+                <div className="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200 fade-in">
+                    <div className="flex justify-between mb-6">
+                        <h2 className="font-bold text-xl">Summary Quiz</h2>
+                        <span className="text-slate-400">Q{qIdx + 1} / {questions.length}</span>
+                    </div>
+                    <p className="text-lg font-bold mb-6">{questions[qIdx].q}</p>
+                    <div className="space-y-3">
+                        {questions[qIdx].opts.map((o, i) => (
+                            <button key={i} onClick={() => handleAns(i)} className="w-full text-left p-4 bg-slate-50 hover:bg-teal-50 border hover:border-teal-300 rounded transition">
+                                {o}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
