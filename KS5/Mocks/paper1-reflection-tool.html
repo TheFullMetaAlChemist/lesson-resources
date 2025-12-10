@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>A-Level Chemistry Mock – Traffic Light Reflection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --accent: #2b6cb0;
+      --accent-soft: #ebf4ff;
+      --text-main: #1a202c;
+      --text-muted: #4a5568;
+      --border: #e2e8f0;
+      --red: #fc8181;
+      --amber: #f6ad55;
+      --green: #68d391;
+      --red-soft: #fff5f5;
+      --amber-soft: #fffbeb;
+      --green-soft: #f0fff4;
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius-card: 18px;
+      --radius-pill: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #edf2ff 0, #f4f7fb 40%, #edf2f7 100%);
+      min-height: 100vh;
+      padding: 24px;
+      color: var(--text-main);
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-soft);
+      padding: 24px 24px 32px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      color: #2c5282;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill span.dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.red { background: var(--red); }
+    .dot.amber { background: var(--amber); }
+    .dot.green { background: var(--green); }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 0 12px;
+    }
+
+    .controls-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .controls-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .field-group input[type="text"],
+    .field-group select {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      font-size: 0.85rem;
+      min-width: 180px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: white;
+      transition: background 0.15s ease, transform 0.05s ease;
+      white-space: nowrap;
+    }
+
+    .btn.secondary {
+      background: #f7fafc;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: #2c5282;
+    }
+
+    .btn.secondary:hover {
+      background: #edf2f7;
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-pill strong {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .table-wrapper {
+      margin-top: 10px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: white;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #f7fafc;
+      z-index: 2;
+      box-shadow: 0 1px 0 rgba(226, 232, 240, 0.9);
+    }
+
+    th, td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #edf2f7;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #718096;
+      background: #f7fafc;
+    }
+
+    tr:nth-child(even) td {
+      background: #fbfdff;
+    }
+
+    tr.topic-row.highlight-red td {
+      background: var(--red-soft);
+    }
+    tr.topic-row.highlight-amber td {
+      background: var(--amber-soft);
+    }
+    tr.topic-row.highlight-green td {
+      background: var(--green-soft);
+    }
+
+    .topic-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .topic-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .traffic-cell {
+      min-width: 180px;
+    }
+
+    .traffic-buttons {
+      display: inline-flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .traffic-btn {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      background: #f9fafb;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.05s ease;
+    }
+
+    .traffic-btn span.swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .traffic-btn.red span.swatch { background: var(--red); }
+    .traffic-btn.amber span.swatch { background: var(--amber); }
+    .traffic-btn.green span.swatch { background: var(--green); }
+
+    .traffic-btn.selected.red {
+      background: var(--red-soft);
+      border-color: var(--red);
+      color: #9b2c2c;
+      font-weight: 600;
+    }
+
+    .traffic-btn.selected.amber {
+      background: var(--amber-soft);
+      border-color: var(--amber);
+      color: #9c4221;
+      font-weight: 600;
+    }
+
+    .traffic-btn.selected.green {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #276749;
+      font-weight: 600;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+      header h1 {
+        font-size: 1.3rem;
+      }
+      .table-wrapper {
+        max-height: none;
+      }
+      th:nth-child(2), td:nth-child(2) {
+        display: none; /* hide spec code on small screens to keep it readable */
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="card">
+    <header>
+      <h1>A-Level Chemistry Mock – Traffic Light Reflection</h1>
+      <p>
+        For each topic, choose a colour to show how confident you feel <strong>based on this mock:</strong>
+        red if you need more help, amber if you’re part-way there, and green if you feel confident.
+      </p>
+    </header>
+
+    <div class="pill-row">
+      <div class="pill"><span class="dot red"></span>🔴 Need more practice</div>
+      <div class="pill"><span class="dot amber"></span>🟠 Getting there</div>
+      <div class="pill"><span class="dot green"></span>🟢 Confident</div>
+    </div>
+
+    <div class="controls">
+      <div class="controls-left">
+        <div class="field-group">
+          <label for="studentName">Your name (optional):</label>
+          <input id="studentName" type="text" placeholder="Type your name here…" />
+        </div>
+        <div class="field-group">
+          <label for="filterSelect">Filter topics:</label>
+          <select id="filterSelect">
+            <option value="all">Show all topics</option>
+            <option value="red">Show 🔴 only</option>
+            <option value="amber">Show 🟠 only</option>
+            <option value="green">Show 🟢 only</option>
+            <option value="unrated">Show unrated only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="controls-right">
+        <button class="btn secondary" type="button" id="btnClear">
+          <span class="btn-icon">♻️</span> Clear ratings
+        </button>
+        <button class="btn secondary" type="button" id="btnExport">
+          <span class="btn-icon">💾</span> Download summary
+        </button>
+        <button class="btn" type="button" id="btnPrint">
+          <span class="btn-icon">🖨️</span> Print / Save as PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-pill">
+        <span class="dot red"></span>
+        <span>Red: <strong id="countRed">0</strong></span>
+      </div>
+      <div class="stat-pill">
+        <span class="dot amber"></span>
+        <span>Amber: <strong id="countAmber">0</strong></span>
+      </div>
+      <div class="stat-pill">
+        <span class="dot green"></span>
+        <span>Green: <strong id="countGreen">0</strong></span>
+      </div>
+      <div class="stat-pill">
+        <span>Unrated: <strong id="countUnrated">0</strong></span>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table id="topicsTable">
+        <thead>
+          <tr>
+            <th>Topic / Skill</th>
+            <th>Spec Code</th>
+            <th>Description</th>
+            <th>Traffic Light</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- rows inserted by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footer-note">
+      Your choices are automatically saved in this browser using local storage. You can download a summary
+      or print this page (including to PDF) for your records or to share with your teacher.
+    </p>
+  </div>
+</div>
+
+<script>
+  const topics = [
+    ["Isotopes", "3.1.1(a)", "Recognising isotopes, interpreting mass–charge notation, same protons but different neutrons."],
+    ["Hydrated salts & water of crystallisation", "2.1.3(d)", "Using mass changes to determine waters of crystallisation and salt formulae."],
+    ["Empirical formulae", "2.1.3(e)", "Finding empirical formulae from mass or percentage composition data."],
+    ["Acid–base stoichiometry", "2.1.4(a)", "Balancing acid–base equations and using mole ratios in titration-style problems."],
+    ["Rates from graphs", "3.1.2(c)", "Finding rates from concentration–time graphs using tangents and interpreting shapes of curves."],
+    ["Bond enthalpy calculations", "2.4.1(b)", "Using bond enthalpies to estimate enthalpy changes (ΔH)."],
+    ["Intermolecular forces", "2.2.2(c)", "Explaining boiling/melting point trends using London forces and permanent dipoles."],
+    ["Percentage uncertainty", "2.1.4(d)", "Calculating percentage uncertainty in measurements and assessing impact on experiments."],
+    ["Rate equations & RDS", "3.1.2(f)", "Using rate data to deduce the rate equation and identify the rate-determining step."],
+    ["Half-life & rate constant", "3.1.2(d)", "Using the half-life relationship (k = ln2 / t½) for first-order reactions."],
+    ["Bond enthalpy (products–reactants)", "2.4.1(b)", "Applying ΔH = Σ(bonds broken) – Σ(bonds formed) correctly."],
+    ["Group 2 periodic trends", "3.1.3(b)", "Explaining reactivity and ionisation energy trends down Group 2."],
+    ["Gas volume stoichiometry", "2.1.3(g)", "Using molar volume and gas volume ratios to work out moles and equations."],
+    ["Period 3 melting points", "2.2.2(b)", "Explaining melting point trends Na → Ar using structure and type of bonding."],
+    ["Metallic vs giant covalent structures", "2.2.2(a)", "Comparing metallic bonding with giant covalent structures and their properties."],
+    ["Ionisation energy anomaly (P vs S)", "3.1.1(e)", "Explaining the drop from P to S using electron pairing and repulsion in 3p orbitals."],
+    ["Halogen displacement reactions", "3.1.3(c)", "Predicting halogen–halide reactions and writing balanced ionic equations."],
+    ["Shapes of molecules", "2.2.2(g)", "Using electron pair repulsion (VSEPR) to predict shapes and bond angles, including lone pairs."],
+    ["Units of Kp", "3.1.4(b)", "Deriving units of the equilibrium constant Kp from its expression."],
+    ["Kp calculations", "3.1.4(c)", "Substituting into Kp expressions and rearranging to find unknown pressures."],
+    ["Temperature effects on Kp", "3.1.4(d)", "Explaining how Kp changes with temperature for exothermic and endothermic reactions."],
+    ["Calorimetry (q = mcΔT)", "2.4.1(a)", "Using temperature change and mass to calculate energy changes in kJ mol⁻¹."],
+    ["Enthalpy of formation", "2.4.1(d)", "Using standard enthalpies of formation to calculate reaction enthalpies via Hess’ Law."],
+    ["Hess cycles", "2.4.1(e)", "Combining and reversing equations to find unknown enthalpy changes in energy cycles."],
+    ["pH of strong acids", "2.1.4(b)", "Using pH = −log[H⁺] for strong monobasic acids that fully dissociate."],
+    ["Strong vs weak acids", "2.1.4(a)", "Comparing strong and weak acids in terms of ionisation and resulting pH."],
+    ["Oxidation numbers & disproportionation", "3.1.2(a)", "Assigning oxidation numbers and identifying disproportionation reactions."],
+    ["Group 2 reactions with acids", "3.1.3(b)", "Observing and explaining reactions of Group 2 metals with acids."],
+    ["Half-equations", "3.1.2(b)", "Writing oxidation and reduction half-equations and balancing electrons."],
+    ["Kw, pH, [OH⁻] calculations", "2.1.4(c)", "Using Kw to move between pH, [H⁺] and [OH⁻] for strong acids/bases."],
+    ["Kc calculations", "3.1.4(a)", "Using equilibrium concentrations to calculate Kc or unknown concentrations."],
+    ["Le Chatelier’s principle", "3.1.4(e)", "Predicting the effect of temperature and pressure changes on position of equilibrium."],
+    ["Orders from initial rates", "3.1.2(c)", "Using initial rate data and concentration changes to work out orders."],
+    ["Zero-order & mechanism deduction", "3.1.2(f)", "Using zero-order behaviour to conclude whether a species appears in the RDS."],
+    ["Rate constant calculations", "3.1.2(d)", "Calculating k and its units from the rate equation and experimental data."],
+    ["Enthalpy from calorimetry", "2.4.1(a)", "Finding ΔH per mole from experimental calorimetry data."],
+    ["Thermochemical Hess cycles", "2.4.1(e)", "Constructing Hess cycles for solid and solution reactions (e.g. Na₂CO₃ / NaHCO₃)."],
+    ["Stoichiometry in enthalpy", "2.4.1(c)", "Correctly scaling enthalpy changes according to the number of moles reacting."]
+  ];
+
+  const STORAGE_KEY = "chemTrafficLight_v1";
+  const NAME_KEY = "chemTrafficLight_name";
+
+  const tableBody = document.querySelector("#topicsTable tbody");
+  const filterSelect = document.getElementById("filterSelect");
+  const btnClear = document.getElementById("btnClear");
+  const btnExport = document.getElementById("btnExport");
+  const btnPrint = document.getElementById("btnPrint");
+  const nameInput = document.getElementById("studentName");
+
+  const countRedEl = document.getElementById("countRed");
+  const countAmberEl = document.getElementById("countAmber");
+  const countGreenEl = document.getElementById("countGreen");
+  const countUnratedEl = document.getElementById("countUnrated");
+
+  let ratings = {}; // topic index -> 'red' | 'amber' | 'green'
+
+  function loadFromStorage() {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        ratings = JSON.parse(stored);
+      }
+      const storedName = localStorage.getItem(NAME_KEY);
+      if (storedName && nameInput) {
+        nameInput.value = storedName;
+      }
+    } catch (e) {
+      console.warn("Could not load from storage", e);
+      ratings = {};
+    }
+  }
+
+  function saveToStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
+      if (nameInput) {
+        localStorage.setItem(NAME_KEY, nameInput.value || "");
+      }
+    } catch (e) {
+      console.warn("Could not save to storage", e);
+    }
+  }
+
+  function createRow(topic, index) {
+    const [title, code, desc] = topic;
+    const tr = document.createElement("tr");
+    tr.className = "topic-row";
+    tr.dataset.index = index.toString();
+
+    const tdTopic = document.createElement("td");
+    const tTitle = document.createElement("div");
+    tTitle.className = "topic-title";
+    tTitle.textContent = title;
+    const tDesc = document.createElement("div");
+    tDesc.className = "topic-desc";
+    tDesc.textContent = desc;
+    tdTopic.appendChild(tTitle);
+    tdTopic.appendChild(tDesc);
+
+    const tdCode = document.createElement("td");
+    tdCode.textContent = code;
+
+    const tdDesc = document.createElement("td");
+    tdDesc.textContent = desc;
+
+    const tdTraffic = document.createElement("td");
+    tdTraffic.className = "traffic-cell";
+
+    const container = document.createElement("div");
+    container.className = "traffic-buttons";
+
+    ["red", "amber", "green"].forEach(colour => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `traffic-btn ${colour}`;
+      btn.dataset.colour = colour;
+      btn.dataset.index = index.toString();
+      const swatch = document.createElement("span");
+      swatch.className = "swatch";
+      const label = document.createElement("span");
+      if (colour === "red") label.textContent = "🔴 Need more practice";
+      if (colour === "amber") label.textContent = "🟠 Getting there";
+      if (colour === "green") label.textContent = "🟢 Confident";
+      btn.appendChild(swatch);
+      btn.appendChild(label);
+      container.appendChild(btn);
+    });
+
+    tdTraffic.appendChild(container);
+
+    tr.appendChild(tdTopic);
+    tr.appendChild(tdCode);
+    tr.appendChild(tDesc);
+    tr.appendChild(tdTraffic);
+
+    return tr;
+  }
+
+  function renderTable() {
+    tableBody.innerHTML = "";
+    topics.forEach((topic, index) => {
+      const row = createRow(topic, index);
+      tableBody.appendChild(row);
+    });
+    applyRatingsToUI();
+    updateStats();
+    applyFilter();
+  }
+
+  function applyRatingsToUI() {
+    const rows = document.querySelectorAll("tr.topic-row");
+    rows.forEach(row => {
+      row.classList.remove("highlight-red", "highlight-amber", "highlight-green");
+      const idx = row.dataset.index;
+      const rating = ratings[idx];
+      if (rating) {
+        row.classList.add(`highlight-${rating}`);
+      }
+      const btns = row.querySelectorAll(".traffic-btn");
+      btns.forEach(btn => {
+        btn.classList.remove("selected");
+        if (btn.dataset.colour === rating) {
+          btn.classList.add("selected");
+        }
+      });
+    });
+  }
+
+  function updateStats() {
+    let red = 0, amber = 0, green = 0, unrated = 0;
+    topics.forEach((_, index) => {
+      const r = ratings[index];
+      if (!r) {
+        unrated++;
+      } else if (r === "red") {
+        red++;
+      } else if (r === "amber") {
+        amber++;
+      } else if (r === "green") {
+        green++;
+      }
+    });
+    countRedEl.textContent = red;
+    countAmberEl.textContent = amber;
+    countGreenEl.textContent = green;
+    countUnratedEl.textContent = unrated;
+  }
+
+  function applyFilter() {
+    const filter = filterSelect.value;
+    const rows = document.querySelectorAll("tr.topic-row");
+    rows.forEach(row => {
+      const idx = row.dataset.index;
+      const rating = ratings[idx] || null;
+      let show = true;
+      if (filter === "red" && rating !== "red") show = false;
+      if (filter === "amber" && rating !== "amber") show = false;
+      if (filter === "green" && rating !== "green") show = false;
+      if (filter === "unrated" && rating !== null) show = false;
+      if (filter === "all") show = true;
+      row.style.display = show ? "" : "none";
+    });
+  }
+
+  function handleTrafficClick(e) {
+    const btn = e.target.closest(".traffic-btn");
+    if (!btn) return;
+    const index = btn.dataset.index;
+    const colour = btn.dataset.colour;
+    if (!index || !colour) return;
+    ratings[index] = colour;
+    saveToStorage();
+    applyRatingsToUI();
+    updateStats();
+    applyFilter(); // to update filter view if on a filtered mode
+  }
+
+  function clearRatings() {
+    if (!confirm("Clear all your traffic-light selections?")) return;
+    ratings = {};
+    saveToStorage();
+    applyRatingsToUI();
+    updateStats();
+    applyFilter();
+  }
+
+  function generateSummaryText() {
+    const name = nameInput.value.trim();
+    const lines = [];
+    lines.push("A-Level Chemistry Mock – Traffic Light Reflection");
+    if (name) {
+      lines.push("Student: " + name);
+    }
+    lines.push("Generated: " + new Date().toLocaleString());
+    lines.push("");
+    topics.forEach((topic, index) => {
+      const [title, code, desc] = topic;
+      const rating = ratings[index] || "unrated";
+      let label = "";
+      if (rating === "red") label = "RED – need more practice";
+      if (rating === "amber") label = "AMBER – getting there";
+      if (rating === "green") label = "GREEN – confident";
+      if (rating === "unrated") label = "NOT RATED";
+      lines.push(`${index + 1}. ${title} (${code})`);
+      lines.push("   Rating: " + label);
+      lines.push("   Focus: " + desc);
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+
+  function downloadSummary() {
+    const text = generateSummaryText();
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const name = nameInput.value.trim() || "student";
+    a.href = url;
+    a.download = `chemistry_traffic_light_${name.replace(/\s+/g, "_")}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function init() {
+    loadFromStorage();
+    renderTable();
+
+    tableBody.addEventListener("click", handleTrafficClick);
+    filterSelect.addEventListener("change", applyFilter);
+    btnClear.addEventListener("click", clearRatings);
+    btnExport.addEventListener("click", downloadSummary);
+    btnPrint.addEventListener("click", () => window.print());
+    nameInput.addEventListener("input", saveToStorage);
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
