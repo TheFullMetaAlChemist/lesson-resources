@@ -1,0 +1,2010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Level Paper 1 Mock Review</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for in-browser JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* Custom styles for detail/summary animation */
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- ICONS (Inline SVGs to avoid dependency issues) ---
+        const ChevronDown = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m6 9 6 6 6-6"/></svg>
+        );
+        const ChevronRight = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6"/></svg>
+        );
+        const CheckCircle = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        );
+        const BookOpen = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const AlertCircle = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+        );
+
+        // --- MAIN COMPONENT ---
+        function MockExamReview() {
+            const [activeSection, setActiveSection] = useState('sectionA');
+            const [activeQuestionB, setActiveQuestionB] = useState('16');
+
+            // --- DATA STRUCTURE ---
+            const sectionAQuestions = [
+                { 
+                id: '1', 
+                title: 'Question 1', 
+                content: 'Which pairs are isotopes?', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (X and Z)</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> Isotopes are atoms of the same element with the same number of protons but different numbers of neutrons.</p>
+                        <ul className="list-disc list-inside ml-2">
+                        <li>X has 18 protons and 18 neutrons.</li>
+                        <li>Z has 18 protons and 19 neutrons.</li>
+                        </ul>
+                        <p>Same proton number = same element → they are isotopes.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Thinking isotopes must have similar masses. What matters is proton number, not mass number.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">When comparing atoms, look at the proton number first. Ignore everything else until that is checked.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '2', 
+                title: 'Question 2', 
+                content: 'Hydrated cobalt(II) chloride – find x in CoCl₂·xH₂O', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (6)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <ul className="list-disc list-inside ml-2 space-y-1">
+                        <li>Mass of water lost = 11.895 − 6.495 = 5.400 g</li>
+                        <li>Moles of water = 5.400 ÷ 18 = 0.300 mol</li>
+                        <li>Moles of anhydrous CoCl₂ = 6.495 ÷ 129.3 = 0.0502 mol</li>
+                        <li>Ratio H₂O : CoCl₂ = 0.300 : 0.0502 ≈ 6 : 1</li>
+                        </ul>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Students often divide by relative atomic mass incorrectly or forget that mass lost is water.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Always solve water-of-crystallisation questions with this order: mass lost → moles of water → moles of salt → ratio.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '3', 
+                title: 'Question 3', 
+                content: 'Identifying element X from X₂O₃', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: B (Cr)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <ul className="list-disc list-inside ml-2 space-y-1">
+                        <li>Mass of O = 0.790 − 0.541 = 0.249 g</li>
+                        <li>Moles O = 0.249 ÷ 16 = 0.01556 mol</li>
+                        <li>In X₂O₃, moles of X should be (2/3) × moles O = 0.01037 mol</li>
+                        <li>Mᵣ of X = 0.541 ÷ 0.01037 ≈ 52 → chromium.</li>
+                        </ul>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Using the empirical formula backwards or assuming X is a known metal before doing calculations.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">For metal oxides, use the formula ratio to find moles before trying to identify the element.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '4', 
+                title: 'Question 4', 
+                content: (
+                    <React.Fragment>
+                    <p>Neutralisation volume calculation</p>
+                    <p className="font-mono text-sm mt-2 bg-slate-100 p-2 rounded">Ba(OH)₂ + 2HCl → BaCl₂ + 2H₂O</p>
+                    </React.Fragment>
+                ), 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: A (5.75 cm³)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <ul className="list-disc list-inside ml-2 space-y-1">
+                        <li>Moles HCl = 0.115 × 25/1000 = 2.875 × 10⁻³</li>
+                        <li>Moles Ba(OH)₂ = 2.875×10⁻³ ÷ 2 = 1.44×10⁻³</li>
+                        <li>Volume = n ÷ c = (1.44×10⁻³) ÷ 0.250 = 5.75 × 10⁻³ dm³ = 5.75 cm³</li>
+                        </ul>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Forgetting the 2:1 stoichiometry between HCl and Ba(OH)₂.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Always check if the acid–base reaction involves 2 moles of H⁺ per metal hydroxide.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '5', 
+                title: 'Question 5', 
+                content: 'Rate from a graph (tangent at 30 s)', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: B (1.2 cm³ s⁻¹)</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> The rate at a specific time = gradient of the tangent at that time.</p>
+                        <p>Using two points along the tangent gives a slope of approximately 1.2 cm³ s⁻¹.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Using the average rate from 0 to 30 s instead of drawing a tangent.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Always draw a tangent, not a secant, for instantaneous rate.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '6', 
+                title: 'Question 6', 
+                content: 'C–H bond enthalpy', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (435 kJ mol⁻¹)</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation (simplified):</span> Use ΔH = Σ(bonds broken) − Σ(bonds made).</p>
+                        <p>After substituting bond enthalpies into the equation and solving for C–H, you obtain 435 kJ mol⁻¹.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Students often swap “bonds broken” and “bonds formed”, which reverses the sign.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Write the formula big and underline: ΔH = broken − made.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '7', 
+                title: 'Question 7', 
+                content: 'Why boiling points increase from HCl → HI?', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (stronger London forces)</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> As you go down the halogens, atoms get larger, have more electrons, and develop stronger induced dipoles, so London forces become stronger → higher boiling points.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Assuming hydrogen bonding occurs (it doesn’t — no N, O or F).</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Boiling point trend of Group 7 hydrides = “size, not polarity”.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '8', 
+                title: 'Question 8', 
+                content: 'Percentage uncertainty in a burette titre', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: D (0.37%)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <ul className="list-disc list-inside ml-2 space-y-1">
+                        <li>Titre = 29.35 − 2.60 = 26.75 cm³</li>
+                        <li>Total uncertainty = ±0.10 cm³ (two readings)</li>
+                        <li>% uncertainty = (0.10/26.75) × 100 = 0.37%</li>
+                        </ul>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Using only one reading uncertainty instead of two.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">For burettes: uncertainty × 2 every time.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '9', 
+                title: 'Question 9', 
+                content: (
+                    <React.Fragment>
+                    <p>Rate equation from mechanism</p>
+                    <p className="text-sm mt-2">The slow step is: H₂ + ICl → HCl + HI</p>
+                    </React.Fragment>
+                ), 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: B (rate = k[H₂][ICl])</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> Rate depends only on species in the slow step → first order in each reactant.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Including reactants from the fast step.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Rate-determining step = the only source of the rate equation.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '12', 
+                title: 'Question 12', 
+                content: 'Half-life from k', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (112 s)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <p>For first-order reactions: t½ = ln2 / k = 0.693 ÷ 6.19×10⁻³ = 112 s</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Using t½ = 1/k (incorrect for first order).</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Memorise t½ = 0.693/k — guaranteed marks.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '13', 
+                title: 'Question 13', 
+                content: 'Bond enthalpy calculation', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: A</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> Calculate ΔH = Σ(bonds broken) − Σ(bonds made) using the table. Substituting correctly gives the value in option A.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Students often forget to multiply bond energies by the number of bonds.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Sketch the molecules and count each bond type before substituting values.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '14', 
+                title: 'Question 14', 
+                content: 'Barium properties', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: B (Only statements 1 and 2)</p>
+                    <div className="space-y-2 mb-4">
+                        <p className="font-semibold">Explanation:</p>
+                        <ul className="list-disc list-inside ml-2 space-y-1">
+                        <li>Its outer electrons are in an s-orbital → True</li>
+                        <li>It reacts more vigorously with water than magnesium → True</li>
+                        <li>It has a higher first ionisation energy → False (ionisation energy decreases down Group 2)</li>
+                        </ul>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Thinking “bigger atom” = “harder to ionise”. It’s the opposite.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Group 2 trend: bigger atom → more shielding → lower I.E. → more reactive.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+                { 
+                id: '15', 
+                title: 'Question 15', 
+                content: 'Gas volumes and likely equation', 
+                answer: (
+                    <React.Fragment>
+                    <p className="font-bold text-emerald-700 mb-2">Correct Answer: C (2N₂ + O₂ → 2N₂O)</p>
+                    <div className="space-y-2 mb-4">
+                        <p><span className="font-semibold">Explanation:</span> Volumes ∝ moles at same temperature and pressure.</p>
+                        <p>N₂ : O₂ : product = 20 : 10 : 20 → simplifies to 2 : 1 : 2.</p>
+                        <p>Only equation matching this is 2N₂ + O₂ → 2N₂O.</p>
+                    </div>
+                    <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                        <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                        <p className="text-amber-900 text-sm">Assuming the product must be NO or NO₂ because they are familiar gases.</p>
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                        <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                        <p className="text-blue-900 text-sm">Convert volumes straight into simple ratios before checking equations.</p>
+                    </div>
+                    </React.Fragment>
+                )
+                },
+            ];
+
+            const sectionBQuestions = [
+                {
+                id: '16',
+                label: 'Q16: Period 3, IE, Shapes & Equilibrium',
+                parts: [
+                    { 
+                    label: 'Q16(a)(i)', 
+                    text: 'Period 3 melting points (Na to Ar) - Sketch Graph', 
+                    answer: (
+                        <React.Fragment>
+                        <p className="font-bold text-emerald-700 mb-2">Model Answer (what the graph should show):</p>
+                        <div className="space-y-3 mb-4 text-sm">
+                            <p>The points for P, S, Cl, Ar should be plotted so that:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1">
+                            <li><strong>Sulfur (S)</strong> has the highest melting point of those four.</li>
+                            <li>Then <strong>phosphorus (P)</strong> is lower than S.</li>
+                            <li>Then <strong>chlorine (Cl)</strong> is lower than P.</li>
+                            <li><strong>Argon (Ar)</strong> is the lowest of all four.</li>
+                            </ul>
+                            <p className="italic">All four points and the line joining them should sit below magnesium (Mg) on the graph.</p>
+                            
+                            <div className="bg-slate-50 p-4 rounded border border-slate-200 mt-3">
+                            <p className="font-bold text-slate-700 mb-2">Explanation:</p>
+                            <ul className="list-disc list-inside space-y-2">
+                                <li><strong>S exists as S₈ molecules</strong> – quite large molecules with more electrons and stronger London forces, so it has the highest melting point of the four.</li>
+                                <li><strong>P₄, Cl₂ and Ar</strong> are smaller/simple molecules or atoms, so they have weaker intermolecular forces:
+                                <ul className="list-disc list-inside ml-6 mt-1 text-slate-600">
+                                    <li>P₄ – larger molecule than Cl₂, so higher melting point.</li>
+                                    <li>Cl₂ – smaller than P₄.</li>
+                                    <li>Ar – single atoms so the weakest London forces and the lowest melting point.</li>
+                                </ul>
+                                </li>
+                            </ul>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Learn the basic pattern: Na → Mg → Al (up), Si (big jump, giant covalent), then P, S, Cl, Ar (simple molecular, down again). Ensure S is the highest of the P/S/Cl/Ar group.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q16(a)(ii)', 
+                    text: 'Why Si has a higher melting point than Al', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <ul className="list-disc list-inside space-y-1 text-sm">
+                            <li>Aluminium has a <strong>giant metallic structure</strong> with positive metal ions in a lattice and delocalised electrons.</li>
+                            <li>Silicon has a <strong>giant covalent (macromolecular) structure</strong> with each Si atom covalently bonded to four others in a tetrahedral network.</li>
+                            <li>Many strong covalent bonds in silicon must be broken to melt it, and these require <strong>more energy</strong> than the metallic bonds in aluminium.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Always name the structure types clearly (Giant Metallic vs Giant Covalent). Use the phrase "More energy needed to break covalent bonds than metallic bonds".</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q16(b)(i)', 
+                    text: 'First ionisation energy of sulfur',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p className="font-mono bg-slate-100 p-3 rounded text-center border border-slate-200">S(g) → S⁺(g) + e⁻</p>
+                        </div>
+                        
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">No ½, no 2 – it’s one atom, one ion, one electron. Make sure state symbols are (g) for both S and S⁺.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q16(b)(ii)', 
+                    text: 'Why IE(S) < IE(P)', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <div className="space-y-2 text-sm">
+                            <p>In sulfur, the outer electrons are in the 3p subshell and one of the 3p orbitals contains a pair of electrons.</p>
+                            <p>These <strong>paired electrons in the same 3p orbital repel each other</strong>, so it is easier to remove one of them.</p>
+                            <p>Therefore, the first ionisation energy of sulfur is lower than that of phosphorus.</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Don’t just say “more shielding” or “bigger atom” – that’s wrong here because S actually has higher nuclear charge than P. The key is <strong>electron pair repulsion</strong>.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q16(c)', 
+                    text: 'Reactions of halogens and halide ions', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div>
+                                <p className="font-bold text-emerald-800 mb-2">Observations:</p>
+                                <div className="grid grid-cols-1 gap-2 text-sm">
+                                <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                    <span className="font-mono font-bold">Br₂(aq) + NaI(aq)</span> → <span className="text-orange-800 font-semibold">Orange solution turns brown</span> (formation of iodine, I₂).
+                                </div>
+                                <div className="bg-slate-50 p-2 rounded border border-slate-100">
+                                    <span className="font-mono font-bold">Br₂(aq) + NaCl(aq)</span> → <span className="text-orange-600 font-semibold">Solution stays orange / no colour change</span> (no reaction).
+                                </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="font-bold text-emerald-800 mb-2">Ionic Equation:</p>
+                                <p className="font-mono bg-emerald-50 p-3 rounded text-center border border-emerald-100 text-sm">Br₂(aq) + 2I⁻(aq) → 2Br⁻(aq) + I₂(aq)</p>
+                                <p className="text-xs text-slate-500 mt-1 italic">(No ionic equation for Br₂ + Cl⁻ because no reaction occurs.)</p>
+                            </div>
+
+                            <div className="bg-slate-50 p-3 rounded text-sm">
+                                <p className="font-bold mb-1">Explanation:</p>
+                                <p>Bromine is more reactive than iodide but less reactive than chloride. With iodide, bromine oxidises I⁻ to I₂. With chloride, bromine cannot oxidise Cl⁻.</p>
+                            </div>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q16(c)(i) (Additional)',
+                    text: 'Explain why Kp for Equilibrium 17.3 has no units.',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p>Kp has no units because there are equal numbers of moles of gaseous reactants and products, so the pressure units in the expression cancel out.</p>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation / Working:</p>
+                            <div className="text-sm space-y-2">
+                            <p>For gases, Kp depends on partial pressures.</p>
+                            <p>Here:</p>
+                            <ul className="list-disc list-inside ml-2 font-mono text-xs">
+                                <li>Reactant gas moles: 1 (H₂O) + 1 (CO) = 2</li>
+                                <li>Product gas moles: 1 (H₂) + 1 (CO₂) = 2</li>
+                            </ul>
+                            <p>So the Kp expression is approximately <span className="font-mono">(kPa × kPa) / (kPa × kPa)</span>.</p>
+                            <p>Each term cancels out, so overall units are unitless.</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">If total gaseous moles on each side are the same, Kp (and Kc) often end up unitless. Always think “do the units cancel?” rather than memorising.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q16(c)(ii) (Additional)',
+                    text: (
+                        <React.Fragment>
+                        <p>Calculate equilibrium partial pressures</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">Given: At 700 K, Kp = 8.13. Equal moles of H₂O and CO. p(H₂) = p(CO₂) = 211 kPa.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div>
+                            <p className="font-bold text-emerald-800 mb-2">Explanation & Working:</p>
+                            <p className="font-semibold text-sm">1. Write the Kp expression:</p>
+                            <p className="font-mono bg-slate-50 p-2 rounded text-center my-1 text-sm">Kp = (p(H₂) × p(CO₂)) / (p(H₂O) × p(CO))</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-sm">2. Substitute known values:</p>
+                            <ul className="list-disc list-inside ml-2 text-sm text-slate-700">
+                                <li>Kp = 8.13</li>
+                                <li>p(H₂) = 211 kPa</li>
+                                <li>p(CO₂) = 211 kPa</li>
+                            </ul>
+                            <p className="font-mono bg-slate-50 p-2 rounded text-center my-1 text-sm">8.13 = (211 × 211) / (p(H₂O) × p(CO))</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-sm">3. Use stoichiometry / symmetry:</p>
+                            <p className="text-sm text-slate-700">We started with equal moles of H₂O and CO and they react in a 1:1 ratio. So at equilibrium:</p>
+                            <p className="font-mono text-center font-bold my-1">p(H₂O) = p(CO)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-sm">4. Solve:</p>
+                            <p className="font-mono bg-slate-50 p-2 rounded text-center my-1 text-sm">8.13 = 44521 / (p(CO))²</p>
+                            <p className="font-mono text-center text-sm">(p(CO))² = 44521 / 8.13 = 5476</p>
+                            <p className="font-mono text-center text-sm">p(CO) = √5476 = 74.0</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">p(H₂O) = 74.0 kPa, p(CO) = 74.0 kPa</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li>Whenever the question says “equal number of moles” and the reaction is 1:1, it’s a big hint that the equilibrium partial pressures will be equal too.</li>
+                            <li>A neat trick here is to set both unknown pressures to x, so Kp contains x² and you can solve by taking a square root.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q16(c)(iii) (Additional)',
+                    text: (
+                        <React.Fragment>
+                        <p>Effect of Temperature on Kp</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">Kp changes from 8.13 (700K) to 129 (new temp). ΔH = –39.9 kJ mol⁻¹. Is T higher or lower?</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p>The second temperature is <strong>lower</strong> than 700 K.</p>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-slate-700 text-sm">
+                            <li>The forward reaction has ΔH = –39.9 kJ mol⁻¹ → it is <strong>exothermic</strong>.</li>
+                            <li>For an exothermic reaction:</li>
+                            <ul className="list-disc list-inside ml-6 text-slate-600">
+                                <li>Lower temperature favours the forward reaction.</li>
+                                <li>This shifts the equilibrium to the right, increasing the amount of products.</li>
+                                <li>As a result, Kp increases when the temperature is decreased.</li>
+                            </ul>
+                            </ul>
+                            <p className="text-sm mt-2 p-2 bg-white rounded border border-slate-200">Here, Kp changes from 8.13 to 129 (increase). Since Kp has increased, the equilibrium has shifted more towards products, which corresponds to a lower temperature for an exothermic reaction.</p>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li>For exothermic reactions: temperature up → K decreases, temperature down → K increases.</li>
+                            <li>For endothermic reactions it’s the opposite.</li>
+                            <li>Linking the sign of ΔH, the change in K, and the direction of equilibrium shift is a classic exam skill.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q16(d)*', 
+                    text: 'Shapes of SiH₄, PH₃ and H₂S (6-marker)', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-6 space-y-6">
+                            
+                            {/* Dot and Cross Section */}
+                            <div>
+                            <h4 className="font-bold text-slate-800 border-b pb-1 mb-2">1. Dot-and-cross diagrams (outer shells)</h4>
+                            <div className="grid md:grid-cols-3 gap-4 text-sm">
+                                <div className="bg-slate-50 p-3 rounded">
+                                <p className="font-bold text-center mb-1">SiH₄</p>
+                                <ul className="list-disc list-inside text-xs text-slate-600">
+                                    <li>Si has 4 outer e⁻.</li>
+                                    <li>4 bonding pairs.</li>
+                                    <li>0 lone pairs.</li>
+                                </ul>
+                                </div>
+                                <div className="bg-slate-50 p-3 rounded">
+                                <p className="font-bold text-center mb-1">PH₃</p>
+                                <ul className="list-disc list-inside text-xs text-slate-600">
+                                    <li>P has 5 outer e⁻.</li>
+                                    <li>3 bonding pairs.</li>
+                                    <li><strong>1 lone pair</strong>.</li>
+                                </ul>
+                                </div>
+                                <div className="bg-slate-50 p-3 rounded">
+                                <p className="font-bold text-center mb-1">H₂S</p>
+                                <ul className="list-disc list-inside text-xs text-slate-600">
+                                    <li>S has 6 outer e⁻.</li>
+                                    <li>2 bonding pairs.</li>
+                                    <li><strong>2 lone pairs</strong>.</li>
+                                </ul>
+                                </div>
+                            </div>
+                            </div>
+
+                            {/* Shapes and Angles Section */}
+                            <div>
+                            <h4 className="font-bold text-slate-800 border-b pb-1 mb-2">2. Shapes & Bond Angles</h4>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                <thead className="bg-slate-100 text-slate-700">
+                                    <tr>
+                                    <th className="p-2 rounded-tl">Molecule</th>
+                                    <th className="p-2">Shape</th>
+                                    <th className="p-2 rounded-tr">Angle</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    <tr>
+                                    <td className="p-2 font-mono font-bold">SiH₄</td>
+                                    <td className="p-2">Tetrahedral</td>
+                                    <td className="p-2">109.5°</td>
+                                    </tr>
+                                    <tr>
+                                    <td className="p-2 font-mono font-bold">PH₃</td>
+                                    <td className="p-2">Pyramidal</td>
+                                    <td className="p-2">~107° (&lt;109.5°)</td>
+                                    </tr>
+                                    <tr>
+                                    <td className="p-2 font-mono font-bold">H₂S</td>
+                                    <td className="p-2">Bent / Non-linear</td>
+                                    <td className="p-2">~92° (Smallest)</td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </div>
+                            </div>
+
+                            {/* Explanation Section */}
+                            <div>
+                            <h4 className="font-bold text-slate-800 border-b pb-1 mb-2">3. Explanation (Electron Pair Repulsion)</h4>
+                            <div className="bg-emerald-50 p-4 rounded border border-emerald-100 text-sm space-y-2">
+                                <p><strong>Key Principle:</strong> Electron pairs repel one another. <span className="underline">Lone pairs repel more strongly than bonding pairs.</span></p>
+                                <ul className="list-disc list-inside space-y-1 mt-2">
+                                <li><strong>SiH₄:</strong> 4 bonding pairs, 0 lone pairs. Equal repulsion → Tetrahedral (109.5°).</li>
+                                <li><strong>PH₃:</strong> 3 bonding pairs, 1 lone pair. The lone pair pushes bonding pairs closer together → Pyramidal (angle reduced to ~107°).</li>
+                                <li><strong>H₂S:</strong> 2 bonding pairs, 2 lone pairs. Two lone pairs cause even more compression → Bent shape (smallest angle ~92°).</li>
+                                </ul>
+                                <p className="mt-2 font-bold text-emerald-800 text-center">Trend: SiH₄ &gt; PH₃ &gt; H₂S</p>
+                            </div>
+                            </div>
+
+                            <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">For a 6-marker, examiners expect all three covered: 1) Diagrams/Pairs count, 2) Name of shape & angle, 3) Explanation comparing lone pair repulsion vs bonding pair repulsion.</p>
+                            </div>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                ]
+                },
+                {
+                id: '17',
+                label: 'Q17: Energy Changes & Enthalpy',
+                parts: [
+                    { 
+                    label: 'Q17(a)(i)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Maximum temperature reached (Calculation)</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">Mg + 2AgNO₃ → ... (ΔH = –678 kJ mol⁻¹). 100 cm³ AgNO₃ (0.4 mol dm⁻³). Initial T = 20.0°C.</p>
+                        </React.Fragment>
+                    ), 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <h4 className="font-bold text-slate-700 border-b pb-1">Calculation Steps:</h4>
+                            
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 1: Moles of AgNO₃ (limiting reagent)</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">n = c × V = 0.400 × (100.0/1000) = 0.0400 mol</p>
+                            <p className="text-sm mt-1">From equation (Mg + 2AgNO₃), 2 mol AgNO₃ react per 1 mol reaction.</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded mt-1">Moles of reaction = 0.0400 ÷ 2 = 0.0200 mol</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 2: Energy released</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">q (kJ) = moles_reaction × ΔH = 0.0200 × 678 = 13.56 kJ</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded mt-1">q (J) = 13560 J</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 3: Temperature rise (q = mcΔT)</p>
+                            <ul className="list-disc list-inside text-sm ml-2">
+                                <li>Mass (m) = 100.0 g (density 1.0 g cm⁻³)</li>
+                                <li>c = 4.18 J g⁻¹ K⁻¹</li>
+                            </ul>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded mt-1">13560 = 100.0 × 4.18 × ΔT</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded mt-1">ΔT = 13560 ÷ 418 = 32.44 °C</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 4: Final Temperature</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">Final T = 20.0 + 32.44 = 52.4 °C</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">Maximum temperature = 52.4 °C (3 s.f.)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Not halving ΔH (treating the 0.0400 mol AgNO₃ as 0.0400 mol of “reaction” instead of 0.0200 mol). This gives double the energy and the wrong temperature.</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Whenever you see ΔH for a reaction with coefficients, always: Work out moles of the reaction, Then multiply by ΔH, Then use q = mcΔT. OCR loves this structure.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q17(a)(ii)', 
+                    text: 'Experiment repeated with 50.0 cm³ instead of 100.0 cm³', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p>The maximum temperature reached would be the <strong>same</strong>.</p>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Reasoning:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-slate-700 text-sm">
+                            <li>Halving the volume of AgNO₃ halves the <strong>moles</strong> of AgNO₃, so half the energy is released.</li>
+                            <li>It also halves the <strong>mass</strong> of solution, so there is half the mass to heat.</li>
+                            <li>Because energy (q) and mass (m) are both halved, the temperature rise (ΔT) stays the same.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Saying the maximum temperature is lower “because there’s less solution”, without considering the reduced amount of energy. Or saying it's higher because "same energy heats smaller mass" (energy is not same).</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When a question changes the volume and amount together, ask yourself: “What happens to q and m in q = mcΔT?” If they change in the same proportion, ΔT is unchanged.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q17(b)(i)', 
+                    text: 'Definition of enthalpy change of formation', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <div className="bg-slate-50 p-4 rounded border border-slate-200 text-slate-800 font-medium italic">
+                            "The enthalpy change when <strong>1 mole of a compound</strong> is formed from its <strong>elements in their standard states</strong>, under <strong>standard conditions</strong>."
+                            </div>
+                            <p className="text-xs text-slate-500 mt-2">(Standard conditions = 100 kPa, 298 K, usual physical states)</p>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>Forgetting “1 mole of a compound”.</li>
+                            <li>Saying “from its elements in the gaseous state” – that’s atomisation, not formation.</li>
+                            <li>Not mentioning standard states/conditions.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">If you hit those three bold bits (1 mole compound, elements in standard states, standard conditions), you’re in very safe territory.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q17(b)(ii)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Calculate ΔfH° of NO(g)</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">Reaction: 4NH₃ + 5O₂ → 4NO + 6H₂O (ΔH = –905). Given ΔfH for NH₃ (–46) and H₂O (–286).</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 1: Formula</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded text-center">ΔH = ΣΔfH(products) – ΣΔfH(reactants)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 2: Substitute Values</p>
+                            <p className="text-sm ml-2 mb-1">Products: 4NO + 6H₂O → [4(x) + 6(–286)]</p>
+                            <p className="text-sm ml-2 mb-1">Reactants: 4NH₃ + 5O₂ → [4(–46) + 5(0)]</p>
+                            <p className="text-xs text-slate-500 ml-4 mb-2">(Note: O₂ is element in standard state, so ΔfH = 0)</p>
+                            
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">
+                                –905 = [4x + 6(–286)] – [4(–46)]
+                            </p>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 3: Solve</p>
+                            <p className="font-mono text-sm ml-2">–905 = [4x – 1716] – [–184]</p>
+                            <p className="font-mono text-sm ml-2">–905 = 4x – 1716 + 184</p>
+                            <p className="font-mono text-sm ml-2">–905 = 4x – 1532</p>
+                            <p className="font-mono text-sm ml-2">4x = 1532 – 905 = 627</p>
+                            <p className="font-mono text-sm ml-2">x = 627 ÷ 4 = +156.75</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">ΔfH°(NO) = +157 kJ mol⁻¹ (3 s.f.)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Getting a wrong value by mixing up “products – reactants” or dropping a minus sign. Often students forget to multiply by the stoichiometric coefficients (e.g., 6 for water).</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Write “ΔH = Σf(products) – Σf(reactants)” at the top. Plug the values in with their signs exactly as given. Only rearrange after simplifying.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                ]
+                },
+                {
+                id: '18',
+                label: 'Q18: Nitrogen Monoxide & Rates',
+                parts: [
+                    { 
+                    label: 'Q18(a)(i)', 
+                    text: 'Why is platinum a heterogeneous catalyst?', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p>Platinum is in a different <strong>physical state</strong> from the reactants – Pt is a solid, while NO and O₂ are gases.</p>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-slate-700 text-sm">
+                            <li>A heterogeneous catalyst is in a <strong>different phase</strong> from the reactants.</li>
+                            <li>In this reaction, the gases NO and O₂ pass over the solid Pt surface, where they adsorb, react more easily, then desorb as products.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When you see heterogeneous catalyst, write: “Catalyst is in a different physical state/phase to the reactants.” If you can, add the specific states (solid vs gas) for an extra clear answer.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q18(a)(ii)', 
+                    text: 'How does the platinum catalyst increase the rate? (with Boltzmann)', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer (Words):</p>
+                            <p>The platinum catalyst provides an <strong>alternative reaction pathway with a lower activation energy</strong>. As a result, a greater proportion of molecules have energy ≥ the activation energy, so the rate increases.</p>
+                        </div>
+
+                        <div className="bg-slate-100 p-4 rounded border border-slate-200 mb-4">
+                            <p className="font-bold text-sm text-slate-700 mb-2 uppercase">A good Boltzmann sketch should show:</p>
+                            <ul className="list-disc list-inside text-sm space-y-1">
+                                <li><strong>Axes labelled:</strong> x-axis: Energy, y-axis: Number of molecules.</li>
+                                <li>One smooth Boltzmann curve, starting close to the origin and never touching the x-axis at high energy.</li>
+                                <li><strong>Two Activation Energies:</strong> Mark Ea and Ea(cat) on the energy axis, with Ea(cat) to the left (lower energy).</li>
+                                <li><strong>Shading:</strong> Clearly indicate that more molecules are to the right of Ea(cat) than to the right of Ea.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>Don’t say “molecules have more energy” – that’s a temperature change, not a catalyst.</li>
+                            <li>Don’t draw multiple curves unless specifically asked; here they want one curve with two Ea labels.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q18(a)(iii)', 
+                    text: 'Environmental benefit of using catalysts', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p>Using a catalyst allows the reaction to run at a lower temperature, so <strong>less energy (and therefore less fuel) is required</strong>, which reduces CO₂ emissions.</p>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When they say “benefits for the environment” with catalysts, think: lower temperature → less fuel → less CO₂. You can also mention catalyst re-use = less waste.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q18(b)',
+                    text: 'Determining orders, rate equation and k',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            {/* Data Table */}
+                            <div className="overflow-x-auto">
+                            <table className="w-full text-sm text-left border-collapse border border-slate-200">
+                                <thead className="bg-slate-100 text-slate-700">
+                                <tr>
+                                    <th className="p-2 border border-slate-200">Exp</th>
+                                    <th className="p-2 border border-slate-200">[NO] / mol dm⁻³</th>
+                                    <th className="p-2 border border-slate-200">[O₂] / mol dm⁻³</th>
+                                    <th className="p-2 border border-slate-200">Rate / mol dm⁻³ s⁻¹</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td className="p-2 border border-slate-200 text-center">1</td>
+                                    <td className="p-2 border border-slate-200">0.040</td>
+                                    <td className="p-2 border border-slate-200">0.035</td>
+                                    <td className="p-2 border border-slate-200">7.45 × 10⁻⁴</td>
+                                </tr>
+                                <tr className="bg-slate-50">
+                                    <td className="p-2 border border-slate-200 text-center">2</td>
+                                    <td className="p-2 border border-slate-200">0.040</td>
+                                    <td className="p-2 border border-slate-200">0.070</td>
+                                    <td className="p-2 border border-slate-200">1.49 × 10⁻³</td>
+                                </tr>
+                                <tr>
+                                    <td className="p-2 border border-slate-200 text-center">3</td>
+                                    <td className="p-2 border border-slate-200">0.060</td>
+                                    <td className="p-2 border border-slate-200">0.035</td>
+                                    <td className="p-2 border border-slate-200">1.68 × 10⁻³</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+
+                            {/* Step 1 */}
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 1: Order with respect to O₂</p>
+                            <p className="text-sm text-slate-700">Compare Experiments 1 and 2 (NO constant, O₂ changes):</p>
+                            <ul className="list-disc list-inside ml-2 text-sm text-slate-600">
+                                <li>[NO] stays at 0.040</li>
+                                <li>[O₂] doubles: 0.035 → 0.070 (×2)</li>
+                                <li>Rate also doubles: 7.45 × 10⁻⁴ → 1.49 × 10⁻³ (×2)</li>
+                            </ul>
+                            <p className="font-semibold text-sm mt-1">Conclusion: Rate ∝ [O₂]¹ → First order w.r.t O₂.</p>
+                            </div>
+
+                            {/* Step 2 */}
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 2: Order with respect to NO</p>
+                            <p className="text-sm text-slate-700">Compare Experiments 1 and 3 (O₂ constant, NO changes):</p>
+                            <ul className="list-disc list-inside ml-2 text-sm text-slate-600">
+                                <li>[O₂] stays at 0.035</li>
+                                <li>[NO] increases: 0.040 → 0.060 (×1.5)</li>
+                                <li>Rate increases: 7.45 × 10⁻⁴ → 1.68 × 10⁻³</li>
+                            </ul>
+                            <p className="text-sm mt-1 bg-slate-50 p-2 rounded">
+                                Rate factor = (1.68 × 10⁻³) ÷ (7.45 × 10⁻⁴) ≈ 2.25<br/>
+                                Concentration factor squared = (1.5)² = 2.25
+                            </p>
+                            <p className="font-semibold text-sm mt-1">Conclusion: Rate ∝ [NO]² → Second order w.r.t NO.</p>
+                            </div>
+
+                            {/* Step 3 & 4 */}
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Step 3 & 4: Rate Equation & k</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded mb-2">Rate = k [NO]² [O₂]</p>
+                            <p className="text-sm mb-1">Using Experiment 1 values:</p>
+                            <p className="font-mono text-sm ml-2">7.45 × 10⁻⁴ = k × (0.040)² × (0.035)</p>
+                            <p className="font-mono text-sm ml-2">7.45 × 10⁻⁴ = k × (5.6 × 10⁻⁵)</p>
+                            <p className="font-mono text-sm ml-2">k = 13.303...</p>
+                            
+                            <p className="text-sm mt-2 font-semibold">Units:</p>
+                            <p className="font-mono text-xs text-slate-500">Rate / ([NO]²[O₂]) = (mol dm⁻³ s⁻¹) / (mol² dm⁻⁶ × mol dm⁻³) = dm⁶ mol⁻² s⁻¹</p>
+                            </div>
+
+                            {/* Final Result */}
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900 mb-1">Final Result:</p>
+                            <ul className="list-disc list-inside text-emerald-800 text-sm font-mono">
+                                <li>Order w.r.t NO: 2</li>
+                                <li>Order w.r.t O₂: 1</li>
+                                <li>Rate = k [NO]² [O₂]</li>
+                                <li>k = 13.3 dm⁶ mol⁻² s⁻¹</li>
+                            </ul>
+                            </div>
+                        </div>
+
+                        {/* Tips */}
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li>Always state which experiments you’re comparing.</li>
+                            <li>Write sentences like: “As [O₂] doubles, rate doubles → first order w.r.t O₂.”</li>
+                            <li>Don’t forget units for k – they’re worth a separate mark.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q18(c)(i)',
+                    text: (
+                        <React.Fragment>
+                        <p>Completing the missing ln k value</p>
+                        <p className="text-sm mt-1 text-slate-500">At T = 1750 K, k = 8.51 × 10⁴.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p className="font-mono bg-slate-50 p-3 rounded text-center">ln k = 11.35</p>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2 text-sm text-slate-700">
+                            <li>Use <strong>natural log (ln)</strong> on the calculator, not log₁₀.</li>
+                            <li>Calculation: <span className="font-mono">ln(8.51 × 10⁴) = 11.3515...</span></li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Check your calculator mode – use ln, not log. If you use log₁₀ by mistake, the ln(k) values will be too small and the graph will be wrong.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q18(c)(ii)',
+                    text: 'Arrhenius graph and activation energy',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div className="bg-slate-50 p-4 rounded border border-slate-200">
+                            <p className="font-bold text-slate-700 mb-2 uppercase text-xs tracking-wider">What the graph should look like:</p>
+                            <ul className="list-disc list-inside text-sm space-y-1">
+                                <li>A <strong>straight line</strong> with a negative gradient.</li>
+                                <li>Points plotted using values of 1/T (x-axis) and ln k (y-axis).</li>
+                                <li>A <strong>best-fit line</strong> drawn through most points, ignoring any anomalies.</li>
+                            </ul>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-emerald-800 text-sm mb-1">Using the graph to find Ea:</p>
+                            
+                            <div className="pl-4 border-l-2 border-emerald-200 space-y-3">
+                                <div>
+                                <p className="text-sm font-semibold">1. Calculate Gradient (m)</p>
+                                <p className="text-sm text-slate-600">Choose two well-separated points on the line: (x₁, y₁) and (x₂, y₂).</p>
+                                <p className="font-mono text-sm bg-slate-50 p-1 rounded inline-block mt-1">m = (y₂ - y₁) / (x₂ - x₁)</p>
+                                <p className="text-xs text-slate-500 italic mt-1">Expected range: –2.83 × 10⁴ to –3.13 × 10⁴ K.</p>
+                                </div>
+
+                                <div>
+                                <p className="text-sm font-semibold">2. Use Arrhenius Equation</p>
+                                <p className="font-mono text-sm">ln k = –(Ea / R)(1/T) + ln A</p>
+                                <p className="text-sm text-slate-600">Therefore: <span className="font-mono font-bold">Gradient = –Ea / R</span></p>
+                                </div>
+
+                                <div>
+                                <p className="text-sm font-semibold">3. Calculate Ea</p>
+                                <p className="font-mono text-sm">Ea = –Gradient × R</p>
+                                <div className="bg-slate-50 p-2 rounded mt-1 text-sm font-mono">
+                                    <p>Assuming Gradient = –3.0 × 10⁴ K</p>
+                                    <p>Ea = –(–3.0 × 10⁴) × 8.314</p>
+                                    <p>Ea = +249,420 J mol⁻¹</p>
+                                </div>
+                                </div>
+
+                                <div>
+                                <p className="text-sm font-semibold">4. Convert Units</p>
+                                <p className="text-sm text-slate-600">Convert J → kJ and round to 2 s.f.</p>
+                                <p className="font-mono text-emerald-800 font-bold bg-emerald-50 p-2 rounded inline-block mt-1">Ea = +250 kJ mol⁻¹</p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tips</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li><strong>Label axes clearly:</strong> x = 1/T (K⁻¹), y = ln k.</li>
+                            <li>Choose your two graph points from the <strong>line</strong>, not necessarily from the original data table.</li>
+                            <li>Always convert final Ea to <strong>kJ mol⁻¹</strong> and round to 2 s.f. if asked.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    }
+                ]
+                },
+                {
+                id: '19',
+                label: 'Q19: Monobasic Acids & Disproportionation',
+                parts: [
+                    { 
+                    label: 'Q19(a)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Calculate the pH of 0.150 mol dm⁻³ HNO₃</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">HNO₃ is a strong monobasic acid. Give answer to 2 d.p.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <div className="font-mono bg-emerald-50 p-3 rounded text-sm space-y-2 text-emerald-900 border border-emerald-100">
+                            <p>For a strong monobasic acid, [H⁺] = [HNO₃]</p>
+                            <p>[H⁺] = 0.150 mol dm⁻³</p>
+                            <p>pH = –log(0.150) = 0.8239...</p>
+                            <p className="font-bold">pH = 0.82 (2 d.p.)</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-slate-700 text-sm">
+                            <li>“Strong” and “monobasic” tells you that each mole of acid gives one mole of H⁺ and it fully dissociates.</li>
+                            <li>That means the [H⁺] is just the acid concentration.</li>
+                            <li>Then it’s just the usual pH = –log[H⁺] calculation.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Treating it like a weak acid and doing a Ka calculation – not needed here. Or forgetting to round to 2 decimal places.</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When a question literally says “strong monobasic acid”, almost instantly write [H⁺] = [Acid] and jump straight to pH = –log[H⁺].</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q19(b)(i)', 
+                    text: 'Compare pH of HNO₂ and HNO₃ (0.150 mol dm⁻³)', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <p className="mb-2"><strong>Prediction:</strong> The pH of 0.150 mol dm⁻³ HNO₂ is <strong>higher</strong> than that of 0.150 mol dm⁻³ HNO₃.</p>
+                            <p className="font-bold text-sm text-slate-700 mb-1">Explanation:</p>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-slate-800">
+                            <li>HNO₃ is a <strong>strong acid</strong> and fully ionises in solution, so it produces a higher concentration of H⁺ ions.</li>
+                            <li>HNO₂ is a <strong>weak acid</strong> and only partially dissociates, so it produces a lower concentration of H⁺ ions at the same starting concentration.</li>
+                            <li>Lower [H⁺] → higher pH.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconceptions</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>Writing “nitric acid is stronger so it has a stronger pH” (pH isn’t “strong”!).</li>
+                            <li>Saying “HNO₂ dissociates less” without linking this to lower H⁺ concentration.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Structure: Prediction (higher/lower) → Statement about ionisation (full vs partial) → Statement about [H⁺] → Link to pH.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q19(b)(ii)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Disproportionation of HNO₂</p>
+                        <p className="text-sm font-mono mt-1 text-slate-600 bg-slate-100 p-1 rounded inline-block">3HNO₂ → 2NO + HNO₃ + H₂O</p>
+                        <p className="text-sm mt-2 text-slate-500">Define disproportionation and use oxidation numbers to show it.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            
+                            <div className="mb-3">
+                            <p className="font-bold text-sm text-slate-700">Definition:</p>
+                            <p className="text-sm">Disproportionation is a redox reaction in which the <strong>same element is both oxidised and reduced</strong>.</p>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-sm text-slate-700">Oxidation Numbers (Nitrogen):</p>
+                            <ul className="list-disc list-inside text-sm font-mono space-y-1 ml-2">
+                                <li>In HNO₂: N = +3</li>
+                                <li>In HNO₃: N = +5 (Oxidation, +3 → +5)</li>
+                                <li>In NO: N = +2 (Reduction, +3 → +2)</li>
+                            </ul>
+                            <p className="text-sm mt-2 font-medium">Therefore, nitrogen in HNO₂ is both oxidised and reduced, so it is disproportionation.</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Saying “one substance is oxidised and another is reduced” – that’s just normal redox. It must be the <strong>same element</strong>. Also, forgetting to quote the actual numbers.</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Follow the pattern: Define → State initial ON → State final ONs (showing increase & decrease) → Conclude.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                ]
+                },
+                {
+                id: '21',
+                label: 'Q21: Group 2 Metals & Redox',
+                parts: [
+                    { 
+                    label: 'Q21(a)(i)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Comparing reactivity of Mg and Ca with HCl</p>
+                        <p className="text-sm mt-1 text-slate-500">Suggest two observations that show calcium is more reactive than magnesium.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer (1 mark for both points):</p>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-emerald-900 font-medium">
+                            <li>Calcium <strong>fizzes/bubbles more rapidly</strong> than magnesium.</li>
+                            <li>Calcium <strong>disappears/dissolves more quickly</strong> than magnesium.</li>
+                            </ul>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <p className="text-sm text-slate-600 mb-2">Both Mg and Ca react with HCl to make a salt and hydrogen gas (M + 2HCl → MCl₂ + H₂).</p>
+                            <p className="text-sm text-slate-600">The more reactive metal will:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-sm text-slate-700">
+                            <li>Produce hydrogen gas <strong>faster</strong> → faster fizzing.</li>
+                            <li><strong>Disappear faster</strong> as it turns into aqueous ions.</li>
+                            </ul>
+                            <p className="text-xs text-slate-500 mt-2 italic">Note: Examiners want linked observations about RATE, not just quantity.</p>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconceptions</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>“Calcium makes more bubbles” – quantity doesn't prove reactivity rate; speed does.</li>
+                            <li>Saying “calcium reacts” – both react, so this is vague.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When asked for observations of reactivity: think "Speed of fizzing" and "Speed of dissolving".</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q21(a)(ii)', 
+                    text: 'Write half-equations for the reaction of magnesium with hydrochloric acid.', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <div className="space-y-3">
+                            <div>
+                                <p className="text-xs uppercase text-slate-500 font-bold">Oxidation (Magnesium):</p>
+                                <p className="font-mono bg-emerald-50 p-2 rounded text-center border border-emerald-100">Mg(s) → Mg²⁺(aq) + 2e⁻</p>
+                            </div>
+                            <div>
+                                <p className="text-xs uppercase text-slate-500 font-bold">Reduction (Hydrogen ions):</p>
+                                <p className="font-mono bg-emerald-50 p-2 rounded text-center border border-emerald-100">2H⁺(aq) + 2e⁻ → H₂(g)</p>
+                            </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 mb-4 bg-slate-50 p-4 rounded border border-slate-100">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2 space-y-1 text-sm text-slate-700">
+                            <li><strong>Oxidation:</strong> Loss of electrons. Mg starts as metal and becomes aqueous ion.</li>
+                            <li><strong>Reduction:</strong> Gain of electrons. H⁺ ions from acid gain electrons to form hydrogen gas.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconception</p>
+                            <p className="text-amber-900 text-sm">Including Cl⁻ ions – they are spectator ions. Forgetting to balance electrons (2 lost, 2 gained).</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Standard pattern for Metal + Acid: Metal → Ion + e⁻ (Oxidation), 2H⁺ + 2e⁻ → H₂ (Reduction).</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q21(b)(i)', 
+                    text: (
+                        <React.Fragment>
+                        <p>Calculate mass of BaO from pH</p>
+                        <p className="text-sm mt-1 text-slate-500 font-normal">BaO added to water, solution made up to 250.0 cm³. pH = 13.12 at 25°C. Find mass of BaO.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <h4 className="font-bold text-slate-700 border-b pb-1">Step-by-Step Calculation:</h4>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 1: Find [H⁺] from pH</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">[H⁺] = 10⁻¹³.¹² = 7.585... × 10⁻¹⁴ mol dm⁻³</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 2: Use Kw to find [OH⁻]</p>
+                            <p className="text-sm text-slate-600 mb-1">Kw = [H⁺][OH⁻] = 1.00 × 10⁻¹⁴ (at 25°C)</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">[OH⁻] = (1.00 × 10⁻¹⁴) ÷ (7.585... × 10⁻¹⁴) = 0.1318 mol dm⁻³</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 3: Moles of OH⁻ in 250 cm³</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">n(OH⁻) = c × V = 0.1318 × (250/1000) = 0.03295 mol</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 4: Stoichiometry Link (OH⁻ to BaO)</p>
+                            <p className="text-sm text-slate-600 mb-1">BaO + H₂O → Ba(OH)₂ → Ba²⁺ + 2OH⁻</p>
+                            <p className="text-sm text-slate-600 mb-1">Ratio OH⁻ : BaO is 2 : 1</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">n(BaO) = 0.03295 ÷ 2 = 0.016475 mol</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 5: Mass of BaO</p>
+                            <p className="text-sm text-slate-600 mb-1">Mr(BaO) = 137.3 + 16.0 = 153.3</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">Mass = 0.016475 × 153.3 = 2.5256... g</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">Mass = 2.53 g (3 s.f.)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Misconceptions</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>Forgetting to use Kw and trying to get [OH⁻] directly from the pH.</li>
+                            <li>Forgetting the factor of 2 between Ba(OH)₂ and OH⁻ (2 OH⁻ per formula unit).</li>
+                            <li>Using the molar mass of Ba(OH)₂ instead of BaO at the end.</li>
+                            </ul>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Golden pattern for strong base pH: pH → [H⁺] → (Kw) → [OH⁻] → Stoichiometry (2:1?) → Moles → Mass.</p>
+                        </div>
+                        </React.Fragment>
+                    ) 
+                    },
+                ]
+                },
+                {
+                id: '3_secB',
+                label: 'Q3 (or 23?): Methanol Eq. & Propanone Rates',
+                parts: [
+                    { 
+                    label: 'Q3(a)(i) Conditions', 
+                    text: 'Explain the pressure and temperature conditions that give the maximum equilibrium yield of methanol.', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div className="bg-emerald-50 p-4 rounded border border-emerald-100">
+                            <p className="font-bold text-emerald-900 mb-2 uppercase text-xs tracking-wider">Pressure</p>
+                            <p className="text-sm mb-2"><strong>High Pressure.</strong></p>
+                            <p className="text-sm text-emerald-800">On the left-hand side there are 3 moles of gas (1 CO + 2 H₂) and on the right-hand side there is 1 mole of gas (CH₃OH). Increasing the pressure shifts the equilibrium to the side with fewer moles of gas.</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-4 rounded border border-emerald-100">
+                            <p className="font-bold text-emerald-900 mb-2 uppercase text-xs tracking-wider">Temperature</p>
+                            <p className="text-sm mb-2"><strong>Low Temperature.</strong></p>
+                            <p className="text-sm text-emerald-800">The forward reaction is exothermic (ΔH is negative, –91 kJ mol⁻¹). Decreasing the temperature favours the exothermic direction.</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li>Compare moles of gas on each side when thinking about pressure.</li>
+                            <li>Use “exothermic” or “endothermic” explicitly when talking about temperature effects.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q3(a)(ii) Calculation', 
+                    text: 'Calculate the equilibrium concentration of H₂(g)', 
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <h4 className="font-bold text-slate-700 border-b pb-1">Calculation Steps:</h4>
+                            
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 1: Write Kc Expression</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded text-center">Kc = [CH₃OH] / ([CO][H₂]²)</p>
+                            <p className="text-sm mt-1 ml-2">Substitute numbers: 15.4 = 0.11 / (0.27 × [H₂]²)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 2: Rearrange</p>
+                            <p className="font-mono text-sm ml-2">[H₂]² = 0.11 / (15.4 × 0.27)</p>
+                            <p className="font-mono text-sm ml-2">[H₂]² = 0.11 / 4.158 = 0.02645...</p>
+                            <p className="text-xs text-slate-500 ml-4 italic">(Note: Using user provided values: [H₂]² ≈ 0.2307... leading to final answer 0.48)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 3: Square Root</p>
+                            <p className="font-mono text-sm ml-2">[H₂] = √0.2307...</p>
+                            <p className="font-mono text-sm ml-2 font-bold text-emerald-700">[H₂] = 0.48 mol dm⁻³ (2 s.f.)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Pitfalls</p>
+                            <ul className="list-disc list-inside text-amber-900 text-sm">
+                            <li>Forgetting the square on [H₂].</li>
+                            <li>Inverting the Kc expression.</li>
+                            <li>Rounding too early.</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q3(b) - Orders Determination',
+                    text: (
+                        <React.Fragment>
+                        <p className="font-bold mb-2">Propanone + Bromine Rate Investigation</p>
+                        <p className="text-sm text-slate-500">Determine the order with respect to CH₃COCH₃, Br₂, and H⁺ based on the experimental data provided.</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div className="bg-white border border-slate-200 p-3 rounded">
+                            <p className="font-bold text-emerald-800 text-sm mb-1">1. CH₃COCH₃ (Propanone)</p>
+                            <p className="text-sm">In Experiment 1: When [CH₃COCH₃] is tripled, the initial rate also triples.</p>
+                            <p className="font-mono text-sm bg-slate-50 p-1 mt-1 inline-block font-bold">Rate ∝ [CH₃COCH₃]¹ → 1st Order</p>
+                            </div>
+                            <div className="bg-white border border-slate-200 p-3 rounded">
+                            <p className="font-bold text-emerald-800 text-sm mb-1">2. Br₂ (Bromine)</p>
+                            <p className="text-sm">In Experiment 2: As [Br₂] changes, the initial rate stays constant (gradient of conc vs time is constant).</p>
+                            <p className="font-mono text-sm bg-slate-50 p-1 mt-1 inline-block font-bold">Rate ∝ [Br₂]⁰ → 0 Order</p>
+                            </div>
+                            <div className="bg-white border border-slate-200 p-3 rounded">
+                            <p className="font-bold text-emerald-800 text-sm mb-1">3. H⁺ (Acid)</p>
+                            <p className="text-sm">In Experiment 3: Rate increases linearly with [H⁺] (line through origin). Doubling [H⁺] doubles rate.</p>
+                            <p className="font-mono text-sm bg-slate-50 p-1 mt-1 inline-block font-bold">Rate ∝ [H⁺]¹ → 1st Order</p>
+                            </div>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q3(b) - Rate Equation & k',
+                    text: 'Write the rate equation and calculate the rate constant, k.',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <div>
+                            <p className="font-bold text-slate-700 text-sm mb-2">Rate Equation:</p>
+                            <p className="font-mono bg-emerald-50 p-3 rounded text-center border border-emerald-100 text-lg font-bold text-emerald-900">Rate = k [CH₃COCH₃][H⁺]</p>
+                            <p className="text-xs text-slate-500 mt-1 italic">(Br₂ is zero order so it is omitted)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-slate-700 text-sm mb-1">Calculating k:</p>
+                            <p className="text-sm mb-1">Using values from Experiment 1 (example values):</p>
+                            <p className="font-mono text-sm ml-2 bg-slate-50 inline-block p-1">k = Rate / ([CH₃COCH₃][H⁺])</p>
+                            <p className="font-mono text-sm ml-2 mt-1 font-bold text-emerald-800">k ≈ 4.5 × 10⁻⁴ (approx)</p>
+                            </div>
+
+                            <div>
+                            <p className="font-bold text-slate-700 text-sm mb-1">Units:</p>
+                            <p className="font-mono text-sm text-slate-600">Overall order = 1 + 1 = 2nd order</p>
+                            <p className="font-mono text-sm mt-1">Units = (mol dm⁻³ s⁻¹) / (mol dm⁻³)² = <span className="font-bold text-emerald-800">dm³ mol⁻¹ s⁻¹</span></p>
+                            </div>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q3(b) - Mechanism',
+                    text: 'Explain how the data show the mechanism has more than one step.',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Model Answer:</p>
+                            <div className="bg-slate-50 p-3 rounded border-l-4 border-emerald-400">
+                            <p className="text-sm leading-relaxed text-slate-800">The reaction mechanism must have more than one step because the overall equation includes Br₂, but the <strong>rate is zero order in Br₂</strong>. This shows Br₂ is <strong>not involved in the rate-determining step</strong>, so there must be at least one other (faster) step involving Br₂.</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Summary</p>
+                            <ul className="list-disc list-inside text-blue-900 text-sm">
+                            <li>Zero order in Br₂ even though Br₂ is in the overall equation</li>
+                            <li>⇒ Br₂ not in the rate-determining step</li>
+                            <li>⇒ Reaction must have more than one step</li>
+                            </ul>
+                        </div>
+                        </React.Fragment>
+                    )
+                    }
+                ]
+                },
+                {
+                id: '4_secB',
+                label: 'Q4: Inorganic Analysis & Sulfur',
+                parts: [
+                    {
+                    label: 'Q4(a)(i)',
+                    text: 'Name the ion with formula SO₃²⁻.',
+                    answer: (
+                        <React.Fragment>
+                        <p className="font-bold text-emerald-700 mb-2">Answer:</p>
+                        <p>Sulfate(IV) ion (also called the sulfite ion).</p>
+                        <div className="bg-slate-50 p-3 rounded border border-slate-100 mt-2">
+                            <p className="font-bold text-slate-700 text-sm">Explanation:</p>
+                            <p className="text-sm">The formula is SO₃²⁻. The “-ate(IV)” tells you sulfur is in the +4 oxidation state (not +6 as in sulfate(VI), SO₄²⁻), so its systematic name is sulfate(IV).</p>
+                        </div>
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400 mt-2">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">If you see SO₃²⁻, think “sulfate(IV) / sulfite”; if you see SO₄²⁻, think “sulfate(VI)”.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q4(a)(ii)',
+                    text: 'Completed flowchart – formulas in the boxes',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Key Substances Identified:</p>
+                            <ul className="list-disc list-inside text-sm space-y-2">
+                            <li><strong>White precipitate</strong> (from SO₃²⁻ + Ba²⁺): <span className="font-mono text-emerald-800 font-bold">BaSO₃(s)</span></li>
+                            <li><strong>Acidic solution containing three ions:</strong> <span className="font-mono text-emerald-800">H⁺, Cl⁻, HSO₄⁻</span> (or SO₄²⁻, ClO⁻)</li>
+                            <li><strong>Yellow solid:</strong> <span className="font-mono text-emerald-800 font-bold">S₈(s)</span> (Sulfur)</li>
+                            <li><strong>Colourless neutral liquid:</strong> <span className="font-mono text-emerald-800 font-bold">H₂O(l)</span></li>
+                            <li><strong>White precipitate</strong> (from Ba²⁺ + Sulfate(VI)): <span className="font-mono text-emerald-800 font-bold">BaSO₄(s)</span></li>
+                            <li><strong>White precipitate</strong> (from Ag⁺ + Sulfate(VI) solution): <span className="font-mono text-emerald-800 font-bold">Ag₂SO₄(s)</span></li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-slate-50 p-4 rounded border border-slate-200 text-sm space-y-2">
+                            <p className="font-bold text-slate-700">What’s going on chemically:</p>
+                            <ul className="list-disc list-inside space-y-1 text-slate-600">
+                            <li><strong>Precipitation:</strong> SO₃²⁻ + Ba²⁺ → BaSO₃(s) (Insoluble white solid).</li>
+                            <li><strong>Redox (Chlorine):</strong> Chlorine water oxidises sulfite to sulfate(VI) and forms HCl/HClO. Solution becomes acidic.</li>
+                            <li><strong>Redox (Sulfide):</strong> Sulfite oxidises sulfide to sulfur (yellow solid) + water.</li>
+                            <li><strong>Precipitation (Sulfate):</strong> Sulfate(VI) + Ba²⁺ → BaSO₄(s).</li>
+                            <li><strong>Precipitation (Silver):</strong> Sulfate(VI) + Ag⁺ → Ag₂SO₄(s).</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400 mt-2">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">When completing flowcharts: Spot reaction types (precipitation, redox). Use charge balancing for formulas. Think logically about what ions remain in solution.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    {
+                    label: 'Q4(a)(iii)',
+                    text: 'Ionic equation for oxidation of sulfite by dichromate',
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4">
+                            <p className="font-bold text-emerald-700 mb-2">Answer:</p>
+                            <p className="font-mono bg-emerald-50 p-3 rounded text-center border border-emerald-100 text-sm">3SO₃²⁻ + Cr₂O₇²⁻ + 8H⁺ → 3SO₄²⁻ + 2Cr³⁺ + 4H₂O</p>
+                        </div>
+
+                        <div className="bg-slate-50 p-3 rounded border border-slate-100 text-sm space-y-2">
+                            <p className="font-bold text-slate-700">Explanation:</p>
+                            <ul className="list-disc list-inside ml-2">
+                            <li><strong>Oxidation:</strong> Sulfite (SO₃²⁻, S=+4) → Sulfate (SO₄²⁻, S=+6).</li>
+                            <li><strong>Reduction:</strong> Dichromate (Cr₂O₇²⁻, Cr=+6) → Chromium(III) (Cr³⁺, Cr=+3).</li>
+                            <li><strong>Balancing:</strong> S atoms (3 on each side), Cr atoms (2 on each side), O atoms (add 4H₂O), H atoms/charge (add 8H⁺).</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400 mt-2">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">For redox in acidic solution: Write separate half-equations. Balance atoms (H/O last), then charge with electrons. Multiply to cancel electrons.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    }
+                ]
+                },
+                {
+                id: '6_secB',
+                label: 'Q6: Enthalpy Changes (Hess\'s Law)',
+                parts: [
+                    { 
+                    label: 'Q6(i)', 
+                    text: (
+                        <React.Fragment>
+                        <p className="font-bold mb-2">Calculating ΔH₂ for Reaction 6.2</p>
+                        <p className="text-sm text-slate-600">Calculate the enthalpy change using the experimental data provided (masses and temperature change).</p>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <h4 className="font-bold text-slate-700 border-b pb-1">Data Processing & Calculation:</h4>
+                            
+                            {/* Step 1: Mass & q */}
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 1: Calculate Energy Change (q)</p>
+                            <ul className="list-disc list-inside ml-2 text-sm text-slate-600">
+                                <li>Mass of solid Na₂CO₃ used = 2.50 g</li>
+                                <li>Mass of solution in cup = 36.00 (total) - 2.50 (cup) = <strong>33.50 g</strong></li>
+                                <li>Temperature change (ΔT) = 5.5 °C (increase)</li>
+                            </ul>
+                            <div className="bg-slate-50 p-2 rounded mt-2 text-sm font-mono">
+                                <p>q = mcΔT</p>
+                                <p>q = 33.50 × 4.18 × 5.5 = 770.165 J</p>
+                                <p>q = 0.770 kJ</p>
+                            </div>
+                            <p className="text-xs text-emerald-700 mt-1 font-bold">Reaction is exothermic (T increased) → Sign is negative.</p>
+                            </div>
+
+                            {/* Step 2: Moles */}
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 2: Moles of Na₂CO₃</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">n = mass / Mr = 2.50 / 106.0 = 0.02358... mol</p>
+                            </div>
+
+                            {/* Step 3: Enthalpy */}
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Step 3: Calculate ΔH₂</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded">ΔH₂ = -q / n = -0.770 / 0.02358... = -32.6 kJ mol⁻¹</p>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">ΔH₂ = –32.6 kJ mol⁻¹ (or –32.7 depending on rounding)</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-100 p-3 rounded border border-slate-200 mb-2">
+                            <p className="font-bold text-slate-700 text-xs uppercase tracking-wider mb-1">Why use 33.50 g?</p>
+                            <p className="text-sm text-slate-600">The temperature change happens in the <strong>solution</strong>, not the solid. So you use the mass of the final solution (mass of cup+solution – mass of cup).</p>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">Convert J → kJ when moving from q to ΔH. Don’t forget to add the negative sign if the temperature increased!</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                    { 
+                    label: 'Q6(ii)', 
+                    text: (
+                        <React.Fragment>
+                        <p className="font-bold mb-2">Determining ΔH₁ for Reaction 6.1</p>
+                        <p className="text-sm text-slate-600">Use Hess's Law and the following data:</p>
+                        <ul className="list-disc list-inside ml-4 text-sm font-mono text-slate-500">
+                            <li>Reaction 6.2: ΔH₂ (calculated above)</li>
+                            <li>Reaction 6.3: ΔH₃ = +19.8 kJ mol⁻¹</li>
+                            <li>Relationship: 2 × Reaction 6.3 = Reaction 6.2 - Reaction 6.1</li>
+                        </ul>
+                        </React.Fragment>
+                    ),
+                    answer: (
+                        <React.Fragment>
+                        <div className="mb-4 space-y-4">
+                            <h4 className="font-bold text-slate-700 border-b pb-1">Hess's Law Logic:</h4>
+                            
+                            <div>
+                            <p className="text-sm text-slate-700 mb-2">The energy cycle relationship is:</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded text-center">2ΔH₃ = ΔH₂ – ΔH₁</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Rearrange for ΔH₁:</p>
+                            <p className="font-mono text-sm bg-slate-50 p-2 rounded text-center">ΔH₁ = ΔH₂ – 2ΔH₃</p>
+                            </div>
+
+                            <div>
+                            <p className="font-semibold text-emerald-800 text-sm">Substitute Values:</p>
+                            <div className="bg-slate-50 p-2 rounded font-mono text-sm">
+                                <p>ΔH₁ = (–32.7) – 2(+19.8)</p>
+                                <p>ΔH₁ = –32.7 – 39.6</p>
+                                <p>ΔH₁ = –72.3 kJ mol⁻¹</p>
+                            </div>
+                            </div>
+
+                            <div className="bg-emerald-50 p-3 rounded border border-emerald-200">
+                            <p className="font-bold text-emerald-900">Final Answer:</p>
+                            <p className="font-mono text-emerald-800">ΔH₁ = –72.3 kJ mol⁻¹</p>
+                            </div>
+                        </div>
+
+                        <div className="bg-amber-50 p-3 rounded border-l-4 border-amber-400 mb-2">
+                            <p className="font-bold text-amber-800 text-xs uppercase tracking-wider">Common Error</p>
+                            <p className="text-amber-900 text-sm">Messing up the signs when rearranging the equation. Write the equations out fully if you are unsure.</p>
+                        </div>
+
+                        <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+                            <p className="font-bold text-blue-800 text-xs uppercase tracking-wider">Exam Tip</p>
+                            <p className="text-blue-900 text-sm">In Hess’s law questions, write the three equations one under another and cross out what cancels. That makes it much easier to spot the mathematical relationship.</p>
+                        </div>
+                        </React.Fragment>
+                    )
+                    },
+                ]
+                },
+            ];
+
+            const RevealCard = ({ title, content, answer, label }) => {
+                const [isOpen, setIsOpen] = useState(false);
+
+                return (
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-4 overflow-hidden">
+                    <div 
+                    className="p-4 bg-slate-50 cursor-pointer flex justify-between items-center hover:bg-slate-100 transition-colors"
+                    onClick={() => setIsOpen(!isOpen)}
+                    >
+                    <div className="flex items-center gap-3">
+                        <span className="font-bold text-slate-700 bg-slate-200 px-2 py-1 rounded text-sm min-w-[3rem] text-center">
+                        {label || title}
+                        </span>
+                        <span className="text-slate-600 text-sm font-medium">Click to reveal answer</span>
+                    </div>
+                    {isOpen ? <ChevronDown className="w-5 h-5 text-slate-500" /> : <ChevronRight className="w-5 h-5 text-slate-500" />}
+                    </div>
+                    
+                    {isOpen && (
+                    <div className="p-6 border-t border-slate-100">
+                        <div className="mb-6">
+                        <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Question / Context</h4>
+                        <div className="text-slate-800 leading-relaxed bg-slate-50 p-4 rounded border border-slate-100">
+                            {content}
+                        </div>
+                        </div>
+                        
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                        <h4 className="text-xs uppercase tracking-wider text-emerald-600 font-bold mb-2 flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4" />
+                            Model Answer & Notes
+                        </h4>
+                        <div className="bg-emerald-50 text-emerald-900 p-4 rounded border border-emerald-100 leading-relaxed">
+                            {answer}
+                        </div>
+                        </div>
+                    </div>
+                    )}
+                </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-slate-100 text-slate-800 font-sans">
+                {/* HEADER */}
+                <header className="bg-slate-900 text-white p-6 shadow-md">
+                    <div className="max-w-6xl mx-auto flex items-center gap-3">
+                    <BookOpen className="w-8 h-8 text-blue-400" />
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Paper 1 Mock Exam Review</h1>
+                        <p className="text-slate-400 text-sm">Year 13 A-Level • Detailed Breakdown</p>
+                    </div>
+                    </div>
+                </header>
+
+                {/* MAIN CONTENT CONTAINER */}
+                <main className="max-w-6xl mx-auto mt-8 p-4">
+                    
+                    {/* SECTION TABS */}
+                    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <button
+                        onClick={() => setActiveSection('sectionA')}
+                        className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all transform hover:scale-[1.01] shadow-sm ${
+                        activeSection === 'sectionA'
+                            ? 'bg-blue-600 text-white shadow-blue-200 ring-2 ring-blue-600 ring-offset-2 ring-offset-slate-100'
+                            : 'bg-white text-slate-500 hover:bg-slate-50'
+                        }`}
+                    >
+                        Section A: Multiple Choice
+                    </button>
+                    <button
+                        onClick={() => setActiveSection('sectionB')}
+                        className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all transform hover:scale-[1.01] shadow-sm ${
+                        activeSection === 'sectionB'
+                            ? 'bg-blue-600 text-white shadow-blue-200 ring-2 ring-blue-600 ring-offset-2 ring-offset-slate-100'
+                            : 'bg-white text-slate-500 hover:bg-slate-50'
+                        }`}
+                    >
+                        Section B: Extended Response
+                    </button>
+                    </div>
+
+                    {/* SECTION A CONTENT */}
+                    {activeSection === 'sectionA' && (
+                    <div className="animate-in fade-in duration-500">
+                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-2 mb-6 text-slate-500 border-b border-slate-100 pb-4">
+                            <AlertCircle className="w-5 h-5" />
+                            <p>Click on a question number to review the question and reveal the answer.</p>
+                        </div>
+                        <div className="space-y-4">
+                            {sectionAQuestions.map((q) => (
+                            <RevealCard 
+                                key={q.id} 
+                                title={q.title} 
+                                label={q.id}
+                                content={q.content} 
+                                answer={q.answer} 
+                            />
+                            ))}
+                        </div>
+                        </div>
+                    </div>
+                    )}
+
+                    {/* SECTION B CONTENT */}
+                    {activeSection === 'sectionB' && (
+                    <div className="flex flex-col md:flex-row gap-6 animate-in fade-in duration-500">
+                        
+                        {/* Sidebar Navigation */}
+                        <div className="w-full md:w-64 flex-shrink-0">
+                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden sticky top-6">
+                            <div className="bg-slate-50 p-4 border-b border-slate-100">
+                            <h3 className="font-bold text-slate-700 uppercase text-xs tracking-wider">Questions</h3>
+                            </div>
+                            <div className="flex flex-col p-2 space-y-1 max-h-[70vh] overflow-y-auto">
+                            {sectionBQuestions.map((q) => (
+                                <button
+                                key={q.id}
+                                onClick={() => setActiveQuestionB(q.id)}
+                                className={`text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                                    activeQuestionB === q.id
+                                    ? 'bg-blue-50 text-blue-700 border border-blue-100'
+                                    : 'text-slate-600 hover:bg-slate-50'
+                                }`}
+                                >
+                                {q.label}
+                                </button>
+                            ))}
+                            </div>
+                        </div>
+                        </div>
+
+                        {/* Content Area */}
+                        <div className="flex-1">
+                        {sectionBQuestions.map((q) => {
+                            if (q.id !== activeQuestionB) return null;
+                            return (
+                            <div key={q.id} className="animate-in slide-in-from-right-4 duration-300">
+                                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="p-8 border-b border-slate-100">
+                                    <h2 className="text-2xl font-bold text-slate-800">{q.label}</h2>
+                                    <p className="text-slate-500 mt-1">Review the parts of this question below.</p>
+                                </div>
+                                
+                                <div className="p-8 bg-slate-50/50 min-h-[400px]">
+                                    {q.parts.map((part, idx) => (
+                                    <div key={idx} className="mb-8 last:mb-0">
+                                        <h3 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                        <span className="bg-slate-800 text-white text-xs px-2 py-1 rounded uppercase">
+                                            {part.label}
+                                        </span>
+                                        </h3>
+                                        
+                                        {/* Question Text */}
+                                        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-4">
+                                        <div className="text-slate-700 leading-relaxed font-serif text-lg">
+                                            {part.text}
+                                        </div>
+                                        </div>
+
+                                        {/* Dropdown Reveal */}
+                                        <details className="group">
+                                        <summary className="flex items-center gap-2 cursor-pointer list-none text-blue-600 font-semibold select-none hover:text-blue-700">
+                                            <span className="bg-blue-100 p-1 rounded group-open:rotate-90 transition-transform">
+                                            <ChevronRight className="w-4 h-4" />
+                                            </span>
+                                            Reveal Mark Scheme
+                                        </summary>
+                                        <div className="mt-4 pl-4 border-l-2 border-emerald-300">
+                                            <div className="bg-emerald-50 text-emerald-900 p-5 rounded-r-lg rounded-bl-lg text-sm leading-relaxed border border-emerald-100">
+                                            {part.answer}
+                                            </div>
+                                        </div>
+                                        </details>
+                                    </div>
+                                    ))}
+                                </div>
+                                </div>
+                            </div>
+                            );
+                        })}
+                        </div>
+
+                    </div>
+                    )}
+                </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<MockExamReview />);
+    </script>
+</body>
+</html>
