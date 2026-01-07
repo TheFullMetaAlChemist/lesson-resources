@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Higher Tier: Structure & Bonding - Revision</title>
+    <title>Higher Tier: Structure & Bonding - Score Tracker</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -33,10 +33,25 @@
             margin-bottom: 30px;
             text-align: center;
             border-top: 6px solid var(--primary);
+            position: relative;
         }
 
         h1 { margin: 0; color: var(--primary); }
         .subtitle { color: #64748b; margin-top: 10px; }
+
+        .btn-reset {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f1f5f9;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+        .btn-reset:hover { background: #e2e8f0; color: var(--danger); }
 
         .question-card {
             background: var(--card-bg);
@@ -48,8 +63,9 @@
             transition: all 0.3s ease;
         }
 
-        .question-card.answered-right { border-left-color: var(--success); background-color: #f0fdf4; }
-        .question-card.answered-wrong { border-left-color: var(--danger); background-color: #fef2f2; }
+        .question-card.full-marks { border-left-color: var(--success); background-color: #f0fdf4; }
+        .question-card.partial-marks { border-left-color: var(--warning); background-color: #fffbeb; }
+        .question-card.zero-marks { border-left-color: var(--danger); background-color: #fef2f2; }
 
         .q-header {
             display: flex;
@@ -59,36 +75,35 @@
             gap: 20px;
         }
 
-        .q-title { font-weight: bold; font-size: 1.15rem; color: #1e293b; }
+        .q-title { font-weight: bold; font-size: 1.1rem; color: #1e293b; }
         .q-topic { 
             display: inline-block; 
             background: #e2e8f0; 
             color: #475569; 
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             padding: 2px 8px; 
             border-radius: 4px; 
             margin-bottom: 8px;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        .status-toggle { display: flex; gap: 10px; flex-shrink: 0; }
-        .status-btn {
-            padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+        .score-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .score-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
             border: 1px solid #cbd5e1; background: white; transition: all 0.2s;
-            white-space: nowrap; font-weight: 500;
+            font-weight: 600; color: #64748b;
         }
 
         input[type="radio"] { display: none; }
-        input[value="correct"]:checked + .status-btn { background: var(--success); color: white; border-color: var(--success); }
-        input[value="incorrect"]:checked + .status-btn { background: var(--danger); color: white; border-color: var(--danger); }
+        input:checked + .score-btn { background: var(--primary); color: white; border-color: var(--primary); }
 
         .box { padding: 14px 18px; border-radius: 8px; margin-top: 12px; font-size: 0.95rem; line-height: 1.5; }
         .model-ans { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
         .explanation { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
         .misconception { background: #fff1f2; border: 1px solid #fecaca; color: #991b1b; }
 
-        .label { font-weight: bold; display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+        .label { font-weight: bold; display: block; margin-bottom: 6px; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; }
 
         .btn-finish {
             display: block; width: 100%; background: var(--primary); color: white;
@@ -102,18 +117,19 @@
         }
 
         .summary-box {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
         }
 
         .follow-up-card { background: white; color: #1e293b; padding: 25px; border-radius: 12px; margin-top: 20px; }
@@ -132,9 +148,12 @@
             padding: 12px; margin-top: 12px; border-radius: 6px; font-size: 0.95rem;
         }
 
+        .score-badge {
+            font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; background: #fee2e2; color: #991b1b; margin-left: 8px;
+        }
+
         @media (max-width: 600px) {
             .q-header { flex-direction: column; }
-            .status-toggle { width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
@@ -142,200 +161,84 @@
 
 <div class="container">
     <header>
-        <h1>Higher Tier: Structure & Bonding</h1>
-        <p class="subtitle">Complete your corrections and deepen your understanding for higher-level marks.</p>
+        <button class="btn-reset" onclick="clearProgress()">Reset All Progress</button>
+        <h1>Higher Tier Revision</h1>
+        <p class="subtitle">Review the model answers, then record your marks to generate a targeted plan.</p>
     </header>
 
     <div id="quiz-container"></div>
 
-    <button class="btn-finish" onclick="generateAnalysis()">Finish Review & View Targeted Follow-ups</button>
+    <button class="btn-finish" onclick="generateAnalysis()">Generate Targeted Revision Summary</button>
 
     <div id="results-section">
-        <h2>Your Targeted Revision Plan</h2>
+        <h2>Your Performance Analysis</h2>
         <div id="summary-container" class="summary-box"></div>
-        <p>Complete these specific follow-up questions for every question you marked as 'Correction Required'.</p>
+        <p>Specific follow-up practice for topics where you dropped marks:</p>
         <div class="follow-up-card" id="follow-up-list"></div>
     </div>
 </div>
 
 <script>
+    const STORAGE_KEY = 'higher_tier_marks';
+
     const questionData = [
-        {
-            id: "1",
-            topic: "Giant Covalent (Diamond)",
-            q: "Give two physical properties of diamond. (2 marks)",
-            ans: "• Very hard<br>• Very high melting point<br>(Alternatives: does not conduct electricity, high thermal conductivity)",
-            exp: "Diamond has a giant covalent structure where each carbon atom forms four strong covalent bonds. These strong bonds require a lot of energy to break, making diamond extremely hard and giving it a very high melting point.",
-            mis: "Saying “shiny” (not a property used for marking); Saying “strong” without explaining structure; Confusing diamond with graphite (which conducts)."
-        },
-        {
-            id: "2",
-            topic: "State Symbols",
-            q: "Give the state symbol for ammonium nitrate solution. (1 mark)",
-            ans: "(aq)",
-            exp: "“Solution” means the substance is dissolved in water, so the correct state symbol is aqueous (aq).",
-            mis: "Writing (l) because it’s liquid; Writing “aqueous” instead of (aq); Adding a chemical formula unnecessarily."
-        },
-        {
-            id: "3",
-            topic: "Scientific Models",
-            q: "Suggest one limitation of a ball-and-stick model of a water molecule. (1 mark)",
-            ans: "• Not to scale<br>• Does not show electrons or electron shells<br>• Not three-dimensional<br>• Shows atoms as solid spheres",
-            exp: "Ball-and-stick models are simplified representations. They help show bonding but do not accurately represent size, shape, or electron behaviour.",
-            mis: "Describing properties of water instead of the model; Saying “it’s wrong” without detail."
-        },
-        {
-            id: "4",
-            topic: "Ionic Bonding",
-            q: "Describe what happens when a sodium atom reacts with a chlorine atom. (4 marks)",
-            ans: "1. A sodium atom loses one electron<br>2. A chlorine atom gains one electron<br>3. The electron is transferred from sodium to chlorine<br>4. This forms positive sodium ions (Na⁺) and negative chloride ions (Cl⁻)",
-            exp: "This is ionic bonding. The oppositely charged ions attract each other due to electrostatic forces, forming sodium chloride.",
-            mis: "Saying electrons are shared (covalent); Saying ions lose or gain electrons (it must be atoms); Saying chlorine gives electrons to sodium."
-        },
-        {
-            id: "5",
-            topic: "Structure Comparison",
-            q: "Compare the structure and bonding of carbon dioxide, magnesium oxide and silicon dioxide. (6 marks)",
-            ans: "• Carbon dioxide and silicon dioxide are made of atoms, while magnesium oxide is made of ions<br>• Carbon dioxide has a simple molecular structure with weak intermolecular forces<br>• Silicon dioxide and magnesium oxide both have giant structures<br>• Carbon dioxide and silicon dioxide have covalent bonding where electrons are shared<br>• Magnesium oxide has ionic bonding (electron transfer from Mg to O)<br>• Carbon dioxide has double bonds, whereas silicon dioxide has single covalent bonds in a network",
-            exp: "The key to high marks is comparing: Type of particles (atoms vs ions), Bonding type (ionic vs covalent), and Structure size (simple molecules vs giant lattice).",
-            mis: "Writing three separate descriptions instead of comparisons; Talking about melting points (ignored here); Saying silicon dioxide is ionic."
-        },
-        {
-            id: "6",
-            topic: "Scientific Models",
-            q: "Give two limitations of the simple particle model for hydrogen gas. (2 marks)",
-            ans: "• Does not show hydrogen as H₂ molecules<br>• Does not show particle movement<br>• Does not show forces between particles<br>• Only two-dimensional",
-            exp: "Simple particle models help visualise spacing but miss key ideas such as movement, bonding, and forces.",
-            mis: "Saying “it’s wrong” without detail; Describing states of matter instead of the model."
-        },
-        {
-            id: "7",
-            topic: "Ionic Bonding",
-            q: "Explain what happens when caesium reacts with oxygen. (4 marks)",
-            ans: "• Each caesium atom loses one electron<br>• The oxygen atom gains two electrons<br>• Two caesium atoms react with one oxygen atom<br>• This forms Cs⁺ ions and O²⁻ ions with full outer shells",
-            exp: "Group 1 metals lose one electron. Oxygen needs two electrons, so two caesium atoms are required.",
-            mis: "Saying oxygen loses electrons; Saying only one caesium atom reacts; Confusing oxide ions with oxygen molecules."
-        },
-        {
-            id: "8",
-            topic: "Simple Molecular",
-            q: "Explain why ammonia has a low boiling point. (3 marks)",
-            ans: "• Ammonia has small molecules<br>• There are weak intermolecular forces between molecules<br>• Only a small amount of energy is needed to separate the molecules",
-            exp: "Boiling involves overcoming intermolecular forces, not breaking covalent bonds.",
-            mis: "Saying covalent bonds are weak; Talking about breaking bonds; Referring to atoms instead of molecules."
-        },
-        {
-            id: "9",
-            topic: "Giant Covalent (Graphite)",
-            q: "Explain why graphite conducts electricity. (3 marks)",
-            ans: "• Each carbon atom forms three covalent bonds<br>• One electron per carbon is delocalised<br>• These delocalised electrons can move and carry charge",
-            exp: "Graphite conducts because of free-moving electrons, unlike diamond where all electrons are fixed in four bonds.",
-            mis: "Saying graphite conducts because it’s a metal; Confusing graphite with ionic structures."
-        },
-        {
-            id: "10",
-            topic: "State Symbols",
-            q: "Complete the equation with state symbols. (2 marks)",
-            ans: "ZnO <strong>(s)</strong> + 2HCl <strong>(aq)</strong> → ZnCl₂ <strong>(aq)</strong> + H₂O <strong>(l)</strong>",
-            exp: "Zinc oxide is a solid, HCl is aqueous (solution), Zinc chloride is soluble (aqueous), and water is a pure liquid (l).",
-            mis: "Writing ZnCl₂ as a solid; Forgetting water is liquid."
-        },
-        {
-            id: "11",
-            topic: "Solutions & Precipitates",
-            q: "Explain why the solution becomes cloudy. (2 marks)",
-            ans: "• Sulfur is formed<br>• Sulfur is an insoluble solid (precipitate)",
-            exp: "The solid sulfur particles scatter light, making the solution look cloudy.",
-            mis: "Saying gas causes cloudiness; Naming sulfur dioxide instead of sulfur."
-        },
-        {
-            id: "12",
-            topic: "Ionic Properties",
-            q: "Explain the conditions needed for sodium chloride to conduct electricity. (3 marks)",
-            ans: "• Sodium chloride must be molten or dissolved in water<br>• The ions are free to move<br>• Moving ions carry charge",
-            exp: "In a solid lattice, ions are fixed. They must be mobile to conduct electricity.",
-            mis: "Saying solid NaCl conducts; Talking about electrons instead of ions."
-        },
-        {
-            id: "13",
-            topic: "Structure Comparison",
-            q: "Compare the structure and bonding in sodium chloride and hydrogen chloride. (6 marks)",
-            ans: "• NaCl has ionic bonding, HCl has covalent bonding<br>• NaCl is from a metal and non-metal, HCl from two non-metals<br>• NaCl forms a giant ionic lattice, HCl forms small molecules<br>• NaCl contains charged ions, HCl molecules are neutral<br>• Ionic forces are strong and act in all directions, whereas intermolecular forces in HCl are weak",
-            exp: "High marks require direct comparison of both bonding and structure, not just listing features.",
-            mis: "Describing only one substance; Talking about melting points; Forgetting to compare magnitude (strong vs weak)."
-        }
+        { id: "1", topic: "Giant Covalent", max: 2, q: "Give two physical properties of diamond.", ans: "• Very hard<br>• Very high melting point", exp: "Giant covalent lattice with 4 strong bonds per carbon.", mis: "Saying 'shiny' or 'conducts electricity'." },
+        { id: "2", topic: "State Symbols", max: 1, q: "State symbol for ammonium nitrate solution.", ans: "(aq)", exp: "Dissolved in water = aqueous.", mis: "Writing (l)." },
+        { id: "3", topic: "Scientific Models", max: 1, q: "Limitation of ball-and-stick model.", ans: "Not to scale / No electrons shown.", exp: "Models simplify real-world complexity.", mis: "Saying 'it's too small'." },
+        { id: "4", topic: "Ionic Bonding", max: 4, q: "Describe sodium reacting with chlorine.", ans: "Na loses 1e⁻; Cl gains 1e⁻; Transfer occurs; Ions Na⁺ and Cl⁻ form.", exp: "Electrostatic attraction between oppositely charged ions.", mis: "Saying electrons are shared." },
+        { id: "5", topic: "Structure Comparison", max: 6, q: "Compare CO₂, MgO and SiO₂.", ans: "Particles (atoms vs ions); Structure (simple vs giant); Bonding (covalent vs ionic).", exp: "A 6-mark answer must bridge all three substance types.", mis: "Not making direct comparisons." },
+        { id: "6", topic: "Scientific Models", max: 2, q: "Limitations of particle model for H₂ gas.", ans: "Doesn't show diatomic molecules / No movement / No forces.", exp: "Particles are actually molecules in motion with intermolecular forces.", mis: "Generalizing 'it's not real'." },
+        { id: "7", topic: "Ionic Bonding", max: 4, q: "Explain caesium reacting with oxygen.", ans: "Cs loses 1e⁻; O gains 2e⁻; 2:1 ratio; Ions Cs⁺ and O²⁻ form.", exp: "Group 1 atoms always lose 1 electron to be stable.", mis: "Incorrect ratios (e.g. CsO)." },
+        { id: "8", topic: "Simple Molecular", max: 3, q: "Why ammonia has a low boiling point.", ans: "Small molecules; Weak intermolecular forces; Little energy to separate.", exp: "Boiling involves molecules separating, not bonds breaking.", mis: "Saying covalent bonds are weak." },
+        { id: "9", topic: "Giant Covalent", max: 3, q: "Why graphite conducts electricity.", ans: "3 bonds per C; 1 delocalised electron; Move through structure.", exp: "The free electron carries electrical charge.", mis: "Comparing it to a metal lattice." },
+        { id: "10", topic: "State Symbols", max: 2, q: "Complete the equation: ZnO + 2HCl...", ans: "ZnO(s), HCl(aq), ZnCl₂(aq), H₂O(l)", exp: "Metal oxides are solids; water is liquid.", mis: "Incorrectly labeling water as (aq)." },
+        { id: "11", topic: "Solutions & Precipitates", max: 2, q: "Explain why solution becomes cloudy.", ans: "Sulfur formed; It is an insoluble precipitate.", exp: "Solids scatter light in a solution.", mis: "Saying a gas is produced." },
+        { id: "12", topic: "Ionic Properties", max: 3, q: "Conditions for NaCl to conduct electricity.", ans: "Molten or dissolved; Ions free to move; Carry charge.", exp: "Ions are locked in solid state but mobile in liquid/solution.", mis: "Saying solid NaCl conducts." },
+        { id: "13", topic: "Structure Comparison", max: 6, q: "Compare NaCl and HCl.", ans: "Bonding (Ionic vs Covalent); Structure (Giant vs Simple); Particles (Ions vs Molecules).", exp: "Contrasting types of forces is essential here.", mis: "Confusing intermolecular forces with covalent bonds." }
     ];
 
     const followUpData = {
-        "1": { 
-            q: "<strong>Diamond and graphite are both made of carbon:</strong><br>a) Why is diamond very hard but graphite is soft?<br>b) Link your answer explicitly to bonding and structure.<br><br><strong>A student says:</strong> 'Diamond is hard because the carbon atoms are heavy.'<br>Explain why this statement is incorrect and give the correct explanation.", 
-            a: "a) Diamond atoms are locked in a rigid 3D lattice where each carbon forms 4 bonds. Graphite has layers with weak forces between them, allowing them to slide.<br>b) Correct explanation: Hardness comes from the <strong>giant covalent structure</strong> and the energy required to break 4 strong covalent bonds per atom, not atomic mass." 
-        },
-        "2": { 
-            q: "<strong>Task 1:</strong> Explain the difference between the state symbols (aq) and (l) using an example of an acid.<br><br><strong>Task 2: Zinc chloride is described as a solution:</strong><br>a) What does this tell you about its state symbol?<br>b) Why would (s) be incorrect?", 
-            a: "Task 1: (l) means a pure liquid (e.g., H₂O), while (aq) means dissolved in water (e.g., HCl in water).<br>Task 2: a) (aq). b) (s) means solid; a solution is by definition a mixture where the substance is dissolved." 
-        },
-        "3": { 
-            q: "<strong>Task 1:</strong> A ball-and-stick model shows the bonds in a molecule clearly. Give two things it does not show accurately about a real molecule.<br><br><strong>Task 2:</strong> Why is it important that chemists understand the limitations of models rather than thinking they are perfect representations?", 
-            a: "Task 1: 1. Relative sizes of atoms (scale). 2. Forces/Electrons between atoms.<br>Task 2: To avoid incorrect predictions about reactivity or physical properties based on a simplified visual aid." 
-        },
-        "4": { 
-            q: "<strong>Task 1:</strong> Describe the formation of an ionic bond between magnesium and oxygen. (Mention electrons and charges).<br><br><strong>Task 2: A student writes:</strong> 'Sodium and chlorine share electrons to bond.'<br>a) Identify the type of bonding they have described.<br>b) Correct the statement using the correct bonding type.", 
-            a: "Task 1: Mg loses 2 electrons to form Mg²⁺. O gains 2 electrons to form O²⁻. The oppositely charged ions attract.<br>Task 2: a) Covalent. b) Sodium <strong>transfers</strong> an electron to chlorine to form an <strong>ionic</strong> bond." 
-        },
-        "5": { 
-            q: "<strong>Task 1:</strong> Carbon dioxide has a low melting point but silicon dioxide has a very high melting point. Explain this difference using structure and bonding only.<br><br><strong>Task 2:</strong> Complete the table for CO₂, MgO, SiO₂ (Bonding & Structure Size). Then write one comparative sentence.", 
-            a: "Task 1: CO₂ is simple molecular (weak intermolecular forces); SiO₂ is giant covalent (must break strong covalent bonds).<br>Task 2: CO₂ (Covalent/Simple), MgO (Ionic/Giant), SiO₂ (Covalent/Giant). Sentence: MgO and SiO₂ both have giant structures, but MgO is ionic while SiO₂ is covalent." 
-        },
-        "6": { 
-            q: "<strong>Task 1:</strong> The particle model shows gas particles far apart. What two important features of a real gas are missing from this model?<br><br><strong>Task 2:</strong> Explain why particle models are still useful, even though they are not fully accurate.", 
-            a: "Task 1: Particle movement/speed and the forces of attraction between particles.<br>Task 2: They provide a simple way to visualize and predict changes in state, volume, and pressure." 
-        },
-        "7": { 
-            q: "<strong>Task 1: Potassium reacts with oxygen:</strong><br>a) How many potassium atoms react with one oxygen atom?<br>b) Explain your answer using electrons.<br><br><strong>Task 2:</strong> Why do metals in Group 1 always form +1 ions?", 
-            a: "Task 1: a) Two. b) Each K loses 1e⁻ (2 total) to satisfy O which needs 2e⁻.<br>Task 2: They have one electron in their outer shell; losing it results in a stable full outer shell and a +1 charge." 
-        },
-        "8": { 
-            q: "<strong>Task 1:</strong> Explain why breaking intermolecular forces requires less energy than breaking covalent bonds.<br><br><strong>Task 2:</strong> Compare ammonia (NH₃) with sodium chloride in terms of Structure, Forces, and Boiling point.", 
-            a: "Task 1: Intermolecular forces are weak attractions between molecules; covalent bonds are strong electrostatic attractions between nuclei and shared electrons.<br>Task 2: NH₃ is simple molecular/weak forces/low BP. NaCl is giant ionic/strong forces/high BP." 
-        },
-        "9": { 
-            q: "<strong>Task 1:</strong> Explain why diamond does not conduct electricity but graphite does, even though both are made of carbon.<br><br><strong>Task 2:</strong> What is meant by a delocalised electron, and why is it essential for electrical conductivity?", 
-            a: "Task 1: Diamond uses all 4 outer electrons in bonds. Graphite only uses 3, leaving 1 delocalised electron per atom.<br>Task 2: An electron not attached to a specific atom. Essential because charge must be able to flow through the structure." 
-        },
-        "10": { 
-            q: "<strong>Task 1:</strong> Calcium oxide reacts with nitric acid to form calcium nitrate and water. Write the full equation with state symbols.<br><br><strong>Task 2:</strong> Why are most metal oxides written as (s) in reactions with acids?", 
-            a: "Task 1: CaO(s) + 2HNO₃(aq) → Ca(NO₃)₂(aq) + H₂O(l).<br>Task 2: They are typically insoluble solids in their pure form before the reaction begins." 
-        },
-        "11": { 
-            q: "<strong>Task 1:</strong> Define the term precipitate and explain how you can recognise one in a reaction.<br><br><strong>Task 2:</strong> Why does forming a solid in a solution make it appear cloudy instead of clear?", 
-            a: "Task 1: An insoluble solid formed from two solutions. Recognised by the solution turning cloudy or a solid settling at the bottom.<br>Task 2: The solid particles are suspended and scatter light passing through the liquid." 
-        },
-        "12": { 
-            q: "<strong>Task 1:</strong> Explain why solid sodium chloride does not conduct electricity.<br><br><strong>Task 2:</strong> Explain why molten sodium chloride does conduct electricity but solid sodium chloride does not.", 
-            a: "Task 1: The ions are fixed in a rigid giant lattice and cannot move.<br>Task 2: When molten, the lattice breaks and ions are free to move and carry charge. In a solid, they are immobile." 
-        },
-        "13": { 
-            q: "<strong>Task 1:</strong> Compare sodium chloride and hydrogen chloride using two differences in bonding and two differences in structure.<br><br><strong>Task 2: A student writes:</strong> 'Both sodium chloride and hydrogen chloride have strong bonds.' Explain why this statement is only partly correct.", 
-            a: "Task 1: Bonding: NaCl is ionic, HCl is covalent. Structure: NaCl is a giant lattice, HCl is simple molecular.<br>Task 2: Both have strong primary bonds (ionic/covalent), but HCl also has <strong>weak intermolecular forces</strong> which determine its physical properties, unlike NaCl." 
-        }
+        "1": { q: "<strong>Diamond & Graphite:</strong> Explain why diamond is very hard but graphite is soft, linking to bonding.", a: "Diamond has a rigid 3D lattice with 4 bonds per atom. Graphite has layers with weak forces between them." },
+        "2": { q: "<strong>State Symbols:</strong> What is the difference between (aq) and (l) using an example of an acid?", a: "(l) is pure liquid; (aq) is dissolved in water." },
+        "3": { q: "<strong>Models:</strong> Why is it vital to know model limitations?", a: "To avoid false assumptions about particle behavior or scale." },
+        "4": { q: "<strong>Ionic:</strong> Describe magnesium reacting with oxygen. (Charges & Electrons).", a: "Mg loses 2e⁻ to form Mg²⁺. O gains 2e⁻ to form O²⁻." },
+        "5": { q: "<strong>Structure & Bonding:</strong> State the type of bonding and structure for Carbon Dioxide (CO₂), Magnesium Oxide (MgO), and Silicon Dioxide (SiO₂).", a: "• <strong>CO₂:</strong> Covalent bonding, Simple molecular structure.<br>• <strong>MgO:</strong> Ionic bonding, Giant ionic lattice.<br>• <strong>SiO₂:</strong> Covalent bonding, Giant covalent structure." },
+        "6": { q: "<strong>Gas Models:</strong> What 2 features of real gases are missing from particle models?", a: "Intermolecular forces and actual particle shape/size." },
+        "7": { q: "<strong>Group 1:</strong> Why do Group 1 metals always form +1 ions?", a: "They have 1 outer electron; losing it results in a stable full shell." },
+        "8": { q: "<strong>Ammonia:</strong> Why is breaking intermolecular forces easier than breaking bonds?", a: "Intermolecular forces are weak attractions; bonds are strong electrostatic forces." },
+        "9": { q: "<strong>Graphite:</strong> What is a delocalised electron and why is it essential?", a: "An electron free to move through the structure to carry charge." },
+        "10": { q: "<strong>Equations:</strong> Why are metal oxides usually written as (s) in acid reactions?", a: "They are insoluble bases in solid form." },
+        "11": { q: "<strong>Precipitates:</strong> Define precipitate and how you recognise one.", a: "A solid formed from solutions; recognised by cloudiness." },
+        "12": { q: "<strong>NaCl Conductivity:</strong> Why does molten NaCl conduct but solid doesn't?", a: "Ions are mobile in molten state but fixed in a lattice in solid state." },
+        "13": { q: "<strong>NaCl vs HCl:</strong> Explain why 'Both have strong bonds' is only partly correct.", a: "Both have strong primary bonds, but HCl has weak intermolecular forces." }
     };
 
     function renderQuestions() {
         const container = document.getElementById('quiz-container');
+        const savedData = getSavedData();
+        
         questionData.forEach(q => {
             const card = document.createElement('div');
             card.className = 'question-card';
             card.id = `card-${q.id}`;
+            
+            let scoreOptions = '';
+            for(let i=0; i <= q.max; i++) {
+                const isChecked = savedData[q.id] == i ? 'checked' : '';
+                scoreOptions += `
+                    <label>
+                        <input type="radio" name="score-${q.id}" value="${i}" ${isChecked} onchange="saveMark('${q.id}', ${i}, ${q.max})">
+                        <span class="score-btn">${i} / ${q.max}</span>
+                    </label>
+                `;
+            }
+
             card.innerHTML = `
                 <div class="q-header">
                     <div style="flex-grow:1">
                         <span class="q-topic">${q.topic}</span>
                         <div class="q-title">Q${q.id}: ${q.q}</div>
-                    </div>
-                    <div class="status-toggle">
-                        <label><input type="radio" name="s-${q.id}" value="correct" onchange="updateStyle('${q.id}', 'correct')"><span class="status-btn">✅ Correct</span></label>
-                        <label><input type="radio" name="s-${q.id}" value="incorrect" onchange="updateStyle('${q.id}', 'incorrect')"><span class="status-btn">❌ Correction Required</span></label>
+                        <div class="score-selector">${scoreOptions}</div>
                     </div>
                 </div>
                 <div class="box model-ans"><span class="label">✅ Model Answer</span>${q.ans}</div>
@@ -343,12 +246,40 @@
                 <div class="box misconception"><span class="label">⚠️ Common Misconceptions</span>${q.mis}</div>
             `;
             container.appendChild(card);
+            
+            // Restore visual state if previously saved
+            if (savedData[q.id] !== undefined) {
+                updateStyle(q.id, parseInt(savedData[q.id]), q.max);
+            }
         });
     }
 
-    function updateStyle(id, s) {
+    function saveMark(id, score, max) {
+        const data = getSavedData();
+        data[id] = score;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        updateStyle(id, score, max);
+    }
+
+    function getSavedData() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+    }
+
+    function clearProgress() {
+        if(confirm("Are you sure you want to clear all your marks and reset the form?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+
+    function updateStyle(id, score, max) {
         const el = document.getElementById(`card-${id}`);
-        el.className = 'question-card ' + (s === 'correct' ? 'answered-right' : 'answered-wrong');
+        if (!el) return;
+        el.classList.remove('full-marks', 'partial-marks', 'zero-marks');
+        if (score === max) el.classList.add('full-marks');
+        else if (score === 0) el.classList.add('zero-marks');
+        else el.classList.add('partial-marks');
     }
 
     function toggle(id) {
@@ -360,49 +291,56 @@
         const list = document.getElementById('follow-up-list');
         const summaryCont = document.getElementById('summary-container');
         list.innerHTML = '';
-        summaryCont.innerHTML = '<h3>Performance by Sub-Topic:</h3>';
+        summaryCont.innerHTML = `
+            <div class="summary-item" style="font-weight:bold; border-bottom: 2px solid rgba(255,255,255,0.2)">
+                <span>Sub-Topic</span><span>Marks</span><span>Success %</span>
+            </div>
+        `;
 
-        const wrongs = Array.from(document.querySelectorAll('input[value="incorrect"]:checked')).map(i => i.name.split('-')[1]);
         const topics = {};
+        const followUps = [];
 
         questionData.forEach(q => {
-            if (!topics[q.topic]) topics[q.topic] = { total: 0, wrong: 0 };
-            topics[q.topic].total++;
-        });
+            if (!topics[q.topic]) topics[q.topic] = { totalPossible: 0, achieved: 0 };
+            
+            const selected = document.querySelector(`input[name="score-${q.id}"]:checked`);
+            const scoreAchieved = selected ? parseInt(selected.value) : 0;
+            
+            topics[q.topic].totalPossible += q.max;
+            topics[q.topic].achieved += scoreAchieved;
 
-        wrongs.forEach(id => {
-            const q = questionData.find(item => item.id === id);
-            if (q) topics[q.topic].wrong++;
+            if (scoreAchieved < q.max) {
+                followUps.push({ id: q.id, lost: q.max - scoreAchieved });
+            }
         });
 
         Object.keys(topics).forEach(t => {
             const stat = topics[t];
+            const perc = Math.round((stat.achieved / stat.totalPossible) * 100);
             const div = document.createElement('div');
             div.className = 'summary-item';
-            const color = stat.wrong === 0 ? '#4ade80' : (stat.wrong === stat.total ? '#f87171' : '#fbbf24');
-            div.innerHTML = `<span>${t}</span><span style="color:${color}; font-weight:bold">${stat.total - stat.wrong}/${stat.total} Correct</span>`;
+            const color = perc === 100 ? '#4ade80' : (perc < 50 ? '#f87171' : '#fbbf24');
+            div.innerHTML = `<span>${t}</span><span>${stat.achieved}/${stat.totalPossible}</span><span style="color:${color}; font-weight:bold">${perc}%</span>`;
             summaryCont.appendChild(div);
         });
         
-        if (wrongs.length === 0) {
-            list.innerHTML = '<p>Excellent work. You have mastered these Higher Tier concepts. No further tasks required.</p>';
+        if (followUps.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding:20px;">🎉 <strong>Excellent Score!</strong> You scored 100% in all categories.</div>';
         } else {
-            wrongs.forEach(id => {
-                const f = followUpData[id];
-                if (f) {
-                    const div = document.createElement('div');
-                    div.className = 'follow-up-task';
-                    div.innerHTML = `
-                        <span style="font-weight:bold; color:var(--danger)">TARGETED FOLLOW-UP FOR Q${id}:</span>
-                        <div style="margin-top:10px; border-top:1px solid #e2e8f0; padding-top:10px;">${f.q}</div>
-                        <button class="reveal-btn" onclick="toggle('${id}')">👁️ Reveal Follow-up Answers</button>
-                        <div class="follow-up-ans" id="ans-${id}">
-                            <span class="label">Expert Check</span>
-                            ${f.a}
-                        </div>
-                    `;
-                    list.appendChild(div);
-                }
+            followUps.forEach(item => {
+                const f = followUpData[item.id];
+                const div = document.createElement('div');
+                div.className = 'follow-up-task';
+                div.innerHTML = `
+                    <span style="font-weight:bold; color:var(--danger)">REVISION TASK FOR Q${item.id} <span class="score-badge">Lost ${item.lost} mark(s)</span></span>
+                    <div style="margin-top:10px; border-top:1px solid #e2e8f0; padding-top:10px;">${f.q}</div>
+                    <button class="reveal-btn" onclick="toggle('${item.id}')">👁️ Reveal Model Answer</button>
+                    <div class="follow-up-ans" id="ans-${item.id}">
+                        <span class="label">Expert Check</span>
+                        ${f.a}
+                    </div>
+                `;
+                list.appendChild(div);
             });
         }
         document.getElementById('results-section').style.display = 'block';
