@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Year 12 Chemistry Mid-Year Assessment – QLA</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --soft:#f1f5f9;
+      --accent:#2563eb;
+      --accent2:#0ea5e9;
+      --good:#16a34a;
+      --mid:#f59e0b;
+      --poor:#ef4444;
+      --shadow: 0 10px 25px rgba(15,23,42,.08);
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--ink);
+      background:linear-gradient(180deg,#f8fafc, #f1f5f9 50%, #eef2ff);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:24px auto 64px;
+      padding:0 16px;
+    }
+    header{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 18px 14px;
+    }
+    .titleRow{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:-0.2px;
+    }
+    .sub{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:var(--card);
+      color:var(--ink);
+      padding:9px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition:transform .05s ease, box-shadow .15s ease, border-color .15s ease;
+      box-shadow: 0 2px 0 rgba(15,23,42,.03);
+    }
+    .btn:hover{border-color:#cbd5e1; box-shadow: 0 8px 18px rgba(15,23,42,.08);}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border-color:transparent;
+      color:white;
+    }
+    .btn.secondary{ background:var(--soft); }
+
+    .gridTop{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap:12px;
+      align-items:stretch;
+    }
+    @media (max-width:900px){
+      .gridTop{grid-template-columns:1fr}
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .panel h2{
+      margin:0 0 10px;
+      font-size:14px;
+      letter-spacing:-0.1px;
+    }
+    .formRow{
+      display:grid;
+      grid-template-columns: 160px 1fr;
+      gap:10px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    @media (max-width:540px){
+      .formRow{grid-template-columns:1fr}
+    }
+    label{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    input[type="text"], input[type="number"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:14px;
+      outline:none;
+    }
+    input[readonly]{
+      background:var(--soft);
+      color:var(--ink);
+    }
+
+    /* QLA input table */
+    .tableWrap{
+      margin-top:14px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .tableHeader{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .hint{
+      color:var(--muted);
+      font-size:13px;
+      margin:0;
+      line-height:1.35;
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      font-size:13px;
+    }
+    thead th{
+      text-align:left;
+      padding:10px 12px;
+      background: #f8fafc;
+      color:#334155;
+      border-bottom:1px solid var(--line);
+      position:sticky;
+      top:0;
+      z-index:1;
+    }
+    tbody td{
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+    tbody tr:hover td{background:#fafcff}
+    .qid{
+      font-family:var(--mono);
+      font-weight:700;
+      color:#1f2937;
+      white-space:nowrap;
+    }
+    .max{
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .topicTag{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      color:#334155;
+      font-weight:650;
+      font-size:12px;
+    }
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .markInput{
+      width:90px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      font-size:14px;
+      outline:none;
+      text-align:center;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      border:1px solid var(--line);
+      background:#fff;
+      margin-right:6px;
+    }
+    .pill.ms{background:#ecfeff;border-color:#cffafe;color:#155e75}
+    .pill.ws{background:#eff6ff;border-color:#dbeafe;color:#1e40af}
+    .pill.ao1{background:#f8fafc}
+    .pill.ao2{background:#f1f5f9}
+    .pill.ao3{background:#fff7ed;border-color:#ffedd5;color:#9a3412}
+
+    /* Report */
+    .reportWrap{
+      display:none;
+      margin-top:14px;
+    }
+
+    /* Prominent print header (also visible on screen) */
+    .reportHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow:var(--shadow);
+      margin-top:12px;
+    }
+    .reportHeader .left h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:-0.2px;
+    }
+    .reportHeader .left .meta{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:650;
+      line-height:1.35;
+    }
+    .reportHeader .right{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .badgeBig{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      min-width:140px;
+      background:#f8fafc;
+    }
+    .badgeBig .k{font-size:12px;color:var(--muted);font-weight:800}
+    .badgeBig .v{font-size:20px;font-weight:950;margin-top:4px;letter-spacing:-0.3px}
+
+    .reportGrid{
+      display:grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap:12px;
+      align-items:start;
+      margin-top:12px;
+    }
+    @media (max-width:900px){
+      .reportGrid{grid-template-columns:1fr}
+    }
+    .metricRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .metric{
+      flex:1 1 160px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .metric .k{font-size:12px;color:var(--muted);font-weight:700}
+    .metric .v{font-size:18px;font-weight:900;margin-top:4px;letter-spacing:-0.2px}
+    .barList{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:10px;
+    }
+    .barItem{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:10px 12px;
+    }
+    .barTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .barName{
+      font-weight:800;
+      font-size:13px;
+    }
+    .barPct{
+      font-family:var(--mono);
+      font-weight:900;
+      color:#0f172a;
+    }
+    .barTrack{
+      height:10px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:8px;
+    }
+    .barFill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+    }
+    .traffic{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:800;
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .dot{ width:10px;height:10px;border-radius:50%; }
+    .t-good .dot{background:var(--good)}
+    .t-mid .dot{background:var(--mid)}
+    .t-poor .dot{background:var(--poor)}
+
+    /* Follow-up questions */
+    .followups{ margin-top:12px; }
+    .fqCard{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .fqHead{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .fqBucket{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:5px 10px;
+      border-radius:999px;
+      background:var(--soft);
+      border:1px solid var(--line);
+      font-weight:900;
+      font-size:12px;
+      color:#334155;
+    }
+    .qList{
+      margin:10px 0 0;
+      padding-left:18px;
+      color:#111827;
+    }
+    .qList li{
+      margin:10px 0;
+      line-height:1.35;
+    }
+    .markBadge{
+      font-family:var(--mono);
+      font-weight:900;
+      font-size:12px;
+      color:#0f172a;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      padding:2px 8px;
+      border-radius:999px;
+      margin-left:8px;
+      white-space:nowrap;
+    }
+    details{
+      margin-top:6px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+      border-radius:12px;
+      padding:8px 10px;
+    }
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      color:#334155;
+    }
+    .ans{ margin-top:8px; color:#0f172a; }
+    .ans ul{ margin:8px 0 0; padding-left:18px; }
+    .ans li{ margin:6px 0; }
+
+    .smallNote{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.35;
+    }
+
+    /* Print */
+    @page { size: A4; margin: 5mm; }
+    @media print{
+      body{background:#fff}
+      .noPrint{display:none !important;}
+      header, .tableWrap{display:none !important;} /* Input UI hidden */
+      .wrap{max-width:none; margin:0; padding:0}
+      .reportWrap{display:block !important; margin:0}
+
+      /* Force two columns on A4 */
+      .reportGrid{
+        grid-template-columns: 1.35fr 1fr !important;
+        gap:10px !important;
+        margin-top:10px !important;
+      }
+
+      /* Make everything more compact so both panels fit on one page */
+      .panel{padding:10px !important; box-shadow:none !important;}
+      .reportHeader{box-shadow:none !important; padding:12px !important;}
+      .barItem{padding:8px 10px !important;}
+      .barTrack{height:9px !important;}
+      .barName{font-size:12px !important;}
+      .barPct{font-size:12px !important;}
+      .traffic{font-size:11px !important; padding:3px 8px !important;}
+      .badgeBig{padding:8px 10px !important; min-width:120px !important;}
+      .badgeBig .v{font-size:18px !important;}
+
+      /* Keep the first page for header + two columns; start follow-ups on next page */
+      .followups{break-before:page;}
+      .barFill{print-color-adjust:exact; -webkit-print-color-adjust:exact;}
+      .dot{print-color-adjust:exact; -webkit-print-color-adjust:exact;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="noPrint">
+      <div class="titleRow">
+        <div>
+          <h1 id="testName">Year 12 Chemistry Mid-Year Assessment – QLA</h1>
+          <p class="sub">
+            Enter your marks for each sub-question, then generate a report to see strengths/weaknesses by topic bucket and skill (AO / MS / WS).
+            Your inputs are saved automatically on this device.
+          </p>
+        </div>
+        <div class="controls">
+          <button class="btn secondary" id="btnReset" title="Clears your saved inputs on this device">Reset</button>
+          <button class="btn primary" id="btnGenerate">Generate report</button>
+        </div>
+      </div>
+
+      <div class="gridTop">
+        <div class="panel">
+          <h2>Student details</h2>
+          <div class="formRow">
+            <label for="studentName">Student name</label>
+            <input id="studentName" type="text" placeholder="e.g., Alex Turner" />
+          </div>
+          <div class="smallNote">
+            Your name will appear prominently on the printed evidence sheet.
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Overall result (auto-calculated)</h2>
+          <div class="formRow">
+            <label for="overallPct">Percentage</label>
+            <input id="overallPct" type="text" readonly value="—" />
+          </div>
+          <div class="formRow">
+            <label for="overallGrade">Grade</label>
+            <input id="overallGrade" type="text" readonly value="—" />
+          </div>
+          <div class="smallNote">
+            Grade boundaries (percent): A* 81, A 71, B 61, C 51, D 42, E 32.
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- INPUT GRID -->
+    <section class="tableWrap noPrint" id="inputSection">
+      <div class="tableHeader">
+        <div>
+          <strong>QLA input grid</strong>
+          <p class="hint">Enter the marks you achieved for each sub-question (0 to max). Leave blank if not sure yet (it will count as 0 until you fill it in).</p>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btnSaveNow" title="Forces a save (it also saves automatically)">Save</button>
+        </div>
+      </div>
+
+      <div style="overflow:auto; max-height: 70vh;">
+        <table aria-label="QLA input table">
+          <thead>
+            <tr>
+              <th style="width:120px;">Sub-Q</th>
+              <th style="width:90px;">Max</th>
+              <th>Focus</th>
+              <th style="width:220px;">Bucket</th>
+              <th style="width:160px;">Tags</th>
+              <th style="width:130px;">Your marks</th>
+            </tr>
+          </thead>
+          <tbody id="qTableBody"></tbody>
+        </table>
+      </div>
+
+      <div style="padding:12px 14px;">
+        <p class="hint" style="margin:0;">
+          When ready, click <strong>Generate report</strong>. You can always come back and edit your marks.
+        </p>
+      </div>
+    </section>
+
+    <!-- REPORT -->
+    <section class="reportWrap" id="reportSection">
+
+      <!-- Prominent header that WILL PRINT -->
+      <div class="reportHeader" id="reportHeader">
+        <div class="left">
+          <h2 id="printTitle">Year 12 Chemistry Mid-Year Assessment – QLA Report</h2>
+          <div class="meta" id="printMeta">Student: —</div>
+        </div>
+        <div class="right">
+          <div class="badgeBig">
+            <div class="k">Percentage</div>
+            <div class="v" id="printPct">—</div>
+          </div>
+          <div class="badgeBig">
+            <div class="k">Grade</div>
+            <div class="v" id="printGrade">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls noPrint" style="justify-content:flex-end; margin-top:12px;">
+        <button class="btn" id="btnBack">Back to edit marks</button>
+        <button class="btn primary" id="btnPrint">Print / Save to PDF</button>
+      </div>
+
+      <div class="reportGrid">
+        <!-- Left: buckets -->
+        <div class="panel" id="bucketPanel">
+          <h2>Topic bucket breakdown (highest → lowest)</h2>
+          <div class="smallNote" style="margin-top:-2px;">
+            Focus your revision on any <strong>red</strong> buckets first, then <strong>amber</strong>.
+          </div>
+          <div class="barList" id="bucketBars"></div>
+          <div class="smallNote">
+            Traffic lights: <strong>Green</strong> ≥70%, <strong>Amber</strong> 50–69%, <strong>Red</strong> &lt;50%.
+          </div>
+        </div>
+
+        <!-- Right: AO/MS/WS -->
+        <div class="panel" id="skillsPanel">
+          <h2>Skills breakdown (AO / MS / WS)</h2>
+          <div class="smallNote" style="margin-top:-2px;">
+            If AO2 is low, practise explaining and applying ideas, not just recalling facts.
+          </div>
+          <div class="barList" id="skillBars"></div>
+          <div class="smallNote">
+            AO1 = recall, AO2 = apply, AO3 = practical/evaluation. MS = maths skills, WS = working scientifically.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel followups" id="followupPanel" style="margin-top:12px;">
+        <h2>Follow-up questions (your 3 weakest topic buckets)</h2>
+        <p class="hint" style="margin:0;">
+          These are short (1–3 marks). Attempt without notes first, then open the model answers for a mark-scheme style check + “how to get the marks”.
+        </p>
+        <div id="followupCards"></div>
+      </div>
+    </section>
+  </div>
+
+<script>
+/* =========================
+   CONFIG: Test + Mapping
+   ========================= */
+
+const STORAGE_KEY = "y12chem_midyear_qla_v2";
+
+/**
+ * Topic buckets
+ */
+const BUCKETS = [
+  { id:"TB1", name:"Formulae, ions & equations" },
+  { id:"TB2", name:"Atomic structure & electron configuration" },
+  { id:"TB3", name:"Isotopes & mass spectrometry (quantitative)" },
+  { id:"TB4", name:"Bonding & structure (ionic/covalent/metallic)" },
+  { id:"TB5", name:"Shape, polarity & intermolecular forces" },
+  { id:"TB6", name:"Redox & oxidation states" },
+  { id:"TB7", name:"Amount of substance (core calculations)" },
+  { id:"TB8", name:"Acids, bases & salts" },
+  { id:"TB9", name:"Practical skills & evaluation (WS)" },
+];
+
+/**
+ * Questions map (sub-question granularity)
+ */
+const QUESTIONS = [
+  { id:"Q1",  label:"Q1",  max:1, focus:"Write correct ionic formula from ions/charges", bucket:"TB1", ao:"AO1", ms:false, ws:false },
+  { id:"Q2",  label:"Q2",  max:1, focus:"Identify non-polar molecule from shape/symmetry", bucket:"TB5", ao:"AO2", ms:false, ws:false },
+  { id:"Q3",  label:"Q3",  max:1, focus:"Identify a redox equation", bucket:"TB6", ao:"AO2", ms:false, ws:false },
+  { id:"Q4",  label:"Q4",  max:1, focus:"Empirical formula from masses", bucket:"TB7", ao:"AO2", ms:true,  ws:false },
+  { id:"Q5",  label:"Q5",  max:1, focus:"Ion concentration after mixing solutions", bucket:"TB7", ao:"AO2", ms:true,  ws:false },
+  { id:"Q6",  label:"Q6",  max:1, focus:"Neutralisation stoichiometry", bucket:"TB8", ao:"AO2", ms:true,  ws:false },
+  { id:"Q7",  label:"Q7",  max:1, focus:"Titration technique errors affecting titre", bucket:"TB9", ao:"AO3", ms:false, ws:true  },
+
+  { id:"Q8a", label:"Q8a", max:1, focus:"Full electron configuration", bucket:"TB2", ao:"AO1", ms:false, ws:false },
+  { id:"Q8b", label:"Q8b", max:1, focus:"Predict ionic formula from charges", bucket:"TB1", ao:"AO2", ms:false, ws:false },
+  { id:"Q8c", label:"Q8c", max:3, focus:"Explain melting point using IMFs", bucket:"TB5", ao:"AO2", ms:false, ws:false },
+  { id:"Q8d", label:"Q8d", max:5, focus:"Conductivity across substances/states", bucket:"TB4", ao:"AO2", ms:false, ws:false },
+  { id:"Q8e1",label:"Q8e(i)",max:2, focus:"Calculate Ar from mass spectrum", bucket:"TB3", ao:"AO2", ms:true,  ws:false },
+  { id:"Q8e2",label:"Q8e(ii)",max:1, focus:"Identify element from Ar / mp clue", bucket:"TB3", ao:"AO2", ms:false, ws:false },
+
+  { id:"Q9a", label:"Q9a", max:2, focus:"Oxidised/reduced using oxidation numbers", bucket:"TB6", ao:"AO2", ms:false, ws:false },
+  { id:"Q9b", label:"Q9b", max:2, focus:"Dot-and-cross incl. dative bond", bucket:"TB4", ao:"AO2", ms:false, ws:false },
+  { id:"Q9c1",label:"Q9c(i)",max:2, focus:"Limiting reagent + gas volume at RTP", bucket:"TB7", ao:"AO2", ms:true,  ws:false },
+  { id:"Q9c2",label:"Q9c(ii)",max:2, focus:"Suggest improvements for better accuracy", bucket:"TB9", ao:"AO3", ms:false, ws:true  },
+
+  { id:"Q10a",label:"Q10a",max:1, focus:"Write a balanced equation", bucket:"TB1", ao:"AO2", ms:false, ws:false },
+  { id:"Q10b",label:"Q10b",max:3, focus:"Mass → moles → number of molecules", bucket:"TB7", ao:"AO2", ms:true,  ws:false },
+  { id:"Q10c",label:"Q10c",max:3, focus:"Name shape + explain via electron pairs", bucket:"TB5", ao:"AO2", ms:false, ws:false },
+
+  { id:"Q11", label:"Q11", max:3, focus:"Percentage yield using stoichiometry", bucket:"TB7", ao:"AO2", ms:true,  ws:false },
+
+  { id:"Q12a",label:"Q12a",max:2, focus:"Ionic dot-and-cross diagram", bucket:"TB4", ao:"AO2", ms:false, ws:false },
+  { id:"Q12b",label:"Q12b",max:1, focus:"Reagent choice to make salt with HCl", bucket:"TB8", ao:"AO2", ms:false, ws:false },
+
+  { id:"Q13a",label:"Q13a",max:2, focus:"Evaluate errors + improve method", bucket:"TB9", ao:"AO3", ms:false, ws:true },
+  { id:"Q13b",label:"Q13b",max:1, focus:"Read burette diagrams; calculate titre", bucket:"TB9", ao:"AO3", ms:false, ws:true },
+  { id:"Q13c1",label:"Q13c(i)",max:2, focus:"Use titre to calculate moles", bucket:"TB8", ao:"AO2", ms:true,  ws:false },
+  { id:"Q13c2",label:"Q13c(ii)",max:4, focus:"Identify carbonate from mass + moles", bucket:"TB8", ao:"AO2", ms:true,  ws:false },
+
+  { id:"Q14", label:"Q14", max:4, focus:"Explain anomalous properties of ice (H-bonding)", bucket:"TB5", ao:"AO2", ms:false, ws:false },
+];
+
+/**
+ * Follow-up bank with more guidance:
+ * Each answer supports: (i) final answer, (ii) how to earn marks, (iii) common pitfall
+ */
+const FOLLOWUPS = [
+  // TB1
+  { bucket:"TB1", marks:1, q:"Write the formula of aluminium nitrate.",
+    aHtml:`<strong>Final answer:</strong> Al(NO₃)₃
+      <ul>
+        <li><strong>How to get the mark:</strong> Al is 3+, nitrate is NO₃⁻ so you need 3 nitrates.</li>
+        <li><strong>Common pitfall:</strong> writing AlNO₃ (missing brackets and/or incorrect charge balance).</li>
+      </ul>`
+  },
+  { bucket:"TB1", marks:2, q:"Balance: ___ Fe + ___ H₂SO₄ → ___ FeSO₄ + ___ H₂",
+    aHtml:`<strong>Final answer:</strong> Fe + H₂SO₄ → FeSO₄ + H₂ (1:1:1:1)
+      <ul>
+        <li><strong>How to get the marks:</strong> check Fe, S, O already match as FeSO₄; the 2 H in acid become H₂ gas.</li>
+        <li><strong>Common pitfall:</strong> changing the sulfate group incorrectly (treat SO₄ as a unit here).</li>
+      </ul>`
+  },
+  { bucket:"TB1", marks:2, q:"Explain why brackets are needed in Mg(OH)₂.",
+    aHtml:`<strong>Final answer:</strong> Brackets show the whole OH group is doubled.
+      <ul>
+        <li><strong>Mark points:</strong> (1) OH⁻ is a polyatomic ion; (2) two OH⁻ are needed to balance Mg²⁺.</li>
+        <li><strong>Common pitfall:</strong> writing MgO₂H₂ (unclear and not standard formula writing).</li>
+      </ul>`
+  },
+
+  // TB2
+  { bucket:"TB2", marks:1, q:"Write the full electron configuration of sodium.",
+    aHtml:`<strong>Final answer:</strong> 1s² 2s² 2p⁶ 3s¹
+      <ul>
+        <li><strong>How to get the mark:</strong> sodium has 11 electrons; fill orbitals in order.</li>
+        <li><strong>Common pitfall:</strong> skipping 2p (e.g. 1s² 2s² 3s⁷) – not allowed.</li>
+      </ul>`
+  },
+  { bucket:"TB2", marks:2, q:"Explain why bromine forms a Br⁻ ion.",
+    aHtml:`<strong>Final answer:</strong> It gains one electron to get a full outer shell.
+      <ul>
+        <li><strong>Mark points:</strong> (1) gains 1 electron; (2) achieves a noble-gas (full) outer shell and becomes 1−.</li>
+        <li><strong>Common pitfall:</strong> saying it “loses an electron” (that would make Br⁺).</li>
+      </ul>`
+  },
+
+  // TB3
+  { bucket:"TB3", marks:2, q:"Chlorine has isotopes Cl-35 (75%) and Cl-37 (25%). Calculate Ar.",
+    aHtml:`<strong>Final answer:</strong> (35 × 0.75) + (37 × 0.25) = 35.5
+      <ul>
+        <li><strong>How to get the marks:</strong> use a weighted mean (mass × fractional abundance), then add.</li>
+        <li><strong>Common pitfall:</strong> using percentages without converting (75 not 0.75), giving an answer 100× too big.</li>
+      </ul>`
+  },
+  { bucket:"TB3", marks:1, q:"State what causes two peaks to appear in a mass spectrum.",
+    aHtml:`<strong>Final answer:</strong> The element has isotopes with different masses.
+      <ul>
+        <li><strong>How to get the mark:</strong> mention isotopes (not “two elements”).</li>
+      </ul>`
+  },
+
+  // TB4
+  { bucket:"TB4", marks:2, q:"Explain why solid sodium chloride does not conduct electricity.",
+    aHtml:`<strong>Final answer:</strong> The ions are not free to move in the solid lattice.
+      <ul>
+        <li><strong>Mark points:</strong> (1) ions are fixed; (2) no mobile charged particles so no current.</li>
+        <li><strong>Common pitfall:</strong> saying “there are no ions” (there are ions, just not mobile).</li>
+      </ul>`
+  },
+  { bucket:"TB4", marks:3, q:"Explain why magnesium has a higher melting point than sodium.",
+    aHtml:`<strong>Final answer:</strong> stronger metallic bonding in Mg.
+      <ul>
+        <li><strong>Mark points:</strong> Mg forms Mg²⁺ and contributes more delocalised electrons; attraction is stronger so more energy needed to melt.</li>
+        <li><strong>Common pitfall:</strong> talking about “more protons” without linking to metallic bonding strength.</li>
+      </ul>`
+  },
+
+  // TB5
+  { bucket:"TB5", marks:2, q:"State the shape of ammonia and explain your answer.",
+    aHtml:`<strong>Final answer:</strong> trigonal pyramidal.
+      <ul>
+        <li><strong>Mark points:</strong> 3 bonding pairs + 1 lone pair; lone pair repels more strongly causing the pyramidal shape.</li>
+        <li><strong>Common pitfall:</strong> saying trigonal planar (that would be 3 bonding pairs and no lone pairs).</li>
+      </ul>`
+  },
+  { bucket:"TB5", marks:3, q:"Explain why water has a higher boiling point than hydrogen sulfide.",
+    aHtml:`<strong>Final answer:</strong> water forms hydrogen bonds; H₂S does not.
+      <ul>
+        <li><strong>Mark points:</strong> (1) hydrogen bonding present in water; (2) H₂S only has weaker intermolecular forces (London/dipole); (3) stronger forces require more energy to overcome.</li>
+        <li><strong>Common pitfall:</strong> saying “water is heavier” (it isn’t; the key is bonding).</li>
+      </ul>`
+  },
+
+  // TB6
+  { bucket:"TB6", marks:2, q:"State which species is oxidised: Zn + Cu²⁺ → Zn²⁺ + Cu",
+    aHtml:`<strong>Final answer:</strong> zinc is oxidised.
+      <ul>
+        <li><strong>Mark points:</strong> Zn loses 2 electrons / oxidation state increases from 0 to +2.</li>
+        <li><strong>Common pitfall:</strong> mixing up oxidised vs reduced—remember OIL RIG (Oxidation Is Loss).</li>
+      </ul>`
+  },
+  { bucket:"TB6", marks:1, q:"State the oxidation number of sulfur in H₂SO₄.",
+    aHtml:`<strong>Final answer:</strong> +6
+      <ul>
+        <li><strong>Quick method:</strong> H is +1 (×2 = +2), O is −2 (×4 = −8). Sum to 0: S + 2 − 8 = 0 ⇒ S = +6.</li>
+      </ul>`
+  },
+
+  // TB7
+  { bucket:"TB7", marks:2, q:"Calculate moles in 4.0 g of NaOH (Mr 40).",
+    aHtml:`<strong>Final answer:</strong> n = 4.0 ÷ 40 = 0.10 mol
+      <ul>
+        <li><strong>Mark points:</strong> use n = m/Mr, substitute correctly, give units.</li>
+        <li><strong>Common pitfall:</strong> dividing the wrong way (40 ÷ 4.0).</li>
+      </ul>`
+  },
+  { bucket:"TB7", marks:3, q:"Calculate volume of 0.20 mol CO₂ at RTP.",
+    aHtml:`<strong>Final answer:</strong> 4.8 dm³
+      <ul>
+        <li><strong>Mark points:</strong> (1) use molar volume at RTP = 24 dm³ mol⁻¹; (2) V = n×24; (3) V = 0.20×24 = 4.8 dm³.</li>
+        <li><strong>Common pitfall:</strong> mixing cm³ and dm³ (1 dm³ = 1000 cm³).</li>
+      </ul>`
+  },
+
+  // TB8
+  { bucket:"TB8", marks:2, q:"Name a suitable reagent to react with HCl to make magnesium chloride.",
+    aHtml:`<strong>Final answer:</strong> magnesium oxide / magnesium carbonate / magnesium hydroxide (any one)
+      <ul>
+        <li><strong>How to get the marks:</strong> choose a base/alkali/carbonate so the product is MgCl₂.</li>
+        <li><strong>Common pitfall:</strong> choosing magnesium metal (gives MgCl₂ but may be considered less appropriate if the question expects oxide/carbonate/hydroxide for salt prep).</li>
+      </ul>`
+  },
+  { bucket:"TB8", marks:3, q:"25.0 cm³ of 0.10 mol dm⁻³ HCl neutralises 20.0 cm³ NaOH. Calculate [NaOH].",
+    aHtml:`<strong>Final answer:</strong> 0.125 mol dm⁻³
+      <ul>
+        <li><strong>Step method:</strong> (1) Convert volumes to dm³: 25.0 cm³ = 0.0250 dm³, 20.0 cm³ = 0.0200 dm³. (2) Moles HCl = c×V = 0.10×0.0250 = 0.00250 mol. (3) 1:1 ratio ⇒ moles NaOH = 0.00250 mol. (4) [NaOH] = n/V = 0.00250/0.0200 = 0.125 mol dm⁻³.</li>
+        <li><strong>Common pitfall:</strong> forgetting cm³→dm³ conversion.</li>
+      </ul>`
+  },
+
+  // TB9
+  { bucket:"TB9", marks:1, q:"State why a burette is rinsed with the solution it will contain.",
+    aHtml:`<strong>Final answer:</strong> to avoid dilution/contamination by water.
+      <ul>
+        <li><strong>Exam phrasing:</strong> “so the concentration of the solution in the burette is not changed”.</li>
+      </ul>`
+  },
+  { bucket:"TB9", marks:2, q:"Explain why weighing by difference improves accuracy.",
+    aHtml:`<strong>Final answer:</strong> it ensures the mass that leaves the container is the mass used.
+      <ul>
+        <li><strong>Mark points:</strong> (1) reduces loss during transfer; (2) more accurate mass used in calculations.</li>
+        <li><strong>Common pitfall:</strong> saying “it makes the balance more accurate” (it’s about transfer losses).</li>
+      </ul>`
+  },
+  { bucket:"TB9", marks:3, q:"Suggest two improvements to increase the accuracy of a titration.",
+    aHtml:`<strong>Any two:</strong>
+      <ul>
+        <li>use a white tile to see the endpoint colour change clearly</li>
+        <li>add the titrant dropwise near the endpoint, swirling continuously</li>
+        <li>repeat until concordant titres are obtained</li>
+        <li>read the meniscus at eye level to avoid parallax error</li>
+      </ul>
+      <ul>
+        <li><strong>Common pitfall:</strong> “use more indicator” (too much indicator can make the endpoint less sharp).</li>
+      </ul>`
+  },
+];
+
+/* =========================
+   Grade boundaries
+   ========================= */
+function gradeFromPct(pct){
+  if (pct >= 81) return "A*";
+  if (pct >= 71) return "A";
+  if (pct >= 61) return "B";
+  if (pct >= 51) return "C";
+  if (pct >= 42) return "D";
+  if (pct >= 32) return "E";
+  return "U";
+}
+
+/* Traffic light for bucket/skill */
+function trafficClass(pct){
+  if (pct >= 70) return "t-good";
+  if (pct >= 50) return "t-mid";
+  return "t-poor";
+}
+function fillColor(pct){
+  const root = getComputedStyle(document.documentElement);
+  if (pct >= 70) return root.getPropertyValue("--good").trim();
+  if (pct >= 50) return root.getPropertyValue("--mid").trim();
+  return root.getPropertyValue("--poor").trim();
+}
+
+/* =========================
+   State + Persistence
+   ========================= */
+let state = {
+  studentName: "",
+  marks: {}
+};
+
+function saveState(){
+  state.studentName = document.getElementById("studentName")?.value || state.studentName || "";
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.warn("LocalStorage save failed:", e);
+  }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const parsed = JSON.parse(raw);
+    if(parsed && typeof parsed === "object"){
+      state = parsed;
+    }
+  }catch(e){
+    console.warn("LocalStorage load failed:", e);
+  }
+}
+
+function resetState(){
+  if(!confirm("Reset will clear your saved inputs on this device. Continue?")) return;
+  state = { studentName:"", marks:{} };
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  document.getElementById("studentName").value = "";
+  document.querySelectorAll(".markInput").forEach(inp => inp.value = "");
+  updateOverallFields();
+  showInput();
+}
+
+/* =========================
+   UI Build: Input table
+   ========================= */
+function buildInputTable(){
+  const tbody = document.getElementById("qTableBody");
+  tbody.innerHTML = "";
+  for(const q of QUESTIONS){
+    const tr = document.createElement("tr");
+
+    const tdId = document.createElement("td");
+    tdId.innerHTML = `<span class="qid">${q.label}</span>`;
+    tr.appendChild(tdId);
+
+    const tdMax = document.createElement("td");
+    tdMax.innerHTML = `<span class="max">${q.max}</span>`;
+    tr.appendChild(tdMax);
+
+    const tdFocus = document.createElement("td");
+    tdFocus.textContent = q.focus;
+    tr.appendChild(tdFocus);
+
+    const tdBucket = document.createElement("td");
+    const bName = BUCKETS.find(b => b.id === q.bucket)?.name || q.bucket;
+    tdBucket.innerHTML = `<span class="topicTag">${escapeHtml(bName)}</span>`;
+    tr.appendChild(tdBucket);
+
+    const tdTags = document.createElement("td");
+    tdTags.innerHTML = `
+      <span class="pill ${q.ao.toLowerCase()}">${q.ao}</span>
+      ${q.ms ? `<span class="pill ms">MS</span>` : ""}
+      ${q.ws ? `<span class="pill ws">WS</span>` : ""}
+    `;
+    tr.appendChild(tdTags);
+
+    const tdMark = document.createElement("td");
+    const input = document.createElement("input");
+    input.type = "number";
+    input.inputMode = "numeric";
+    input.min = "0";
+    input.max = String(q.max);
+    input.step = "1";
+    input.className = "markInput";
+    input.placeholder = "0";
+    input.dataset.qid = q.id;
+
+    const saved = state.marks?.[q.id];
+    if(saved !== undefined && saved !== null && saved !== ""){
+      input.value = saved;
+    }
+
+    input.addEventListener("input", () => {
+      let v = input.value;
+      if(v === "" || v === null){
+        delete state.marks[q.id];
+      }else{
+        let num = Number(v);
+        if(Number.isNaN(num)) num = 0;
+        if(num < 0) num = 0;
+        if(num > q.max) num = q.max;
+        input.value = String(num);
+        state.marks[q.id] = num;
+      }
+      saveState();
+      updateOverallFields();
+    });
+
+    tdMark.appendChild(input);
+    tdMark.insertAdjacentHTML("beforeend", `<div class="tiny">out of ${q.max}</div>`);
+    tr.appendChild(tdMark);
+
+    tbody.appendChild(tr);
+  }
+}
+
+/* =========================
+   Calculations
+   ========================= */
+function getMark(q){
+  const v = state.marks?.[q.id];
+  if(v === undefined || v === null || v === "") return 0;
+  const num = Number(v);
+  if(Number.isNaN(num)) return 0;
+  return Math.max(0, Math.min(q.max, num));
+}
+
+function computeTotals(){
+  const totalMax = QUESTIONS.reduce((s,q)=>s+q.max,0);
+  const totalScored = QUESTIONS.reduce((s,q)=>s+getMark(q),0);
+  const pct = totalMax === 0 ? 0 : (totalScored/totalMax)*100;
+
+  const bucket = {};
+  for(const b of BUCKETS){
+    bucket[b.id] = { id:b.id, name:b.name, scored:0, max:0, pct:0 };
+  }
+  for(const q of QUESTIONS){
+    bucket[q.bucket].max += q.max;
+    bucket[q.bucket].scored += getMark(q);
+  }
+  for(const bId of Object.keys(bucket)){
+    const obj = bucket[bId];
+    obj.pct = obj.max === 0 ? 0 : (obj.scored/obj.max)*100;
+  }
+
+  const ao = {
+    AO1:{name:"AO1 (Recall)", scored:0, max:0, pct:0},
+    AO2:{name:"AO2 (Apply)",  scored:0, max:0, pct:0},
+    AO3:{name:"AO3 (Evaluate/Practical)", scored:0, max:0, pct:0},
+  };
+  const ms = {name:"Maths skills (MS)", scored:0, max:0, pct:0};
+  const ws = {name:"Working Scientifically (WS)", scored:0, max:0, pct:0};
+
+  for(const q of QUESTIONS){
+    ao[q.ao].max += q.max;
+    ao[q.ao].scored += getMark(q);
+    if(q.ms){ ms.max += q.max; ms.scored += getMark(q); }
+    if(q.ws){ ws.max += q.max; ws.scored += getMark(q); }
+  }
+  for(const k of Object.keys(ao)){
+    ao[k].pct = ao[k].max === 0 ? 0 : (ao[k].scored/ao[k].max)*100;
+  }
+  ms.pct = ms.max === 0 ? 0 : (ms.scored/ms.max)*100;
+  ws.pct = ws.max === 0 ? 0 : (ws.scored/ws.max)*100;
+
+  return { totalMax, totalScored, pct, bucket, ao, ms, ws };
+}
+
+function updateOverallFields(){
+  const { pct } = computeTotals();
+  document.getElementById("overallPct").value = `${pct.toFixed(0)}%`;
+  document.getElementById("overallGrade").value = gradeFromPct(pct);
+}
+
+/* =========================
+   Report Rendering
+   ========================= */
+function renderReport(){
+  saveState();
+  const totals = computeTotals();
+
+  // Fill report header (prints!)
+  const testTitle = document.getElementById("testName")?.textContent || "Year 12 Chemistry Mid-Year Assessment";
+  const studentName = (state.studentName || "").trim() || "—";
+  document.getElementById("printTitle").textContent = `${testTitle} – QLA Report`;
+  document.getElementById("printMeta").textContent = `Student: ${studentName} • Score: ${totals.totalScored.toFixed(0)} / ${totals.totalMax}`;
+  document.getElementById("printPct").textContent = `${totals.pct.toFixed(0)}%`;
+  document.getElementById("printGrade").textContent = gradeFromPct(totals.pct);
+
+  // Buckets (sorted high -> low)
+  const bucketArr = Object.values(totals.bucket).filter(b => b.max > 0);
+  bucketArr.sort((a,b)=> b.pct - a.pct);
+  const bucketBars = document.getElementById("bucketBars");
+  bucketBars.innerHTML = "";
+  for(const b of bucketArr){
+    bucketBars.appendChild(makeBarItem(b.name, b.pct, `${b.scored.toFixed(0)} / ${b.max}`));
+  }
+
+  // Skills
+  const skillBars = document.getElementById("skillBars");
+  skillBars.innerHTML = "";
+  const skillsList = [totals.ao.AO1, totals.ao.AO2, totals.ao.AO3, totals.ms, totals.ws];
+  for(const s of skillsList){
+    const max = s.max ?? 0;
+    if(max === 0) continue;
+    skillBars.appendChild(makeBarItem(s.name, s.pct, `${s.scored.toFixed(0)} / ${max}`));
+  }
+
+  // Weakest 3 buckets for follow-ups
+  const weakest = [...bucketArr].sort((a,b)=> a.pct - b.pct).slice(0,3);
+  renderFollowups(weakest.map(w => w.id), totals.bucket);
+
+  // Keep header fields in sync if user returns to input view later
+  updateOverallFields();
+}
+
+function makeBarItem(name, pct, subtitle){
+  const traffic = trafficClass(pct);
+  const fill = fillColor(pct);
+  const div = document.createElement("div");
+  div.className = "barItem";
+  div.innerHTML = `
+    <div class="barTop">
+      <div>
+        <div class="barName">${escapeHtml(name)}
+          <span class="traffic ${traffic}" style="margin-left:8px;">
+            <span class="dot"></span>${trafficLabel(pct)}
+          </span>
+        </div>
+        <div class="tiny">${escapeHtml(subtitle)}</div>
+      </div>
+      <div class="barPct">${pct.toFixed(0)}%</div>
+    </div>
+    <div class="barTrack" aria-hidden="true">
+      <div class="barFill"></div>
+    </div>
+  `;
+  const fillEl = div.querySelector(".barFill");
+  fillEl.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+  fillEl.style.background = fill;
+  return div;
+}
+
+function trafficLabel(pct){
+  if(pct >= 70) return "Green";
+  if(pct >= 50) return "Amber";
+  return "Red";
+}
+
+/* =========================
+   Follow-ups rendering
+   ========================= */
+function renderFollowups(bucketIds, bucketTotalsMap){
+  const wrap = document.getElementById("followupCards");
+  wrap.innerHTML = "";
+
+  for(const bId of bucketIds){
+    const bName = BUCKETS.find(b=>b.id===bId)?.name || bId;
+    const bPct = bucketTotalsMap[bId]?.pct ?? 0;
+
+    const pool = FOLLOWUPS.filter(x => x.bucket === bId);
+    const picks = pool.slice(0, Math.min(3, pool.length));
+
+    const card = document.createElement("div");
+    card.className = "fqCard";
+    card.innerHTML = `
+      <div class="fqHead">
+        <div class="fqBucket">${escapeHtml(bName)} • ${bPct.toFixed(0)}%</div>
+        <div class="tiny">Try first, then open model answers to check method + mark points.</div>
+      </div>
+      <ol class="qList"></ol>
+    `;
+    const list = card.querySelector(".qList");
+    for(const item of picks){
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div>
+          ${escapeHtml(item.q)}
+          <span class="markBadge">${item.marks} mark${item.marks===1?"":"s"}</span>
+        </div>
+        <details>
+          <summary>Show model answer + how to get the marks</summary>
+          <div class="ans">${item.aHtml}</div>
+        </details>
+      `;
+      list.appendChild(li);
+    }
+
+    wrap.appendChild(card);
+  }
+
+  if(!wrap.children.length){
+    const p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = "No follow-up questions to show yet.";
+    wrap.appendChild(p);
+  }
+}
+
+/* =========================
+   View switching
+   ========================= */
+function showReport(){
+  document.getElementById("inputSection").style.display = "none";
+  document.getElementById("reportSection").style.display = "block";
+  renderReport();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function showInput(){
+  document.getElementById("reportSection").style.display = "none";
+  document.getElementById("inputSection").style.display = "block";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* =========================
+   Helpers
+   ========================= */
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* =========================
+   Init
+   ========================= */
+(function init(){
+  loadState();
+
+  const nameEl = document.getElementById("studentName");
+  nameEl.value = state.studentName || "";
+  nameEl.addEventListener("input", () => saveState());
+
+  buildInputTable();
+  updateOverallFields();
+
+  document.getElementById("btnGenerate").addEventListener("click", showReport);
+  document.getElementById("btnBack").addEventListener("click", showInput);
+  document.getElementById("btnPrint").addEventListener("click", () => window.print());
+  document.getElementById("btnSaveNow").addEventListener("click", () => { saveState(); alert("Saved on this device."); });
+  document.getElementById("btnReset").addEventListener("click", resetState);
+})();
+</script>
+</body>
+</html>
