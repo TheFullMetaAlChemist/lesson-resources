@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Forces & Motion — Thought Process</title>
+  <style>
+    :root{
+      --bg:#f7f8fb;
+      --panel:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --muted2:#64748b;
+      --border:#e2e8f0;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .08);
+      --shadow2: 0 6px 18px rgba(15, 23, 42, .06);
+      --brand:#2563eb;
+      --brand2:#7c3aed;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --chip:#eef2ff;
+      --chip2:#f5f3ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: linear-gradient(180deg, #fbfcff 0%, var(--bg) 100%);
+      color:var(--text);
+    }
+
+    .topbar{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      background:rgba(255,255,255,.85);
+      backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+      min-width: 240px;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:14px;
+      background: conic-gradient(from 180deg, var(--brand), var(--brand2), var(--brand));
+      box-shadow: 0 10px 25px rgba(37,99,235,.22);
+      position:relative;
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-20%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), transparent 55%);
+      transform: rotate(15deg);
+    }
+    h1{
+      margin:0;
+      font-size:14px;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .sub{
+      font-size:12px;
+      color:var(--muted2);
+      margin-top:2px;
+    }
+    .actions{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:700;
+      color:var(--text);
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+      transition:.15s ease;
+      display:flex; align-items:center; gap:8px;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn:active{ transform: translateY(0px); }
+    .btn.primary{
+      border-color: rgba(37,99,235,.25);
+      background: linear-gradient(135deg, rgba(37,99,235,.12), rgba(124,58,237,.10));
+    }
+    .switchWrap{
+      display:flex; align-items:center; gap:10px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      box-shadow: var(--shadow2);
+      font-size:12px;
+      font-weight:750;
+      color:var(--muted);
+    }
+    .switch{
+      width:44px;height:26px;border-radius:999px;
+      border:1px solid var(--border);
+      background:#f1f5f9;
+      position:relative;
+      cursor:pointer;
+      box-shadow: inset 0 1px 0 rgba(15,23,42,.04);
+      flex:0 0 auto;
+    }
+    .switch::after{
+      content:"";
+      position:absolute;
+      top:3px; left:3px;
+      width:20px;height:20px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--border);
+      transition:.15s ease;
+      box-shadow: var(--shadow2);
+    }
+    .switch.on{
+      background: rgba(37,99,235,.14);
+      border-color: rgba(37,99,235,.25);
+    }
+    .switch.on::after{ left:21px; border-color: rgba(37,99,235,.25); }
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .main{
+      padding:18px;
+    }
+    .headRow{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+    }
+    .title{
+      font-size:18px; font-weight:900; margin:0;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      font-size:12px; color:var(--muted2); margin-top:4px; line-height:1.35;
+    }
+    .card{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:14px;
+      background: linear-gradient(135deg, rgba(37,99,235,.06), rgba(124,58,237,.05));
+      box-shadow: var(--shadow2);
+    }
+    .qText{
+      font-size:16px;
+      font-weight:900;
+      line-height:1.25;
+      margin:0 0 10px 0;
+    }
+    .optBtns{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:8px;
+    }
+    .optBtn{
+      text-align:left;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:14px;
+      padding:12px 12px;
+      cursor:pointer;
+      font-weight:800;
+      color:var(--text);
+      box-shadow: var(--shadow2);
+      transition:.15s ease;
+    }
+    .optBtn:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
+    .optBtn small{
+      display:block;
+      margin-top:4px;
+      font-weight:700;
+      color:var(--muted2);
+      line-height:1.25;
+    }
+    .resultCard{
+      border:1px solid rgba(22,163,74,.25);
+      background: rgba(22,163,74,.08);
+      border-radius:18px;
+      padding:14px;
+    }
+    .resultCard h3{
+      margin:0 0 6px 0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .resultCard p{ margin:0; font-size:14px; line-height:1.35; }
+
+    .sideHead{
+      padding:12px 14px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background: rgba(255,255,255,.92);
+    }
+    .sideHead b{ font-size:13px; }
+    .sideBody{
+      padding:10px 14px 14px 14px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height: calc(100vh - 140px);
+    }
+    .step{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 10px;
+      background:#fff;
+    }
+    .step .q{ font-weight:900; font-size:12px; color:var(--text); margin-bottom:4px; }
+    .step .a{ font-weight:750; font-size:12px; color:var(--muted); }
+    .step .a span{ color:var(--text); }
+    .step.result{
+      border-color: rgba(22,163,74,.25);
+      background: rgba(22,163,74,.06);
+    }
+
+    .note{
+      margin-top:12px;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#f8fafc;
+      color:var(--muted2);
+      font-size:12px;
+      line-height:1.4;
+    }
+    .pill{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background: var(--chip);
+      border:1px solid rgba(37,99,235,.18);
+      color:#1e3a8a;
+      font-weight:900;
+      font-size:11px;
+      margin-right:6px;
+      white-space:nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h1>Forces & Motion — Thought Process</h1>
+        <div class="sub">Follow the questions to decide what happens to an object.</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="switchWrap" title="Show/hide hints in the option buttons">
+        Hints
+        <div id="hintSwitch" class="switch" role="switch" aria-checked="false" tabindex="0"></div>
+      </div>
+      <button class="btn" id="btnBack" title="Go back one step">↩ Back</button>
+      <button class="btn primary" id="btnRestart" title="Restart from the beginning">⟲ Restart</button>
+      <button class="btn" id="btnCopyTrail" title="Copy trail to clipboard">📋 Copy trail</button>
+      <button class="btn" id="btnPrint" title="Print the trail">🖨 Print</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <main class="panel main">
+      <div class="headRow">
+        <div>
+          <h2 class="title" id="flowTitle">Motion from Forces</h2>
+          <div class="subtitle" id="flowSubtitle">
+            Start with <b>“moving or stationary”</b>, then decide whether forces are <b>balanced</b> (resultant force = 0 N).
+          </div>
+        </div>
+      </div>
+
+      <div id="playerCard" class="card"></div>
+
+      <div class="note">
+        <span class="pill">Teacher tip</span>
+        Ask students to justify each answer using the key idea: <b>unbalanced forces cause acceleration</b> (a change in velocity).
+      </div>
+    </main>
+
+    <aside class="panel">
+      <div class="sideHead">
+        <b>Reasoning trail</b>
+        <span style="font-size:12px;color:var(--muted2);" id="trailCount">0 steps</span>
+      </div>
+      <div id="trailBody" class="sideBody"></div>
+    </aside>
+  </div>
+
+<script>
+(() => {
+  // -------- Flow data (demo only) --------
+  const flow = {
+    title: "Motion from Forces",
+    startNodeId: "q1",
+    nodes: {
+      q1: { id:"q1", type:"question", text:"Is the object moving or stationary?", options:["e1","e2"] },
+
+      q2: { id:"q2", type:"question", text:"If stationary: are the forces balanced? (Resultant force = 0 N)", options:["e3","e4"] },
+      r1: { id:"r1", type:"result", text:"It remains stationary (no acceleration)." },
+
+      q3: { id:"q3", type:"question", text:"Which direction is the resultant (overall) force?", options:["e5","e6","e7","e8","e9"] },
+      r2: { id:"r2", type:"result", text:"It accelerates in the direction of the resultant force." },
+
+      q4: { id:"q4", type:"question", text:"If moving: are the forces balanced? (Resultant force = 0 N)", options:["e10","e11"] },
+
+      q5: { id:"q5", type:"question", text:"Is there friction/air resistance acting?", options:["e12","e13"] },
+      r3: { id:"r3", type:"result", text:"It continues at constant velocity (same speed and direction)." },
+
+      q5a:{ id:"q5a", type:"question", text:"Is there a driving force (push/thrust) balancing the resistive force?", options:["e14","e15"] },
+      r4: { id:"r4", type:"result", text:"It slows down (decelerates), opposite its motion." },
+
+      q6: { id:"q6", type:"question", text:"Is the resultant force in the same direction as the motion?", options:["e16","e17","e18"] },
+      r5: { id:"r5", type:"result", text:"It speeds up (accelerates) in the direction of motion." },
+      r6: { id:"r6", type:"result", text:"Its velocity changes direction (it turns) and accelerates towards the resultant force." },
+    },
+    edges: {
+      e1: { id:"e1", from:"q1", label:"Stationary", hint:"Not changing position (at rest).", to:"q2" },
+      e2: { id:"e2", from:"q1", label:"Moving", hint:"Already in motion (has velocity).", to:"q4" },
+
+      e3: { id:"e3", from:"q2", label:"Yes (balanced)", hint:"Resultant force is zero.", to:"r1" },
+      e4: { id:"e4", from:"q2", label:"No (unbalanced)", hint:"There is a resultant force.", to:"q3" },
+
+      e5: { id:"e5", from:"q3", label:"Up", hint:"Resultant points upwards.", to:"r2" },
+      e6: { id:"e6", from:"q3", label:"Down", hint:"Resultant points downwards.", to:"r2" },
+      e7: { id:"e7", from:"q3", label:"Left", hint:"Resultant points left.", to:"r2" },
+      e8: { id:"e8", from:"q3", label:"Right", hint:"Resultant points right.", to:"r2" },
+      e9: { id:"e9", from:"q3", label:"Other direction", hint:"Any direction works: acceleration follows the resultant.", to:"r2" },
+
+      e10:{ id:"e10", from:"q4", label:"Yes (balanced)", hint:"Resultant force is zero.", to:"q5" },
+      e11:{ id:"e11", from:"q4", label:"No (unbalanced)", hint:"There is a resultant force.", to:"q6" },
+
+      e12:{ id:"e12", from:"q5", label:"No / negligible", hint:"No significant resistive force.", to:"r3" },
+      e13:{ id:"e13", from:"q5", label:"Yes", hint:"A resistive force acts (drag/friction).", to:"q5a" },
+
+      e14:{ id:"e14", from:"q5a", label:"Yes", hint:"Driving force balances resistance → resultant is zero.", to:"r3" },
+      e15:{ id:"e15", from:"q5a", label:"No", hint:"Resistance is not balanced → resultant opposite motion.", to:"r4" },
+
+      e16:{ id:"e16", from:"q6", label:"Yes", hint:"Resultant aligns with motion → speed increases.", to:"r5" },
+      e17:{ id:"e17", from:"q6", label:"No (opposite)", hint:"Resultant opposes motion → slows down.", to:"r4" },
+      e18:{ id:"e18", from:"q6", label:"At an angle", hint:"Resultant not aligned → changes direction.", to:"r6" },
+    }
+  };
+
+  // -------- UI state --------
+  let showHints = false;
+  const path = []; // {nodeId, choiceEdgeId}
+  let currentNodeId = flow.startNodeId;
+
+  // -------- DOM --------
+  const playerCard = document.getElementById("playerCard");
+  const trailBody = document.getElementById("trailBody");
+  const trailCount = document.getElementById("trailCount");
+  const hintSwitch = document.getElementById("hintSwitch");
+
+  const btnBack = document.getElementById("btnBack");
+  const btnRestart = document.getElementById("btnRestart");
+  const btnCopyTrail = document.getElementById("btnCopyTrail");
+  const btnPrint = document.getElementById("btnPrint");
+
+  // -------- Helpers --------
+  const esc = (s)=> String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const node = (id)=> flow.nodes[id];
+  const edge = (id)=> flow.edges[id];
+
+  function setHints(on){
+    showHints = on;
+    hintSwitch.classList.toggle("on", on);
+    hintSwitch.setAttribute("aria-checked", String(on));
+    render();
+  }
+
+  function render(){
+    renderCard();
+    renderTrail();
+  }
+
+  function renderCard(){
+    const n = node(currentNodeId);
+    if (!n) return;
+
+    if (n.type === "result"){
+      playerCard.innerHTML = `
+        <div class="resultCard">
+          <h3>Result</h3>
+          <p>${esc(n.text)}</p>
+        </div>
+      `;
+      return;
+    }
+
+    const buttons = (n.options || []).map(eid => {
+      const e = edge(eid);
+      const hint = (showHints && e.hint) ? `<small>${esc(e.hint)}</small>` : "";
+      return `
+        <button class="optBtn" data-edge="${e.id}">
+          ${esc(e.label)}
+          ${hint}
+        </button>
+      `;
+    }).join("");
+
+    playerCard.innerHTML = `
+      <div>
+        <div class="qText">${esc(n.text)}</div>
+        <div class="optBtns">${buttons}</div>
+      </div>
+    `;
+
+    playerCard.querySelectorAll(".optBtn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const edgeId = btn.getAttribute("data-edge");
+        const e = edge(edgeId);
+        path.push({ nodeId: currentNodeId, choiceEdgeId: edgeId });
+        currentNodeId = e.to;
+        render();
+      });
+    });
+  }
+
+  function renderTrail(){
+    trailBody.innerHTML = "";
+    trailCount.textContent = `${path.length} step${path.length===1?"":"s"}`;
+
+    path.forEach((step, idx) => {
+      const n = node(step.nodeId);
+      const e = edge(step.choiceEdgeId);
+      const div = document.createElement("div");
+      div.className = "step";
+      div.innerHTML = `
+        <div class="q">Q${idx+1}: ${esc((n.text||"").split("\n")[0])}</div>
+        <div class="a">A: <span>${esc(e.label)}</span></div>
+      `;
+      trailBody.appendChild(div);
+    });
+
+    const cur = node(currentNodeId);
+    if (cur && cur.type === "result"){
+      const div = document.createElement("div");
+      div.className = "step result";
+      div.innerHTML = `
+        <div class="q">Result</div>
+        <div class="a"><span>${esc(cur.text)}</span></div>
+      `;
+      trailBody.appendChild(div);
+    }
+  }
+
+  function buildTrailText(){
+    const lines = [];
+    lines.push(`Flow: ${flow.title}`);
+    lines.push("");
+    path.forEach((step, idx) => {
+      const n = node(step.nodeId);
+      const e = edge(step.choiceEdgeId);
+      lines.push(`Q${idx+1}: ${n.text}`);
+      lines.push(`A${idx+1}: ${e.label}`);
+      lines.push("");
+    });
+    const cur = node(currentNodeId);
+    if (cur?.type === "result"){
+      lines.push(`Result: ${cur.text}`);
+    } else if (cur) {
+      lines.push(`Current: ${cur.text}`);
+    }
+    return lines.join("\n");
+  }
+
+  // -------- Controls --------
+  btnBack.addEventListener("click", () => {
+    if (path.length === 0) {
+      currentNodeId = flow.startNodeId;
+      render();
+      return;
+    }
+    const prev = path.pop();
+    currentNodeId = prev.nodeId;
+    render();
+  });
+
+  btnRestart.addEventListener("click", () => {
+    path.length = 0;
+    currentNodeId = flow.startNodeId;
+    render();
+  });
+
+  btnCopyTrail.addEventListener("click", async () => {
+    const text = buildTrailText();
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Trail copied.");
+    } catch {
+      prompt("Copy the trail:", text);
+    }
+  });
+
+  btnPrint.addEventListener("click", () => {
+    const text = buildTrailText();
+    const w = window.open("", "_blank");
+    if (!w) return;
+    w.document.write(`
+      <html><head><title>Forces & Motion — Trail</title>
+      <meta charset="utf-8"/>
+      <style>
+        body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:20px;color:#0f172a;}
+        h1{font-size:18px;margin:0 0 10px;}
+        pre{white-space:pre-wrap;line-height:1.35;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px;}
+      </style>
+      </head><body>
+        <h1>${esc(flow.title)}</h1>
+        <pre>${esc(text)}</pre>
+        <script>window.print();<\/script>
+      </body></html>
+    `);
+    w.document.close();
+  });
+
+  hintSwitch.addEventListener("click", ()=>setHints(!showHints));
+  hintSwitch.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setHints(!showHints); }
+  });
+
+  // -------- Init --------
+  render();
+})();
+</script>
+</body>
+</html>
