@@ -1,0 +1,871 @@
+```html
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Forces Test – Model Answers & Explanations</title>
+  <style>
+    :root{
+      --bg:#f7f7f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --accent:#2563eb;
+      --accent-2:#0f766e;
+      --warn:#b45309;
+      --ok:#166534;
+      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 10px 20px rgba(0,0,0,.04);
+      --radius:14px;
+      --radius-sm:10px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:linear-gradient(180deg, #fafafa, var(--bg));
+      line-height:1.45;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      backdrop-filter:saturate(180%) blur(10px);
+      background:rgba(247,247,248,.85);
+      border-bottom:1px solid var(--border);
+    }
+
+    .wrap{
+      max-width:1050px;
+      margin:0 auto;
+      padding:18px 18px 26px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    h1{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing:-.2px;
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:4px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      border:1px solid var(--border);
+      background:var(--card);
+      color:var(--text);
+      padding:9px 11px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:13px;
+      box-shadow:0 1px 0 rgba(0,0,0,.02);
+      transition:transform .04s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{border-color:#cbd5e1}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{
+      border-color:rgba(37,99,235,.35);
+      background:rgba(37,99,235,.08);
+      color:#0b3aa5;
+    }
+
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.6);
+      padding:6px 10px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .pill input{
+      accent-color:var(--accent);
+      transform:translateY(1px);
+    }
+
+    main .grid{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:16px;
+      align-items:start;
+      margin-top:16px;
+    }
+
+    @media (max-width: 900px){
+      main .grid{grid-template-columns:1fr}
+    }
+
+    .nav{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;
+      position:sticky;
+      top:88px;
+    }
+
+    .nav h2{
+      font-size:13px;
+      margin:0 0 10px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.2px;
+      text-transform:uppercase;
+    }
+
+    .tabs{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+
+    .tab{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      transition:border-color .15s ease, background .15s ease;
+    }
+    .tab:hover{border-color:#cbd5e1}
+    .tab[aria-selected="true"]{
+      border-color:rgba(37,99,235,.45);
+      background:rgba(37,99,235,.06);
+    }
+    .tab strong{
+      font-size:13px;
+      font-weight:700;
+    }
+    .tab span{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .content{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      min-height:540px;
+    }
+
+    .panel{display:none}
+    .panel.active{display:block}
+
+    .qhead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      border-bottom:1px solid var(--border);
+      padding-bottom:12px;
+      margin-bottom:14px;
+    }
+
+    .qtitle{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-.2px;
+    }
+
+    .qmeta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .badge{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background:rgba(249,250,251,.8);
+    }
+
+    .section{
+      margin:14px 0 0;
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:var(--radius-sm);
+      background:rgba(249,250,251,.6);
+    }
+
+    .section h3{
+      margin:0 0 8px;
+      font-size:14px;
+      font-weight:800;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      align-items:start;
+    }
+    @media (max-width: 720px){
+      .row{grid-template-columns:1fr}
+    }
+
+    .box{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+      background:#fff;
+    }
+
+    .label{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.25px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+
+    .answer{
+      font-size:14px;
+      font-weight:700;
+      color:#111827;
+    }
+
+    .explain{
+      margin-top:8px;
+      color:#374151;
+      font-size:13px;
+    }
+
+    .explain ul{margin:8px 0 0 18px}
+    .explain li{margin:4px 0}
+
+    details{
+      margin-top:10px;
+      border:1px dashed #d1d5db;
+      border-radius:12px;
+      background:#fff;
+      padding:10px 12px;
+    }
+    details summary{
+      cursor:pointer;
+      font-weight:700;
+      color:#0b3aa5;
+      outline:none;
+    }
+    details p, details ul{margin:8px 0 0}
+
+    .eq{
+      font-family:var(--mono);
+      font-size:13px;
+      background:rgba(37,99,235,.06);
+      border:1px solid rgba(37,99,235,.18);
+      padding:10px 12px;
+      border-radius:12px;
+      overflow:auto;
+      white-space:pre-wrap;
+    }
+
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(15,118,110,.25);
+      background:rgba(15,118,110,.06);
+      color:#0f3f3a;
+      font-size:13px;
+    }
+
+    .footer{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px solid var(--border);
+    }
+
+    .kbd{
+      font-family:var(--mono);
+      font-size:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      padding:2px 6px;
+      border-radius:8px;
+      color:#111827;
+    }
+
+    @media print{
+      header, .nav, .actions { display:none !important; }
+      body{ background:#fff; }
+      .content{ box-shadow:none; border:none; }
+      .panel{ display:block !important; page-break-after:always; }
+      .panel:last-child{ page-break-after:auto; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Forces Test – Model Answers & Explanations</h1>
+        <div class="sub">Tabs for main questions (Q1–Q5). Toggle explanations if you want a “mark scheme only” view.</div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="toggleAll">Hide explanations</button>
+        <button class="btn" onclick="window.print()">Print</button>
+        <div class="pill" title="Show/Hide all explanation paragraphs">
+          <input type="checkbox" id="explainToggle" checked />
+          <label for="explainToggle">Show explanations</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <aside class="nav" aria-label="Question navigation">
+      <h2>Main Questions</h2>
+      <ul class="tabs" role="tablist">
+        <li>
+          <button class="tab" role="tab" id="tab-q1" aria-controls="panel-q1" aria-selected="true">
+            <strong>Question 1</strong>
+            <span>Swimmer forces</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab" role="tab" id="tab-q2" aria-controls="panel-q2" aria-selected="false">
+            <strong>Question 2</strong>
+            <span>Friction practical</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab" role="tab" id="tab-q3" aria-controls="panel-q3" aria-selected="false">
+            <strong>Question 3</strong>
+            <span>Hooke’s Law</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab" role="tab" id="tab-q4" aria-controls="panel-q4" aria-selected="false">
+            <strong>Question 4</strong>
+            <span>Drag vs upthrust</span>
+          </button>
+        </li>
+        <li>
+          <button class="tab" role="tab" id="tab-q5" aria-controls="panel-q5" aria-selected="false">
+            <strong>Question 5</strong>
+            <span>Mars rover</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="footer">
+        <div><strong>Tip:</strong> Use <span class="kbd">↑</span> / <span class="kbd">↓</span> to move tabs, <span class="kbd">Enter</span> to open.</div>
+      </div>
+    </aside>
+
+    <section class="content" aria-live="polite">
+      <!-- Q1 -->
+      <article class="panel active" id="panel-q1" role="tabpanel" aria-labelledby="tab-q1">
+        <div class="qhead">
+          <h2 class="qtitle">Question 1 — Forces on a swimmer</h2>
+          <div class="qmeta">
+            <span class="badge">Marks: 7</span>
+            <span class="badge">Key ideas: contact/non-contact, balanced forces, drag</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(a) Label the forces on the swimmer (3)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer">
+                • Upwards arrow: <strong>upthrust</strong><br/>
+                • Downwards arrow: <strong>weight</strong> (or gravity)<br/>
+                • Backwards arrow: <strong>drag</strong> (water resistance / friction)
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Weight pulls down due to gravity. Upthrust is the upward push from the water. Drag acts opposite the swimmer’s motion because moving through water causes resistance.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(b) Which force is non-contact? (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer"><strong>Weight</strong></div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Weight is caused by gravity, which acts at a distance (no touching needed).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(c) Circle the correct words (2)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">(i) Balanced or unbalanced?</div>
+              <div class="answer"><strong>Unbalanced</strong></div>
+              <div style="height:10px"></div>
+              <div class="label">(ii) Motion</div>
+              <div class="answer"><strong>Getting faster</strong></div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Unbalanced forces mean there is a resultant force, so the motion changes. Here, the swimmer speeds up (accelerates).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(d) Streamlined suits reduce which force? (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer"><strong>Drag</strong> (water resistance / friction)</div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                A more streamlined shape cuts resistance from the water, reducing drag so the swimmer can move more efficiently.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="explainBlock">
+          <summary>Common mistakes (optional)</summary>
+          <ul class="explain">
+            <li>Labelling the backwards force as “upthrust” (upthrust is always upwards).</li>
+            <li>Saying drag is non-contact (it’s contact: particles collide/push on the object).</li>
+            <li>Choosing “balanced” but also “getting faster” (those contradict).</li>
+          </ul>
+        </details>
+      </article>
+
+      <!-- Q2 -->
+      <article class="panel" id="panel-q2" role="tabpanel" aria-labelledby="tab-q2">
+        <div class="qhead">
+          <h2 class="qtitle">Question 2 — Investigating friction</h2>
+          <div class="qmeta">
+            <span class="badge">Marks: 3</span>
+            <span class="badge">Key ideas: fair test, lubrication, uses of low friction</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(a) Name one thing to keep the same (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer (any one)</div>
+              <div class="answer">
+                • Same block (mass/size/shape/material) <em>or</em><br/>
+                • Same starting angle <em>or</em><br/>
+                • Keep surfaces dry <em>or</em><br/>
+                • Lift the slope at the same speed
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                It must be a fair test: only the slope material should change, so you can compare friction properly.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(b) How to make friction even smaller (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer">
+                Add a <strong>lubricant</strong> (e.g. water or oil) to the slope / bottom of the block.
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                A lubricant creates a thin layer that helps surfaces slide more easily, reducing friction.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(c) Another example where we want as little friction as possible (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer (any sensible example)</div>
+              <div class="answer">
+                • Skis on snow • Hockey puck on ice • Wheel bearings • Aeroplanes moving through air
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                In these situations, low friction/resistance means less energy wasted and smoother or faster movement.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="explainBlock">
+          <summary>Quick check: what NOT to write</summary>
+          <p class="explain">
+            Don’t talk about decreasing <strong>air resistance</strong> here — the practical is about friction between the block and the slope.
+          </p>
+        </details>
+      </article>
+
+      <!-- Q3 -->
+      <article class="panel" id="panel-q3" role="tabpanel" aria-labelledby="tab-q3">
+        <div class="qhead">
+          <h2 class="qtitle">Question 3 — Hooke’s Law</h2>
+          <div class="qmeta">
+            <span class="badge">Marks: 6</span>
+            <span class="badge">Key ideas: extension, newton meter, proportionality</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(a) What name do we give to how much the spring stretches? (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer"><strong>Extension</strong></div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Extension means how much longer the spring gets compared with its original length.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(b) Equipment to measure weight of masses (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer"><strong>Newton meter</strong> (force meter)</div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Weight is a force, so you measure it in newtons with a force meter/newton meter.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(c) Results and Hooke’s Law</h3>
+
+          <div class="section" style="margin-top:10px">
+            <h3>(i) If you double the force, you will ____ the extension (1)</h3>
+            <div class="row">
+              <div class="box">
+                <div class="label">Model answer</div>
+                <div class="answer"><strong>Double</strong></div>
+              </div>
+              <div class="box explainBlock">
+                <div class="label">Explanation</div>
+                <div class="explain">
+                  Hooke’s Law: extension is proportional to force (so doubling force doubles extension) until the spring stops behaving elastically.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:10px">
+            <h3>(ii) Do the results agree with Hooke’s Law? How can you tell? (2)</h3>
+            <div class="row">
+              <div class="box">
+                <div class="label">Model answer</div>
+                <div class="answer">
+                  <strong>Yes.</strong> When the force doubles, the extension doubles (e.g. 1 N → 0.8 cm and 2 N → 1.6 cm).
+                </div>
+              </div>
+              <div class="box explainBlock">
+                <div class="label">Explanation</div>
+                <div class="explain">
+                  The table shows a consistent proportional pattern at first (1–4 N). That supports Hooke’s Law.
+                  <div class="note">
+                    Notice at 5 N the extension is 4.8 cm, which is larger than the simple pattern would predict (it would be 4.0 cm). That suggests it may be starting to go beyond perfect proportionality at higher force.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(d) One safety precaution (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer (any one)</div>
+              <div class="answer">
+                • Wear goggles <em>or</em><br/>
+                • Don’t drop masses on your feet <em>or</em><br/>
+                • Stand back from hanging masses <em>or</em><br/>
+                • Use a landing pad under masses
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Hanging masses can swing or fall, so you reduce risk of injury or broken equipment.
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Q4 -->
+      <article class="panel" id="panel-q4" role="tabpanel" aria-labelledby="tab-q4">
+        <div class="qhead">
+          <h2 class="qtitle">Question 4 — Drag forces and upthrust</h2>
+          <div class="qmeta">
+            <span class="badge">Marks: 3</span>
+            <span class="badge">Key ideas: contact forces, direction of forces, particle model</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(a) One similarity and one difference (2)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer">
+                <strong>Similarity:</strong> Both are <strong>contact forces</strong> and can act in fluids (air/water).<br/><br/>
+                <strong>Difference:</strong> <strong>Upthrust</strong> always acts <strong>upwards</strong>, but <strong>drag</strong> acts <strong>opposite to motion</strong> (and only matters when moving).
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Upthrust is due to pressure differences in a fluid. Drag is due to collisions/friction with fluid particles when an object moves.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(b) Use the particle model to explain drag (1)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer">
+                As the object moves, it pushes air/water particles out of the way and they push back on the object, creating a force that opposes motion.
+              </div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                More collisions (e.g. higher speed or denser fluid) means a larger drag force.
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Q5 -->
+      <article class="panel" id="panel-q5" role="tabpanel" aria-labelledby="tab-q5">
+        <div class="qhead">
+          <h2 class="qtitle">Question 5 — NASA’s Curiosity Rover on Mars</h2>
+          <div class="qmeta">
+            <span class="badge">Marks: 12</span>
+            <span class="badge">Key ideas: W = m×g, rearranging, drag and particles</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(a) Complete the word equation for weight (2)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model answer</div>
+              <div class="answer"><strong>Weight (N) = mass (kg) × gravitational field strength (N/kg)</strong></div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                Mass stays the same wherever you are, but weight changes because gravitational field strength changes.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(b) Calculate the gravitational field strength on Mars (3)</h3>
+          <div class="row">
+            <div class="box">
+              <div class="label">Model method + answer</div>
+              <div class="eq" aria-label="Calculation">
+g = W / m
+g = 3326 / 899
+g = 3.7 N/kg
+              </div>
+              <div class="answer" style="margin-top:10px">Answer: <strong>3.7 N/kg</strong></div>
+            </div>
+            <div class="box explainBlock">
+              <div class="label">Explanation</div>
+              <div class="explain">
+                You rearrange <span class="kbd">W = m × g</span> to get <span class="kbd">g = W ÷ m</span>, then substitute the Mars weight and the mass.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>(c) Parachute and forces</h3>
+
+          <div class="section" style="margin-top:10px">
+            <h3>(i) What happened to the two forces when the parachute opened, and why? (4)</h3>
+            <div class="row">
+              <div class="box">
+                <div class="label">Model answer</div>
+                <div class="answer">
+                  • The <strong>weight stayed the same</strong> because the rover’s mass did not change (and g didn’t suddenly change).<br/>
+                  • The <strong>drag force increased</strong> because the parachute increased the surface area.
+                </div>
+              </div>
+              <div class="box explainBlock">
+                <div class="label">Explanation</div>
+                <div class="explain">
+                  Bigger area → more collisions with air particles → larger drag force → rover slows down.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section" style="margin-top:10px">
+            <h3>(ii) Mars’ atmosphere is thinner. Is drag bigger, smaller or the same as on Earth? Explain using particles. (3)</h3>
+            <div class="row">
+              <div class="box">
+                <div class="label">Model answer</div>
+                <div class="answer"><strong>Smaller.</strong> There are fewer particles in Mars’ atmosphere, so there are fewer collisions/pushes on the rover, giving a smaller drag force.</div>
+              </div>
+              <div class="box explainBlock">
+                <div class="label">Explanation</div>
+                <div class="explain">
+                  Drag comes from the rover pushing particles out of the way and particles pushing back. Fewer particles means less pushing back overall.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="explainBlock">
+          <summary>Mini “exam tip”</summary>
+          <p class="explain">
+            When calculating <span class="kbd">g</span>, always write the rearranged equation first (g = W ÷ m) and then substitute numbers — it helps avoid mixing up mass and weight.
+          </p>
+        </details>
+      </article>
+    </section>
+  </div>
+</main>
+
+<script>
+  (function(){
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const panels = Array.from(document.querySelectorAll('.panel'));
+    const explainToggle = document.getElementById('explainToggle');
+    const toggleAllBtn = document.getElementById('toggleAll');
+
+    function setActive(tab){
+      const id = tab.getAttribute('aria-controls');
+      tabs.forEach(t => t.setAttribute('aria-selected', String(t === tab)));
+      panels.forEach(p => p.classList.toggle('active', p.id === id));
+      // Move focus to panel heading for accessibility
+      const panel = document.getElementById(id);
+      const heading = panel.querySelector('.qtitle');
+      if (heading) heading.setAttribute('tabindex','-1'), heading.focus({preventScroll:false});
+      // Remove tabindex after focus to keep DOM clean
+      setTimeout(() => heading && heading.removeAttribute('tabindex'), 50);
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => setActive(tab));
+      tab.addEventListener('keydown', (e) => {
+        const i = tabs.indexOf(tab);
+        if (e.key === 'ArrowDown') { e.preventDefault(); tabs[(i+1)%tabs.length].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); tabs[(i-1+tabs.length)%tabs.length].focus(); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActive(tab); }
+      });
+    });
+
+    function applyExplainVisibility(show){
+      document.querySelectorAll('.explainBlock').forEach(el => {
+        el.style.display = show ? '' : 'none';
+      });
+      explainToggle.checked = show;
+      toggleAllBtn.textContent = show ? 'Hide explanations' : 'Show explanations';
+    }
+
+    explainToggle.addEventListener('change', (e) => applyExplainVisibility(e.target.checked));
+    toggleAllBtn.addEventListener('click', () => applyExplainVisibility(!explainToggle.checked));
+
+    // Start with explanations shown
+    applyExplainVisibility(true);
+  })();
+</script>
+</body>
+</html>
+```
