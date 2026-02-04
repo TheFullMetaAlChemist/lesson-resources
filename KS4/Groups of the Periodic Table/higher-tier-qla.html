@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DIRT QLA — Groups of the Periodic Table (Higher)</title>
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --border:#e2e8f0;
+      --accent:#2563eb;
+      --success:#10b981;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --radius:12px;
+      --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--ink);
+      background-color:var(--bg);
+      line-height:1.5;
+    }
+    header{
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+      margin-bottom: 1.5rem;
+    }
+    .wrap{max-width:1000px; margin:0 auto; padding:0 1.5rem;}
+    h1{font-size:1.5rem; margin:0; font-weight: 800; letter-spacing:-0.025em}
+    .sub{font-size:0.875rem; color:var(--muted); margin-top: 0.25rem}
+    
+    .topbar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem}
+    .btnRow{display:flex; gap:0.5rem; flex-wrap:wrap}
+    
+    button{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: white;
+    }
+    button:hover{background: #f1f5f9}
+    .primary{background: var(--accent); color: white; border-color: var(--accent)}
+    .primary:hover{background: #1d4ed8}
+    .danger{color: var(--bad); border-color: #fecaca}
+    .danger:hover{background: #fef2f2}
+
+    .layout{max-width:1000px; margin:0 auto; padding:0 1.5rem 3rem; display:flex; flex-direction:column; gap:1.5rem;}
+    
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel-head{
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-head h2{font-size: 1.125rem; margin: 0; font-weight: 700}
+    .panel-body{padding: 1.5rem}
+
+    .grid-input{display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem}
+    label{display:block; font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:0.35rem}
+    input{
+      width:100%;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+    }
+
+    .qTable{width:100%; border-collapse:collapse; font-size: 0.875rem}
+    .qTable th{text-align:left; padding:0.75rem; background:#f8fafc; border-bottom:2px solid var(--border); color:var(--muted)}
+    .qTable td{padding:0.75rem; border-bottom:1px solid var(--border)}
+    .qTable input{width:60px; text-align:center; padding: 0.25rem}
+
+    /* ---- NEW REPORT ELEMENTS ---- */
+    .status-bar{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f1f5f9;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .stat-box{text-align: center}
+    .stat-label{font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase}
+    .stat-val{font-size: 1.5rem; font-weight: 800; display: block; color: var(--accent)}
+
+    .topic-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .topic-card{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background: #fff;
+    }
+    .topic-name{font-weight: 600; font-size: 0.9rem; flex: 1}
+    .topic-score{font-size: 0.8rem; color: var(--muted); margin-right: 1rem}
+
+    .feedback-row{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .feedback-col h3{font-size: 1rem; margin-top: 0; color: var(--ink); border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem}
+    .feedback-col ul{padding-left: 1.25rem; margin: 0; font-size: 0.9rem}
+    .feedback-col li{margin-bottom: 0.5rem}
+
+    .followup-section{
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .fu-card{border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; background: #fff}
+    .fu-card h4{margin: 0 0 0.5rem 0; font-size: 1rem}
+    .fu-text{font-size: 0.85rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4}
+    textarea{width:100%; border:1px solid var(--border); border-radius:0.5rem; padding:0.75rem; min-height:120px; font-family: inherit}
+
+    #printHeader{display: none}
+
+    @media print {
+      .noPrint { display: none !important; }
+      #printHeader { 
+        display: block; 
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--ink);
+        padding-bottom: 1rem;
+      }
+      body { background: white; padding: 0; }
+      .layout { max-width: 100%; padding: 0; margin: 0; }
+      .panel { border: none; box-shadow: none; }
+      .panel-body { padding: 0; }
+      .topic-grid { grid-template-columns: 1fr 1fr !important; }
+      .feedback-row { grid-template-columns: 1fr 1fr !important; }
+      .page-break { page-break-before: always; height: 1px; width: 100%; }
+      .status-bar { background: #fff !important; border: 2px solid #000; }
+      .fu-card { border: 1px solid #000; break-inside: avoid; }
+    }
+
+    .pill{
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+    }
+    .pill-green{background: var(--success)}
+    .pill-amber{background: var(--warn)}
+    .pill-red{background: var(--bad)}
+  </style>
+</head>
+<body>
+
+<div id="printHeader">
+  <h1 style="font-size: 20pt">Chemistry Analysis: Groups of the Periodic Table</h1>
+  <p id="printMeta" style="font-size: 12pt"></p>
+</div>
+
+<header class="noPrint">
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>DIRT QLA — Groups of the Periodic Table (Higher)</h1>
+        <div class="sub">Personalized Feedback & Follow-up Work</div>
+      </div>
+      <div class="btnRow">
+        <button class="primary" onclick="generateReport()">Generate Report</button>
+        <button onclick="window.print()">Print to PDF</button>
+        <button class="danger" onclick="resetApp()">Reset</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  
+  <section class="panel noPrint">
+    <div class="panel-head"><h2>Student Details</h2></div>
+    <div class="panel-body">
+      <div class="grid-input">
+        <div>
+          <label>Student Name</label>
+          <input type="text" id="name" placeholder="Enter name...">
+        </div>
+        <div>
+          <label>Class</label>
+          <input type="text" id="class" placeholder="e.g. 11/Ch1">
+        </div>
+        <div>
+          <label>Target Grade</label>
+          <input type="text" id="target" placeholder="e.g. 7">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel noPrint">
+    <div class="panel-head"><h2>Enter Your Scores</h2></div>
+    <div class="panel-body">
+      <table class="qTable">
+        <thead>
+          <tr>
+            <th>Q</th>
+            <th>Description</th>
+            <th>Max</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody id="scoreBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="report" class="panel">
+    <div class="panel-head noPrint"><h2>Analysis Report</h2></div>
+    <div class="panel-body">
+      
+      <!-- Summary Bar -->
+      <div class="status-bar">
+        <div class="stat-box">
+          <span class="stat-label">Total Score</span>
+          <span class="stat-val" id="resScore">0 / 35</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Percentage</span>
+          <span class="stat-val" id="resPct">0%</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Grade</span>
+          <span class="stat-val" id="resGrade">U</span>
+        </div>
+      </div>
+
+      <!-- Topic Grid (2 Columns) -->
+      <h3>Topic Mastery</h3>
+      <div class="topic-grid" id="topicGrid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Strengths & Targets (Side by Side) -->
+      <div class="feedback-row">
+        <div class="feedback-col">
+          <h3>"I Can" (Strengths)</h3>
+          <ul id="icanList"></ul>
+        </div>
+        <div class="feedback-col">
+          <h3>"I Need to Focus On"</h3>
+          <ul id="targetList"></ul>
+        </div>
+      </div>
+
+      <div class="page-break"></div>
+
+      <!-- Follow Up Section -->
+      <div style="margin-top: 2rem">
+        <h3 style="margin-bottom: 0.25rem">Personalized Follow-Up Work</h3>
+        <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem">Complete these two tasks based on your weakest assessment areas.</p>
+        <div class="followup-section" id="fuSection">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<script>
+  // Assessment Data
+  const QUESTIONS = [
+    { id: "1.1", max: 2, topic: "A", desc: "Graph trends (Group 1 MP)" },
+    { id: "1.2", max: 1, topic: "A", desc: "Estimation from graph" },
+    { id: "1.3", max: 1, topic: "A", desc: "Lithium electron structure" },
+    { id: "1.4", max: 3, topic: "A", desc: "Sodium + water observations" },
+    { id: "1.5", max: 1, topic: "A", desc: "Identify reactivity trend" },
+    { id: "1.6", max: 3, topic: "A", desc: "Explain G1 reactivity trend" },
+    { id: "2.1", max: 2, topic: "B", desc: "Plotting + Line of best fit" },
+    { id: "2.2", max: 1, topic: "B", desc: "Estimate values from line" },
+    { id: "2.3", max: 1, topic: "B", desc: "Predict state at 25°C" },
+    { id: "2.4", max: 2, topic: "B", desc: "Isotopes & subatomic particles" },
+    { id: "2.5", max: 1, topic: "B", desc: "Explain relative atomic mass" },
+    { id: "3ai", max: 2, topic: "C", desc: "Group 7 similarities (electrons)" },
+    { id: "3aii", max: 2, topic: "D", desc: "Explain G7 reaction speed" },
+    { id: "3b", max: 2, topic: "C", desc: "Noble gas unreactivity/monatomic" },
+    { id: "4ai", max: 1, topic: "E", desc: "Fluorine atom structure" },
+    { id: "4aii", max: 1, topic: "E", desc: "Chloride ion structure" },
+    { id: "4aiii", max: 4, topic: "D", desc: "Explain Fluorine vs Chlorine reactivity" },
+    { id: "4bi", max: 1, topic: "G", desc: "Infer reactivity from data" },
+    { id: "4bii", max: 2, topic: "G", desc: "Experimental error/Apparatus reaction" },
+    { id: "5i", max: 1, topic: "F", desc: "Displacement word equations" },
+    { id: "5ii", max: 1, topic: "F", desc: "Predicting lack of displacement" }
+  ];
+
+  const TOPICS = {
+    A: { name: "G1 Trends & Reactivity", total: 11 },
+    B: { name: "G7 Data & Isotopes", total: 7 },
+    C: { name: "G Patterns & Noble Gases", total: 4 },
+    D: { name: "Halogen Reactivity Theory", total: 6 },
+    E: { name: "Electron Structures & Ions", total: 2 },
+    F: { name: "Halogen Displacement", total: 2 },
+    G: { name: "Evidence & Lab Accuracy", total: 3 }
+  };
+
+  const FEEDBACK = {
+    A: { 
+      can: "I can describe trends in Group 1 and explain reactivity using shielding and nuclear attraction.", 
+      target: "Focus on the specific wording for reactivity: distance from nucleus, shielding, and strength of attraction.",
+      fu: {
+        title: "Task: Alkali Metal Explanations",
+        q: "Explain why potassium is more reactive than sodium. Mention shells, shielding, and the outer electron.",
+        prompt: "Focus on why the outer electron is 'lost' more easily in potassium."
+      }
+    },
+    B: { 
+      can: "I can accurately plot data, use lines of best fit, and define isotopes.", 
+      target: "Improve accuracy in reading graphs and linking isotope abundance to relative atomic mass.",
+      fu: {
+        title: "Task: Graphing & Isotopes",
+        q: "Copper-63 has an abundance of 69% and Copper-65 has 31%. Explain why the RAM is 63.5.",
+        prompt: "Use the term 'weighted average' in your answer."
+      }
+    },
+    C: { 
+      can: "I can link chemical properties to outer shell electron counts and explain noble gas stability.", 
+      target: "Ensure you mention 'full outer shells' specifically when discussing Group 0 stability.",
+      fu: {
+        title: "Task: Noble Gas Stability",
+        q: "Explain why argon is monatomic and does not form compounds easily.",
+        prompt: "Relate your answer to its electron configuration (2.8.8)."
+      }
+    },
+    D: { 
+      can: "I can explain the trend in Group 7 reactivity using atomic structure arguments.", 
+      target: "Practise explaining why it's harder for larger atoms to *gain* electrons compared to losing them.",
+      fu: {
+        title: "Task: Halogen Theory",
+        q: "Explain why fluorine is more reactive than chlorine.",
+        prompt: "Compare the distance between the nucleus and the incoming electron."
+      }
+    },
+    E: { 
+      can: "I can draw and write electronic configurations for both atoms and ions.", 
+      target: "Be careful when drawing ions; remember to show the change in electron count and the charge.",
+      fu: {
+        title: "Task: Ions & Atoms",
+        q: "Draw the electron structure for a Magnesium atom and a Magnesium ion (Mg²⁺).",
+        prompt: "How many electrons are in the outer shell of the ion?"
+      }
+    },
+    F: { 
+      can: "I can predict and write equations for halogen displacement reactions.", 
+      target: "Practise writing both word and balanced symbol equations for displacement.",
+      fu: {
+        title: "Task: Displacement Reactions",
+        q: "Write the word equation for: Chlorine + Potassium Bromide. Will Iodine react with Sodium Chloride?",
+        prompt: "Use the reactivity series of the halogens to justify your answer."
+      }
+    },
+    G: { 
+      can: "I can interpret experimental data and identify when the apparatus might be reacting.", 
+      target: "Look for clues in questions about the container material (e.g. glass) reacting with the chemicals.",
+      fu: {
+        title: "Task: Experimental Design",
+        q: "Why should fluorine reactions not be carried out in glass containers?",
+        prompt: "Research what fluorine does to the silicon in glass."
+      }
+    }
+  };
+
+  // Initialization
+  window.onload = () => {
+    const body = document.getElementById('scoreBody');
+    QUESTIONS.forEach(q => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${q.id}</td>
+        <td>${q.desc}</td>
+        <td>${q.max}</td>
+        <td><input type="number" id="q_${q.id}" min="0" max="${q.max}" value="0" onchange="generateReport()"></td>
+      `;
+      body.appendChild(row);
+    });
+    
+    // Load local storage if exists
+    const saved = localStorage.getItem('qla_periodic_data');
+    if(saved) {
+      const data = JSON.parse(saved);
+      document.getElementById('name').value = data.name || "";
+      document.getElementById('class').value = data.class || "";
+      document.getElementById('target').value = data.target || "";
+      Object.keys(data.scores).forEach(id => {
+        const inp = document.getElementById(`q_${id}`);
+        if(inp) inp.value = data.scores[id];
+      });
+      generateReport();
+    }
+  };
+
+  function generateReport() {
+    let total = 0;
+    const scores = {};
+    const topicTotals = { A:0, B:0, C:0, D:0, E:0, F:0, G:0 };
+
+    QUESTIONS.forEach(q => {
+      const val = parseInt(document.getElementById(`q_${q.id}`).value) || 0;
+      total += val;
+      scores[q.id] = val;
+      topicTotals[q.topic] += val;
+    });
+
+    // Percentages and Grades
+    const pct = Math.round((total / 35) * 100);
+    document.getElementById('resScore').innerText = `${total} / 35`;
+    document.getElementById('resPct').innerText = `${pct}%`;
+    
+    let grade = "U";
+    if (pct >= 85) grade = "9";
+    else if (pct >= 75) grade = "8";
+    else if (pct >= 65) grade = "7";
+    else if (pct >= 55) grade = "6";
+    else if (pct >= 45) grade = "5";
+    else if (pct >= 35) grade = "4";
+    else if (pct >= 25) grade = "3";
+    document.getElementById('resGrade').innerText = grade;
+
+    // Save
+    const name = document.getElementById('name').value;
+    const classVal = document.getElementById('class').value;
+    localStorage.setItem('qla_periodic_data', JSON.stringify({ name, class: classVal, target: document.getElementById('target').value, scores }));
+    document.getElementById('printMeta').innerText = `Student: ${name} | Class: ${classVal} | Grade: ${grade} (${pct}%)`;
+
+    // Render Topics
+    const grid = document.getElementById('topicGrid');
+    grid.innerHTML = "";
+    const sortedTopics = Object.keys(TOPICS).map(k => ({
+      id: k,
+      ...TOPICS[k],
+      score: topicTotals[k],
+      pct: Math.round((topicTotals[k] / TOPICS[k].total) * 100)
+    })).sort((a,b) => b.pct - a.pct);
+
+    sortedTopics.forEach(t => {
+      const colorClass = t.pct >= 70 ? 'pill-green' : (t.pct >= 40 ? 'pill-amber' : 'pill-red');
+      grid.innerHTML += `
+        <div class="topic-card">
+          <span class="topic-name">${t.name}</span>
+          <span class="topic-score">${t.score}/${t.total}</span>
+          <span class="pill ${colorClass}">${t.pct}%</span>
+        </div>
+      `;
+    });
+
+    // Feedback
+    const icanList = document.getElementById('icanList');
+    const targetList = document.getElementById('targetList');
+    icanList.innerHTML = "";
+    targetList.innerHTML = "";
+
+    sortedTopics.slice(0, 3).forEach(t => {
+      if(t.pct > 50) icanList.innerHTML += `<li>${FEEDBACK[t.id].can}</li>`;
+    });
+    sortedTopics.slice(-3).reverse().forEach(t => {
+      targetList.innerHTML += `<li>${FEEDBACK[t.id].target}</li>`;
+    });
+
+    // Follow ups (weakest 2)
+    const fuSec = document.getElementById('fuSection');
+    fuSec.innerHTML = "";
+    const weakest = sortedTopics.slice(-2);
+    weakest.forEach(t => {
+      const data = FEEDBACK[t.id].fu;
+      fuSec.innerHTML += `
+        <div class="fu-card">
+          <h4>${data.title}</h4>
+          <p style="font-weight:700; font-size: 0.9rem; margin-bottom: 0.5rem">Question:</p>
+          <p style="font-size: 0.9rem; margin-bottom: 0.75rem">${data.q}</p>
+          <p class="fu-text"><i>Tip: ${data.prompt}</i></p>
+          <textarea placeholder="Write your answer here..."></textarea>
+        </div>
+      `;
+    });
+  }
+
+  function resetApp() {
+    if(confirm("Are you sure you want to clear all data?")) {
+      localStorage.removeItem('qla_periodic_data');
+      location.reload();
+    }
+  }
+</script>
+</body>
+</html>
