@@ -1,1097 +1,1486 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Extraction Sim: Phytomining & Bioleaching</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
-            background-color: #eef2f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-            color: #444;
-            user-select: none;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bio-Extraction Sim: Phytomining & Bioleaching</title>
+  <style>
+    :root{
+      --bg:#eef2f5;
+      --panel:#ffffff;
+      --text:#24313f;
+      --muted:#5b6b7a;
+      --shadow: 0 10px 25px rgba(0,0,0,.08);
+      --shadow-soft: 0 4px 10px rgba(0,0,0,.06);
+      --radius:14px;
+      --accent:#2f7dff;
+      --ok:#28a745;
+      --warn:#ffc107;
+      --bad:#dc3545;
+    }
 
-        h1 { color: #2c3e50; margin-bottom: 5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); margin-top: 0; }
-        h3 { color: #666; margin-top: 0; font-weight: normal; margin-bottom: 15px; letter-spacing: 0.5px;}
+    *{box-sizing:border-box;}
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family: 'Segoe UI','Roboto',system-ui,-apple-system,Helvetica,Arial,sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow:hidden; /* key: no page scrolling */
+      user-select:none;
+    }
 
-        /* Main Wrapper */
-        .main-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 800px;
-        }
+    /* Top header */
+    .header{
+      padding: 10px 14px 6px;
+      text-align:center;
+    }
+    .header h1{
+      margin:0;
+      font-size: clamp(18px, 2.2vw, 26px);
+      letter-spacing:.2px;
+    }
+    .header h3{
+      margin: 4px 0 0;
+      font-weight: 500;
+      color: var(--muted);
+      font-size: clamp(12px, 1.4vw, 14px);
+    }
 
-        /* Dialog Box */
-        .dialog-box {
-            background: #fff;
-            width: 100%;
-            padding: 20px 30px; 
-            border-radius: 8px;
-            border-left: 6px solid #007bff;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 15px; 
-            text-align: left; 
-            font-size: 1.15em;
-            line-height: 1.6;
-            color: #2c3e50;
-            box-sizing: border-box;
-            min-height: 90px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start; 
-        }
+    /* Main layout: dialog + canvas + controls, always within viewport */
+    .main{
+      height: calc(100vh - 52px); /* header height-ish */
+      max-height: calc(100vh - 52px);
+      width: min(1024px, 100vw);
+      margin: 0 auto;
+      padding: 10px 12px 12px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+    }
 
-        #game-container {
-            position: relative;
-            width: 800px;
-            height: 550px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            overflow: hidden;
-            cursor: default;
-            border: 1px solid #ddd;
-        }
+    /* Dialog */
+    .dialog-box{
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      border-left: 7px solid var(--accent);
+      padding: 12px 14px;
+      min-height: 72px;
+      display:flex;
+      align-items:center;
+      line-height: 1.45;
+      font-size: clamp(14px, 1.3vw, 16px);
+      color: var(--text);
+    }
+    .dialog-box b{ font-weight:700; }
+    .dialog-box.success{ border-left-color: var(--ok); background:#f2fff6; }
+    .dialog-box.warning{ border-left-color: var(--warn); background:#fffdf2; }
+    .dialog-box.error{ border-left-color: var(--bad); background:#fff5f5; }
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
+    /* Canvas container */
+    #game-container{
+      position:relative;
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.06);
+      overflow:hidden;
+      min-height: 260px;
+    }
+    canvas{
+      display:block;
+      width:100%;
+      height:100%;
+      touch-action:none;
+    }
 
-        /* Controls */
-        .controls {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            padding: 10px;
-            background: #fff; 
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            min-height: 60px;
-            box-sizing: border-box;
-            align-items: center;
-        }
+    /* Controls */
+    .controls{
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(0,0,0,.06);
+      padding: 10px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap: 10px;
+      align-items:center;
+      min-height: 58px;
+    }
 
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            background: linear-gradient(145deg, #007bff, #0069d9);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,123,255,0.2);
-            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
-        }
+    button{
+      appearance:none;
+      border:none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor:pointer;
+      color:#fff;
+      background: linear-gradient(145deg, #2f7dff, #1f63d8);
+      box-shadow: 0 6px 14px rgba(47,125,255,.22);
+      transform: translateZ(0);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      white-space:nowrap;
+    }
+    button:hover{ transform: translateY(-1px); box-shadow: 0 10px 18px rgba(47,125,255,.25); }
+    button:active{ transform: translateY(0px); filter: brightness(.98); }
 
-        button:hover { 
-            background: linear-gradient(145deg, #0069d9, #0056b3); 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 12px rgba(0,123,255,0.3);
-        }
-        button:active { transform: translateY(0); }
-        
-        button.metal-btn { 
-            background: linear-gradient(145deg, #6c757d, #5a6268); 
-            box-shadow: 0 4px 6px rgba(108,117,125,0.2);
-        }
-        button.metal-btn:hover { background: linear-gradient(145deg, #5a6268, #4e555b); }
-        
-        button.tool-btn { 
-            background: linear-gradient(145deg, #28a745, #218838); 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(40,167,69,0.2);
-        }
-        button.tool-btn:hover { background: linear-gradient(145deg, #218838, #1e7e34); }
+    .metal-btn{
+      background: linear-gradient(145deg, #6c757d, #545c63);
+      box-shadow: 0 6px 14px rgba(108,117,125,.20);
+    }
+    .metal-btn:hover{ box-shadow: 0 10px 18px rgba(108,117,125,.24); }
 
-        .hidden { display: none !important; }
+    .tool-btn{
+      background: linear-gradient(145deg, #29b765, #1e8a4b);
+      box-shadow: 0 6px 14px rgba(41,183,101,.22);
+    }
+    .tool-btn:hover{ box-shadow: 0 10px 18px rgba(41,183,101,.24); }
 
-        /* Status Colors */
-        .success { border-left-color: #28a745; background: #f0fff4; }
-        .error { border-left-color: #dc3545; background: #fff5f5; }
-        .warning { border-left-color: #ffc107; background: #fffff5; }
+    .ghost-btn{
+      background: linear-gradient(145deg, #ff8f00, #f57c00);
+      box-shadow: 0 6px 14px rgba(245,124,0,.20);
+    }
 
-    </style>
+    .hidden{ display:none !important; }
+
+    /* Tiny hint pill (optional) */
+    .hint{
+      position:absolute;
+      top:10px;
+      right:10px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      box-shadow: 0 6px 14px rgba(0,0,0,.08);
+      pointer-events:none;
+      backdrop-filter: blur(6px);
+    }
+
+    @media (max-height: 650px){
+      .dialog-box{ min-height: 64px; }
+      .controls{ min-height: 52px; }
+      button{ padding: 9px 12px; }
+    }
+  </style>
 </head>
 <body>
-
+  <div class="header">
     <h1>Copper Extraction Simulation</h1>
     <h3>Topic: Phytomining, Bioleaching & Electrolysis</h3>
+  </div>
 
-    <div class="main-wrapper">
-        <!-- 1. Text Area Top -->
-        <div id="dialog" class="dialog-box">
-            Welcome! High-grade copper ore is running out. <br>
-            Choose a biological method to extract copper from low-grade ore.
-        </div>
-
-        <!-- 2. Animation Window Middle -->
-        <div id="game-container">
-            <canvas id="simCanvas" width="800" height="550"></canvas>
-        </div>
-
-        <!-- 3. Controls Bottom -->
-        <div id="controls-area" class="controls">
-            <!-- Buttons injected via JS -->
-        </div>
+  <div class="main">
+    <div id="dialog" class="dialog-box">
+      Welcome! High-grade copper ore is running out.<br>
+      Choose a biological method to extract copper from low-grade ore.
     </div>
 
+    <div id="game-container">
+      <div id="hint" class="hint hidden">Tip</div>
+      <canvas id="simCanvas"></canvas>
+    </div>
+
+    <div id="controls-area" class="controls"></div>
+  </div>
+
 <script>
-/**
- * SIMULATION ENGINE
- */
+/* ---------------------------
+   Canvas helpers + DPI scaling
+---------------------------- */
 const canvas = document.getElementById('simCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', { alpha: true });
 const dialog = document.getElementById('dialog');
 const controls = document.getElementById('controls-area');
+const hintEl = document.getElementById('hint');
+const container = document.getElementById('game-container');
 
-// Game State Enum
+let DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+let W = 800, H = 550;
+
+function resizeCanvas(){
+  const r = container.getBoundingClientRect();
+  // Fit canvas into container exactly
+  W = Math.floor(r.width);
+  H = Math.floor(r.height);
+
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+
+  canvas.width = Math.floor(W * DPR);
+  canvas.height = Math.floor(H * DPR);
+
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  recomputeSceneConstants();
+  buildSoilTexture(); // avoid flicker: deterministic per resize
+}
+
+window.addEventListener('resize', () => {
+  DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  resizeCanvas();
+});
+
+/* roundRect polyfill (for older browsers) */
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r){
+    const rr = Array.isArray(r) ? r : [r,r,r,r];
+    const [r1,r2,r3,r4] = rr.map(v => Math.max(0, Math.min(v, Math.min(w,h)/2)));
+    this.beginPath();
+    this.moveTo(x + r1, y);
+    this.lineTo(x + w - r2, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + r2);
+    this.lineTo(x + w, y + h - r3);
+    this.quadraticCurveTo(x + w, y + h, x + w - r3, y + h);
+    this.lineTo(x + r4, y + h);
+    this.quadraticCurveTo(x, y + h, x, y + h - r4);
+    this.lineTo(x, y + r1);
+    this.quadraticCurveTo(x, y, x + r1, y);
+    return this;
+  };
+}
+
+/* ---------------------------
+   Simulation State
+---------------------------- */
 const STATES = {
-    MENU: 0,
-    PHYTO_PLANT: 1,
-    PHYTO_GROW: 2,
-    PHYTO_HARVEST: 3,
-    PHYTO_BURN: 4,
-    BIO_LEACH: 5,
-    DISPLACEMENT_SELECT: 6,
-    DISPLACEMENT_REACT: 7,
-    ELECTROLYSIS: 8,
-    FINISHED: 9
+  MENU: 0,
+  PHYTO_PLANT: 1,
+  PHYTO_GROW: 2,
+  PHYTO_HARVEST: 3,
+  PHYTO_BURN: 4,
+  BIO_LEACH: 5,
+  DISPLACEMENT_SELECT: 6,
+  DISPLACEMENT_REACT: 7,
+  ELECTROLYSIS: 8,
+  FINISHED: 9
 };
 
 let currentState = STATES.MENU;
 let frames = 0;
+let lastT = performance.now();
+let dt = 16;
 
-// MOUSE / INPUT
+/* Input */
 let mouse = { x: 0, y: 0, isDown: false };
-let currentTool = null; // 'seeds', 'scythe'
+let currentTool = null;
 
-// VARIABLES
+/* Scene variables */
 let particles = [];
 let plants = [];
-let anodeWidth = 60;
-let cathodeWidth = 15;
-let solutionColor = {r: 255, g: 255, b: 255}; 
+let solutionColor = {r:255,g:255,b:255};
+let solutionTarget = {r:255,g:255,b:255};
 let reactionProgress = 0;
 let copperPrecipitateHeight = 0;
 
-// BIOLEACHING SPECIFIC
+let anodeWidth = 60;
+let cathodeWidth = 15;
+
+/* Bioleaching */
 let bioRocks = [];
 let bioBacteria = [];
 let bioDroplets = [];
+let tankFill = 0;
 
-// ASSETS / CONSTANTS
-const groundLevel = 400; 
-
-// --- INITIALIZATION ---
-function init() {
-    setupInput();
-    showMenu();
-    loop();
+/* Layout constants (recomputed on resize) */
+let groundLevel = 400;
+let soilTexture = [];
+function recomputeSceneConstants(){
+  groundLevel = Math.round(H * 0.73);  // scalable to any height
 }
 
-function setupInput() {
-    canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        mouse.x = e.clientX - rect.left;
-        mouse.y = e.clientY - rect.top;
-        handleToolAction();
+/* Build fixed soil texture once per resize (prevents flickering) */
+function buildSoilTexture(){
+  soilTexture = [];
+  const count = Math.floor((W * (H - groundLevel)) / 5000);
+  for(let i=0; i<count; i++){
+    soilTexture.push({
+      x: Math.random() * W,
+      y: groundLevel + Math.random() * (H - groundLevel),
+      s: 1 + Math.random() * 2,
+      a: 0.06 + Math.random() * 0.08
     });
-    canvas.addEventListener('mousedown', () => { mouse.isDown = true; handleToolAction(); });
-    canvas.addEventListener('mouseup', () => { mouse.isDown = false; });
-    
-    canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        mouse.x = e.touches[0].clientX - rect.left;
-        mouse.y = e.touches[0].clientY - rect.top;
-        mouse.isDown = true;
-        handleToolAction();
-    }, {passive: false});
-    canvas.addEventListener('touchstart', () => { mouse.isDown = true; });
-    canvas.addEventListener('touchend', () => { mouse.isDown = false; });
+  }
 }
 
-function handleToolAction() {
-    if (!mouse.isDown) return;
+/* ---------------------------
+   Utility
+---------------------------- */
+function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+function lerp(a,b,t){ return a + (b-a)*t; }
+function lerpColor(c1, c2, t){
+  return {
+    r: Math.round(lerp(c1.r, c2.r, t)),
+    g: Math.round(lerp(c1.g, c2.g, t)),
+    b: Math.round(lerp(c1.b, c2.b, t)),
+  };
+}
+function setHint(text, show=true){
+  hintEl.textContent = text;
+  hintEl.classList.toggle('hidden', !show);
+}
 
-    if (currentState === STATES.PHYTO_PLANT && currentTool === 'seeds') {
-        if (mouse.y > groundLevel - 50 && mouse.y < groundLevel + 50) {
-            let tooClose = plants.some(p => Math.abs(p.x - mouse.x) < 30);
-            if (!tooClose) {
-                plants.push({ x: mouse.x, height: 0, cut: false, variance: Math.random() });
-                if (plants.length >= 3 && document.getElementById('grow-btn').classList.contains('hidden')) {
-                    document.getElementById('grow-btn').classList.remove('hidden');
-                    setDialog("Great! Click 'Grow Plants' when ready, or plant more.");
-                }
-            }
+/* ---------------------------
+   Input binding (mouse + touch)
+---------------------------- */
+function setupInput(){
+  const posFromEvent = (clientX, clientY) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = clientX - rect.left;
+    mouse.y = clientY - rect.top;
+  };
+
+  canvas.addEventListener('mousemove', e => { posFromEvent(e.clientX, e.clientY); handleToolAction(); });
+  canvas.addEventListener('mousedown', e => { mouse.isDown = true; posFromEvent(e.clientX, e.clientY); handleToolAction(); });
+  window.addEventListener('mouseup', () => { mouse.isDown = false; });
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    mouse.isDown = true;
+    posFromEvent(e.touches[0].clientX, e.touches[0].clientY);
+    handleToolAction();
+  }, {passive:false});
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    posFromEvent(e.touches[0].clientX, e.touches[0].clientY);
+    handleToolAction();
+  }, {passive:false});
+
+  window.addEventListener('touchend', () => { mouse.isDown = false; });
+}
+
+function handleToolAction(){
+  if (!mouse.isDown) return;
+
+  if (currentState === STATES.PHYTO_PLANT && currentTool === 'seeds') {
+    if (mouse.y > groundLevel - 60 && mouse.y < groundLevel + 40) {
+      let tooClose = plants.some(p => Math.abs(p.x - mouse.x) < 34);
+      if (!tooClose) {
+        plants.push({ x: mouse.x, height: 0, cut: false, variance: Math.random(), sway: Math.random()*Math.PI*2 });
+        if (plants.length >= 3) {
+          const growBtn = document.getElementById('grow-btn');
+          if (growBtn && growBtn.classList.contains('hidden')) {
+            growBtn.classList.remove('hidden');
+            setDialog("Great! Click <b>Grow Plants</b> when ready, or plant more.");
+          }
         }
+      }
     }
+  }
 
-    if (currentState === STATES.PHYTO_HARVEST && currentTool === 'scythe') {
-        plants.forEach(p => {
-            if (!p.cut && Math.abs(mouse.x - p.x) < 25 && mouse.y < groundLevel && mouse.y > groundLevel - p.height - 20) {
-                p.cut = true;
-            }
-        });
-
-        const allCut = plants.length > 0 && plants.every(p => p.cut);
-        if (allCut && document.getElementById('burn-btn').classList.contains('hidden')) {
-            document.getElementById('burn-btn').classList.remove('hidden');
-            setDialog("All plants harvested! They are rich in copper. Click 'Burn' to extract the ash.", "success");
-        }
-    }
-}
-
-
-// --- MAIN LOOP ---
-function loop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    frames++;
-
-    switch (currentState) {
-        case STATES.MENU:
-            drawMenuBackground();
-            break;
-        case STATES.PHYTO_PLANT:
-            drawPhytoEnvironment();
-            drawPlants();
-            drawToolOverlay();
-            break;
-        case STATES.PHYTO_GROW:
-            drawPhytoEnvironment();
-            drawPlants();
-            updatePhytoParticles();
-            drawPhytoLabels();
-            break;
-        case STATES.PHYTO_HARVEST:
-            drawPhytoEnvironment();
-            drawPlants();
-            drawToolOverlay();
-            break;
-        case STATES.PHYTO_BURN:
-            drawBurning();
-            break;
-        case STATES.BIO_LEACH:
-            updateBioleaching();
-            drawBioleaching();
-            break;
-        case STATES.DISPLACEMENT_SELECT:
-        case STATES.DISPLACEMENT_REACT:
-            drawBeakerScene();
-            if(currentState === STATES.DISPLACEMENT_REACT) updateReaction();
-            break;
-        case STATES.ELECTROLYSIS:
-            drawElectrolysisScene();
-            updateElectrolysis();
-            break;
-        case STATES.FINISHED:
-            drawFinished();
-            break;
-    }
-
-    requestAnimationFrame(loop);
-}
-
-// --- SCENE: MENU ---
-function drawMenuBackground() {
-    // Left: Nature
-    let gradSky = ctx.createLinearGradient(0, 0, 0, 400);
-    gradSky.addColorStop(0, "#4FC3F7");
-    gradSky.addColorStop(1, "#B3E5FC");
-    ctx.fillStyle = gradSky;
-    ctx.fillRect(0, 0, 400, 550);
-    
-    // Soil Left
-    ctx.fillStyle = "#5D4037";
-    ctx.fillRect(0, 400, 400, 150);
-    ctx.fillStyle = "#66BB6A"; // Grass
-    ctx.fillRect(0, 390, 400, 10);
-    
-    // Right: Industrial
-    ctx.fillStyle = "#ECEFF1"; 
-    ctx.fillRect(400, 0, 400, 550);
-    // Floor
-    ctx.fillStyle = "#CFD8DC";
-    ctx.fillRect(400, 400, 400, 150);
-    
-    drawOrePile(600, 420, 100);
-    
-    // Divider
-    ctx.strokeStyle = "#B0BEC5";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(400,0); ctx.lineTo(400,550);
-    ctx.stroke();
-
-    // Labels
-    ctx.shadowColor="rgba(255,255,255,0.8)"; ctx.shadowBlur=4;
-    ctx.fillStyle = "#2c3e50";
-    ctx.font = "bold 24px Segoe UI";
-    ctx.textAlign = "center";
-    ctx.fillText("Method A: Phytomining", 200, 120);
-    ctx.fillText("Method B: Bioleaching", 600, 120);
-    ctx.shadowBlur=0;
-}
-
-// --- SCENE: PHYTOMINING ---
-function drawPhytoEnvironment() {
-    // Sky
-    let grad = ctx.createLinearGradient(0, 0, 0, groundLevel);
-    grad.addColorStop(0, "#87CEEB");
-    grad.addColorStop(1, "#E0F7FA");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 800, groundLevel);
-
-    // Soil
-    let gradSoil = ctx.createLinearGradient(0, groundLevel, 0, 550);
-    gradSoil.addColorStop(0, "#5D4037");
-    gradSoil.addColorStop(1, "#3E2723");
-    ctx.fillStyle = gradSoil;
-    ctx.fillRect(0, groundLevel, 800, 550 - groundLevel);
-    
-    // Soil Texture
-    ctx.fillStyle = "rgba(0,0,0,0.1)";
-    for(let i=0; i<100; i++) {
-        let x = Math.random() * 800;
-        let y = groundLevel + Math.random() * 150;
-        ctx.fillRect(x, y, 2, 2);
-    }
-}
-
-function drawPlants() {
+  if (currentState === STATES.PHYTO_HARVEST && currentTool === 'scythe') {
     plants.forEach(p => {
-        let h = p.height;
-        let x = p.x;
-        let variance = p.variance; 
-
-        if (p.cut) {
-            ctx.save();
-            ctx.translate(x, groundLevel);
-            ctx.rotate(Math.PI / 2 + 0.2); 
-            ctx.strokeStyle = "#558B2F"; 
-            ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -h); ctx.stroke();
-            ctx.fillStyle = "#689F38";
-            ctx.beginPath(); ctx.ellipse(-10, -h+10, 8, 4, 0.5, 0, Math.PI*2); ctx.fill();
-            ctx.restore();
-            return;
-        }
-
-        // Roots
-        if (h > 5) {
-            ctx.strokeStyle = "#D7CCC8";
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(x, groundLevel);
-            ctx.quadraticCurveTo(x - 10, groundLevel + 20, x - 5, groundLevel + h/2);
-            ctx.moveTo(x, groundLevel);
-            ctx.quadraticCurveTo(x + 10, groundLevel + 20, x + 5, groundLevel + h/2);
-            ctx.stroke();
-        }
-
-        // Stem
-        ctx.strokeStyle = "#4CAF50";
-        ctx.lineWidth = 4;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(x, groundLevel);
-        let curveX = x + (variance - 0.5) * 10;
-        ctx.quadraticCurveTo(curveX, groundLevel - h/2, x, groundLevel - h);
-        ctx.stroke();
-
-        // Leaves
-        if (h > 5) {
-            ctx.fillStyle = currentState === STATES.PHYTO_PLANT ? "#AED581" : "#2E7D32";
-            if (h > 20) {
-                ctx.beginPath(); 
-                ctx.ellipse(x - 12, groundLevel - h + 15, 12, 6, Math.PI / 4, 0, Math.PI * 2); 
-                ctx.fill();
-                ctx.beginPath(); 
-                ctx.ellipse(x + 12, groundLevel - h + 18, 12, 6, -Math.PI / 4, 0, Math.PI * 2); 
-                ctx.fill();
-            }
-            ctx.beginPath(); 
-            ctx.ellipse(x, groundLevel - h, 8, 4, 0, 0, Math.PI * 2); 
-            ctx.fill();
-        }
-
-        if (currentState === STATES.PHYTO_GROW && h < 120 + variance * 40) p.height += 0.5;
-        if (currentState === STATES.PHYTO_PLANT && h < 15) p.height = 15;
+      if (!p.cut) {
+        const hitX = Math.abs(mouse.x - p.x) < 28;
+        const hitY = mouse.y < groundLevel && mouse.y > groundLevel - p.height - 24;
+        if (hitX && hitY) p.cut = true;
+      }
     });
-
-    if (currentState === STATES.PHYTO_GROW || currentState === STATES.PHYTO_HARVEST) {
-        particles.forEach(p => {
-            if (p.absorbed) return;
-            let grad = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, 6);
-            grad.addColorStop(0, "#FF7043");
-            grad.addColorStop(1, "rgba(255,112,67,0)");
-            ctx.fillStyle = grad;
-            ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "#D84315";
-            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
-        });
+    const allCut = plants.length > 0 && plants.every(p => p.cut);
+    if (allCut) {
+      const burnBtn = document.getElementById('burn-btn');
+      if (burnBtn && burnBtn.classList.contains('hidden')) {
+        burnBtn.classList.remove('hidden');
+        setDialog("All plants harvested! They are rich in copper. Click <b>Burn</b> to extract the ash.", "success");
+      }
     }
+  }
 }
 
-function updatePhytoParticles() {
-    let activeParticles = 0;
-    particles.forEach((p) => {
-        if (p.absorbed) return;
-        activeParticles++;
+/* ---------------------------
+   Main loop with delta time
+---------------------------- */
+function loop(t){
+  dt = clamp(t - lastT, 8, 40);
+  lastT = t;
+  frames++;
 
-        let target = plants[0];
-        let minDist = 9999;
-        plants.forEach(plant => {
-            let d = Math.abs(plant.x - p.x);
-            if (d < minDist) { minDist = d; target = plant; }
-        });
+  ctx.clearRect(0,0,W,H);
 
-        if (minDist > 150) return;
+  switch(currentState){
+    case STATES.MENU: drawMenuBackground(); setHint("Choose a method below", true); break;
 
-        let dx = target.x - p.x;
-        let dy = groundLevel - p.y;
-        p.x += dx * 0.025;
-        p.y += dy * 0.025;
+    case STATES.PHYTO_PLANT:
+      drawPhytoEnvironment();
+      drawPlants();
+      drawToolOverlay();
+      setHint("Hold & drag to plant 🌱", true);
+      break;
 
-        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) {
-            p.absorbed = true;
-        }
-    });
-    
-    if (activeParticles === 0 && currentState === STATES.PHYTO_GROW) {
-        startHarvesting();
-    }
+    case STATES.PHYTO_GROW:
+      drawPhytoEnvironment();
+      updatePhytoParticles(dt);
+      drawPlants();
+      drawPhytoLabels();
+      setHint("Watch Cu²⁺ move into roots", true);
+      break;
+
+    case STATES.PHYTO_HARVEST:
+      drawPhytoEnvironment();
+      drawPlants();
+      drawToolOverlay();
+      setHint("Hold & drag to cut 🌾", true);
+      break;
+
+    case STATES.PHYTO_BURN:
+      drawBurning(dt);
+      setHint("Burning concentrates copper in ash", true);
+      break;
+
+    case STATES.BIO_LEACH:
+      updateBioleaching(dt);
+      drawBioleaching();
+      setHint("Water trickles → acidic leachate collects", true);
+      break;
+
+    case STATES.DISPLACEMENT_SELECT:
+      drawBeakerScene(dt);
+      setHint("Pick a metal more reactive than copper", true);
+      break;
+
+    case STATES.DISPLACEMENT_REACT:
+      drawBeakerScene(dt);
+      updateReaction(dt);
+      setHint("Copper forms as a solid (orange)", true);
+      break;
+
+    case STATES.ELECTROLYSIS:
+      drawElectrolysisScene(dt);
+      updateElectrolysis(dt);
+      setHint("Cu²⁺ plates onto the cathode", true);
+      break;
+
+    case STATES.FINISHED:
+      drawFinished();
+      setHint("Complete ✅", true);
+      break;
+  }
+
+  requestAnimationFrame(loop);
 }
 
-function drawToolOverlay() {
-    if (currentTool === 'seeds') {
-        ctx.font = "30px Arial";
-        ctx.shadowColor = "white"; ctx.shadowBlur = 10;
-        ctx.fillText("🌱", mouse.x, mouse.y);
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.font = "bold 14px Segoe UI";
-        ctx.fillText("Drag to plant", mouse.x + 20, mouse.y);
-    } else if (currentTool === 'scythe') {
-        ctx.font = "30px Arial";
-        ctx.shadowColor = "white"; ctx.shadowBlur = 10;
-        ctx.fillText("🌾", mouse.x, mouse.y);
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = "rgba(0,0,0,0.6)";
-        ctx.font = "bold 14px Segoe UI";
-        ctx.fillText("Drag to cut", mouse.x + 20, mouse.y);
-    }
+/* ---------------------------
+   Drawing: MENU
+---------------------------- */
+function drawMenuBackground(){
+  // Left: nature
+  let sky = ctx.createLinearGradient(0, 0, 0, groundLevel);
+  sky.addColorStop(0, "#4FC3F7");
+  sky.addColorStop(1, "#B3E5FC");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W/2, H);
+
+  // ground left
+  ctx.fillStyle = "#5D4037";
+  ctx.fillRect(0, groundLevel, W/2, H-groundLevel);
+  ctx.fillStyle = "#66BB6A";
+  ctx.fillRect(0, groundLevel-10, W/2, 10);
+
+  // Right: lab/industrial
+  ctx.fillStyle = "#ECEFF1";
+  ctx.fillRect(W/2, 0, W/2, H);
+  ctx.fillStyle = "#CFD8DC";
+  ctx.fillRect(W/2, groundLevel, W/2, H-groundLevel);
+
+  drawOrePile(W*0.75, groundLevel+20, Math.min(110, W*0.13));
+
+  // Divider
+  ctx.strokeStyle = "rgba(176,190,197,.9)";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(W/2,0); ctx.lineTo(W/2,H);
+  ctx.stroke();
+
+  // Labels
+  ctx.save();
+  ctx.fillStyle = "#24313f";
+  ctx.font = `700 ${clamp(W*0.03, 16, 24)}px Segoe UI`;
+  ctx.textAlign = "center";
+  ctx.shadowColor = "rgba(255,255,255,.9)";
+  ctx.shadowBlur = 8;
+  ctx.fillText("Method A: Phytomining", W*0.25, clamp(H*0.22, 90, 140));
+  ctx.fillText("Method B: Bioleaching", W*0.75, clamp(H*0.22, 90, 140));
+  ctx.restore();
 }
 
-function drawPhytoLabels() {
-    if (frames < 300) {
-        ctx.fillStyle = "rgba(255,255,255,0.9)";
-        ctx.font = "bold 16px Segoe UI";
-        ctx.fillText("Copper Ions (Red) move into roots", 100, 480);
-    }
+/* ---------------------------
+   Drawing: PHYTOMINING
+---------------------------- */
+function drawPhytoEnvironment(){
+  // Sky
+  let grad = ctx.createLinearGradient(0, 0, 0, groundLevel);
+  grad.addColorStop(0, "#87CEEB");
+  grad.addColorStop(1, "#E0F7FA");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,groundLevel);
+
+  // Soil
+  let soil = ctx.createLinearGradient(0, groundLevel, 0, H);
+  soil.addColorStop(0, "#5D4037");
+  soil.addColorStop(1, "#3E2723");
+  ctx.fillStyle = soil;
+  ctx.fillRect(0,groundLevel,W,H-groundLevel);
+
+  // fixed texture (no flicker)
+  for(const s of soilTexture){
+    ctx.fillStyle = `rgba(0,0,0,${s.a})`;
+    ctx.fillRect(s.x, s.y, s.s, s.s);
+  }
+
+  // subtle horizon line
+  ctx.fillStyle = "rgba(255,255,255,.35)";
+  ctx.fillRect(0, groundLevel-2, W, 2);
 }
 
-function drawBurning() {
-    ctx.fillStyle = "#1a1a1a";
-    ctx.fillRect(0, 0, 800, 550); 
-    
-    let gradAsh = ctx.createLinearGradient(0, 300, 0, 500);
-    gradAsh.addColorStop(0, "#757575");
-    gradAsh.addColorStop(1, "#424242");
-    ctx.fillStyle = gradAsh;
-    ctx.beginPath();
-    ctx.moveTo(300, 500);
-    ctx.quadraticCurveTo(400, 380, 500, 500);
-    ctx.fill();
-    ctx.fillStyle = "#BDBDBD";
-    ctx.font = "16px Segoe UI";
-    ctx.fillText("Ash (contains Copper Compounds)", 400, 530);
+function drawPlants(){
+  const time = frames * 0.02;
 
-    ctx.globalCompositeOperation = "lighter";
-    for(let i=0; i<15; i++) {
-        let x = 320 + Math.random() * 160;
-        let h = 50 + Math.random() * 150;
-        let w = 10 + Math.random() * 20;
-        if (Math.random() > 0.5) h += Math.sin(frames * 0.5) * 20;
-
-        let gradFire = ctx.createLinearGradient(x, 500, x, 500 - h);
-        gradFire.addColorStop(0, "rgba(255, 87, 34, 0.8)"); 
-        gradFire.addColorStop(0.4, "rgba(255, 193, 7, 0.6)"); 
-        gradFire.addColorStop(1, "rgba(255, 235, 59, 0)"); 
-
-        ctx.fillStyle = gradFire;
-        ctx.beginPath();
-        ctx.ellipse(x, 500 - h/2, w, h/2, 0, 0, Math.PI*2);
-        ctx.fill();
+  // copper ion particles (during grow/harvest)
+  if (currentState === STATES.PHYTO_GROW || currentState === STATES.PHYTO_HARVEST) {
+    for(const p of particles){
+      if (p.absorbed) continue;
+      const glow = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, 7);
+      glow.addColorStop(0, "rgba(255,112,67,.95)");
+      glow.addColorStop(1, "rgba(255,112,67,0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(216,67,21,.95)";
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, Math.PI*2); ctx.fill();
     }
-    ctx.globalCompositeOperation = "source-over";
-}
+  }
 
-// --- SCENE: BIOLEACHING (OVERHAULED) ---
+  // plants
+  plants.forEach(p => {
+    const x = p.x;
+    const variance = p.variance;
+    let h = p.height;
 
-function initBioleaching() {
-    // Generate static rocks pile
-    bioRocks = [];
-    const centerX = 350;
-    const centerY = 350;
-    // Build pyramid
-    for(let row=0; row<5; row++) {
-        for(let col=0; col<=row; col++) {
-            let r = 25 + Math.random()*10;
-            let x = centerX - (row*20) + (col*45) + Math.random()*10;
-            let y = 150 + (row*40) + Math.random()*10;
-            bioRocks.push({x, y, r, color: Math.random()>0.5 ? '#795548' : '#5D4037'});
-        }
+    if (p.cut){
+      // fallen stem
+      ctx.save();
+      ctx.translate(x, groundLevel);
+      ctx.rotate(Math.PI/2 + 0.25);
+      ctx.strokeStyle = "#558B2F";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-h); ctx.stroke();
+      ctx.fillStyle = "#689F38";
+      ctx.beginPath(); ctx.ellipse(-10, -h+10, 9, 5, 0.5, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+      return;
     }
 
-    // Generate Bacteria
-    bioBacteria = [];
-    bioRocks.forEach(rock => {
-        // Add 2-4 bacteria per rock
-        let count = 2 + Math.floor(Math.random()*3);
-        for(let i=0; i<count; i++) {
-            let angle = Math.random() * Math.PI * 2;
-            let dist = Math.random() * (rock.r * 0.8);
-            bioBacteria.push({
-                rock: rock,
-                angle: angle,
-                dist: dist,
-                speed: 0.01 + Math.random() * 0.02,
-                size: 6
-            });
-        }
-    });
+    // sway
+    const sway = Math.sin(time + p.sway) * (0.6 + variance) * 4;
 
-    bioDroplets = [];
-}
-
-function updateBioleaching() {
-    // Spawn Water
-    if(frames % 10 === 0) {
-        bioDroplets.push({x: 350 + Math.random()*100 - 50, y: 50, vy: 2, state: 'water'}); // state: water or leachate
+    // roots
+    if (h > 10){
+      ctx.strokeStyle = "rgba(215,204,200,.9)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x, groundLevel);
+      ctx.quadraticCurveTo(x - 14, groundLevel + 22, x - 6, groundLevel + h/2);
+      ctx.moveTo(x, groundLevel);
+      ctx.quadraticCurveTo(x + 14, groundLevel + 22, x + 6, groundLevel + h/2);
+      ctx.stroke();
     }
 
-    // Move Droplets
-    bioDroplets.forEach(d => {
-        d.y += d.vy;
-        
-        // Interaction with rocks
-        if(d.state === 'water') {
-            bioRocks.forEach(r => {
-                let dx = d.x - r.x;
-                let dy = d.y - r.y;
-                if(Math.sqrt(dx*dx + dy*dy) < r.r + 5) {
-                    d.state = 'leachate'; // Turns blue on contact
-                    d.vy = 1; // Slow down trickling
-                    // Jitter
-                    d.x += (Math.random()-0.5)*2;
-                }
-            });
-        }
-        
-        // Flow into tank
-        if(d.y > 450) {
-            d.vy = 0; // Stop? Or flow away?
-            // Simple visual hack: remove if too low
-        }
-    });
-    
-    // Prune droplets
-    bioDroplets = bioDroplets.filter(d => d.y < 500);
-
-    // Animate Bacteria (Crawling)
-    bioBacteria.forEach(b => {
-        b.angle += b.speed;
-        // Keep strictly on rock surface
-        b.x = b.rock.x + Math.cos(b.angle) * b.dist;
-        b.y = b.rock.y + Math.sin(b.angle) * b.dist;
-    });
-}
-
-function drawBioleaching() {
-    // Lab Bg
-    let gradBg = ctx.createLinearGradient(0,0,0,550);
-    gradBg.addColorStop(0, "#f5f5f5");
-    gradBg.addColorStop(1, "#e0e0e0");
-    ctx.fillStyle = gradBg;
-    ctx.fillRect(0, 0, 800, 550);
-
-    // 1. Sprinkler System
-    ctx.strokeStyle = "#90A4AE";
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(350, 0); ctx.lineTo(350, 40); // Vertical pipe
-    ctx.moveTo(300, 40); ctx.lineTo(400, 40); // Horizontal spray bar
-    ctx.stroke();
-    // Spray nozzles
-    ctx.fillStyle = "#607D8B";
-    for(let i=300; i<=400; i+=20) {
-        ctx.fillRect(i-3, 38, 6, 8);
-    }
-
-    // 2. Collection Tank / Trough
-    ctx.fillStyle = "#CFD8DC";
-    ctx.beginPath();
-    ctx.moveTo(150, 450);
-    ctx.lineTo(550, 450);
-    ctx.lineTo(530, 500);
-    ctx.lineTo(170, 500);
-    ctx.fill();
-    ctx.strokeStyle = "#B0BEC5"; ctx.lineWidth = 2; ctx.stroke();
-    
-    // Liquid in tank
-    ctx.fillStyle = "rgba(33, 150, 243, 0.6)";
-    ctx.beginPath();
-    ctx.moveTo(175, 495);
-    ctx.lineTo(525, 495);
-    ctx.lineTo(540, 460);
-    ctx.lineTo(160, 460);
-    ctx.fill();
-
-    // 3. Rocks
-    bioRocks.forEach(r => {
-        ctx.fillStyle = r.color;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.r, 0, Math.PI*2);
-        ctx.fill();
-        // Highlight
-        ctx.fillStyle = "rgba(255,255,255,0.1)";
-        ctx.beginPath(); ctx.arc(r.x-5, r.y-5, r.r/3, 0, Math.PI*2); ctx.fill();
-    });
-
-    // 4. Bacteria (Rod shaped)
-    ctx.fillStyle = "#76FF03"; // Bright bacteria green
-    ctx.strokeStyle = "#33691E";
-    ctx.lineWidth = 1;
-    
-    bioBacteria.forEach(b => {
-        ctx.save();
-        ctx.translate(b.x, b.y);
-        ctx.rotate(b.angle + Math.PI/2); // Align with movement roughly
-        // Draw Rod (Pill shape)
-        ctx.beginPath();
-        ctx.roundRect(-4, -2, 8, 4, 2); // Modern canvas API
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-    });
-
-    // 5. Droplets
-    bioDroplets.forEach(d => {
-        if(d.state === 'water') ctx.fillStyle = "rgba(179, 229, 252, 0.8)";
-        else ctx.fillStyle = "rgba(33, 150, 243, 0.8)"; // Leachate blue
-        
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, 3, 0, Math.PI*2);
-        ctx.fill();
-    });
-
-    // 6. Zoom Bubble (Magnifying Glass)
-    const zoomX = 600; 
-    const zoomY = 250;
-    const zoomR = 80;
-    
-    // Draw Glass
-    ctx.save();
-    ctx.beginPath(); ctx.arc(zoomX, zoomY, zoomR, 0, Math.PI*2); ctx.clip();
-    ctx.fillStyle = "#fff"; ctx.fill();
-    
-    // Draw Zoomed Content (Single Rock Surface)
-    ctx.fillStyle = "#795548"; ctx.fillRect(zoomX-80, zoomY-80, 160, 160);
-    // Big Bacteria
-    ctx.fillStyle = "#76FF03"; ctx.strokeStyle="#33691E"; ctx.lineWidth=2;
-    let bTime = frames * 0.05;
-    for(let i=0; i<3; i++) {
-        let bx = zoomX + Math.sin(bTime+i)*20;
-        let by = zoomY + Math.cos(bTime+i*2)*20 + (i*30 - 30);
-        ctx.save();
-        ctx.translate(bx, by);
-        ctx.rotate(Math.sin(bTime)*0.5);
-        ctx.beginPath(); ctx.roundRect(-15, -8, 30, 16, 8); ctx.fill(); ctx.stroke();
-        // Cilia/Flagella details
-        ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(-25, Math.sin(frames*0.5)*5); ctx.stroke();
-        ctx.restore();
-    }
-    // Reaction Bubbles
-    ctx.strokeStyle = "#2962FF";
-    ctx.beginPath(); ctx.arc(zoomX+30, zoomY-20, 5, 0, Math.PI*2); ctx.stroke();
-    ctx.beginPath(); ctx.arc(zoomX+40, zoomY-35, 8, 0, Math.PI*2); ctx.stroke();
-    
-    ctx.restore();
-    
-    // Magnifying Glass Frame
-    ctx.strokeStyle = "#444"; ctx.lineWidth=8;
-    ctx.beginPath(); ctx.arc(zoomX, zoomY, zoomR, 0, Math.PI*2); ctx.stroke();
-    // Handle
-    ctx.strokeStyle = "#5D4037"; ctx.lineWidth=12;
-    ctx.beginPath(); ctx.moveTo(zoomX + zoomR*0.7, zoomY + zoomR*0.7); ctx.lineTo(zoomX+100, zoomY+100); ctx.stroke();
-    
-    // Labels
-    ctx.fillStyle = "#333";
-    ctx.font = "bold 14px Segoe UI";
-    ctx.fillText("Sprinkler System", 280, 30);
-    ctx.fillText("Leachate Collection", 350, 530);
-    ctx.fillText("Bacteria Zoom", 560, 350);
-}
-
-function drawOrePile(x, y, size) {
-    // Pile shape
-    ctx.fillStyle = "#5D4037";
-    ctx.beginPath(); ctx.arc(x, y, size, Math.PI, 0); ctx.fill();
-    
-    let grad = ctx.createRadialGradient(x-30, y-30, 10, x, y, size);
-    grad.addColorStop(0, "rgba(255,255,255,0.1)");
-    grad.addColorStop(1, "rgba(0,0,0,0.3)");
-    ctx.fillStyle = grad;
-    ctx.beginPath(); ctx.arc(x, y, size, Math.PI, 0); ctx.fill();
-
-    for(let i=0; i<25; i++) {
-        let ang = Math.PI + Math.random()*Math.PI;
-        let rad = Math.random() * size * 0.8;
-        let px = x + Math.cos(ang)*rad;
-        let py = y + Math.sin(ang)*(rad * 0.6);
-        
-        ctx.fillStyle = i % 2 === 0 ? "#795548" : "#4E342E";
-        ctx.beginPath();
-        ctx.moveTo(px, py);
-        ctx.lineTo(px+10, py+5);
-        ctx.lineTo(px+8, py+15);
-        ctx.lineTo(px-5, py+12);
-        ctx.closePath();
-        ctx.fill();
-    }
-}
-
-function drawBeakerScene() {
-    ctx.fillStyle = "#ECEFF1"; ctx.fillRect(0,0,800,550);
-    ctx.fillStyle = "#CFD8DC"; ctx.fillRect(0, 420, 800, 130);
-    ctx.fillStyle = "#B0BEC5"; ctx.fillRect(0, 420, 800, 10); 
-
-    let bx = 300, by = 150, bw = 200, bh = 300;
-    
-    let c = solutionColor;
-    let liquidGrad = ctx.createLinearGradient(bx, by, bx+bw, by);
-    liquidGrad.addColorStop(0, `rgba(${c.r}, ${c.g}, ${c.b}, 0.8)`);
-    liquidGrad.addColorStop(0.5, `rgba(${c.r}, ${c.g}, ${c.b}, 0.6)`); 
-    liquidGrad.addColorStop(1, `rgba(${c.r}, ${c.g}, ${c.b}, 0.8)`);
-    
-    ctx.fillStyle = liquidGrad;
-    ctx.fillRect(bx+5, by+50, bw-10, bh-55);
-
+    // stem
+    ctx.strokeStyle = "#39a64b";
     ctx.lineWidth = 4;
-    ctx.strokeStyle = "rgba(176, 190, 197, 0.8)";
-    ctx.strokeRect(bx, by, bw, bh);
-    
+    ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.ellipse(bx + bw/2, by, bw/2, 10, 0, 0, Math.PI*2);
+    ctx.moveTo(x, groundLevel);
+    const curveX = x + (variance - 0.5) * 10 + sway;
+    ctx.quadraticCurveTo(curveX, groundLevel - h/2, x + sway*0.6, groundLevel - h);
     ctx.stroke();
-    
-    ctx.fillStyle = "rgba(255,255,255,0.4)";
-    ctx.fillRect(bx + 10, by + 20, 20, bh - 40);
-    ctx.fillRect(bx + bw - 25, by + 20, 10, bh - 40);
 
-    if(currentState === STATES.DISPLACEMENT_REACT && reactionProgress < 1) {
-        ctx.fillStyle = "rgba(255,255,255,0.6)";
-        for(let i=0; i<15; i++) {
-            ctx.beginPath(); 
-            ctx.arc(bx + 20 + Math.random()*(bw-40), 450 - Math.random()*200, 2 + Math.random()*4, 0, Math.PI*2); 
-            ctx.fill();
-        }
-    }
-
-    if (reactionProgress > 0) {
-        if(copperPrecipitateHeight < reactionProgress * 40) copperPrecipitateHeight += 0.5;
-        ctx.fillStyle = "#D84315"; 
+    // leaves
+    if (h > 12){
+      ctx.fillStyle = (currentState === STATES.PHYTO_PLANT) ? "rgba(174,213,129,.95)" : "rgba(46,125,50,.98)";
+      if (h > 26){
         ctx.beginPath();
-        ctx.moveTo(bx+5, by+bh-5);
-        ctx.lineTo(bx+bw-5, by+bh-5);
-        ctx.lineTo(bx+bw-5, by+bh-5 - copperPrecipitateHeight);
-        ctx.quadraticCurveTo(bx+bw/2, by+bh-5 - copperPrecipitateHeight - 15, bx+5, by+bh-5 - copperPrecipitateHeight);
+        ctx.ellipse(x - 12 + sway*0.4, groundLevel - h + 16, 12, 6, Math.PI/4, 0, Math.PI*2);
         ctx.fill();
-        
-        if(reactionProgress > 0.8) {
-             ctx.fillStyle = "#333"; ctx.font = "bold 16px Segoe UI"; 
-             ctx.fillText("Solid Copper", bx + bw/2, by+bh - 10);
-        }
+        ctx.beginPath();
+        ctx.ellipse(x + 12 + sway*0.4, groundLevel - h + 20, 12, 6, -Math.PI/4, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.ellipse(x + sway*0.2, groundLevel - h, 8, 4, 0, 0, Math.PI*2);
+      ctx.fill();
     }
+
+    // growth logic
+    if (currentState === STATES.PHYTO_GROW && h < 115 + variance * 40) p.height += (dt * 0.03);
+    if (currentState === STATES.PHYTO_PLANT && h < 16) p.height = 16;
+  });
 }
 
-function updateReaction() {
-    if (reactionProgress < 1) reactionProgress += 0.005;
+function updatePhytoParticles(dt){
+  let active = 0;
+
+  for(const p of particles){
+    if (p.absorbed) continue;
+    active++;
+
+    // find nearest plant
+    let target = plants[0];
+    let minDist = 999999;
+    for(const plant of plants){
+      const d = Math.abs(plant.x - p.x);
+      if (d < minDist){ minDist = d; target = plant; }
+    }
+
+    if (!target || minDist > 180) continue;
+
+    const dx = target.x - p.x;
+    const dy = groundLevel - p.y;
+    const pull = (dt * 0.0018);
+    p.x += dx * pull;
+    p.y += dy * pull;
+
+    if (Math.abs(dx) < 8 && Math.abs(dy) < 8) p.absorbed = true;
+  }
+
+  if (active === 0 && currentState === STATES.PHYTO_GROW){
+    startHarvesting();
+  }
 }
 
-function drawElectrolysisScene() {
-    ctx.fillStyle = "#FAFAFA"; ctx.fillRect(0,0,800,550);
+function drawToolOverlay(){
+  if (!currentTool) return;
 
-    const tankX = 200, tankY = 200, tankW = 400, tankH = 300;
-    const wireY = 80;
-    
-    ctx.strokeStyle = "#555"; ctx.lineWidth = 6; ctx.strokeRect(tankX, tankY, tankW, tankH);
-    
-    let liqGrad = ctx.createLinearGradient(tankX, tankY, tankX, tankY+tankH);
-    liqGrad.addColorStop(0, "rgba(33, 150, 243, 0.4)");
-    liqGrad.addColorStop(1, "rgba(25, 118, 210, 0.7)");
-    ctx.fillStyle = liqGrad;
-    ctx.fillRect(tankX+5, tankY+10, tankW-10, tankH-15);
+  ctx.save();
+  ctx.textAlign = "left";
+  ctx.shadowColor = "rgba(255,255,255,.9)";
+  ctx.shadowBlur = 10;
+  ctx.font = `${clamp(W*0.04, 22, 30)}px Arial`;
 
-    let anodeGrad = ctx.createLinearGradient(250, 0, 250 + anodeWidth, 0);
-    anodeGrad.addColorStop(0, "#8D6E63");
-    anodeGrad.addColorStop(0.5, "#A1887F"); 
-    anodeGrad.addColorStop(1, "#6D4C41");
-    ctx.fillStyle = anodeGrad;
-    ctx.fillRect(250, tankY - 40, anodeWidth, 250);
-    
-    let cathGrad = ctx.createLinearGradient(550 - cathodeWidth, 0, 550, 0);
-    cathGrad.addColorStop(0, "#E64A19"); 
-    cathGrad.addColorStop(0.5, "#FF7043");
-    cathGrad.addColorStop(1, "#BF360C");
-    ctx.fillStyle = cathGrad;
-    ctx.fillRect(550 - cathodeWidth, tankY - 40, cathodeWidth, 250);
+  if (currentTool === 'seeds'){
+    ctx.fillText("🌱", mouse.x, mouse.y);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(0,0,0,.55)";
+    ctx.font = `700 ${clamp(W*0.018, 12, 14)}px Segoe UI`;
+    ctx.fillText("Drag to plant", mouse.x + 22, mouse.y);
+  }
+  if (currentTool === 'scythe'){
+    ctx.fillText("🌾", mouse.x, mouse.y);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(0,0,0,.55)";
+    ctx.font = `700 ${clamp(W*0.018, 12, 14)}px Segoe UI`;
+    ctx.fillText("Drag to cut", mouse.x + 22, mouse.y);
+  }
+  ctx.restore();
+}
 
-    particles.forEach(p => {
-        if(p.type === 'sludge') {
-            ctx.fillStyle = "#3E2723"; ctx.fillRect(p.x, p.y, 6, 6);
-        } else if (p.type === 'ion') {
-            ctx.fillStyle = "#1565C0"; ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = "white"; ctx.font="8px Arial"; ctx.fillText("Cu²⁺", p.x-6, p.y-6);
-        }
-    });
-
-    ctx.strokeStyle = "#333"; ctx.lineWidth = 4;
-    ctx.beginPath(); 
-    ctx.moveTo(270, tankY - 40); ctx.lineTo(270, wireY); ctx.lineTo(370, wireY);
-    ctx.moveTo(530, tankY - 40); ctx.lineTo(530, wireY); ctx.lineTo(430, wireY); 
+function drawPhytoLabels(){
+  // short helper label
+  if (frames < 240){
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.88)";
+    ctx.strokeStyle = "rgba(0,0,0,.06)";
+    ctx.lineWidth = 1;
+    const label = "Copper ions (red) move into roots";
+    ctx.font = `700 ${clamp(W*0.02, 13, 16)}px Segoe UI`;
+    const m = ctx.measureText(label);
+    const pad = 10;
+    const x = 12;
+    const y = H - 46;
+    ctx.beginPath();
+    ctx.roundRect(x, y, m.width + pad*2, 30, 10);
+    ctx.fill();
     ctx.stroke();
-
-    ctx.fillStyle ="#FFC107"; 
-    ctx.beginPath(); ctx.arc(400, wireY, 25, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle="#000"; ctx.textAlign="center"; 
-    ctx.font = "bold 16px Arial"; ctx.fillText("DC", 400, wireY+6);
-
-    ctx.fillStyle = "#333";
-    ctx.font = "bold 15px Segoe UI";
-    
-    ctx.fillText("Impure Anode (+)", 230, 130);
-    ctx.fillText("Pure Cathode (-)", 570, 130);
-    
-    ctx.fillStyle = "rgba(255,255,255,0.8)";
-    ctx.fillRect(300, 350, 200, 30);
-    ctx.fillStyle = "#01579B";
-    ctx.font = "italic 16px Segoe UI";
-    ctx.fillText("Cu²⁺ ions migrate to cathode", 400, 370);
-    
-    if(anodeWidth < 50) {
-        ctx.fillStyle = "#3E2723";
-        ctx.fillText("Sludge (Impurities)", 300, 480);
-    }
-}
-
-function updateElectrolysis() {
-    if (anodeWidth > 10) {
-        anodeWidth -= 0.15;
-        cathodeWidth += 0.12; 
-        if (Math.random() < 0.15) particles.push({x: 250 + anodeWidth, y: 220 + Math.random()*200, type: 'ion', speed: 1 + Math.random()});
-        if (Math.random() < 0.05) particles.push({x: 250 + Math.random()*anodeWidth, y: 450, type: 'sludge'});
-    } else {
-        if(document.getElementById('finish-btn').classList.contains('hidden')) {
-             setDialog("Electrolysis Complete! The impure anode has dissolved. Pure copper has plated onto the cathode.", "success");
-             document.getElementById('finish-btn').classList.remove('hidden');
-        }
-    }
-
-    particles.forEach(p => {
-        if (p.type === 'ion') {
-            p.x += p.speed;
-            if (p.x > 550 - cathodeWidth) p.x = 550 - cathodeWidth;
-        } else if (p.type === 'sludge') {
-            p.y += 2;
-            if (p.y > 480) p.y = 480 + Math.random()*5;
-        }
-    });
-}
-
-function drawFinished() {
-    ctx.fillStyle = "#fff"; ctx.fillRect(0,0,800,550);
-    ctx.save(); ctx.translate(400, 275); ctx.rotate(frames * 0.005);
-    ctx.fillStyle = "#FFF3E0";
-    for(let i=0; i<12; i++) { ctx.rotate(Math.PI/6); ctx.fillRect(0, -40, 600, 80); }
+    ctx.fillStyle = "rgba(36,49,63,.95)";
+    ctx.fillText(label, x + pad, y + 20);
     ctx.restore();
-
-    ctx.fillStyle = "#333"; ctx.font = "bold 36px Segoe UI"; ctx.textAlign = "center";
-    ctx.fillText("Extraction Complete!", 400, 150);
-    
-    let bx = 300, by = 250;
-    ctx.fillStyle = "#8D6E63"; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx+20, by-20); ctx.lineTo(bx+220, by-20); ctx.lineTo(bx+200, by); ctx.fill();
-    ctx.fillStyle = "#A1887F"; ctx.fillRect(bx+200, by, 20, 60);
-    ctx.beginPath(); ctx.moveTo(bx+200, by); ctx.lineTo(bx+220, by-20); ctx.lineTo(bx+220, by+40); ctx.lineTo(bx+200, by+60); ctx.fill();
-    
-    let gradCopper = ctx.createLinearGradient(bx, by, bx, by+60);
-    gradCopper.addColorStop(0, "#D84315");
-    gradCopper.addColorStop(1, "#BF360C");
-    ctx.fillStyle = gradCopper;
-    ctx.fillRect(bx, by, 200, 60);
-    
-    ctx.fillStyle = "rgba(255,255,255,0.3)";
-    ctx.beginPath(); ctx.moveTo(bx, by+60); ctx.lineTo(bx+200, by); ctx.lineTo(bx+200, by-5); ctx.lineTo(bx, by+55); ctx.fill();
-
-    ctx.fillStyle = "white"; ctx.font = "bold 24px Segoe UI"; 
-    ctx.shadowColor="rgba(0,0,0,0.5)"; ctx.shadowBlur=4;
-    ctx.fillText("99.9% PURE COPPER", 400, 288);
-    ctx.shadowBlur=0;
+  }
 }
 
-// --- UI LOGIC ---
+/* Burning (smoother flame + embers) */
+function drawBurning(dt){
+  ctx.fillStyle = "#141414";
+  ctx.fillRect(0,0,W,H);
 
-function showMenu() {
-    currentState = STATES.MENU;
-    setDialog("<b>Method Select</b><br>Traditional mining is damaging.<br>Select a sustainable biological method to begin.");
-    controls.innerHTML = `
-        <button onclick="startPhyto()">Start Phytomining</button>
-        <button onclick="startBio()">Start Bioleaching</button>
-    `;
+  // ash mound
+  const mid = W*0.5;
+  const baseY = H*0.90;
+  const moundH = H*0.24;
+
+  let ash = ctx.createLinearGradient(0, baseY-moundH, 0, baseY);
+  ash.addColorStop(0, "#808080");
+  ash.addColorStop(1, "#3b3b3b");
+  ctx.fillStyle = ash;
+  ctx.beginPath();
+  ctx.moveTo(mid - W*0.18, baseY);
+  ctx.quadraticCurveTo(mid, baseY - moundH, mid + W*0.18, baseY);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(255,255,255,.72)";
+  ctx.font = `${clamp(W*0.018, 12, 16)}px Segoe UI`;
+  ctx.textAlign = "center";
+  ctx.fillText("Ash (contains copper compounds)", mid, baseY + 26);
+
+  // flames (soft, stable)
+  ctx.globalCompositeOperation = "lighter";
+  const flameCount = 18;
+  const t = frames * 0.08;
+
+  for(let i=0; i<flameCount; i++){
+    const fx = mid - W*0.16 + (i/(flameCount-1))*(W*0.32) + Math.sin(t+i)*6;
+    const fh = (H*0.10) + (Math.sin(t*1.5 + i)*0.5+0.5)*(H*0.18);
+    const fw = 10 + (Math.sin(t + i*2)*0.5+0.5)*12;
+
+    const g = ctx.createLinearGradient(fx, baseY, fx, baseY - fh);
+    g.addColorStop(0, "rgba(255, 87, 34, 0.75)");
+    g.addColorStop(0.45, "rgba(255, 193, 7, 0.55)");
+    g.addColorStop(1, "rgba(255, 235, 59, 0)");
+    ctx.fillStyle = g;
+
+    ctx.beginPath();
+    ctx.ellipse(fx, baseY - fh/2, fw, fh/2, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = "source-over";
+
+  // embers
+  if (!drawBurning.embers) drawBurning.embers = [];
+  const embers = drawBurning.embers;
+
+  if (embers.length < 45 && Math.random() < 0.5){
+    embers.push({ x: mid + (Math.random()-0.5)*W*0.25, y: baseY-10, vy: -1.6 - Math.random()*1.6, vx: (Math.random()-0.5)*0.6, life: 80 + Math.random()*60 });
+  }
+  for(const e of embers){
+    e.x += e.vx;
+    e.y += e.vy;
+    e.vy -= 0.01; // float up
+    e.life -= dt*0.6;
+    ctx.fillStyle = `rgba(255,170,60,${clamp(e.life/140, 0, 1)})`;
+    ctx.beginPath(); ctx.arc(e.x, e.y, 1.6, 0, Math.PI*2); ctx.fill();
+  }
+  drawBurning.embers = embers.filter(e => e.life > 0 && e.y > 0);
 }
 
-function startPhyto() {
-    currentState = STATES.PHYTO_PLANT;
-    currentTool = 'seeds';
-    plants = [];
-    
-    setDialog("<b>Step 1: Planting</b><br>The low-grade ore is in the soil. <br>Select the <b>Seed Bag</b> and drag your mouse across the field to plant seeds.");
-    
-    controls.innerHTML = `
-        <button class="tool-btn" onclick="selectTool('seeds')">💰 Use Seed Bag</button>
-        <button id="grow-btn" class="hidden" onclick="startGrowing()">Start Growing</button>
-    `;
-}
+/* ---------------------------
+   BIOLEACHING
+---------------------------- */
+function initBioleaching(){
+  bioRocks = [];
+  bioBacteria = [];
+  bioDroplets = [];
+  tankFill = 0;
 
-function selectTool(tool) {
-    currentTool = tool;
-}
+  const centerX = W*0.44;
+  const startY = H*0.30;
+  const rows = 5;
 
-function startGrowing() {
-    currentState = STATES.PHYTO_GROW;
-    currentTool = null;
-    setDialog("<b>Step 2: Growing</b><br>Plants absorb copper ions through their roots. Watch the red dots move into the plants.");
-    controls.innerHTML = ""; // No controls while growing
-    
-    particles = [];
-    for(let i=0; i<80; i++) {
-        particles.push({
-            x: Math.random() * 800,
-            y: groundLevel + 15 + Math.random() * 120,
-            absorbed: false
-        });
+  for(let row=0; row<rows; row++){
+    for(let col=0; col<=row; col++){
+      const r = clamp(18 + Math.random()*10, 16, 30);
+      const x = centerX - (row* (r*0.85)) + col*(r*1.7) + (Math.random()-0.5)*8;
+      const y = startY + row*(r*1.45) + (Math.random()-0.5)*8;
+      bioRocks.push({ x, y, r, color: Math.random()>0.5 ? "#795548" : "#5D4037" });
     }
-}
+  }
 
-function startHarvesting() {
-    currentState = STATES.PHYTO_HARVEST;
-    currentTool = 'scythe'; 
-    setDialog("<b>Step 3: Harvesting</b><br>The plants are now rich in copper. <br>Use the <b>Scythe</b> and drag over plants to cut them down.");
-    
-    controls.innerHTML = `
-        <button class="tool-btn" onclick="selectTool('scythe')">🗡️ Use Scythe</button>
-        <button id="burn-btn" class="hidden" onclick="doBurn()">Burn Plants</button>
-    `;
-}
-
-function doBurn() {
-    currentState = STATES.PHYTO_BURN;
-    setDialog("<b>Step 4: Burning</b><br>The plants are burnt. The resulting ash contains copper compounds.");
-    controls.innerHTML = `<button onclick="addAcid()">Add Acid to Ash</button>`;
-}
-
-function startBio() {
-    currentState = STATES.BIO_LEACH;
-    frames = 0; 
-    setDialog("<b>Bioleaching</b><br>Bacteria on the rocks feed on the ore. <br>The sprinkling system adds water, which the bacteria turn into an acidic copper solution (leachate).");
-    initBioleaching();
-    controls.innerHTML = `<button onclick="collectLeachate()">Collect Leachate</button>`;
-}
-
-function addAcid() {
-    startDisplacement("Ash dissolved in acid. We now have a blue Copper Sulfate solution.");
-}
-
-function collectLeachate() {
-    startDisplacement("Leachate collected. We have a blue solution rich in Copper ions.");
-}
-
-function startDisplacement(msg) {
-    currentState = STATES.DISPLACEMENT_SELECT;
-    solutionColor = {r: 30, g: 144, b: 255}; 
-    reactionProgress = 0;
-    copperPrecipitateHeight = 0;
-    
-    setDialog(msg + "<br><b>Step 5: Displacement</b><br>We need solid copper. Choose a metal to displace the copper:");
-    
-    controls.innerHTML = `
-        <button class="metal-btn" onclick="tryMetal('Gold')">Gold (Au)</button>
-        <button class="metal-btn" onclick="tryMetal('Zinc')">Zinc (Zn)</button>
-        <button class="metal-btn" onclick="tryMetal('Iron')">Scrap Iron (Fe)</button>
-    `;
-}
-
-function tryMetal(metal) {
-    if (metal === 'Gold') {
-        setDialog("<b>Failed.</b> Gold is less reactive than Copper.<br>It sits at the bottom and does nothing.", "error");
-    } else if (metal === 'Zinc') {
-        setDialog("<b>Success... but costly.</b><br>Zinc is more reactive than Copper, but it is expensive.<br><i>Zn + CuSO₄ → ZnSO₄ + Cu</i>", "warning");
-        runDisplacementAnim({r:245, g:245, b:245}); 
-    } else if (metal === 'Iron') {
-        setDialog("<b>Perfect!</b> Scrap iron is cheap and more reactive than Copper.<br><i>Fe + CuSO₄ → FeSO₄ + Cu</i>", "success");
-        runDisplacementAnim({r:152, g:251, b:152}); 
+  // bacteria: 2–4 per rock
+  for(const rock of bioRocks){
+    const count = 2 + Math.floor(Math.random()*3);
+    for(let i=0; i<count; i++){
+      const angle = Math.random()*Math.PI*2;
+      const dist = Math.random()*(rock.r*0.75);
+      bioBacteria.push({
+        rock,
+        angle,
+        dist,
+        speed: 0.6 + Math.random()*0.9,
+        size: 6 + Math.random()*1.5
+      });
     }
+  }
 }
 
-function runDisplacementAnim(targetColor) {
-    currentState = STATES.DISPLACEMENT_REACT;
-    controls.innerHTML = ""; 
-    setTimeout(() => {
-        controls.innerHTML = `<button onclick="startElectrolysis()">Purify Copper (Electrolysis)</button>`;
-        setDialog("We have solid copper, but it contains impurities.<br><b>Step 6: Purification</b> via Electrolysis.");
-    }, 4000);
+function updateBioleaching(dt){
+  // spawn droplets
+  const spawnRate = 0.02 * dt; // ~ every few frames, scaled to dt
+  if (Math.random() < spawnRate){
+    bioDroplets.push({
+      x: W*0.44 + (Math.random()-0.5)*W*0.12,
+      y: 56,
+      vy: 120,           // px/s
+      vx: (Math.random()-0.5)*10,
+      state: 'water',    // water -> leachate
+      stuck: false
+    });
+  }
+
+  // bacteria crawl
+  for(const b of bioBacteria){
+    b.angle += (b.speed * dt * 0.0016);
+    b.x = b.rock.x + Math.cos(b.angle) * b.dist;
+    b.y = b.rock.y + Math.sin(b.angle) * b.dist;
+  }
+
+  // droplets movement + collision
+  const troughY = H*0.84;
+  for(const d of bioDroplets){
+    if (!d.stuck){
+      d.y += d.vy * (dt/1000);
+      d.x += d.vx * (dt/1000);
+
+      // collide with rocks
+      if (d.state === 'water'){
+        for(const r of bioRocks){
+          const dx = d.x - r.x;
+          const dy = d.y - r.y;
+          const dist = Math.hypot(dx,dy);
+          if (dist < r.r + 4){
+            d.state = 'leachate';
+            d.vy *= 0.55; // slows as it trickles
+            d.vx *= 0.3;
+            d.x += (Math.random()-0.5)*3;
+            break;
+          }
+        }
+      }
+
+      // into trough
+      if (d.y >= troughY){
+        d.stuck = true;
+        d.y = troughY;
+        tankFill = clamp(tankFill + (d.state === 'leachate' ? 0.015 : 0.006), 0, 1);
+      }
+    }
+  }
+
+  // prune old droplets
+  bioDroplets = bioDroplets.filter(d => d.y < H + 20 && !d.stuck);
 }
 
-function startElectrolysis() {
-    currentState = STATES.ELECTROLYSIS;
-    particles = []; 
-    anodeWidth = 60;
-    cathodeWidth = 15;
-    setDialog("<b>Electrolysis</b><br>Anode: Impure Copper | Cathode: Pure Copper<br>Copper ions move to the cathode. Impurities fall as sludge.");
-    controls.innerHTML = `<button id="finish-btn" class="hidden" onclick="finishSim()">Finish Extraction</button>`;
+function drawBioleaching(){
+  // background
+  const bg = ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0, "#f7f7f7");
+  bg.addColorStop(1, "#e6eaee");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0,0,W,H);
+
+  // sprinkler pipe
+  ctx.strokeStyle = "#90A4AE";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(W*0.44, 0); ctx.lineTo(W*0.44, 46);
+  ctx.moveTo(W*0.38, 46); ctx.lineTo(W*0.50, 46);
+  ctx.stroke();
+
+  // nozzles
+  ctx.fillStyle = "#607D8B";
+  for(let i=0; i<7; i++){
+    const x = lerp(W*0.38, W*0.50, i/6);
+    ctx.fillRect(x-3, 44, 6, 9);
+  }
+
+  // trough
+  const tx1 = W*0.18, tx2 = W*0.68;
+  const ty = H*0.84, ty2 = H*0.93;
+  ctx.fillStyle = "#cfd8dc";
+  ctx.beginPath();
+  ctx.moveTo(tx1, ty);
+  ctx.lineTo(tx2, ty);
+  ctx.lineTo(tx2 - W*0.02, ty2);
+  ctx.lineTo(tx1 + W*0.02, ty2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "rgba(0,0,0,.10)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // liquid in trough (fills gradually)
+  const fillH = lerp(0, (ty2-ty-6), tankFill);
+  ctx.fillStyle = "rgba(33,150,243,.55)";
+  ctx.beginPath();
+  ctx.moveTo(tx1 + W*0.022, ty2 - 4);
+  ctx.lineTo(tx2 - W*0.022, ty2 - 4);
+  ctx.lineTo(tx2 - W*0.012, ty2 - 4 - fillH);
+  ctx.lineTo(tx1 + W*0.012, ty2 - 4 - fillH);
+  ctx.closePath();
+  ctx.fill();
+
+  // rocks
+  for(const r of bioRocks){
+    ctx.fillStyle = r.color;
+    ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,.10)";
+    ctx.beginPath(); ctx.arc(r.x - r.r*0.25, r.y - r.r*0.25, r.r*0.35, 0, Math.PI*2); ctx.fill();
+  }
+
+  // bacteria
+  ctx.fillStyle = "#76FF03";
+  ctx.strokeStyle = "#33691E";
+  ctx.lineWidth = 1;
+  for(const b of bioBacteria){
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.angle + Math.PI/2);
+    ctx.beginPath();
+    ctx.roundRect(-b.size*0.6, -b.size*0.22, b.size*1.2, b.size*0.44, b.size*0.22);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // droplets
+  for(const d of bioDroplets){
+    ctx.fillStyle = (d.state === 'water') ? "rgba(179,229,252,.85)" : "rgba(33,150,243,.85)";
+    ctx.beginPath(); ctx.arc(d.x, d.y, 3, 0, Math.PI*2); ctx.fill();
+  }
+
+  // zoom bubble
+  const zoomX = W*0.80, zoomY = H*0.42, zoomR = Math.min(86, W*0.12);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(zoomX, zoomY, zoomR, 0, Math.PI*2); ctx.clip();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(zoomX-zoomR, zoomY-zoomR, zoomR*2, zoomR*2);
+
+  // rock texture
+  ctx.fillStyle = "#7a5345";
+  ctx.fillRect(zoomX-zoomR, zoomY-zoomR, zoomR*2, zoomR*2);
+  ctx.fillStyle = "rgba(0,0,0,.06)";
+  for(let i=0;i<30;i++){
+    ctx.fillRect(zoomX-zoomR + Math.random()*zoomR*2, zoomY-zoomR + Math.random()*zoomR*2, 2, 2);
+  }
+
+  // big bacteria
+  const bt = frames * 0.04;
+  ctx.fillStyle = "#76FF03"; ctx.strokeStyle="#33691E"; ctx.lineWidth=2;
+  for(let i=0;i<3;i++){
+    const bx = zoomX + Math.sin(bt+i)*zoomR*0.25;
+    const by = zoomY + Math.cos(bt+i*1.7)*zoomR*0.20 + (i*zoomR*0.35 - zoomR*0.35);
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.rotate(Math.sin(bt)*0.4);
+    ctx.beginPath(); ctx.roundRect(-15, -8, 30, 16, 8); ctx.fill(); ctx.stroke();
+    // flagellum
+    ctx.beginPath(); ctx.moveTo(-15,0); ctx.lineTo(-28, Math.sin(frames*0.2+i)*6); ctx.stroke();
+    ctx.restore();
+  }
+  // reaction bubbles
+  ctx.strokeStyle = "rgba(41,98,255,.9)";
+  ctx.beginPath(); ctx.arc(zoomX+zoomR*0.25, zoomY-zoomR*0.15, 5, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(zoomX+zoomR*0.35, zoomY-zoomR*0.30, 8, 0, Math.PI*2); ctx.stroke();
+
+  ctx.restore();
+
+  // frame + handle
+  ctx.strokeStyle = "rgba(30,30,30,.85)";
+  ctx.lineWidth = 8;
+  ctx.beginPath(); ctx.arc(zoomX, zoomY, zoomR, 0, Math.PI*2); ctx.stroke();
+
+  ctx.strokeStyle = "#5D4037";
+  ctx.lineWidth = 12;
+  ctx.beginPath();
+  ctx.moveTo(zoomX + zoomR*0.65, zoomY + zoomR*0.65);
+  ctx.lineTo(zoomX + zoomR*1.25, zoomY + zoomR*1.25);
+  ctx.stroke();
+
+  // labels
+  ctx.fillStyle = "rgba(36,49,63,.9)";
+  ctx.font = `700 ${clamp(W*0.018, 12, 14)}px Segoe UI`;
+  ctx.textAlign = "center";
+  ctx.fillText("Sprinkler", W*0.44, 22);
+  ctx.fillText("Leachate collection", (tx1+tx2)/2, H - 10);
+  ctx.fillText("Bacteria zoom", zoomX, zoomY + zoomR + 18);
 }
 
-function finishSim() {
-    currentState = STATES.FINISHED;
-    setDialog("<b>Module Complete</b><br>Phytomining/Bioleaching + Displacement + Electrolysis = Sustainable Copper.", "success");
-    controls.innerHTML = `<button onclick="init()">Restart Simulation</button>`;
+/* ---------------------------
+   Ore pile helper
+---------------------------- */
+function drawOrePile(x, y, size){
+  ctx.fillStyle = "#5D4037";
+  ctx.beginPath(); ctx.arc(x, y, size, Math.PI, 0); ctx.fill();
+
+  const grad = ctx.createRadialGradient(x-size*0.25, y-size*0.3, 8, x, y, size);
+  grad.addColorStop(0, "rgba(255,255,255,.12)");
+  grad.addColorStop(1, "rgba(0,0,0,.28)");
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(x, y, size, Math.PI, 0); ctx.fill();
+
+  for(let i=0;i<22;i++){
+    const ang = Math.PI + Math.random()*Math.PI;
+    const rad = Math.random()*size*0.78;
+    const px = x + Math.cos(ang)*rad;
+    const py = y + Math.sin(ang)*(rad*0.6);
+
+    ctx.fillStyle = (i%2===0) ? "#795548" : "#4E342E";
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px+10, py+5);
+    ctx.lineTo(px+8, py+15);
+    ctx.lineTo(px-5, py+12);
+    ctx.closePath();
+    ctx.fill();
+  }
 }
 
-function setDialog(text, type="") {
-    dialog.innerHTML = text;
-    dialog.className = "dialog-box " + type;
+/* ---------------------------
+   DISPLACEMENT
+---------------------------- */
+function drawBeakerScene(dt){
+  ctx.fillStyle = "#ECEFF1"; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = "#CFD8DC"; ctx.fillRect(0, H*0.76, W, H*0.24);
+  ctx.fillStyle = "#B0BEC5"; ctx.fillRect(0, H*0.76, W, 10);
+
+  const bw = Math.min(W*0.32, 240);
+  const bh = Math.min(H*0.55, 320);
+  const bx = (W - bw)/2;
+  const by = H*0.18;
+
+  // smooth solution color transition if reacting
+  if (currentState === STATES.DISPLACEMENT_REACT){
+    solutionColor = lerpColor(solutionColor, solutionTarget, clamp(dt*0.002, 0, 1));
+  }
+
+  const c = solutionColor;
+  const liquidGrad = ctx.createLinearGradient(bx, by, bx+bw, by);
+  liquidGrad.addColorStop(0, `rgba(${c.r},${c.g},${c.b},0.82)`);
+  liquidGrad.addColorStop(0.5, `rgba(${c.r},${c.g},${c.b},0.62)`);
+  liquidGrad.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0.82)`);
+
+  ctx.fillStyle = liquidGrad;
+  ctx.fillRect(bx+5, by+50, bw-10, bh-55);
+
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "rgba(176, 190, 197, 0.9)";
+  ctx.strokeRect(bx, by, bw, bh);
+
+  ctx.beginPath();
+  ctx.ellipse(bx + bw/2, by, bw/2, 10, 0, 0, Math.PI*2);
+  ctx.stroke();
+
+  // glass highlights
+  ctx.fillStyle = "rgba(255,255,255,0.36)";
+  ctx.fillRect(bx + 10, by + 20, 18, bh - 40);
+  ctx.fillRect(bx + bw - 24, by + 20, 9, bh - 40);
+
+  // bubbles during reaction
+  if (currentState === STATES.DISPLACEMENT_REACT && reactionProgress < 1) {
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    const bubbleCount = 10;
+    for(let i=0; i<bubbleCount; i++){
+      const px = bx + 18 + Math.random()*(bw-36);
+      const py = (by+bh-20) - Math.random()*(bh-90);
+      ctx.beginPath();
+      ctx.arc(px, py, 2 + Math.random()*3, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  // copper solid build-up
+  if (reactionProgress > 0){
+    const targetH = reactionProgress * 46;
+    copperPrecipitateHeight = lerp(copperPrecipitateHeight, targetH, clamp(dt*0.01, 0, 1));
+
+    ctx.fillStyle = "#D84315";
+    ctx.beginPath();
+    ctx.moveTo(bx+5, by+bh-5);
+    ctx.lineTo(bx+bw-5, by+bh-5);
+    ctx.lineTo(bx+bw-5, by+bh-5 - copperPrecipitateHeight);
+    ctx.quadraticCurveTo(bx+bw/2, by+bh-5 - copperPrecipitateHeight - 14, bx+5, by+bh-5 - copperPrecipitateHeight);
+    ctx.closePath();
+    ctx.fill();
+
+    if (reactionProgress > 0.8){
+      ctx.fillStyle = "rgba(36,49,63,.92)";
+      ctx.font = `700 ${clamp(W*0.02, 14, 16)}px Segoe UI`;
+      ctx.textAlign = "center";
+      ctx.fillText("Solid copper", bx + bw/2, by + bh - 12);
+    }
+  }
 }
 
-// Start
+function updateReaction(dt){
+  reactionProgress = clamp(reactionProgress + dt * 0.00018, 0, 1);
+}
+
+/* ---------------------------
+   ELECTROLYSIS
+---------------------------- */
+function drawElectrolysisScene(dt){
+  ctx.fillStyle = "#FAFAFA"; ctx.fillRect(0,0,W,H);
+
+  const tankW = Math.min(W*0.56, 460);
+  const tankH = Math.min(H*0.55, 330);
+  const tankX = (W - tankW)/2;
+  const tankY = H*0.30;
+  const wireY = H*0.14;
+
+  ctx.strokeStyle = "rgba(85,85,85,.9)";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(tankX, tankY, tankW, tankH);
+
+  const liq = ctx.createLinearGradient(tankX, tankY, tankX, tankY+tankH);
+  liq.addColorStop(0, "rgba(33,150,243,0.38)");
+  liq.addColorStop(1, "rgba(25,118,210,0.72)");
+  ctx.fillStyle = liq;
+  ctx.fillRect(tankX+5, tankY+10, tankW-10, tankH-15);
+
+  // electrodes positions
+  const anodeX = tankX + tankW*0.18;
+  const cathX = tankX + tankW*0.82;
+
+  // anode
+  let anG = ctx.createLinearGradient(anodeX, 0, anodeX + anodeWidth, 0);
+  anG.addColorStop(0, "#8D6E63");
+  anG.addColorStop(0.5, "#A1887F");
+  anG.addColorStop(1, "#6D4C41");
+  ctx.fillStyle = anG;
+  ctx.fillRect(anodeX, tankY - 40, anodeWidth, tankH*0.78);
+
+  // cathode
+  let caG = ctx.createLinearGradient(cathX - cathodeWidth, 0, cathX, 0);
+  caG.addColorStop(0, "#E64A19");
+  caG.addColorStop(0.5, "#FF7043");
+  caG.addColorStop(1, "#BF360C");
+  ctx.fillStyle = caG;
+  ctx.fillRect(cathX - cathodeWidth, tankY - 40, cathodeWidth, tankH*0.78);
+
+  // ions/sludge particles
+  for(const p of particles){
+    if (p.type === 'sludge'){
+      ctx.fillStyle = "rgba(62,39,35,.95)";
+      ctx.fillRect(p.x, p.y, 6, 6);
+    } else if (p.type === 'ion'){
+      ctx.fillStyle = "rgba(21,101,192,.95)";
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.9)";
+      ctx.font = "10px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Cu²⁺", p.x, p.y - 8);
+    }
+  }
+
+  // wires
+  ctx.strokeStyle = "rgba(51,51,51,.9)";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(anodeX + anodeWidth*0.4, tankY - 40);
+  ctx.lineTo(anodeX + anodeWidth*0.4, wireY);
+  ctx.lineTo(W*0.46, wireY);
+  ctx.moveTo(cathX - cathodeWidth*0.4, tankY - 40);
+  ctx.lineTo(cathX - cathodeWidth*0.4, wireY);
+  ctx.lineTo(W*0.54, wireY);
+  ctx.stroke();
+
+  // DC source
+  ctx.fillStyle ="#FFC107";
+  ctx.beginPath(); ctx.arc(W*0.50, wireY, 22, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle="#000";
+  ctx.font = "700 14px Arial";
+  ctx.textAlign="center";
+  ctx.fillText("DC", W*0.50, wireY + 5);
+
+  // labels
+  ctx.fillStyle = "rgba(36,49,63,.92)";
+  ctx.font = `700 ${clamp(W*0.018, 13, 15)}px Segoe UI`;
+  ctx.textAlign = "center";
+  ctx.fillText("Impure anode (+)", anodeX + anodeWidth/2, tankY - 60);
+  ctx.fillText("Pure cathode (-)", cathX - cathodeWidth/2, tankY - 60);
+
+  // info strip
+  ctx.fillStyle = "rgba(255,255,255,.84)";
+  ctx.strokeStyle = "rgba(0,0,0,.08)";
+  ctx.lineWidth = 1;
+  const msg = "Cu²⁺ ions migrate to the cathode";
+  ctx.font = `600 ${clamp(W*0.018, 13, 16)}px Segoe UI`;
+  const m = ctx.measureText(msg);
+  ctx.beginPath();
+  ctx.roundRect(W/2 - (m.width/2 + 14), tankY + tankH*0.44, m.width + 28, 30, 12);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "rgba(1,87,155,.95)";
+  ctx.fillText(msg, W/2, tankY + tankH*0.44 + 20);
+
+  if (anodeWidth < 50){
+    ctx.fillStyle = "rgba(62,39,35,.95)";
+    ctx.font = `700 ${clamp(W*0.018, 13, 15)}px Segoe UI`;
+    ctx.fillText("Sludge (impurities)", W/2, tankY + tankH + 30);
+  }
+}
+
+function updateElectrolysis(dt){
+  const anodeX = (W - Math.min(W*0.56, 460))/2 + Math.min(W*0.56, 460)*0.18;
+  const tankY = H*0.30;
+  const tankH = Math.min(H*0.55, 330);
+  const cathX = (W - Math.min(W*0.56, 460))/2 + Math.min(W*0.56, 460)*0.82;
+
+  if (anodeWidth > 10){
+    anodeWidth -= dt * 0.010;  // smoother, dt-based
+    cathodeWidth += dt * 0.008;
+
+    if (Math.random() < dt*0.0025){
+      particles.push({
+        x: anodeX + anodeWidth,
+        y: tankY + 30 + Math.random()*(tankH*0.65),
+        type: 'ion',
+        speed: 70 + Math.random()*60
+      });
+    }
+    if (Math.random() < dt*0.001){
+      particles.push({
+        x: anodeX + Math.random()*Math.max(10, anodeWidth),
+        y: tankY + tankH - 40,
+        type: 'sludge'
+      });
+    }
+  } else {
+    const finishBtn = document.getElementById('finish-btn');
+    if (finishBtn && finishBtn.classList.contains('hidden')){
+      setDialog("Electrolysis complete! The impure anode has dissolved. Pure copper has plated onto the cathode.", "success");
+      finishBtn.classList.remove('hidden');
+    }
+  }
+
+  // move particles
+  for(const p of particles){
+    if (p.type === 'ion'){
+      p.x += p.speed * (dt/1000);
+      const limit = cathX - cathodeWidth;
+      if (p.x > limit) p.x = limit;
+    } else if (p.type === 'sludge'){
+      p.y += 120 * (dt/1000);
+      const floor = tankY + tankH - 20;
+      if (p.y > floor) p.y = floor + Math.random()*4;
+    }
+  }
+}
+
+/* ---------------------------
+   FINISHED
+---------------------------- */
+function drawFinished(){
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,W,H);
+
+  // subtle rays
+  ctx.save();
+  ctx.translate(W/2, H/2);
+  ctx.rotate(frames * 0.004);
+  ctx.fillStyle = "rgba(255,243,224,.85)";
+  for(let i=0;i<12;i++){
+    ctx.rotate(Math.PI/6);
+    ctx.fillRect(0, -40, W*0.9, 80);
+  }
+  ctx.restore();
+
+  ctx.fillStyle = "rgba(36,49,63,.92)";
+  ctx.font = `800 ${clamp(W*0.05, 24, 40)}px Segoe UI`;
+  ctx.textAlign = "center";
+  ctx.fillText("Extraction Complete!", W/2, H*0.28);
+
+  // copper bar
+  const bw = Math.min(W*0.42, 320);
+  const bh = 70;
+  const bx = (W-bw)/2;
+  const by = H*0.46;
+
+  ctx.fillStyle = "#8D6E63";
+  ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx+22, by-22); ctx.lineTo(bx+bw+22, by-22); ctx.lineTo(bx+bw, by); ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = "#A1887F";
+  ctx.fillRect(bx+bw, by, 22, bh);
+  ctx.beginPath(); ctx.moveTo(bx+bw, by); ctx.lineTo(bx+bw+22, by-22); ctx.lineTo(bx+bw+22, by+bh-22); ctx.lineTo(bx+bw, by+bh); ctx.closePath(); ctx.fill();
+
+  const copper = ctx.createLinearGradient(bx, by, bx, by+bh);
+  copper.addColorStop(0, "#D84315");
+  copper.addColorStop(1, "#BF360C");
+  ctx.fillStyle = copper;
+  ctx.fillRect(bx, by, bw, bh);
+
+  ctx.fillStyle = "rgba(255,255,255,.30)";
+  ctx.beginPath(); ctx.moveTo(bx, by+bh); ctx.lineTo(bx+bw, by); ctx.lineTo(bx+bw, by-6); ctx.lineTo(bx, by+bh-6); ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `800 ${clamp(W*0.03, 16, 26)}px Segoe UI`;
+  ctx.shadowColor = "rgba(0,0,0,.35)";
+  ctx.shadowBlur = 6;
+  ctx.fillText("99.9% PURE COPPER", W/2, by + bh/2 + 8);
+  ctx.shadowBlur = 0;
+}
+
+/* ---------------------------
+   UI / FLOW
+---------------------------- */
+function setDialog(text, type=""){
+  dialog.innerHTML = text;
+  dialog.className = "dialog-box " + type;
+}
+
+function showMenu(){
+  currentState = STATES.MENU;
+  currentTool = null;
+  setDialog("<b>Method Select</b><br>Traditional mining is damaging. Select a biological method to begin.");
+  controls.innerHTML = `
+    <button onclick="startPhyto()">🌿 Start Phytomining</button>
+    <button onclick="startBio()">🧫 Start Bioleaching</button>
+  `;
+}
+
+function startPhyto(){
+  currentState = STATES.PHYTO_PLANT;
+  currentTool = 'seeds';
+  plants = [];
+  particles = [];
+
+  setDialog("<b>Step 1: Planting</b><br>The low-grade ore is in the soil.<br>Select the <b>Seed Bag</b> and drag across the field to plant seeds.");
+  controls.innerHTML = `
+    <button class="tool-btn" onclick="selectTool('seeds')">🌱 Use Seed Bag</button>
+    <button id="grow-btn" class="hidden" onclick="startGrowing()">Grow Plants</button>
+    <button class="metal-btn" onclick="showMenu()">↩ Back</button>
+  `;
+}
+
+function selectTool(tool){ currentTool = tool; }
+
+function startGrowing(){
+  currentState = STATES.PHYTO_GROW;
+  currentTool = null;
+  setDialog("<b>Step 2: Growing</b><br>Plants absorb copper ions through their roots. Watch the red dots move into the plants.");
+  controls.innerHTML = ""; // no buttons needed here
+
+  particles = [];
+  const count = Math.floor((W*H)/7000);
+  for(let i=0;i<count;i++){
+    particles.push({
+      x: Math.random()*W,
+      y: groundLevel + 12 + Math.random()*(H-groundLevel-18),
+      absorbed:false
+    });
+  }
+}
+
+function startHarvesting(){
+  currentState = STATES.PHYTO_HARVEST;
+  currentTool = 'scythe';
+  setDialog("<b>Step 3: Harvesting</b><br>The plants are now rich in copper.<br>Use the <b>Scythe</b> and drag over plants to cut them down.");
+  controls.innerHTML = `
+    <button class="tool-btn" onclick="selectTool('scythe')">🌾 Use Scythe</button>
+    <button id="burn-btn" class="hidden" onclick="doBurn()">🔥 Burn</button>
+    <button class="metal-btn" onclick="showMenu()">↩ Back</button>
+  `;
+}
+
+function doBurn(){
+  currentState = STATES.PHYTO_BURN;
+  setDialog("<b>Step 4: Burning</b><br>Burning concentrates copper compounds into the ash.");
+  controls.innerHTML = `<button class="ghost-btn" onclick="addAcid()">🧪 Add acid to ash</button>`;
+}
+
+function startBio(){
+  currentState = STATES.BIO_LEACH;
+  frames = 0;
+  setDialog("<b>Bioleaching</b><br>Bacteria on the rocks help dissolve copper from low-grade ore.<br>A sprinkler adds water, producing a copper-rich acidic solution (<b>leachate</b>).");
+  initBioleaching();
+  controls.innerHTML = `
+    <button onclick="collectLeachate()">🧴 Collect leachate</button>
+    <button class="metal-btn" onclick="showMenu()">↩ Back</button>
+  `;
+}
+
+function addAcid(){
+  startDisplacement("Ash dissolved in acid. We now have a blue copper sulfate solution.");
+}
+
+function collectLeachate(){
+  startDisplacement("Leachate collected. We have a blue solution rich in copper ions.");
+}
+
+function startDisplacement(msg){
+  currentState = STATES.DISPLACEMENT_SELECT;
+  solutionColor = {r:30,g:144,b:255};
+  solutionTarget = {r:30,g:144,b:255};
+  reactionProgress = 0;
+  copperPrecipitateHeight = 0;
+
+  setDialog(`${msg}<br><b>Step 5: Displacement</b><br>We need solid copper. Choose a metal to displace copper from solution:`);
+  controls.innerHTML = `
+    <button class="metal-btn" onclick="tryMetal('Gold')">Gold (Au)</button>
+    <button class="metal-btn" onclick="tryMetal('Zinc')">Zinc (Zn)</button>
+    <button class="metal-btn" onclick="tryMetal('Iron')">Scrap iron (Fe)</button>
+  `;
+}
+
+function tryMetal(metal){
+  if (metal === 'Gold'){
+    setDialog("<b>Failed.</b> Gold is less reactive than copper, so it does not displace it.", "error");
+    return;
+  }
+  if (metal === 'Zinc'){
+    setDialog("<b>Success... but costly.</b><br>Zinc is more reactive than copper, but it is expensive.<br><i>Zn + CuSO₄ → ZnSO₄ + Cu</i>", "warning");
+    runDisplacementAnim({r:240, g:240, b:240}); // solution fades lighter
+    return;
+  }
+  if (metal === 'Iron'){
+    setDialog("<b>Perfect!</b> Scrap iron is cheap and more reactive than copper.<br><i>Fe + CuSO₄ → FeSO₄ + Cu</i>", "success");
+    runDisplacementAnim({r:160, g:240, b:170}); // solution shifts greenish (FeSO4)
+    return;
+  }
+}
+
+function runDisplacementAnim(targetColor){
+  currentState = STATES.DISPLACEMENT_REACT;
+  controls.innerHTML = "";
+  solutionTarget = targetColor;
+
+  // after reaction: show next button
+  setTimeout(() => {
+    controls.innerHTML = `<button onclick="startElectrolysis()">⚡ Purify copper (electrolysis)</button>`;
+    setDialog("We have solid copper, but it contains impurities.<br><b>Step 6: Purification</b> via electrolysis.");
+  }, 3500);
+}
+
+function startElectrolysis(){
+  currentState = STATES.ELECTROLYSIS;
+  particles = [];
+  anodeWidth = 60;
+  cathodeWidth = 15;
+  setDialog("<b>Electrolysis</b><br>Anode: impure copper | Cathode: pure copper<br>Copper ions plate onto the cathode. Impurities fall as sludge.");
+  controls.innerHTML = `<button id="finish-btn" class="hidden" onclick="finishSim()">✅ Finish extraction</button>`;
+}
+
+function finishSim(){
+  currentState = STATES.FINISHED;
+  setDialog("<b>Module Complete</b><br>Phytomining/bioleaching + displacement + electrolysis = sustainable copper extraction.", "success");
+  controls.innerHTML = `<button onclick="init()">🔁 Restart</button>`;
+}
+
+/* ---------------------------
+   Init
+---------------------------- */
+function init(){
+  // reset
+  currentState = STATES.MENU;
+  frames = 0;
+  particles = [];
+  plants = [];
+  currentTool = null;
+
+  resizeCanvas();
+  showMenu();
+}
+
+setupInput();
 init();
-
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
