@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QLA Report – Lattice Enthalpy & Entropy (Y13)</title>
+  <style>
+    :root{
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+
+      --green:#10b981;
+      --amber:#f59e0b;
+      --red:#ef4444;
+
+      --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+      color:var(--ink);
+      background:
+        radial-gradient(1100px 650px at 20% 0%, #eaf2ff 0%, transparent 60%),
+        radial-gradient(900px 600px at 85% 5%, #e9fff6 0%, transparent 55%),
+        var(--bg);
+    }
+    header{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 18px 10px;
+    }
+    h1{
+      margin:0;
+      font-size: 24px;
+      letter-spacing:-0.02em;
+    }
+    .sub{
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+      max-width: 95ch;
+    }
+
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 18px 28px;
+      display:grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 1020px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+    .cardHead h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:-0.01em;
+    }
+    .cardHead p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height:1.45;
+      max-width: 80ch;
+    }
+    .content{ padding: 14px 16px 18px; }
+
+    .btnRow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .btn{
+      appearance:none;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor:pointer;
+      font-size: 13.5px;
+      transition: transform .05s ease, box-shadow .2s ease, border .2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 12px 24px rgba(15,23,42,0.10); }
+    .btn.primary{
+      background: rgba(37,99,235,0.10);
+      border-color: rgba(37,99,235,0.30);
+      color: #1e3a8a;
+    }
+    .btn.good{
+      background: rgba(16,185,129,0.10);
+      border-color: rgba(16,185,129,0.30);
+      color:#065f46;
+    }
+    .btn.danger{
+      background: rgba(239,68,68,0.10);
+      border-color: rgba(239,68,68,0.30);
+      color:#7f1d1d;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 720px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 6px;
+      font-weight: 750;
+    }
+    input[type="text"], input[type="number"], select, textarea{
+      width:100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font-size: 15px;
+      background: #fff;
+      color: var(--ink);
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(37,99,235,0.45);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+    textarea{
+      min-height: 86px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+    .smallNote{ margin:8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+
+    /* Marks table (responsive, no forced min-width) */
+    .tableWrap{
+      overflow:auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.75);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+    th{
+      text-align:left;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 850;
+      background: rgba(246,248,252,0.65);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tr:last-child td{ border-bottom:none; }
+    .marksInput{
+      max-width: 120px;
+      font-size: 15px;
+      padding: 10px 10px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      font-weight: 850;
+      background: rgba(255,255,255,0.85);
+      white-space: nowrap;
+    }
+    .pill.good{ border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.10); color:#065f46; }
+    .pill.amber{ border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.10); color:#7c2d12; }
+    .pill.red{ border-color: rgba(239,68,68,0.35); background: rgba(239,68,68,0.10); color:#7f1d1d; }
+
+    .reasonGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.75);
+    }
+    @media (max-width: 720px){
+      .reasonGrid{ grid-template-columns: 1fr; }
+    }
+    .reasonGrid .r{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-size: 14.5px;
+      line-height: 1.3;
+      color:#111827;
+    }
+    .reasonGrid input{ margin-top:2px; width: 18px; height:18px; }
+
+    .summaryGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 720px){
+      .summaryGrid{ grid-template-columns: 1fr; }
+    }
+    .stat{
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(246,248,252,0.35));
+    }
+    .stat .k{ color: var(--muted); font-size: 12.5px; font-weight: 800; margin-bottom: 4px; }
+    .stat .v{ font-size: 22px; font-weight: 950; letter-spacing:-0.02em; }
+
+    .sectionTitle{
+      margin: 14px 0 8px;
+      font-size: 14.5px;
+      font-weight: 950;
+      letter-spacing:-0.01em;
+    }
+    .list{
+      margin: 0;
+      padding-left: 18px;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+    .list li{ margin: 6px 0; }
+
+    /* REPORT (print) */
+    #reportView{ display:none; }
+    .report{
+      background: #fff;
+      color:#000;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .report h2{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:-0.01em;
+    }
+    .report .metaLine{
+      margin: 6px 0 0;
+      color:#222;
+      font-size: 13px;
+      line-height:1.35;
+    }
+    .report .split{
+      display:flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .report .chip{
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .report .block{
+      margin-top: 12px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      page-break-inside: avoid;
+    }
+    .report table{
+      width:100%;
+      font-size: 12.5px;
+      border-collapse: collapse;
+    }
+    .report th, .report td{
+      border-bottom: 1px solid #e6e6e6;
+      padding: 8px;
+    }
+    .report th{
+      color:#111;
+      background: #f4f6fb;
+      font-weight: 900;
+      font-size: 12px;
+    }
+    .ragDot{
+      display:inline-block;
+      width:10px; height:10px;
+      border-radius:999px;
+      margin-right:8px;
+      vertical-align: middle;
+    }
+    .dotG{ background: var(--green); }
+    .dotA{ background: var(--amber); }
+    .dotR{ background: var(--red); }
+
+    .report .qTitle{
+      font-weight: 950;
+      font-size: 13.5px;
+      margin: 0 0 6px;
+    }
+    .report .qList{
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12.8px;
+      line-height: 1.45;
+    }
+    .report .qList li{ margin: 5px 0; }
+    .report .rule{
+      height:1px; background:#e6e6e6; margin: 10px 0;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      background:rgba(255,255,255,0.92);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 12px;
+      box-shadow: 0 12px 26px rgba(15,23,42,0.14);
+      display:none;
+      z-index:50;
+      backdrop-filter: blur(8px);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    @media print{
+      body{ background:#fff; }
+      header, #appView, .toast, #reportControls { display:none !important; }
+      #reportView{ display:block !important; }
+      #reportView .report{ border:none; padding: 0; }
+      @page{ size: A4; margin: 12mm; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>QLA Report Generator – Lattice Enthalpy & Entropy (Y13)</h1>
+  <p class="sub">
+    Enter your marks for each question part (right-hand column in the table), tick your top reasons for lost marks (just once),
+    then generate a printable report (≤2 pages) with traffic lights and follow-up questions for your two weakest areas.
+  </p>
+</header>
+
+<div class="wrap" id="appView">
+
+  <section class="card">
+    <div class="cardHead">
+      <div>
+        <h2>Student inputs</h2>
+        <p>Fill in name, grade, then your marks for each question part.</p>
+      </div>
+      <div class="btnRow">
+        <button class="btn primary" id="generateBtn" type="button">Generate report</button>
+        <button class="btn" id="saveBtn" type="button">Save</button>
+        <button class="btn" id="loadBtn" type="button">Load</button>
+        <button class="btn danger" id="resetBtn" type="button">Reset</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="grid2">
+        <div>
+          <label for="testTitle">Test title (prefilled)</label>
+          <input id="testTitle" type="text" value="Lattice Enthalpy & Entropy – Year 13 Test" />
+          <div class="smallNote">Leave as-is unless your teacher asks otherwise.</div>
+        </div>
+
+        <div>
+          <label for="studentName">Student name</label>
+          <input id="studentName" type="text" placeholder="e.g. Alex Turner" />
+        </div>
+
+        <div>
+          <label for="grade">Grade</label>
+          <select id="grade">
+            <option value="">Select…</option>
+            <option>A*</option><option>A</option><option>B</option><option>C</option>
+            <option>D</option><option>E</option><option>U</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="scoreTotal">Total score (auto)</label>
+          <input id="scoreTotal" type="text" value="0 / 37" readonly />
+        </div>
+      </div>
+
+      <div class="sectionTitle">Marks by question part</div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:110px;">Part</th>
+              <th>What it’s testing</th>
+              <th style="width:70px;">Max</th>
+              <th style="width:150px;">Your marks</th>
+            </tr>
+          </thead>
+          <tbody id="marksBody"></tbody>
+        </table>
+      </div>
+
+      <div class="sectionTitle">Top reasons you lost marks (tick up to 3)</div>
+      <div class="reasonGrid" id="reasonsGrid"></div>
+      <p class="smallNote">Pick the biggest causes. This makes the advice more accurate.</p>
+
+      <div class="sectionTitle">Optional: focus for next time</div>
+      <textarea id="focusNote" placeholder="e.g. I will practise Born–Haber cycles and always convert J→kJ before substituting into ΔG."></textarea>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="cardHead">
+      <div>
+        <h2>Live overview</h2>
+        <p>Traffic lights and weakest areas update as you type.</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="summaryGrid">
+        <div class="stat">
+          <div class="k">Marks earned</div>
+          <div class="v" id="earned">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">Marks available</div>
+          <div class="v" id="avail">37</div>
+        </div>
+        <div class="stat">
+          <div class="k">Score</div>
+          <div class="v" id="pct">0%</div>
+        </div>
+        <div class="stat">
+          <div class="k">Weakest areas</div>
+          <div class="v" id="weakest" style="font-size:14px;font-weight:950;">—</div>
+        </div>
+      </div>
+
+      <div class="sectionTitle">Topic traffic lights</div>
+      <div id="ragPreview"></div>
+
+      <div class="sectionTitle">Follow-up questions preview</div>
+      <ol class="list" id="followPreview"></ol>
+
+      <div class="sectionTitle">Print</div>
+      <p class="smallNote">Generate the report, then print from the report screen (formatted for ≤2 pages).</p>
+    </div>
+  </aside>
+</div>
+
+<div id="reportView">
+  <div class="report" id="report"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  const LS_KEY = "qlA_lattice_enthalpy_entropy_v2";
+
+  const parts = [
+    ["1(a)", 2, "Lattice enthalpy definition", "A"],
+    ["1(b)", 1, "Entropy definition", "A"],
+    ["1(c)", 2, "First ionisation energy definition", "A"],
+
+    ["2(a)", 1, "Hydration enthalpy term", "A"],
+    ["2(b)", 1, "Atomisation enthalpy term", "A"],
+    ["2(c)", 1, "Enthalpy of solution term", "A"],
+    ["2(d)", 1, "First electron affinity term", "A"],
+
+    ["3(a)", 2, "Why more gas → +ΔS (energy dispersal)", "B"],
+    ["3(b)(i)", 3, "ΔG calculation (units + substitution)", "C"],
+    ["3(b)(ii)", 3, "Feasibility at high temperature (ΔG logic)", "B"],
+
+    ["4(a)(i)", 1, "Enthalpy of formation term", "A"],
+    ["4(a)(ii)", 4, "Born–Haber arrows A–D (values + multipliers)", "D"],
+    ["4(a)(iii)", 2, "Lattice enthalpy from Born–Haber", "D"],
+    ["4(b)", 2, "Charge density explanation (MgCl2 vs AlCl3)", "B"],
+
+    ["5(a)(i)", 3, "Species in energy cycle (solid/gaseous/aq)", "D"],
+    ["5(a)(ii)", 3, "Hydration enthalpy calculation (I−)", "E"],
+    ["5(b)", 6, "Solubility discussion (balanced argument + entropy)", "F"]
+  ];
+
+  const areas = {
+    A: { name:"Definitions & key terms", tip:"Memorise examiner wording; use correct states + ‘per mole’.",
+         targets:["Write full-mark definitions with key phrases.","Practise matching terms to equations with states."] },
+    B: { name:"Entropy & feasibility reasoning", tip:"Use sign logic and energy dispersal language.",
+         targets:["Link particles → energy dispersal → entropy.","Always state: feasible if ΔG < 0; explain TΔS."] },
+    C: { name:"Gibbs calculations & units (ΔG)", tip:"Equation first, unit conversion early, then substitute.",
+         targets:["Convert J↔kJ before multiplying by T.","Keep units and check signs each line."] },
+    D: { name:"Energy cycles & Born–Haber", tip:"Structure + signs + multipliers (×3 terms) matter.",
+         targets:["Know which steps are endo/exo and why.","Be consistent with lattice definition used."] },
+    E: { name:"Hydration/solution cycle calculations", tip:"Track stoichiometry (2×I−), rearrange carefully.",
+         targets:["Write the cycle relationship before numbers.","Remember to divide by 2 for iodide at the end."] },
+    F: { name:"Extended response: solubility discussion", tip:"Claim + counterclaim + entropy + safe conclusion.",
+         targets:["Use: lattice vs hydration, then entropy.","Avoid overconfident conclusions from lattice alone."] }
+  };
+
+  const reasons = [
+    { id:"def", label:"Weak key wording / definitions" },
+    { id:"setup", label:"Method/setup (cycle / equation / structure)" },
+    { id:"math", label:"Maths/units/signs/significant figures" },
+    { id:"why", label:"Explaining ‘why’ (thermo reasoning)" },
+    { id:"marks", label:"Missed marking points / command word" },
+    { id:"time", label:"Time / rushed / unfinished" }
+  ];
+
+  const followBanks = {
+    A: [
+      "Write a full-mark definition of lattice enthalpy including: one mole, ionic compound, gaseous ions.",
+      "Rewrite the definition of entropy using ‘energy dispersal’ and explain why it’s better than ‘disorder’ alone.",
+      "Define first ionisation energy and underline the three examiner points (moles, gaseous, electrons/1+ ions).",
+      "Pick two Q2 terms and write a general equation form for each (include correct states).",
+      "In one sentence, distinguish atomisation enthalpy from bond enthalpy."
+    ],
+    B: [
+      "Explain (one sentence) why an increase in moles of gas usually gives ΔS > 0 using ‘more dispersed’.",
+      "Complete and explain: ‘As temperature increases, TΔS ________, therefore ΔG becomes more/less likely to be ________.’",
+      "For ΔH > 0 and ΔS > 0, explain when the reaction becomes feasible using ΔG logic (no numbers).",
+      "Explain why higher ionic charge density gives a more negative lattice enthalpy (electrostatic attraction).",
+      "Give two reasons why lattice enthalpy alone cannot predict solubility (one must mention entropy)."
+    ],
+    C: [
+      "Write ΔG = ΔH − TΔS and state the required units for ΔH and ΔS so the calculation is consistent.",
+      "Convert 18.6 J K⁻¹ mol⁻¹ into kJ K⁻¹ mol⁻¹ (show the step).",
+      "Calculate TΔS at 373 K when ΔS = 0.0186 kJ K⁻¹ mol⁻¹.",
+      "If someone forgets J→kJ conversion, is TΔS too big or too small? Explain why.",
+      "If ΔG is +199 kJ mol⁻¹, is the reaction feasible at 373 K? State the rule and conclude."
+    ],
+    D: [
+      "List the key Born–Haber steps for forming an ionic lattice (atomisation, ionisation, electron affinity, lattice).",
+      "State one step that is usually endothermic and one that is usually exothermic, and explain why.",
+      "Explain why the chlorine-related terms in AlCl3 are multiplied by 3.",
+      "If you sum IE1+IE2+IE3, what species are you forming (and from what state)?",
+      "Explain why lattice enthalpy is negative when defined as formation from gaseous ions."
+    ],
+    E: [
+      "In words, state the relationship between lattice enthalpy, hydration enthalpies and enthalpy of solution.",
+      "Explain why BaI2 gives 2×Δhyd(I−) in the cycle.",
+      "Given sum of hydration enthalpies = −1923 and Δhyd(Ba2+) = −1309, calculate Δhyd(I−) (show both steps).",
+      "Explain why larger anions generally have less negative hydration enthalpies.",
+      "Write one sentence explaining what an exothermic ΔHsol implies about lattice vs hydration."
+    ],
+    F: [
+      "Write a 3-part plan: claim (less soluble) → counterclaim (hydration offsets) → conclusion.",
+      "Give one specific lattice enthalpy argument for lower solubility (energy needed to separate ions).",
+      "Give one specific hydration enthalpy counterargument (mention Mg2+ charge density).",
+      "Add an entropy point: why does it make the conclusion less certain?",
+      "Write an ‘exam-safe’ conclusion sentence that does not overclaim."
+    ]
+  };
+
+  const ragThresholds = { green: 80, amber: 50 };
+
+  const state = { marks:{}, selectedReasons:{} };
+
+  const $ = (s)=>document.querySelector(s);
+  const marksBody = $("#marksBody");
+  const reasonsGrid = $("#reasonsGrid");
+
+  const studentName = $("#studentName");
+  const grade = $("#grade");
+  const testTitle = $("#testTitle");
+  const focusNote = $("#focusNote");
+  const scoreTotal = $("#scoreTotal");
+
+  const earnedEl = $("#earned");
+  const availEl = $("#avail");
+  const pctEl = $("#pct");
+  const weakestEl = $("#weakest");
+  const ragPreview = $("#ragPreview");
+  const followPreview = $("#followPreview");
+
+  const reportHost = $("#report");
+  const toastEl = $("#toast");
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.style.display = "block";
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>toastEl.style.display="none", 1600);
+  }
+
+  function cssId(part){ return part.replace(/[^a-zA-Z0-9]/g, "_"); }
+
+  function buildMarksTable(){
+    marksBody.innerHTML = "";
+    for(const [part, max, desc] of parts){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${part}</strong></td>
+        <td>${desc}</td>
+        <td>${max}</td>
+        <td>
+          <input class="marksInput"
+            type="number"
+            min="0"
+            max="${max}"
+            step="1"
+            inputmode="numeric"
+            id="m_${cssId(part)}"
+            placeholder="0–${max}" />
+        </td>
+      `;
+      marksBody.appendChild(tr);
+
+      const input = tr.querySelector("input");
+      input.addEventListener("input", ()=>{
+        const raw = input.value;
+        if(raw === ""){
+          delete state.marks[part];
+          updateAll();
+          return;
+        }
+        let n = Math.floor(Number(raw));
+        if(Number.isNaN(n)) n = 0;
+        n = Math.max(0, Math.min(max, n));
+        input.value = n;
+        state.marks[part] = n;
+        updateAll();
+      });
+    }
+  }
+
+  function buildReasons(){
+    reasonsGrid.innerHTML = "";
+    reasons.forEach(r=>{
+      const div = document.createElement("div");
+      div.className = "r";
+      div.innerHTML = `
+        <input type="checkbox" id="reason_${r.id}">
+        <div><strong>${r.label}</strong></div>
+      `;
+      reasonsGrid.appendChild(div);
+
+      const cb = div.querySelector("input");
+      cb.addEventListener("change", ()=>{
+        const selectedCount = Object.values(state.selectedReasons).filter(Boolean).length;
+        if(cb.checked && selectedCount >= 3){
+          cb.checked = false;
+          toast("Pick up to 3 reasons");
+          return;
+        }
+        state.selectedReasons[r.id] = cb.checked;
+      });
+    });
+  }
+
+  function totalAvailable(){ return parts.reduce((s,p)=>s+p[1],0); }
+  function totalEarned(){
+    let sum = 0;
+    for(const [part] of parts){
+      const v = state.marks[part];
+      if(v === undefined) continue;
+      sum += Number(v) || 0;
+    }
+    return sum;
+  }
+
+  function areaTotals(){
+    const res = {};
+    for(const id of Object.keys(areas)) res[id] = { earned:0, max:0 };
+    for(const [part, max, desc, areaId] of parts){
+      res[areaId].max += max;
+      const v = state.marks[part];
+      if(v !== undefined) res[areaId].earned += (Number(v) || 0);
+    }
+    return res;
+  }
+  function areaHasData(areaId){
+    return parts.some(p => p[3] === areaId && state.marks[p[0]] !== undefined);
+  }
+  function areaPct(areaId, totals){
+    const t = totals[areaId];
+    if(!t || t.max === 0) return 0;
+    return Math.round((t.earned / t.max) * 100);
+  }
+  function ragFromPct(pct){
+    if(pct >= ragThresholds.green) return "green";
+    if(pct >= ragThresholds.amber) return "amber";
+    return "red";
+  }
+  function twoWeakestAreas(totals){
+    const scored = Object.keys(areas)
+      .filter(a => areaHasData(a))
+      .map(a => {
+        const pct = areaPct(a, totals);
+        const lost = totals[a].max - totals[a].earned;
+        return { a, pct, lost, max: totals[a].max };
+      });
+    if(scored.length === 0) return [];
+    scored.sort((x,y)=>{
+      if(x.pct !== y.pct) return x.pct - y.pct;
+      if(x.lost !== y.lost) return y.lost - x.lost;
+      return y.max - x.max;
+    });
+    return scored.slice(0,2).map(x=>x.a);
+  }
+
+  function renderRagPreview(totals){
+    const rows = Object.keys(areas).map(a=>{
+      const has = areaHasData(a);
+      const pct = has ? areaPct(a, totals) : null;
+      const rag = (pct === null) ? null : ragFromPct(pct);
+      const earned = totals[a].earned;
+      const max = totals[a].max;
+      return { a, pct, rag, earned, max, has };
+    });
+
+    ragPreview.innerHTML = rows.map(r=>{
+      if(!r.has){
+        return `<div style="margin:8px 0; padding:10px 12px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,0.65);">
+          <strong>${areas[r.a].name}</strong>
+          <div style="color:var(--muted); font-size:13px; margin-top:4px;">No marks entered yet for this area</div>
+        </div>`;
+      }
+      const cls = r.rag === "green" ? "good" : (r.rag === "amber" ? "amber" : "red");
+      return `<div style="margin:8px 0; padding:10px 12px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,0.75); display:flex; justify-content:space-between; gap:10px; align-items:center;">
+        <div>
+          <div style="font-weight:950;">${areas[r.a].name}</div>
+          <div style="color:var(--muted); font-size:13px; margin-top:4px;">${areas[r.a].tip}</div>
+        </div>
+        <span class="pill ${cls}">${r.earned}/${r.max} • ${r.pct}%</span>
+      </div>`;
+    }).join("");
+  }
+
+  function renderFollowPreview(weak2){
+    followPreview.innerHTML = "";
+    if(!weak2.length) return;
+    const lines = [];
+    weak2.forEach(a=>{
+      (followBanks[a] || []).slice(0,2).forEach(q => lines.push(`${areas[a].name}: ${q}`));
+    });
+    lines.slice(0,6).forEach(t=>{
+      const li = document.createElement("li");
+      li.textContent = t;
+      followPreview.appendChild(li);
+    });
+  }
+
+  function updateAll(){
+    const avail = totalAvailable();
+    const earned = totalEarned();
+    const pct = avail ? Math.round((earned/avail)*100) : 0;
+
+    scoreTotal.value = `${earned} / ${avail}`;
+    earnedEl.textContent = String(earned);
+    availEl.textContent = String(avail);
+    pctEl.textContent = `${pct}%`;
+
+    const totals = areaTotals();
+    const weak2 = twoWeakestAreas(totals);
+    weakestEl.textContent = weak2.length ? weak2.map(a=>areas[a].name).join(" + ") : "—";
+
+    renderRagPreview(totals);
+    renderFollowPreview(weak2);
+  }
+
+  function reasonTips(){
+    const tips = {
+      def: "Practise full-mark definitions from memory (include state + ‘per mole’ detail).",
+      setup: "Write the relationship first (cycle/equation), then substitute with signs and multipliers.",
+      math: "Convert units early (J↔kJ) and keep units on every line.",
+      why: "Use particle + energy language (dispersal/attraction), not just restating facts.",
+      marks: "Underline the command word; make sure each sentence earns a separate marking point.",
+      time: "Use a 1–2 sentence template to secure method marks even when rushed."
+    };
+    return reasons.filter(r => state.selectedReasons[r.id]).map(r => ({ label:r.label, tip: tips[r.id] || "" }));
+  }
+
+  function escapeHTML(str){
+    return String(str).replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+
+  function ragLabel(rag){
+    if(rag === "green") return "Green (Secure)";
+    if(rag === "amber") return "Amber (Developing)";
+    if(rag === "red") return "Red (Priority)";
+    return "—";
+  }
+  function dotClass(rag){
+    if(rag === "green") return "dotG";
+    if(rag === "amber") return "dotA";
+    if(rag === "red") return "dotR";
+    return "";
+  }
+
+  function generateReportData(){
+    const avail = totalAvailable();
+    const earned = totalEarned();
+    const pct = avail ? Math.round((earned/avail)*100) : 0;
+    const totals = areaTotals();
+
+    const areaRows = Object.keys(areas).map(a=>{
+      const has = areaHasData(a);
+      const earnedA = totals[a].earned;
+      const maxA = totals[a].max;
+      const pctA = has ? Math.round((earnedA/maxA)*100) : null;
+      const rag = (pctA === null) ? null : ragFromPct(pctA);
+      return { a, has, earned: earnedA, max: maxA, pct: pctA, rag };
+    });
+
+    const weak2 = twoWeakestAreas(totals);
+    const follow = weak2.map(a=>({ a, name: areas[a].name, qs: (followBanks[a] || []).slice(0,5) }));
+
+    const reasonItems = reasonTips();
+
+    const sortedByPct = areaRows.filter(r=>r.has && r.pct !== null).slice().sort((x,y)=>y.pct-x.pct);
+    const strongest = sortedByPct[0]?.a ? areas[sortedByPct[0].a].name : null;
+    const weakest = weak2.length ? weak2.map(a=>areas[a].name).join(" and ") : null;
+
+    let overviewLine = "Enter marks for each question part to generate an overview.";
+    if(strongest && weakest) overviewLine = `Strongest area: ${strongest}. Priority focus: ${weakest}.`;
+    else if(strongest) overviewLine = `Strongest area so far: ${strongest}.`;
+
+    return {
+      meta: {
+        title: testTitle.value.trim() || "Lattice Enthalpy & Entropy – Year 13 Test",
+        name: studentName.value.trim() || "Student",
+        grade: grade.value || "—",
+        scoreText: `${earned}/${avail} (${pct}%)`,
+        date: new Date().toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" })
+      },
+      overviewLine,
+      areaRows,
+      reasons: reasonItems,
+      focus: focusNote.value.trim(),
+      follow
+    };
+  }
+
+  function renderReport(){
+    const d = generateReportData();
+
+    const areaTableRows = d.areaRows.map(r=>{
+      const pctText = r.has ? `${r.earned}/${r.max} (${r.pct}%)` : "—";
+      const dot = r.has ? `<span class="ragDot ${dotClass(r.rag)}"></span>` : `<span class="ragDot" style="background:#999;"></span>`;
+      const ragText = r.has ? ragLabel(r.rag) : "No data";
+      const next = r.has ? (areas[r.a].targets[0] || areas[r.a].tip) : "Enter marks for this area to get feedback.";
+      return `
+        <tr>
+          <td><strong>${areas[r.a].name}</strong></td>
+          <td>${pctText}</td>
+          <td>${dot}${ragText}</td>
+          <td>${escapeHTML(next)}</td>
+        </tr>
+      `;
+    }).join("");
+
+    const reasonsHtml = d.reasons.length
+      ? `<ul class="qList">${d.reasons.map(x => `<li><strong>${escapeHTML(x.label)}:</strong> ${escapeHTML(x.tip)}</li>`).join("")}</ul>`
+      : `<div style="font-size:12.8px; line-height:1.45;">No reasons selected.</div>`;
+
+    const focusHtml = d.focus
+      ? `<div style="font-size:12.8px; line-height:1.45;">${escapeHTML(d.focus)}</div>`
+      : `<div style="font-size:12.8px; line-height:1.45; color:#444;">—</div>`;
+
+    const followBlocks = d.follow.length
+      ? d.follow.map(f => `
+          <div class="block">
+            <div class="qTitle">${escapeHTML(f.name)} – Follow-up questions</div>
+            <ol class="qList">
+              ${f.qs.map(q => `<li>${escapeHTML(q)}</li>`).join("")}
+            </ol>
+          </div>
+        `).join("")
+      : `<div class="block"><div class="qTitle">Follow-up questions</div><div style="font-size:12.8px;">Enter marks to generate targeted questions.</div></div>`;
+
+    reportHost.innerHTML = `
+      <div class="report">
+        <h2>${escapeHTML(d.meta.title)}</h2>
+        <div class="metaLine">
+          <strong>Name:</strong> ${escapeHTML(d.meta.name)} &nbsp;|&nbsp;
+          <strong>Date:</strong> ${escapeHTML(d.meta.date)} &nbsp;|&nbsp;
+          <strong>Grade:</strong> ${escapeHTML(d.meta.grade)} &nbsp;|&nbsp;
+          <strong>Score:</strong> ${escapeHTML(d.meta.scoreText)}
+        </div>
+
+        <div class="split">
+          <span class="chip"><strong>Overview:</strong> ${escapeHTML(d.overviewLine)}</span>
+        </div>
+
+        <div class="block">
+          <div class="qTitle">Topic traffic lights</div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:30%;">Topic area</th>
+                <th style="width:18%;">Marks</th>
+                <th style="width:18%;">Traffic light</th>
+                <th>Next step</th>
+              </tr>
+            </thead>
+            <tbody>${areaTableRows}</tbody>
+          </table>
+        </div>
+
+        <div class="block">
+          <div class="qTitle">Top reasons for lost marks</div>
+          ${reasonsHtml}
+          <div class="rule"></div>
+          <div class="qTitle">My focus for next time</div>
+          ${focusHtml}
+        </div>
+
+        <div style="page-break-before: always;"></div>
+
+        ${followBlocks}
+      </div>
+    `;
+  }
+
+  function saveToLocal(){
+    const payload = {
+      testTitle: testTitle.value,
+      studentName: studentName.value,
+      grade: grade.value,
+      focusNote: focusNote.value,
+      marks: state.marks,
+      selectedReasons: state.selectedReasons
+    };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    toast("Saved");
+  }
+
+  function loadFromLocal(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw){ toast("No saved data found"); return; }
+      const payload = JSON.parse(raw);
+
+      testTitle.value = payload.testTitle || testTitle.value;
+      studentName.value = payload.studentName || "";
+      grade.value = payload.grade || "";
+      focusNote.value = payload.focusNote || "";
+
+      state.marks = payload.marks || {};
+      state.selectedReasons = payload.selectedReasons || {};
+
+      for(const [part] of parts){
+        const el = document.getElementById("m_" + cssId(part));
+        if(el) el.value = (state.marks[part] === undefined) ? "" : state.marks[part];
+      }
+      reasons.forEach(r=>{
+        const cb = document.getElementById("reason_" + r.id);
+        cb.checked = !!state.selectedReasons[r.id];
+      });
+
+      updateAll();
+      toast("Loaded");
+    }catch{
+      toast("Could not load saved data");
+    }
+  }
+
+  function resetAll(){
+    if(!confirm("Reset all fields?")) return;
+    testTitle.value = "Lattice Enthalpy & Entropy – Year 13 Test";
+    studentName.value = "";
+    grade.value = "";
+    focusNote.value = "";
+    state.marks = {};
+    state.selectedReasons = {};
+    for(const [part] of parts){
+      const el = document.getElementById("m_" + cssId(part));
+      if(el) el.value = "";
+    }
+    reasons.forEach(r=>{
+      const cb = document.getElementById("reason_" + r.id);
+      cb.checked = false;
+    });
+    updateAll();
+    toast("Reset complete");
+  }
+
+  function injectReportControls(){
+    if(document.getElementById("reportControls")) return;
+
+    const controls = document.createElement("div");
+    controls.id = "reportControls";
+    controls.style.maxWidth = "1200px";
+    controls.style.margin = "0 auto";
+    controls.style.padding = "12px 18px 18px";
+    controls.innerHTML = `
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Report ready</h2>
+            <p>Print this (formatted for ≤2 pages) or go back to edit.</p>
+          </div>
+          <div class="btnRow">
+            <button class="btn good" id="printReportBtn" type="button">Print report</button>
+            <button class="btn" id="backBtn" type="button">Back to edit</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertBefore(controls, document.getElementById("reportView"));
+
+    document.getElementById("printReportBtn").addEventListener("click", ()=> window.print());
+    document.getElementById("backBtn").addEventListener("click", ()=>{
+      controls.remove();
+      document.getElementById("reportView").style.display = "none";
+      document.getElementById("appView").style.display = "";
+      window.scrollTo({ top: 0, behavior: "instant" });
+    });
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", saveToLocal);
+  document.getElementById("loadBtn").addEventListener("click", loadFromLocal);
+  document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+  document.getElementById("generateBtn").addEventListener("click", ()=>{
+    if(!studentName.value.trim()){
+      toast("Please enter your name");
+      studentName.focus();
+      return;
+    }
+    renderReport();
+    document.getElementById("appView").style.display = "none";
+    document.getElementById("reportView").style.display = "block";
+    injectReportControls();
+    toast("Report generated");
+  });
+
+  // INIT
+  buildMarksTable();
+  buildReasons();
+  updateAll();
+</script>
+</body>
+</html>
