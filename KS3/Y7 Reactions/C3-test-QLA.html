@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>C3 Reactions – Corrections & Targeted Follow-Up</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Print styles */
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; }
+      .shadow-sm, .shadow-lg, .shadow { box-shadow: none !important; }
+      .border { border-color: #ddd !important; }
+      .print-break-avoid { break-inside: avoid; }
+      @page { margin: 12mm; }
+    }
+    .print-only { display: none; }
+
+    /* Lined answer area for print */
+    .lined {
+      background-image: linear-gradient(to bottom, transparent 31px, rgba(0,0,0,0.10) 32px);
+      background-size: 100% 32px;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useState } = React;
+
+    // -------------------------
+    // Inline icons
+    // -------------------------
+    const Icon = ({ name, size = 20, className = "" }) => {
+      const icons = {
+        check: <path d="M20 6 9 17l-5-5" />,
+        x: <path d="M18 6 6 18M6 6l12 12" />,
+        chevronDown: <path d="m6 9 6 6 6-6" />,
+        chevronUp: <path d="m18 15-6-6-6 6" />,
+        beaker: <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M6 14h12" />,
+        bookOpen: <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />,
+        alertCircle: <path d="M12 8v4M12 16h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" />,
+        printer: <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z" />,
+        sparkles: <path d="M12 2l1.5 5L19 9l-5.5 2L12 16l-1.5-5L5 9l5.5-2zM4 14l.8 2.6L7 18l-2.2.4L4 21l-.8-2.6L1 18l2.2-.4zM20 14l.8 2.6L23 18l-2.2.4L20 21l-.8-2.6L17 18l2.2-.4z" />
+      };
+
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+        >
+          {icons[name] || <circle cx="12" cy="12" r="10" />}
+        </svg>
+      );
+    };
+
+    // -------------------------
+    // Storage key
+    // -------------------------
+    const STORAGE_KEY = "C3_Reactions_QLA_v2";
+
+    // -------------------------
+    // Grade boundaries (as in your existing tool)
+    // -------------------------
+    const getGrade = (score) => {
+      if (score >= 24) return { grade: 'Excelling', color: 'text-purple-600' };
+      if (score >= 18) return { grade: 'Exceeding', color: 'text-blue-600' };
+      if (score >= 12) return { grade: 'Expected', color: 'text-green-600' };
+      if (score >= 6)  return { grade: 'Working Towards', color: 'text-orange-600' };
+      if (score >= 3)  return { grade: 'Beginning', color: 'text-yellow-600' };
+      return { grade: 'Ungraded', color: 'text-gray-400' };
+    };
+
+    // -------------------------
+    // Deterministic hash (for stable follow-up selection)
+    // -------------------------
+    const hashString = (str) => {
+      // Simple, stable hash
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0);
+    };
+
+    // -------------------------
+    // Data: Questions (your existing content, now with strands)
+    // -------------------------
+    const QuizData = [
+      {
+        id: 1,
+        marks: 4,
+        topic: "Chemical Changes",
+        strands: ["Useful vs not useful reactions"],
+        question: "Classify the following changes as Useful or Not Useful.",
+        answerContent: (
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full text-sm text-left text-gray-700">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100">
+                <tr>
+                  <th className="px-4 py-2">Action</th>
+                  <th className="px-4 py-2">Reaction Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="bg-white border-b"><td className="px-4 py-2 font-medium">Frying an egg</td><td className="px-4 py-2 text-green-600 font-bold">Useful</td></tr>
+                <tr className="bg-gray-50 border-b"><td className="px-4 py-2 font-medium">Baking a potato</td><td className="px-4 py-2 text-green-600 font-bold">Useful</td></tr>
+                <tr className="bg-white border-b"><td className="px-4 py-2 font-medium">A nail rusting</td><td className="px-4 py-2 text-red-600 font-bold">Not Useful</td></tr>
+                <tr className="bg-gray-50 border-b"><td className="px-4 py-2 font-medium">Milk going off</td><td className="px-4 py-2 text-red-600 font-bold">Not Useful</td></tr>
+                <tr className="bg-white"><td className="px-4 py-2 font-medium">Breaking down the ozone layer</td><td className="px-4 py-2 text-red-600 font-bold">Not Useful</td></tr>
+              </tbody>
+            </table>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for each completely correct row.",
+          "No mark if both boxes are ticked for a single row."
+        ]
+      },
+      {
+        id: 2,
+        marks: 3,
+        topic: "Definitions",
+        strands: ["Chemical vs physical changes", "Exothermic vs endothermic"],
+        question: "Complete the sentences about chemical, physical, and exothermic changes.",
+        answerContent: (
+          <div className="space-y-2 text-sm">
+            <p>a) In <span className="font-bold text-blue-600">chemical</span> changes new substances are produced.</p>
+            <p>b) In <span className="font-bold text-blue-600">physical</span> changes no new substances are made and it is easy to reverse.</p>
+            <p>c) In <span className="font-bold text-blue-600">exothermic</span> changes, energy is transferred to the surroundings.</p>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for 'chemical'",
+          "1 mark for 'physical'",
+          "1 mark for 'exothermic'"
+        ]
+      },
+      {
+        id: 3,
+        marks: 2,
+        topic: "Reaction Types",
+        strands: ["Reaction types (combustion & decomposition)"],
+        question: "Match Decomposition and Combustion to their definitions.",
+        answerContent: (
+          <div className="space-y-3 text-sm">
+            <div className="p-2 bg-blue-50 rounded border border-blue-100">
+              <span className="font-bold text-blue-800">Decomposition:</span> When a compound breaks down into elements or smaller compounds.
+            </div>
+            <div className="p-2 bg-orange-50 rounded border border-orange-100">
+              <span className="font-bold text-orange-800">Combustion:</span> When a substance and oxygen react together to release heat and form a new product.
+            </div>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for correct Decomposition definition",
+          "1 mark for correct Combustion definition"
+        ]
+      },
+      {
+        id: 4,
+        marks: 1,
+        topic: "Oxidation",
+        strands: ["Oxidation (metal + oxygen)"],
+        question: "What is the product formed when copper reacts with oxygen?",
+        answerContent: (
+          <p className="text-lg font-semibold text-gray-800">Copper oxide <span className="text-sm font-normal text-gray-500">(or CuO)</span></p>
+        ),
+        markingPoints: ["1 mark for 'copper oxide' or 'CuO'"]
+      },
+      {
+        id: 5,
+        marks: 1,
+        topic: "Combustion",
+        strands: ["Combustion products"],
+        question: "What are the two products of the complete combustion of ethane?",
+        answerContent: (
+          <ul className="list-disc pl-5 text-gray-800">
+            <li>Carbon dioxide</li>
+            <li>Water</li>
+          </ul>
+        ),
+        markingPoints: [
+          "1 mark for providing BOTH carbon dioxide and water correctly."
+        ]
+      },
+      {
+        id: 6,
+        marks: 2,
+        topic: "Chemical Formulae",
+        strands: ["Ratio from formula (subscripts)"],
+        question: "Determine the ratios for Water and Glucose.",
+        answerContent: (
+          <div className="space-y-4">
+            <div>
+              <p className="font-semibold text-sm text-gray-500">a) Hydrogen to Oxygen in Water:</p>
+              <p className="text-lg">2 : 1</p>
+            </div>
+            <div>
+              <p className="font-semibold text-sm text-gray-500">b) Simplest ratio for C₆H₁₂O₆:</p>
+              <p className="text-lg">1 : 2 : 1</p>
+            </div>
+          </div>
+        ),
+        markingPoints: [
+          "a) Must be 2:1 (not 1:2)",
+          "b) 1:2:1 (derived from 6:12:6)"
+        ]
+      },
+      {
+        id: 7,
+        marks: 3,
+        topic: "Stoichiometry & Mass",
+        strands: ["Stoichiometry (molecules)", "Conservation of mass calculations"],
+        question: "Calculate oxygen molecules needed and mass of water produced.",
+        answerContent: (
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-bold text-gray-700">a) Oxygen molecules:</p>
+              <p>If 1 glucose needs 6 oxygen, then 3 glucose needs:</p>
+              <p className="font-mono bg-gray-100 p-1 inline-block mt-1">3 × 6 = <span className="font-bold text-blue-600">18</span></p>
+            </div>
+            <hr />
+            <div>
+              <p className="font-bold text-gray-700">b) Conservation of mass:</p>
+              <p>Total mass before = 180 g + 192 g = <span className="font-semibold">372 g</span></p>
+              <p>Mass of water = total mass − mass of CO₂</p>
+              <p className="font-mono bg-gray-100 p-1 inline-block mt-1">372 − 264 = <span className="font-bold text-blue-600">108 g</span></p>
+            </div>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for '18'",
+          "1 mark for correct working (372 − 264)",
+          "1 mark for final answer '108 g'"
+        ]
+      },
+      {
+        id: 8,
+        marks: 4,
+        topic: "Experimental Method",
+        strands: ["Planning: exo/endothermic investigation", "Exothermic vs endothermic"],
+        question: "Describe a method to determine if a reaction between acid and magnesium is exo/endothermic.",
+        answerContent: (
+          <div className="space-y-3 text-sm">
+            <p className="italic text-gray-600">Model answer:</p>
+            <ol className="list-decimal pl-5 space-y-1 text-gray-800">
+              <li>Measure start temperature of acid.</li>
+              <li>Add magnesium and stir.</li>
+              <li>Record highest/lowest temperature reached.</li>
+              <li>Calculate temperature change.</li>
+              <li><strong>Conclusion:</strong> If temp rises → exothermic. If temp falls → endothermic.</li>
+            </ol>
+          </div>
+        ),
+        markingPoints: [
+          "Measure starting temperature",
+          "Add magnesium & stir",
+          "Record highest/lowest temperature",
+          "Link temp change to correct reaction type"
+        ]
+      },
+      {
+        id: 9,
+        marks: 5,
+        topic: "Conservation of Mass Experiment",
+        strands: ["Balancing equations", "Conservation of mass: gas escaping"],
+        question: "Balance the equation and explain mass changes.",
+        answerContent: (
+          <div className="space-y-3 text-sm">
+            <div>
+              <p className="font-semibold text-gray-600">a) Balancing:</p>
+              <p className="font-mono text-lg">CaCO₃ + <span className="text-red-600 font-bold">2</span>HCl → CaCl₂ + H₂O + CO₂</p>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-600">b) Change in mass:</p>
+              <p className="font-mono">101.7 − 99.8 = <span className="text-blue-600 font-bold">1.9 g</span></p>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-600">c) Explanation:</p>
+              <p>The mass decreased because <span className="font-bold">carbon dioxide gas</span> was produced and <span className="font-bold">escaped</span> the flask.</p>
+            </div>
+          </div>
+        ),
+        markingPoints: [
+          "a) 1 mark for '2'",
+          "b) 1 mark for '1.9'",
+          "c) 1 mark for stating mass decreases/goes down",
+          "c) 1 mark for identifying carbon dioxide",
+          "c) 1 mark for mentioning gas escapes"
+        ]
+      },
+      {
+        id: 10,
+        marks: 2,
+        topic: "Definitions",
+        strands: ["Reactants vs products"],
+        question: "Define reactants and products.",
+        answerContent: (
+          <div className="space-y-2 text-sm">
+            <p><span className="font-bold text-purple-700">Reactants:</span> Substances used up / combined at the start.</p>
+            <p><span className="font-bold text-purple-700">Products:</span> Substances formed / made during the reaction.</p>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for reactants definition",
+          "1 mark for products definition"
+        ]
+      },
+      {
+        id: 11,
+        marks: 1,
+        topic: "Word Equations",
+        strands: ["Word equations"],
+        question: "Write the word equation for the decomposition of hydrogen peroxide.",
+        answerContent: (
+          <p className="font-bold text-gray-800 text-center py-2 bg-gray-50 rounded">
+            hydrogen peroxide → water + oxygen
+          </p>
+        ),
+        markingPoints: [
+          "1 mark for correct substances AND arrow/plus sign"
+        ]
+      },
+      {
+        id: 12,
+        marks: 2,
+        topic: "Environmental Chemistry",
+        strands: ["Pros/cons of reactions (wood burning)"],
+        question: "State one advantage and one disadvantage of burning wood.",
+        answerContent: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="bg-green-50 p-2 rounded border border-green-200">
+              <span className="font-bold text-green-800 block mb-1">Advantage (+):</span>
+              Releases heat energy (useful for cooking/heating).
+            </div>
+            <div className="bg-red-50 p-2 rounded border border-red-200">
+              <span className="font-bold text-red-800 block mb-1">Disadvantage (−):</span>
+              Releases CO₂ (greenhouse gas) / could release CO / fewer trees for photosynthesis.
+            </div>
+          </div>
+        ),
+        markingPoints: [
+          "1 mark for releasing heat/energy",
+          "1 mark for a valid disadvantage (e.g., CO₂ greenhouse gas / CO / less photosynthesis)"
+        ]
+      }
+    ];
+
+    // -------------------------
+    // Follow-up bank (mapped to strands)
+    // -------------------------
+    const FollowUps = [
+      // Useful vs not useful
+      {
+        id: "FU-UVNU-1",
+        strand: "Useful vs not useful reactions",
+        question: "Explain why rusting is usually described as ‘not useful’. Then give ONE example where rusting could be useful (or deliberately used).",
+        markingPoints: [
+          "Rusting damages iron/steel, weakens structures, costs money to repair",
+          "Example: rust effect in art/sculpture, weathering steel (Corten), chemical demonstrations"
+        ]
+      },
+      {
+        id: "FU-UVNU-2",
+        strand: "Useful vs not useful reactions",
+        question: "A student says, ‘Cooking is always a chemical reaction’. Explain why this is sometimes true, but not always. Give one example of each.",
+        markingPoints: [
+          "Sometimes chemical (new substances formed) e.g., baking a cake, frying an egg",
+          "Sometimes mostly physical (change of state) e.g., melting chocolate, freezing ice lollies"
+        ]
+      },
+
+      // Chemical vs physical
+      {
+        id: "FU-CP-1",
+        strand: "Chemical vs physical changes",
+        question: "Describe TWO signs that a chemical change has happened. For each sign, explain why it suggests new substances were made.",
+        markingPoints: [
+          "Any two: colour change, gas produced, temperature change, precipitate, light produced",
+          "Explanation links to products/new substances"
+        ]
+      },
+      {
+        id: "FU-CP-2",
+        strand: "Chemical vs physical changes",
+        question: "A student dissolves sugar in water. Is this chemical or physical? Explain how you could get the sugar back.",
+        markingPoints: [
+          "Physical (no new substance; can reverse)",
+          "Evaporate water/crystallise sugar"
+        ]
+      },
+
+      // Exo/endo
+      {
+        id: "FU-EXEN-1",
+        strand: "Exothermic vs endothermic",
+        question: "Define exothermic and endothermic. Then, for each one, give a real-life example and explain what happens to the temperature of the surroundings.",
+        markingPoints: [
+          "Exothermic: energy transferred to surroundings → temp rises",
+          "Endothermic: energy taken in from surroundings → temp falls",
+          "Suitable examples"
+        ]
+      },
+      {
+        id: "FU-EXEN-2",
+        strand: "Exothermic vs endothermic",
+        question: "A reaction causes the temperature of the mixture to drop from 20°C to 16°C. What type of reaction is it, and what does that tell you about energy transfer?",
+        markingPoints: [
+          "Endothermic",
+          "Energy taken in from surroundings"
+        ]
+      },
+
+      // Reaction types
+      {
+        id: "FU-RT-1",
+        strand: "Reaction types (combustion & decomposition)",
+        question: "Classify each reaction type and justify: (1) Methane burning in oxygen. (2) Hydrogen peroxide splitting into water and oxygen.",
+        markingPoints: [
+          "Methane burning: combustion (reacts with oxygen, releases energy, forms new products)",
+          "Hydrogen peroxide splitting: decomposition (one compound breaks down)"
+        ]
+      },
+      {
+        id: "FU-RT-2",
+        strand: "Reaction types (combustion & decomposition)",
+        question: "Write one sentence to define combustion and one sentence to define decomposition. Then write a word equation example for each.",
+        markingPoints: [
+          "Clear definitions",
+          "Correct word equations"
+        ]
+      },
+
+      // Oxidation (metal + oxygen)
+      {
+        id: "FU-OX-1",
+        strand: "Oxidation (metal + oxygen)",
+        question: "Magnesium reacts with oxygen to form magnesium oxide. Write the word equation and explain why this is an oxidation reaction.",
+        markingPoints: [
+          "magnesium + oxygen → magnesium oxide",
+          "Oxidation = gain of oxygen (at KS3)"
+        ]
+      },
+
+      // Combustion products
+      {
+        id: "FU-COMB-1",
+        strand: "Combustion products",
+        question: "Explain why complete combustion of a hydrocarbon always makes carbon dioxide and water.",
+        markingPoints: [
+          "Hydrocarbons contain carbon and hydrogen",
+          "In complete combustion, carbon → CO₂ and hydrogen → H₂O"
+        ]
+      },
+
+      // Ratio from formula
+      {
+        id: "FU-RATIO-1",
+        strand: "Ratio from formula (subscripts)",
+        question: "A compound has formula Al₂(SO₄)₃. Work out the ratio of Al : S : O atoms in simplest form.",
+        markingPoints: [
+          "Al = 2",
+          "S = 3",
+          "O = 12",
+          "Ratio 2 : 3 : 12"
+        ]
+      },
+      {
+        id: "FU-RATIO-2",
+        strand: "Ratio from formula (subscripts)",
+        question: "Glucose is C₆H₁₂O₆. Explain why the simplest ratio is 1:2:1 and show the step you use to simplify it.",
+        markingPoints: [
+          "Start 6:12:6",
+          "Divide all by 6 → 1:2:1"
+        ]
+      },
+
+      // Stoichiometry molecules
+      {
+        id: "FU-STOICH-1",
+        strand: "Stoichiometry (molecules)",
+        question: "If 1 molecule of A reacts with 4 molecules of B, how many molecules of B are needed for 7 molecules of A? Show your working.",
+        markingPoints: [
+          "7 × 4 = 28",
+          "28 molecules of B"
+        ]
+      },
+
+      // Conservation of mass calculations
+      {
+        id: "FU-MASSCALC-1",
+        strand: "Conservation of mass calculations",
+        question: "Before a reaction: 50 g reactant X + 30 g reactant Y. After: 60 g product P. Calculate the mass of product Q and explain the rule you used.",
+        markingPoints: [
+          "Total before = 80 g",
+          "Q = 80 − 60 = 20 g",
+          "Conservation of mass"
+        ]
+      },
+
+      // Planning exo/endo investigation
+      {
+        id: "FU-PLAN-1",
+        strand: "Planning: exo/endothermic investigation",
+        question: "Design a method to test whether dissolving ammonium nitrate in water is exothermic or endothermic. Include what to measure and how to conclude.",
+        markingPoints: [
+          "Measure start temperature",
+          "Add solute, stir, measure temperature change",
+          "Temp down = endothermic; temp up = exothermic"
+        ]
+      },
+
+      // Balancing equations
+      {
+        id: "FU-BAL-1",
+        strand: "Balancing equations",
+        question: "Balance: Mg + O₂ → MgO",
+        markingPoints: [
+          "2Mg + O₂ → 2MgO"
+        ]
+      },
+      {
+        id: "FU-BAL-2",
+        strand: "Balancing equations",
+        question: "Balance: Na₂CO₃ + HCl → NaCl + H₂O + CO₂",
+        markingPoints: [
+          "Na₂CO₃ + 2HCl → 2NaCl + H₂O + CO₂"
+        ]
+      },
+
+      // Gas escaping
+      {
+        id: "FU-GAS-1",
+        strand: "Conservation of mass: gas escaping",
+        question: "Explain why the mass measured on a balance may go down during a reaction that produces a gas. What could you do to stop the mass changing?",
+        markingPoints: [
+          "Gas escapes so measured mass decreases",
+          "Use a sealed container / bung + gas syringe setup (closed system)"
+        ]
+      },
+
+      // Reactants vs products
+      {
+        id: "FU-RP-1",
+        strand: "Reactants vs products",
+        question: "In the reaction: iron + sulfur → iron sulfide, identify the reactants and the product. Then explain what the words mean.",
+        markingPoints: [
+          "Reactants: iron, sulfur",
+          "Product: iron sulfide",
+          "Reactants used up; products formed"
+        ]
+      },
+
+      // Word equations
+      {
+        id: "FU-WE-1",
+        strand: "Word equations",
+        question: "Write word equations for: (1) combustion of propane, (2) decomposition of calcium carbonate.",
+        markingPoints: [
+          "propane + oxygen → carbon dioxide + water",
+          "calcium carbonate → calcium oxide + carbon dioxide"
+        ]
+      },
+
+      // Pros/cons
+      {
+        id: "FU-PROS-1",
+        strand: "Pros/cons of reactions (wood burning)",
+        question: "Give TWO disadvantages of burning wood and ONE advantage. Try to use specific science words.",
+        markingPoints: [
+          "Advantage: releases heat/energy",
+          "Disadvantages: CO₂ greenhouse gas, CO (incomplete combustion), particulates/air pollution, deforestation reduces photosynthesis"
+        ]
+      }
+    ];
+
+    // -------------------------
+    // Helpers: Strand stats + report selection
+    // -------------------------
+    const computeStrandStats = (scores) => {
+      const stats = {}; // { strand: { earned, available } }
+
+      QuizData.forEach(q => {
+        const earned = Number.isFinite(scores[q.id]) ? scores[q.id] : 0;
+        const available = q.marks;
+        q.strands.forEach(s => {
+          if (!stats[s]) stats[s] = { earned: 0, available: 0 };
+          stats[s].earned += earned;
+          stats[s].available += available;
+        });
+      });
+
+      const asArray = Object.entries(stats).map(([strand, v]) => {
+        const pct = v.available > 0 ? Math.round((v.earned / v.available) * 100) : 0;
+        return { strand, ...v, pct };
+      });
+
+      asArray.sort((a,b) => a.pct - b.pct); // weakest first
+      return asArray;
+    };
+
+    const pickFollowUps = (strandStats, seedStr) => {
+      const seed = hashString(seedStr);
+
+      // Work from weakest upwards, but ensure we end up with 2 tasks
+      const weakest = [...strandStats].sort((a,b) => a.pct - b.pct);
+
+      const chosen = [];
+
+      const pickOneFromStrand = (strand, extraSalt) => {
+        const pool = FollowUps.filter(f => f.strand === strand);
+        if (pool.length === 0) return null;
+        const idx = (hashString(seedStr + "|" + strand + "|" + extraSalt) + seed) % pool.length;
+        return pool[idx];
+      };
+
+      // Try to take 1 from each of the two weakest strands
+      const uniqueWeakStrands = [];
+      for (const row of weakest) {
+        if (!uniqueWeakStrands.includes(row.strand)) uniqueWeakStrands.push(row.strand);
+        if (uniqueWeakStrands.length >= 2) break;
+      }
+
+      if (uniqueWeakStrands.length === 0) return [];
+
+      if (uniqueWeakStrands.length === 1) {
+        // Take two from the same strand (if possible)
+        const s = uniqueWeakStrands[0];
+        const first = pickOneFromStrand(s, "A");
+        if (first) chosen.push(first);
+
+        const pool = FollowUps.filter(f => f.strand === s && f.id !== first?.id);
+        if (pool.length > 0) {
+          const idx2 = (hashString(seedStr + "|" + s + "|B") + seed) % pool.length;
+          chosen.push(pool[idx2]);
+        }
+        return chosen.slice(0,2);
+      }
+
+      const first = pickOneFromStrand(uniqueWeakStrands[0], "A");
+      const second = pickOneFromStrand(uniqueWeakStrands[1], "B");
+
+      if (first) chosen.push(first);
+      if (second) chosen.push(second);
+
+      // If one strand had no pool, fill from any weak pools
+      if (chosen.length < 2) {
+        const fallbackPool = FollowUps.slice();
+        // deterministic shuffle-ish pick
+        const idx = (seed % fallbackPool.length);
+        chosen.push(fallbackPool[idx]);
+      }
+
+      // Ensure unique
+      const unique = [];
+      chosen.forEach(x => {
+        if (x && !unique.some(u => u.id === x.id)) unique.push(x);
+      });
+
+      return unique.slice(0,2);
+    };
+
+    // -------------------------
+    // UI Components
+    // -------------------------
+    const ScoreButton = ({ value, current, onClick }) => (
+      <button
+        onClick={() => onClick(value)}
+        className={`w-10 h-10 rounded-full font-bold transition-all duration-200 flex items-center justify-center border-2
+          ${current === value
+            ? 'bg-blue-600 text-white border-blue-600 scale-110 shadow-lg'
+            : 'bg-white text-gray-500 border-gray-200 hover:border-blue-300 hover:text-blue-500'}`}
+      >
+        {value}
+      </button>
+    );
+
+    const QuestionCard = ({ data, userScore, onScoreChange }) => {
+      const [isOpen, setIsOpen] = useState(false);
+
+      return (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6 transition-all duration-300 print:break-inside-avoid">
+          <div
+            className="p-5 cursor-pointer hover:bg-gray-50 flex justify-between items-start"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded uppercase tracking-wide">
+                  Q{data.id}
+                </span>
+                <span className="text-gray-400 text-xs">{data.topic}</span>
+              </div>
+              <h3 className="text-gray-800 font-medium text-lg leading-snug">{data.question}</h3>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {data.strands.map((s, idx) => (
+                  <span key={idx} className="text-[11px] bg-gray-100 text-gray-600 px-2 py-1 rounded-full border border-gray-200">
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-2 ml-4">
+              <div className="flex items-center gap-1 text-sm font-semibold text-gray-500">
+                <span>{Number.isFinite(userScore) ? userScore : 0}</span>
+                <span className="text-gray-300">/</span>
+                <span>{data.marks}</span>
+              </div>
+              {isOpen ? <Icon name="chevronUp" className="text-gray-400"/> : <Icon name="chevronDown" className="text-gray-400"/>}
+            </div>
+          </div>
+
+          {isOpen && (
+            <div className="border-t border-gray-100 bg-gray-50/50">
+              <div className="p-5 grid gap-6 md:grid-cols-2">
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm h-full">
+                  <div className="flex items-center gap-2 mb-3 text-green-700 border-b border-green-100 pb-2">
+                    <Icon name="bookOpen" size={18} />
+                    <h4 className="font-bold text-sm uppercase tracking-wider">Model Answer</h4>
+                  </div>
+                  <div className="text-gray-700">{data.answerContent}</div>
+                </div>
+
+                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm h-full flex flex-col">
+                  <div className="flex items-center gap-2 mb-3 text-indigo-700 border-b border-indigo-100 pb-2">
+                    <Icon name="check" size={18} />
+                    <h4 className="font-bold text-sm uppercase tracking-wider">Marking Points</h4>
+                  </div>
+
+                  <ul className="space-y-2 mb-6 flex-1">
+                    {data.markingPoints.map((mp, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="mt-1 min-w-[6px] h-[6px] rounded-full bg-indigo-400 block"></span>
+                        {mp}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="bg-gray-50 -m-4 mt-auto p-4 border-t border-gray-100 no-print">
+                    <p className="text-xs font-bold text-gray-500 uppercase mb-3 text-center">Your Score</p>
+                    <div className="flex justify-center gap-2 flex-wrap">
+                      {[...Array(data.marks + 1)].map((_, i) => (
+                        <ScoreButton
+                          key={i}
+                          value={i}
+                          current={userScore}
+                          onClick={(val) => onScoreChange(data.id, val)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // -------------------------
+    // Print-only report component
+    // -------------------------
+    const Report = ({ report }) => {
+      if (!report) return null;
+
+      const {
+        testTitle, studentName, totalScore, totalMaxMarks, percentage, gradeLabel,
+        strengths, weaknesses, followUps
+      } = report;
+
+      return (
+        <div className="print-only">
+          <div className="border border-gray-300 rounded-xl p-5 mb-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-black text-gray-900">{testTitle}</h1>
+                <p className="text-gray-600 mt-1">
+                  <span className="font-semibold">Student:</span> {studentName || "________________________"}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600 font-semibold">Score</p>
+                <p className="text-3xl font-black text-gray-900">{totalScore}<span className="text-gray-400 text-lg font-semibold">/{totalMaxMarks}</span></p>
+                <p className="text-sm text-gray-600 mt-1">{percentage}% · <span className="font-bold">{gradeLabel}</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mb-4 print-break-avoid">
+            <div className="border border-gray-300 rounded-xl p-4">
+              <h2 className="font-black text-gray-900 mb-2">Strongest areas</h2>
+              {strengths.length === 0 ? (
+                <p className="text-gray-600 text-sm">No data yet. Enter your marks first.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {strengths.map((s) => (
+                    <li key={s.strand} className="text-sm flex items-center justify-between gap-2">
+                      <span className="font-semibold text-gray-800">{s.strand}</span>
+                      <span className="text-gray-700">{s.pct}%</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <div className="border border-gray-300 rounded-xl p-4">
+              <h2 className="font-black text-gray-900 mb-2">Weaker areas to focus on</h2>
+              {weaknesses.length === 0 ? (
+                <p className="text-gray-600 text-sm">No data yet. Enter your marks first.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {weaknesses.map((w) => (
+                    <li key={w.strand} className="text-sm flex items-center justify-between gap-2">
+                      <span className="font-semibold text-gray-800">{w.strand}</span>
+                      <span className="text-gray-700">{w.pct}%</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          <div className="border border-gray-300 rounded-xl p-4 mb-4 print-break-avoid">
+            <h2 className="font-black text-gray-900 mb-2">Next steps</h2>
+            <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
+              <li>Correct your original test paper in a different colour.</li>
+              <li>Complete the two follow-up questions below (chosen from your weaker areas).</li>
+              <li>Bring this sheet and your corrected test to your next lesson.</li>
+            </ul>
+          </div>
+
+          {/* Two half-page follow-ups */}
+          <div className="grid grid-cols-1 gap-4">
+            {followUps.map((fu, idx) => (
+              <div key={fu.id} className="border border-gray-300 rounded-xl p-4 print-break-avoid">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-black text-gray-900">Follow-up {idx + 1}</h3>
+                    <p className="text-xs text-gray-600 mt-1">Focus strand: <span className="font-semibold">{fu.strand}</span></p>
+                  </div>
+                  <div className="text-xs text-gray-600 font-semibold">Teacher/Student Copy</div>
+                </div>
+
+                <p className="mt-3 text-sm text-gray-900 font-semibold">{fu.question}</p>
+
+                <div className="mt-3 border border-gray-200 rounded-lg h-[220px] lined"></div>
+
+                <div className="mt-3 text-xs text-gray-600">
+                  <span className="font-bold">Marking points to self-check after:</span>
+                  <ul className="list-disc pl-5 mt-1 space-y-1">
+                    {fu.markingPoints.map((mp, i) => <li key={i}>{mp}</li>)}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      );
+    };
+
+    // -------------------------
+    // App
+    // -------------------------
+    const App = () => {
+      const totalMaxMarks = 30; // as per your paper
+      const [scores, setScores] = useState({});
+      const [studentName, setStudentName] = useState("");
+      const [testTitle, setTestTitle] = useState("C3 Reactions – Corrections Summary");
+      const [report, setReport] = useState(null);
+
+      // Load saved state
+      useEffect(() => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (saved && typeof saved === "object") {
+            if (saved.scores) setScores(saved.scores);
+            if (typeof saved.studentName === "string") setStudentName(saved.studentName);
+            if (typeof saved.testTitle === "string") setTestTitle(saved.testTitle);
+            if (saved.report) setReport(saved.report);
+          }
+        } catch (e) {}
+      }, []);
+
+      // Save state
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ scores, studentName, testTitle, report }));
+        } catch (e) {}
+      }, [scores, studentName, testTitle, report]);
+
+      const handleScoreChange = (questionId, score) => {
+        setScores(prev => ({ ...prev, [questionId]: score }));
+        // If they change scores after generating a report, gently invalidate it
+        if (report) setReport(null);
+      };
+
+      const totalScore = useMemo(() => {
+        return Object.values(scores).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0);
+      }, [scores]);
+
+      const percentage = useMemo(() => {
+        return Math.round((totalScore / totalMaxMarks) * 100);
+      }, [totalScore]);
+
+      const gradeInfo = useMemo(() => getGrade(totalScore), [totalScore]);
+
+      const progressWidth = Math.max(0, Math.min(100, percentage));
+
+      const buildReport = () => {
+        const strandStats = computeStrandStats(scores);
+        // strengths = top 3 by pct, weaknesses = bottom 3 by pct (but meaningful ordering)
+        const sorted = [...strandStats].sort((a,b) => a.pct - b.pct);
+        const weaknesses = sorted.slice(0, 3);
+        const strengths = [...sorted].slice(-3).reverse();
+
+        const seedStr = `${testTitle}|${studentName}|${JSON.stringify(scores)}`;
+        const followUps = pickFollowUps(sorted, seedStr);
+
+        const reportObj = {
+          createdAt: new Date().toISOString(),
+          testTitle,
+          studentName,
+          totalScore,
+          totalMaxMarks,
+          percentage,
+          gradeLabel: gradeInfo.grade,
+          strengths,
+          weaknesses,
+          followUps
+        };
+
+        setReport(reportObj);
+      };
+
+      const canGenerate = Object.keys(scores).length > 0;
+
+      const clearAll = () => {
+        if (!confirm("Clear name, scores and report?")) return;
+        setScores({});
+        setStudentName("");
+        setReport(null);
+        // keep testTitle
+      };
+
+      return (
+        <div className="min-h-screen bg-gray-50 font-sans text-gray-900 pb-20">
+
+          {/* Print-only report */}
+          <Report report={report || (report === null ? null : report)} />
+
+          {/* Everything below is interactive only */}
+          <div className="no-print">
+
+            {/* Sticky header */}
+            <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+              <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="bg-blue-600 text-white p-2 rounded-lg">
+                    <Icon name="beaker" size={20} />
+                  </div>
+                  <div>
+                    <h1 className="font-bold text-sm md:text-base text-gray-800">C3 Reactions</h1>
+                    <p className="text-xs text-gray-500">Year 7 Corrections + Targeted Follow-Up</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-5">
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500 font-semibold uppercase">Total Score</p>
+                    <p className="text-xl font-bold text-blue-700">{totalScore} <span className="text-gray-400 text-sm font-normal">/ {totalMaxMarks}</span></p>
+                  </div>
+                  <div className="text-right hidden sm:block">
+                    <p className="text-xs text-gray-500 font-semibold uppercase">Grade</p>
+                    <p className={`text-lg font-black ${gradeInfo.color}`}>{gradeInfo.grade}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="h-1 w-full bg-gray-100">
+                <div
+                  className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                  style={{ width: `${progressWidth}%` }}
+                />
+              </div>
+            </div>
+
+            <main className="max-w-3xl mx-auto px-4 py-8">
+
+              {/* Student + report controls */}
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm mb-8">
+                <div className="flex flex-col md:flex-row gap-6 md:items-end md:justify-between">
+                  <div className="flex-1">
+                    <h2 className="text-xl font-black text-gray-900 mb-2">Set up your report</h2>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                      Enter your name, mark each question honestly, then generate a summary report with two targeted follow-up questions.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-bold text-gray-600 uppercase">Student name</label>
+                        <input
+                          value={studentName}
+                          onChange={(e) => { setStudentName(e.target.value); if (report) setReport(null); }}
+                          placeholder="e.g., Alex Turner"
+                          className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold text-gray-600 uppercase">Report title</label>
+                        <input
+                          value={testTitle}
+                          onChange={(e) => { setTestTitle(e.target.value); if (report) setReport(null); }}
+                          className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="min-w-[220px] bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+                    <p className="text-xs text-gray-500 uppercase font-bold mb-1">Current grade</p>
+                    <p className={`text-2xl font-black ${gradeInfo.color}`}>{gradeInfo.grade}</p>
+                    <p className="text-gray-500 text-sm mt-1">{percentage}%</p>
+
+                    <div className="mt-4 flex flex-col gap-2">
+                      <button
+                        onClick={buildReport}
+                        disabled={!canGenerate}
+                        className={`w-full px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2
+                          ${canGenerate
+                            ? "bg-blue-600 hover:bg-blue-700 text-white"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          }`}
+                      >
+                        <Icon name="sparkles" size={18} />
+                        Generate report
+                      </button>
+
+                      <button
+                        onClick={() => window.print()}
+                        disabled={!report}
+                        className={`w-full px-4 py-2 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2
+                          ${report
+                            ? "bg-gray-900 hover:bg-black text-white"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                          }`}
+                      >
+                        <Icon name="printer" size={18} />
+                        Print report
+                      </button>
+
+                      <button
+                        onClick={clearAll}
+                        className="w-full px-4 py-2 rounded-lg text-sm font-semibold border border-gray-300 hover:bg-white transition-colors text-gray-700"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {report && (
+                  <div className="mt-6 border-t border-gray-200 pt-4">
+                    <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-gray-900">Report ready.</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Your report includes a strengths/weaknesses summary and two follow-up questions chosen from your weaker areas.
+                        </p>
+                      </div>
+                      <div className="bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-lg px-3 py-2">
+                        Tip: If you change any marks, you’ll need to generate the report again.
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Instructions */}
+              <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 mb-8">
+                <h2 className="text-xl font-black text-blue-900 mb-2">How to use this</h2>
+                <ol className="list-decimal pl-5 text-blue-900/90 text-sm space-y-1">
+                  <li>Click each question to open the model answer and marking points.</li>
+                  <li>Enter the score you actually got for that question.</li>
+                  <li>When finished, click <span className="font-bold">Generate report</span> to create a summary + two targeted questions.</li>
+                  <li>Click <span className="font-bold">Print report</span> to print the worksheet-style summary.</li>
+                </ol>
+              </div>
+
+              {/* Questions */}
+              <div className="space-y-4">
+                {QuizData.map((q) => (
+                  <QuestionCard
+                    key={q.id}
+                    data={q}
+                    userScore={scores[q.id]}
+                    onScoreChange={handleScoreChange}
+                  />
+                ))}
+              </div>
+
+              {/* Bottom note */}
+              <div className="mt-12 text-center border-t border-gray-200 pt-8">
+                <p className="text-gray-500 text-sm">
+                  When you’re done, generate your report and print it — the printout won’t include all the question-by-question scores.
+                </p>
+              </div>
+
+            </main>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
