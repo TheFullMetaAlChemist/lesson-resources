@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCSE Rates of Reaction Test Review</title>
+  <style>
+    :root {
+      --bg: #f4f8fc;
+      --panel: #ffffff;
+      --panel-soft: #f8fbfe;
+      --text: #1f2937;
+      --muted: #5f6f82;
+      --line: #d7e4f0;
+      --accent: #5e8ff5;
+      --accent-soft: #eaf2ff;
+      --success: #2f855a;
+      --success-soft: #f2fbf6;
+      --warning: #b7791f;
+      --warning-soft: #fff9ef;
+      --info: #2b6cb0;
+      --info-soft: #eef6ff;
+      --shadow: 0 14px 36px rgba(45, 77, 108, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f7fbff 0%, #eef5fb 100%);
+      color: var(--text);
+      font-size: 21px;
+      line-height: 1.65;
+    }
+
+    .container {
+      max-width: 1340px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f2f7ff 100%);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2.35rem;
+      line-height: 1.12;
+    }
+
+    .hero p {
+      margin: 8px 0;
+      color: var(--muted);
+      max-width: 980px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .summary-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card .label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .summary-card .value {
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .sidebar h2 {
+      margin: 4px 0 14px;
+      font-size: 1.15rem;
+    }
+
+    .tab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tab-button {
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      color: var(--text);
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: #b8cdf8;
+      outline: none;
+    }
+
+    .tab-button.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .content-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+      min-height: 780px;
+    }
+
+    .question-panel {
+      display: none;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .question-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      color: #24457f;
+      border: 1px solid #c7dafe;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .question-title {
+      font-size: 1.95rem;
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+
+    .question-stem {
+      color: var(--text);
+      margin-bottom: 22px;
+      font-size: 1.06rem;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 18px;
+      background: #fcfdff;
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .good-answer {
+      border-left: 6px solid var(--success);
+      background: var(--success-soft);
+    }
+
+    .mark-box {
+      border-left: 6px solid var(--accent);
+      background: #f7faff;
+    }
+
+    .warning-box {
+      border-left: 6px solid var(--warning);
+      background: var(--warning-soft);
+    }
+
+    .info-box {
+      border-left: 6px solid var(--info);
+      background: var(--info-soft);
+    }
+
+    .subpart {
+      border-top: 1px dashed var(--line);
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+
+    .subpart:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .subpart h4 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+    }
+
+    .answer-line {
+      font-weight: 700;
+      color: #164d32;
+      margin-bottom: 8px;
+    }
+
+    ul, ol {
+      margin: 10px 0 0 24px;
+      padding: 0;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checklist div {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .formula {
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 26px;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { font-size: 18px; }
+      .container { padding: 16px; }
+      .hero, .sidebar, .content-panel { padding: 20px; }
+      .question-title { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>GCSE Rates of Reaction Test Review</h1>
+      <p>Use the tabs to work through each question from the test. For every part, there is a model answer, a plain-English explanation of what the examiner wanted, and notes on where marks are often lost.</p>
+      <p>This is designed to help students compare their own answer with a strong answer and spot exactly what to improve next time.</p>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="label">Topic</div>
+          <div class="value">Rates of Reaction</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Questions</div>
+          <div class="value">4</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Total Marks</div>
+          <div class="value">29</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Best use</div>
+          <div class="value">Review and improve</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Questions</h2>
+        <div class="tab-list">
+          <button class="tab-button active" data-tab="q1">Question 1</button>
+          <button class="tab-button" data-tab="q2">Question 2</button>
+          <button class="tab-button" data-tab="q3">Question 3</button>
+          <button class="tab-button" data-tab="q4">Question 4</button>
+        </div>
+      </aside>
+
+      <main class="content-panel">
+        <section class="question-panel active" id="q1">
+          <div class="pill-row">
+            <span class="pill">Question 1</span>
+            <span class="pill">5 marks</span>
+            <span class="pill">Collision theory basics</span>
+          </div>
+          <h2 class="question-title">Sulfur dioxide and oxygen</h2>
+          <p class="question-stem">This question checks key foundation ideas: word equations, compounds, collisions, activation energy and ways to change the rate.</p>
+
+          <div class="subpart">
+            <h4>1a(i) Complete the word equation.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">oxygen, sulfur trioxide</p>
+            </div>
+            <div class="section mark-box">
+              <h3>What the examiner wanted</h3>
+              <p>Both missing words had to be correct to get the mark. One correct word on its own would not be enough here.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1a(ii) Is sulfur dioxide an element, a mixture or a compound?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">Compound</p>
+            </div>
+            <div class="section info-box">
+              <h3>Why?</h3>
+              <p>SO<sub>2</sub> contains sulfur and oxygen chemically joined together, so it is a compound.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1b Complete the sentence about pressure and collisions.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">The frequency of the collisions increases.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Common mistake</h3>
+              <p>Answers such as “there are more particles” were too vague on their own. The mark was for the idea that collisions happen more often.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1c What is the minimum energy needed for particles to react called?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">Activation energy</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1d Give one way to increase the rate other than changing pressure.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Add a catalyst.</p>
+              <p>Another acceptable answer was to increase the temperature.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q2">
+          <div class="pill-row">
+            <span class="pill">Question 2</span>
+            <span class="pill">6 marks</span>
+            <span class="pill">Sodium thiosulfate practical</span>
+          </div>
+          <h2 class="question-title">Concentration and rate</h2>
+          <p class="question-stem">This question focused on graph skills, practical errors and explaining why a higher concentration gives a faster reaction.</p>
+
+          <div class="subpart">
+            <h4>2a(i) Draw a line of best fit.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>A continuous straight line should be drawn through the trend of the data, ignoring the anomalous point.</p>
+            </div>
+            <div class="section info-box">
+              <h3>Key idea</h3>
+              <p>The mark was for showing the overall trend, not forcing the line through every point.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>2a(ii) Suggest two reasons why the points do not all lie on the line of best fit.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <ol>
+                <li>There may have been timing errors, such as not starting or stopping the stopwatch at exactly the right moment.</li>
+                <li>There may have been measurement errors, such as judging the point when the cross disappeared differently each time.</li>
+              </ol>
+              <p>Other acceptable ideas included temperature fluctuations, an anomalous result, plotting errors, recording errors or calculation errors.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Where students lose marks</h3>
+              <p>“Human error” can be accepted, but only if it is clear enough. Better answers give a specific example of the error.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>2b(i) How does the graph support the idea that rate is directly proportional to concentration?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The graph shows a straight-line relationship, so as concentration increases, the rate increases in direct proportion.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>Simple version that would score</h3>
+              <p>“As concentration increases, the rate goes up” would get the mark.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>2b(ii) Explain, in terms of particles, why the rate increases when concentration increases.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>When the concentration is higher, there are more reacting particles in the same volume of solution. This means the particles are closer together and collide more often, so there are more successful collisions each second and the reaction is faster.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>What the mark scheme was looking for</h3>
+              <div class="checklist">
+                <div>More particles in the same volume.</div>
+                <div>Particles are closer together.</div>
+                <div>More collisions or more frequent collisions.</div>
+              </div>
+            </div>
+            <div class="section warning-box">
+              <h3>Common mistake</h3>
+              <p>Talking about particles having more energy is not the main point here. This question was about concentration, not temperature.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q3">
+          <div class="pill-row">
+            <span class="pill">Question 3</span>
+            <span class="pill">5 marks</span>
+            <span class="pill">Rate calculations</span>
+          </div>
+          <h2 class="question-title">Hydrogen from magnesium and acid</h2>
+          <p class="question-stem">This question tested graph/table reading, average rate calculations and explaining why rate changes during a reaction.</p>
+
+          <div class="subpart">
+            <h4>3a(i) Calculate the average rate between 30 s and 50 s.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>At 30 s the volume is 130 cm<sup>3</sup>. At 50 s the volume is 175 cm<sup>3</sup>.</p>
+              <p>Change in volume = 175 − 130 = 45 cm<sup>3</sup></p>
+              <p>Time = 20 s</p>
+              <div class="formula">Average rate = 45 ÷ 20 = 2.25 cm<sup>3</sup>/s</div>
+              <p class="answer-line">Rate = 2.25 cm<sup>3</sup>/s</p>
+            </div>
+            <div class="section mark-box">
+              <h3>How the marks were awarded</h3>
+              <ul>
+                <li>1 mark for using the correct readings: 130 and 175</li>
+                <li>1 mark for dividing by 20</li>
+                <li>1 mark for the correct answer of 2.25</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>3a(ii) Explain why this rate is different from the rate in the first 10 seconds.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The rate is slower between 30 and 50 seconds because the concentration of the reactants is lower than it was at the start. As the reaction continues, reactant particles are used up, so there are fewer collisions each second.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>To get both marks</h3>
+              <div class="checklist">
+                <div>Say that the concentration of the reactant or reactants is lower.</div>
+                <div>Link this to fewer collisions per second.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q4">
+          <div class="pill-row">
+            <span class="pill">Question 4</span>
+            <span class="pill">13 marks</span>
+            <span class="pill">Required practical ideas</span>
+          </div>
+          <h2 class="question-title">Factors affecting rate</h2>
+          <p class="question-stem">This longer question tested planning a method, explaining the effect of temperature, defining a catalyst and naming biological catalysts.</p>
+
+          <div class="subpart">
+            <h4>4a Describe a method to investigate the effect of particle size on the rate of reaction of calcium carbonate with hydrochloric acid.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <ol>
+                <li>Measure a fixed volume of hydrochloric acid using a measuring cylinder.</li>
+                <li>Put the acid into a conical flask connected to a gas syringe with a stopper and delivery tube.</li>
+                <li>Measure a fixed mass of calcium carbonate using a balance.</li>
+                <li>Add the calcium carbonate to the flask, quickly fit the stopper and start the timer.</li>
+                <li>Record the volume of gas collected at regular time intervals, or measure how long it takes to collect a fixed volume of gas.</li>
+                <li>Repeat the experiment using different sized pieces of calcium carbonate.</li>
+                <li>Keep the mass of calcium carbonate the same each time.</li>
+                <li>Keep the volume, concentration and temperature of the hydrochloric acid the same each time.</li>
+                <li>Repeat each test and calculate a mean to improve reliability.</li>
+              </ol>
+            </div>
+            <div class="section mark-box">
+              <h3>What a top-level answer needed</h3>
+              <p>A strong answer had to be logical, detailed and valid. It needed both the practical method and the control variables.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>How marks were often lost</h3>
+              <ul>
+                <li>Not saying how the rate would actually be measured.</li>
+                <li>Forgetting the gas syringe, stopper or delivery tube.</li>
+                <li>Not controlling mass, acid volume, acid concentration or temperature.</li>
+                <li>Mentioning different particle sizes but not explaining how the experiment would be repeated fairly.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>4b Explain the effect of increasing temperature on the rate of reaction.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Increasing the temperature increases the rate of reaction because the particles have more energy and move faster. This means collisions happen more often, and a greater proportion of collisions have enough energy to overcome the activation energy, so more collisions are successful.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>Key marking points</h3>
+              <div class="checklist">
+                <div>The rate increases.</div>
+                <div>Particles have more energy or move faster.</div>
+                <div>Collision frequency increases and/or more collisions are successful.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>4c What is meant by a catalyst?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>A catalyst is a substance that increases the rate of a reaction and is not used up during the reaction.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Common mistake</h3>
+              <p>Only saying “it speeds up a reaction” is not enough for full marks. You also needed the idea that it is not used up.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>4d Explain how a catalyst works.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>A catalyst works by providing an alternative reaction pathway with a lower activation energy. This means more collisions are successful each second, so the reaction happens faster.</p>
+            </div>
+            <div class="section info-box">
+              <h3>Important note</h3>
+              <p>The mark scheme extract mainly showed the one-mark answer for biological catalysts in part (d), but this explanation is the standard GCSE explanation students should use when asked how a catalyst works.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>4e What are catalysts in biological systems called?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">Enzymes</p>
+            </div>
+          </div>
+        </section>
+
+        <p class="footer-note">Built in a clean, accessible style with light colours, large font and tabbed navigation so students can work through the paper question by question.</p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.question-panel');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+        buttons.forEach(btn => btn.classList.remove('active'));
+        panels.forEach(panel => panel.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
