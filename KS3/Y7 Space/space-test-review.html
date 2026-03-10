@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Year 7 Space Test Review</title>
+  <style>
+    :root {
+      --bg: #f6f9fc;
+      --panel: #ffffff;
+      --panel-soft: #f8fbff;
+      --text: #1f2a37;
+      --muted: #5b6b7f;
+      --line: #d9e6f2;
+      --accent: #5b8def;
+      --accent-soft: #eaf2ff;
+      --success: #2e8b57;
+      --warning: #b7791f;
+      --shadow: 0 12px 30px rgba(44, 62, 80, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef5fb 100%);
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f2f7ff 100%);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2.2rem;
+      line-height: 1.15;
+    }
+
+    .hero p {
+      margin: 8px 0;
+      color: var(--muted);
+      max-width: 900px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .summary-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .summary-card .label {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .summary-card .value {
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .sidebar h2 {
+      margin: 4px 0 14px;
+      font-size: 1.15rem;
+    }
+
+    .tab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tab-button {
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      color: var(--text);
+      text-align: left;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: #b7cdf6;
+      outline: none;
+    }
+
+    .tab-button.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    .content-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      min-height: 720px;
+    }
+
+    .question-panel {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .question-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      color: #234077;
+      border: 1px solid #c8dafd;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .question-title {
+      font-size: 1.9rem;
+      margin: 0 0 8px;
+      line-height: 1.2;
+    }
+
+    .question-stem {
+      font-size: 1.08rem;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      background: #fcfdff;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 18px;
+    }
+
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .section p,
+    .section li {
+      font-size: 1rem;
+    }
+
+    .mark-box {
+      border-left: 6px solid var(--accent);
+      background: #f7faff;
+    }
+
+    .good-answer {
+      border-left: 6px solid var(--success);
+      background: #f5fcf8;
+    }
+
+    .warning-box {
+      border-left: 6px solid var(--warning);
+      background: #fffaf2;
+    }
+
+    ul, ol {
+      margin: 10px 0 0 24px;
+      padding: 0;
+    }
+
+    .answer-line {
+      font-weight: 700;
+      color: #173c2b;
+      margin-bottom: 8px;
+    }
+
+    .subpart {
+      border-top: 1px dashed var(--line);
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+
+    .subpart:first-of-type {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
+    .subpart h4 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+    }
+
+    .diagram-note {
+      background: #eef7ff;
+      border: 1px dashed #a9c8f8;
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 10px;
+      color: #234077;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .checklist div {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 26px;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { font-size: 18px; }
+      .container { padding: 16px; }
+      .hero, .content-panel, .sidebar { padding: 20px; }
+      .question-title { font-size: 1.55rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <h1>Year 7 Space Test Review</h1>
+      <p>Use the tabs to move through each question. Every section shows a model answer, what the examiner was looking for, and the sort of mistake that can lose marks.</p>
+      <p>This page is designed to help students compare their own answer with a strong one and spot exactly what is missing.</p>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="label">Topic</div>
+          <div class="value">Space</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Questions</div>
+          <div class="value">9</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Total Marks</div>
+          <div class="value">30</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Best way to use it</div>
+          <div class="value">Compare, improve, reflect</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Questions</h2>
+        <div class="tab-list" id="tabList">
+          <button class="tab-button active" data-tab="q1">Question 1</button>
+          <button class="tab-button" data-tab="q2">Question 2</button>
+          <button class="tab-button" data-tab="q3">Question 3</button>
+          <button class="tab-button" data-tab="q4">Question 4</button>
+          <button class="tab-button" data-tab="q5">Question 5</button>
+          <button class="tab-button" data-tab="q6">Question 6</button>
+          <button class="tab-button" data-tab="q7">Question 7</button>
+          <button class="tab-button" data-tab="q8">Question 8</button>
+          <button class="tab-button" data-tab="q9">Question 9</button>
+        </div>
+      </aside>
+
+      <main class="content-panel">
+        <section class="question-panel active" id="q1">
+          <div class="pill-row">
+            <span class="pill">Question 1</span>
+            <span class="pill">5 marks</span>
+            <span class="pill">Solar System basics</span>
+          </div>
+          <h2 class="question-title">Planets and the Sun</h2>
+          <p class="question-stem">This question checks whether you know the order of the planets, how planets differ, and the force involved in forming the Sun.</p>
+
+          <div class="subpart">
+            <h4>1a. Label the planets in the correct order from the Sun.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune</p>
+            </div>
+            <div class="section mark-box">
+              <h3>How the marks worked</h3>
+              <ul>
+                <li>3 marks for all 8 planets in the correct order.</li>
+                <li>2 marks for one mistake.</li>
+                <li>1 mark for two mistakes.</li>
+              </ul>
+            </div>
+            <div class="section warning-box">
+              <h3>Where marks are often lost</h3>
+              <ul>
+                <li>Mixing up Uranus and Neptune.</li>
+                <li>Missing out a planet.</li>
+                <li>Putting the planets in an order based on size instead of distance from the Sun.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1b. Give one other way the planets are different from each other.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The planets are different sizes.</p>
+              <p>Other acceptable ideas included temperature, type of planet, number of moons, speed of orbit, or whether they have rings.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>Examiner thinking</h3>
+              <p>You only needed <strong>one valid difference</strong>. A simple, correct science fact was enough for the mark.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>1c. Name the force that pulled dust and gas together to form the Sun.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">Gravity</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Common mistake</h3>
+              <p>Answers such as magnetism or pressure do not get the mark here. The key force is <strong>gravity</strong>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q2">
+          <div class="pill-row">
+            <span class="pill">Question 2</span>
+            <span class="pill">2 marks</span>
+            <span class="pill">Apparent movement of the Sun</span>
+          </div>
+          <h2 class="question-title">Why the Sun seems to move</h2>
+          <p class="question-stem">This question is about what we observe in the sky and the real reason behind it.</p>
+
+          <div class="subpart">
+            <h4>2a. Which direction does the Sun appear to move?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The arrow should go <strong>from East to West</strong>.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>2b. Explain why the Sun appears to move across the sky.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The Sun appears to move because the Earth is spinning on its axis.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>What the answer needed</h3>
+              <p>You needed the idea that the <strong>Earth rotates</strong>. The Sun is not actually moving across the sky around Earth each day.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Common mistake</h3>
+              <p>Saying that the Sun goes around the Earth is not accepted.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q3">
+          <div class="pill-row">
+            <span class="pill">Question 3</span>
+            <span class="pill">1 mark</span>
+            <span class="pill">Seasons</span>
+          </div>
+          <h2 class="question-title">Summer in the UK</h2>
+          <p class="question-stem">You had to identify the point in Earth’s orbit where the UK is tilted towards the Sun.</p>
+
+          <div class="section good-answer">
+            <h3>Model answer</h3>
+            <p>The correct position was the <strong>left-hand Earth</strong> on the diagram.</p>
+          </div>
+          <div class="section mark-box">
+            <h3>What this shows</h3>
+            <p>The UK has summer when the Northern Hemisphere is tilted towards the Sun, so it gets more direct sunlight and longer days.</p>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q4">
+          <div class="pill-row">
+            <span class="pill">Question 4</span>
+            <span class="pill">2 marks</span>
+            <span class="pill">Moon phases</span>
+          </div>
+          <h2 class="question-title">Torch, globe and Moon model</h2>
+          <p class="question-stem">This question used a practical model to test understanding of Moon phases.</p>
+
+          <div class="subpart">
+            <h4>4a. What does the torch represent?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">The Sun</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>4b. Which phase is shown when the ball is directly between the globe and the torch?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">New moon</p>
+            </div>
+            <div class="section mark-box">
+              <h3>Explanation</h3>
+              <p>When the Moon is between Earth and the Sun, the lit side faces away from Earth, so it looks dark to us. That is a <strong>new moon</strong>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q5">
+          <div class="pill-row">
+            <span class="pill">Question 5</span>
+            <span class="pill">4 marks</span>
+            <span class="pill">Solar eclipses</span>
+          </div>
+          <h2 class="question-title">Total and partial solar eclipses</h2>
+          <p class="question-stem">This was a longer answer. You had to use the diagram and explain what happens in the umbra and penumbra.</p>
+
+          <div class="section good-answer">
+            <h3>Model answer</h3>
+            <p>A solar eclipse happens when the Moon moves between the Sun and the Earth and blocks the Sun’s light. The <strong>umbra</strong> is the darkest part of the shadow, where the Sun is completely blocked, so people there see a <strong>total solar eclipse</strong>. The <strong>penumbra</strong> is the lighter outer shadow, where only some of the Sun’s light is blocked, so people there see a <strong>partial solar eclipse</strong>.</p>
+            <div class="diagram-note">
+              On the diagram, the umbra should be the narrow central shadow behind the Moon, and the penumbra should be the wider, lighter shadow around it.
+            </div>
+          </div>
+
+          <div class="section mark-box">
+            <h3>What the mark scheme was looking for</h3>
+            <div class="checklist">
+              <div>Moon between the Sun and Earth.</div>
+              <div>Umbra correctly identified or labelled.</div>
+              <div>No sunlight reaches the umbra, so this gives a total eclipse.</div>
+              <div>Penumbra correctly identified or labelled.</div>
+              <div>Only some sunlight reaches the penumbra, so this gives a partial eclipse.</div>
+            </div>
+          </div>
+
+          <div class="section warning-box">
+            <h3>How marks were lost</h3>
+            <ul>
+              <li>Only describing the eclipse without saying what the umbra and penumbra are.</li>
+              <li>Mixing up total and partial eclipse.</li>
+              <li>Not making clear that the Moon blocks the Sun’s light.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q6">
+          <div class="pill-row">
+            <span class="pill">Question 6</span>
+            <span class="pill">2 marks</span>
+            <span class="pill">Planet data</span>
+          </div>
+          <h2 class="question-title">Comparing planet sizes</h2>
+          <p class="question-stem">This question used data from a table and then asked you to think about Pluto.</p>
+
+          <div class="subpart">
+            <h4>6a. How many times bigger is Jupiter than Earth?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">About 11 times</p>
+              <p>135 800 ÷ 12 700 ≈ 10.7, which rounds to about 11.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>6b. Suggest why Pluto is not a planet.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Its diameter is too small.</p>
+            </div>
+            <div class="section warning-box">
+              <h3>Important note</h3>
+              <p>This follows the wording of the test mark scheme. In more detail, Pluto is classed as a dwarf planet rather than a full planet.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q7">
+          <div class="pill-row">
+            <span class="pill">Question 7</span>
+            <span class="pill">6 marks</span>
+            <span class="pill">Seasons and sunlight</span>
+          </div>
+          <h2 class="question-title">Why summer is hotter than winter</h2>
+          <p class="question-stem">This question linked an experiment with the real reason for the seasons.</p>
+
+          <div class="subpart">
+            <h4>7a. State one thing Mark must keep the same.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The amount of sand in each tray should be the same.</p>
+              <p>Other acceptable answers included keeping the sand level, keeping the distance from the lamp the same, or keeping the thermometer depth the same.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>7b. Explain why Tray A gets hotter than Tray B.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>In Tray A the light is concentrated on a smaller area. In Tray B the light is spread out over a larger area, so the sand does not heat up as much.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>7c. Why does the Sun hit the UK at an angle in winter?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Because the Earth is tilted.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>7d. Give another reason it is hotter in summer than in winter.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The Sun is in the sky for longer in summer, so there are more hours of daylight and more time for the ground to warm up.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>7e. Explain why people near the Equator do not have four seasons like the UK.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Near the Equator, the Sun stays at a similar angle in the sky through the year, so the sunlight is quite direct most of the time. The length of the day and the temperature do not change very much, so places near the Equator do not usually have four clearly different seasons like the UK.</p>
+              <div class="diagram-note">
+                A good diagram would show Earth with a labelled equator and the Sun’s rays hitting near the Equator at a similar angle.
+              </div>
+            </div>
+            <div class="section mark-box">
+              <h3>To get both marks</h3>
+              <ul>
+                <li>Include the idea that the Sun’s angle does not change much near the Equator.</li>
+                <li>Include the idea that temperature or daylight hours do not change much.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q8">
+          <div class="pill-row">
+            <span class="pill">Question 8</span>
+            <span class="pill">1 mark</span>
+            <span class="pill">Seeing objects in space</span>
+          </div>
+          <h2 class="question-title">Why some objects can be seen with the naked eye</h2>
+          <p class="question-stem">This question was about light.</p>
+
+          <div class="section good-answer">
+            <h3>Model answer</h3>
+            <p>Objects that we can see with the naked eye emit enough light, or reflect enough light, to be seen from Earth. More distant objects may not emit or reflect enough light for our eyes to detect.</p>
+          </div>
+          <div class="section warning-box">
+            <h3>Common mistake</h3>
+            <p>Only saying that something is “too far away” is not quite enough unless you link it to the amount of light reaching Earth.</p>
+          </div>
+        </section>
+
+        <section class="question-panel" id="q9">
+          <div class="pill-row">
+            <span class="pill">Question 9</span>
+            <span class="pill">5 marks</span>
+            <span class="pill">Graphs and patterns</span>
+          </div>
+          <h2 class="question-title">Distance from the Sun and orbit time</h2>
+          <p class="question-stem">This question combined graph skills, pattern spotting and scale model maths.</p>
+
+          <div class="subpart">
+            <h4>9a. Plot the last three planets and draw a smooth curve.</h4>
+            <div class="section good-answer">
+              <h3>What a full-mark answer needed</h3>
+              <ul>
+                <li>Correctly plot Saturn: (1400, 29)</li>
+                <li>Correctly plot Uranus: (2900, 84)</li>
+                <li>Correctly plot Neptune: (4500, 165)</li>
+                <li>Draw a smooth curve through the pattern</li>
+              </ul>
+            </div>
+            <div class="section warning-box">
+              <h3>How marks were lost</h3>
+              <p>One mark could still be awarded for two correct points, but missing the curve or plotting inaccurate coordinates would lose marks.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>9b. Describe the pattern shown on the graph.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>The further a planet is from the Sun, the longer it takes to orbit the Sun.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>9c. Suggest an explanation for this pattern.</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p>Planets that are further away have a bigger orbit, so they have further to travel. Also, the Sun’s gravity is weaker further away.</p>
+            </div>
+            <div class="section mark-box">
+              <h3>What was accepted</h3>
+              <p>You only needed one of those ideas for the mark.</p>
+            </div>
+          </div>
+
+          <div class="subpart">
+            <h4>9d. If Earth is 15 cm from the Sun in the model, how far away should Neptune be?</h4>
+            <div class="section good-answer">
+              <h3>Model answer</h3>
+              <p class="answer-line">450 cm</p>
+              <p>Earth is 150 million km from the Sun and Neptune is 4500 million km away. Neptune is 30 times farther than Earth, so 15 × 30 = 450 cm.</p>
+            </div>
+          </div>
+        </section>
+
+        <p class="footer-note">Built as a student-friendly review page with large text, light colours and tabbed navigation for easy checking after a test.</p>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.question-panel');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        panels.forEach(panel => panel.classList.remove('active'));
+
+        button.classList.add('active');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
