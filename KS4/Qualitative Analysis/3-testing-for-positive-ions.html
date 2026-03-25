@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCSE Chemistry: Positive Ions Identifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* CSS Art Animations */
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-2deg); }
+            100% { transform: scale(1.05) rotate(2deg); }
+        }
+        .flame-anim {
+            border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+            filter: blur(2px);
+            animation: flicker 0.3s infinite alternate;
+            transition: background-color 1s ease-in-out, box-shadow 1s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-up {
+            transition: height 1s ease-in-out, background-color 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 selection:bg-blue-200">
+
+    <!-- Header -->
+    <header class="bg-blue-700 text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl font-bold mb-2">Positive Ion (Cation) Testing</h1>
+        <p class="text-blue-100 max-w-2xl mx-auto">Interactive learning tool for GCSE Chemistry. Add reagents, observe the outcomes, and identify the mystery ion based on your specification.</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6 mt-6">
+        
+        <!-- Tab Navigation -->
+        <div class="flex justify-center mb-6 space-x-4">
+            <button id="tab-practice" onclick="switchTab('practice')" class="px-6 py-2 rounded-full font-bold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition">Interactive Practice</button>
+            <button id="tab-flowchart" onclick="switchTab('flowchart')" class="px-6 py-2 rounded-full font-bold bg-white text-blue-600 border-2 border-blue-600 shadow-sm hover:bg-blue-50 transition">View Flowchart</button>
+        </div>
+
+        <!-- Flowchart View -->
+        <div id="view-flowchart" class="hidden bg-white p-8 rounded-2xl shadow-lg fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-center text-blue-800">Cation Identification Flowchart</h2>
+            <div class="overflow-x-auto">
+                <div class="min-w-[800px] flex flex-col items-center space-y-4">
+                    <!-- Start -->
+                    <div class="bg-blue-100 border-2 border-blue-400 p-3 rounded-lg font-bold text-center w-64 shadow-sm">
+                        Add Sodium Hydroxide (NaOH)
+                    </div>
+                    <div class="flex w-full justify-between relative px-12">
+                        <!-- Connecting Lines top -->
+                        <div class="absolute top-0 left-[16%] w-[68%] h-px bg-gray-400"></div>
+                        <div class="absolute top-0 left-[16%] w-px h-6 bg-gray-400"></div>
+                        <div class="absolute top-0 left-[50%] w-px h-6 bg-gray-400"></div>
+                        <div class="absolute top-0 left-[84%] w-px h-6 bg-gray-400"></div>
+                        
+                        <!-- Column 1: No Ppt -->
+                        <div class="flex flex-col items-center w-1/3 mt-6">
+                            <div class="bg-gray-100 p-2 rounded border border-gray-300 font-semibold mb-4 text-sm">No Precipitate</div>
+                            <div class="w-px h-6 bg-gray-400"></div>
+                            <div class="bg-orange-100 border border-orange-400 p-2 rounded font-bold text-sm mb-4">Flame Test</div>
+                            <div class="flex flex-col space-y-2 w-full px-4">
+                                <div class="bg-red-100 text-red-800 p-2 rounded border border-red-300 text-center text-sm shadow-sm">Crimson Flame ➔ <strong class="text-lg">Li⁺</strong></div>
+                                <div class="bg-yellow-100 text-yellow-800 p-2 rounded border border-yellow-300 text-center text-sm shadow-sm">Yellow Flame ➔ <strong class="text-lg">Na⁺</strong></div>
+                                <div class="bg-purple-100 text-purple-800 p-2 rounded border border-purple-300 text-center text-sm shadow-sm">Lilac Flame ➔ <strong class="text-lg">K⁺</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: White Ppt -->
+                        <div class="flex flex-col items-center w-1/3 mt-6">
+                            <div class="bg-slate-100 p-2 rounded border border-slate-300 font-semibold mb-4 text-sm">White Precipitate</div>
+                            <div class="w-px h-6 bg-gray-400"></div>
+                            <div class="bg-blue-100 border border-blue-400 p-2 rounded font-bold text-sm mb-4">Add Excess NaOH</div>
+                            <div class="flex w-full justify-between relative mt-2 px-2">
+                                <div class="absolute -top-4 left-[25%] w-[50%] h-px bg-gray-400"></div>
+                                <div class="absolute -top-4 left-[25%] w-px h-4 bg-gray-400"></div>
+                                <div class="absolute -top-4 left-[75%] w-px h-4 bg-gray-400"></div>
+                                
+                                <div class="flex flex-col items-center w-1/2 px-1">
+                                    <div class="bg-gray-50 p-1 rounded border border-gray-200 text-xs mb-2 text-center">Dissolves</div>
+                                    <div class="bg-teal-100 text-teal-800 p-2 rounded border border-teal-300 w-full text-center text-sm shadow-sm">➔ <strong class="text-lg">Al³⁺</strong></div>
+                                </div>
+                                <div class="flex flex-col items-center w-1/2 px-1">
+                                    <div class="bg-gray-50 p-1 rounded border border-gray-200 text-xs mb-2 text-center">Insoluble</div>
+                                    <div class="bg-orange-100 border border-orange-400 p-1 rounded font-bold text-xs w-full text-center mb-2">Flame Test</div>
+                                    <div class="flex flex-col space-y-1 w-full">
+                                        <div class="bg-orange-200 text-orange-900 p-1 rounded border border-orange-400 text-center text-xs shadow-sm">Orange-red ➔ <strong>Ca²⁺</strong></div>
+                                        <div class="bg-gray-200 text-gray-800 p-1 rounded border border-gray-400 text-center text-xs shadow-sm">No flame ➔ <strong>Mg²⁺</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Coloured Ppt -->
+                        <div class="flex flex-col items-center w-1/3 mt-6">
+                            <div class="bg-indigo-50 p-2 rounded border border-indigo-200 font-semibold mb-4 text-sm">Coloured Precipitate</div>
+                            <div class="w-px h-6 bg-gray-400"></div>
+                            <div class="bg-orange-100 border border-orange-400 p-2 rounded font-bold text-sm mb-4">Flame Test</div>
+                            <div class="flex flex-col space-y-2 w-full px-4">
+                                <div class="bg-green-100 text-green-800 p-2 rounded border border-green-300 text-center text-sm shadow-sm">Blue ppt + Green Flame ➔ <strong class="text-lg">Cu²⁺</strong></div>
+                                <div class="bg-emerald-100 text-emerald-800 p-2 rounded border border-emerald-300 text-center text-sm shadow-sm">Green ppt + No Flame ➔ <strong class="text-lg">Fe²⁺</strong></div>
+                                <div class="bg-amber-100 text-amber-900 p-2 rounded border border-amber-300 text-center text-sm shadow-sm">Brown ppt + No Flame ➔ <strong class="text-lg">Fe³⁺</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Practice View (Interactive App) -->
+        <div id="view-practice" class="fade-in">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+                
+                <!-- Left panel: Visuals -->
+                <div class="w-full md:w-5/12 bg-gray-800 p-8 flex flex-col items-center justify-center relative shadow-inner">
+                    <h3 class="absolute top-4 left-4 text-gray-400 font-semibold uppercase tracking-wider text-sm">Laboratory View</h3>
+                    
+                    <div id="visual-container" class="w-full h-64 flex items-center justify-center">
+                        <!-- Dynamic Visuals (Test tube or Bunsen) will be injected here -->
+                    </div>
+                    <div id="visual-label" class="mt-6 text-white text-lg font-medium bg-gray-900 px-4 py-1 rounded-full opacity-0 transition-opacity duration-500">
+                        Ready
+                    </div>
+                </div>
+
+                <!-- Right panel: Controls & Observations -->
+                <div class="w-full md:w-7/12 p-8 flex flex-col bg-slate-50 relative">
+                    
+                    <!-- Progress / Status Header -->
+                    <div class="mb-6 pb-4 border-b border-gray-200">
+                        <span id="status-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-100 text-blue-800 mb-2">Stage: Setup</span>
+                        <h2 id="action-title" class="text-2xl font-bold text-gray-800">Identify the Mystery Ion</h2>
+                    </div>
+
+                    <!-- Observation Log -->
+                    <div id="observations-container" class="mb-6 flex-grow hidden">
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Lab Notes (Observations)</h4>
+                        <ul id="observations-list" class="space-y-3">
+                            <!-- JS will populate lis here -->
+                        </ul>
+                    </div>
+
+                    <!-- Action Area -->
+                    <div id="action-area" class="mt-auto bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+                        <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
+                            Generate Mystery Solution
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- Data Definitions based on AQA Spec ---
+        const ions = [
+            // Group 1: No ppt, Flame Test
+            { id: 'Li+', group: 1, pptColorCSS: 'bg-transparent', pptName: 'No', flameColor: '#dc143c', flameShadow: 'rgba(220, 20, 60, 0.6)', flameName: 'Crimson', options: ['Li+', 'Na+', 'K+'], answerText: 'Lithium (Li⁺)' },
+            { id: 'Na+', group: 1, pptColorCSS: 'bg-transparent', pptName: 'No', flameColor: '#fbbf24', flameShadow: 'rgba(251, 191, 36, 0.6)', flameName: 'Yellow', options: ['Li+', 'Na+', 'K+'], answerText: 'Sodium (Na⁺)' },
+            { id: 'K+', group: 1, pptColorCSS: 'bg-transparent', pptName: 'No', flameColor: '#c084fc', flameShadow: 'rgba(192, 132, 252, 0.6)', flameName: 'Lilac', options: ['Li+', 'Na+', 'K+'], answerText: 'Potassium (K⁺)' },
+            
+            // Group 2: White ppt, Excess NaOH, Flame test (if insoluble)
+            { id: 'Ca2+', group: 2, pptColorCSS: 'bg-slate-50', pptName: 'White', dissolves: false, flameColor: '#ea580c', flameShadow: 'rgba(234, 88, 12, 0.6)', flameName: 'Orange-red', options: ['Ca2+', 'Mg2+', 'Al3+'], answerText: 'Calcium (Ca²⁺)' },
+            { id: 'Mg2+', group: 2, pptColorCSS: 'bg-slate-50', pptName: 'White', dissolves: false, flameColor: '#3b82f6', flameShadow: 'rgba(59, 130, 246, 0.6)', flameName: 'No distinctive colour', options: ['Ca2+', 'Mg2+', 'Al3+'], answerText: 'Magnesium (Mg²⁺)' },
+            { id: 'Al3+', group: 2, pptColorCSS: 'bg-slate-50', pptName: 'White', dissolves: true, flameColor: '#3b82f6', flameShadow: 'rgba(59, 130, 246, 0.6)', flameName: 'No distinctive colour', options: ['Ca2+', 'Mg2+', 'Al3+'], answerText: 'Aluminium (Al³⁺)' },
+            
+            // Group 3: Coloured ppt, Flame test
+            { id: 'Cu2+', group: 3, pptColorCSS: 'bg-blue-500', pptName: 'Blue', flameColor: '#22c55e', flameShadow: 'rgba(34, 197, 94, 0.6)', flameName: 'Green', options: ['Cu2+', 'Fe2+', 'Fe3+'], answerText: 'Copper(II) (Cu²⁺)' },
+            { id: 'Fe2+', group: 3, pptColorCSS: 'bg-green-700', pptName: 'Green', flameColor: '#3b82f6', flameShadow: 'rgba(59, 130, 246, 0.6)', flameName: 'No distinctive colour', options: ['Cu2+', 'Fe2+', 'Fe3+'], answerText: 'Iron(II) (Fe²⁺)' },
+            { id: 'Fe3+', group: 3, pptColorCSS: 'bg-orange-800', pptName: 'Brown', flameColor: '#3b82f6', flameShadow: 'rgba(59, 130, 246, 0.6)', flameName: 'No distinctive colour', options: ['Cu2+', 'Fe2+', 'Fe3+'], answerText: 'Iron(III) (Fe³⁺)' }
+        ];
+
+        // --- State Variables ---
+        let currentIon = null;
+        let observations = [];
+        let currentState = 'INTRO';
+
+        // --- DOM Elements ---
+        const visualContainer = document.getElementById('visual-container');
+        const visualLabel = document.getElementById('visual-label');
+        const observationsContainer = document.getElementById('observations-container');
+        const observationsList = document.getElementById('observations-list');
+        const actionArea = document.getElementById('action-area');
+        const actionTitle = document.getElementById('action-title');
+        const statusBadge = document.getElementById('status-badge');
+
+        // --- Tab Switching ---
+        function switchTab(tab) {
+            if (tab === 'practice') {
+                document.getElementById('view-practice').classList.remove('hidden');
+                document.getElementById('view-flowchart').classList.add('hidden');
+                document.getElementById('tab-practice').className = "px-6 py-2 rounded-full font-bold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition";
+                document.getElementById('tab-flowchart').className = "px-6 py-2 rounded-full font-bold bg-white text-blue-600 border-2 border-blue-600 shadow-sm hover:bg-blue-50 transition";
+            } else {
+                document.getElementById('view-practice').classList.add('hidden');
+                document.getElementById('view-flowchart').classList.remove('hidden');
+                document.getElementById('tab-flowchart').className = "px-6 py-2 rounded-full font-bold bg-blue-600 text-white shadow-md hover:bg-blue-700 transition";
+                document.getElementById('tab-practice').className = "px-6 py-2 rounded-full font-bold bg-white text-blue-600 border-2 border-blue-600 shadow-sm hover:bg-blue-50 transition";
+            }
+        }
+
+        // --- Visual HTML Generators ---
+        function getTestTubeHTML(liquidHeight = 'h-24', pptHeight = 'h-0', pptColor = 'bg-transparent', pptOpacity = 'opacity-0') {
+            return `
+            <div class="relative w-20 h-56 border-4 border-t-0 border-white/40 rounded-b-full mx-auto overflow-hidden bg-gray-900/50 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.5)] fade-in">
+                <!-- Highlight/Gloss -->
+                <div class="absolute left-2 top-2 bottom-6 w-2 bg-white/20 rounded-full z-20 pointer-events-none"></div>
+                <!-- Liquid body -->
+                <div id="liquid" class="absolute bottom-0 w-full ${liquidHeight} bg-blue-300/30 slide-up z-0"></div>
+                <!-- Precipitate -->
+                <div id="precipitate" class="absolute bottom-0 w-full ${pptHeight} ${pptColor} slide-up ${pptOpacity} z-10 rounded-b-full shadow-[inset_0_-5px_15px_rgba(0,0,0,0.3)]"></div>
+            </div>`;
+        }
+
+        function getFlameHTML(color = '#3b82f6', shadow = 'rgba(59,130,246,0.6)') {
+            return `
+            <div class="flex flex-col items-center justify-end h-56 fade-in">
+                <!-- Flame Element -->
+                <div id="active-flame" class="relative w-16 h-28 mb-[-12px] z-10 flame-anim" style="background-color: ${color}; box-shadow: 0 0 30px 10px ${shadow};">
+                    <!-- Inner blue cone for realism -->
+                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-12 bg-blue-200/60 rounded-full blur-[2px]"></div>
+                </div>
+                <!-- Bunsen Tube -->
+                <div class="w-6 h-20 bg-gray-400 border-l-2 border-r-2 border-gray-500 rounded-t-sm z-0 relative shadow-md">
+                    <!-- Air hole collar -->
+                    <div class="absolute bottom-2 left-[-2px] w-[calc(100%+4px)] h-4 bg-gray-600 rounded-sm"></div>
+                </div>
+                <!-- Bunsen Base -->
+                <div class="w-20 h-4 bg-gray-700 rounded-t-lg mt-0 z-20 shadow-lg"></div>
+            </div>`;
+        }
+
+        // --- Utility ---
+        function setLabel(text) {
+            visualLabel.innerText = text;
+            visualLabel.classList.remove('opacity-0');
+            visualLabel.classList.add('opacity-100');
+        }
+        function hideLabel() {
+            visualLabel.classList.remove('opacity-100');
+            visualLabel.classList.add('opacity-0');
+        }
+        function addObservation(text, icon = '📝') {
+            observations.push(text);
+            const li = document.createElement('li');
+            li.className = "flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm fade-in";
+            li.innerHTML = `<span class="mr-3 text-xl">${icon}</span><span class="text-gray-700 font-medium">${text}</span>`;
+            observationsList.appendChild(li);
+        }
+
+        // --- Core Game Logic ---
+
+        function startGame() {
+            // Pick a random ion
+            currentIon = ions[Math.floor(Math.random() * ions.length)];
+            observations = [];
+            observationsList.innerHTML = '';
+            observationsContainer.classList.remove('hidden');
+            
+            // Setup UI for Test 1
+            currentState = 'NAOH_TEST';
+            statusBadge.innerText = 'Stage 1: Sodium Hydroxide Test';
+            actionTitle.innerText = 'Step 1: Add NaOH(aq)';
+            
+            visualContainer.innerHTML = getTestTubeHTML('h-24', 'h-0', 'bg-transparent', 'opacity-0');
+            setLabel('Unknown Solution');
+
+            actionArea.innerHTML = `
+                <p class="text-gray-600 mb-4">First, let's add a few drops of Sodium Hydroxide solution to our mystery sample.</p>
+                <button id="btn-action" onclick="performNaOH()" class="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 transition">
+                    Add drops of NaOH(aq)
+                </button>
+            `;
+        }
+
+        function performNaOH() {
+            const btn = document.getElementById('btn-action');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-pulse">Adding reagent...</span>';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                // Update Visuals
+                let liquidHeight = 'h-28'; // rises slightly
+                let pptHeight = 'h-0';
+                let pptOpacity = 'opacity-0';
+                let pptClass = currentIon.pptColorCSS;
+
+                if (currentIon.pptName !== 'No') {
+                    pptHeight = 'h-10'; // Precipitate forms at bottom
+                    pptOpacity = 'opacity-95';
+                }
+
+                visualContainer.innerHTML = getTestTubeHTML(liquidHeight, pptHeight, pptClass, pptOpacity);
+                setLabel(`${currentIon.pptName} Precipitate Result`);
+
+                // Update Observations
+                let obsText = currentIon.pptName === 'No' 
+                    ? "Added a few drops of NaOH: No precipitate formed." 
+                    : `Added a few drops of NaOH: A ${currentIon.pptName.toLowerCase()} precipitate formed.`;
+                addObservation(obsText, '🧪');
+
+                // Next Step Logic
+                actionArea.innerHTML = '';
+                if (currentIon.group === 2) {
+                    // Group 2 elements need excess NaOH test
+                    statusBadge.innerText = 'Stage 2: Excess NaOH Test';
+                    actionTitle.innerText = 'Step 2: Add Excess NaOH';
+                    actionArea.innerHTML = `
+                        <p class="text-gray-600 mb-4 font-medium text-blue-800 bg-blue-50 p-3 rounded-lg">A white precipitate implies Ca²⁺, Mg²⁺, or Al³⁺. We must add excess NaOH to distinguish Aluminium.</p>
+                        <button id="btn-action" onclick="performExcess()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition">
+                            Add Excess NaOH(aq)
+                        </button>
+                    `;
+                } else {
+                    // Group 1 and 3 move straight to flame test
+                    statusBadge.innerText = 'Stage 2: Flame Test';
+                    actionTitle.innerText = 'Step 2: Flame Test';
+                    actionArea.innerHTML = `
+                        <p class="text-gray-600 mb-4 font-medium text-blue-800 bg-blue-50 p-3 rounded-lg">Now we need to perform a flame test on a fresh sample to find out more.</p>
+                        <button id="btn-action" onclick="setupFlameTest()" class="w-full py-4 rounded-xl font-bold text-lg bg-orange-600 text-white shadow-md hover:bg-orange-700 transition">
+                            Proceed to Flame Test
+                        </button>
+                    `;
+                }
+            }, 1200);
+        }
+
+        function performExcess() {
+            const btn = document.getElementById('btn-action');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-pulse">Adding excess reagent...</span>';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                let liquidHeight = 'h-36'; // rises a lot
+                let pptHeight = currentIon.dissolves ? 'h-0' : 'h-10';
+                let pptOpacity = currentIon.dissolves ? 'opacity-0' : 'opacity-95';
+                
+                visualContainer.innerHTML = getTestTubeHTML(liquidHeight, pptHeight, currentIon.pptColorCSS, pptOpacity);
+                
+                let obsText = currentIon.dissolves 
+                    ? "Added excess NaOH: The white precipitate dissolved to form a colourless solution."
+                    : "Added excess NaOH: The white precipitate did not dissolve.";
+                addObservation(obsText, '💧');
+                setLabel(currentIon.dissolves ? 'Precipitate Dissolved' : 'Precipitate Remained');
+
+                if (currentIon.dissolves) {
+                    // It's Al3+, no flame test needed according to spec logic path (we go straight to quiz)
+                    statusBadge.innerText = 'Stage 3: Conclusion';
+                    actionTitle.innerText = 'Final Identification';
+                    actionArea.innerHTML = `
+                        <p class="text-gray-600 mb-4">We have enough evidence to identify the ion.</p>
+                        <button onclick="showQuiz()" class="w-full py-4 rounded-xl font-bold text-lg bg-green-600 text-white shadow-md hover:bg-green-700 transition">
+                            Identify Ion
+                        </button>
+                    `;
+                } else {
+                    // Ca2+ or Mg2+, need flame test
+                    statusBadge.innerText = 'Stage 3: Flame Test';
+                    actionTitle.innerText = 'Step 3: Flame Test';
+                    actionArea.innerHTML = `
+                        <p class="text-gray-600 mb-4 font-medium text-blue-800 bg-blue-50 p-3 rounded-lg">The precipitate didn't dissolve. We must do a flame test to differentiate Ca²⁺ from Mg²⁺.</p>
+                        <button id="btn-action" onclick="setupFlameTest()" class="w-full py-4 rounded-xl font-bold text-lg bg-orange-600 text-white shadow-md hover:bg-orange-700 transition">
+                            Proceed to Flame Test
+                        </button>
+                    `;
+                }
+            }, 1500);
+        }
+
+        function setupFlameTest() {
+            visualContainer.innerHTML = getFlameHTML('#3b82f6', 'rgba(59,130,246,0.6)'); // Default blue bunsen flame
+            setLabel('Roaring Blue Flame');
+            
+            actionArea.innerHTML = `
+                <p class="text-gray-600 mb-4">A clean nichrome wire loop is dipped into the unknown compound and placed into the edge of a roaring blue bunsen flame.</p>
+                <button id="btn-action" onclick="performFlameTest()" class="w-full py-4 rounded-xl font-bold text-lg bg-orange-500 text-white shadow-md hover:bg-orange-600 transition">
+                    Place Sample in Flame
+                </button>
+            `;
+        }
+
+        function performFlameTest() {
+            const btn = document.getElementById('btn-action');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="animate-pulse">Testing...</span>';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                // Change flame color directly
+                const flameEl = document.getElementById('active-flame');
+                if(flameEl) {
+                    flameEl.style.backgroundColor = currentIon.flameColor;
+                    flameEl.style.boxShadow = `0 0 35px 15px ${currentIon.flameShadow}`;
+                }
+                
+                setLabel(`${currentIon.flameName} Observed`);
+                addObservation(`Flame Test: ${currentIon.flameName} observed.`, '🔥');
+
+                statusBadge.innerText = 'Final Stage: Conclusion';
+                actionTitle.innerText = 'Final Identification';
+                actionArea.innerHTML = `
+                    <p class="text-gray-600 mb-4">Based on all observations, you must now identify the correct ion.</p>
+                    <button onclick="showQuiz()" class="w-full py-4 rounded-xl font-bold text-lg bg-green-600 text-white shadow-md hover:bg-green-700 transition">
+                        Select the correct Ion
+                    </button>
+                `;
+            }, 1000);
+        }
+
+        function showQuiz() {
+            hideLabel();
+            visualContainer.innerHTML = `
+                <div class="text-center text-gray-300 fade-in">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-lg font-medium">Review your notes and select the answer.</p>
+                </div>
+            `;
+
+            actionTitle.innerText = 'Which ion is present?';
+            statusBadge.innerText = 'Quiz';
+            
+            // Generate option buttons
+            let buttonsHTML = currentIon.options.map(opt => {
+                return `<button onclick="checkAnswer('${opt}')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-blue-50 hover:border-blue-400 transition mb-3 last:mb-0 shadow-sm">
+                    ${opt}
+                </button>`;
+            }).join('');
+
+            actionArea.innerHTML = `
+                <p class="text-gray-600 mb-5">Given the sets of ions below, click the one that matches the experimental data.</p>
+                <div class="flex flex-col">
+                    ${buttonsHTML}
+                </div>
+            `;
+        }
+
+        function checkAnswer(selectedOpt) {
+            const isCorrect = selectedOpt === currentIon.id;
+            
+            if (isCorrect) {
+                visualContainer.innerHTML = `
+                    <div class="text-center text-green-400 fade-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 mx-auto mb-2 drop-shadow-lg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="text-2xl font-bold text-white">Correct!</h3>
+                    </div>`;
+                
+                statusBadge.innerText = 'Success';
+                statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800 mb-2';
+                actionTitle.innerText = 'Brilliant Work!';
+                actionArea.innerHTML = `
+                    <div class="bg-green-50 text-green-800 p-4 rounded-lg mb-6 text-left border border-green-200">
+                        <p class="font-bold mb-1">It is indeed ${currentIon.answerText}.</p>
+                        <p class="text-sm">The combination of your observations precisely matches the chemical signature for this specific cation according to the AQA specification.</p>
+                    </div>
+                    <button onclick="resetApp()" class="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 transition">
+                        Identify Another Ion
+                    </button>
+                `;
+            } else {
+                visualContainer.innerHTML = `
+                    <div class="text-center text-red-400 fade-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 mx-auto mb-2 drop-shadow-lg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        <h3 class="text-2xl font-bold text-white">Incorrect</h3>
+                    </div>`;
+                
+                statusBadge.innerText = 'Review Required';
+                statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800 mb-2';
+                actionTitle.innerText = 'Not quite right!';
+                actionArea.innerHTML = `
+                    <div class="bg-red-50 text-red-800 p-4 rounded-lg mb-6 text-left border border-red-200">
+                        <p class="font-bold mb-1">The correct ion was ${currentIon.answerText} (${currentIon.id}).</p>
+                        <p class="text-sm mt-2">Check the flowchart tab if you need a reminder of the testing pathways!</p>
+                    </div>
+                    <button onclick="resetApp()" class="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 transition">
+                        Try Another Ion
+                    </button>
+                `;
+            }
+        }
+
+        function resetApp() {
+            // Reset Badges
+            statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-100 text-blue-800 mb-2';
+            statusBadge.innerText = 'Stage: Setup';
+            actionTitle.innerText = 'Identify the Mystery Ion';
+            
+            // Hide elements
+            observationsContainer.classList.add('hidden');
+            hideLabel();
+            
+            // Set intro visual
+            visualContainer.innerHTML = `
+                <div class="text-center text-gray-500 opacity-60">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <p>Awaiting Sample</p>
+                </div>
+            `;
+            
+            // Set intro button
+            actionArea.innerHTML = `
+                <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-blue-600 text-white shadow-md hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
+                    Generate Mystery Solution
+                </button>
+            `;
+        }
+
+        // Initialize state on load
+        resetApp();
+
+    </script>
+</body>
+</html>
