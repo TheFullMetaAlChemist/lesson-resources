@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPK Fertilisers: GCSE Chemistry</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        chemGreen: '#cde0c0',
+                        chemPink: '#e8c2db',
+                        chemBag: '#f3d9b8',
+                        chemBorder: '#8a6a4b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; color: #1e293b; }
+        .glass-panel { background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #1d4ed8; font-weight: 600; }
+        .tab-inactive { color: #64748b; font-weight: 500; }
+        .tab-inactive:hover { color: #3b82f6; background-color: #eff6ff; }
+        
+        /* Flowchart animation */
+        @keyframes pulse-border {
+            0% { stroke-width: 2px; }
+            50% { stroke-width: 4px; stroke: #3b82f6; }
+            100% { stroke-width: 2px; }
+        }
+        .node-selected rect {
+            stroke: #3b82f6;
+            stroke-width: 3px;
+            animation: pulse-border 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- Data Definitions ---
+        const FLOWCHART_NODES = {
+            haber: { id: 'haber', x: 20, y: 20, w: 140, h: 60, type: 'pink', title: 'Haber process', sub: 'N₂ + 3H₂ ⇌ 2NH₃', desc: 'Nitrogen from the air and hydrogen from natural gas are reacted to produce ammonia.' },
+            ammonia: { id: 'ammonia', x: 20, y: 140, w: 140, h: 60, type: 'green', title: 'ammonia', sub: 'NH₃', desc: 'An alkaline gas used as the starting point for making nitric acid and ammonium salts.' },
+            nitric: { id: 'nitric', x: 20, y: 280, w: 140, h: 60, type: 'green', title: 'nitric acid', sub: 'HNO₃', desc: 'Produced by the oxidation of ammonia. Used to make ammonium nitrate and to treat phosphate rock.' },
+            amm_nitrate: { id: 'amm_nitrate', x: 200, y: 280, w: 150, h: 70, type: 'bag', title: 'ammonium nitrate', sub: 'NH₄NO₃', desc: 'A very nitrogen-rich salt made by reacting ammonia with nitric acid.' },
+            amm_phos: { id: 'amm_phos', x: 380, y: 280, w: 160, h: 70, type: 'bag', title: 'ammonium phosphate', sub: '(NH₄)₃PO₄', desc: 'Made by reacting ammonia with phosphoric acid.' },
+            phos_rock: { id: 'phos_rock', x: 600, y: 20, w: 160, h: 60, type: 'pink', title: 'phosphate rock', sub: 'Mined', desc: 'Mined from the ground. Contains phosphorus but is INSOLUBLE in water, so it cannot be used directly as a fertiliser.' },
+            single_super: { id: 'single_super', x: 820, y: 20, w: 170, h: 70, type: 'bag', title: 'single superphosphate', sub: 'Ca₃(PO₄)₂ + CaSO₄', desc: 'Produced when phosphate rock is treated with SULFURIC acid. It is a mixture of calcium phosphate and calcium sulfate.' },
+            phos_acid: { id: 'phos_acid', x: 500, y: 140, w: 140, h: 60, type: 'green', title: 'phosphoric acid', sub: 'H₃PO₄', desc: 'Produced when phosphate rock is treated with nitric acid. Reacts further with ammonia or phosphate rock.' },
+            calc_nitrate: { id: 'calc_nitrate', x: 700, y: 140, w: 140, h: 70, type: 'bag', title: 'calcium nitrate', sub: 'Ca(NO₃)₂', desc: 'Produced alongside phosphoric acid when phosphate rock is treated with nitric acid.' },
+            triple_super: { id: 'triple_super', x: 760, y: 280, w: 170, h: 70, type: 'bag', title: 'triple superphosphate', sub: 'Ca₃(PO₄)₂', desc: 'Produced when phosphate rock is treated with PHOSPHORIC acid. It contains mainly calcium phosphate.' },
+            potassium: { id: 'potassium', x: 20, y: 440, w: 160, h: 60, type: 'pink', title: 'potassium salts', sub: 'KCl / K₂SO₄', desc: 'Mined directly from the ground. It is soluble in water, so it can be used directly as a fertiliser without chemical processing.' },
+            npk: { id: 'npk', x: 280, y: 550, w: 160, h: 80, type: 'bag', title: 'NPK fertiliser', sub: '', desc: 'A formulated formulation of salts containing appropriate percentages of Nitrogen, Phosphorus, and Potassium to improve agricultural productivity.' },
+        };
+
+        const QUIZ_QUESTIONS = [
+            {
+                q: "Which three main elements are found in NPK fertilisers?",
+                options: ["Nitrogen, Phosphorus, Potassium", "Nickel, Phosphorus, Krypton", "Nitrogen, Potassium, Calcium", "Sodium, Phosphorus, Potassium"],
+                answer: 0
+            },
+            {
+                q: "Why can't mined phosphate rock be used directly as a fertiliser?",
+                options: ["It is too acidic", "It is insoluble in water", "It contains toxic heavy metals", "It evaporates too quickly"],
+                answer: 1
+            },
+            {
+                q: "What is produced when phosphate rock is treated with SULFURIC acid?",
+                options: ["Phosphoric acid and calcium nitrate", "Triple superphosphate", "Single superphosphate", "Ammonium phosphate"],
+                answer: 2
+            },
+            {
+                q: "Which of the following describes 'Triple superphosphate'?",
+                options: ["A mixture of calcium phosphate and calcium sulfate", "Calcium phosphate produced by treating phosphate rock with phosphoric acid", "Ammonium nitrate combined with potassium chloride", "Phosphoric acid and calcium nitrate"],
+                answer: 1
+            },
+            {
+                q: "What products are formed when phosphate rock is treated with NITRIC acid?",
+                options: ["Single superphosphate", "Phosphoric acid and calcium nitrate", "Ammonium nitrate", "Potassium chloride"],
+                answer: 1
+            },
+            {
+                q: "Which of the following compounds is obtained by mining and can be used DIRECTLY as a fertiliser?",
+                options: ["Ammonium nitrate", "Phosphate rock", "Potassium chloride", "Phosphoric acid"],
+                answer: 2
+            },
+            {
+                q: "When comparing the industrial production of fertilisers to laboratory preparations, which is true?",
+                options: ["The laboratory process is a continuous process", "The industrial process uses lower concentrations of reactants", "The laboratory process uses titration and crystallisation", "The industrial process produces a smaller yield"],
+                answer: 2
+            }
+        ];
+
+        // --- Components ---
+
+        const IconBook = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>;
+        const IconMap = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="21" y2="9"/></svg>;
+        const IconFlask = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="5.52" x2="18.48" y1="16" y2="16"/></svg>;
+        const IconCheck = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>;
+
+        const Header = () => (
+            <header className="bg-blue-900 text-white p-6 shadow-md">
+                <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <h1 className="text-3xl font-bold">NPK Fertilisers</h1>
+                        <p className="text-blue-200 mt-1">GCSE Chemistry Interactive Tutorial</p>
+                    </div>
+                </div>
+            </header>
+        );
+
+        const TutorialContent = () => (
+            <div className="space-y-6 animate-fade-in pb-10">
+                <div className="glass-panel p-6">
+                    <h2 className="text-2xl font-bold text-blue-900 mb-4">What are NPK Fertilisers?</h2>
+                    <p className="mb-4">NPK fertilisers are formulations containing compounds of <strong>N</strong>itrogen, <strong>P</strong>hosphorus, and <strong>K</strong>otassium (Potassium). They are used to provide essential nutrients to plants to improve agricultural productivity.</p>
+                    <p>Instead of being just one chemical, NPK fertilisers are <strong>formulations</strong> (mixtures designed as a useful product) of various soluble salts containing the appropriate percentages of these three elements.</p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="glass-panel p-6">
+                        <h3 className="text-xl font-bold text-green-700 mb-3">Obtaining the Raw Materials</h3>
+                        <ul className="list-disc pl-5 space-y-2">
+                            <li><strong>Nitrogen:</strong> Sourced via the <em>Haber process</em> which makes <strong>ammonia (NH<sub>3</sub>)</strong>. Ammonia can be used directly or reacted with oxygen to make <strong>nitric acid (HNO<sub>3</sub>)</strong>.</li>
+                            <li><strong>Potassium:</strong> Compounds like <strong>potassium chloride (KCl)</strong> and <strong>potassium sulfate (K<sub>2</sub>SO<sub>4</sub>)</strong> are <strong>mined</strong> directly from the ground. Because they are soluble in water, they can be used directly as fertilisers.</li>
+                            <li><strong>Phosphorus:</strong> Sourced by mining <strong>phosphate rock</strong>. However, phosphate rock is <strong>insoluble</strong> in water, meaning plants cannot absorb it. It must be chemically treated before use.</li>
+                        </ul>
+                    </div>
+
+                    <div className="glass-panel p-6 border-l-4 border-orange-500">
+                        <h3 className="text-xl font-bold text-orange-700 mb-3">Reactions of Phosphate Rock <span className="text-sm text-red-500 bg-red-100 px-2 py-1 rounded-full ml-2">Must Know!</span></h3>
+                        <p className="mb-4 text-sm text-gray-600">To make the phosphorus accessible to plants, phosphate rock is treated with different acids to produce soluble salts:</p>
+                        
+                        <div className="space-y-4">
+                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                                <p className="font-semibold text-sm">1. Treated with Nitric Acid (HNO<sub>3</sub>)</p>
+                                <p className="text-blue-700 font-mono text-sm mt-1">Phosphate rock + Nitric acid &rarr; <span className="font-bold">Phosphoric acid + Calcium nitrate</span></p>
+                                <p className="text-xs text-gray-500 mt-1">*(The phosphoric acid is then usually neutralized with ammonia to make ammonium phosphate)*</p>
+                            </div>
+                            
+                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                                <p className="font-semibold text-sm">2. Treated with Sulfuric Acid (H<sub>2</sub>SO<sub>4</sub>)</p>
+                                <p className="text-blue-700 font-mono text-sm mt-1">Phosphate rock + Sulfuric acid &rarr; <span className="font-bold">Single superphosphate</span></p>
+                                <p className="text-xs text-gray-500 mt-1">*(Single superphosphate is a mixture of calcium phosphate and calcium sulfate)*</p>
+                            </div>
+
+                            <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                                <p className="font-semibold text-sm">3. Treated with Phosphoric Acid (H<sub>3</sub>PO<sub>4</sub>)</p>
+                                <p className="text-blue-700 font-mono text-sm mt-1">Phosphate rock + Phosphoric acid &rarr; <span className="font-bold">Triple superphosphate</span></p>
+                                <p className="text-xs text-gray-500 mt-1">*(Triple superphosphate is pure calcium phosphate)*</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const IndustrialVsLab = () => (
+            <div className="glass-panel p-6 animate-fade-in">
+                <h2 className="text-2xl font-bold text-blue-900 mb-4">Industrial Production vs Laboratory Preparation</h2>
+                <p className="mb-6">Compounds like ammonium sulfate can be made both in the lab and on an industrial scale. However, the processes are very different due to safety, scale, and economic requirements.</p>
+                
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="p-3 border-b-2 border-gray-300">Feature</th>
+                                <th className="p-3 border-b-2 border-blue-400 bg-blue-50 text-blue-900">Laboratory Preparation</th>
+                                <th className="p-3 border-b-2 border-orange-400 bg-orange-50 text-orange-900">Industrial Production</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="p-3 border-b font-semibold bg-gray-50">Scale</td>
+                                <td className="p-3 border-b">Small scale (small amounts made at a time)</td>
+                                <td className="p-3 border-b">Huge scale (tonnes produced daily)</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 border-b font-semibold bg-gray-50">Process Type</td>
+                                <td className="p-3 border-b"><strong>Batch process</strong> (mix ingredients, wait, extract, repeat)</td>
+                                <td className="p-3 border-b"><strong>Continuous process</strong> (reactants constantly fed in, products constantly removed)</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 border-b font-semibold bg-gray-50">Starting Materials</td>
+                                <td className="p-3 border-b">Usually bought from chemical suppliers. Uses <strong>dilute</strong> solutions of ammonia and acid.</td>
+                                <td className="p-3 border-b">Raw materials made on site (e.g., ammonia from Haber process). Uses ammonia gas and <strong>concentrated</strong> acid.</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 border-b font-semibold bg-gray-50">Equipment</td>
+                                <td className="p-3 border-b">Glassware (burettes, pipettes, beakers)</td>
+                                <td className="p-3 border-b">Massive stainless steel pipes, vats, and reaction chambers</td>
+                            </tr>
+                            <tr>
+                                <td className="p-3 border-b font-semibold bg-gray-50">Method</td>
+                                <td className="p-3 border-b"><strong>Titration</strong> followed by slow <strong>crystallisation</strong> (evaporating water using a Bunsen burner)</td>
+                                <td className="p-3 border-b">Very exothermic reaction. The heat produced is safely used to evaporate the water to make a concentrated slurry, which is then spray-dried into granules.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+
+        const Flowchart = () => {
+            const [selectedId, setSelectedId] = useState(null);
+
+            const activeNode = selectedId ? FLOWCHART_NODES[selectedId] : null;
+
+            // Helper for drawing text labels with white outline
+            const TextLabel = ({x, y, text, rotate=0}) => (
+                <text 
+                    x={x} y={y} 
+                    fill="#334155" 
+                    fontSize="12" 
+                    fontWeight="600"
+                    textAnchor="middle" 
+                    transform={rotate ? `rotate(${rotate}, ${x}, ${y})` : ''}
+                    style={{ paintOrder: 'stroke', stroke: 'white', strokeWidth: '4px' }}
+                    className="font-sans"
+                >
+                    {text}
+                </text>
+            );
+
+            // Helper for drawing arrows
+            const Arrow = ({x1, y1, x2, y2, label, labelX, labelY, rotate=0}) => {
+                const mx = labelX || (x1 + x2) / 2;
+                const my = labelY || (y1 + y2) / 2;
+                return (
+                    <g>
+                        <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#475569" strokeWidth="2" markerEnd="url(#arrowhead)" />
+                        {label && <TextLabel x={mx} y={my} text={label} rotate={rotate} />}
+                    </g>
+                );
+            };
+
+            const ArrowPath = ({d, label, labelX, labelY, rotate=0}) => (
+                <g>
+                    <path d={d} fill="none" stroke="#475569" strokeWidth="2" markerEnd="url(#arrowhead)" />
+                    {label && <TextLabel x={labelX} y={labelY} text={label} rotate={rotate} />}
+                </g>
+            );
+
+            return (
+                <div className="flex flex-col lg:flex-row gap-6 animate-fade-in">
+                    {/* SVG Canvas */}
+                    <div className="glass-panel p-2 flex-grow overflow-x-auto bg-white">
+                        <div className="text-center mb-2 text-sm text-gray-500 font-medium">Click on any box to view chemical details</div>
+                        <svg viewBox="0 0 1000 660" className="w-full min-w-[900px] h-auto">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
+                                </marker>
+                                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="2" dy="4" stdDeviation="3" floodOpacity="0.1" />
+                                </filter>
+                            </defs>
+
+                            {/* --- Edges (Arrows) --- */}
+                            {/* Haber to Ammonia */}
+                            <Arrow x1="90" y1="80" x2="90" y2="135" />
+                            
+                            {/* Ammonia to Nitric Acid */}
+                            <Arrow x1="90" y1="200" x2="90" y2="275" label="+ O₂ (oxidation)" labelX="135" labelY="240" />
+                            
+                            {/* Ammonia to Amm Nitrate */}
+                            <ArrowPath d="M 160 170 L 250 170 L 250 275" label="+ nitric acid" labelX="205" labelY="160" />
+                            
+                            {/* Nitric Acid to Amm Nitrate */}
+                            <Arrow x1="160" y1="315" x2="195" y2="315" label="+ ammonia" labelY="305" />
+
+                            {/* Ammonia to Amm Phos */}
+                            <ArrowPath d="M 160 155 L 430 155 L 430 275" label="+ phosphoric acid" labelX="330" labelY="145" />
+
+                            {/* Phosphate Rock logic */}
+                            {/* Rock to Phos Acid */}
+                            <ArrowPath d="M 640 80 L 640 105 L 570 105 L 570 135" label="+ nitric acid" labelX="605" labelY="120" />
+                            
+                            {/* Rock to Calc Nitrate */}
+                            <ArrowPath d="M 720 80 L 720 105 L 770 105 L 770 135" label="+ nitric acid" labelX="745" labelY="120" />
+                            
+                            {/* Rock to Single Superphosphate */}
+                            <Arrow x1="760" y1="50" x2="815" y2="50" label="+ sulfuric acid (H₂SO₄)" labelY="40" labelX="785" />
+                            
+                            {/* Rock to Triple Superphosphate */}
+                            <ArrowPath d="M 680 80 L 680 240 L 845 240 L 845 275" label="+ phosphoric acid (H₃PO₄)" labelX="760" labelY="230" />
+                            
+                            {/* Phos Acid to Amm Phos */}
+                            <ArrowPath d="M 570 200 L 570 230 L 490 230 L 490 275" label="+ ammonia" labelX="530" labelY="220" />
+
+                            {/* NPK final mixture arrows */}
+                            <ArrowPath d="M 275 350 L 275 510 L 340 510 L 340 545" label="mixed" labelX="307" labelY="500" />
+                            <ArrowPath d="M 460 350 L 460 510 L 380 510 L 380 545" />
+                            <ArrowPath d="M 180 470 L 320 470 L 320 545" label="mixed" labelX="250" labelY="460" />
+
+                            {/* --- Nodes --- */}
+                            {Object.values(FLOWCHART_NODES).map(node => {
+                                let fillColor = '#fff';
+                                let strokeColor = '#cbd5e1';
+                                if (node.type === 'pink') { fillColor = '#e8c2db'; strokeColor = '#b894ab'; }
+                                if (node.type === 'green') { fillColor = '#cde0c0'; strokeColor = '#a1b893'; }
+                                if (node.type === 'bag') { fillColor = '#f3d9b8'; strokeColor = '#8a6a4b'; }
+
+                                const isSelected = selectedId === node.id;
+
+                                return (
+                                    <g key={node.id} 
+                                       transform={`translate(${node.x}, ${node.y})`} 
+                                       onClick={() => setSelectedId(node.id)}
+                                       className={`cursor-pointer ${isSelected ? 'node-selected' : ''}`}
+                                    >
+                                        <rect 
+                                            width={node.w} 
+                                            height={node.h} 
+                                            rx="6" 
+                                            fill={fillColor} 
+                                            stroke={strokeColor}
+                                            strokeWidth="2"
+                                            filter="url(#shadow)"
+                                        />
+                                        
+                                        {/* Content inside node */}
+                                        <text x={node.w / 2} y={node.h / 2 - (node.sub ? 6 : 0)} 
+                                              textAnchor="middle" 
+                                              dominantBaseline="middle" 
+                                              fill="#1e293b" 
+                                              fontSize="14" 
+                                              fontWeight="600"
+                                              className="font-sans"
+                                        >
+                                            {node.title}
+                                        </text>
+                                        
+                                        {node.sub && (
+                                            <text x={node.w / 2} y={node.h / 2 + 12} 
+                                                  textAnchor="middle" 
+                                                  dominantBaseline="middle" 
+                                                  fill="#475569" 
+                                                  fontSize="13" 
+                                                  className="font-sans font-mono"
+                                            >
+                                                {node.sub}
+                                            </text>
+                                        )}
+                                    </g>
+                                );
+                            })}
+                        </svg>
+                    </div>
+
+                    {/* Information Panel */}
+                    <div className="w-full lg:w-80 flex-shrink-0">
+                        <div className="glass-panel p-6 sticky top-6 h-full min-h-[300px]">
+                            {activeNode ? (
+                                <div className="animate-fade-in">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className={`w-4 h-4 rounded-full ${activeNode.type === 'pink' ? 'bg-chemPink' : activeNode.type === 'green' ? 'bg-chemGreen' : 'bg-chemBag'}`}></div>
+                                        <h3 className="text-xl font-bold capitalize">{activeNode.title}</h3>
+                                    </div>
+                                    
+                                    {activeNode.sub && (
+                                        <div className="bg-gray-100 p-2 rounded text-center font-mono text-lg mb-4 text-blue-800">
+                                            {activeNode.sub}
+                                        </div>
+                                    )}
+                                    
+                                    <p className="text-gray-700 leading-relaxed text-sm">
+                                        {activeNode.desc}
+                                    </p>
+                                    
+                                    {activeNode.type === 'bag' && activeNode.id !== 'npk' && (
+                                        <div className="mt-6 p-3 bg-orange-50 border border-orange-200 rounded text-sm text-orange-800">
+                                            <strong>Fertiliser Component:</strong> This compound is mixed with others to create final NPK formulations.
+                                        </div>
+                                    )}
+                                    {activeNode.type === 'pink' && (
+                                        <div className="mt-6 p-3 bg-purple-50 border border-purple-200 rounded text-sm text-purple-800">
+                                            <strong>Raw Material:</strong> Sourced via industrial scale processes or direct mining.
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-full text-gray-400 text-center space-y-4">
+                                    <IconMap />
+                                    <p>Select a component on the flowchart to view its chemical properties and manufacturing details.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Quiz = () => {
+            const [currentQ, setCurrentQ] = useState(0);
+            const [score, setScore] = useState(0);
+            const [showResults, setShowResults] = useState(false);
+            const [feedback, setFeedback] = useState(null); // 'correct' or 'incorrect'
+            const [selectedIdx, setSelectedIdx] = useState(null);
+
+            const handleAnswer = (idx) => {
+                if (feedback) return; // Prevent multiple clicks
+                
+                setSelectedIdx(idx);
+                const isCorrect = idx === QUIZ_QUESTIONS[currentQ].answer;
+                
+                if (isCorrect) {
+                    setScore(score + 1);
+                    setFeedback('correct');
+                } else {
+                    setFeedback('incorrect');
+                }
+
+                setTimeout(() => {
+                    if (currentQ + 1 < QUIZ_QUESTIONS.length) {
+                        setCurrentQ(currentQ + 1);
+                        setFeedback(null);
+                        setSelectedIdx(null);
+                    } else {
+                        setShowResults(true);
+                    }
+                }, 1500);
+            };
+
+            const resetQuiz = () => {
+                setCurrentQ(0);
+                setScore(0);
+                setShowResults(false);
+                setFeedback(null);
+                setSelectedIdx(null);
+            };
+
+            if (showResults) {
+                const percentage = Math.round((score / QUIZ_QUESTIONS.length) * 100);
+                let message = "Keep studying!";
+                if (percentage >= 80) message = "Excellent work!";
+                else if (percentage >= 50) message = "Good effort, but review the flowchart.";
+
+                return (
+                    <div className="glass-panel p-8 text-center max-w-xl mx-auto animate-fade-in">
+                        <h2 className="text-3xl font-bold text-blue-900 mb-4">Quiz Complete!</h2>
+                        <div className="text-6xl mb-4">{percentage >= 80 ? '🏆' : percentage >= 50 ? '👍' : '📚'}</div>
+                        <p className="text-xl mb-2">You scored <strong>{score}</strong> out of <strong>{QUIZ_QUESTIONS.length}</strong>.</p>
+                        <p className="text-gray-600 mb-8">{message}</p>
+                        <button onClick={resetQuiz} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                            Restart Quiz
+                        </button>
+                    </div>
+                );
+            }
+
+            const q = QUIZ_QUESTIONS[currentQ];
+
+            return (
+                <div className="glass-panel p-6 max-w-3xl mx-auto animate-fade-in">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-bold text-gray-800">Knowledge Check</h2>
+                        <span className="bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-sm font-semibold">
+                            Question {currentQ + 1} of {QUIZ_QUESTIONS.length}
+                        </span>
+                    </div>
+                    
+                    <div className="mb-8">
+                        <h3 className="text-2xl font-medium text-gray-900 leading-snug">{q.q}</h3>
+                    </div>
+
+                    <div className="space-y-3">
+                        {q.options.map((opt, idx) => {
+                            let btnClass = "w-full text-left p-4 rounded-lg border-2 transition-all font-medium text-lg ";
+                            
+                            if (feedback && idx === q.answer) {
+                                btnClass += "bg-green-100 border-green-500 text-green-900"; // Correct answer styling
+                            } else if (feedback && idx === selectedIdx && idx !== q.answer) {
+                                btnClass += "bg-red-100 border-red-500 text-red-900"; // Incorrect selected styling
+                            } else if (!feedback) {
+                                btnClass += "bg-white border-gray-200 hover:border-blue-400 hover:bg-blue-50"; // Default interactive
+                            } else {
+                                btnClass += "bg-gray-50 border-gray-200 text-gray-400 opacity-50"; // Disabled state for others
+                            }
+
+                            return (
+                                <button 
+                                    key={idx} 
+                                    onClick={() => handleAnswer(idx)}
+                                    disabled={feedback !== null}
+                                    className={btnClass}
+                                >
+                                    {opt}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div className="mt-8 bg-gray-200 rounded-full h-2.5">
+                        <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((currentQ) / QUIZ_QUESTIONS.length) * 100}%` }}></div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('flowchart');
+
+            const tabs = [
+                { id: 'tutorial', label: 'Tutorial Notes', icon: <IconBook /> },
+                { id: 'flowchart', label: 'Interactive Flowchart', icon: <IconMap /> },
+                { id: 'compare', label: 'Lab vs Industry', icon: <IconFlask /> },
+                { id: 'quiz', label: 'Knowledge Quiz', icon: <IconCheck /> }
+            ];
+
+            return (
+                <div className="min-h-screen font-sans pb-12">
+                    <Header />
+                    
+                    {/* Tab Navigation */}
+                    <div className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+                        <div className="max-w-6xl mx-auto flex overflow-x-auto">
+                            {tabs.map(tab => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center gap-2 px-6 py-4 transition-colors whitespace-nowrap ${
+                                        activeTab === tab.id ? 'tab-active' : 'tab-inactive'
+                                    }`}
+                                >
+                                    {tab.icon}
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <main className="max-w-6xl mx-auto p-4 md:p-6 mt-4">
+                        {activeTab === 'tutorial' && <TutorialContent />}
+                        {activeTab === 'flowchart' && <Flowchart />}
+                        {activeTab === 'compare' && <IndustrialVsLab />}
+                        {activeTab === 'quiz' && <Quiz />}
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
