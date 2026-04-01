@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C5 Chemical Changes Higher - Model Answers</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --panel-2: #f8fafc;
+      --text: #1f2937;
+      --muted: #5b6472;
+      --border: #d7dde5;
+      --border-strong: #bcc7d3;
+      --accent: #475569;
+      --accent-soft: #e8edf3;
+      --success-bg: #eef6f0;
+      --success-border: #c9dfcf;
+      --warn-bg: #fbf6ee;
+      --warn-border: #e6d4b8;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fc 0%, #eef2f6 100%);
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .hero {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 900px;
+    }
+
+    .tab-bar-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 247, 250, 0.94);
+      backdrop-filter: blur(10px);
+      padding: 12px 0 16px;
+      margin-bottom: 14px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .tab-bar button {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    }
+
+    .tab-bar button:hover {
+      background: var(--accent-soft);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .tab-bar button.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .question-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .question-head h2 {
+      margin: 0;
+      font-size: 1.55rem;
+      line-height: 1.3;
+    }
+
+    .marks {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .prompt {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 22px;
+    }
+
+    .prompt-title,
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .answer-box,
+    .explanation-box,
+    .mistakes-box {
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .answer-box {
+      background: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .explanation-box {
+      background: #f8fafc;
+    }
+
+    .mistakes-box {
+      background: var(--warn-bg);
+      border-color: var(--warn-border);
+    }
+
+    .answer-box p,
+    .explanation-box p,
+    .mistakes-box p,
+    .prompt p {
+      margin: 0;
+    }
+
+    .answer-box ul,
+    .explanation-box ul,
+    .mistakes-box ul {
+      margin: 10px 0 0 22px;
+      padding: 0;
+    }
+
+    .equation {
+      font-family: "Consolas", "Courier New", monospace;
+      display: inline-block;
+      background: rgba(255,255,255,0.6);
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.06);
+      margin-top: 10px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        font-size: 17px;
+      }
+
+      .page {
+        padding: 16px;
+      }
+
+      .hero,
+      .tab-panel {
+        padding: 20px;
+        border-radius: 20px;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .question-head h2 {
+        font-size: 1.35rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>C5 Chemical Changes Higher</h1>
+      <p>Interactive model answers for each higher tier exam question, with clear explanations and common mistakes. Use the tabs to move between questions. This version matches the styling and layout of the foundation tier resource.</p>
+    </section>
+
+    <div class="tab-bar-wrap">
+      <div class="tab-bar" id="tabBar">
+        <button class="active" data-tab="q011">01.1</button>
+        <button data-tab="q012">01.2</button>
+        <button data-tab="q013">01.3</button>
+        <button data-tab="q014">01.4</button>
+        <button data-tab="q021">02.1</button>
+        <button data-tab="q022">02.2</button>
+        <button data-tab="q023">02.3</button>
+        <button data-tab="q024">02.4</button>
+        <button data-tab="q025">02.5</button>
+        <button data-tab="q026">02.6</button>
+        <button data-tab="q027">02.7</button>
+        <button data-tab="q028">02.8</button>
+        <button data-tab="q029">02.9</button>
+        <button data-tab="q031">03.1</button>
+        <button data-tab="q032">03.2</button>
+        <button data-tab="q033">03.3</button>
+      </div>
+    </div>
+
+    <section class="tab-panel active" id="q011">
+      <div class="question-head"><h2>Question 01.1 – What type of substance is copper oxide?</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Copper oxide is insoluble. What type of substance is copper oxide?</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Base</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Copper oxide is a metal oxide, and metal oxides are bases. It is not an alkali because it is insoluble in water.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Choosing <strong>alkali</strong> instead of <strong>base</strong>.</li><li>Thinking all metal oxides are salts.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q012">
+      <div class="question-head"><h2>Question 01.2 – Type of reaction</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Copper oxide reacts with dilute hydrochloric acid to produce copper chloride and water. Tick the type of reaction taking place.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Neutralisation</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>This is an acid reacting with a base. Acid + base produces salt + water, so this is a neutralisation reaction.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Choosing combustion because oxygen appears in copper oxide.</li><li>Choosing decomposition because several substances are involved.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q013">
+      <div class="question-head"><h2>Question 01.3 – Balanced symbol equation</h2><div class="marks">2 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Write a balanced symbol equation for the reaction between CuO and HCl.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p class="equation">CuO + 2HCl → CuCl<sub>2</sub> + H<sub>2</sub>O</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>First write the correct formulas. Then balance the equation by placing a 2 in front of HCl so the number of hydrogen and chlorine atoms is the same on both sides.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Writing CuCl instead of CuCl<sub>2</sub>.</li><li>Forgetting the 2 in front of HCl.</li><li>Changing the small formula numbers instead of balancing numbers.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q014">
+      <div class="question-head"><h2>Question 01.4 – Making pure dry copper chloride crystals</h2><div class="marks">6 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Describe how you could produce pure dry crystals of copper chloride from copper oxide and dilute hydrochloric acid.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p>Add dilute hydrochloric acid to a beaker and gently warm it. Add copper oxide and stir. Continue adding copper oxide until no more reacts, so all of the acid is used up. Filter the mixture to remove the excess copper oxide. Pour the filtrate into an evaporating basin and heat gently until some of the water evaporates and the solution becomes more concentrated. Pour the solution into a crystallising dish and leave it to cool so crystals form. Remove the crystals and dry them.</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><div class="two-col"><div><p><strong>Excess copper oxide</strong> is added so that all of the acid reacts.</p><p><strong>Filtering</strong> removes the unreacted solid.</p></div><div><p><strong>Evaporation</strong> concentrates the solution.</p><p><strong>Cooling</strong> allows crystals to form from the concentrated solution.</p></div></div><p class="footer-note">This is the standard method for preparing a soluble salt from an insoluble base.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Missing out the filtering step.</li><li>Not using excess copper oxide.</li><li>Evaporating all the water away instead of allowing crystals to form.</li><li>Forgetting to dry the crystals.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q021">
+      <div class="question-head"><h2>Question 02.1 – Control variable</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Give one variable the student should control.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p>Any sensible control variable, for example <strong>mass of metal</strong>, <strong>surface area of the metal</strong>, <strong>volume of copper sulfate solution</strong>, <strong>concentration of copper sulfate solution</strong>, or <strong>initial temperature of the solution</strong>.</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>A control variable is something kept the same each time so the test is fair. Good examples are quantities or conditions that might affect the temperature rise.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Naming a piece of equipment instead of a variable.</li><li>Giving the metal type, which is the independent variable.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q022">
+      <div class="question-head"><h2>Question 02.2 – Independent variable</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Name the independent variable in the student’s investigation.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Type of metal</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>The independent variable is the one changed on purpose. In this investigation, the student changes which metal is added to the copper sulfate solution.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Choosing temperature rise, which is the dependent variable.</li><li>Writing copper sulfate solution, which is not what is changed.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q023">
+      <div class="question-head"><h2>Question 02.3 – Complete the equation with state symbols</h2><div class="marks">3 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Tyler added zinc powder to copper sulfate solution. The solution was decolourised and a red-brown powder formed. Complete the equation, including state symbols, for the reaction.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p class="equation">Zn(s) + CuSO<sub>4</sub>(aq) → Cu(s) + ZnSO<sub>4</sub>(aq)</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Zinc and copper are solids, so they use <strong>(s)</strong>. Copper sulfate and zinc sulfate are solutions, so they use <strong>(aq)</strong>. The equation is already balanced in a 1:1:1:1 ratio.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Using <strong>(l)</strong> instead of <strong>(aq)</strong>.</li><li>Forgetting that copper is a solid product.</li><li>Writing the correct substances but in an unbalanced or muddled equation.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q024">
+      <div class="question-head"><h2>Question 02.4 – Estimated order of reactivity</h2><div class="marks">2 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Use the results to place the metals in an estimated order of reactivity.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>magnesium &gt; zinc &gt; tin &gt; copper / tungsten / silver</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>A higher temperature rise suggests a more reactive metal. Magnesium gave the highest temperature rise, then zinc, then tin. Copper, tungsten and silver all gave 0.0, so the results do not separate them.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Trying to force copper, tungsten and silver into a definite order.</li><li>Putting zinc above magnesium.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q025">
+      <div class="question-head"><h2>Question 02.5 – Why the order cannot be certain</h2><div class="marks">2 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Explain why it is not possible to be certain about the order of reactivity of the metals in the table.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p>It is not possible to be certain because <strong>tungsten, copper and silver all gave a temperature rise of 0.0</strong>, so from these results alone <strong>you cannot tell which of them is more reactive</strong>.</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>The experiment distinguishes magnesium, zinc and tin, but it does not provide enough information to rank tungsten, copper and silver because they all gave the same result.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Saying the whole set of results is useless.</li><li>Claiming the experiment was wrong rather than limited.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q026">
+      <div class="question-head"><h2>Question 02.6 – How to gain more information</h2><div class="marks">2 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Suggest how you could gain more information to improve your order of reactivity.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p>You could make the metals <strong>react with air, water or oxygen</strong> and compare <strong>how vigorous the reactions are</strong>.</p><p class="footer-note">Another acceptable idea is to measure the voltage between pairs of metals dipped in an electrolyte.</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>A different test could provide extra evidence to separate the metals that all gave 0.0 in the copper sulfate test. More information would allow a better estimated order.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Saying only “repeat the experiment” without explaining how that would give new information.</li><li>Giving a vague answer with no comparison method.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q027">
+      <div class="question-head"><h2>Question 02.7 – Why copper does not make copper chloride with hydrochloric acid</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Copper chloride cannot be produced by reacting copper with hydrochloric acid. Give a reason why.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Copper does not react with acids.</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Copper is below hydrogen in the reactivity series, so it does not react with dilute acids such as hydrochloric acid.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Saying copper is completely unreactive in all situations.</li><li>Blaming the acid instead of the metal’s low reactivity.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q028">
+      <div class="question-head"><h2>Question 02.8 – Why potassium is unsafe</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>It is not safe to produce potassium chloride by reacting potassium with hydrochloric acid. Give a reason why.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Potassium is very reactive, so it is too dangerous.</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Potassium reacts extremely violently, so using it with hydrochloric acid would be unsafe.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Saying potassium would not react.</li><li>Giving a vague answer like “it is harmful” with no link to reactivity.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q029">
+      <div class="question-head"><h2>Question 02.9 – Oxidation and reduction in terms of electrons</h2><div class="marks">2 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>The ionic equation for the reaction between magnesium and dilute hydrochloric acid is:</p><p class="equation">Mg + 2H<sup>+</sup> → Mg<sup>2+</sup> + H<sub>2</sub></p><p>Explain, in terms of electrons, which species is oxidised and which is reduced in the reaction.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Magnesium is oxidised because it loses electrons.</strong></p><p><strong>Hydrogen ions are reduced because they gain electrons.</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Oxidation means loss of electrons, and reduction means gain of electrons. Magnesium atoms lose electrons to form magnesium ions, while hydrogen ions gain electrons to form hydrogen gas.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Mixing up oxidation and reduction.</li><li>Saying magnesium gains electrons.</li><li>Referring only to hydrogen, instead of hydrogen ions.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q031">
+      <div class="question-head"><h2>Question 03.1 – What is an alkali?</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>What is an alkali?</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>Soluble base</strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>An alkali is a base that dissolves in water. Insoluble bases are not alkalis.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Choosing insoluble base.</li><li>Thinking any dissolved substance counts as an alkali.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q032">
+      <div class="question-head"><h2>Question 03.2 – Estimating hydrogen ion concentration</h2><div class="marks">1 mark</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>The pH of hydrochloric acid was 1.0 and the pH of ethanoic acid was 2.9. The hydrogen ion concentration of hydrochloric acid was 0.1 mol/dm<sup>3</sup>. Which estimate is approximately correct for the hydrogen ion concentration of ethanoic acid?</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p><strong>0.001 mol/dm<sup>3</sup></strong></p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Each increase of 1 in pH means the hydrogen ion concentration is ten times smaller. A pH of 2.9 is close to pH 3, so the concentration is about 100 times lower than 0.1 mol/dm<sup>3</sup>, giving an estimate of 0.001 mol/dm<sup>3</sup>.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Choosing 0.1 mol/dm<sup>3</sup> because both acids started at the same concentration.</li><li>Forgetting that the pH scale is logarithmic.</li></ul></div>
+    </section>
+
+    <section class="tab-panel" id="q033">
+      <div class="question-head"><h2>Question 03.3 – Why the acids have different pH values</h2><div class="marks">3 marks</div></div>
+      <div class="prompt"><div class="prompt-title">Question</div><p>Explain why the solution of hydrochloric acid has a different pH to the solution of ethanoic acid.</p></div>
+      <div class="answer-box"><div class="section-title">Model answer</div><p>Hydrochloric acid is a <strong>stronger acid</strong> because it <strong>completely ionises</strong> in water. Ethanoic acid is a <strong>weak acid</strong> because it only <strong>partly ionises</strong>. Therefore hydrochloric acid produces a higher concentration of hydrogen ions and has a lower pH.</p></div>
+      <div class="explanation-box"><div class="section-title">Explanation</div><p>Even when two acids have the same concentration, their pH can be different if one is strong and one is weak. A strong acid releases nearly all of its hydrogen ions, but a weak acid releases only some of them.</p></div>
+      <div class="mistakes-box"><div class="section-title">Common mistakes</div><ul><li>Saying hydrochloric acid is more concentrated.</li><li>Not mentioning ionisation at all.</li><li>Confusing strong and concentrated.</li></ul></div>
+    </section>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-bar button');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        panels.forEach(panel => panel.classList.remove('active'));
+
+        button.classList.add('active');
+        document.getElementById(target).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
