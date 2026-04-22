@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KS3 Sound Wave Simulation</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+    }
+
+    .intro {
+      max-width: 900px;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 18px 20px 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .control-group {
+      margin-bottom: 24px;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .badge {
+      background: #e2e8f0;
+      color: #0f172a;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .helper {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.4;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      background: #0f172a;
+      color: white;
+    }
+
+    .secondary-btn {
+      background: white;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+    }
+
+    .toggle-panel {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      gap: 12px;
+    }
+
+    .display-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 18px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    svg {
+      width: 100%;
+      min-width: 700px;
+      height: auto;
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+    }
+
+    .stat-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .stat-text {
+      color: #475569;
+      line-height: 1.4;
+      font-size: 0.95rem;
+    }
+
+    .notes {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .note-box {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+    }
+
+    .note-box h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    .note-box ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .notes {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>KS3 Sound Wave Simulation</h1>
+    <p class="intro">
+      Change the sound and watch a clear, steady wave update instantly as frequency and amplitude change.
+      Use it to teach wave parts and the links between pitch and frequency, and between volume and amplitude.
+    </p>
+
+    <div class="layout">
+      <div class="card">
+        <div class="card-header">Controls</div>
+        <div class="card-content">
+          <div class="control-group">
+            <div class="control-top">
+              <label for="frequency">Frequency</label>
+              <span class="badge" id="frequencyBadge">440 Hz</span>
+            </div>
+            <input type="range" id="frequency" min="100" max="1200" step="10" value="440">
+            <div class="helper">Higher frequency = higher pitch.</div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-top">
+              <label for="amplitude">Amplitude</label>
+              <span class="badge" id="amplitudeBadge">45</span>
+            </div>
+            <input type="range" id="amplitude" min="10" max="70" step="1" value="45">
+            <div class="helper">Greater amplitude = louder sound.</div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-top">
+              <label for="waveform">Wave type</label>
+            </div>
+            <select id="waveform" style="width:100%; padding:10px; border-radius:12px; border:1px solid #cbd5e1; font-size:1rem;">
+              <option value="sine">Sine wave</option>
+              <option value="square">Square wave</option>
+              <option value="triangle">Triangle wave</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="playButton">Play sound</button>
+            <button class="secondary-btn" id="resetButton">Reset</button>
+          </div>
+
+          <div class="toggle-panel">
+            <div class="toggle-row">
+              <label for="showLabels">Show labels</label>
+              <input type="checkbox" id="showLabels" checked>
+            </div>
+            <div class="toggle-row">
+              <label for="showAmplitudeGuide">Show amplitude guide</label>
+              <input type="checkbox" id="showAmplitudeGuide" checked>
+            </div>
+            <div class="toggle-row">
+              <label for="showFrequencyGuide">Show frequency guide</label>
+              <input type="checkbox" id="showFrequencyGuide" checked>
+            </div>
+            <div class="toggle-row">
+              <label for="showWavelengthGuide">Show wavelength guide</label>
+              <input type="checkbox" id="showWavelengthGuide" checked>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="card-header">Oscilloscope View</div>
+          <div class="card-content">
+            <div class="display-box">
+              <svg id="oscilloscope" viewBox="0 0 900 320" aria-label="Sound wave display">
+                <defs>
+                  <pattern id="smallGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+                    <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"></path>
+                  </pattern>
+                  <pattern id="grid" width="150" height="150" patternUnits="userSpaceOnUse">
+                    <rect width="150" height="150" fill="url(#smallGrid)"></rect>
+                    <path d="M 150 0 L 0 0 0 150" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1.5"></path>
+                  </pattern>
+                </defs>
+
+                <rect x="0" y="0" width="900" height="320" fill="url(#grid)"></rect>
+                <line id="restLine" x1="0" y1="160" x2="900" y2="160" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-dasharray="6 6"></line>
+
+                <path id="wavePath" fill="none" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"></path>
+
+                <line id="amplitudeLine" stroke="#fbbf24" stroke-width="3"></line>
+                <text id="amplitudeText" fill="#fef3c7" font-size="18">Amplitude</text>
+
+                <circle id="freqCircle1" r="6" fill="#86efac"></circle>
+                <circle id="freqCircle2" r="6" fill="#86efac"></circle>
+                <line id="frequencyLine" stroke="#86efac" stroke-width="3"></line>
+                <text id="frequencyText" fill="#dcfce7" font-size="18" text-anchor="middle">One cycle → frequency</text>
+
+                <line id="wavelengthLine" stroke="#f9a8d4" stroke-width="3"></line>
+                <line id="wavelengthTick1" stroke="#f9a8d4" stroke-width="3"></line>
+                <line id="wavelengthTick2" stroke="#f9a8d4" stroke-width="3"></line>
+                <text id="wavelengthText" fill="#fce7f3" font-size="18" text-anchor="middle">Wavelength</text>
+
+                <text id="crestText" fill="white" font-size="16" text-anchor="middle">Crest</text>
+                <text id="troughText" fill="white" font-size="16" text-anchor="middle">Trough</text>
+                <text id="restText" fill="white" font-size="16">Rest position</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-title">Pitch</div>
+            <div class="stat-value" id="pitchValue">Medium pitch</div>
+            <div class="stat-text">Pitch depends on frequency.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Volume</div>
+            <div class="stat-value" id="volumeValue">Medium volume</div>
+            <div class="stat-text">Volume depends on amplitude.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Frequency</div>
+            <div class="stat-value" id="frequencyValue">440 Hz</div>
+            <div class="stat-text">More waves each second means a higher frequency.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Wavelength</div>
+            <div class="stat-value" id="wavelengthValue">0.77 m</div>
+            <div class="stat-text">At a constant wave speed, higher frequency means shorter wavelength.</div>
+          </div>
+        </div>
+
+        <div class="notes">
+          <div class="note-box">
+            <h3>Key relationships</h3>
+            <ul>
+              <li>Pitch is linked to frequency.</li>
+              <li>Volume is linked to amplitude.</li>
+              <li>Wavelength is the distance between matching points on two waves.</li>
+              <li>If wave speed stays the same, frequency and wavelength change in opposite directions.</li>
+            </ul>
+          </div>
+
+          <div class="note-box">
+            <h3>Good prompts for students</h3>
+            <ul>
+              <li>What happens to the spacing of the wave when the pitch goes up?</li>
+              <li>What changes on the screen when the sound gets louder?</li>
+              <li>Can a wave be loud and low pitch at the same time?</li>
+              <li>Which parts of the wave would you measure to find amplitude and wavelength?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SPEED_OF_SOUND = 340;
+    const DISPLAY_WIDTH = 900;
+    const DISPLAY_HEIGHT = 320;
+
+    const frequencySlider = document.getElementById("frequency");
+    const amplitudeSlider = document.getElementById("amplitude");
+    const waveformSelect = document.getElementById("waveform");
+    const playButton = document.getElementById("playButton");
+    const resetButton = document.getElementById("resetButton");
+
+    const showLabelsCheckbox = document.getElementById("showLabels");
+    const showAmplitudeGuideCheckbox = document.getElementById("showAmplitudeGuide");
+    const showFrequencyGuideCheckbox = document.getElementById("showFrequencyGuide");
+    const showWavelengthGuideCheckbox = document.getElementById("showWavelengthGuide");
+
+    const frequencyBadge = document.getElementById("frequencyBadge");
+    const amplitudeBadge = document.getElementById("amplitudeBadge");
+    const pitchValue = document.getElementById("pitchValue");
+    const volumeValue = document.getElementById("volumeValue");
+    const frequencyValue = document.getElementById("frequencyValue");
+    const wavelengthValue = document.getElementById("wavelengthValue");
+
+    const wavePath = document.getElementById("wavePath");
+    const amplitudeLine = document.getElementById("amplitudeLine");
+    const amplitudeText = document.getElementById("amplitudeText");
+    const freqCircle1 = document.getElementById("freqCircle1");
+    const freqCircle2 = document.getElementById("freqCircle2");
+    const frequencyLine = document.getElementById("frequencyLine");
+    const frequencyText = document.getElementById("frequencyText");
+    const wavelengthLine = document.getElementById("wavelengthLine");
+    const wavelengthTick1 = document.getElementById("wavelengthTick1");
+    const wavelengthTick2 = document.getElementById("wavelengthTick2");
+    const wavelengthText = document.getElementById("wavelengthText");
+    const crestText = document.getElementById("crestText");
+    const troughText = document.getElementById("troughText");
+    const restText = document.getElementById("restText");
+
+    let audioContext = null;
+    let oscillator = null;
+    let gainNode = null;
+    let isPlaying = false;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function formatNumber(value, digits = 2) {
+      return Number(value).toFixed(digits);
+    }
+
+    function getPitchLabel(frequency) {
+      if (frequency < 220) return "Low pitch";
+      if (frequency < 660) return "Medium pitch";
+      return "High pitch";
+    }
+
+    function getVolumeLabel(amplitude) {
+      if (amplitude < 30) return "Quiet";
+      if (amplitude < 70) return "Medium volume";
+      return "Loud";
+    }
+
+    function updateSound() {
+      if (oscillator && audioContext) {
+        oscillator.frequency.setValueAtTime(Number(frequencySlider.value), audioContext.currentTime);
+        oscillator.type = waveformSelect.value;
+      }
+      if (gainNode && audioContext) {
+        gainNode.gain.setValueAtTime((Number(amplitudeSlider.value) / 100) * 0.2, audioContext.currentTime);
+      }
+    }
+
+    async function startAudio() {
+      try {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        if (audioContext.state === "suspended") {
+          await audioContext.resume();
+        }
+
+        stopAudio(false);
+
+        oscillator = audioContext.createOscillator();
+        gainNode = audioContext.createGain();
+
+        oscillator.type = waveformSelect.value;
+        oscillator.frequency.setValueAtTime(Number(frequencySlider.value), audioContext.currentTime);
+        gainNode.gain.setValueAtTime((Number(amplitudeSlider.value) / 100) * 0.2, audioContext.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start();
+
+        isPlaying = true;
+        playButton.textContent = "Stop sound";
+      } catch (error) {
+        console.error("Audio start failed", error);
+      }
+    }
+
+    function stopAudio(updateButton = true) {
+      if (oscillator) {
+        try {
+          oscillator.stop();
+        } catch (e) {}
+        oscillator.disconnect();
+        oscillator = null;
+      }
+
+      if (gainNode) {
+        gainNode.disconnect();
+        gainNode = null;
+      }
+
+      isPlaying = false;
+      if (updateButton) {
+        playButton.textContent = "Play sound";
+      }
+    }
+
+    function toggleAudio() {
+      if (isPlaying) {
+        stopAudio();
+      } else {
+        startAudio();
+      }
+    }
+
+    function resetControls() {
+      frequencySlider.value = 440;
+      amplitudeSlider.value = 45;
+      waveformSelect.value = "sine";
+      showLabelsCheckbox.checked = true;
+      showAmplitudeGuideCheckbox.checked = true;
+      showFrequencyGuideCheckbox.checked = true;
+      showWavelengthGuideCheckbox.checked = true;
+      updateSound();
+      drawWave();
+    }
+
+    function drawWave() {
+      const frequency = Number(frequencySlider.value);
+      const amplitude = Number(amplitudeSlider.value);
+      const waveform = waveformSelect.value;
+
+      const wavelength = SPEED_OF_SOUND / frequency;
+      const cyclesAcrossScreen = clamp(frequency / 110, 1, 12);
+      const pixelsPerCycle = DISPLAY_WIDTH / cyclesAcrossScreen;
+
+      const midY = DISPLAY_HEIGHT / 2;
+      const ampPx = amplitude * 2;
+      const crestX = pixelsPerCycle / 4;
+      const troughX = (3 * pixelsPerCycle) / 4;
+      const wavelengthStartX = pixelsPerCycle * 0.2;
+      const wavelengthEndX = wavelengthStartX + pixelsPerCycle;
+
+      let d = "";
+      for (let x = 0; x <= DISPLAY_WIDTH; x += 4) {
+        const angle = (x / pixelsPerCycle) * Math.PI * 2;
+        let y;
+
+        if (waveform === "square") {
+          y = midY + (Math.sin(angle) >= 0 ? -ampPx : ampPx);
+        } else if (waveform === "triangle") {
+          y = midY + ((2 * ampPx) / Math.PI) * Math.asin(Math.sin(angle));
+        } else {
+          y = midY - ampPx * Math.sin(angle);
+        }
+
+        d += (x === 0 ? "M" : "L") + x + "," + y + " ";
+      }
+
+      wavePath.setAttribute("d", d);
+
+      frequencyBadge.textContent = frequency + " Hz";
+      amplitudeBadge.textContent = amplitude;
+      pitchValue.textContent = getPitchLabel(frequency);
+      volumeValue.textContent = getVolumeLabel(amplitude);
+      frequencyValue.textContent = frequency + " Hz";
+      wavelengthValue.textContent = formatNumber(wavelength, 2) + " m";
+
+      const showLabels = showLabelsCheckbox.checked;
+      const showAmplitudeGuide = showAmplitudeGuideCheckbox.checked;
+      const showFrequencyGuide = showFrequencyGuideCheckbox.checked;
+      const showWavelengthGuide = showWavelengthGuideCheckbox.checked;
+
+      if (showAmplitudeGuide) {
+        amplitudeLine.setAttribute("x1", crestX);
+        amplitudeLine.setAttribute("y1", midY);
+        amplitudeLine.setAttribute("x2", crestX);
+        amplitudeLine.setAttribute("y2", midY - ampPx);
+        amplitudeLine.style.display = "block";
+
+        amplitudeText.setAttribute("x", crestX + 12);
+        amplitudeText.setAttribute("y", midY - ampPx / 2);
+        amplitudeText.setAttribute("dominant-baseline", "middle");
+        amplitudeText.style.display = showLabels ? "block" : "none";
+      } else {
+        amplitudeLine.style.display = "none";
+        amplitudeText.style.display = "none";
+      }
+
+      if (showFrequencyGuide) {
+        freqCircle1.setAttribute("cx", crestX);
+        freqCircle1.setAttribute("cy", midY - ampPx);
+        freqCircle2.setAttribute("cx", crestX + pixelsPerCycle);
+        freqCircle2.setAttribute("cy", midY - ampPx);
+
+        frequencyLine.setAttribute("x1", crestX);
+        frequencyLine.setAttribute("y1", midY - ampPx - 30);
+        frequencyLine.setAttribute("x2", crestX + pixelsPerCycle);
+        frequencyLine.setAttribute("y2", midY - ampPx - 30);
+
+        frequencyText.setAttribute("x", crestX + pixelsPerCycle / 2);
+        frequencyText.setAttribute("y", midY - ampPx - 38);
+
+        freqCircle1.style.display = "block";
+        freqCircle2.style.display = "block";
+        frequencyLine.style.display = "block";
+        frequencyText.style.display = showLabels ? "block" : "none";
+      } else {
+        freqCircle1.style.display = "none";
+        freqCircle2.style.display = "none";
+        frequencyLine.style.display = "none";
+        frequencyText.style.display = "none";
+      }
+
+      if (showWavelengthGuide) {
+        wavelengthLine.setAttribute("x1", wavelengthStartX);
+        wavelengthLine.setAttribute("y1", DISPLAY_HEIGHT - 40);
+        wavelengthLine.setAttribute("x2", wavelengthEndX);
+        wavelengthLine.setAttribute("y2", DISPLAY_HEIGHT - 40);
+
+        wavelengthTick1.setAttribute("x1", wavelengthStartX);
+        wavelengthTick1.setAttribute("y1", DISPLAY_HEIGHT - 50);
+        wavelengthTick1.setAttribute("x2", wavelengthStartX);
+        wavelengthTick1.setAttribute("y2", DISPLAY_HEIGHT - 30);
+
+        wavelengthTick2.setAttribute("x1", wavelengthEndX);
+        wavelengthTick2.setAttribute("y1", DISPLAY_HEIGHT - 50);
+        wavelengthTick2.setAttribute("x2", wavelengthEndX);
+        wavelengthTick2.setAttribute("y2", DISPLAY_HEIGHT - 30);
+
+        wavelengthText.setAttribute("x", (wavelengthStartX + wavelengthEndX) / 2);
+        wavelengthText.setAttribute("y", DISPLAY_HEIGHT - 52);
+
+        wavelengthLine.style.display = "block";
+        wavelengthTick1.style.display = "block";
+        wavelengthTick2.style.display = "block";
+        wavelengthText.style.display = showLabels ? "block" : "none";
+      } else {
+        wavelengthLine.style.display = "none";
+        wavelengthTick1.style.display = "none";
+        wavelengthTick2.style.display = "none";
+        wavelengthText.style.display = "none";
+      }
+
+      if (showLabels) {
+        crestText.setAttribute("x", crestX - 10);
+        crestText.setAttribute("y", midY - ampPx - 12);
+
+        troughText.setAttribute("x", troughX);
+        troughText.setAttribute("y", midY + ampPx + 24);
+
+        restText.setAttribute("x", DISPLAY_WIDTH - 120);
+        restText.setAttribute("y", midY - 12);
+
+        crestText.style.display = "block";
+        troughText.style.display = "block";
+        restText.style.display = "block";
+      } else {
+        crestText.style.display = "none";
+        troughText.style.display = "none";
+        restText.style.display = "none";
+      }
+    }
+
+    playButton.addEventListener("click", toggleAudio);
+    resetButton.addEventListener("click", resetControls);
+
+    frequencySlider.addEventListener("input", () => {
+      updateSound();
+      drawWave();
+    });
+
+    amplitudeSlider.addEventListener("input", () => {
+      updateSound();
+      drawWave();
+    });
+
+    waveformSelect.addEventListener("change", () => {
+      updateSound();
+      drawWave();
+    });
+
+    showLabelsCheckbox.addEventListener("change", drawWave);
+    showAmplitudeGuideCheckbox.addEventListener("change", drawWave);
+    showFrequencyGuideCheckbox.addEventListener("change", drawWave);
+    showWavelengthGuideCheckbox.addEventListener("change", drawWave);
+
+    window.addEventListener("beforeunload", () => {
+      stopAudio(false);
+      if (audioContext) {
+        audioContext.close();
+      }
+    });
+
+    drawWave();
+  </script>
+</body>
+</html>
