@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo Field Lab</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --blue: #1d4ed8;
+      --blue-dark: #1e3a8a;
+      --green: #047857;
+      --green-bg: #ecfdf5;
+      --red: #be123c;
+      --red-bg: #fff1f2;
+      --amber: #fde68a;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #020617, #0f172a 55%, #172554);
+      color: white;
+      padding: 44px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-glow-one,
+    .header-glow-two {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(42px);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    .header-glow-one {
+      width: 230px;
+      height: 230px;
+      left: -80px;
+      top: 30px;
+      background: white;
+    }
+
+    .header-glow-two {
+      width: 140px;
+      height: 140px;
+      right: 50px;
+      top: 65px;
+      background: #a7f3d0;
+    }
+
+    .header-inner {
+      position: relative;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.1);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      margin: 14px 0 0;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    header p {
+      max-width: 760px;
+      margin: 16px 0 0;
+      font-size: 1.1rem;
+      color: #dbeafe;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+      display: grid;
+      grid-template-columns: 1.35fr 0.85fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-inner { padding: 24px; }
+    .span-2 { grid-column: 1 / -1; }
+
+    .top-row,
+    .section-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .muted { color: var(--muted); margin: 4px 0 0; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .pill {
+      border-radius: 16px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(15,23,42,0.14); }
+    button:active { transform: translateY(0); box-shadow: none; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-success { background: var(--green); color: white; }
+    .btn-secondary { background: #f1f5f9; color: #1e293b; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .field {
+      position: relative;
+      height: 320px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(#e0f2fe, #f0f9ff 46%, #d1fae5);
+      box-shadow: inset 0 2px 8px rgba(15,23,42,0.08);
+    }
+
+    .sky-glow {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 90px;
+      background: linear-gradient(rgba(255,255,255,0.6), transparent);
+    }
+
+    .grass {
+      position: absolute;
+      left: 8%;
+      right: 12%;
+      bottom: 32px;
+      height: 112px;
+      border: 1px solid #047857;
+      border-radius: 14px;
+      background: repeating-linear-gradient(90deg, #4ade80 0, #4ade80 42px, #22c55e 42px, #22c55e 84px);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+    }
+
+    .student-icon {
+      position: absolute;
+      left: 7%;
+      bottom: 143px;
+      font-size: 3rem;
+      filter: drop-shadow(0 2px 2px rgba(15,23,42,0.15));
+    }
+
+    .wall {
+      position: absolute;
+      right: 7%;
+      bottom: 96px;
+      width: 64px;
+      height: 176px;
+      border: 1px solid #475569;
+      border-radius: 10px;
+      background: repeating-linear-gradient(0deg, #cbd5e1 0, #cbd5e1 18px, #94a3b8 18px, #94a3b8 23px);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.12);
+    }
+
+    .field-label {
+      position: absolute;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.96);
+      border-radius: 999px;
+      padding: 5px 11px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #334155;
+      box-shadow: 0 2px 6px rgba(15,23,42,0.08);
+    }
+
+    .student-label { left: 4%; bottom: 114px; }
+    .wall-label { right: 3%; bottom: 286px; }
+
+    .wave {
+      position: absolute;
+      bottom: 142px;
+      left: 13%;
+      width: 64px;
+      height: 64px;
+      transform: translateX(-50%);
+      display: none;
+      pointer-events: none;
+    }
+
+    .wave-core {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      border: 6px solid #1d4ed8;
+      background: rgba(219, 234, 254, 0.25);
+      box-shadow: 0 0 26px rgba(29, 78, 216, 0.35);
+      animation: pulse-core 0.6s infinite ease-in-out;
+    }
+
+    .wave-ripple {
+      position: absolute;
+      inset: -18px;
+      border-radius: 999px;
+      border: 2px solid rgba(96, 165, 250, 0.55);
+      animation: ripple 0.8s infinite ease-out;
+    }
+
+    @keyframes pulse-core {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.22); }
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(1); opacity: 0.75; }
+      100% { transform: scale(1.55); opacity: 0; }
+    }
+
+    .wave-status {
+      position: absolute;
+      left: 24px;
+      top: 24px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.96);
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e293b;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+      display: none;
+    }
+
+    .echo-flash {
+      position: absolute;
+      left: 8%;
+      top: 32px;
+      background: var(--amber);
+      border: 1px solid #fbbf24;
+      color: #713f12;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1.45rem;
+      font-weight: 750;
+      box-shadow: var(--shadow);
+      display: none;
+      animation: echo-pop 0.4s ease-out;
+    }
+
+    @keyframes echo-pop {
+      0% { transform: scale(0.2); opacity: 0; }
+      70% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .experiment-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .status-box {
+      border-left: 8px solid var(--blue);
+      background: #eff6ff;
+      color: #0f172a;
+      border-radius: 18px;
+      padding: 16px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .stopwatch {
+      min-width: 210px;
+      background: #020617;
+      color: white;
+      border-radius: 22px;
+      text-align: center;
+      padding: 18px 24px;
+      box-shadow: inset 0 2px 12px rgba(255,255,255,0.08);
+    }
+
+    .stopwatch-label {
+      color: #bae6fd;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    #timerDisplay {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 3rem;
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-top: 6px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .feedback {
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 12px;
+      border-radius: 16px;
+      padding: 14px;
+      font-weight: 650;
+    }
+
+    .feedback.good { display: flex; background: var(--green-bg); color: #064e3b; }
+    .feedback.bad { display: flex; background: var(--red-bg); color: #881337; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: left;
+    }
+
+    th { background: #eff6ff; font-weight: 750; }
+    td.time { font-family: ui-monospace, monospace; font-size: 1.05rem; }
+    .empty-row { text-align: center; color: var(--muted); padding: 20px; }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    label {
+      display: block;
+      color: #334155;
+      font-size: 0.9rem;
+      font-weight: 750;
+      margin-bottom: 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      background: white;
+      padding: 12px;
+      font: inherit;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    input:focus, textarea:focus { border-color: var(--blue); }
+    textarea { min-height: 90px; resize: vertical; }
+
+    .formula-card,
+    .question-card {
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .formula-card p { margin: 0; }
+    .formula { margin-top: 6px !important; font-size: 1.1rem; font-weight: 750; }
+    .formula-note { margin-top: 6px !important; color: var(--muted); font-size: 0.92rem; }
+    .question-card { margin: 0 0 16px; }
+
+    .calculator {
+      position: fixed;
+      z-index: 50;
+      width: 285px;
+      left: 28px;
+      top: 120px;
+      user-select: none;
+      border: 4px solid #020617;
+      border-radius: 28px;
+      background: #1e293b;
+      padding: 12px;
+      box-shadow: 0 18px 38px rgba(15,23,42,0.32);
+      display: none;
+    }
+
+    .calculator-top {
+      cursor: grab;
+      border-radius: 20px 20px 0 0;
+      background: #020617;
+      color: white;
+      padding: 12px 16px;
+    }
+
+    .calculator-top:active { cursor: grabbing; }
+
+    .calculator-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .casio {
+      color: #cbd5e1;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+    }
+
+    .calc-model { color: #94a3b8; font-size: 0.66rem; font-weight: 700; }
+
+    .close-calc {
+      border-radius: 999px;
+      background: #334155;
+      color: white;
+      padding: 3px 10px;
+      font-size: 0.85rem;
+    }
+
+    .close-calc:hover { background: #e11d48; }
+
+    .calculator-body {
+      border-radius: 0 0 22px 22px;
+      background: #334155;
+      padding: 12px;
+    }
+
+    .calc-display {
+      min-height: 70px;
+      margin-bottom: 12px;
+      border: 4px solid #020617;
+      border-radius: 12px;
+      background: #d9f99d;
+      color: #020617;
+      padding: 12px;
+      text-align: right;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      overflow-x: auto;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.18);
+    }
+
+    .calc-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .calc-buttons button {
+      border-radius: 12px;
+      padding: 11px 6px;
+      font-size: 1.08rem;
+      font-weight: 800;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.22);
+    }
+
+    .calc-number { background: #f8fafc; color: #020617; }
+    .calc-operator { background: #cbd5e1; color: #020617; }
+    .calc-action { background: #e11d48; color: white; }
+    .calc-equals { background: #fb923c; color: #020617; }
+
+    .calc-help {
+      margin: 10px 0 0;
+      color: #cbd5e1;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+      .span-2 { grid-column: auto; }
+      .analysis-grid, .experiment-grid { grid-template-columns: 1fr; }
+      .stopwatch { min-width: 100%; }
+    }
+
+    @media (max-width: 520px) {
+      header { padding: 32px 16px; }
+      .panel-inner { padding: 18px; }
+      .field { height: 290px; }
+      #timerDisplay { font-size: 2.4rem; }
+      .calculator { width: 270px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-glow-one"></div>
+    <div class="header-glow-two"></div>
+    <div class="header-inner">
+      <div class="eyebrow"><span>〰️</span> Echo Field Lab</div>
+      <h1>Measure a school field using echoes</h1>
+      <p>Make a sound, listen for the echo, record repeats, calculate a mean, then work out the field length.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-inner">
+        <div class="top-row">
+          <div>
+            <h2>1. Run the virtual experiment</h2>
+            <p class="muted">The simulation uses a slowed-down echo so humans can time it accurately.</p>
+          </div>
+          <div class="pill-row">
+            <div class="pill">Speed of sound: <span id="speedPill">340</span> m/s</div>
+            <button id="calculatorToggle" class="btn-secondary">🧮 Show calculator</button>
+          </div>
+        </div>
+
+        <div class="field" aria-label="Visualisation of sound wave travelling across the school field and reflecting from a wall">
+          <div class="sky-glow"></div>
+          <div class="grass"></div>
+          <div class="student-icon">🧍</div>
+          <div class="field-label student-label">Student</div>
+          <div class="wall"></div>
+          <div class="field-label wall-label">Sports hall wall</div>
+          <div id="waveStatus" class="wave-status">Sound wave travelling to the wall</div>
+          <div id="wave" class="wave">
+            <div class="wave-core"></div>
+            <div class="wave-ripple"></div>
+          </div>
+          <div id="echoFlash" class="echo-flash">ECHO! Stop now</div>
+        </div>
+
+        <div class="experiment-grid">
+          <div id="statusBox" class="status-box">Press Make sound. The timer will start, and the sound wave will travel to the wall.</div>
+          <div class="stopwatch">
+            <div class="stopwatch-label">⏱️ Stopwatch</div>
+            <div id="timerDisplay">0.00</div>
+            <div class="muted">seconds</div>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button id="startBtn" class="btn-primary">🔊 Make sound</button>
+          <button id="stopBtn" class="btn-success" disabled>⚡ Stop on echo</button>
+          <button id="resetTrialBtn" class="btn-secondary">↺ Reset trial</button>
+        </div>
+
+        <div id="trialFeedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-inner">
+        <div class="section-title-row">
+          <h2>2. Results</h2>
+          <span style="font-size: 1.8rem;">📋</span>
+        </div>
+        <p class="muted">Aim for at least five repeats. Avoid stopping before the echo sound.</p>
+        <div style="overflow: hidden; border: 1px solid var(--border); border-radius: 16px; margin-top: 14px;">
+          <table>
+            <thead>
+              <tr><th>Trial</th><th>Echo time / s</th></tr>
+            </thead>
+            <tbody id="resultsBody">
+              <tr><td colspan="2" class="empty-row">No trials recorded yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button id="resetExperimentBtn" class="btn-secondary" style="margin-top: 16px;">Start fresh investigation</button>
+      </div>
+    </section>
+
+    <section class="panel span-2">
+      <div class="panel-inner analysis-grid">
+        <section>
+          <div class="section-title-row" style="justify-content: flex-start;">
+            <span style="font-size: 1.8rem;">🧮</span>
+            <h2>3. Student calculations</h2>
+          </div>
+
+          <label for="meanInput">Your mean echo time / s</label>
+          <input id="meanInput" type="number" step="0.01" placeholder="e.g. 3.42" />
+          <button id="checkMeanBtn" class="btn-primary">Check mean</button>
+          <div id="meanFeedback" class="feedback"></div>
+
+          <div class="formula-card">
+            <p><strong>Step 1: Total distance travelled by sound</strong></p>
+            <p class="formula">distance = speed × time</p>
+          </div>
+
+          <label for="totalDistanceInput" style="margin-top: 18px;">Total distance travelled / m</label>
+          <input id="totalDistanceInput" type="number" step="0.1" placeholder="e.g. 1160" />
+          <button id="checkTotalDistanceBtn" class="btn-primary">Check total distance</button>
+          <div id="totalDistanceFeedback" class="feedback"></div>
+
+          <div class="formula-card">
+            <p><strong>Step 2: Calculate field length</strong></p>
+            <p class="formula">field length = total distance ÷ 2</p>
+            <p class="formula-note">The sound travelled to the wall and back, so the field length is half the total distance travelled by the sound.</p>
+          </div>
+
+          <label for="fieldLengthInput" style="margin-top: 18px;">Your calculated field length / m</label>
+          <input id="fieldLengthInput" type="number" step="0.1" placeholder="e.g. 580.7" />
+          <button id="checkFieldLengthBtn" class="btn-primary">Check field length</button>
+          <div id="fieldLengthFeedback" class="feedback"></div>
+        </section>
+
+        <section>
+          <h2 style="margin-bottom: 16px;">4. Exam-style thinking</h2>
+
+          <div class="question-card">
+            <label for="qSound">Suggest a suitable sound for this experiment.</label>
+            <textarea id="qSound" placeholder="Write your answer here before checking..."></textarea>
+            <button class="btn-primary written-check" data-question="sound">🏆 Check answer</button>
+            <div id="soundFeedback" class="feedback"></div>
+          </div>
+
+          <div class="question-card">
+            <label for="qSuitable">Explain why this sound is suitable.</label>
+            <textarea id="qSuitable" placeholder="Write your answer here before checking..."></textarea>
+            <button class="btn-primary written-check" data-question="suitable">🏆 Check answer</button>
+            <div id="suitableFeedback" class="feedback"></div>
+          </div>
+
+          <div class="question-card">
+            <label for="qDivide">Explain why the time is divided by 2.</label>
+            <textarea id="qDivide" placeholder="Write your answer here before checking..."></textarea>
+            <button class="btn-primary written-check" data-question="divide">🏆 Check answer</button>
+            <div id="divideFeedback" class="feedback"></div>
+          </div>
+
+          <div class="question-card">
+            <label for="qRepeat">Why should repeat measurements be taken?</label>
+            <textarea id="qRepeat" placeholder="Write your answer here before checking..."></textarea>
+            <button class="btn-primary written-check" data-question="repeat">🏆 Check answer</button>
+            <div id="repeatFeedback" class="feedback"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <aside id="calculator" class="calculator" aria-label="Draggable calculator">
+    <div id="calculatorTop" class="calculator-top">
+      <div class="calculator-title-row">
+        <div>
+          <div class="casio">CASIO</div>
+          <div class="calc-model">EchoLab fx-83</div>
+        </div>
+        <button id="closeCalculator" class="close-calc" aria-label="Close calculator">×</button>
+      </div>
+    </div>
+    <div class="calculator-body">
+      <div id="calcDisplay" class="calc-display">0</div>
+      <div id="calcButtons" class="calc-buttons"></div>
+      <p class="calc-help">Drag the top bar to move • Use for mean and distance calculations</p>
+    </div>
+  </aside>
+
+  <script>
+    const SPEED_OF_SOUND = 340;
+    const MIN_ECHO_TIME = 3;
+    const MAX_ECHO_TIME = 5;
+    const GOOD_TIMING_TOLERANCE = 0.6;
+    const OK_TIMING_TOLERANCE = 1.1;
+    const FIELD_MIN = 80;
+    const FIELD_MAX = 120;
+
+    const state = {
+      fieldLength: randomFieldLength(),
+      echoTime: 0,
+      isRunning: false,
+      phase: "ready",
+      elapsed: 0,
+      trials: [],
+      startTime: null,
+      rafId: null,
+      echoTimeout: null,
+      returnTimeout: null,
+      calculatorVisible: false,
+      calculatorDisplay: "0",
+      calculatorPosition: { x: 28, y: 120 },
+      drag: null
+    };
+
+    state.echoTime = buildEchoTime(state.fieldLength);
+
+    const els = {
+      timer: document.getElementById("timerDisplay"),
+      startBtn: document.getElementById("startBtn"),
+      stopBtn: document.getElementById("stopBtn"),
+      resetTrialBtn: document.getElementById("resetTrialBtn"),
+      resetExperimentBtn: document.getElementById("resetExperimentBtn"),
+      resultsBody: document.getElementById("resultsBody"),
+      statusBox: document.getElementById("statusBox"),
+      wave: document.getElementById("wave"),
+      waveStatus: document.getElementById("waveStatus"),
+      echoFlash: document.getElementById("echoFlash"),
+      trialFeedback: document.getElementById("trialFeedback"),
+      meanInput: document.getElementById("meanInput"),
+      totalDistanceInput: document.getElementById("totalDistanceInput"),
+      fieldLengthInput: document.getElementById("fieldLengthInput"),
+      meanFeedback: document.getElementById("meanFeedback"),
+      totalDistanceFeedback: document.getElementById("totalDistanceFeedback"),
+      fieldLengthFeedback: document.getElementById("fieldLengthFeedback"),
+      calculatorToggle: document.getElementById("calculatorToggle"),
+      calculator: document.getElementById("calculator"),
+      calculatorTop: document.getElementById("calculatorTop"),
+      closeCalculator: document.getElementById("closeCalculator"),
+      calcDisplay: document.getElementById("calcDisplay"),
+      calcButtons: document.getElementById("calcButtons")
+    };
+
+    function randomFieldLength() {
+      return Math.floor(Math.random() * (FIELD_MAX - FIELD_MIN + 1)) + FIELD_MIN;
+    }
+
+    function round(value, dp = 2) {
+      return Number(value.toFixed(dp));
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function buildEchoTime(fieldLength) {
+      const realEchoTime = (2 * fieldLength) / SPEED_OF_SOUND;
+      return clamp(realEchoTime * 5.5, MIN_ECHO_TIME, MAX_ECHO_TIME);
+    }
+
+    function getMean(trials) {
+      if (!trials.length) return null;
+      return trials.reduce((sum, trial) => sum + trial.time, 0) / trials.length;
+    }
+
+    function getTotalDistanceFromMean(meanTime) {
+      if (meanTime === null || !Number.isFinite(meanTime)) return null;
+      return SPEED_OF_SOUND * meanTime;
+    }
+
+    function getFieldLengthFromMean(meanTime) {
+      const totalDistance = getTotalDistanceFromMean(meanTime);
+      if (totalDistance === null) return null;
+      return totalDistance / 2;
+    }
+
+    function getWaveProgress(elapsed, echoTime) {
+      if (!Number.isFinite(elapsed) || !Number.isFinite(echoTime) || echoTime <= 0) return 0;
+      const halfTime = echoTime / 2;
+      if (elapsed <= halfTime) return clamp(elapsed / halfTime, 0, 1);
+      return clamp(1 - (elapsed - halfTime) / halfTime, 0, 1);
+    }
+
+    function safeCalculatorExpression(expression) {
+      return expression
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/−/g, "-")
+        .replace(/[^0-9+\-*/().]/g, "");
+    }
+
+    function calculateExpression(expression) {
+      const cleaned = safeCalculatorExpression(expression);
+      if (!cleaned || /[+\-*/.]$/.test(cleaned)) return null;
+      try {
+        const result = Function('"use strict"; return (' + cleaned + ')')();
+        return Number.isFinite(result) ? round(result, 6) : null;
+      } catch {
+        return null;
+      }
+    }
+
+    function runDeveloperTests() {
+      const exampleLength = randomFieldLength();
+      console.assert(exampleLength >= FIELD_MIN && exampleLength <= FIELD_MAX, "randomFieldLength should generate a sensible field length");
+      console.assert(buildEchoTime(80) >= MIN_ECHO_TIME, "Echo time should never be below the minimum teaching delay");
+      console.assert(buildEchoTime(120) <= MAX_ECHO_TIME, "Echo time should never exceed the maximum teaching delay");
+      console.assert(round(1.236, 2) === 1.24, "round should round to 2 dp");
+      console.assert(getMean([{ time: 3 }, { time: 5 }]) === 4, "getMean should calculate the mean correctly");
+      console.assert(getTotalDistanceFromMean(4) === 1360, "Total distance should use speed × time");
+      console.assert(getFieldLengthFromMean(4) === 680, "Field length should use total distance ÷ 2");
+      console.assert(getWaveProgress(0, 4) === 0, "Wave should start at the student");
+      console.assert(getWaveProgress(2, 4) === 1, "Wave should reach the wall halfway through the echo time");
+      console.assert(getWaveProgress(4, 4) === 0, "Wave should return to the student when echo is heard");
+      console.assert(safeCalculatorExpression("340×3.5÷2") === "340*3.5/2", "Calculator should convert display symbols into valid operators");
+      console.assert(calculateExpression("340×4÷2") === 680, "Calculator should evaluate a field-length calculation");
+      console.assert(calculateExpression("2+") === null, "Calculator should reject incomplete expressions");
+      console.assert(GOOD_TIMING_TOLERANCE > 0.25, "Great timing tolerance should be generous enough for student reaction time");
+      console.assert(OK_TIMING_TOLERANCE > GOOD_TIMING_TOLERANCE, "OK timing tolerance should be wider than great timing tolerance");
+    }
+
+    runDeveloperTests();
+
+    function playBlip(volume = 0.8, frequency = 720) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+
+      const audio = new AudioContext();
+      const oscillator = audio.createOscillator();
+      const gain = audio.createGain();
+
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(frequency, audio.currentTime);
+      gain.gain.setValueAtTime(volume, audio.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.14);
+      oscillator.connect(gain);
+      gain.connect(audio.destination);
+      oscillator.start();
+      oscillator.stop(audio.currentTime + 0.14);
+    }
+
+    function clearTimers() {
+      if (state.rafId) cancelAnimationFrame(state.rafId);
+      clearTimeout(state.echoTimeout);
+      clearTimeout(state.returnTimeout);
+    }
+
+    function setPhase(phase) {
+      state.phase = phase;
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const messages = {
+        ready: "Press Make sound. The timer will start, and the sound wave will travel to the wall.",
+        outward: "Sound is travelling across the field towards the wall...",
+        returning: "The sound has bounced off the wall and is travelling back... get ready.",
+        echo: "Echo heard! Stop the stopwatch now.",
+        recorded: "Trial recorded. Repeat the investigation to improve reliability."
+      };
+      els.statusBox.textContent = messages[state.phase] || messages.ready;
+    }
+
+    function updateTimer() {
+      els.timer.textContent = state.elapsed.toFixed(2);
+    }
+
+    function updateWave() {
+      const showWave = state.isRunning || state.phase === "echo";
+      els.wave.style.display = showWave ? "block" : "none";
+      els.waveStatus.style.display = state.isRunning ? "block" : "none";
+      els.echoFlash.style.display = state.phase === "echo" ? "block" : "none";
+
+      const progress = getWaveProgress(state.elapsed, state.echoTime);
+      const waveLeft = 13 + progress * 65;
+      els.wave.style.left = waveLeft + "%";
+      els.waveStatus.textContent = state.elapsed <= state.echoTime / 2
+        ? "Sound wave travelling to the wall"
+        : "Sound wave returning to the student";
+    }
+
+    function startTrial() {
+      if (state.isRunning) return;
+      clearTimers();
+      state.isRunning = true;
+      state.elapsed = 0;
+      state.startTime = performance.now();
+      setPhase("outward");
+      showFeedback(els.trialFeedback, null);
+      playBlip(0.9, 760);
+      els.startBtn.disabled = true;
+      els.stopBtn.disabled = false;
+
+      const tick = () => {
+        state.elapsed = (performance.now() - state.startTime) / 1000;
+        updateTimer();
+        updateWave();
+        state.rafId = requestAnimationFrame(tick);
+      };
+      tick();
+
+      state.returnTimeout = setTimeout(() => setPhase("returning"), (state.echoTime / 2) * 1000);
+      state.echoTimeout = setTimeout(() => {
+        setPhase("echo");
+        state.elapsed = state.echoTime;
+        updateTimer();
+        updateWave();
+        playBlip(0.22, 760);
+      }, state.echoTime * 1000);
+    }
+
+    function stopTrial() {
+      if (!state.isRunning) return;
+
+      const finalTime = (performance.now() - state.startTime) / 1000;
+      clearTimers();
+      state.isRunning = false;
+      state.elapsed = finalTime;
+      setPhase("recorded");
+      updateTimer();
+      updateWave();
+      els.startBtn.disabled = false;
+      els.stopBtn.disabled = true;
+
+      state.trials.push({ id: state.trials.length + 1, time: round(finalTime, 2) });
+      renderResults();
+
+      const timingError = Math.abs(finalTime - state.echoTime);
+      let trialFeedback;
+      if (timingError <= GOOD_TIMING_TOLERANCE) {
+        trialFeedback = { ok: true, text: "Great timing — that reading is close to the echo." };
+      } else if (timingError <= OK_TIMING_TOLERANCE) {
+        trialFeedback = { ok: true, text: "Good attempt — close enough for this investigation. Repeats will help smooth out reaction time." };
+      } else {
+        trialFeedback = { ok: false, text: "Recorded, but your reaction time may have strongly affected this result. Repeat it and look for a pattern." };
+      }
+      showFeedback(els.trialFeedback, trialFeedback);
+    }
+
+    function resetTrial() {
+      clearTimers();
+      state.isRunning = false;
+      state.elapsed = 0;
+      setPhase("ready");
+      updateTimer();
+      updateWave();
+      els.startBtn.disabled = false;
+      els.stopBtn.disabled = true;
+    }
+
+    function resetExperiment() {
+      resetTrial();
+      state.fieldLength = randomFieldLength();
+      state.echoTime = buildEchoTime(state.fieldLength);
+      state.trials = [];
+      renderResults();
+      document.querySelectorAll("input, textarea").forEach(input => input.value = "");
+      document.querySelectorAll(".feedback").forEach(box => showFeedback(box, null));
+    }
+
+    function renderResults() {
+      if (!state.trials.length) {
+        els.resultsBody.innerHTML = '<tr><td colspan="2" class="empty-row">No trials recorded yet</td></tr>';
+        return;
+      }
+      els.resultsBody.innerHTML = state.trials.map(trial => `
+        <tr>
+          <td><strong>${trial.id}</strong></td>
+          <td class="time">${trial.time.toFixed(2)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function showFeedback(element, item) {
+      element.className = "feedback";
+      element.textContent = "";
+      if (!item) return;
+      element.classList.add(item.ok ? "good" : "bad");
+      element.innerHTML = `<span>${item.ok ? "✅" : "❌"}</span><span>${item.text}</span>`;
+    }
+
+    function checkMean() {
+      const mean = getMean(state.trials);
+      if (mean === null) {
+        showFeedback(els.meanFeedback, { ok: false, text: "Record some trials first." });
+        return;
+      }
+      const user = Number(els.meanInput.value);
+      const correct = round(mean, 2);
+      if (!Number.isFinite(user)) {
+        showFeedback(els.meanFeedback, { ok: false, text: "Enter your calculated mean time." });
+        return;
+      }
+      showFeedback(els.meanFeedback, Math.abs(user - correct) <= 0.02
+        ? { ok: true, text: `Correct — the mean time is ${correct.toFixed(2)} s.` }
+        : { ok: false, text: `Not quite. Add all the times, then divide by the number of trials. Correct mean: ${correct.toFixed(2)} s.` }
+      );
+    }
+
+    function checkTotalDistance() {
+      const mean = getMean(state.trials);
+      const correctDistance = getTotalDistanceFromMean(mean);
+      if (correctDistance === null) {
+        showFeedback(els.totalDistanceFeedback, { ok: false, text: "Calculate the mean time first." });
+        return;
+      }
+      const user = Number(els.totalDistanceInput.value);
+      const correct = round(correctDistance, 1);
+      if (!Number.isFinite(user)) {
+        showFeedback(els.totalDistanceFeedback, { ok: false, text: "Enter the total distance travelled by the sound." });
+        return;
+      }
+      showFeedback(els.totalDistanceFeedback, Math.abs(user - correct) <= 2
+        ? { ok: true, text: `Correct — total distance is about ${correct.toFixed(1)} m.` }
+        : { ok: false, text: `Not quite. Use distance = speed × time. Correct answer: ${correct.toFixed(1)} m.` }
+      );
+    }
+
+    function checkFieldLength() {
+      const mean = getMean(state.trials);
+      const correctLength = getFieldLengthFromMean(mean);
+      if (correctLength === null) {
+        showFeedback(els.fieldLengthFeedback, { ok: false, text: "Calculate the mean time and total distance first." });
+        return;
+      }
+      const user = Number(els.fieldLengthInput.value);
+      const correct = round(correctLength, 1);
+      if (!Number.isFinite(user)) {
+        showFeedback(els.fieldLengthFeedback, { ok: false, text: "Enter the field length." });
+        return;
+      }
+      showFeedback(els.fieldLengthFeedback, Math.abs(user - correct) <= 1
+        ? { ok: true, text: `Correct — field length is about ${correct.toFixed(1)} m.` }
+        : { ok: false, text: `Remember: field length = total distance ÷ 2. Correct answer: ${correct.toFixed(1)} m.` }
+      );
+    }
+
+    function checkWritten(key) {
+      const map = {
+        sound: {
+          textarea: document.getElementById("qSound"),
+          feedback: document.getElementById("soundFeedback"),
+          words: ["clap", "bang", "balloon", "wood", "blocks", "starter", "pistol"],
+          model: "A suitable sound could be a clap, a balloon popping, or two wooden blocks being hit together."
+        },
+        suitable: {
+          textarea: document.getElementById("qSuitable"),
+          feedback: document.getElementById("suitableFeedback"),
+          words: ["loud", "short", "sharp", "clear", "echo", "easy", "distinct"],
+          model: "The sound should be loud, short and sharp so the echo is clear and easy to time."
+        },
+        divide: {
+          textarea: document.getElementById("qDivide"),
+          feedback: document.getElementById("divideFeedback"),
+          words: ["there", "back", "wall", "return", "twice", "double", "total"],
+          model: "The measured time is for the sound travelling to the wall and back, so the total distance is twice the field length."
+        },
+        repeat: {
+          textarea: document.getElementById("qRepeat"),
+          feedback: document.getElementById("repeatFeedback"),
+          words: ["mean", "average", "reliable", "random", "error", "anomaly", "accurate"],
+          model: "Repeats allow a mean to be calculated, reduce the effect of random errors, and help identify anomalous results."
+        }
+      };
+
+      const item = map[key];
+      const text = item.textarea.value.toLowerCase();
+      const matched = item.words.filter(word => text.includes(word)).length;
+      showFeedback(item.feedback, matched >= 2 || text.length > 70
+        ? { ok: true, text: `Good answer. Model answer: ${item.model}` }
+        : { ok: false, text: `Add more detail. Model answer: ${item.model}` }
+      );
+    }
+
+    function setupCalculator() {
+      const buttons = ["AC", "DEL", "(", ")", "7", "8", "9", "÷", "4", "5", "6", "×", "1", "2", "3", "−", "0", ".", "=", "+"];
+      els.calcButtons.innerHTML = buttons.map(button => {
+        const cls = button === "=" ? "calc-equals" : ["AC", "DEL"].includes(button) ? "calc-action" : ["÷", "×", "−", "+", "(", ")"].includes(button) ? "calc-operator" : "calc-number";
+        return `<button class="${cls}" data-value="${button}">${button}</button>`;
+      }).join("");
+
+      els.calcButtons.addEventListener("click", event => {
+        const button = event.target.closest("button");
+        if (!button) return;
+        pressCalculator(button.dataset.value);
+      });
+    }
+
+    function pressCalculator(value) {
+      if (value === "AC") {
+        state.calculatorDisplay = "0";
+      } else if (value === "DEL") {
+        state.calculatorDisplay = state.calculatorDisplay.length <= 1 ? "0" : state.calculatorDisplay.slice(0, -1);
+      } else if (value === "=") {
+        const result = calculateExpression(state.calculatorDisplay);
+        state.calculatorDisplay = result === null ? "Error" : String(result);
+      } else {
+        if (state.calculatorDisplay === "Error") state.calculatorDisplay = value;
+        else if (state.calculatorDisplay === "0" && /[0-9.]/.test(value)) state.calculatorDisplay = value;
+        else state.calculatorDisplay += value;
+      }
+      els.calcDisplay.textContent = state.calculatorDisplay;
+    }
+
+    function toggleCalculator(force) {
+      state.calculatorVisible = typeof force === "boolean" ? force : !state.calculatorVisible;
+      els.calculator.style.display = state.calculatorVisible ? "block" : "none";
+      els.calculatorToggle.textContent = state.calculatorVisible ? "🧮 Hide calculator" : "🧮 Show calculator";
+    }
+
+    function startCalculatorDrag(event) {
+      event.preventDefault();
+      const pointer = event.touches ? event.touches[0] : event;
+      state.drag = {
+        startX: pointer.clientX,
+        startY: pointer.clientY,
+        originalX: state.calculatorPosition.x,
+        originalY: state.calculatorPosition.y
+      };
+      window.addEventListener("mousemove", onCalculatorDrag);
+      window.addEventListener("mouseup", stopCalculatorDrag);
+      window.addEventListener("touchmove", onCalculatorDrag, { passive: false });
+      window.addEventListener("touchend", stopCalculatorDrag);
+    }
+
+    function onCalculatorDrag(event) {
+      if (!state.drag) return;
+      if (event.cancelable) event.preventDefault();
+      const pointer = event.touches ? event.touches[0] : event;
+      const nextX = state.drag.originalX + pointer.clientX - state.drag.startX;
+      const nextY = state.drag.originalY + pointer.clientY - state.drag.startY;
+      state.calculatorPosition.x = clamp(nextX, 8, window.innerWidth - 300);
+      state.calculatorPosition.y = clamp(nextY, 8, window.innerHeight - 440);
+      els.calculator.style.left = state.calculatorPosition.x + "px";
+      els.calculator.style.top = state.calculatorPosition.y + "px";
+    }
+
+    function stopCalculatorDrag() {
+      state.drag = null;
+      window.removeEventListener("mousemove", onCalculatorDrag);
+      window.removeEventListener("mouseup", stopCalculatorDrag);
+      window.removeEventListener("touchmove", onCalculatorDrag);
+      window.removeEventListener("touchend", stopCalculatorDrag);
+    }
+
+    els.startBtn.addEventListener("click", startTrial);
+    els.stopBtn.addEventListener("click", stopTrial);
+    els.resetTrialBtn.addEventListener("click", resetTrial);
+    els.resetExperimentBtn.addEventListener("click", resetExperiment);
+    document.getElementById("checkMeanBtn").addEventListener("click", checkMean);
+    document.getElementById("checkTotalDistanceBtn").addEventListener("click", checkTotalDistance);
+    document.getElementById("checkFieldLengthBtn").addEventListener("click", checkFieldLength);
+    document.querySelectorAll(".written-check").forEach(button => button.addEventListener("click", () => checkWritten(button.dataset.question)));
+    els.calculatorToggle.addEventListener("click", () => toggleCalculator());
+    els.closeCalculator.addEventListener("click", () => toggleCalculator(false));
+    els.calculatorTop.addEventListener("mousedown", startCalculatorDrag);
+    els.calculatorTop.addEventListener("touchstart", startCalculatorDrag);
+
+    setupCalculator();
+    updateStatus();
+    updateTimer();
+    updateWave();
+  </script>
+</body>
+</html>
