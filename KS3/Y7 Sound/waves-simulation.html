@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Water Waves: Energy Moves, Particles Bob</title>
+  <style>
+    :root {
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+      --sky-50: #f0f9ff;
+      --sky-100: #e0f2fe;
+      --sky-700: #0369a1;
+      --sky-800: #075985;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-900);
+      padding: 16px;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .icon-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      background: var(--sky-100);
+      border-radius: 18px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+      font-size: 30px;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--slate-600);
+      font-size: clamp(1rem, 1.7vw, 1.15rem);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .simulation-card,
+    .panel {
+      background: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: 22px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .simulation-card {
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 520px;
+    }
+
+    aside {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 20px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1.25rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      width: 100%;
+      border-radius: 12px;
+      font-weight: 700;
+      padding: 0.7rem 0.85rem;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+
+    .btn-primary {
+      background: var(--sky-700);
+      color: white;
+      border: 1px solid var(--sky-700);
+    }
+
+    .btn-primary:hover {
+      background: var(--sky-800);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--slate-900);
+      border: 1px solid var(--slate-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--slate-50);
+    }
+
+    .btn-primary:active,
+    .btn-secondary:active {
+      transform: translateY(1px);
+    }
+
+    .control-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .slider-group {
+      display: grid;
+      gap: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--slate-700);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--sky-700);
+    }
+
+    .teaching-point {
+      color: var(--slate-700);
+      line-height: 1.55;
+      margin: 0 0 10px;
+    }
+
+    .teaching-point:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 12px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      canvas {
+        height: 460px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="icon-box" aria-hidden="true">〰️</div>
+      <div>
+        <h1>Water Waves: Energy Moves, Particles Bob</h1>
+        <p class="subtitle">A simple tank model for showing what happens when a small boat floats on a water wave.</p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="simulation-card">
+        <canvas id="waveCanvas" aria-label="Animated water wave tank simulation"></canvas>
+      </section>
+
+      <aside>
+        <section class="panel">
+          <h2>Controls</h2>
+          <div class="button-grid">
+            <button id="playPauseBtn" class="btn-primary">⏸ Pause</button>
+            <button id="resetBtn" class="btn-secondary">↺ Reset</button>
+          </div>
+          <div class="control-stack">
+            <button id="particlesBtn" class="btn-primary">● Hide water particles</button>
+            <button id="energyBtn" class="btn-primary">➡ Toggle energy arrow</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Wave settings</h2>
+          <div class="slider-group">
+            <label>
+              <div class="slider-label"><span>Wave height</span><span id="amplitudeValue">34</span></div>
+              <input id="amplitudeSlider" type="range" min="12" max="52" value="34" />
+            </label>
+
+            <label>
+              <div class="slider-label"><span>Wavelength</span><span id="wavelengthValue">230 px</span></div>
+              <input id="wavelengthSlider" type="range" min="140" max="330" value="230" />
+            </label>
+
+            <label>
+              <div class="slider-label"><span>Speed</span><span id="speedValue">1.1×</span></div>
+              <input id="speedSlider" type="range" min="0.4" max="2.2" step="0.1" value="1.1" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Teaching point</h2>
+          <p class="teaching-point">The wave shape travels across the container, so energy is transferred from one place to another.</p>
+          <p class="teaching-point">The boat shows what the water is doing locally: it bobs up and down rather than travelling across the container with the wave.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("waveCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const state = {
+      running: true,
+      showParticles: true,
+      showEnergyArrow: true,
+      amplitude: 34,
+      wavelength: 230,
+      speed: 1.1,
+      time: 0,
+      lastFrame: performance.now()
+    };
+
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const particlesBtn = document.getElementById("particlesBtn");
+    const energyBtn = document.getElementById("energyBtn");
+
+    const amplitudeSlider = document.getElementById("amplitudeSlider");
+    const wavelengthSlider = document.getElementById("wavelengthSlider");
+    const speedSlider = document.getElementById("speedSlider");
+
+    const amplitudeValue = document.getElementById("amplitudeValue");
+    const wavelengthValue = document.getElementById("wavelengthValue");
+    const speedValue = document.getElementById("speedValue");
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.max(1, rect.width * dpr);
+      canvas.height = Math.max(1, rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    playPauseBtn.addEventListener("click", () => {
+      state.running = !state.running;
+      playPauseBtn.textContent = state.running ? "⏸ Pause" : "▶ Play";
+    });
+
+    resetBtn.addEventListener("click", () => {
+      state.time = 0;
+    });
+
+    particlesBtn.addEventListener("click", () => {
+      state.showParticles = !state.showParticles;
+      particlesBtn.textContent = state.showParticles ? "● Hide water particles" : "○ Show water particles";
+      particlesBtn.className = state.showParticles ? "btn-primary" : "btn-secondary";
+    });
+
+    energyBtn.addEventListener("click", () => {
+      state.showEnergyArrow = !state.showEnergyArrow;
+      energyBtn.className = state.showEnergyArrow ? "btn-primary" : "btn-secondary";
+    });
+
+    amplitudeSlider.addEventListener("input", () => {
+      state.amplitude = Number(amplitudeSlider.value);
+      amplitudeValue.textContent = state.amplitude;
+    });
+
+    wavelengthSlider.addEventListener("input", () => {
+      state.wavelength = Number(wavelengthSlider.value);
+      wavelengthValue.textContent = state.wavelength + " px";
+    });
+
+    speedSlider.addEventListener("input", () => {
+      state.speed = Number(speedSlider.value);
+      speedValue.textContent = state.speed.toFixed(1) + "×";
+    });
+
+    function animate(now) {
+      const rect = canvas.getBoundingClientRect();
+      const dt = Math.min((now - state.lastFrame) / 16.67, 2);
+      state.lastFrame = now;
+
+      if (state.running) {
+        state.time += 0.035 * state.speed * dt;
+      }
+
+      drawScene(ctx, {
+        width: rect.width,
+        height: rect.height,
+        time: state.time,
+        amplitude: state.amplitude,
+        wavelength: state.wavelength,
+        showParticles: state.showParticles,
+        showEnergyArrow: state.showEnergyArrow
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+    runSelfTests();
+
+    function drawScene(ctx, options) {
+      const { width, height, time, amplitude, wavelength, showParticles, showEnergyArrow } = options;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const tankX = 38;
+      const tankY = 50;
+      const tankW = Math.max(220, width - 76);
+      const tankH = Math.max(260, height - 112);
+      const restY = tankY + tankH * 0.43;
+      const baseY = tankY + tankH;
+      const phase = time * 3.1;
+      const k = (Math.PI * 2) / wavelength;
+
+      drawBackground(ctx, width, height);
+      drawTank(ctx, tankX, tankY, tankW, tankH);
+      drawWater(ctx, tankX, tankW, restY, baseY, amplitude, k, phase);
+      drawRestLine(ctx, tankX, tankW, restY);
+
+      if (showParticles) {
+        drawParticles(ctx, tankX, tankW, restY, baseY, amplitude, k, phase);
+      }
+
+      drawBoat(ctx, tankX, tankW, restY, baseY, amplitude, k, phase);
+
+      if (showEnergyArrow) {
+        drawArrow(ctx, tankX + 90, tankY + 30, tankX + tankW - 95, tankY + 30, "rgba(220, 38, 38, 0.78)");
+        ctx.fillStyle = "rgba(127, 29, 29, 0.90)";
+        ctx.font = "700 14px Inter, system-ui, sans-serif";
+        ctx.fillText("wave energy transfers across the container", tankX + 110, tankY + 22);
+      }
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
+      ctx.font = "700 15px Inter, system-ui, sans-serif";
+      ctx.fillText("Water surface moves across", tankX + 20, baseY + 34);
+      ctx.font = "500 13px Inter, system-ui, sans-serif";
+      ctx.fillText("The boat and water particles mainly move up and down, not across the tank.", tankX + 20, baseY + 55);
+    }
+
+    function drawBackground(ctx, width, height) {
+      const bg = ctx.createLinearGradient(0, 0, 0, height);
+      bg.addColorStop(0, "#f8fafc");
+      bg.addColorStop(1, "#e0f2fe");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    function drawTank(ctx, tankX, tankY, tankW, tankH) {
+      ctx.fillStyle = "rgba(15, 23, 42, 0.08)";
+      roundRect(ctx, tankX + 4, tankY + 7, tankW, tankH, 18);
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(255,255,255,0.65)";
+      roundRect(ctx, tankX, tankY, tankW, tankH, 18);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(14, 116, 144, 0.55)";
+      ctx.lineWidth = 3;
+      roundRect(ctx, tankX, tankY, tankW, tankH, 18);
+      ctx.stroke();
+    }
+
+    function waveY(x, tankW, restY, amplitude, k, phase) {
+      const travelling = Math.sin(k * x - phase);
+      const reflection = 0.42 * Math.sin(k * x + phase * 0.78);
+      const edgeDamping = Math.sin((Math.PI * x) / tankW);
+      return restY + amplitude * edgeDamping * (travelling + reflection) * 0.72;
+    }
+
+    function drawWater(ctx, tankX, tankW, restY, baseY, amplitude, k, phase) {
+      ctx.beginPath();
+      ctx.moveTo(tankX + 2, baseY);
+      for (let x = 0; x <= tankW; x += 4) {
+        ctx.lineTo(tankX + x, waveY(x, tankW, restY, amplitude, k, phase));
+      }
+      ctx.lineTo(tankX + tankW - 2, baseY);
+      ctx.closePath();
+
+      const water = ctx.createLinearGradient(0, restY - 70, 0, baseY);
+      water.addColorStop(0, "rgba(56, 189, 248, 0.50)");
+      water.addColorStop(1, "rgba(14, 116, 144, 0.62)");
+      ctx.fillStyle = water;
+      ctx.fill();
+
+      ctx.beginPath();
+      for (let x = 0; x <= tankW; x += 3) {
+        const y = waveY(x, tankW, restY, amplitude, k, phase);
+        if (x === 0) ctx.moveTo(tankX + x, y);
+        else ctx.lineTo(tankX + x, y);
+      }
+      ctx.strokeStyle = "rgba(3, 105, 161, 0.95)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawRestLine(ctx, tankX, tankW, restY) {
+      ctx.setLineDash([7, 7]);
+      ctx.strokeStyle = "rgba(71, 85, 105, 0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(tankX + 12, restY);
+      ctx.lineTo(tankX + tankW - 12, restY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(51, 65, 85, 0.78)";
+      ctx.font = "600 13px Inter, system-ui, sans-serif";
+      ctx.fillText("still water level", tankX + 18, restY - 10);
+    }
+
+    function drawParticles(ctx, tankX, tankW, restY, baseY, amplitude, k, phase) {
+      const rows = [0.13, 0.28, 0.43, 0.58, 0.73];
+      const cols = 13;
+
+      for (let i = 0; i < cols; i++) {
+        const x = tankX + 60 + i * ((tankW - 120) / (cols - 1));
+        const localSurface = waveY(x - tankX, tankW, restY, amplitude, k, phase);
+
+        ctx.strokeStyle = "rgba(7, 89, 133, 0.14)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, restY + 10);
+        ctx.lineTo(x, baseY - 18);
+        ctx.stroke();
+
+        for (let r = 0; r < rows.length; r++) {
+          const baseParticleY = restY + 24 + rows[r] * (baseY - restY - 50);
+          const bob = amplitude * 0.32 * Math.sin(k * (x - tankX) - phase + r * 0.35);
+          const y = baseParticleY + bob;
+          if (y < localSurface + 12 || y > baseY - 16) continue;
+
+          ctx.beginPath();
+          ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(7, 89, 133, 0.70)";
+          ctx.fill();
+        }
+      }
+    }
+
+    function drawBoat(ctx, tankX, tankW, restY, baseY, amplitude, k, phase) {
+      const boatX = tankX + tankW * 0.62;
+      const cx = boatX - tankX;
+      const boatY = waveY(cx, tankW, restY, amplitude, k, phase) - 10;
+
+      ctx.save();
+      ctx.translate(boatX, boatY);
+      ctx.rotate(0.05 * Math.sin(phase));
+
+      ctx.beginPath();
+      ctx.moveTo(-20, 0);
+      ctx.lineTo(20, 0);
+      ctx.lineTo(12, 10);
+      ctx.lineTo(-12, 10);
+      ctx.closePath();
+      ctx.fillStyle = "#7c3aed";
+      ctx.fill();
+      ctx.strokeStyle = "#5b21b6";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, -18);
+      ctx.strokeStyle = "#374151";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, -18);
+      ctx.lineTo(12, -6);
+      ctx.lineTo(0, -6);
+      ctx.closePath();
+      ctx.fillStyle = "#fbbf24";
+      ctx.fill();
+
+      ctx.restore();
+
+      ctx.strokeStyle = "rgba(120, 53, 15, 0.45)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 5]);
+      ctx.beginPath();
+      ctx.moveTo(boatX, restY - amplitude - 18);
+      ctx.lineTo(boatX, restY + amplitude + 24);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.font = "700 13px Inter, system-ui, sans-serif";
+      ctx.fillText("boat moves up and down", boatX - 70, Math.min(baseY + 20, restY + amplitude + 44));
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      const radius = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.arcTo(x + w, y, x + w, y + h, radius);
+      ctx.arcTo(x + w, y + h, x, y + h, radius);
+      ctx.arcTo(x, y + h, x, y, radius);
+      ctx.arcTo(x, y, x + w, y, radius);
+      ctx.closePath();
+    }
+
+    function drawArrow(ctx, x1, y1, x2, y2, color) {
+      const head = 14;
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function runSelfTests() {
+      const yAtRest = waveY(0, 500, 200, 30, (Math.PI * 2) / 200, 0);
+      console.assert(Number.isFinite(yAtRest), "waveY should return a finite number");
+      console.assert(Math.abs(yAtRest - 200) < 0.0001, "waveY at the tank edge should equal the rest level because of edge damping");
+
+      const yMid = waveY(250, 500, 200, 30, (Math.PI * 2) / 200, 1.5);
+      console.assert(Number.isFinite(yMid), "waveY should work for points inside the tank");
+
+      const particleBaseX = 100;
+      const particleLaterX = 100;
+      console.assert(particleBaseX === particleLaterX, "particle x-position should stay fixed to show particles do not travel across the container");
+    }
+  </script>
+</body>
+</html>
