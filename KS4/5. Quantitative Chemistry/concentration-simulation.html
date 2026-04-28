@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concentration of Solutions | Particle Simulation</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-light: #eff6ff;
+      --slate-light: #f1f5f9;
+      --shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.06);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 12px 16px;
+    }
+
+    .wrap {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    header {
+      padding: 16px 20px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.25rem, 2.2vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 850px;
+    }
+
+    .formula-box {
+      background: var(--blue-light);
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      min-width: 245px;
+      line-height: 1.45;
+    }
+
+    .controls {
+      padding: 12px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .mode-btn {
+      padding: 9px 13px;
+      border-radius: 13px;
+      background: var(--slate-light);
+      color: #1e293b;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      font-size: 0.88rem;
+    }
+
+    .mode-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .mode-btn.active {
+      background: var(--blue);
+      color: white;
+    }
+
+    .same-control {
+      background: var(--blue-light);
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    .same-control-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .same-control label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .hint {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .compare-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-control {
+      background: var(--slate-light);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .mini-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .mini-header h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .mini-conc {
+      color: var(--blue-dark);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .slider-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .slider-grid label {
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .simulation-grid {
+      display: grid;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .simulation-grid.same {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .simulation-grid.compare {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sim-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .sim-card h2 {
+      margin: 0;
+      text-align: center;
+      font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    }
+
+    .pill-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 8px;
+      font-size: 0.78rem;
+    }
+
+    .pill {
+      background: var(--slate-light);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px 6px;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .pill-label {
+      color: #64748b;
+      line-height: 1.1;
+    }
+
+    .pill-value {
+      font-weight: 800;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .canvas-shell {
+      position: relative;
+      margin-top: 10px;
+      height: 285px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 8px;
+    }
+
+    canvas {
+      border-radius: 6px 6px 16px 16px;
+      display: block;
+    }
+
+    .scale {
+      position: absolute;
+      right: 4px;
+      bottom: 8px;
+      font-size: 10px;
+      color: #64748b;
+      pointer-events: none;
+    }
+
+    .tick {
+      position: absolute;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .tick-line {
+      width: 12px;
+      border-top: 1px solid #94a3b8;
+    }
+
+    .note {
+      margin-top: 4px;
+      color: #64748b;
+      font-size: 0.68rem;
+      text-align: center;
+    }
+
+    .interpretation {
+      width: 100%;
+      margin-top: 8px;
+      background: var(--slate-light);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .interpretation strong {
+      color: var(--text);
+    }
+
+    .prompts {
+      overflow: hidden;
+    }
+
+    .prompt-toggle {
+      width: 100%;
+      padding: 12px 16px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .prompt-toggle:hover {
+      background: #f8fafc;
+    }
+
+    .prompt-grid {
+      display: none;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0 16px 16px;
+    }
+
+    .prompt-grid.open {
+      display: grid;
+    }
+
+    .prompt {
+      background: var(--slate-light);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 650;
+    }
+
+    @media (max-width: 900px) {
+      .header-row,
+      .control-grid,
+      .same-control-row {
+        flex-direction: column;
+        display: flex;
+        align-items: stretch;
+      }
+
+      .formula-box {
+        min-width: auto;
+      }
+
+      .simulation-grid.same,
+      .simulation-grid.compare,
+      .compare-controls,
+      .prompt-grid.open {
+        grid-template-columns: 1fr;
+      }
+
+      .canvas-shell {
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="wrap">
+      <header class="card">
+        <div class="header-row">
+          <div>
+            <h1>Concentration of Solutions: Particle Simulation</h1>
+            <p class="subtitle">Concentration depends on how many solute particles are present compared with the volume of solution.</p>
+          </div>
+          <div class="formula-box">
+            <div><strong>Formula:</strong> concentration = mass ÷ volume</div>
+            <div><strong>Units:</strong> g/dm³, g, dm³</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="card controls">
+        <div class="control-grid">
+          <div class="mode-buttons">
+            <button id="compareBtn" class="mode-btn" type="button">Compare two solutions</button>
+            <button id="sameBtn" class="mode-btn active" type="button">Same concentration, different volumes</button>
+          </div>
+
+          <div id="dynamicControls"></div>
+        </div>
+      </section>
+
+      <main id="simulationGrid" class="simulation-grid same"></main>
+
+      <section class="card prompts">
+        <button id="promptToggle" class="prompt-toggle" type="button">
+          <span>Class discussion prompts</span>
+          <span id="promptIcon">+</span>
+        </button>
+        <div id="promptGrid" class="prompt-grid">
+          <div class="prompt">Which solution has the most particles in each unit of space?</div>
+          <div class="prompt">Why can the 250 cm³ beaker have more particles but the same concentration?</div>
+          <div class="prompt">What happens to particle crowding if you add water but no more solute?</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_PARTICLE_SPEED = 1.35;
+    const PARTICLES_PER_GRAM = 4;
+
+    const state = {
+      mode: "same",
+      massA: 6,
+      volumeA: 100,
+      massB: 12,
+      volumeB: 100,
+      targetConc: 40,
+      showPrompts: false,
+      simulations: [],
+    };
+
+    function cm3ToDm3(cm3) {
+      return cm3 / 1000;
+    }
+
+    function calculateConcentration(mass, volumeCm3) {
+      return mass / cm3ToDm3(volumeCm3);
+    }
+
+    function calculateHeightForVolume(volumeCm3, maxVolumeCm3, maxHeightPx) {
+      return (volumeCm3 / maxVolumeCm3) * maxHeightPx;
+    }
+
+    function runDeveloperChecks() {
+      console.assert(cm3ToDm3(1000) === 1, "1000 cm³ should equal 1 dm³");
+      console.assert(cm3ToDm3(250) === 0.25, "250 cm³ should equal 0.25 dm³");
+      console.assert(calculateConcentration(10, 250) === 40, "10 g in 250 cm³ should equal 40 g/dm³");
+      console.assert(
+        calculateHeightForVolume(200, 500, 260) === 2 * calculateHeightForVolume(100, 500, 260),
+        "200 cm³ should display as twice the height of 100 cm³"
+      );
+      console.assert(
+        calculateHeightForVolume(250, 250, 260) === 5 * calculateHeightForVolume(50, 250, 260),
+        "250 cm³ should display as five times the height of 50 cm³ in same-concentration mode"
+      );
+    }
+
+    runDeveloperChecks();
+
+    function render() {
+      stopAllSimulations();
+      renderModeButtons();
+      renderControls();
+      renderSimulations();
+      renderPrompts();
+    }
+
+    function renderModeButtons() {
+      document.getElementById("compareBtn").classList.toggle("active", state.mode === "compare");
+      document.getElementById("sameBtn").classList.toggle("active", state.mode === "same");
+    }
+
+    function renderControls() {
+      const controls = document.getElementById("dynamicControls");
+
+      if (state.mode === "compare") {
+        controls.innerHTML = `
+          <div class="compare-controls">
+            ${miniControlHtml("A", state.massA, state.volumeA, calculateConcentration(state.massA, state.volumeA))}
+            ${miniControlHtml("B", state.massB, state.volumeB, calculateConcentration(state.massB, state.volumeB))}
+          </div>
+        `;
+
+        bindSlider("massA", "massAValue", "massA");
+        bindSlider("volumeA", "volumeAValue", "volumeA");
+        bindSlider("massB", "massBValue", "massB");
+        bindSlider("volumeB", "volumeBValue", "volumeB");
+      } else {
+        controls.innerHTML = `
+          <div class="same-control">
+            <div class="same-control-row">
+              <label for="targetConc">Target concentration: <span id="targetConcValue">${state.targetConc}</span> g/dm³</label>
+              <input id="targetConc" type="range" min="10" max="100" step="5" value="${state.targetConc}" />
+            </div>
+            <p class="hint">Larger volumes need more solute to keep the same particle crowding.</p>
+          </div>
+        `;
+
+        document.getElementById("targetConc").addEventListener("input", (event) => {
+          state.targetConc = Number(event.target.value);
+          document.getElementById("targetConcValue").textContent = state.targetConc;
+          renderSimulationsOnly();
+        });
+      }
+    }
+
+    function miniControlHtml(label, mass, volume, concentration) {
+      const massId = label === "A" ? "massA" : "massB";
+      const volumeId = label === "A" ? "volumeA" : "volumeB";
+      return `
+        <div class="mini-control">
+          <div class="mini-header">
+            <h2>Solution ${label}</h2>
+            <div class="mini-conc">${concentration.toFixed(1)} g/dm³</div>
+          </div>
+          <div class="slider-grid">
+            <label>
+              Mass: <span id="${massId}Value">${mass}</span> g
+              <input id="${massId}" type="range" min="1" max="25" step="1" value="${mass}" />
+            </label>
+            <label>
+              Volume: <span id="${volumeId}Value">${volume}</span> cm³
+              <input id="${volumeId}" type="range" min="50" max="500" step="50" value="${volume}" />
+            </label>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindSlider(elementId, valueId, stateKey) {
+      document.getElementById(elementId).addEventListener("input", (event) => {
+        state[stateKey] = Number(event.target.value);
+        document.getElementById(valueId).textContent = state[stateKey];
+        renderControls();
+        renderSimulationsOnly();
+      });
+    }
+
+    function getBeakerData() {
+      if (state.mode === "compare") {
+        return [
+          { id: "A", label: "Solution A", mass: state.massA, volume: state.volumeA },
+          { id: "B", label: "Solution B", mass: state.massB, volume: state.volumeB },
+        ];
+      }
+
+      return [50, 100, 250].map((volume) => ({
+        id: `same-${volume}`,
+        label: `${volume} cm³`,
+        volume,
+        mass: +(state.targetConc * cm3ToDm3(volume)).toFixed(2),
+      }));
+    }
+
+    function renderSimulationsOnly() {
+      stopAllSimulations();
+      renderSimulations();
+    }
+
+    function renderSimulations() {
+      const grid = document.getElementById("simulationGrid");
+      const beakerData = getBeakerData();
+
+      grid.className = `simulation-grid ${state.mode}`;
+      grid.innerHTML = "";
+
+      beakerData.forEach((data, index) => {
+        const conc = calculateConcentration(data.mass, data.volume);
+        const card = document.createElement("section");
+        card.className = "sim-card";
+
+        card.innerHTML = `
+          <div class="sim-title">
+            <h2>${data.label}</h2>
+            <div class="pill-row">
+              <div class="pill"><div class="pill-label">Mass</div><div class="pill-value">${data.mass} g</div></div>
+              <div class="pill"><div class="pill-label">Volume</div><div class="pill-value">${data.volume} cm³</div></div>
+              <div class="pill"><div class="pill-label">Conc.</div><div class="pill-value">${conc.toFixed(1)} g/dm³</div></div>
+            </div>
+          </div>
+          <div class="canvas-shell">
+            ${volumeScaleHtml(state.mode === "same" ? 250 : 500, 260)}
+            <canvas></canvas>
+          </div>
+          <div class="note">Constant particle size • liquid area is directly proportional to volume • mass changes particle number</div>
+          <div class="interpretation">
+            <strong>${concentrationLabel(conc)}</strong> — ${state.mode === "same" ? "compare particle crowding, not total particles." : "look at particle crowding inside the container."}
+          </div>
+        `;
+
+        grid.appendChild(card);
+
+        const canvas = card.querySelector("canvas");
+        const simulation = new ParticleSimulation(canvas, {
+          particleCount: Math.max(4, Math.min(120, Math.round(data.mass * PARTICLES_PER_GRAM))),
+          volume: data.volume,
+          seed: index + 11,
+          mode: state.mode,
+          particleScale: 0.82,
+        });
+
+        state.simulations.push(simulation);
+        simulation.start();
+      });
+    }
+
+    function concentrationLabel(conc) {
+      if (conc >= 100) return "Very concentrated";
+      if (conc >= 50) return "More concentrated";
+      return "Less concentrated";
+    }
+
+    function volumeScaleHtml(maxVolume, maxHeight) {
+      const tickValues = maxVolume === 250 ? [50, 100, 150, 200, 250] : [100, 200, 300, 400, 500];
+      const ticks = tickValues
+        .map((v) => {
+          const y = maxHeight - calculateHeightForVolume(v, maxVolume, maxHeight);
+          return `<div class="tick" style="top:${y - 7}px"><span>${v}</span><span class="tick-line"></span></div>`;
+        })
+        .join("");
+
+      return `<div class="scale" style="height:${maxHeight}px">${ticks}</div>`;
+    }
+
+    function stopAllSimulations() {
+      state.simulations.forEach((sim) => sim.stop());
+      state.simulations = [];
+    }
+
+    function renderPrompts() {
+      document.getElementById("promptGrid").classList.toggle("open", state.showPrompts);
+      document.getElementById("promptIcon").textContent = state.showPrompts ? "−" : "+";
+    }
+
+    class ParticleSimulation {
+      constructor(canvas, options) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+        this.options = options;
+        this.particles = [];
+        this.frame = null;
+        this.config = this.createConfig();
+        this.createParticles();
+      }
+
+      createConfig() {
+        const maxVolume = this.options.mode === "same" ? 250 : 500;
+        const width = this.options.mode === "same" ? 250 : 330;
+        const maxHeight = 260;
+        const height = calculateHeightForVolume(this.options.volume, maxVolume, maxHeight);
+        const radius = 4.4 * this.options.particleScale;
+
+        return {
+          width,
+          height: Math.max(1, Math.round(height)),
+          radius,
+          maxHeight,
+          maxVolume,
+        };
+      }
+
+      createParticles() {
+        const { width, height, radius } = this.config;
+        const { seed, particleCount, volume } = this.options;
+        const rand = mulberry32(seed * 100000 + particleCount * 97 + volume * 13 + Math.round(width));
+        const particles = [];
+
+        for (let i = 0; i < particleCount; i++) {
+          let placed = false;
+          let x = radius + rand() * Math.max(1, width - radius * 2);
+          let y = radius + rand() * Math.max(1, height - radius * 2);
+
+          for (let attempt = 0; attempt < 500 && !placed; attempt++) {
+            x = radius + rand() * Math.max(1, width - radius * 2);
+            y = radius + rand() * Math.max(1, height - radius * 2);
+            placed = particles.every((p) => distanceSquared(x, y, p.x, p.y) > (radius * 2.15) ** 2);
+          }
+
+          const angle = rand() * Math.PI * 2;
+          const baseSpeed = 0.55 + rand() * 0.65;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * baseSpeed,
+            vy: Math.sin(angle) * baseSpeed,
+            radius,
+            mass: 1,
+          });
+        }
+
+        this.particles = particles;
+      }
+
+      start() {
+        const dpr = window.devicePixelRatio || 1;
+        const { width, height } = this.config;
+
+        this.canvas.width = width * dpr;
+        this.canvas.height = height * dpr;
+        this.canvas.style.width = `${width}px`;
+        this.canvas.style.height = `${height}px`;
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        this.step();
+      }
+
+      stop() {
+        if (this.frame) cancelAnimationFrame(this.frame);
+      }
+
+      step() {
+        const { width, height, radius } = this.config;
+        const ctx = this.ctx;
+        const dt = DEFAULT_PARTICLE_SPEED;
+
+        ctx.fillStyle = "rgba(239, 246, 255, 0.22)";
+        ctx.fillRect(0, 0, width, height);
+
+        drawLiquid(ctx, width, height);
+
+        for (const p of this.particles) {
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+
+          if (p.x - radius < 0) {
+            p.x = radius;
+            p.vx = Math.abs(p.vx);
+          }
+          if (p.x + radius > width) {
+            p.x = width - radius;
+            p.vx = -Math.abs(p.vx);
+          }
+          if (p.y - radius < 0) {
+            p.y = radius;
+            p.vy = Math.abs(p.vy);
+          }
+          if (p.y + radius > height) {
+            p.y = height - radius;
+            p.vy = -Math.abs(p.vy);
+          }
+        }
+
+        this.resolveParticleCollisions();
+        drawParticles(ctx, this.particles);
+        drawBeakerEdges(ctx, width, height);
+
+        this.frame = requestAnimationFrame(() => this.step());
+      }
+
+      resolveParticleCollisions() {
+        const particles = this.particles;
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i];
+            const b = particles[j];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const distSq = dx * dx + dy * dy;
+            const minDist = a.radius + b.radius;
+
+            if (distSq > 0 && distSq < minDist * minDist) {
+              const dist = Math.sqrt(distSq);
+              const nx = dx / dist;
+              const ny = dy / dist;
+              const overlap = minDist - dist;
+
+              a.x -= (overlap / 2) * nx;
+              a.y -= (overlap / 2) * ny;
+              b.x += (overlap / 2) * nx;
+              b.y += (overlap / 2) * ny;
+
+              const dvx = b.vx - a.vx;
+              const dvy = b.vy - a.vy;
+              const impact = dvx * nx + dvy * ny;
+
+              if (impact < 0) {
+                const impulse = impact;
+                a.vx += impulse * nx;
+                a.vy += impulse * ny;
+                b.vx -= impulse * nx;
+                b.vy -= impulse * ny;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function drawLiquid(ctx, width, height) {
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, "rgba(191, 219, 254, 0.55)");
+      gradient.addColorStop(1, "rgba(147, 197, 253, 0.75)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.strokeStyle = "rgba(37, 99, 235, 0.45)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 8);
+      for (let x = 0; x <= width; x += 12) {
+        ctx.lineTo(x, 8 + Math.sin(x / 28) * 2.2);
+      }
+      ctx.stroke();
+    }
+
+    function drawParticles(ctx, particles) {
+      for (const p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(30, 64, 175, 0.88)";
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(15, 23, 42, 0.5)";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(p.x - p.radius * 0.35, p.y - p.radius * 0.35, p.radius * 0.22, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.fill();
+      }
+    }
+
+    function drawBeakerEdges(ctx, width, height) {
+      ctx.strokeStyle = "rgba(51, 65, 85, 0.95)";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, height);
+      ctx.quadraticCurveTo(0, height, 18, height);
+      ctx.lineTo(width - 18, height);
+      ctx.quadraticCurveTo(width, height, width, height);
+      ctx.lineTo(width, 0);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(100, 116, 139, 0.65)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 2);
+      ctx.lineTo(width, 2);
+      ctx.stroke();
+    }
+
+    function distanceSquared(x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      return dx * dx + dy * dy;
+    }
+
+    function mulberry32(a) {
+      return function () {
+        let t = (a += 0x6d2b79f5);
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    document.getElementById("compareBtn").addEventListener("click", () => {
+      state.mode = "compare";
+      render();
+    });
+
+    document.getElementById("sameBtn").addEventListener("click", () => {
+      state.mode = "same";
+      render();
+    });
+
+    document.getElementById("promptToggle").addEventListener("click", () => {
+      state.showPrompts = !state.showPrompts;
+      renderPrompts();
+    });
+
+    window.addEventListener("beforeunload", stopAllSimulations);
+    render();
+  </script>
+</body>
+</html>
