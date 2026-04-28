@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCSE Chemistry Equation Trainer</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0; --slate-300:#cbd5e1;
+      --slate-500:#64748b; --slate-600:#475569; --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
+      --cyan-50:#ecfeff; --cyan-600:#0891b2; --cyan-700:#0e7490;
+      --indigo-50:#eef2ff; --indigo-100:#e0e7ff; --indigo-700:#4338ca; --indigo-900:#312e81;
+      --emerald-50:#ecfdf5; --emerald-200:#a7f3d0; --emerald-600:#059669; --emerald-900:#064e3b;
+      --rose-50:#fff1f2; --rose-200:#fecdd3; --rose-600:#e11d48; --rose-900:#881337;
+      --amber-50:#fffbeb; --amber-200:#fde68a; --amber-900:#78350f;
+    }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-900);
+      background: linear-gradient(135deg, var(--slate-50), var(--cyan-50), var(--indigo-50));
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .header {
+      display: flex; justify-content: space-between; gap: 16px; align-items: center;
+      background: rgba(255,255,255,.82); border: 1px solid var(--slate-200); border-radius: 28px;
+      padding: 20px; box-shadow: 0 1px 5px rgba(15,23,42,.06); backdrop-filter: blur(10px); margin-bottom: 16px;
+    }
+    .eyebrow { display: flex; gap: 8px; align-items: center; font-weight: 700; color: var(--cyan-700); font-size: 14px; }
+    h1 { margin: 4px 0 0; font-size: 32px; letter-spacing: -0.03em; }
+    p { margin: 0; }
+    .subtitle { margin-top: 6px; color: var(--slate-600); font-size: 14px; max-width: 760px; }
+    .stats { display: grid; grid-template-columns: repeat(3, minmax(85px, 1fr)); gap: 8px; text-align: center; }
+    .stat { background: var(--slate-100); border-radius: 18px; padding: 12px 16px; }
+    .stat-label { color: var(--slate-500); font-size: 12px; }
+    .stat-value { font-weight: 800; font-size: 22px; }
+    .layout { display: grid; grid-template-columns: 280px 1fr 300px; gap: 16px; }
+    .card { background: rgba(255,255,255,.92); border: 1px solid var(--slate-200); border-radius: 28px; box-shadow: 0 1px 5px rgba(15,23,42,.05); }
+    .card-content { padding: 16px; }
+    h2 { font-size: 16px; margin: 0 0 12px; }
+    .mode-list { display: flex; flex-direction: column; gap: 8px; }
+    button, select, textarea { font: inherit; }
+    .mode-btn, .pattern-btn {
+      border: 0; width: 100%; text-align: left; cursor: pointer; border-radius: 18px; padding: 12px;
+      font-weight: 700; transition: .15s ease; background: var(--slate-100); color: var(--slate-700);
+    }
+    .mode-btn { display: flex; gap: 10px; align-items: center; }
+    .mode-btn:hover, .pattern-btn:hover { background: var(--slate-200); }
+    .mode-btn.active, .pattern-btn.active { background: var(--cyan-600); color: white; box-shadow: 0 8px 18px rgba(8,145,178,.2); }
+    select { width: 100%; border-radius: 18px; border: 1px solid var(--slate-200); background: white; padding: 12px; font-weight: 700; color: var(--slate-800); }
+    .teacher-note { margin-top: 18px; border-radius: 18px; padding: 14px; background: var(--amber-50); border: 1px solid var(--amber-200); color: var(--amber-900); font-size: 14px; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .btn {
+      border: 0; cursor: pointer; border-radius: 18px; padding: 10px 16px; font-size: 14px; font-weight: 700;
+      background: var(--cyan-600); color: white; transition: .15s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn:hover { background: var(--cyan-700); }
+    .btn-outline { background: white; color: var(--slate-700); border: 1px solid var(--slate-300); }
+    .btn-outline:hover { background: var(--slate-50); }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge { border-radius: 999px; background: var(--slate-100); color: var(--slate-700); padding: 5px 12px; font-weight: 700; font-size: 12px; }
+    .question-top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .prompt { color: var(--slate-500); font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .equation-box {
+      background: white; border: 1px solid var(--slate-200); border-radius: 20px; padding: 18px;
+      text-align: center; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 20px; font-weight: 800;
+      box-shadow: inset 0 2px 8px rgba(15,23,42,.05);
+    }
+    sub { font-size: .72em; line-height: 0; }
+    .answer-area { margin-top: 18px; }
+    .patterns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    textarea {
+      width: 100%; min-height: 116px; resize: vertical; border-radius: 20px; border: 1px solid var(--slate-200);
+      background: var(--slate-50); padding: 16px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 16px;
+      outline: none;
+    }
+    textarea:focus { background: white; border-color: var(--cyan-600); box-shadow: 0 0 0 3px rgba(8,145,178,.13); }
+    .formula-toolbar {
+      display: none; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; border-radius: 18px;
+      background: var(--slate-100); border: 1px solid var(--slate-200); padding: 8px;
+    }
+    .toolbar-btn {
+      border: 0; cursor: pointer; border-radius: 14px; padding: 9px 12px; background: white; color: var(--slate-700); font-weight: 700;
+    }
+    .toolbar-btn.active { background: var(--cyan-600); color: white; }
+    .toolbar-tip { color: var(--slate-500); font-size: 12px; }
+    .feedback { display: none; margin-top: 18px; border-radius: 24px; padding: 16px; border: 1px solid; }
+    .feedback.correct { display: block; background: var(--emerald-50); border-color: var(--emerald-200); color: var(--emerald-900); }
+    .feedback.incorrect { display: block; background: var(--rose-50); border-color: var(--rose-200); color: var(--rose-900); }
+    .feedback-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .hint, .answer-reveal { display: none; margin-top: 14px; border-radius: 18px; padding: 14px; font-size: 14px; }
+    .hint { background: var(--indigo-50); color: var(--indigo-900); border: 1px solid var(--indigo-100); }
+    .answer-reveal { background: var(--slate-900); color: white; }
+    .answer-reveal div + div { margin-top: 8px; }
+    .attempt-list { display: flex; flex-direction: column; gap: 8px; }
+    .attempt { display: flex; justify-content: space-between; gap: 8px; align-items: center; background: var(--slate-50); border-radius: 18px; padding: 12px; font-size: 14px; }
+    .ok { color: var(--emerald-600); font-weight: 900; }
+    .bad { color: var(--rose-600); font-weight: 900; }
+    .mt { margin-top: 18px; }
+    @media (max-width: 1050px) { .layout { grid-template-columns: 1fr; } .header { align-items: stretch; } }
+    @media (max-width: 700px) { body { padding: 10px; } .header { flex-direction: column; } .stats, .patterns { grid-template-columns: 1fr; } h1 { font-size: 26px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <div class="eyebrow"><span>⚗️</span> GCSE Chemistry Revision</div>
+        <h1>Equation Trainer</h1>
+        <p class="subtitle">Practise products, word equations, symbol equations, balancing and reaction families. The app marks answers instantly and gives targeted hints.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Score</div><div class="stat-value" id="scoreValue">0/0</div></div>
+        <div class="stat"><div class="stat-label">Streak</div><div class="stat-value" id="streakValue">0</div></div>
+        <div class="stat"><div class="stat-label">Bank</div><div class="stat-value" id="bankValue">0</div></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="card">
+        <div class="card-content">
+          <h2>Practice mode</h2>
+          <div class="mode-list" id="modeList"></div>
+
+          <h2 class="mt">Reaction family</h2>
+          <select id="familySelect"></select>
+
+          <div class="teacher-note"><strong>Teacher note:</strong> students can use hints during practice, then switch to mixed family and symbol equation mode for retrieval.</div>
+          <button class="btn btn-outline mt" id="resetScoreBtn" style="width:100%;">↻ Reset score</button>
+        </div>
+      </aside>
+
+      <main class="card">
+        <div class="card-content">
+          <div class="question-top">
+            <div class="badges">
+              <span class="badge" id="familyBadge"></span>
+              <span class="badge" id="difficultyBadge"></span>
+              <span class="badge" id="modeBadge"></span>
+            </div>
+            <button class="btn btn-outline" id="randomBtn">🔀 Random</button>
+          </div>
+
+          <p class="prompt" id="modePrompt"></p>
+          <div class="equation-box" id="questionBox"></div>
+
+          <div class="answer-area" id="answerArea">
+            <div class="formula-toolbar" id="formulaToolbar">
+              <button class="toolbar-btn" id="subscriptBtn" type="button">x₂ Subscript off</button>
+              <button class="toolbar-btn" id="arrowBtn" type="button">Insert arrow →</button>
+              <button class="toolbar-btn" id="reversibleBtn" type="button">Insert reversible ⇌</button>
+              <span class="toolbar-tip">Turn subscript on for formula numbers, then off for coefficients.</span>
+            </div>
+            <textarea id="answerInput" placeholder="Type your answer here..."></textarea>
+            <div class="patterns" id="patternOptions"></div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" id="checkBtn">Check answer</button>
+            <button class="btn btn-outline" id="hintBtn">💡 Hint</button>
+            <button class="btn btn-outline" id="answerBtn">👁️ Answer</button>
+            <button class="btn btn-outline" id="nextBtn">↻ Next</button>
+          </div>
+
+          <div class="feedback" id="feedbackBox">
+            <div class="feedback-title" id="feedbackTitle"></div>
+            <p id="feedbackText" style="margin-top:8px;"></p>
+          </div>
+
+          <div class="hint" id="hintBox"></div>
+          <div class="answer-reveal" id="answerReveal"></div>
+        </div>
+      </main>
+
+      <aside class="card">
+        <div class="card-content">
+          <h2>Recent attempts</h2>
+          <div id="historyList" class="attempt-list"><p style="color:var(--slate-500);font-size:14px;">No attempts yet.</p></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const EQUATIONS = [
+      { id: "mg-o2", family: "Metals + oxygen", difficulty: "easy", wordReactants: "magnesium + oxygen", wordProducts: "magnesium oxide", wordEquation: "magnesium + oxygen → magnesium oxide", symbolEquation: "2Mg + O2 → 2MgO", unbalanced: "Mg + O2 → MgO", pattern: "metal + oxygen → metal oxide", hint: "A metal reacting with oxygen forms a metal oxide." },
+      { id: "na-o2", family: "Metals + oxygen", difficulty: "medium", wordReactants: "sodium + oxygen", wordProducts: "sodium oxide", wordEquation: "sodium + oxygen → sodium oxide", symbolEquation: "4Na + O2 → 2Na2O", unbalanced: "Na + O2 → Na2O", pattern: "metal + oxygen → metal oxide", hint: "Sodium forms Na+ ions, so sodium oxide is Na2O." },
+      { id: "li-water", family: "Group 1 + water", difficulty: "easy", wordReactants: "lithium + water", wordProducts: "lithium hydroxide + hydrogen", wordEquation: "lithium + water → lithium hydroxide + hydrogen", symbolEquation: "2Li + 2H2O → 2LiOH + H2", unbalanced: "Li + H2O → LiOH + H2", pattern: "Group 1 metal + water → metal hydroxide + hydrogen", hint: "Group 1 metals react with water to make an alkaline hydroxide and hydrogen gas." },
+      { id: "na-water", family: "Group 1 + water", difficulty: "easy", wordReactants: "sodium + water", wordProducts: "sodium hydroxide + hydrogen", wordEquation: "sodium + water → sodium hydroxide + hydrogen", symbolEquation: "2Na + 2H2O → 2NaOH + H2", unbalanced: "Na + H2O → NaOH + H2", pattern: "Group 1 metal + water → metal hydroxide + hydrogen", hint: "The solution formed is alkaline because sodium hydroxide is produced." },
+      { id: "mg-hcl", family: "Metals + acids", difficulty: "easy", wordReactants: "magnesium + hydrochloric acid", wordProducts: "magnesium chloride + hydrogen", wordEquation: "magnesium + hydrochloric acid → magnesium chloride + hydrogen", symbolEquation: "Mg + 2HCl → MgCl2 + H2", unbalanced: "Mg + HCl → MgCl2 + H2", pattern: "metal + acid → salt + hydrogen", hint: "Hydrochloric acid forms chloride salts." },
+      { id: "zn-h2so4", family: "Metals + acids", difficulty: "medium", wordReactants: "zinc + sulfuric acid", wordProducts: "zinc sulfate + hydrogen", wordEquation: "zinc + sulfuric acid → zinc sulfate + hydrogen", symbolEquation: "Zn + H2SO4 → ZnSO4 + H2", unbalanced: "Zn + H2SO4 → ZnSO4 + H2", pattern: "metal + acid → salt + hydrogen", hint: "Sulfuric acid forms sulfate salts." },
+      { id: "hcl-naoh", family: "Neutralisation", difficulty: "easy", wordReactants: "hydrochloric acid + sodium hydroxide", wordProducts: "sodium chloride + water", wordEquation: "hydrochloric acid + sodium hydroxide → sodium chloride + water", symbolEquation: "HCl + NaOH → NaCl + H2O", unbalanced: "HCl + NaOH → NaCl + H2O", pattern: "acid + alkali → salt + water", hint: "Hydrochloric acid makes chloride salts. Sodium hydroxide provides the sodium part of the salt." },
+      { id: "h2so4-koh", family: "Neutralisation", difficulty: "medium", wordReactants: "sulfuric acid + potassium hydroxide", wordProducts: "potassium sulfate + water", wordEquation: "sulfuric acid + potassium hydroxide → potassium sulfate + water", symbolEquation: "H2SO4 + 2KOH → K2SO4 + 2H2O", unbalanced: "H2SO4 + KOH → K2SO4 + H2O", pattern: "acid + alkali → salt + water", hint: "Potassium is K+, sulfate is SO4 2-, so potassium sulfate is K2SO4." },
+      { id: "cuo-h2so4", family: "Acids + metal oxides", difficulty: "medium", wordReactants: "copper oxide + sulfuric acid", wordProducts: "copper sulfate + water", wordEquation: "copper oxide + sulfuric acid → copper sulfate + water", symbolEquation: "CuO + H2SO4 → CuSO4 + H2O", unbalanced: "CuO + H2SO4 → CuSO4 + H2O", pattern: "metal oxide + acid → salt + water", hint: "Metal oxides neutralise acids to form a salt and water." },
+      { id: "caco3-hcl", family: "Acids + carbonates", difficulty: "medium", wordReactants: "calcium carbonate + hydrochloric acid", wordProducts: "calcium chloride + water + carbon dioxide", wordEquation: "calcium carbonate + hydrochloric acid → calcium chloride + water + carbon dioxide", symbolEquation: "CaCO3 + 2HCl → CaCl2 + H2O + CO2", unbalanced: "CaCO3 + HCl → CaCl2 + H2O + CO2", pattern: "carbonate + acid → salt + water + carbon dioxide", hint: "Every acid-carbonate reaction produces carbon dioxide." },
+      { id: "caco3-thermal", family: "Thermal decomposition", difficulty: "easy", wordReactants: "calcium carbonate", wordProducts: "calcium oxide + carbon dioxide", wordEquation: "calcium carbonate → calcium oxide + carbon dioxide", symbolEquation: "CaCO3 → CaO + CO2", unbalanced: "CaCO3 → CaO + CO2", pattern: "metal carbonate → metal oxide + carbon dioxide", hint: "Heating many metal carbonates produces a metal oxide and carbon dioxide." },
+      { id: "methane-complete", family: "Combustion", difficulty: "medium", wordReactants: "methane + oxygen", wordProducts: "carbon dioxide + water", wordEquation: "methane + oxygen → carbon dioxide + water", symbolEquation: "CH4 + 2O2 → CO2 + 2H2O", unbalanced: "CH4 + O2 → CO2 + H2O", pattern: "hydrocarbon + oxygen → carbon dioxide + water", hint: "Complete combustion produces carbon dioxide and water." },
+      { id: "mg-cuso4", family: "Displacement reactions", difficulty: "medium", wordReactants: "magnesium + copper sulfate", wordProducts: "magnesium sulfate + copper", wordEquation: "magnesium + copper sulfate → magnesium sulfate + copper", symbolEquation: "Mg + CuSO4 → MgSO4 + Cu", unbalanced: "Mg + CuSO4 → MgSO4 + Cu", pattern: "more reactive metal + less reactive metal compound → new compound + displaced metal", hint: "Magnesium is more reactive than copper, so it displaces copper from copper sulfate." },
+      { id: "na-cl2", family: "Halogens", difficulty: "easy", wordReactants: "sodium + chlorine", wordProducts: "sodium chloride", wordEquation: "sodium + chlorine → sodium chloride", symbolEquation: "2Na + Cl2 → 2NaCl", unbalanced: "Na + Cl2 → NaCl", pattern: "metal + halogen → metal halide", hint: "Chlorine is diatomic, so it is Cl2." },
+      { id: "cl2-kbr", family: "Halogens", difficulty: "hard", wordReactants: "chlorine + potassium bromide", wordProducts: "potassium chloride + bromine", wordEquation: "chlorine + potassium bromide → potassium chloride + bromine", symbolEquation: "Cl2 + 2KBr → 2KCl + Br2", unbalanced: "Cl2 + KBr → KCl + Br2", pattern: "more reactive halogen + halide compound → new halide compound + less reactive halogen", hint: "Chlorine is more reactive than bromine, so it displaces bromine." },
+      { id: "br2-ki", family: "Halogens", difficulty: "hard", wordReactants: "bromine + potassium iodide", wordProducts: "potassium bromide + iodine", wordEquation: "bromine + potassium iodide → potassium bromide + iodine", symbolEquation: "Br2 + 2KI → 2KBr + I2", unbalanced: "Br2 + KI → KBr + I2", pattern: "more reactive halogen + halide compound → new halide compound + less reactive halogen", hint: "Bromine is more reactive than iodine, so it displaces iodine." },
+      { id: "pbbr2-electrolysis", family: "Electrolysis", difficulty: "medium", wordReactants: "lead bromide", wordProducts: "lead + bromine", wordEquation: "lead bromide → lead + bromine", symbolEquation: "PbBr2 → Pb + Br2", unbalanced: "PbBr2 → Pb + Br2", pattern: "molten ionic compound → metal + non-metal", hint: "In molten lead bromide, lead forms at the cathode and bromine forms at the anode." },
+      { id: "agcl-precip", family: "Precipitation / ionic equations", difficulty: "hard", wordReactants: "silver nitrate + sodium chloride", wordProducts: "silver chloride + sodium nitrate", wordEquation: "silver nitrate + sodium chloride → silver chloride + sodium nitrate", symbolEquation: "AgNO3 + NaCl → AgCl + NaNO3", ionicEquation: "Ag+ + Cl- → AgCl", unbalanced: "AgNO3 + NaCl → AgCl + NaNO3", pattern: "two soluble salts → insoluble salt precipitate + soluble salt", hint: "Silver chloride is the insoluble precipitate." },
+      { id: "photosynthesis", family: "Biology crossover", difficulty: "medium", wordReactants: "carbon dioxide + water", wordProducts: "glucose + oxygen", wordEquation: "carbon dioxide + water → glucose + oxygen", symbolEquation: "6CO2 + 6H2O → C6H12O6 + 6O2", unbalanced: "CO2 + H2O → C6H12O6 + O2", pattern: "photosynthesis stores energy by making glucose", hint: "Photosynthesis needs light energy and chlorophyll, but these are not written as reactants." },
+      { id: "haber", family: "Haber process", difficulty: "medium", wordReactants: "nitrogen + hydrogen", wordProducts: "ammonia", wordEquation: "nitrogen + hydrogen ⇌ ammonia", symbolEquation: "N2 + 3H2 ⇌ 2NH3", unbalanced: "N2 + H2 ⇌ NH3", pattern: "nitrogen + hydrogen ⇌ ammonia", hint: "The Haber process is reversible, so use the equilibrium arrow." }
+    ];
+
+    const MODES = [
+      { id: "products", label: "Predict products", icon: "🎯", prompt: "Type the products in words." },
+      { id: "word", label: "Word equation", icon: "📘", prompt: "Write the full word equation." },
+      { id: "symbol", label: "Symbol equation", icon: "⚗️", prompt: "Write the balanced symbol equation." },
+      { id: "balance", label: "Balance it", icon: "🏆", prompt: "Balance the symbol equation." },
+      { id: "family", label: "Reaction family", icon: "🧩", prompt: "Choose the reaction pattern." }
+    ];
+
+    const SUBSCRIPT_DIGITS = { "0":"₀", "1":"₁", "2":"₂", "3":"₃", "4":"₄", "5":"₅", "6":"₆", "7":"₇", "8":"₈", "9":"₉" };
+    const families = ["All families", ...Array.from(new Set(EQUATIONS.map(e => e.family)))];
+
+    let state = {
+      mode: "products", familyFilter: "All families", currentIndex: 0, input: "", selectedFamily: "",
+      checked: false, showHint: false, showAnswer: false, correct: false, subscriptMode: false,
+      score: { correct: 0, attempted: 0, streak: 0 }, history: [], patternOptions: []
+    };
+
+    const el = id => document.getElementById(id);
+    const pool = () => EQUATIONS.filter(e => state.familyFilter === "All families" || e.family === state.familyFilter);
+    const currentEquation = () => pool()[state.currentIndex % pool().length] || EQUATIONS[0];
+    const currentMode = () => MODES.find(m => m.id === state.mode) || MODES[0];
+
+    function escapeHtml(text) {
+      return String(text ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[c]));
+    }
+
+    function formulaHtml(value) {
+      const text = String(value || "");
+      let html = "";
+      let subscriptMode = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const prev = text[i - 1] || "";
+        if (/[0-9]/.test(char)) {
+          const shouldBeSubscript = subscriptMode || /[A-Za-z)]/.test(prev);
+          html += shouldBeSubscript ? `<sub>${char}</sub>` : escapeHtml(char);
+          subscriptMode = shouldBeSubscript;
+        } else {
+          html += escapeHtml(char);
+          subscriptMode = false;
+        }
+      }
+      return html;
+    }
+
+    function normalise(input) {
+      return String(input || "").toLowerCase()
+        .replace(/⇌/g, "<=>").replace(/→|-->|=>/g, "->")
+        .replace(/[₀]/g,"0").replace(/[₁]/g,"1").replace(/[₂]/g,"2").replace(/[₃]/g,"3").replace(/[₄]/g,"4")
+        .replace(/[₅]/g,"5").replace(/[₆]/g,"6").replace(/[₇]/g,"7").replace(/[₈]/g,"8").replace(/[₉]/g,"9")
+        .replace(/\s+/g, "").trim();
+    }
+
+    function normaliseWords(input) {
+      return String(input || "").toLowerCase()
+        .replace(/⇌/g, "<=>").replace(/→|-->|=>/g, "->")
+        .replace(/\s*\+\s*/g, "+").replace(/\s*->\s*/g, "->").replace(/\s*<=>\s*/g, "<=>")
+        .replace(/\s+/g, " ").trim();
+    }
+
+    function checkAnswer(mode, input, equation, selectedFamily) {
+      if (mode === "family") return selectedFamily === equation.pattern;
+      if (mode === "products") return normaliseWords(input) === normaliseWords(equation.wordProducts);
+      if (mode === "word") return normaliseWords(input) === normaliseWords(equation.wordEquation);
+      if (mode === "symbol" || mode === "balance") return normalise(input) === normalise(equation.symbolEquation);
+      return false;
+    }
+
+    function shuffleArray(array) { return [...array].sort(() => Math.random() - 0.5); }
+    function toSubscriptDigit(char) { return SUBSCRIPT_DIGITS[char] || char; }
+
+    function setQuestionStateBlank() {
+      state.input = ""; state.selectedFamily = ""; state.checked = false; state.showHint = false; state.showAnswer = false; state.correct = false;
+      makePatternOptions();
+    }
+
+    function makePatternOptions() {
+      const equation = currentEquation();
+      const options = Array.from(new Set(EQUATIONS.map(e => e.pattern)));
+      const wrong = shuffleArray(options.filter(p => p !== equation.pattern)).slice(0, 3);
+      state.patternOptions = shuffleArray([equation.pattern, ...wrong]);
+    }
+
+    function feedbackHtml(mode, equation, input) {
+      if (!input && mode !== "family") return "Have a go first, then check your answer.";
+      if (mode === "products") return `Pattern reminder: ${escapeHtml(equation.pattern)}. Expected products: ${escapeHtml(equation.wordProducts)}.`;
+      if (mode === "word") return `Full word equation: ${escapeHtml(equation.wordEquation)}.`;
+      if (mode === "symbol" || mode === "balance") return `Correct balanced equation: ${formulaHtml(equation.symbolEquation)}. Remember to check formulae first, then balance using coefficients.`;
+      return `This reaction follows: ${escapeHtml(equation.pattern)}.`;
+    }
+
+    function insertTextAtCursor(textToInsert) {
+      const textarea = el("answerInput");
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const value = textarea.value;
+      state.input = `${value.slice(0, start)}${textToInsert}${value.slice(end)}`;
+      render();
+      requestAnimationFrame(() => {
+        textarea.focus();
+        const nextCursor = start + textToInsert.length;
+        textarea.setSelectionRange(nextCursor, nextCursor);
+      });
+    }
+
+    function handleFormulaInputChange(event) {
+      const rawValue = event.target.value;
+      if (!state.subscriptMode) { state.input = rawValue; render(false); return; }
+      const previousValue = state.input;
+      const selectionStart = event.target.selectionStart;
+      let changedIndex = -1;
+      for (let i = 0; i < rawValue.length; i++) {
+        if (rawValue[i] !== previousValue[i]) { changedIndex = i; break; }
+      }
+      if (changedIndex === -1 && rawValue.length > previousValue.length) changedIndex = rawValue.length - 1;
+      let convertedValue = rawValue;
+      if (changedIndex >= 0) {
+        const changedCharacter = rawValue[changedIndex];
+        const previousCharacter = rawValue[changedIndex - 1] || "";
+        if (/[0-9]/.test(changedCharacter) && /[A-Za-z)]/.test(previousCharacter)) {
+          convertedValue = `${rawValue.slice(0, changedIndex)}${toSubscriptDigit(changedCharacter)}${rawValue.slice(changedIndex + 1)}`;
+        }
+      }
+      state.input = convertedValue;
+      render(false);
+      requestAnimationFrame(() => {
+        const textarea = el("answerInput");
+        textarea.focus(); textarea.setSelectionRange(selectionStart, selectionStart);
+      });
+    }
+
+    function render(restoreFocus = false) {
+      const equation = currentEquation();
+      const mode = currentMode();
+      const isFormulaMode = state.mode === "symbol" || state.mode === "balance";
+
+      el("scoreValue").textContent = `${state.score.correct}/${state.score.attempted}`;
+      el("streakValue").textContent = state.score.streak;
+      el("bankValue").textContent = pool().length;
+      el("familyBadge").textContent = equation.family;
+      el("difficultyBadge").textContent = equation.difficulty;
+      el("modeBadge").textContent = mode.label;
+      el("modePrompt").textContent = mode.prompt;
+
+      document.querySelectorAll(".mode-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.mode === state.mode));
+      el("familySelect").value = state.familyFilter;
+
+      if (state.mode === "products" || state.mode === "word") el("questionBox").textContent = `${equation.wordReactants} → ?`;
+      if (state.mode === "symbol") el("questionBox").textContent = equation.wordEquation;
+      if (state.mode === "balance") el("questionBox").innerHTML = formulaHtml(equation.unbalanced);
+      if (state.mode === "family") el("questionBox").textContent = equation.wordEquation;
+
+      el("formulaToolbar").style.display = isFormulaMode ? "flex" : "none";
+      el("answerInput").style.display = state.mode === "family" ? "none" : "block";
+      el("answerInput").value = state.input;
+      el("answerInput").placeholder = isFormulaMode ? "e.g. Mg + 2HCl → MgCl₂ + H₂" : "Type your answer here...";
+      el("subscriptBtn").classList.toggle("active", state.subscriptMode);
+      el("subscriptBtn").textContent = `x₂ Subscript ${state.subscriptMode ? "on" : "off"}`;
+
+      const patternOptions = el("patternOptions");
+      patternOptions.style.display = state.mode === "family" ? "grid" : "none";
+      patternOptions.innerHTML = state.patternOptions.map(p => `<button type="button" class="pattern-btn ${state.selectedFamily === p ? "active" : ""}" data-pattern="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join("");
+      patternOptions.querySelectorAll(".pattern-btn").forEach(btn => btn.addEventListener("click", () => { state.selectedFamily = btn.dataset.pattern; render(); }));
+
+      el("hintBox").style.display = state.showHint ? "block" : "none";
+      el("hintBox").innerHTML = `<strong>Hint:</strong> ${escapeHtml(equation.hint)}`;
+
+      el("answerReveal").style.display = state.showAnswer ? "block" : "none";
+      el("answerReveal").innerHTML = `<div><strong>Pattern:</strong> ${escapeHtml(equation.pattern)}</div><div><strong>Word:</strong> ${escapeHtml(equation.wordEquation)}</div><div><strong>Symbol:</strong> ${formulaHtml(equation.symbolEquation)}</div>${equation.ionicEquation ? `<div><strong>Ionic:</strong> ${formulaHtml(equation.ionicEquation)}</div>` : ""}`;
+
+      const feedbackBox = el("feedbackBox");
+      feedbackBox.className = "feedback";
+      if (state.checked) {
+        feedbackBox.classList.add(state.correct ? "correct" : "incorrect");
+        el("feedbackTitle").innerHTML = `${state.correct ? "✓" : "✕"} ${state.correct ? "Correct — excellent recall." : "Not quite yet."}`;
+        el("feedbackText").innerHTML = state.correct ? "" : feedbackHtml(state.mode, equation, state.input);
+      }
+
+      const historyList = el("historyList");
+      if (state.history.length === 0) {
+        historyList.innerHTML = `<p style="color:var(--slate-500);font-size:14px;">No attempts yet.</p>`;
+      } else {
+        historyList.innerHTML = state.history.map(h => `<div class="attempt"><span>${escapeHtml(h.family)}</span><span class="${h.correct ? "ok" : "bad"}">${h.correct ? "✓" : "✕"}</span></div>`).join("");
+      }
+
+      if (restoreFocus && state.mode !== "family") requestAnimationFrame(() => el("answerInput").focus());
+    }
+
+    function init() {
+      el("modeList").innerHTML = MODES.map(m => `<button type="button" class="mode-btn" data-mode="${m.id}"><span style="width:24px;text-align:center;">${m.icon}</span>${m.label}</button>`).join("");
+      el("modeList").querySelectorAll(".mode-btn").forEach(btn => btn.addEventListener("click", () => { state.mode = btn.dataset.mode; setQuestionStateBlank(); render(); }));
+      el("familySelect").innerHTML = families.map(f => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
+      el("familySelect").addEventListener("change", e => { state.familyFilter = e.target.value; state.currentIndex = 0; setQuestionStateBlank(); render(); });
+      el("resetScoreBtn").addEventListener("click", () => { state.score = { correct: 0, attempted: 0, streak: 0 }; state.history = []; setQuestionStateBlank(); render(); });
+      el("randomBtn").addEventListener("click", () => { state.currentIndex = Math.floor(Math.random() * pool().length); setQuestionStateBlank(); render(); });
+      el("nextBtn").addEventListener("click", () => { state.currentIndex = (state.currentIndex + 1) % pool().length; setQuestionStateBlank(); render(); });
+      el("hintBtn").addEventListener("click", () => { state.showHint = !state.showHint; render(); });
+      el("answerBtn").addEventListener("click", () => { state.showAnswer = !state.showAnswer; render(); });
+      el("checkBtn").addEventListener("click", () => {
+        const equation = currentEquation();
+        const isCorrect = checkAnswer(state.mode, state.input, equation, state.selectedFamily);
+        if (!state.checked) {
+          state.score.correct += isCorrect ? 1 : 0;
+          state.score.attempted += 1;
+          state.score.streak = isCorrect ? state.score.streak + 1 : 0;
+          state.history = [{ id: equation.id, family: equation.family, mode: state.mode, correct: isCorrect }, ...state.history].slice(0, 8);
+        }
+        state.correct = isCorrect; state.checked = true; render();
+      });
+      el("answerInput").addEventListener("input", e => {
+        const isFormulaMode = state.mode === "symbol" || state.mode === "balance";
+        if (isFormulaMode) handleFormulaInputChange(e); else { state.input = e.target.value; render(false); }
+      });
+      el("subscriptBtn").addEventListener("click", () => {
+        state.subscriptMode = !state.subscriptMode;
+        render();
+        requestAnimationFrame(() => el("answerInput").focus());
+      });
+      el("arrowBtn").addEventListener("click", () => insertTextAtCursor(" → "));
+      el("reversibleBtn").addEventListener("click", () => insertTextAtCursor(" ⇌ "));
+
+      console.assert(normalise("2Mg + O₂ → 2MgO") === normalise("2Mg+O2->2MgO"), "Normalisation test failed");
+      console.assert(checkAnswer("symbol", "Mg + 2HCl → MgCl₂ + H₂", EQUATIONS.find(e => e.id === "mg-hcl"), ""), "Subscript answer test failed");
+
+      makePatternOptions();
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
