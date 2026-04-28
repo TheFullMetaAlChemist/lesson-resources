@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hearing: Sound Wave to Brain</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script src="https://unpkg.com/framer-motion@10/dist/framer-motion.js"></script>
+
+  <style>
+    html, body, #root {
+      margin: 0;
+      min-height: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f8fafc;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useState } = React;
+    const { AnimatePresence, motion } = window.Motion;
+
+    const stages = [
+      {
+        id: 0,
+        short: "Ear canal",
+        title: "Sound enters the ear canal",
+        explanation: "Sound waves are channelled into the ear and travel down the ear canal.",
+        particle: "sound wave",
+        colour: "bg-sky-50 border-sky-300",
+      },
+      {
+        id: 1,
+        short: "Ear drum",
+        title: "The ear drum vibrates",
+        explanation: "The sound reaches the ear drum, which vibrates in response to the sound waves.",
+        particle: "vibration",
+        colour: "bg-amber-50 border-amber-300",
+      },
+      {
+        id: 2,
+        short: "Small bones",
+        title: "Small bones amplify the vibrations",
+        explanation: "Small bones behind the ear drum vibrate and make the vibrations stronger.",
+        particle: "amplified vibration",
+        colour: "bg-orange-50 border-orange-300",
+      },
+      {
+        id: 3,
+        short: "Cochlea",
+        title: "Vibrations enter the cochlea",
+        explanation: "The final bone pushes against the fluid-filled cochlea.",
+        particle: "fluid wave",
+        colour: "bg-emerald-50 border-emerald-300",
+      },
+      {
+        id: 4,
+        short: "Hair cells",
+        title: "Hair cells convert the signal",
+        explanation: "Tiny hairs in the cochlea vibrate and change the vibrations into electrical impulses.",
+        particle: "electrical impulse",
+        colour: "bg-violet-50 border-violet-300",
+      },
+      {
+        id: 5,
+        short: "Auditory nerve",
+        title: "The signal travels to the brain",
+        explanation: "The auditory nerve carries the electrical impulse to the brain.",
+        particle: "nerve signal",
+        colour: "bg-rose-50 border-rose-300",
+      },
+    ];
+
+    function runContentTests() {
+      console.assert(stages.length === 6, "There should be six hearing stages.");
+      console.assert(stages[0].short === "Ear canal", "The first stage should be the ear canal.");
+      console.assert(stages[5].short === "Auditory nerve", "The final stage should be the auditory nerve.");
+      console.assert(stages.every((stage) => stage.title && stage.explanation && stage.particle), "Every stage needs display text.");
+      console.assert(new Set(stages.map((stage) => stage.id)).size === stages.length, "Stage IDs should be unique.");
+      console.assert(
+        stages.map((stage) => stage.short).join(" > ") === "Ear canal > Ear drum > Small bones > Cochlea > Hair cells > Auditory nerve",
+        "The hearing pathway should be in the correct order."
+      );
+      console.assert(stages.every((stage) => stage.short.length > 0), "Every stage needs a short label.");
+      console.assert(stages.every((stage) => stage.explanation.endsWith(".")), "Every explanation should be a complete sentence.");
+    }
+    runContentTests();
+
+    function Icon({ name, className = "" }) {
+      const icons = {
+        play: "▶",
+        pause: "⏸",
+        reset: "↻",
+        ear: "👂",
+        brain: "🧠",
+        sound: "🔊",
+        zap: "⚡",
+        help: "?",
+      };
+
+      return <span className={`inline-block ${className}`}>{icons[name] || ""}</span>;
+    }
+
+    function Button({ children, onClick, disabled = false, variant = "solid", className = "" }) {
+      const base = "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl px-3 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40";
+      const styles =
+        variant === "outline"
+          ? "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+          : "bg-sky-600 text-white shadow-sm hover:bg-sky-700";
+
+      return (
+        <button type="button" onClick={onClick} disabled={disabled} className={`${base} ${styles} ${className}`}>
+          {children}
+        </button>
+      );
+    }
+
+    function Card({ children, className = "" }) {
+      return <div className={`overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</div>;
+    }
+
+    function CardContent({ children, className = "" }) {
+      return <div className={className}>{children}</div>;
+    }
+
+    function ProfessionalEarDiagram({ stage }) {
+      const isActive = (target) => stage === target;
+      const signalX = [58, 186, 282, 386, 503, 648][stage];
+      const signalY = [194, 194, 194, 196, 187, 151][stage];
+      const signalColour = stage < 4 ? "#0284c7" : "#7c3aed";
+
+      return (
+        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-sky-50 p-1 shadow-inner">
+          <svg viewBox="0 0 760 420" className="h-[40vh] min-h-[270px] w-full">
+            <defs>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="8" stdDeviation="8" floodColor="#0f172a" floodOpacity="0.14" />
+              </filter>
+              <linearGradient id="outerEarGrad" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="#fed7aa" />
+                <stop offset="52%" stopColor="#fdba74" />
+                <stop offset="100%" stopColor="#fb923c" />
+              </linearGradient>
+              <linearGradient id="canalGrad" x1="0" x2="1">
+                <stop offset="0%" stopColor="#bae6fd" />
+                <stop offset="100%" stopColor="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="cochleaGrad" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="#d1fae5" />
+                <stop offset="100%" stopColor="#34d399" />
+              </linearGradient>
+              <linearGradient id="brainGrad" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stopColor="#fecdd3" />
+                <stop offset="100%" stopColor="#fb7185" />
+              </linearGradient>
+            </defs>
+
+            <rect x="18" y="18" width="724" height="384" rx="30" fill="rgba(255,255,255,0.45)" stroke="#e2e8f0" />
+
+            <g filter="url(#softShadow)">
+              <path d="M98 88 C37 124 31 259 92 312 C141 355 207 309 204 240 C202 181 178 126 143 101 C128 90 114 84 98 88Z" fill="url(#outerEarGrad)" stroke="#ea580c" strokeWidth="3" />
+              <path d="M112 137 C76 163 77 253 119 280 C152 301 175 267 164 235 C153 205 138 202 145 177 C153 146 134 126 112 137Z" fill="#fed7aa" stroke="#fb923c" strokeWidth="3" opacity="0.95" />
+              <path d="M151 197 C177 188 207 184 235 187" fill="none" stroke="#0f172a" strokeOpacity="0.18" strokeWidth="10" strokeLinecap="round" />
+            </g>
+
+            <g>
+              <path d="M166 194 C206 190 242 190 277 194" fill="none" stroke="url(#canalGrad)" strokeWidth="31" strokeLinecap="round" opacity={isActive(0) ? 1 : 0.72} />
+              <path d="M166 194 C206 190 242 190 277 194" fill="none" stroke="#0284c7" strokeWidth={isActive(0) ? 5 : 3} strokeDasharray="8 10" strokeLinecap="round" opacity="0.7" />
+            </g>
+
+            <motion.g animate={isActive(1) ? { x: [0, 3, -3, 2, 0] } : { x: 0 }} transition={{ duration: 0.45, repeat: isActive(1) ? Infinity : 0 }}>
+              <ellipse cx="306" cy="194" rx="13" ry="58" fill="#fbbf24" stroke="#b45309" strokeWidth="3" filter="url(#softShadow)" />
+              <ellipse cx="306" cy="194" rx="5" ry="45" fill="#fde68a" opacity="0.75" />
+            </motion.g>
+
+            <g filter="url(#softShadow)">
+              {[0, 1, 2].map((item) => {
+                const cx = 346 + item * 37;
+                return (
+                  <motion.g
+                    key={item}
+                    animate={isActive(2) ? { rotate: [0, 9, -9, 0], y: [0, -4, 4, 0] } : { rotate: 0, y: 0 }}
+                    transition={{ duration: 0.55, repeat: isActive(2) ? Infinity : 0, delay: item * 0.08 }}
+                    style={{ transformOrigin: `${cx}px 194px` }}
+                  >
+                    <circle cx={cx} cy="194" r="18" fill="#fed7aa" stroke="#ea580c" strokeWidth="3" />
+                    <circle cx={cx + 5} cy="189" r="7" fill="#fff7ed" opacity="0.75" />
+                    {item < 2 ? <path d={`M${cx + 18} 194 L${cx + 19} 194`} stroke="#ea580c" strokeWidth="5" strokeLinecap="round" /> : null}
+                  </motion.g>
+                );
+              })}
+            </g>
+
+            <g filter="url(#softShadow)">
+              <motion.path
+                d="M493 132 C544 128 584 163 584 209 C584 254 548 285 505 280 C466 276 438 248 439 212 C440 177 465 156 501 157 C533 158 555 180 553 207 C551 233 530 250 506 246 C484 242 471 226 475 207 C479 190 492 181 507 184 C520 186 528 196 526 208 C525 217 518 223 509 222"
+                fill="none"
+                stroke="url(#cochleaGrad)"
+                strokeLinecap="round"
+                strokeWidth="22"
+                animate={isActive(3) ? { pathLength: [0.35, 1, 0.35] } : { pathLength: 1 }}
+                transition={{ duration: 1.7, repeat: isActive(3) ? Infinity : 0 }}
+              />
+              <path
+                d="M493 132 C544 128 584 163 584 209 C584 254 548 285 505 280 C466 276 438 248 439 212 C440 177 465 156 501 157 C533 158 555 180 553 207 C551 233 530 250 506 246 C484 242 471 226 475 207 C479 190 492 181 507 184 C520 186 528 196 526 208 C525 217 518 223 509 222"
+                fill="none"
+                stroke="#047857"
+                strokeLinecap="round"
+                strokeWidth="3"
+                opacity="0.65"
+              />
+            </g>
+
+            <g>
+              {[0, 1, 2, 3, 4, 5, 6].map((item) => {
+                const x = 462 + item * 15;
+                const heights = [34, 47, 59, 68, 58, 47, 35];
+                const height = heights[item];
+                return (
+                  <motion.path
+                    key={item}
+                    d={`M${x} 331 C${x - 3} ${331 - height / 2}, ${x + 3} ${331 - height / 2}, ${x} ${331 - height}`}
+                    fill="none"
+                    stroke="#7c3aed"
+                    strokeLinecap="round"
+                    strokeWidth="5"
+                    animate={isActive(4) ? { rotate: [-5, 6, -5] } : { rotate: 0 }}
+                    transition={{ duration: 0.48, repeat: isActive(4) ? Infinity : 0, delay: item * 0.04 }}
+                    style={{ transformOrigin: `${x}px 331px` }}
+                  />
+                );
+              })}
+              <rect x="448" y="331" width="120" height="8" rx="4" fill="#c4b5fd" />
+              {isActive(4) ? (
+                <motion.text x="584" y="305" fontSize="32" animate={{ opacity: [0.2, 1, 0.2], scale: [0.85, 1.15, 0.85] }} transition={{ duration: 0.8, repeat: Infinity }}>
+                  ⚡
+                </motion.text>
+              ) : null}
+            </g>
+
+            <g>
+              <path d="M567 187 C607 154 646 145 684 146" fill="none" stroke="#fda4af" strokeLinecap="round" strokeWidth="20" />
+              <path d="M567 187 C607 154 646 145 684 146" fill="none" stroke="#e11d48" strokeDasharray="8 11" strokeLinecap="round" strokeWidth="4" opacity="0.8" />
+              {[0, 1, 2].map((item) => (
+                <motion.circle
+                  key={item}
+                  r="7"
+                  fill="#7c3aed"
+                  animate={isActive(5) ? { cx: [570, 684], cy: [187, 146], opacity: [0, 1, 0] } : { cx: 570, cy: 187, opacity: 0.25 }}
+                  transition={{ duration: 1.1, repeat: isActive(5) ? Infinity : 0, delay: item * 0.26 }}
+                />
+              ))}
+              <g transform="translate(675 104)" filter="url(#softShadow)">
+                <path d="M28 13 C44 5 65 12 70 31 C86 35 93 55 83 69 C88 87 72 104 53 100 C40 113 17 106 13 88 C-2 82 -5 58 9 48 C3 33 12 18 28 13Z" fill="url(#brainGrad)" stroke="#be123c" strokeWidth="3" />
+                <path d="M24 30 C37 33 41 45 33 56 M52 27 C45 41 50 53 64 58 M30 76 C43 71 58 78 61 91" fill="none" stroke="#be123c" strokeLinecap="round" strokeWidth="3" opacity="0.55" />
+              </g>
+            </g>
+
+            <motion.g animate={{ x: signalX, y: signalY }} transition={{ type: "spring", stiffness: 75, damping: 14 }}>
+              <circle r="18" fill={signalColour} stroke="white" strokeWidth="5" filter="url(#softShadow)" />
+              <motion.circle r="28" fill="none" stroke={signalColour} strokeWidth="4" animate={{ scale: [0.8, 1.35, 0.8], opacity: [0.15, 0.45, 0.15] }} transition={{ duration: 1.2, repeat: Infinity }} />
+              <text x="0" y="6" textAnchor="middle" fontSize="18" fill="white">
+                {stage < 4 ? "≈" : "⚡"}
+              </text>
+            </motion.g>
+
+            <g fontFamily="Inter, system-ui, sans-serif" fontSize="13" fontWeight="700" fill="#334155">
+              <text x="50" y="365">outer ear</text>
+              <text x="193" y="248">ear canal</text>
+              <text x="278" y="122">ear drum</text>
+              <text x="336" y="145">small bones</text>
+              <text x="468" y="101">cochlea</text>
+              <text x="443" y="378">hair cells</text>
+              <text x="602" y="118">auditory nerve</text>
+            </g>
+          </svg>
+        </div>
+      );
+    }
+
+    function MiniWave({ active }) {
+      return (
+        <div className="relative h-20 w-28 overflow-hidden rounded-2xl border border-sky-200 bg-white shadow-inner">
+          {[0, 1, 2].map((item) => (
+            <motion.div
+              key={item}
+              className="absolute left-4 top-1/2 h-10 w-10 -translate-y-1/2 rounded-full border-4 border-sky-400"
+              animate={active ? { x: [0, 62], scale: [0.55, 1.15], opacity: [0, 0.85, 0] } : { x: 0, scale: 0.7, opacity: 0.45 }}
+              transition={{ duration: 1.4, repeat: active ? Infinity : 0, delay: item * 0.28 }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    function MiniEarDrum({ active }) {
+      return (
+        <div className="relative flex h-20 w-28 items-center justify-center rounded-2xl border border-amber-200 bg-white shadow-inner">
+          <motion.div className="h-16 w-3 rounded-full bg-amber-400" animate={active ? { scaleX: [1, 2.1, 0.75, 1.6, 1] } : { scaleX: 1 }} transition={{ duration: 0.58, repeat: active ? Infinity : 0 }} />
+          <div className="absolute left-4 h-1 w-10 rounded-full bg-sky-300" />
+        </div>
+      );
+    }
+
+    function MiniBones({ active }) {
+      return (
+        <div className="flex h-20 w-28 items-center justify-center gap-1 rounded-2xl border border-orange-200 bg-white shadow-inner">
+          {[0, 1, 2].map((item) => (
+            <motion.div
+              key={item}
+              className="h-8 w-8 rounded-full border-4 border-orange-300 bg-orange-100"
+              animate={active ? { y: [0, -7, 7, 0], rotate: [0, 12, -12, 0] } : { y: 0, rotate: 0 }}
+              transition={{ duration: 0.55, repeat: active ? Infinity : 0, delay: item * 0.08 }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    function MiniCochlea({ active }) {
+      return (
+        <div className="flex h-20 w-28 items-center justify-center rounded-2xl border border-emerald-200 bg-white shadow-inner">
+          <motion.svg viewBox="0 0 100 80" className="h-16 w-20" animate={active ? { rotate: [0, 3, -3, 0] } : { rotate: 0 }} transition={{ duration: 0.8, repeat: active ? Infinity : 0 }}>
+            <path d="M48 12 C74 10 90 29 86 51 C82 72 57 76 40 64 C25 54 24 35 38 29 C51 23 64 31 62 44 C60 55 46 57 42 48" fill="none" stroke="#10b981" strokeLinecap="round" strokeWidth="12" />
+            <path d="M48 12 C74 10 90 29 86 51 C82 72 57 76 40 64 C25 54 24 35 38 29 C51 23 64 31 62 44 C60 55 46 57 42 48" fill="none" stroke="#047857" strokeLinecap="round" strokeWidth="2" />
+          </motion.svg>
+        </div>
+      );
+    }
+
+    function MiniHairCells({ active }) {
+      const heights = [20, 32, 44, 54, 44, 32, 20];
+      return (
+        <div className="flex h-20 w-28 items-end justify-center gap-2 rounded-2xl border border-violet-200 bg-white p-3 shadow-inner">
+          {heights.map((height, item) => (
+            <motion.div
+              key={item}
+              className="w-2 rounded-t-full bg-violet-500"
+              style={{ height }}
+              animate={active ? { rotate: [-7, 8, -7] } : { rotate: 0 }}
+              transition={{ duration: 0.45, repeat: active ? Infinity : 0, delay: item * 0.04 }}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    function MiniNerve({ active }) {
+      return (
+        <div className="relative flex h-20 w-28 items-center justify-center rounded-2xl border border-rose-200 bg-white shadow-inner">
+          <div className="absolute left-4 h-2 w-16 rounded-full bg-rose-200" />
+          {[0, 1, 2].map((item) => (
+            <motion.div
+              key={item}
+              className="absolute left-5 h-3 w-3 rounded-full bg-violet-600"
+              animate={active ? { x: [0, 58], opacity: [0, 1, 0] } : { x: 0, opacity: 0.35 }}
+              transition={{ duration: 1, repeat: active ? Infinity : 0, delay: item * 0.25 }}
+            />
+          ))}
+          <span className="absolute right-3 text-3xl">🧠</span>
+        </div>
+      );
+    }
+
+    function StageVisual({ stage, active }) {
+      const visuals = [
+        <MiniWave active={active} key="wave" />,
+        <MiniEarDrum active={active} key="drum" />,
+        <MiniBones active={active} key="bones" />,
+        <MiniCochlea active={active} key="cochlea" />,
+        <MiniHairCells active={active} key="hair" />,
+        <MiniNerve active={active} key="nerve" />,
+      ];
+      return visuals[stage] || null;
+    }
+
+    function getQuestionOptions(currentStage) {
+      const correct = stages[currentStage].short;
+      const distractors = stages
+        .filter((stage) => stage.id !== currentStage)
+        .map((stage) => stage.short)
+        .slice(0, 3);
+      return [correct, ...distractors].sort((a, b) => a.localeCompare(b));
+    }
+
+    function HearingProcessSimulation() {
+      const [stage, setStage] = useState(0);
+      const [playing, setPlaying] = useState(false);
+      const [showLabels, setShowLabels] = useState(true);
+      const [quizMode, setQuizMode] = useState(false);
+      const [selected, setSelected] = useState(null);
+
+      useEffect(() => {
+        if (!playing) return undefined;
+
+        const timer = window.setInterval(() => {
+          setStage((currentStage) => (currentStage + 1) % stages.length);
+          setSelected(null);
+        }, 3200);
+
+        return () => window.clearInterval(timer);
+      }, [playing]);
+
+      const questionOptions = useMemo(() => getQuestionOptions(stage), [stage]);
+      const progressPercentage = ((stage + 1) / stages.length) * 100;
+
+      return (
+        <div className="h-screen overflow-hidden bg-slate-50 p-2 text-slate-900">
+          <div className="mx-auto flex h-full max-w-7xl flex-col gap-2">
+            <Card>
+              <div className="bg-gradient-to-r from-sky-700 via-sky-600 to-violet-700 px-4 py-3 text-white">
+                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-3xl backdrop-blur">👂</span>
+                    <div>
+                      <h1 className="text-xl font-bold md:text-2xl">Hearing: Sound Wave to Brain</h1>
+                      <p className="mt-1 text-sm text-sky-100">A dynamic model showing how vibrations become electrical impulses.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={() => setPlaying(!playing)} className="border border-amber-100 bg-amber-300 text-slate-900 shadow-md hover:bg-amber-200">
+                      <Icon name={playing ? "pause" : "play"} />
+                      {playing ? "Pause" : "Play"}
+                    </Button>
+                    <Button variant="outline" onClick={() => { setStage(0); setPlaying(false); setSelected(null); }} className="border-white/50 bg-white/10 text-white hover:bg-white/20">
+                      <Icon name="reset" />
+                      Reset
+                    </Button>
+                    <Button variant="outline" onClick={() => setShowLabels(!showLabels)} className="border-white/50 bg-white/10 text-white hover:bg-white/20">
+                      {showLabels ? "Hide labels" : "Show labels"}
+                    </Button>
+                    <Button variant="outline" onClick={() => { setQuizMode(!quizMode); setSelected(null); }} className="border-white/50 bg-white/10 text-white hover:bg-white/20">
+                      <Icon name="help" />
+                      Quiz mode
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="h-2 bg-slate-100">
+                <motion.div className="h-full bg-sky-500" animate={{ width: `${progressPercentage}%` }} transition={{ duration: 0.4 }} />
+              </div>
+            </Card>
+
+            <Card className="shrink-0">
+              <CardContent className="p-2">
+                <ProfessionalEarDiagram stage={stage} />
+              </CardContent>
+            </Card>
+
+            <Card className="shrink-0">
+              <CardContent className="p-2">
+                <div className="grid grid-cols-6 gap-2">
+                  {stages.map((stageItem, index) => (
+                    <button
+                      type="button"
+                      key={stageItem.id}
+                      onClick={() => { setStage(index); setPlaying(false); setSelected(null); }}
+                      className={`group min-h-[120px] rounded-2xl border p-2 text-left transition hover:-translate-y-0.5 hover:shadow-md ${index === stage ? `${stageItem.colour} shadow-md ring-2 ring-sky-400` : "border-slate-200 bg-white hover:bg-slate-50"}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">{index + 1}</span>
+                        {index === stage ? <span className="rounded-full bg-sky-600 px-2 py-1 text-xs font-bold text-white">Now</span> : null}
+                      </div>
+                      <div className="mt-1 flex scale-90 justify-center">
+                        <StageVisual stage={index} active={index === stage} />
+                      </div>
+                      {showLabels ? <div className="mt-1 text-center text-xs font-bold text-slate-800">{stageItem.short}</div> : null}
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid min-h-0 flex-1 gap-2 overflow-hidden lg:grid-cols-[2fr_1fr]">
+              <Card>
+                <CardContent className="p-3">
+                  <AnimatePresence mode="wait">
+                    <motion.div key={stage} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}>
+                      <div className="text-sm font-semibold text-slate-500">Stage {stage + 1} of 6</div>
+                      <h2 className="mt-1 text-xl font-bold">{stages[stage].title}</h2>
+                      <p className="mt-1 text-base leading-relaxed text-slate-700">{stages[stage].explanation}</p>
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        <div className="rounded-2xl bg-slate-100 p-3 text-sm">
+                          <span className="font-semibold">Signal type now: </span>
+                          <span>{stages[stage].particle}</span>
+                        </div>
+                        <div className="rounded-2xl bg-sky-50 p-3 text-sm text-sky-900">
+                          <span className="font-semibold">Key idea: </span>
+                          <span>{stage < 4 ? "The signal is still a vibration." : "The signal is now electrical."}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button variant="outline" disabled={stage === 0} onClick={() => { setStage(stage - 1); setSelected(null); }}>
+                      Previous
+                    </Button>
+                    <Button disabled={stage === stages.length - 1} onClick={() => { setStage(stage + 1); setSelected(null); }}>
+                      Next stage
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-3">
+                  {!quizMode ? (
+                    <div>
+                      <h3 className="text-lg font-bold">Class discussion</h3>
+                      <p className="mt-2 text-sm text-slate-700">Ask students what type of signal is moving at this stage.</p>
+                      <div className="mt-3 space-y-1 text-sm text-slate-700">
+                        <p><b>Before cochlea:</b> vibrations.</p>
+                        <p><b>At the hair cells:</b> vibrations are converted.</p>
+                        <p><b>After hair cells:</b> electrical impulses.</p>
+                        <p><b>Key idea:</b> the brain receives signals, not sound waves.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="text-lg font-bold">Quick check</h3>
+                      <p className="mt-2 text-sm text-slate-700">Which part of the ear is active now?</p>
+                      <div className="mt-3 grid gap-2">
+                        {questionOptions.map((option) => {
+                          const correct = option === stages[stage].short;
+                          const chosen = selected === option;
+                          const chosenStyle = correct ? "border-emerald-500 bg-emerald-100" : "border-rose-500 bg-rose-100";
+                          return (
+                            <button
+                              type="button"
+                              key={option}
+                              onClick={() => setSelected(option)}
+                              className={`rounded-2xl border p-3 text-left text-sm font-semibold transition ${chosen ? chosenStyle : "border-slate-200 bg-white hover:bg-slate-50"}`}
+                            >
+                              {option}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {selected ? (
+                        <p className="mt-3 text-sm font-semibold">
+                          {selected === stages[stage].short ? "Correct — move the signal on." : "Not quite — check the active stage and try again."}
+                        </p>
+                      ) : null}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<HearingProcessSimulation />);
+  </script>
+
+</body>
+</html>
