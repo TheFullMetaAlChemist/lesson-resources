@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCSE Chemistry: Negative Ions Identifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-up {
+      transition: height 1s ease-in-out, background-color 1s ease-in-out, opacity 1s ease-in-out;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: 20px;
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.75);
+      animation: rise 1.6s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-110px) scale(1.2); opacity: 0; }
+    }
+
+    .cloudy {
+      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 35%, transparent 60%);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 selection:bg-emerald-200">
+
+  <header class="bg-emerald-700 text-white p-6 shadow-md text-center">
+    <h1 class="text-3xl font-bold mb-2">Negative Ion Testing</h1>
+    <p class="text-emerald-100 max-w-2xl mx-auto">
+      Interactive GCSE Chemistry tool for identifying carbonate, halide and sulfate ions using standard chemical tests.
+    </p>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-6 mt-6">
+
+    <div class="flex justify-center mb-6 space-x-4">
+      <button id="tab-practice" onclick="switchTab('practice')" class="px-6 py-2 rounded-full font-bold bg-emerald-600 text-white shadow-md hover:bg-emerald-700 transition">
+        Interactive Practice
+      </button>
+      <button id="tab-flowchart" onclick="switchTab('flowchart')" class="px-6 py-2 rounded-full font-bold bg-white text-emerald-600 border-2 border-emerald-600 shadow-sm hover:bg-emerald-50 transition">
+        View Flowchart
+      </button>
+    </div>
+
+    <div id="view-flowchart" class="hidden bg-white p-8 rounded-2xl shadow-lg fade-in">
+      <h2 class="text-2xl font-bold mb-6 text-center text-emerald-800">Negative Ion Identification Flowchart</h2>
+
+      <div class="overflow-x-auto">
+        <div class="min-w-[800px] flex flex-col items-center space-y-5">
+
+          <div class="bg-emerald-100 border-2 border-emerald-400 p-3 rounded-lg font-bold text-center w-72 shadow-sm">
+            Start with the unknown solution or solid sample
+          </div>
+
+          <div class="grid grid-cols-3 gap-6 w-full">
+
+            <div class="bg-blue-50 border border-blue-300 rounded-xl p-4 shadow-sm">
+              <h3 class="font-bold text-blue-800 text-center mb-3">Carbonate Test</h3>
+              <p class="text-sm mb-3 text-center">Add dilute acid</p>
+              <div class="bg-white rounded-lg border p-3 text-sm text-center">
+                Effervescence / fizzing
+              </div>
+              <div class="text-center my-2 font-bold">+</div>
+              <div class="bg-white rounded-lg border p-3 text-sm text-center">
+                Gas turns limewater cloudy
+              </div>
+              <div class="mt-4 bg-blue-100 text-blue-900 rounded-lg p-3 text-center font-bold">
+                Carbonate ion, CO₃²⁻
+              </div>
+            </div>
+
+            <div class="bg-purple-50 border border-purple-300 rounded-xl p-4 shadow-sm">
+              <h3 class="font-bold text-purple-800 text-center mb-3">Halide Test</h3>
+              <p class="text-sm mb-3 text-center">Add dilute nitric acid, then silver nitrate solution</p>
+              <div class="space-y-2">
+                <div class="bg-white rounded-lg border p-2 text-sm text-center">White precipitate → Chloride, Cl⁻</div>
+                <div class="bg-amber-50 rounded-lg border p-2 text-sm text-center">Cream precipitate → Bromide, Br⁻</div>
+                <div class="bg-yellow-100 rounded-lg border p-2 text-sm text-center">Yellow precipitate → Iodide, I⁻</div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-300 rounded-xl p-4 shadow-sm">
+              <h3 class="font-bold text-slate-800 text-center mb-3">Sulfate Test</h3>
+              <p class="text-sm mb-3 text-center">Add dilute hydrochloric acid, then barium chloride solution</p>
+              <div class="bg-white rounded-lg border p-3 text-sm text-center">
+                White precipitate forms
+              </div>
+              <div class="mt-4 bg-slate-200 text-slate-900 rounded-lg p-3 text-center font-bold">
+                Sulfate ion, SO₄²⁻
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-practice" class="fade-in">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+
+        <div class="w-full md:w-5/12 bg-gray-800 p-8 flex flex-col items-center justify-center relative shadow-inner">
+          <h3 class="absolute top-4 left-4 text-gray-400 font-semibold uppercase tracking-wider text-sm">Laboratory View</h3>
+
+          <div id="visual-container" class="w-full h-64 flex items-center justify-center"></div>
+
+          <div id="visual-label" class="mt-6 text-white text-lg font-medium bg-gray-900 px-4 py-1 rounded-full opacity-0 transition-opacity duration-500">
+            Ready
+          </div>
+        </div>
+
+        <div class="w-full md:w-7/12 p-8 flex flex-col bg-slate-50 relative">
+
+          <div class="mb-6 pb-4 border-b border-gray-200">
+            <span id="status-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 mb-2">
+              Stage: Setup
+            </span>
+            <h2 id="action-title" class="text-2xl font-bold text-gray-800">Identify the Mystery Negative Ion</h2>
+          </div>
+
+          <div id="observations-container" class="mb-6 flex-grow hidden">
+            <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Lab Notes</h4>
+            <ul id="observations-list" class="space-y-3"></ul>
+          </div>
+
+          <div id="action-area" class="mt-auto bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+            <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              Generate Mystery Sample
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const ions = [
+      {
+        id: 'CO3',
+        name: 'Carbonate',
+        formula: 'CO₃²⁻',
+        test: 'carbonate',
+        answerText: 'Carbonate ion, CO₃²⁻',
+        options: ['CO3', 'Cl', 'SO4'],
+        precipitate: false
+      },
+      {
+        id: 'Cl',
+        name: 'Chloride',
+        formula: 'Cl⁻',
+        test: 'halide',
+        pptName: 'white',
+        pptClass: 'bg-white',
+        answerText: 'Chloride ion, Cl⁻',
+        options: ['Cl', 'Br', 'I']
+      },
+      {
+        id: 'Br',
+        name: 'Bromide',
+        formula: 'Br⁻',
+        test: 'halide',
+        pptName: 'cream',
+        pptClass: 'bg-amber-100',
+        answerText: 'Bromide ion, Br⁻',
+        options: ['Cl', 'Br', 'I']
+      },
+      {
+        id: 'I',
+        name: 'Iodide',
+        formula: 'I⁻',
+        test: 'halide',
+        pptName: 'yellow',
+        pptClass: 'bg-yellow-300',
+        answerText: 'Iodide ion, I⁻',
+        options: ['Cl', 'Br', 'I']
+      },
+      {
+        id: 'SO4',
+        name: 'Sulfate',
+        formula: 'SO₄²⁻',
+        test: 'sulfate',
+        pptName: 'white',
+        pptClass: 'bg-white',
+        answerText: 'Sulfate ion, SO₄²⁻',
+        options: ['SO4', 'CO3', 'Cl']
+      }
+    ];
+
+    let currentIon = null;
+    let observations = [];
+
+    const visualContainer = document.getElementById('visual-container');
+    const visualLabel = document.getElementById('visual-label');
+    const observationsContainer = document.getElementById('observations-container');
+    const observationsList = document.getElementById('observations-list');
+    const actionArea = document.getElementById('action-area');
+    const actionTitle = document.getElementById('action-title');
+    const statusBadge = document.getElementById('status-badge');
+
+    function switchTab(tab) {
+      if (tab === 'practice') {
+        document.getElementById('view-practice').classList.remove('hidden');
+        document.getElementById('view-flowchart').classList.add('hidden');
+        document.getElementById('tab-practice').className = "px-6 py-2 rounded-full font-bold bg-emerald-600 text-white shadow-md hover:bg-emerald-700 transition";
+        document.getElementById('tab-flowchart').className = "px-6 py-2 rounded-full font-bold bg-white text-emerald-600 border-2 border-emerald-600 shadow-sm hover:bg-emerald-50 transition";
+      } else {
+        document.getElementById('view-practice').classList.add('hidden');
+        document.getElementById('view-flowchart').classList.remove('hidden');
+        document.getElementById('tab-flowchart').className = "px-6 py-2 rounded-full font-bold bg-emerald-600 text-white shadow-md hover:bg-emerald-700 transition";
+        document.getElementById('tab-practice').className = "px-6 py-2 rounded-full font-bold bg-white text-emerald-600 border-2 border-emerald-600 shadow-sm hover:bg-emerald-50 transition";
+      }
+    }
+
+    function setLabel(text) {
+      visualLabel.innerText = text;
+      visualLabel.classList.remove('opacity-0');
+      visualLabel.classList.add('opacity-100');
+    }
+
+    function hideLabel() {
+      visualLabel.classList.remove('opacity-100');
+      visualLabel.classList.add('opacity-0');
+    }
+
+    function addObservation(text, icon = '📝') {
+      observations.push(text);
+      const li = document.createElement('li');
+      li.className = "flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm fade-in";
+      li.innerHTML = `<span class="mr-3 text-xl">${icon}</span><span class="text-gray-700 font-medium">${text}</span>`;
+      observationsList.appendChild(li);
+    }
+
+    function getTestTubeHTML({ liquidHeight = 'h-24', pptHeight = 'h-0', pptClass = 'bg-transparent', bubbles = false, cloudy = false } = {}) {
+      const bubbleHTML = bubbles ? `
+        <div class="bubble left-[25%]"></div>
+        <div class="bubble left-[45%]" style="animation-delay:0.3s"></div>
+        <div class="bubble left-[65%]" style="animation-delay:0.6s"></div>
+        <div class="bubble left-[35%]" style="animation-delay:0.9s"></div>
+      ` : '';
+
+      return `
+        <div class="relative w-20 h-56 border-4 border-t-0 border-white/40 rounded-b-full mx-auto overflow-hidden bg-gray-900/50 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.5)] fade-in">
+          <div class="absolute left-2 top-2 bottom-6 w-2 bg-white/20 rounded-full z-20 pointer-events-none"></div>
+          <div class="absolute bottom-0 w-full ${liquidHeight} bg-blue-300/30 ${cloudy ? 'cloudy' : ''} slide-up z-0"></div>
+          <div class="absolute bottom-0 w-full ${pptHeight} ${pptClass} slide-up opacity-95 z-10 rounded-b-full shadow-[inset_0_-5px_15px_rgba(0,0,0,0.3)]"></div>
+          ${bubbleHTML}
+        </div>`;
+    }
+
+    function getLimewaterHTML(cloudy = false) {
+      return `
+        <div class="flex items-center justify-center gap-10 fade-in">
+          ${getTestTubeHTML({ liquidHeight: 'h-24', bubbles: true })}
+          <div class="text-white text-4xl">→</div>
+          ${getTestTubeHTML({ liquidHeight: 'h-24', cloudy })}
+        </div>
+      `;
+    }
+
+    function startGame() {
+      currentIon = ions[Math.floor(Math.random() * ions.length)];
+      observations = [];
+      observationsList.innerHTML = '';
+      observationsContainer.classList.remove('hidden');
+
+      statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 mb-2';
+
+      actionTitle.innerText = 'Choose the Correct First Test';
+      statusBadge.innerText = 'Stage 1: Planning';
+
+      visualContainer.innerHTML = getTestTubeHTML();
+      setLabel('Unknown Sample');
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-4">
+          You have an unknown sample. Which test would you like to perform first?
+        </p>
+
+        <div class="space-y-3">
+          <button onclick="chooseTest('carbonate')" class="w-full py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition">
+            Add dilute acid and test gas with limewater
+          </button>
+
+          <button onclick="chooseTest('halide')" class="w-full py-3 rounded-xl font-bold bg-purple-600 text-white hover:bg-purple-700 transition">
+            Add dilute nitric acid, then silver nitrate
+          </button>
+
+          <button onclick="chooseTest('sulfate')" class="w-full py-3 rounded-xl font-bold bg-slate-700 text-white hover:bg-slate-800 transition">
+            Add dilute hydrochloric acid, then barium chloride
+          </button>
+        </div>
+      `;
+    }
+
+    function chooseTest(testType) {
+      if (testType === 'carbonate') performCarbonateTest();
+      if (testType === 'halide') performHalideTest();
+      if (testType === 'sulfate') performSulfateTest();
+    }
+
+    function performCarbonateTest() {
+      actionTitle.innerText = 'Carbonate Test';
+      statusBadge.innerText = 'Testing with dilute acid';
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-4">Adding dilute acid to the sample...</p>
+        <button disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-400 text-white">
+          Testing...
+        </button>
+      `;
+
+      setTimeout(() => {
+        if (currentIon.id === 'CO3') {
+          visualContainer.innerHTML = getLimewaterHTML(true);
+          setLabel('Gas turns limewater cloudy');
+          addObservation('Dilute acid added: fizzing observed.', '🫧');
+          addObservation('Gas tested with limewater: limewater turned cloudy.', '☁️');
+        } else {
+          visualContainer.innerHTML = getTestTubeHTML({ liquidHeight: 'h-28' });
+          setLabel('No carbonate result');
+          addObservation('Dilute acid added: no fizzing observed.', '🧪');
+          addObservation('No gas was produced to turn limewater cloudy.', '☁️');
+        }
+
+        showDecisionAfterTest();
+      }, 1400);
+    }
+
+    function performHalideTest() {
+      actionTitle.innerText = 'Halide Test';
+      statusBadge.innerText = 'Testing with silver nitrate';
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-4">Adding dilute nitric acid, then silver nitrate solution...</p>
+        <button disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-400 text-white">
+          Testing...
+        </button>
+      `;
+
+      setTimeout(() => {
+        if (currentIon.test === 'halide') {
+          visualContainer.innerHTML = getTestTubeHTML({
+            liquidHeight: 'h-28',
+            pptHeight: 'h-10',
+            pptClass: currentIon.pptClass
+          });
+          setLabel(`${currentIon.pptName} precipitate`);
+          addObservation(`Dilute nitric acid added, then silver nitrate solution: a ${currentIon.pptName} precipitate formed.`, '🧪');
+        } else {
+          visualContainer.innerHTML = getTestTubeHTML({ liquidHeight: 'h-28' });
+          setLabel('No halide precipitate');
+          addObservation('Dilute nitric acid added, then silver nitrate solution: no precipitate formed.', '🧪');
+        }
+
+        showDecisionAfterTest();
+      }, 1400);
+    }
+
+    function performSulfateTest() {
+      actionTitle.innerText = 'Sulfate Test';
+      statusBadge.innerText = 'Testing with barium chloride';
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-4">Adding dilute hydrochloric acid, then barium chloride solution...</p>
+        <button disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-400 text-white">
+          Testing...
+        </button>
+      `;
+
+      setTimeout(() => {
+        if (currentIon.id === 'SO4') {
+          visualContainer.innerHTML = getTestTubeHTML({
+            liquidHeight: 'h-28',
+            pptHeight: 'h-10',
+            pptClass: 'bg-white'
+          });
+          setLabel('White precipitate');
+          addObservation('Dilute hydrochloric acid added, then barium chloride solution: a white precipitate formed.', '🧪');
+        } else {
+          visualContainer.innerHTML = getTestTubeHTML({ liquidHeight: 'h-28' });
+          setLabel('No sulfate precipitate');
+          addObservation('Dilute hydrochloric acid added, then barium chloride solution: no white precipitate formed.', '🧪');
+        }
+
+        showDecisionAfterTest();
+      }, 1400);
+    }
+
+    function showDecisionAfterTest() {
+      statusBadge.innerText = 'Evidence Collected';
+      actionTitle.innerText = 'What next?';
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-4">
+          You can run another test or try to identify the ion now.
+        </p>
+
+        <div class="space-y-3">
+          <button onclick="chooseTest('carbonate')" class="w-full py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition">
+            Carbonate Test
+          </button>
+
+          <button onclick="chooseTest('halide')" class="w-full py-3 rounded-xl font-bold bg-purple-600 text-white hover:bg-purple-700 transition">
+            Halide Test
+          </button>
+
+          <button onclick="chooseTest('sulfate')" class="w-full py-3 rounded-xl font-bold bg-slate-700 text-white hover:bg-slate-800 transition">
+            Sulfate Test
+          </button>
+
+          <button onclick="showQuiz()" class="w-full py-4 rounded-xl font-bold text-lg bg-green-600 text-white hover:bg-green-700 transition">
+            Identify the Ion
+          </button>
+        </div>
+      `;
+    }
+
+    function showQuiz() {
+      hideLabel();
+
+      visualContainer.innerHTML = `
+        <div class="text-center text-gray-300 fade-in">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-lg font-medium">Review your observations and select the answer.</p>
+        </div>
+      `;
+
+      actionTitle.innerText = 'Which negative ion is present?';
+      statusBadge.innerText = 'Quiz';
+
+      const labels = {
+        CO3: 'Carbonate, CO₃²⁻',
+        Cl: 'Chloride, Cl⁻',
+        Br: 'Bromide, Br⁻',
+        I: 'Iodide, I⁻',
+        SO4: 'Sulfate, SO₄²⁻'
+      };
+
+      const fullOptions = ['CO3', 'Cl', 'Br', 'I', 'SO4'];
+
+      const buttonsHTML = fullOptions.map(opt => `
+        <button onclick="checkAnswer('${opt}')" class="w-full py-3 rounded-lg font-bold text-lg bg-white border-2 border-gray-300 text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 transition mb-3 last:mb-0 shadow-sm">
+          ${labels[opt]}
+        </button>
+      `).join('');
+
+      actionArea.innerHTML = `
+        <p class="text-gray-600 mb-5">
+          Use your lab notes to identify the mystery negative ion.
+        </p>
+        <div class="flex flex-col">
+          ${buttonsHTML}
+        </div>
+      `;
+    }
+
+    function checkAnswer(selectedOpt) {
+      const isCorrect = selectedOpt === currentIon.id;
+
+      if (isCorrect) {
+        visualContainer.innerHTML = `
+          <div class="text-center text-green-400 fade-in">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 mx-auto mb-2 drop-shadow-lg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <h3 class="text-2xl font-bold text-white">Correct!</h3>
+          </div>`;
+
+        statusBadge.innerText = 'Success';
+        statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800 mb-2';
+        actionTitle.innerText = 'Brilliant Work!';
+
+        actionArea.innerHTML = `
+          <div class="bg-green-50 text-green-800 p-4 rounded-lg mb-6 text-left border border-green-200">
+            <p class="font-bold mb-1">It is ${currentIon.answerText}.</p>
+            <p class="text-sm">
+              Your observations match the required GCSE chemical test for this negative ion.
+            </p>
+          </div>
+          <button onclick="resetApp()" class="w-full py-4 rounded-xl font-bold text-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 transition">
+            Identify Another Ion
+          </button>
+        `;
+      } else {
+        visualContainer.innerHTML = `
+          <div class="text-center text-red-400 fade-in">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-28 w-28 mx-auto mb-2 drop-shadow-lg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+            <h3 class="text-2xl font-bold text-white">Incorrect</h3>
+          </div>`;
+
+        statusBadge.innerText = 'Review Required';
+        statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800 mb-2';
+        actionTitle.innerText = 'Not quite right!';
+
+        actionArea.innerHTML = `
+          <div class="bg-red-50 text-red-800 p-4 rounded-lg mb-6 text-left border border-red-200">
+            <p class="font-bold mb-1">The correct ion was ${currentIon.answerText}.</p>
+            <p class="text-sm mt-2">
+              Check the flowchart tab to review the correct test pathway.
+            </p>
+          </div>
+          <button onclick="resetApp()" class="w-full py-4 rounded-xl font-bold text-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 transition">
+            Try Another Ion
+          </button>
+        `;
+      }
+    }
+
+    function resetApp() {
+      statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800 mb-2';
+      statusBadge.innerText = 'Stage: Setup';
+      actionTitle.innerText = 'Identify the Mystery Negative Ion';
+
+      observationsContainer.classList.add('hidden');
+      observationsList.innerHTML = '';
+      hideLabel();
+
+      visualContainer.innerHTML = `
+        <div class="text-center text-gray-500 opacity-60">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+          </svg>
+          <p>Awaiting Sample</p>
+        </div>
+      `;
+
+      actionArea.innerHTML = `
+        <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-emerald-600 text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
+          Generate Mystery Sample
+        </button>
+      `;
+    }
+
+    resetApp();
+  </script>
+</body>
+</html>
