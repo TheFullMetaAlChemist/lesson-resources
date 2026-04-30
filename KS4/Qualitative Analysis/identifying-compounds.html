@@ -462,13 +462,47 @@ function performNaOHTest() {
   setLabel(`${c.ppt} precipitate`);
   addObservation(`Sodium hydroxide added: a ${c.ppt} precipitate formed.`, '🧪');
 
-  if (c.id === 'Al') addObservation('Excess sodium hydroxide added: the white precipitate dissolved.', '💧');
-  if (c.id === 'Ca' || c.id === 'Mg') addObservation('Excess sodium hydroxide added: the white precipitate did not dissolve.', '💧');
+  if (c.id === 'Al') {
+    addObservation('Excess sodium hydroxide added: the white precipitate dissolved.', '💧');
 
-  if (['Cu','Fe2','Fe3','Al'].includes(c.id)) {
-    showIonQuiz('cation', c, cations.filter(x => ['Cu','Fe2','Fe3','Al'].includes(x.id)));
-  } else if (['Ca','Mg'].includes(c.id)) {
     showIonQuiz('cation', c, cations.filter(x => ['Ca','Mg','Al'].includes(x.id)));
+    return;
+  }
+
+if (c.id === 'Ca' || c.id === 'Mg') {
+  addObservation('Excess sodium hydroxide added: the white precipitate did not dissolve.', '💧');
+
+  actionTitle.innerText = 'Can you identify the ion?';
+  statusBadge.innerText = 'Evidence Check';
+
+  actionArea.innerHTML = `
+    <p class="text-gray-600 mb-4">
+      Based on this observation, what would you like to do?
+    </p>
+
+    <div class="space-y-3">
+      <button onclick="prematureIonChoice('Ca')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-400 transition shadow-sm">
+        Calcium, Ca²⁺
+      </button>
+
+      <button onclick="prematureIonChoice('Mg')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-400 transition shadow-sm">
+        Magnesium, Mg²⁺
+      </button>
+
+      <button onclick="prematureIonChoice('Al')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-400 transition shadow-sm">
+        Aluminium, Al³⁺
+      </button>
+
+      <button onclick="showTestMenu()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Continue testing
+      </button>
+    </div>
+  `;
+  return;
+}
+
+  if (['Cu','Fe2','Fe3'].includes(c.id)) {
+    showIonQuiz('cation', c, cations.filter(x => ['Cu','Fe2','Fe3'].includes(x.id)));
   }
 }
 
