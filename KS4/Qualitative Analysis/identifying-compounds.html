@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GCSE Chemistry: Ionic Compound Identifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .fade-in { animation: fadeIn 0.45s ease-in; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-up {
+      transition: height 1s ease-in-out, opacity 1s ease-in-out;
+    }
+
+    @keyframes flicker {
+      0% { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1.05) rotate(2deg); }
+    }
+
+    .flame-anim {
+      border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+      filter: blur(2px);
+      animation: flicker 0.3s infinite alternate;
+      transition: background-color 1s ease-in-out, box-shadow 1s ease-in-out;
+    }
+
+    .bubble {
+      position: absolute;
+      bottom: 18px;
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.75);
+      animation: rise 1.5s infinite ease-in;
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: translateY(-110px) scale(1.2); opacity: 0; }
+    }
+
+    .cloudy {
+      background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.9), rgba(255,255,255,0.15) 35%, transparent 65%);
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen font-sans text-gray-800 selection:bg-indigo-200">
+
+<header class="bg-indigo-700 text-white p-6 shadow-md text-center">
+  <h1 class="text-3xl font-bold mb-2">Ionic Compound Identifier</h1>
+  <p class="text-indigo-100 max-w-3xl mx-auto">
+    GCSE Chemistry practice tool: carry out positive ion and negative ion tests, identify each ion, then work out the full formula.
+  </p>
+</header>
+
+<main class="max-w-6xl mx-auto p-6 mt-6">
+
+  <div class="flex flex-wrap justify-center gap-3 mb-6">
+    <button id="tab-practice" onclick="switchTab('practice')" class="px-6 py-2 rounded-full font-bold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition">
+      Interactive Practice
+    </button>
+    <button id="tab-reference" onclick="switchTab('reference')" class="px-6 py-2 rounded-full font-bold bg-white text-indigo-600 border-2 border-indigo-600 shadow-sm hover:bg-indigo-50 transition">
+      Reference Tables
+    </button>
+  </div>
+
+  <section id="view-reference" class="hidden bg-white p-8 rounded-2xl shadow-lg fade-in">
+    <h2 class="text-2xl font-bold mb-6 text-center text-indigo-800">GCSE Ion Test Reference</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="border rounded-xl p-5 bg-blue-50">
+        <h3 class="font-bold text-xl text-blue-800 mb-3">Positive ions</h3>
+        <table class="w-full text-sm bg-white rounded-lg overflow-hidden">
+          <tr class="bg-blue-100"><th class="p-2 text-left">Ion</th><th class="p-2 text-left">Key result</th></tr>
+          <tr><td class="p-2">Li⁺</td><td class="p-2">Crimson flame</td></tr>
+          <tr><td class="p-2">Na⁺</td><td class="p-2">Yellow flame</td></tr>
+          <tr><td class="p-2">K⁺</td><td class="p-2">Lilac flame</td></tr>
+          <tr><td class="p-2">Ca²⁺</td><td class="p-2">Orange-red flame / white ppt with NaOH, insoluble in excess</td></tr>
+          <tr><td class="p-2">Mg²⁺</td><td class="p-2">White ppt with NaOH, insoluble in excess</td></tr>
+          <tr><td class="p-2">Al³⁺</td><td class="p-2">White ppt with NaOH, dissolves in excess</td></tr>
+          <tr><td class="p-2">Cu²⁺</td><td class="p-2">Blue ppt with NaOH</td></tr>
+          <tr><td class="p-2">Fe²⁺</td><td class="p-2">Green ppt with NaOH</td></tr>
+          <tr><td class="p-2">Fe³⁺</td><td class="p-2">Brown ppt with NaOH</td></tr>
+        </table>
+      </div>
+
+      <div class="border rounded-xl p-5 bg-emerald-50">
+        <h3 class="font-bold text-xl text-emerald-800 mb-3">Negative ions</h3>
+        <table class="w-full text-sm bg-white rounded-lg overflow-hidden">
+          <tr class="bg-emerald-100"><th class="p-2 text-left">Ion</th><th class="p-2 text-left">Key result</th></tr>
+          <tr><td class="p-2">CO₃²⁻</td><td class="p-2">Add dilute acid: CO₂ produced; limewater turns cloudy</td></tr>
+          <tr><td class="p-2">Cl⁻</td><td class="p-2">Add dilute nitric acid then silver nitrate: white ppt</td></tr>
+          <tr><td class="p-2">Br⁻</td><td class="p-2">Add dilute nitric acid then silver nitrate: cream ppt</td></tr>
+          <tr><td class="p-2">I⁻</td><td class="p-2">Add dilute nitric acid then silver nitrate: yellow ppt</td></tr>
+          <tr><td class="p-2">SO₄²⁻</td><td class="p-2">Add dilute hydrochloric acid then barium chloride: white ppt</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-practice" class="fade-in">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[560px]">
+
+      <div class="w-full lg:w-5/12 bg-gray-800 p-8 flex flex-col items-center justify-center relative shadow-inner">
+        <h3 class="absolute top-4 left-4 text-gray-400 font-semibold uppercase tracking-wider text-sm">Laboratory View</h3>
+        <div id="visual-container" class="w-full h-72 flex items-center justify-center"></div>
+        <div id="visual-label" class="mt-4 text-white text-lg font-medium bg-gray-900 px-4 py-1 rounded-full opacity-0 transition-opacity duration-500">
+          Ready
+        </div>
+      </div>
+
+      <div class="w-full lg:w-7/12 p-8 flex flex-col bg-slate-50">
+
+        <div class="mb-5 pb-4 border-b border-gray-200">
+          <span id="status-badge" class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-100 text-indigo-800 mb-2">
+            Stage: Setup
+          </span>
+          <h2 id="action-title" class="text-2xl font-bold text-gray-800">Identify the Mystery Ionic Compound</h2>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-5">
+          <div class="bg-white p-3 rounded-xl border shadow-sm">
+            <p class="text-xs uppercase font-bold text-gray-500">Positive ion identified</p>
+            <p id="cation-result" class="text-lg font-bold text-blue-700">Not identified</p>
+          </div>
+          <div class="bg-white p-3 rounded-xl border shadow-sm">
+            <p class="text-xs uppercase font-bold text-gray-500">Negative ion identified</p>
+            <p id="anion-result" class="text-lg font-bold text-emerald-700">Not identified</p>
+          </div>
+        </div>
+
+        <div id="observations-container" class="mb-5 flex-grow hidden">
+          <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Lab Notes</h4>
+          <ul id="observations-list" class="space-y-2 max-h-52 overflow-y-auto pr-2"></ul>
+        </div>
+
+        <div id="action-area" class="mt-auto bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+          <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition">
+            Generate Mystery Compound
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const cations = [
+  { id:'Li', name:'Lithium', formula:'Li⁺', charge:1, naoh:'none', ppt:'none', flame:'Crimson', flameColor:'#dc143c', flameShadow:'rgba(220,20,60,.7)' },
+  { id:'Na', name:'Sodium', formula:'Na⁺', charge:1, naoh:'none', ppt:'none', flame:'Yellow', flameColor:'#fbbf24', flameShadow:'rgba(251,191,36,.7)' },
+  { id:'K', name:'Potassium', formula:'K⁺', charge:1, naoh:'none', ppt:'none', flame:'Lilac', flameColor:'#c084fc', flameShadow:'rgba(192,132,252,.7)' },
+  { id:'Ca', name:'Calcium', formula:'Ca²⁺', charge:2, naoh:'white insoluble', ppt:'white', flame:'Orange-red', flameColor:'#ea580c', flameShadow:'rgba(234,88,12,.7)' },
+  { id:'Mg', name:'Magnesium', formula:'Mg²⁺', charge:2, naoh:'white insoluble', ppt:'white', flame:'No distinctive colour', flameColor:'#3b82f6', flameShadow:'rgba(59,130,246,.7)' },
+  { id:'Al', name:'Aluminium', formula:'Al³⁺', charge:3, naoh:'white dissolves', ppt:'white', flame:'No distinctive colour', flameColor:'#3b82f6', flameShadow:'rgba(59,130,246,.7)' },
+  { id:'Cu', name:'Copper(II)', formula:'Cu²⁺', charge:2, naoh:'blue', ppt:'blue', flame:'Green', flameColor:'#22c55e', flameShadow:'rgba(34,197,94,.7)' },
+  { id:'Fe2', name:'Iron(II)', formula:'Fe²⁺', charge:2, naoh:'green', ppt:'green', flame:'No distinctive colour', flameColor:'#3b82f6', flameShadow:'rgba(59,130,246,.7)' },
+  { id:'Fe3', name:'Iron(III)', formula:'Fe³⁺', charge:3, naoh:'brown', ppt:'brown', flame:'No distinctive colour', flameColor:'#3b82f6', flameShadow:'rgba(59,130,246,.7)' }
+];
+
+const anions = [
+  { id:'CO3', name:'Carbonate', formula:'CO₃²⁻', charge:2, test:'carbonate' },
+  { id:'Cl', name:'Chloride', formula:'Cl⁻', charge:1, test:'halide', ppt:'white' },
+  { id:'Br', name:'Bromide', formula:'Br⁻', charge:1, test:'halide', ppt:'cream' },
+  { id:'I', name:'Iodide', formula:'I⁻', charge:1, test:'halide', ppt:'yellow' },
+  { id:'SO4', name:'Sulfate', formula:'SO₄²⁻', charge:2, test:'sulfate' }
+];
+
+const compounds = [
+  ['Na','Cl'], ['Na','Br'], ['Na','I'], ['Na','CO3'], ['Na','SO4'],
+  ['K','Cl'], ['K','Br'], ['K','I'], ['K','CO3'], ['K','SO4'],
+  ['Li','Cl'], ['Li','Br'], ['Li','I'], ['Li','CO3'], ['Li','SO4'],
+  ['Ca','Cl'], ['Ca','Br'], ['Ca','I'], ['Ca','CO3'], ['Ca','SO4'],
+  ['Mg','Cl'], ['Mg','Br'], ['Mg','I'], ['Mg','CO3'], ['Mg','SO4'],
+  ['Al','Cl'], ['Al','Br'], ['Al','I'], ['Al','SO4'],
+  ['Cu','Cl'], ['Cu','Br'], ['Cu','I'], ['Cu','CO3'], ['Cu','SO4'],
+  ['Fe2','Cl'], ['Fe2','Br'], ['Fe2','I'], ['Fe2','CO3'], ['Fe2','SO4'],
+  ['Fe3','Cl'], ['Fe3','Br'], ['Fe3','I'], ['Fe3','SO4']
+];
+
+let current = null;
+let foundCation = null;
+let foundAnion = null;
+
+const visualContainer = document.getElementById('visual-container');
+const visualLabel = document.getElementById('visual-label');
+const observationsContainer = document.getElementById('observations-container');
+const observationsList = document.getElementById('observations-list');
+const actionArea = document.getElementById('action-area');
+const actionTitle = document.getElementById('action-title');
+const statusBadge = document.getElementById('status-badge');
+const cationResult = document.getElementById('cation-result');
+const anionResult = document.getElementById('anion-result');
+
+function switchTab(tab) {
+  document.getElementById('view-practice').classList.toggle('hidden', tab !== 'practice');
+  document.getElementById('view-reference').classList.toggle('hidden', tab !== 'reference');
+
+  document.getElementById('tab-practice').className =
+    tab === 'practice'
+      ? "px-6 py-2 rounded-full font-bold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition"
+      : "px-6 py-2 rounded-full font-bold bg-white text-indigo-600 border-2 border-indigo-600 shadow-sm hover:bg-indigo-50 transition";
+
+  document.getElementById('tab-reference').className =
+    tab === 'reference'
+      ? "px-6 py-2 rounded-full font-bold bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition"
+      : "px-6 py-2 rounded-full font-bold bg-white text-indigo-600 border-2 border-indigo-600 shadow-sm hover:bg-indigo-50 transition";
+}
+
+function setLabel(text) {
+  visualLabel.innerText = text;
+  visualLabel.classList.remove('opacity-0');
+  visualLabel.classList.add('opacity-100');
+}
+
+function hideLabel() {
+  visualLabel.classList.add('opacity-0');
+  visualLabel.classList.remove('opacity-100');
+}
+
+function addObservation(text, icon='📝') {
+  const li = document.createElement('li');
+  li.className = "flex items-start bg-white p-3 rounded-lg border border-gray-100 shadow-sm fade-in";
+  li.innerHTML = `<span class="mr-3 text-xl">${icon}</span><span class="text-gray-700 font-medium">${text}</span>`;
+  observationsList.appendChild(li);
+}
+
+function getTestTubeHTML({ liquidHeight='h-24', pptHeight='h-0', pptClass='bg-transparent', bubbles=false, cloudy=false } = {}) {
+  const bubbleHTML = bubbles ? `
+    <div class="bubble left-[25%]"></div>
+    <div class="bubble left-[45%]" style="animation-delay:.3s"></div>
+    <div class="bubble left-[65%]" style="animation-delay:.6s"></div>
+  ` : '';
+
+  return `
+    <div class="relative w-20 h-56 border-4 border-t-0 border-white/40 rounded-b-full mx-auto overflow-hidden bg-gray-900/50 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.5)] fade-in">
+      <div class="absolute left-2 top-2 bottom-6 w-2 bg-white/20 rounded-full z-20 pointer-events-none"></div>
+      <div class="absolute bottom-0 w-full ${liquidHeight} bg-blue-300/30 ${cloudy ? 'cloudy' : ''} slide-up z-0"></div>
+      <div class="absolute bottom-0 w-full ${pptHeight} ${pptClass} slide-up opacity-95 z-10 rounded-b-full shadow-[inset_0_-5px_15px_rgba(0,0,0,.3)]"></div>
+      ${bubbleHTML}
+    </div>`;
+}
+
+function getFlameHTML(color='#3b82f6', shadow='rgba(59,130,246,.7)') {
+  return `
+    <div class="flex flex-col items-center justify-end h-56 fade-in">
+      <div id="active-flame" class="relative w-16 h-28 mb-[-12px] z-10 flame-anim" style="background-color:${color}; box-shadow:0 0 30px 10px ${shadow};">
+        <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-12 bg-blue-200/60 rounded-full blur-[2px]"></div>
+      </div>
+      <div class="w-6 h-20 bg-gray-400 border-l-2 border-r-2 border-gray-500 rounded-t-sm z-0 relative shadow-md">
+        <div class="absolute bottom-2 left-[-2px] w-[calc(100%+4px)] h-4 bg-gray-600 rounded-sm"></div>
+      </div>
+      <div class="w-20 h-4 bg-gray-700 rounded-t-lg z-20 shadow-lg"></div>
+    </div>`;
+}
+
+function getLimewaterHTML(cloudy=false) {
+  return `
+    <div class="flex items-center justify-center gap-8 fade-in">
+      ${getTestTubeHTML({ liquidHeight:'h-24', bubbles:true })}
+      <div class="text-white text-4xl">→</div>
+      ${getTestTubeHTML({ liquidHeight:'h-24', cloudy })}
+    </div>`;
+}
+
+function getPptClass(colour) {
+  if (colour === 'white') return 'bg-white';
+  if (colour === 'cream') return 'bg-amber-100';
+  if (colour === 'yellow') return 'bg-yellow-300';
+  if (colour === 'blue') return 'bg-blue-500';
+  if (colour === 'green') return 'bg-green-700';
+  if (colour === 'brown') return 'bg-orange-800';
+  return 'bg-transparent';
+}
+
+function sub(num) {
+  return String(num).replace(/1/g,'₁').replace(/2/g,'₂').replace(/3/g,'₃');
+}
+
+function getCompoundFormula(cation, anion) {
+  const symbols = {
+    Li:'Li', Na:'Na', K:'K', Ca:'Ca', Mg:'Mg', Al:'Al',
+    Cu:'Cu', Fe2:'Fe', Fe3:'Fe',
+    Cl:'Cl', Br:'Br', I:'I', CO3:'CO₃', SO4:'SO₄'
+  };
+
+  let cSub = '';
+  let aSub = '';
+
+  if (cation.charge !== anion.charge) {
+    cSub = anion.charge > 1 ? sub(anion.charge) : '';
+    aSub = cation.charge > 1 ? sub(cation.charge) : '';
+  }
+
+  let aSymbol = symbols[anion.id];
+
+  if ((anion.id === 'CO3' || anion.id === 'SO4') && aSub !== '') {
+    aSymbol = `(${aSymbol})`;
+  }
+
+  return `${symbols[cation.id]}${cSub}${aSymbol}${aSub}`;
+}
+
+function getCompoundName(cation, anion) {
+  return `${cation.name} ${anion.name.toLowerCase()}`;
+}
+
+function startGame() {
+  const pick = compounds[Math.floor(Math.random() * compounds.length)];
+
+  current = {
+    cation: cations.find(x => x.id === pick[0]),
+    anion: anions.find(x => x.id === pick[1])
+  };
+
+  foundCation = null;
+  foundAnion = null;
+
+  observationsList.innerHTML = '';
+  observationsContainer.classList.remove('hidden');
+
+  cationResult.innerText = 'Not identified';
+  anionResult.innerText = 'Not identified';
+
+  statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-100 text-indigo-800 mb-2';
+  statusBadge.innerText = 'Stage 1: Choose Tests';
+
+  actionTitle.innerText = 'Carry Out Tests on the Mystery Compound';
+  visualContainer.innerHTML = getTestTubeHTML();
+  setLabel('Unknown Ionic Compound');
+
+  showTestMenu();
+}
+
+function showTestMenu() {
+  const canIdentify = foundCation && foundAnion;
+
+  actionArea.innerHTML = `
+    <p class="text-gray-600 mb-4">
+      Carry out tests on fresh samples. When a useful positive result appears, identify the ion yourself.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-3 mb-4">
+      <button onclick="performNaOHTest()" class="py-3 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-700 transition">
+        Positive ion: Add NaOH
+      </button>
+
+      <button onclick="performFlameTest()" class="py-3 rounded-xl font-bold bg-orange-600 text-white hover:bg-orange-700 transition">
+        Positive ion: Flame test
+      </button>
+
+      <button onclick="performCarbonateTest()" class="py-3 rounded-xl font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition">
+        Negative ion: Carbonate test
+      </button>
+
+      <button onclick="performHalideTest()" class="py-3 rounded-xl font-bold bg-purple-600 text-white hover:bg-purple-700 transition">
+        Negative ion: Halide test
+      </button>
+
+      <button onclick="performSulfateTest()" class="py-3 rounded-xl font-bold bg-slate-700 text-white hover:bg-slate-800 transition">
+        Negative ion: Sulfate test
+      </button>
+
+      <button onclick="showCompoundQuiz()" ${canIdentify ? '' : 'disabled'} class="py-3 rounded-xl font-bold ${canIdentify ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'} transition">
+        Identify Compound Formula
+      </button>
+    </div>
+  `;
+}
+
+function showIonQuiz(type, correctIon, options) {
+  actionTitle.innerText = type === 'cation' ? 'Identify the Positive Ion' : 'Identify the Negative Ion';
+  statusBadge.innerText = type === 'cation' ? 'Ion Identification: Cation' : 'Ion Identification: Anion';
+
+  const shuffled = [...options].sort(() => Math.random() - 0.5);
+
+  actionArea.innerHTML = `
+    <p class="text-gray-600 mb-4">
+      Use the observation you have just made. Which ion does this test result show?
+    </p>
+
+    <div class="space-y-3">
+      ${shuffled.map(ion => `
+        <button onclick="checkIonAnswer('${type}', '${ion.id}', '${correctIon.id}')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-400 transition shadow-sm">
+          ${ion.name}, ${ion.formula}
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function checkIonAnswer(type, selectedId, correctId) {
+  const correct = type === 'cation'
+    ? cations.find(x => x.id === correctId)
+    : anions.find(x => x.id === correctId);
+
+  if (selectedId === correctId) {
+    if (type === 'cation') {
+      foundCation = correct;
+      cationResult.innerText = `${correct.formula}`;
+    } else {
+      foundAnion = correct;
+      anionResult.innerText = `${correct.formula}`;
+    }
+
+    actionArea.innerHTML = `
+      <div class="bg-green-50 text-green-800 p-4 rounded-lg mb-5 border border-green-200 text-left">
+        <p class="font-bold">Correct — this shows ${correct.name}, ${correct.formula}.</p>
+      </div>
+      <button onclick="showTestMenu()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Continue Testing
+      </button>
+    `;
+  } else {
+    actionArea.innerHTML = `
+      <div class="bg-red-50 text-red-800 p-4 rounded-lg mb-5 border border-red-200 text-left">
+        <p class="font-bold">Not quite.</p>
+        <p>The correct ion was ${correct.name}, ${correct.formula}.</p>
+      </div>
+      <button onclick="showTestMenu()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Continue Testing
+      </button>
+    `;
+  }
+}
+
+function performNaOHTest() {
+  const c = current.cation;
+
+  actionTitle.innerText = 'Positive Ion Test: Sodium Hydroxide';
+  statusBadge.innerText = 'Testing with NaOH';
+
+  if (c.naoh === 'none') {
+    visualContainer.innerHTML = getTestTubeHTML({ liquidHeight:'h-28' });
+    setLabel('No precipitate');
+    addObservation('Sodium hydroxide added: no precipitate formed.', '🧪');
+
+    actionArea.innerHTML = `
+      <p class="text-gray-600 mb-4">
+        No precipitate forms with sodium hydroxide. This suggests a Group 1 ion, but this test alone is not enough to identify which one.
+      </p>
+      <button onclick="showTestMenu()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Continue Testing
+      </button>
+    `;
+    return;
+  }
+
+  visualContainer.innerHTML = getTestTubeHTML({
+    liquidHeight:'h-28',
+    pptHeight:'h-10',
+    pptClass:getPptClass(c.ppt)
+  });
+
+  setLabel(`${c.ppt} precipitate`);
+  addObservation(`Sodium hydroxide added: a ${c.ppt} precipitate formed.`, '🧪');
+
+  if (c.id === 'Al') addObservation('Excess sodium hydroxide added: the white precipitate dissolved.', '💧');
+  if (c.id === 'Ca' || c.id === 'Mg') addObservation('Excess sodium hydroxide added: the white precipitate did not dissolve.', '💧');
+
+  if (['Cu','Fe2','Fe3','Al'].includes(c.id)) {
+    showIonQuiz('cation', c, cations.filter(x => ['Cu','Fe2','Fe3','Al'].includes(x.id)));
+  } else if (['Ca','Mg'].includes(c.id)) {
+    showIonQuiz('cation', c, cations.filter(x => ['Ca','Mg','Al'].includes(x.id)));
+  }
+}
+
+function performFlameTest() {
+  const c = current.cation;
+
+  actionTitle.innerText = 'Positive Ion Test: Flame Test';
+  statusBadge.innerText = 'Testing with flame';
+
+  visualContainer.innerHTML = getFlameHTML();
+
+  setTimeout(() => {
+    const flame = document.getElementById('active-flame');
+
+    if (flame) {
+      flame.style.backgroundColor = c.flameColor;
+      flame.style.boxShadow = `0 0 35px 15px ${c.flameShadow}`;
+    }
+
+    setLabel(`${c.flame} flame`);
+    addObservation(`Flame test: ${c.flame} observed.`, '🔥');
+
+    showIonQuiz('cation', c, cations);
+  }, 700);
+}
+
+function performCarbonateTest() {
+  const a = current.anion;
+
+  actionTitle.innerText = 'Negative Ion Test: Carbonate';
+  statusBadge.innerText = 'Testing with dilute acid';
+
+  if (a.id === 'CO3') {
+    visualContainer.innerHTML = getLimewaterHTML(true);
+    setLabel('Gas turns limewater cloudy');
+    addObservation('Dilute acid added: fizzing observed.', '🫧');
+    addObservation('Gas tested with limewater: limewater turned cloudy.', '☁️');
+
+    showIonQuiz('anion', a, anions);
+  } else {
+    visualContainer.innerHTML = getTestTubeHTML({ liquidHeight:'h-28' });
+    setLabel('No carbonate result');
+    addObservation('Dilute acid added: no fizzing observed.', '🧪');
+    showTestMenu();
+  }
+}
+
+function performHalideTest() {
+  const a = current.anion;
+
+  actionTitle.innerText = 'Negative Ion Test: Halide';
+  statusBadge.innerText = 'Testing with silver nitrate';
+
+  if (a.test === 'halide') {
+    visualContainer.innerHTML = getTestTubeHTML({
+      liquidHeight:'h-28',
+      pptHeight:'h-10',
+      pptClass:getPptClass(a.ppt)
+    });
+
+    setLabel(`${a.ppt} precipitate`);
+    addObservation(`Dilute nitric acid added, then silver nitrate solution: a ${a.ppt} precipitate formed.`, '🧪');
+
+    showIonQuiz('anion', a, anions.filter(x => ['Cl','Br','I'].includes(x.id)));
+  } else {
+    visualContainer.innerHTML = getTestTubeHTML({ liquidHeight:'h-28' });
+    setLabel('No halide precipitate');
+    addObservation('Dilute nitric acid added, then silver nitrate solution: no precipitate formed.', '🧪');
+    showTestMenu();
+  }
+}
+
+function performSulfateTest() {
+  const a = current.anion;
+
+  actionTitle.innerText = 'Negative Ion Test: Sulfate';
+  statusBadge.innerText = 'Testing with barium chloride';
+
+  if (a.id === 'SO4') {
+    visualContainer.innerHTML = getTestTubeHTML({
+      liquidHeight:'h-28',
+      pptHeight:'h-10',
+      pptClass:'bg-white'
+    });
+
+    setLabel('White precipitate');
+    addObservation('Dilute hydrochloric acid added, then barium chloride solution: a white precipitate formed.', '🧪');
+
+    showIonQuiz('anion', a, anions);
+  } else {
+    visualContainer.innerHTML = getTestTubeHTML({ liquidHeight:'h-28' });
+    setLabel('No sulfate precipitate');
+    addObservation('Dilute hydrochloric acid added, then barium chloride solution: no white precipitate formed.', '🧪');
+    showTestMenu();
+  }
+}
+
+function showCompoundQuiz() {
+  hideLabel();
+
+  const correctFormula = getCompoundFormula(current.cation, current.anion);
+
+  let options = new Set();
+  options.add(correctFormula);
+
+  while (options.size < 5) {
+    const random = compounds[Math.floor(Math.random() * compounds.length)];
+    const c = cations.find(x => x.id === random[0]);
+    const a = anions.find(x => x.id === random[1]);
+    options.add(getCompoundFormula(c, a));
+  }
+
+  const shuffled = Array.from(options).sort(() => Math.random() - 0.5);
+
+  actionTitle.innerText = 'Identify the Ionic Compound Formula';
+  statusBadge.innerText = 'Final Formula Question';
+
+  visualContainer.innerHTML = `
+    <div class="text-center text-gray-300 fade-in">
+      <p class="text-6xl mb-4">⚖️</p>
+      <p class="text-lg font-medium">Balance the charges to choose the correct formula.</p>
+    </div>
+  `;
+
+  actionArea.innerHTML = `
+    <div class="bg-indigo-50 text-indigo-900 border border-indigo-200 p-4 rounded-lg mb-5 text-left">
+      <p><strong>Positive ion identified:</strong> ${foundCation.name}, ${foundCation.formula}</p>
+      <p><strong>Negative ion identified:</strong> ${foundAnion.name}, ${foundAnion.formula}</p>
+    </div>
+
+    <p class="text-gray-600 mb-4">Which formula is correct for this ionic compound?</p>
+
+    ${shuffled.map(opt => `
+      <button onclick="checkCompound('${opt}')" class="w-full py-3 rounded-lg font-bold text-xl bg-white border-2 border-gray-300 text-gray-700 hover:bg-indigo-50 hover:border-indigo-400 transition mb-3 shadow-sm">
+        ${opt}
+      </button>
+    `).join('')}
+  `;
+}
+
+function checkCompound(selected) {
+  const formula = getCompoundFormula(current.cation, current.anion);
+  const name = getCompoundName(current.cation, current.anion);
+
+  if (selected === formula) {
+    visualContainer.innerHTML = `
+      <div class="text-center text-green-400 fade-in">
+        <p class="text-7xl">✅</p>
+        <h3 class="text-2xl font-bold text-white">Correct!</h3>
+      </div>`;
+
+    statusBadge.innerText = 'Success';
+    statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-100 text-green-800 mb-2';
+    actionTitle.innerText = 'Compound Identified';
+
+    actionArea.innerHTML = `
+      <div class="bg-green-50 text-green-800 p-4 rounded-lg mb-6 text-left border border-green-200">
+        <p class="font-bold mb-1">The compound is ${name}.</p>
+        <p class="text-2xl font-bold">${formula}</p>
+      </div>
+      <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Identify Another Compound
+      </button>
+    `;
+  } else {
+    visualContainer.innerHTML = `
+      <div class="text-center text-red-400 fade-in">
+        <p class="text-7xl">❌</p>
+        <h3 class="text-2xl font-bold text-white">Not quite</h3>
+      </div>`;
+
+    statusBadge.innerText = 'Review Required';
+    statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-red-100 text-red-800 mb-2';
+    actionTitle.innerText = 'Check the Charges';
+
+    actionArea.innerHTML = `
+      <div class="bg-red-50 text-red-800 p-4 rounded-lg mb-6 text-left border border-red-200">
+        <p class="font-bold mb-1">The correct compound was ${name}.</p>
+        <p class="text-2xl font-bold">${formula}</p>
+        <p class="text-sm mt-2">The formula must balance the positive and negative charges.</p>
+      </div>
+      <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
+        Try Another Compound
+      </button>
+    `;
+  }
+}
+
+function resetApp() {
+  statusBadge.className = 'inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-100 text-indigo-800 mb-2';
+  statusBadge.innerText = 'Stage: Setup';
+  actionTitle.innerText = 'Identify the Mystery Ionic Compound';
+
+  observationsContainer.classList.add('hidden');
+  observationsList.innerHTML = '';
+  cationResult.innerText = 'Not identified';
+  anionResult.innerText = 'Not identified';
+
+  hideLabel();
+
+  visualContainer.innerHTML = `
+    <div class="text-center text-gray-500 opacity-60">
+      <p class="text-6xl mb-3">🧪</p>
+      <p>Awaiting Sample</p>
+    </div>
+  `;
+
+  actionArea.innerHTML = `
+    <button onclick="startGame()" class="w-full py-4 rounded-xl font-bold text-lg bg-indigo-600 text-white shadow-md hover:bg-indigo-700 transition">
+      Generate Mystery Compound
+    </button>
+  `;
+}
+
+resetApp();
+</script>
+
+</body>
+</html>
