@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AS Paper 2 Depth 2025 - Interactive Model Answers</title>
+  <style>
+    :root {
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --emerald-50: #ecfdf5;
+      --emerald-200: #a7f3d0;
+      --emerald-900: #064e3b;
+      --amber-50: #fffbeb;
+      --amber-200: #fde68a;
+      --amber-900: #78350f;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--slate-900);
+      background: linear-gradient(135deg, var(--slate-100), #ffffff 50%, var(--slate-100));
+    }
+
+    button, input { font-family: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--slate-200);
+      backdrop-filter: blur(12px);
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .topbar-inner {
+      padding: 1rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    @media (min-width: 1024px) {
+      .topbar-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--slate-500);
+    }
+
+    h1 {
+      margin: 0.25rem 0 0;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.9rem;
+      color: var(--slate-600);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .toolbar { flex-direction: row; align-items: center; }
+    }
+
+    .search-box { position: relative; }
+    .search-box span {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-400);
+      pointer-events: none;
+    }
+
+    input[type="search"] {
+      width: 100%;
+      border: 1px solid var(--slate-200);
+      border-radius: 1rem;
+      background: white;
+      padding: 0.65rem 0.8rem 0.65rem 2.2rem;
+      font-size: 0.9rem;
+      box-shadow: var(--shadow-sm);
+      outline: none;
+    }
+
+    @media (min-width: 640px) {
+      input[type="search"] { width: 18rem; }
+    }
+
+    input[type="search"]:focus { border-color: var(--slate-400); }
+
+    .button-primary {
+      border: none;
+      border-radius: 1rem;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+    .button-primary:hover { background: var(--slate-800); }
+
+    main.wrap {
+      display: grid;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+      padding-bottom: 2rem;
+    }
+
+    @media (min-width: 1024px) {
+      main.wrap { grid-template-columns: 260px 1fr; }
+    }
+
+    aside { align-self: start; }
+    @media (min-width: 1024px) {
+      aside { position: sticky; top: 7rem; }
+    }
+
+    .panel, .question-group, .intro-panel {
+      border: 1px solid var(--slate-200);
+      background: white;
+      border-radius: 2rem;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel + .panel { margin-top: 1rem; }
+
+    .panel-title {
+      margin: 0 0 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--slate-500);
+    }
+
+    .nav-buttons {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: none;
+      border-radius: 1rem;
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--slate-700);
+      background: var(--slate-50);
+    }
+    .nav-btn:hover { background: var(--slate-100); }
+    .nav-btn.active { background: var(--slate-900); color: white; }
+
+    .help-text {
+      margin: 0;
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .content { display: grid; gap: 1.5rem; }
+
+    .stats-grid {
+      display: grid;
+      gap: 0.75rem;
+    }
+    @media (min-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .stat-card {
+      border: 1px solid var(--slate-200);
+      background: white;
+      border-radius: 1.25rem;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-title {
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--slate-800);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .stat-body {
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .validation {
+      border: 1px solid var(--emerald-200);
+      background: var(--emerald-50);
+      color: var(--emerald-900);
+      border-radius: 1.25rem;
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+      font-size: 0.9rem;
+    }
+    .validation.warn {
+      border-color: var(--amber-200);
+      background: var(--amber-50);
+      color: var(--amber-900);
+    }
+    .validation p { margin: 0.25rem 0; }
+    .validation-title { font-weight: 900; margin-bottom: 0.4rem; }
+
+    .intro-panel { padding: 1.25rem; }
+    .intro-head { display: flex; align-items: center; gap: 0.8rem; }
+    .intro-icon {
+      border-radius: 1rem;
+      background: var(--slate-100);
+      padding: 0.75rem;
+      font-size: 1.2rem;
+    }
+    .intro-panel h2, .question-group h2 {
+      margin: 0;
+      line-height: 1.2;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+    .intro-panel p { margin: 0.25rem 0 0; color: var(--slate-600); font-size: 0.9rem; }
+
+    .focus-grid {
+      margin-top: 1rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+    @media (min-width: 768px) {
+      .focus-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .focus-card {
+      border-radius: 1rem;
+      background: var(--slate-50);
+      padding: 1rem;
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .question-group { padding: 1.25rem; }
+    .question-head {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+    .question-icon {
+      flex: none;
+      border-radius: 1rem;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.75rem;
+      font-size: 1.2rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .question-meta {
+      margin-top: 0.25rem;
+      color: var(--slate-600);
+      font-size: 0.9rem;
+    }
+
+    .parts { display: grid; gap: 1rem; }
+
+    .part-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 1.5rem;
+      background: var(--slate-50);
+      padding: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .part-top {
+      margin-bottom: 1rem;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .part-number {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 950;
+      color: var(--slate-900);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--slate-100);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      padding: 0.28rem 0.7rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+    .question-text {
+      margin: 0.8rem 0 0;
+      max-width: 56rem;
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .sections { display: grid; gap: 0.75rem; }
+    .accordion {
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+      border-radius: 1rem;
+      background: white;
+      box-shadow: var(--shadow-sm);
+    }
+    .accordion-btn {
+      width: 100%;
+      border: none;
+      background: white;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      text-align: left;
+      cursor: pointer;
+      color: var(--slate-800);
+      font-size: 0.95rem;
+      font-weight: 850;
+    }
+    .accordion-btn:hover { background: var(--slate-50); }
+    .accordion-title { display: flex; align-items: center; gap: 0.5rem; }
+    .accordion-content {
+      display: none;
+      border-top: 1px solid var(--slate-100);
+      padding: 1rem;
+      color: var(--slate-700);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+    .accordion.open .accordion-content { display: block; }
+    .accordion-content ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+    .accordion-content li { display: flex; gap: 0.55rem; }
+    .dot {
+      margin-top: 0.65rem;
+      width: 0.35rem;
+      height: 0.35rem;
+      border-radius: 999px;
+      background: var(--slate-400);
+      flex: none;
+    }
+
+    .empty {
+      border: 1px solid var(--slate-200);
+      background: white;
+      border-radius: 2rem;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .empty strong { display: block; color: var(--slate-700); }
+    .empty span { display: block; margin-top: 0.4rem; color: var(--slate-500); font-size: 0.9rem; }
+
+    @media print {
+      .topbar, aside, .validation, .toolbar { display: none !important; }
+      main.wrap { display: block; max-width: none; }
+      .accordion-content { display: block !important; }
+      .question-group, .part-card, .accordion { break-inside: avoid; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div>
+        <div class="eyebrow">📘 Interactive Model Answers</div>
+        <h1 id="page-title">AS Paper 2 Depth 2025</h1>
+        <p id="page-subtitle" class="subtitle">OCR AS Level Chemistry A — H032/02 Depth in Chemistry · 70 marks</p>
+      </div>
+      <div class="toolbar">
+        <div class="search-box">
+          <span>⌕</span>
+          <input id="search" type="search" placeholder="Search topics, mistakes, answers..." />
+        </div>
+        <button id="reset-sections" class="button-primary">Reset sections</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <aside>
+      <div class="panel">
+        <h2 class="panel-title">Navigate</h2>
+        <div id="nav" class="nav-buttons"></div>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">💡 How to use</h2>
+        <p class="help-text">Choose a question, read the model answer first, then open the mark breakdown and common mistakes. Use the exam tip as a final self-check before attempting similar questions.</p>
+      </div>
+    </aside>
+
+    <div class="content">
+      <div id="stats" class="stats-grid"></div>
+      <div id="validation"></div>
+      <section class="intro-panel">
+        <div class="intro-head">
+          <div class="intro-icon">◎</div>
+          <div>
+            <h2>Revision focus</h2>
+            <p>This resource is designed to help you understand how marks are earned, not just memorise final answers.</p>
+          </div>
+        </div>
+        <div class="focus-grid">
+          <div class="focus-card"><strong>Calculations:</strong> show every step, include units, and check significant figures.</div>
+          <div class="focus-card"><strong>Explanations:</strong> use clear cause-and-effect chains.</div>
+          <div class="focus-card"><strong>Organic chemistry:</strong> check structures, charges, mechanisms and conditions carefully.</div>
+        </div>
+      </section>
+      <div id="questions" class="content"></div>
+    </div>
+  </main>
+
+  <script>
+    const iconMap = {
+      calculator: "∑",
+      flask: "⚗️",
+      beaker: "🧪",
+      atom: "⚛️",
+      layers: "▦",
+      microscope: "🔬",
+      target: "◎",
+      check: "✓",
+      book: "📘",
+      alert: "⚠️",
+      lightbulb: "💡",
+      sigma: "Σ"
+    };
+
+    const paper = {
+      title: "AS Paper 2 Depth 2025",
+      subtitle: "OCR AS Level Chemistry A — H032/02 Depth in Chemistry",
+      totalMarks: 70,
+      questions: [
+        {
+          number: "1",
+          title: "Enthalpy of Neutralisation",
+          marks: 8,
+          theme: "Energetics",
+          icon: "calculator",
+          parts: [
+            { number: "1(a)", marks: 1, command: "Explain", topic: "Alkalis", question: "Explain what is meant by an alkali.", modelAnswer: "An alkali is a substance that releases OH⁻ ions in aqueous solution.", markBreakdown: ["1 mark for stating that an alkali releases/forms OH⁻ ions in aqueous solution."], explanation: "At AS level, a base is a proton acceptor, but an alkali is specifically a soluble base that produces hydroxide ions in water.", commonMistakes: ["Saying only ‘a base that neutralises acids’, which is too vague.", "Not mentioning OH⁻ ions.", "Forgetting that alkalis are aqueous/soluble bases."], examTip: "For one-mark definitions, include the key ion. For alkalis, that key ion is OH⁻." },
+            { number: "1(b)", marks: 1, command: "Write", topic: "Neutralisation", question: "Write the ionic equation for the neutralisation reaction between an acid and an alkali.", modelAnswer: "H⁺ + OH⁻ → H₂O", markBreakdown: ["1 mark for the correct ionic equation. State symbols are not required."], explanation: "Strong acids provide H⁺ ions and alkalis provide OH⁻ ions. These combine to form water. Sodium and chloride ions would be spectator ions and are not included.", commonMistakes: ["Writing a full equation instead of an ionic equation.", "Including spectator ions such as Na⁺ or Cl⁻.", "Using H₂ instead of H₂O as the product."], examTip: "The ionic equation for neutralisation is the same for any strong acid reacting with any alkali." },
+            { number: "1(c)(i)", marks: 4, command: "Calculate", topic: "Enthalpy change", question: "Calculate the enthalpy change of neutralisation when 40.0 cm³ of 1.40 mol dm⁻³ HCl reacts with 40.0 cm³ of 1.40 mol dm⁻³ NaOH and the temperature rises by 9.40 °C.", modelAnswer: "q = mcΔT = 80 × 4.18 × 9.40 = 3143 J = 3.143 kJ\n\nn(HCl) = 40.0 × 1.40 ÷ 1000 = 0.0560 mol\n\nΔH = 3.143 ÷ 0.0560 = 56.1 kJ mol⁻¹\n\nThe reaction is exothermic, so ΔH = −56.1 kJ mol⁻¹.", markBreakdown: ["1 mark for calculating q using 80 g, 4.18 J g⁻¹ K⁻¹ and 9.40 °C.", "1 mark for calculating moles of HCl/NaOH/H₂O as 0.0560 mol.", "1 mark for dividing energy by moles to get about 56.1 kJ mol⁻¹.", "1 mark for the final answer to 3 significant figures with a negative sign."], explanation: "The total volume is 80.0 cm³, so the mass is assumed to be 80 g. The heat energy released warms this solution. The enthalpy change must be given per mole of water formed, so the energy is divided by the moles reacting. The negative sign shows that heat is released.", commonMistakes: ["Using 40 g instead of 80 g for the mass.", "Forgetting to convert J to kJ.", "Using the wrong number of moles.", "Forgetting the negative sign for an exothermic reaction."], examTip: "Use the sequence: q = mcΔT → moles → energy per mole → sign and units." },
+            { number: "1(c)(ii)", marks: 2, command: "Explain", topic: "Heat and temperature change", question: "The experiment is repeated using the same moles of acid but a smaller total volume. The temperature rise is greater. Explain why.", modelAnswer: "The same number of moles reacts, so the same amount of heat is released. This heat is spread through a smaller mass/volume of solution, so the temperature rise is greater.", markBreakdown: ["1 mark for recognising that the same number of moles reacts, so the same heat is released.", "1 mark for linking the same heat to a smaller mass/volume of solution, giving a greater temperature rise."], explanation: "Temperature change depends on both the heat energy released and the mass being heated. If the same energy heats less solution, the temperature increases by more.", commonMistakes: ["Saying more heat is produced.", "Talking about rate of reaction rather than temperature change.", "Ignoring the smaller total volume."], examTip: "Same energy + smaller mass = larger ΔT." }
+          ]
+        },
+        {
+          number: "2", title: "Group 2 Chemistry and Gas Volumes", marks: 12, theme: "Inorganic and Practical Chemistry", icon: "beaker",
+          parts: [
+            { number: "2(a)(i)", marks: 1, command: "Write", topic: "Ionisation energy", question: "Write an equation to represent the second ionisation energy of calcium, including state symbols.", modelAnswer: "Ca⁺(g) → Ca²⁺(g) + e⁻", markBreakdown: ["1 mark for the correct gaseous calcium ion losing one electron to form Ca²⁺(g)."], explanation: "Second ionisation energy is the energy needed to remove one electron from each ion in one mole of gaseous 1+ ions.", commonMistakes: ["Starting with Ca(g) instead of Ca⁺(g).", "Missing gaseous state symbols.", "Adding an electron to calcium instead of removing one."], examTip: "Ionisation energy equations always involve gaseous species." },
+            { number: "2(a)(ii)*", marks: 6, command: "Explain", topic: "Group 2 reactivity and redox", question: "Give a balanced equation for calcium reacting with water, describe observations, explain why it is redox, and explain the difference in reactivity between magnesium and calcium.", modelAnswer: "Calcium reacts with water according to the equation:\n\nCa + 2H₂O → Ca(OH)₂ + H₂\n\nDuring the reaction, effervescence is observed as hydrogen gas is produced, and the calcium metal gradually disappears. A white precipitate of calcium hydroxide may also form.\n\nThis is a redox reaction because both oxidation and reduction occur. Calcium is oxidised as it loses two electrons to form Ca²⁺ ions, increasing its oxidation state from 0 to +2. Hydrogen is reduced as it gains electrons, decreasing its oxidation state from +1 in water to 0 in hydrogen gas.\n\nCalcium is more reactive than magnesium because it has a larger atomic radius and more electron shells, resulting in increased shielding. This reduces the attraction between the nucleus and the outer electrons, so they are lost more easily. Therefore, calcium has lower ionisation energies than magnesium and reacts more readily.", markBreakdown: ["Level 3 requires all three areas: reaction/observations, redox, and reactivity explanation.", "Equation and observations: Ca + 2H₂O → Ca(OH)₂ + H₂, fizzing, calcium disappearing and/or white precipitate.", "Redox: calcium oxidised, hydrogen reduced, with oxidation states or electron transfer.", "Reactivity: calcium has larger radius/more shielding, weaker attraction to outer electrons, lower ionisation energies and greater reactivity."], explanation: "This is a six-mark level-of-response question. Students need a complete chain of reasoning rather than isolated facts. The strongest answers link atomic structure to ionisation energy, and then to reactivity.", commonMistakes: ["Only saying calcium is more reactive because it is lower in Group 2.", "Forgetting observations.", "Explaining oxidation but not reduction.", "Not linking shielding to ionisation energy."], examTip: "Use the structure: equation → observations → redox → reactivity explanation." },
+            { number: "2(b)(i)", marks: 2, command: "Calculate", topic: "Gas volumes", question: "Calculate the volume of CO₂ produced at RTP when 1.51 g of BaCO₃ reacts with excess nitric acid.", modelAnswer: "n(BaCO₃) = 1.51 ÷ 197.3 = 7.65 × 10⁻³ mol\n\nThe ratio BaCO₃ : CO₂ is 1 : 1, so n(CO₂) = 7.65 × 10⁻³ mol\n\nVolume = 7.65 × 10⁻³ × 24000 = 184 cm³", markBreakdown: ["1 mark for calculating moles of BaCO₃ as 7.65 × 10⁻³ mol.", "1 mark for using the 1:1 ratio and multiplying by 24000 cm³ mol⁻¹ to get 184 cm³."], explanation: "At RTP, one mole of gas occupies 24000 cm³. Since each mole of barium carbonate produces one mole of carbon dioxide, the moles of CO₂ are the same as the moles of BaCO₃.", commonMistakes: ["Using 24 instead of 24000 while answering in cm³.", "Forgetting the 1:1 ratio.", "Using the wrong molar mass."], examTip: "For gas volume at RTP: volume in cm³ = moles × 24000." },
+            { number: "2(b)(ii)", marks: 2, command: "Suggest", topic: "Practical errors", question: "Suggest two reasons why the volume of gas collected is less than the calculated volume.", modelAnswer: "Some CO₂ may escape when the bung is replaced. Some CO₂ may dissolve in the water. Conditions may also not be exactly RTP.", markBreakdown: ["1 mark for each valid reason, up to two marks."], explanation: "The calculated volume assumes perfect collection and RTP conditions. In practice, gas can be lost or dissolve, so the measured volume is lower.", commonMistakes: ["Writing vague answers such as ‘human error’.", "Saying incomplete reaction when the acid is in excess.", "Not identifying a specific source of gas loss."], examTip: "For gas collection errors, think: gas escapes, gas dissolves, or conditions are not RTP." },
+            { number: "2(b)(iii)", marks: 1, command: "Suggest", topic: "Improving practical method", question: "Suggest one modification to produce a volume closer to the calculated volume.", modelAnswer: "Use a gas syringe instead of collecting the gas over water.", markBreakdown: ["1 mark for a suitable apparatus modification, such as using a gas syringe."], explanation: "A gas syringe reduces gas loss and avoids the issue of carbon dioxide dissolving in water.", commonMistakes: ["Suggesting repeats without improving the actual apparatus.", "Saying use a larger measuring cylinder, which does not solve gas loss or solubility."], examTip: "When asked to improve gas collection, a gas syringe is often the strongest suggestion." }
+          ]
+        },
+        {
+          number: "3", title: "Titration and Stereoisomerism", marks: 11, theme: "Practical and Organic Chemistry", icon: "flask",
+          parts: [
+            { number: "3(a)(i)", marks: 1, command: "Complete", topic: "Titration data", question: "Complete the titre table.", modelAnswer: "Titration 1: 23.30 cm³\nTitration 2: 23.05 cm³\nTitration 3: 23.15 cm³", markBreakdown: ["1 mark for all three titres correct to two decimal places."], explanation: "Titre = final burette reading − initial burette reading. The values must be recorded to the same precision as the burette readings.", commonMistakes: ["Writing 23.3 instead of 23.30.", "Adding readings instead of subtracting.", "Rounding to one decimal place."], examTip: "Burette readings and titres should normally be written to two decimal places." },
+            { number: "3(a)(ii)", marks: 1, command: "Calculate", topic: "Mean titre", question: "Calculate the mean titre that should be used.", modelAnswer: "Use the concordant titres 23.05 and 23.15.\n\nMean = (23.05 + 23.15) ÷ 2 = 23.10 cm³", markBreakdown: ["1 mark for using concordant titres and calculating the mean as 23.10 cm³."], explanation: "23.05 cm³ and 23.15 cm³ are concordant because they are within 0.10 cm³ of each other. 23.30 cm³ should not be used in the mean.", commonMistakes: ["Using all three titres.", "Using the rough titre if one is present.", "Not identifying concordant results."], examTip: "Before calculating a mean titre, choose the concordant values first." },
+            { number: "3(a)(iii)", marks: 5, command: "Calculate", topic: "Titration calculation", question: "Calculate the mass, in mg, of malic acid in one tablet.", modelAnswer: "n(NaOH) = 23.10 × 0.0800 ÷ 1000 = 1.848 × 10⁻³ mol\n\nThe equation shows 1 mol acid reacts with 2 mol NaOH, so:\n\nn(acid in 25.0 cm³) = 1.848 × 10⁻³ ÷ 2 = 9.24 × 10⁻⁴ mol\n\nThe original solution was made up to 250.0 cm³, which is ten times larger than 25.0 cm³:\n\nn(acid in 250.0 cm³, from 3 tablets) = 9.24 × 10⁻³ mol\n\nMass in 3 tablets = 9.24 × 10⁻³ × 134.0 = 1.238 g\n\nMass in 1 tablet = 1.238 ÷ 3 = 0.413 g = 413 mg", markBreakdown: ["1 mark for moles of NaOH.", "1 mark for dividing by 2 using the acid:NaOH ratio.", "1 mark for scaling from 25.0 cm³ to 250.0 cm³.", "1 mark for calculating the mass in three tablets.", "1 mark for dividing by 3 and converting to mg to give 413 mg."], explanation: "This calculation combines titration, mole ratio, dilution scaling and unit conversion. The 25.0 cm³ sample is only one tenth of the 250.0 cm³ solution made from three tablets, so the acid moles must be scaled up before finding the mass per tablet.", commonMistakes: ["Forgetting to divide by 2 for the 1:2 acid:NaOH ratio.", "Forgetting to multiply by 10 for the full 250.0 cm³ solution.", "Forgetting to divide by 3 for one tablet.", "Leaving the answer in grams rather than milligrams."], examTip: "Use the flow: mean titre → moles of solution in burette → mole ratio → scale up → mass → per tablet → convert units." },
+            { number: "3(b)", marks: 2, command: "State and explain", topic: "Titration error", question: "State and explain how rinsing the burette with water before filling with NaOH would affect the titre.", modelAnswer: "The titre would be greater because the NaOH in the burette would be diluted. A larger volume of the less concentrated NaOH would be needed to neutralise the acid.", markBreakdown: ["1 mark for stating that the titre would be greater.", "1 mark for explaining that the NaOH is diluted/less concentrated, so more is needed."], explanation: "Water left in the burette lowers the concentration of NaOH. If each cm³ contains fewer moles of NaOH, a larger volume is needed to reach the end point.", commonMistakes: ["Saying the titre is smaller.", "Only saying water affects the result without explaining how.", "Confusing dilution in the burette with dilution in the conical flask."], examTip: "If the solution in the burette is diluted, the titre increases." },
+            { number: "3(c)", marks: 2, command: "Draw", topic: "Stereoisomerism", question: "Draw the cis and trans stereoisomers formed when malic acid is heated with an acid catalyst.", modelAnswer: "The cis isomer should show the relevant groups on the same side of the C=C double bond. The trans isomer should show them on opposite sides of the C=C double bond.", markBreakdown: ["1 mark for a correct cis structure.", "1 mark for a correct trans structure."], explanation: "Cis/trans stereoisomerism occurs because rotation around a C=C double bond is restricted. The atoms or groups attached to the double-bonded carbons can therefore have different spatial arrangements.", commonMistakes: ["Drawing two identical structures.", "Changing the connectivity of the molecule.", "Forgetting that the double bond prevents free rotation."], examTip: "Check that your two drawings have the same connectivity but different arrangement around the C=C double bond." }
+          ]
+        },
+        {
+          number: "4", title: "Alkanes, Combustion and Free Radical Substitution", marks: 14, theme: "Organic Chemistry", icon: "atom",
+          parts: [
+            { number: "4(a)", marks: 4, command: "State and explain", topic: "Boiling point trends", question: "State and explain the trend in boiling points of straight-chain alkanes.", modelAnswer: "The boiling point increases as the chain length increases. Longer alkanes have more electrons and greater surface contact between molecules, so the London dispersion forces between molecules are stronger. More energy is needed to overcome these intermolecular forces, so the boiling point increases.", markBreakdown: ["1 mark for stating that boiling point increases as chain length increases.", "1 mark for greater surface contact/interactions between molecules.", "1 mark for stronger London/induced dipole forces.", "1 mark for more energy needed to overcome intermolecular forces."], explanation: "Alkanes are non-polar molecules, so their main intermolecular forces are London dispersion forces. These increase with molecular size and electron number.", commonMistakes: ["Saying covalent bonds are broken during boiling.", "Mentioning hydrogen bonding or permanent dipole-dipole forces.", "Only saying molecules get bigger without explaining forces."], examTip: "Use this chain: longer chain → more electrons/contact → stronger London forces → more energy needed." },
+            { number: "4(b)(i)", marks: 1, command: "Write", topic: "Combustion", question: "Write the balanced equation for the complete combustion of one mole of pentane.", modelAnswer: "C₅H₁₂ + 8O₂ → 5CO₂ + 6H₂O", markBreakdown: ["1 mark for the fully balanced equation using one mole of pentane."], explanation: "Complete combustion of a hydrocarbon forms carbon dioxide and water. Balance carbon first, then hydrogen, then oxygen.", commonMistakes: ["Incorrect oxygen coefficient.", "Forming carbon monoxide or carbon instead of carbon dioxide.", "Using multiples rather than one mole of pentane."], examTip: "For hydrocarbon combustion: balance C, then H, then O." },
+            { number: "4(b)(ii)", marks: 2, command: "Calculate", topic: "Combustion and carbon dioxide mass", question: "Calculate the mass of CO₂ formed when 1.00 kJ is released during complete combustion of pentane.", modelAnswer: "One mole of pentane produces 5 moles of CO₂.\n\nMass of CO₂ from one mole of pentane = 5 × 44.0 = 220 g\n\nEnergy released by one mole of pentane = 3509 kJ\n\nMass of CO₂ per 1.00 kJ = 220 ÷ 3509 = 0.0627 g", markBreakdown: ["1 mark for calculating mass of CO₂ from one mole of pentane as 220 g.", "1 mark for dividing by 3509 to give 0.0627 g."], explanation: "The enthalpy value tells you the energy released by one mole of pentane. The balanced equation tells you that this also produces five moles of carbon dioxide.", commonMistakes: ["Forgetting to multiply by 5 for five moles of CO₂.", "Using 12 instead of 44 for CO₂.", "Multiplying by 3509 rather than dividing."], examTip: "Connect the equation to the energy data: one mole fuel → energy released and products formed." },
+            { number: "4(b)(iii)", marks: 2, command: "Complete", topic: "Enthalpy profile diagrams", question: "Complete the enthalpy profile diagram for complete combustion of pentane.", modelAnswer: "The diagram should show reactants, C₅H₁₂ + O₂, higher than products, CO₂ + H₂O. It should include a curve rising to a peak and then falling to the products. Ea should be labelled from the reactant energy level to the peak. ΔH should be labelled as a downward arrow from reactants to products.", markBreakdown: ["1 mark for correct reactants/products and activation energy label.", "1 mark for ΔH shown as a downward arrow with products below reactants."], explanation: "Combustion is exothermic, so the products have lower enthalpy than the reactants. Activation energy is the energy needed to reach the top of the energy barrier.", commonMistakes: ["Drawing an endothermic diagram.", "Putting ΔH upwards.", "Not labelling Ea or the formulae of reactants and products."], examTip: "Exothermic profile = products lower than reactants and ΔH arrow down." },
+            { number: "4(b)(iv)", marks: 1, command: "Estimate", topic: "Enthalpy trend", question: "Use the data to estimate the enthalpy change of combustion of butane.", modelAnswer: "−2900 kJ mol⁻¹", markBreakdown: ["1 mark for −2900 kJ mol⁻¹ to two significant figures."], explanation: "Butane sits between propane and pentane in the homologous series, so its enthalpy change should lie between their values and follow the trend.", commonMistakes: ["Giving a positive value.", "Choosing a value outside the trend.", "Using too many significant figures when asked for two."], examTip: "For combustion enthalpies, remember values are negative because combustion is exothermic." },
+            { number: "4(c)", marks: 2, command: "Draw and state", topic: "Structural isomerism", question: "Draw the skeletal formulae and state the systematic names of the two other structural isomers of C₅H₁₂.", modelAnswer: "The two other isomers are 2-methylbutane and 2,2-dimethylpropane, drawn as correct skeletal structures.", markBreakdown: ["2 marks for both correct skeletal structures and both correct names.", "1 mark for two or three correct points out of the four required points."], explanation: "C₅H₁₂ has three structural isomers in total: pentane, 2-methylbutane and 2,2-dimethylpropane. The question already gives straight-chain pentane, so the two branched isomers are required.", commonMistakes: ["Drawing structures with the wrong number of carbons.", "Using displayed formulae when skeletal formulae are requested.", "Naming methylbutane incorrectly."], examTip: "Always count carbons in skeletal formulae before moving on." },
+            { number: "4(d)(i)", marks: 1, command: "Write", topic: "Free radical substitution", question: "Write an equation for formation of C₃H₇Br from propane.", modelAnswer: "C₃H₈ + Br₂ → C₃H₇Br + HBr", markBreakdown: ["1 mark for the correct substitution equation."], explanation: "One hydrogen atom in propane is replaced by one bromine atom. The removed hydrogen combines with the other bromine atom to form HBr.", commonMistakes: ["Forgetting HBr.", "Writing an addition reaction.", "Not balancing the halogen atoms."], examTip: "Alkane + halogen → haloalkane + hydrogen halide." },
+            { number: "4(d)(ii)", marks: 1, command: "Explain", topic: "Homolytic fission", question: "Explain what is meant by homolytic fission.", modelAnswer: "Homolytic fission is when a covalent bond breaks so that each atom receives one electron from the shared pair.", markBreakdown: ["1 mark for stating that each bonded atom gets one electron from the shared pair when the bond breaks."], explanation: "This produces radicals because each species has an unpaired electron.", commonMistakes: ["Saying one atom gets both electrons.", "Not mentioning electrons.", "Confusing homolytic fission with heterolytic fission."], examTip: "Homolytic means even splitting of the bonding pair." },
+            { number: "4(d)(iii)", marks: 2, command: "Complete", topic: "Propagation steps", question: "Complete the propagation steps in the mechanism.", modelAnswer: "C₃H₈ + Br• → C₃H₇• + HBr\n\nC₃H₇• + Br₂ → C₃H₇Br + Br•", markBreakdown: ["1 mark for the first propagation step forming C₃H₇• and HBr.", "1 mark for the second propagation step forming C₃H₇Br and regenerating Br•."], explanation: "Propagation steps continue the chain reaction. A radical is used at the start of each step and another radical is produced at the end.", commonMistakes: ["Missing radical dots.", "Not regenerating Br•.", "Using molecular formulae incorrectly."], examTip: "Propagation = radical in, radical out." },
+            { number: "4(d)(iv)", marks: 1, command: "Explain", topic: "Substitution products", question: "Explain why two structural isomers of C₃H₇Br are formed.", modelAnswer: "Bromine can substitute hydrogen atoms at different positions along the carbon chain, producing different structural isomers.", markBreakdown: ["1 mark for linking the two products to substitution at different positions."], explanation: "Propane has end hydrogens and a middle hydrogen environment. Substitution at these positions gives different bromoalkanes.", commonMistakes: ["Talking about cis/trans isomerism.", "Only saying atoms are arranged differently without explaining why.", "Referring to carbocation stability."], examTip: "For substituted alkanes, look for different hydrogen environments." }
+          ]
+        },
+        {
+          number: "5", title: "Haloalkanes, Bonding and Synthesis", marks: 16, theme: "Bonding and Organic Chemistry", icon: "layers",
+          parts: [
+            { number: "5(a)(i)", marks: 1, command: "Draw", topic: "Dot-and-cross diagrams", question: "Draw a dot-and-cross diagram for CH₃Cl, showing outer electrons only.", modelAnswer: "Carbon should be central with four single covalent bonds: three C–H bonds and one C–Cl bond. Chlorine should have three lone pairs. Different symbols should be used for electrons from C, H and Cl.", markBreakdown: ["1 mark for a correct dot-and-cross diagram including chlorine's three lone pairs and different electron symbols."], explanation: "Carbon has four outer electrons and forms four covalent bonds. Chlorine has seven outer electrons and forms one bond, leaving three lone pairs.", commonMistakes: ["Missing lone pairs on chlorine.", "Using the same symbol for all electrons.", "Giving carbon a lone pair."], examTip: "Halogens in simple covalent molecules usually have one bond and three lone pairs." },
+            { number: "5(a)(ii)", marks: 2, command: "Name and predict", topic: "Molecular shape", question: "Name the shape of chloromethane and predict the H–C–Cl bond angle.", modelAnswer: "Shape: tetrahedral\nBond angle: 109.5°", markBreakdown: ["1 mark for tetrahedral.", "1 mark for 109.5° or an accepted value around 109–110°."], explanation: "There are four bonding pairs around carbon and no lone pairs on the central atom, so the bonding pairs repel equally into a tetrahedral arrangement.", commonMistakes: ["Saying trigonal pyramidal.", "Giving 107° or 104.5°, which involve lone pairs.", "Explaining using atoms rather than electron pairs."], examTip: "Four bonded regions around carbon usually means tetrahedral and 109.5°." },
+            { number: "5(b)", marks: 3, command: "Predict and explain", topic: "Bond angles", question: "Predict the H–C–Cl bond angle in H₂C=CHCl and explain why it differs from CH₃Cl.", modelAnswer: "The H–C–Cl bond angle is about 120°. In H₂C=CHCl, the carbon has three bonded regions around it, whereas the carbon in CH₃Cl has four bonding pairs. Bonded electron pairs repel as far apart as possible, so three regions give a trigonal planar arrangement with a larger bond angle of about 120°.", markBreakdown: ["1 mark for about 120°.", "1 mark for comparing three bonded regions in H₂C=CHCl with four bonded pairs in CH₃Cl.", "1 mark for explaining that bonding pairs repel as far apart as possible."], explanation: "A double bond counts as one region of electron density when predicting shape. Three regions arrange themselves in a trigonal planar shape.", commonMistakes: ["Counting the double bond as two separate directions.", "Saying atoms repel rather than electron pairs.", "Giving the same angle as CH₃Cl."], examTip: "For shapes, count regions of electron density, not just individual bonds." },
+            { number: "5(c)*", marks: 6, command: "Describe and explain", topic: "Organic purification and yield", question: "Describe how to obtain a pure, dry sample of 2-chlorobutane from the reaction mixture and calculate the expected mass at 65.0% yield.", modelAnswer: "After reflux, the reaction mixture contains both an organic layer and an aqueous layer. The mixture should be transferred to a separating funnel to allow the two layers to separate. The organic layer, containing 2-chlorobutane, is the top layer because it has a lower density, 0.87 g cm⁻³, than the aqueous layer, 1.00 g cm⁻³.\n\nThe organic layer should then be removed and dried using an anhydrous salt, such as anhydrous magnesium sulfate or calcium chloride. This removes any remaining water from the organic product.\n\nThe dry organic liquid should then be purified by distillation, collecting the fraction that boils at approximately 70 °C, which is the boiling point of 2-chlorobutane. This separates the desired product from unreacted reactants or impurities.\n\nCalculation:\n\nn(butan-2-ol) = 9.25 ÷ 74.0 = 0.125 mol\n\nThe mole ratio is 1:1, so theoretical moles of 2-chlorobutane = 0.125 mol.\n\nMass at 100% yield = 0.125 × 92.5 = 11.56 g\n\nMass at 65.0% yield = 11.56 × 0.650 = 7.52 g", markBreakdown: ["Level 3 requires all purification steps in a logical order, explanations for most steps and the correct mass calculation.", "Separating funnel: separates organic and aqueous layers; organic layer is on top due to lower density.", "Anhydrous salt: dries the organic product by removing water.", "Distillation: collect fraction at 70 °C to separate/purify 2-chlorobutane.", "Calculation: moles of butan-2-ol, 1:1 ratio, Mr of 2-chlorobutane and 65% yield to give 7.52 g."], explanation: "This question combines practical organic purification and a yield calculation. The strongest answers explain the purpose of each step rather than just listing apparatus.", commonMistakes: ["Listing separating funnel, drying and distillation without explaining them.", "Forgetting that the organic layer is the top layer.", "Trying to dry the product by heating instead of using an anhydrous salt.", "Forgetting to apply the 65% yield."], examTip: "For organic purification, use: separate → dry → distil → calculate." },
+            { number: "5(d)(i)", marks: 3, command: "Draw and state", topic: "Reaction pathways", question: "Draw the alkene X and state reagents for the two-stage synthesis to form compound Z.", modelAnswer: "Alkene X is but-2-ene.\n\nStage 1 reagent: Br₂\n\nStage 2 reagent: aqueous NaOH or OH⁻(aq)\n\nStage 1 adds bromine across the C=C double bond to form the dibromo compound. Stage 2 substitutes bromine atoms with OH groups to form the diol.", markBreakdown: ["1 mark for the correct alkene structure.", "1 mark for Br₂ as the Stage 1 reagent.", "1 mark for aqueous hydroxide/OH⁻(aq) as the Stage 2 reagent."], explanation: "The first stage is addition across an alkene. The second stage is substitution of halogen atoms by hydroxide ions.", commonMistakes: ["Using steam for Stage 2.", "Drawing the wrong alkene.", "Missing one bromine in the intermediate.", "Confusing substitution with elimination."], examTip: "Alkene + Br₂ gives a dibromoalkane; haloalkane + OH⁻(aq) gives an alcohol/diol." },
+            { number: "5(d)(ii)", marks: 1, command: "State", topic: "Organic mechanisms", question: "State the name of the mechanism of Stage 2.", modelAnswer: "Nucleophilic substitution", markBreakdown: ["1 mark for nucleophilic substitution."], explanation: "The hydroxide ion acts as a nucleophile and replaces the bromine atom.", commonMistakes: ["Saying hydrolysis only.", "Saying electrophilic addition, which applies to alkenes.", "Saying elimination."], examTip: "Haloalkane + OH⁻ is usually nucleophilic substitution at AS level." }
+          ]
+        },
+        {
+          number: "6", title: "Mass Spectrometry and Infrared Spectroscopy", marks: 9, theme: "Analysis", icon: "microscope",
+          parts: [
+            { number: "6(a)(i)", marks: 2, command: "Draw", topic: "Mass spectrometry", question: "Draw structures for the ions responsible for peaks P and Q.", modelAnswer: "Peak P: CH₃CO⁺\n\nPeak Q: CH₃COCH₂CH₃⁺", markBreakdown: ["1 mark for CH₃CO⁺ with a positive charge.", "1 mark for CH₃COCH₂CH₃⁺ with a positive charge."], explanation: "Mass spectrometry detects positive ions. Peak P is a common acylium ion fragment. Peak Q corresponds to the molecular ion of the ketone.", commonMistakes: ["Forgetting the positive charge.", "Drawing neutral molecules instead of ions.", "Labelling P and Q the wrong way round."], examTip: "Mass spectrum peaks are caused by ions, so include the positive charge." },
+            { number: "6(a)(ii)", marks: 1, command: "Explain", topic: "M+1 peak", question: "Explain why there is a small peak at m/z = 73.", modelAnswer: "It is an M+1 peak caused by a small proportion of molecules containing carbon-13.", markBreakdown: ["1 mark for identifying carbon-13 as the cause of the M+1 peak."], explanation: "Most carbon atoms are carbon-12, but a small proportion are carbon-13. Molecules containing one carbon-13 atom have a mass one unit higher.", commonMistakes: ["Saying it is caused by impurities.", "Not mentioning carbon-13.", "Thinking it is a different compound."], examTip: "A small peak one unit above the molecular ion usually points to ¹³C." },
+            { number: "6(b)(i)", marks: 1, command: "State", topic: "Infrared spectroscopy", question: "State the effect infrared radiation has on covalent bonds.", modelAnswer: "Infrared radiation causes covalent bonds to vibrate more.", markBreakdown: ["1 mark for stating that bonds vibrate more/absorb energy and vibrate."], explanation: "IR radiation is absorbed by bonds, increasing their vibrational energy. It does not break the bonds.", commonMistakes: ["Saying IR breaks bonds.", "Confusing IR with UV radiation.", "Saying electrons are removed."], examTip: "IR = bond vibrations, not bond breaking." },
+            { number: "6(b)(ii)", marks: 2, command: "Identify and explain", topic: "Functional group identification", question: "Identify two functional groups likely to be present in compound B but not compound A, and explain using the IR spectrum.", modelAnswer: "Alcohol and alkene.\n\nThe broad O–H absorption at 3200–3600 cm⁻¹ indicates an alcohol. The sharp C=C absorption at 1620–1680 cm⁻¹ indicates an alkene.", markBreakdown: ["1 mark for identifying alcohol or alkene.", "1 mark for a correct explanation using the bond and wavenumber range: O–H at 3200–3600 cm⁻¹ or C=C at 1620–1680 cm⁻¹."], explanation: "Compound A is a ketone, so the functional groups identified in compound B must be different from a ketone. The IR spectrum shows signals consistent with O–H and C=C bonds.", commonMistakes: ["Writing hydroxyl instead of alcohol as the functional group name.", "Missing wavenumber ranges.", "Identifying carboxylic acid or alkane instead."], examTip: "For IR questions, give functional group + bond + wavenumber range." }
+          ]
+        }
+      ]
+    };
+
+    const sections = [
+      { key: "modelAnswer", label: "Model answer", icon: "check" },
+      { key: "markBreakdown", label: "Mark breakdown", icon: "target" },
+      { key: "explanation", label: "Explanation", icon: "book" },
+      { key: "commonMistakes", label: "Common mistakes", icon: "alert" },
+      { key: "examTip", label: "Exam tip", icon: "lightbulb" }
+    ];
+
+    let selectedQuestion = "all";
+    let searchQuery = "";
+
+    const $ = (selector) => document.querySelector(selector);
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function validatePaperData(data) {
+      const mainMarks = data.questions.reduce((sum, q) => sum + q.marks, 0);
+      const partMarks = data.questions.reduce((sum, q) => sum + q.parts.reduce((partSum, p) => partSum + p.marks, 0), 0);
+      const partIds = data.questions.flatMap((q) => q.parts.map((p) => p.number));
+      const duplicatePartIds = partIds.filter((id, index) => partIds.indexOf(id) !== index);
+      return {
+        mainMarksMatch: mainMarks === data.totalMarks,
+        partMarksMatch: partMarks === data.totalMarks,
+        noDuplicateParts: duplicatePartIds.length === 0,
+        mainMarks,
+        partMarks,
+        duplicatePartIds
+      };
+    }
+
+    function getFilteredQuestions() {
+      const search = searchQuery.trim().toLowerCase();
+      return paper.questions
+        .filter((q) => selectedQuestion === "all" || q.number === selectedQuestion)
+        .map((q) => ({
+          ...q,
+          parts: q.parts.filter((p) => {
+            if (!search) return true;
+            const haystack = [p.number, p.command, p.topic, p.question, p.modelAnswer, p.explanation, ...(p.commonMistakes || []), p.examTip].join(" ").toLowerCase();
+            return haystack.includes(search);
+          })
+        }))
+        .filter((q) => q.parts.length > 0);
+    }
+
+    function renderNav() {
+      const nav = $("#nav");
+      nav.innerHTML = `
+        <button class="nav-btn ${selectedQuestion === "all" ? "active" : ""}" data-question="all">All questions</button>
+        ${paper.questions.map(q => `<button class="nav-btn ${selectedQuestion === q.number ? "active" : ""}" data-question="${escapeHtml(q.number)}">Q${escapeHtml(q.number)} · ${escapeHtml(q.title)}</button>`).join("")}
+      `;
+      nav.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedQuestion = btn.dataset.question;
+          render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+    }
+
+    function renderStats(filtered) {
+      const visibleMarks = filtered.reduce((sum, q) => sum + q.parts.reduce((partSum, p) => partSum + p.marks, 0), 0);
+      const partCount = filtered.reduce((sum, q) => sum + q.parts.length, 0);
+      $("#stats").innerHTML = `
+        <div class="stat-card"><div class="stat-title">${iconMap.layers} Questions shown</div><div class="stat-body">${filtered.length} main questions</div></div>
+        <div class="stat-card"><div class="stat-title">${iconMap.target} Sub-questions</div><div class="stat-body">${partCount} question parts</div></div>
+        <div class="stat-card"><div class="stat-title">${iconMap.sigma} Marks shown</div><div class="stat-body">${visibleMarks} / ${paper.totalMarks} marks</div></div>
+      `;
+    }
+
+    function renderValidation() {
+      const validation = validatePaperData(paper);
+      const allPass = validation.mainMarksMatch && validation.partMarksMatch && validation.noDuplicateParts;
+      $("#validation").innerHTML = `
+        <div class="validation ${allPass ? "" : "warn"}">
+          <div class="validation-title">✓ Content checks</div>
+          <p>Main question marks: ${validation.mainMarks} / ${paper.totalMarks} ${validation.mainMarksMatch ? "✓" : "✗"}</p>
+          <p>Sub-question marks: ${validation.partMarks} / ${paper.totalMarks} ${validation.partMarksMatch ? "✓" : "✗"}</p>
+          <p>Duplicate question parts: ${validation.noDuplicateParts ? "none ✓" : escapeHtml(validation.duplicatePartIds.join(", "))}</p>
+        </div>
+      `;
+    }
+
+    function renderSection(section, content, openByDefault) {
+      if (!content || (Array.isArray(content) && content.length === 0)) return "";
+      const contentHtml = Array.isArray(content)
+        ? `<ul>${content.map(item => `<li><span class="dot"></span><span>${escapeHtml(item)}</span></li>`).join("")}</ul>`
+        : escapeHtml(content);
+      return `
+        <div class="accordion ${openByDefault ? "open" : ""}">
+          <button class="accordion-btn" type="button" aria-expanded="${openByDefault ? "true" : "false"}">
+            <span class="accordion-title"><span>${iconMap[section.icon]}</span>${escapeHtml(section.label)}</span>
+            <span class="chevron">${openByDefault ? "⌄" : "›"}</span>
+          </button>
+          <div class="accordion-content">${contentHtml}</div>
+        </div>
+      `;
+    }
+
+    function renderPart(part) {
+      return `
+        <article class="part-card">
+          <div class="part-top">
+            <div class="badges">
+              <h3 class="part-number">${escapeHtml(part.number)}</h3>
+              <span class="badge">${part.marks} ${part.marks === 1 ? "mark" : "marks"}</span>
+              <span class="badge">${escapeHtml(part.command)}</span>
+              <span class="badge">${escapeHtml(part.topic)}</span>
+            </div>
+            <p class="question-text">${escapeHtml(part.question)}</p>
+          </div>
+          <div class="sections">
+            ${sections.map((section, index) => renderSection(section, part[section.key], index === 0)).join("")}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderQuestions(filtered) {
+      const container = $("#questions");
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty"><strong>No matching question parts found.</strong><span>Try a different search term or select all questions.</span></div>`;
+        return;
+      }
+      container.innerHTML = filtered.map(q => `
+        <section class="question-group">
+          <div class="question-head">
+            <div class="question-icon">${iconMap[q.icon]}</div>
+            <div>
+              <h2>Question ${escapeHtml(q.number)}: ${escapeHtml(q.title)}</h2>
+              <div class="question-meta">${escapeHtml(q.theme)} · ${q.marks} marks</div>
+            </div>
+          </div>
+          <div class="parts">${q.parts.map(renderPart).join("")}</div>
+        </section>
+      `).join("");
+
+      container.querySelectorAll(".accordion-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const accordion = button.closest(".accordion");
+          const nowOpen = !accordion.classList.contains("open");
+          accordion.classList.toggle("open", nowOpen);
+          button.setAttribute("aria-expanded", String(nowOpen));
+          const chevron = button.querySelector(".chevron");
+          chevron.textContent = nowOpen ? "⌄" : "›";
+        });
+      });
+    }
+
+    function render() {
+      renderNav();
+      const filtered = getFilteredQuestions();
+      renderStats(filtered);
+      renderValidation();
+      renderQuestions(filtered);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      $("#page-title").textContent = paper.title;
+      $("#page-subtitle").textContent = `${paper.subtitle} · ${paper.totalMarks} marks`;
+      $("#search").addEventListener("input", (event) => {
+        searchQuery = event.target.value;
+        render();
+      });
+      $("#reset-sections").addEventListener("click", () => {
+        document.querySelectorAll(".accordion").forEach((accordion, index) => {
+          const shouldOpen = accordion.parentElement.querySelector(".accordion") === accordion;
+          accordion.classList.toggle("open", shouldOpen);
+          const button = accordion.querySelector(".accordion-btn");
+          const chevron = accordion.querySelector(".chevron");
+          button.setAttribute("aria-expanded", String(shouldOpen));
+          chevron.textContent = shouldOpen ? "⌄" : "›";
+        });
+      });
+      render();
+    });
+  </script>
+</body>
+</html>
