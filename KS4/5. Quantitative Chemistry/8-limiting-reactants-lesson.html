@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Limiting Reactants GCSE Chemistry Interactive Resource</title>
+  <style>
+    :root {
+      --blue: #1d4ed8;
+      --blue-dark: #1e3a8a;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --green: #15803d;
+      --red: #b91c1c;
+      --amber-50: #fffbeb;
+      --amber-200: #fde68a;
+      --blue-50: #eff6ff;
+      --blue-100: #dbeafe;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--slate-100);
+      color: var(--slate-800);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(90deg, #1d4ed8, #3730a3);
+      color: white;
+      padding: 32px;
+      border-radius: 28px;
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.2);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: clamp(1.1rem, 2.5vw, 1.65rem);
+      opacity: 0.92;
+    }
+
+    .nav {
+      position: sticky;
+      top: 12px;
+      z-index: 20;
+      background: white;
+      padding: 12px;
+      border-radius: 18px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+      border: 1px solid var(--slate-200);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .nav button, .bottom-nav button, .check-btn, .reveal-btn {
+      border: 0;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.15s ease;
+    }
+
+    .nav button {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+
+    .nav button:hover { background: var(--slate-200); }
+    .nav button.active { background: var(--blue); color: white; }
+
+    .slide {
+      display: none;
+      background: var(--slate-50);
+      padding: 30px;
+      border-radius: 28px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+      border: 1px solid var(--slate-200);
+    }
+
+    .slide.active { display: block; }
+
+    .slide h2 {
+      margin: 0 0 24px;
+      font-size: clamp(1.9rem, 3.8vw, 3rem);
+      line-height: 1.1;
+    }
+
+    .card, .blue-card, .amber-card {
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--slate-200);
+      margin-bottom: 24px;
+    }
+
+    .card { background: white; }
+    .blue-card { background: var(--blue-50); border-color: #bfdbfe; }
+    .amber-card { background: var(--amber-50); border-color: var(--amber-200); }
+
+    .key-concept {
+      background: var(--blue-100);
+      border-left: 5px solid #3b82f6;
+      padding: 24px;
+      border-radius: 18px;
+      margin-top: 24px;
+    }
+
+    .key-concept h3, .card h3, .blue-card h3, .amber-card h3 {
+      margin-top: 0;
+    }
+
+    .equation {
+      font-family: "Courier New", monospace;
+      font-size: 1.3rem;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: inline-block;
+      margin: 8px 0 16px;
+    }
+
+    .ratio-display {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 16px 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-4 { grid-template-columns: 1fr; }
+      .container { padding: 14px; }
+      .slide { padding: 18px; }
+      .hero { padding: 22px; }
+    }
+
+    .input-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .input-card.compact {
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow: none;
+    }
+
+    .input-label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .input-card.compact .input-label {
+      display: none;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input {
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 1rem;
+      width: 150px;
+    }
+
+    .compact input {
+      width: 76px;
+      padding: 7px 8px;
+      font-size: 0.9rem;
+    }
+
+    .compact.text input { width: 105px; }
+
+    .check-btn {
+      background: var(--blue);
+      color: white;
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .compact .check-btn {
+      padding: 7px 8px;
+      font-size: 0.75rem;
+    }
+
+    .feedback {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .correct { color: var(--green); }
+    .wrong { color: var(--red); }
+    .hint { color: #64748b; font-size: 0.9rem; margin: 8px 0 0; }
+
+    .reveal {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .reveal-btn {
+      width: 100%;
+      padding: 14px 18px;
+      text-align: left;
+      background: var(--slate-100);
+      color: var(--slate-800);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+    }
+
+    .reveal-content {
+      display: none;
+      padding: 18px;
+      background: white;
+    }
+
+    .reveal.open .reveal-content { display: block; }
+
+    .table-wrap {
+      overflow-x: auto;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.07);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 7px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--slate-100);
+      font-weight: 800;
+    }
+
+    td:first-child {
+      background: var(--slate-50);
+      font-weight: 800;
+      min-width: 86px;
+    }
+
+    .table-note {
+      margin: 8px 0 0;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    .cookie-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 24px;
+    }
+
+    .cookie-box {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.07);
+    }
+
+    .emoji-row {
+      font-size: 2.1rem;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 22px;
+      gap: 12px;
+    }
+
+    .bottom-nav button {
+      padding: 13px 18px;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid var(--slate-200);
+      color: var(--slate-800);
+      box-shadow: 0 5px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .bottom-nav button.primary {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+
+    .bottom-nav button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .mass-data {
+      color: #475569;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    @media print {
+      .nav, .bottom-nav, .check-btn, .reveal-btn { display: none !important; }
+      .slide { display: block !important; page-break-after: always; box-shadow: none; }
+      body { background: white; }
+      .reveal-content { display: block !important; }
+      input { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1>Limiting Reactants</h1>
+      <p>GCSE Chemistry Interactive Lesson, Practice and Self-Checking Resource</p>
+    </header>
+
+    <nav id="slideNav" class="nav"></nav>
+    <main id="slides"></main>
+
+    <div class="bottom-nav">
+      <button id="prevBtn">Previous</button>
+      <button id="nextBtn" class="primary">Next</button>
+    </div>
+  </div>
+
+<script>
+const sections = [
+  {
+    short: "Intro",
+    title: "Introduction to Limiting and Excess Reactants",
+    html: `
+      <div class="card">
+        <p style="font-size:1.25rem;">In chemical reactions, reactants combine in fixed ratios to make products. In real situations, we often do not have the exact amounts needed for every reactant to be completely used up.</p>
+        <div class="key-concept">
+          <h3>Key Concept</h3>
+          <p style="font-size:1.45rem;"><strong>The limiting reactant</strong> is the substance that is completely used up in a chemical reaction and therefore limits the amount of product that can be made.</p>
+        </div>
+      </div>
+
+      <div class="amber-card">
+        <h3 style="font-size:2.2rem;">Cookie Analogy</h3>
+        <p style="font-size:1.2rem;">Think of limiting reactants like baking cookies.</p>
+
+        <div class="cookie-grid">
+          <div class="cookie-box">
+            <h3>Recipe</h3>
+            <div class="emoji-row"><span>🥚</span><span>🌾</span><span>🌾</span></div>
+            <p>1 egg + 2 cups flour → 4 cookies</p>
+          </div>
+
+          <div class="cookie-box">
+            <h3>Your Ingredients</h3>
+            <div class="emoji-row"><span>🥚</span><span>🌾</span><span>🌾</span><span>🌾</span><span>🌾</span></div>
+            <p>1 egg + 4 cups flour</p>
+          </div>
+        </div>
+
+        <div class="cookie-grid">
+          <div class="cookie-box">
+            <h3>Cookies Made</h3>
+            <div class="emoji-row"><span>🍪</span><span>🍪</span><span>🍪</span><span>🍪</span></div>
+            <p>You can only make 4 cookies because the egg runs out first.</p>
+          </div>
+
+          <div class="cookie-box">
+            <h3>Leftover Reactant</h3>
+            <div class="emoji-row"><span>🌾</span><span>🌾</span></div>
+            <p>Two cups of flour are left over, so flour is the <strong>excess reactant</strong>.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:24px;">
+          <ul style="font-size:1.15rem;">
+            <li>The egg is the <strong>limiting reactant</strong> because it runs out first.</li>
+            <li>The flour is the <strong>excess reactant</strong> because some is left over.</li>
+            <li>The amount of cookies made depends on the limiting ingredient.</li>
+            <li>In chemistry, products form in exactly the same way using fixed ratios.</li>
+          </ul>
+        </div>
+      </div>
+    `
+  },
+  {
+    short: "Mole ratios",
+    title: "1. Understanding and Using Mole Ratios",
+    html: `
+      <div class="blue-card">
+        <h3>Worked Example: Reading the Ratio</h3>
+        <p class="equation">2H₂ + O₂ → 2H₂O</p>
+        <p style="font-size:1.15rem;">The large numbers in front of each substance tell us how many moles react or are made.</p>
+        <div class="ratio-display">H₂ : O₂ : H₂O = 2 : 1 : 2</div>
+        <ul style="font-size:1.1rem;">
+          <li>2 moles of hydrogen react with 1 mole of oxygen.</li>
+          <li>2 moles of water are produced.</li>
+          <li>The same ratio can be scaled up or down.</li>
+        </ul>
+      </div>
+
+      <div class="grid-2">
+        ${checkInput("How many moles of oxygen react with 4 moles of hydrogen?", 2, "mol O₂", "4 is double 2, so oxygen also doubles from 1 to 2.")}
+        ${checkInput("How many moles of hydrogen react with 5 moles of oxygen?", 10, "mol H₂", "Each 1 mol O₂ reacts with 2 mol H₂.")}
+      </div>
+
+      ${reveal("Reveal worked ratio examples", `
+        <p><strong>Example A:</strong> 2 mol H₂ reacts with 1 mol O₂, so 4 mol H₂ reacts with 2 mol O₂.</p>
+        <p><strong>Example B:</strong> 1 mol O₂ reacts with 2 mol H₂, so 5 mol O₂ reacts with 10 mol H₂.</p>
+      `)}
+
+      ${practiceCard("Practice 1", "N₂ + 3H₂ → 2NH₃", `
+        <div class="grid-4">
+          ${checkInput("a) H₂ needed for 1 mol N₂", 3, "mol")}
+          ${checkInput("b) H₂ needed for 2 mol N₂", 6, "mol")}
+          ${checkInput("c) NH₃ formed from 1 mol N₂", 2, "mol")}
+          ${checkInput("d) NH₃ formed from 3 mol H₂", 2, "mol")}
+        </div>
+      `, `
+        <p>a) 1 mol N₂ reacts with <strong>3 mol H₂</strong>.</p>
+        <p>b) 2 mol N₂ reacts with <strong>6 mol H₂</strong>.</p>
+        <p>c) 1 mol N₂ produces <strong>2 mol NH₃</strong>.</p>
+        <p>d) 3 mol H₂ produces <strong>2 mol NH₃</strong>.</p>
+      `)}
+
+      ${practiceCard("Practice 2", "2Mg + O₂ → 2MgO", `
+        <div class="grid-4">
+          ${checkInput("a) O₂ needed for 4 mol Mg", 2, "mol")}
+          ${checkInput("b) Mg needed for 3 mol O₂", 6, "mol")}
+          ${checkInput("c) MgO formed from 6 mol Mg", 6, "mol")}
+          ${checkInput("d) O₂ needed for 1 mol Mg", 0.5, "mol")}
+        </div>
+      `, `
+        <p>a) 4 mol Mg reacts with <strong>2 mol O₂</strong>.</p>
+        <p>b) 3 mol O₂ reacts with <strong>6 mol Mg</strong>.</p>
+        <p>c) 6 mol Mg produces <strong>6 mol MgO</strong>.</p>
+        <p>d) 1 mol Mg reacts with <strong>0.5 mol O₂</strong>.</p>
+      `)}
+
+      ${practiceCard("Practice 3", "2Al + Fe₂O₃ → 2Fe + Al₂O₃", `
+        <div class="grid-4">
+          ${checkInput("a) Al needed for 1 mol Fe₂O₃", 2, "mol")}
+          ${checkInput("b) Al needed for 3 mol Fe₂O₃", 6, "mol")}
+          ${checkInput("c) Fe formed from 2 mol Al", 2, "mol")}
+          ${checkInput("d) Al₂O₃ formed from 4 mol Al", 2, "mol")}
+        </div>
+      `, `
+        <p>a) 1 mol Fe₂O₃ reacts with <strong>2 mol Al</strong>.</p>
+        <p>b) 3 mol Fe₂O₃ reacts with <strong>6 mol Al</strong>.</p>
+        <p>c) 2 mol Al produces <strong>2 mol Fe</strong>.</p>
+        <p>d) 4 mol Al produces <strong>2 mol Al₂O₃</strong>.</p>
+      `)}
+    `
+  },
+  {
+    short: "Limiting",
+    title: "2. Finding the Limiting Reactant Using Moles",
+    html: `
+      <div class="blue-card">
+        <h3>Key Idea</h3>
+        <p style="font-size:1.15rem;">Divide the actual moles by the equation ratio. The smallest value tells us which reactant runs out first.</p>
+      </div>
+
+      ${ratioTable("Worked Example", "2H₂ + O₂ → 2H₂O", [
+        ["H₂", "2", "6", "6 ÷ 2 = 3", "Excess"],
+        ["O₂", "1", "2", "2 ÷ 1 = 2", "Limiting"]
+      ], "Oxygen is limiting because 2 is the smaller moles ÷ ratio value. Hydrogen is in excess.")}
+
+      ${practiceCard("Practice Table 1", "N₂ + 3H₂ → 2NH₃", `
+        <p>You have <strong>2 mol N₂</strong> and <strong>4 mol H₂</strong>. Complete the table.</p>
+        ${fillableRatioTable([
+          {name:"N₂", ratio:1, moles:2, divide:2, status:["excess","in excess"]},
+          {name:"H₂", ratio:3, moles:4, divide:1.33, status:["limiting","limiting reactant"]}
+        ])}
+      `, ratioTable("Model answer", "", [
+        ["N₂", "1", "2", "2 ÷ 1 = 2", "Excess"],
+        ["H₂", "3", "4", "4 ÷ 3 = 1.33", "Limiting"]
+      ], "Hydrogen is limiting because 1.33 is smaller than 2."))}
+
+      ${practiceCard("Practice Table 2", "2Mg + O₂ → 2MgO", `
+        <p>You have <strong>5 mol Mg</strong> and <strong>4 mol O₂</strong>. Complete the table.</p>
+        ${fillableRatioTable([
+          {name:"Mg", ratio:2, moles:5, divide:2.5, status:["limiting","limiting reactant"]},
+          {name:"O₂", ratio:1, moles:4, divide:4, status:["excess","in excess"]}
+        ])}
+      `, ratioTable("Model answer", "", [
+        ["Mg", "2", "5", "5 ÷ 2 = 2.5", "Limiting"],
+        ["O₂", "1", "4", "4 ÷ 1 = 4", "Excess"]
+      ], "Magnesium is limiting because 2.5 is smaller than 4."))}
+
+      ${practiceCard("Practice Table 3", "2Al + Fe₂O₃ → 2Fe + Al₂O₃", `
+        <p>You have <strong>6 mol Al</strong> and <strong>2 mol Fe₂O₃</strong>. Complete the table.</p>
+        ${fillableRatioTable([
+          {name:"Al", ratio:2, moles:6, divide:3, status:["excess","in excess"]},
+          {name:"Fe₂O₃", ratio:1, moles:2, divide:2, status:["limiting","limiting reactant"]}
+        ])}
+      `, ratioTable("Model answer", "", [
+        ["Al", "2", "6", "6 ÷ 2 = 3", "Excess"],
+        ["Fe₂O₃", "1", "2", "2 ÷ 1 = 2", "Limiting"]
+      ], "Iron oxide is limiting because 2 is smaller than 3."))}
+    `
+  },
+  {
+    short: "Mass to moles",
+    title: "3. Converting Mass to Moles, Then Finding the Limiting Reactant",
+    html: `
+      <div class="blue-card">
+        <h3>Key Equation</h3>
+        <div class="ratio-display">moles = mass ÷ Mᵣ</div>
+      </div>
+
+      ${practiceCard("Worked Example", "2Mg + O₂ → 2MgO", `
+        <p>12 g Mg reacts with 16 g O₂. Complete the mass and ratio table.</p>
+        <p class="mass-data">Ar: Mg = 24, O = 16</p>
+        ${fillableMassRatioTable([
+          {name:"Mg", mass:12, mr:24, moles:0.5, ratio:2, divide:0.25, status:["limiting","limiting reactant"]},
+          {name:"O₂", mass:16, mr:32, moles:0.5, ratio:1, divide:0.5, status:["excess","in excess"]}
+        ])}
+      `, `
+        <p>Mg: 12 ÷ 24 = <strong>0.5 mol</strong>.</p>
+        <p>O₂: 16 ÷ 32 = <strong>0.5 mol</strong>.</p>
+        <p>Mg: 0.5 ÷ 2 = <strong>0.25</strong>.</p>
+        <p>O₂: 0.5 ÷ 1 = <strong>0.5</strong>.</p>
+        <p>Magnesium is limiting because 0.25 is smaller.</p>
+      `)}
+
+      ${practiceCard("Practice 1", "N₂ + 3H₂ → 2NH₃", `
+        <p>You have <strong>28 g N₂</strong> and <strong>12 g H₂</strong>.</p>
+        <p class="mass-data">Ar: N = 14, H = 1</p>
+        ${fillableMassRatioTable([
+          {name:"N₂", mass:28, mr:28, moles:1, ratio:1, divide:1, status:["limiting","limiting reactant"]},
+          {name:"H₂", mass:12, mr:2, moles:6, ratio:3, divide:2, status:["excess","in excess"]}
+        ])}
+      `, `
+        <p>N₂: 28 ÷ 28 = <strong>1 mol</strong>.</p>
+        <p>H₂: 12 ÷ 2 = <strong>6 mol</strong>.</p>
+        <p>N₂: 1 ÷ 1 = <strong>1</strong>.</p>
+        <p>H₂: 6 ÷ 3 = <strong>2</strong>.</p>
+        <p>Nitrogen is limiting.</p>
+      `)}
+
+      ${practiceCard("Practice 2", "2Al + Fe₂O₃ → 2Fe + Al₂O₃", `
+        <p>You have <strong>54 g Al</strong> and <strong>160 g Fe₂O₃</strong>.</p>
+        <p class="mass-data">Ar: Al = 27, Fe = 56, O = 16</p>
+        ${fillableMassRatioTable([
+          {name:"Al", mass:54, mr:27, moles:2, ratio:2, divide:1, status:["neither","exact ratio","both used up"]},
+          {name:"Fe₂O₃", mass:160, mr:160, moles:1, ratio:1, divide:1, status:["neither","exact ratio","both used up"]}
+        ])}
+      `, `
+        <p>Mᵣ Fe₂O₃ = (2 × 56) + (3 × 16) = <strong>160</strong>.</p>
+        <p>Al: 54 ÷ 27 = <strong>2 mol</strong>.</p>
+        <p>Fe₂O₃: 160 ÷ 160 = <strong>1 mol</strong>.</p>
+        <p>Both moles ÷ ratio values are 1, so they are in the exact reacting ratio.</p>
+      `)}
+    `
+  },
+  {
+    short: "Max mass",
+    title: "4. Calculating the Maximum Mass of Product",
+    html: `
+      <div class="blue-card">
+        <h3>Method</h3>
+        <ol style="font-size:1.1rem;">
+          <li>Convert each reactant mass into moles.</li>
+          <li>Use the ratio table to identify the limiting reactant.</li>
+          <li>Use the limiting reactant to calculate moles of product.</li>
+          <li>Convert moles of product into mass.</li>
+        </ol>
+      </div>
+
+      ${practiceCard("Worked Example", "2Mg + O₂ → 2MgO", `
+        <p>12 g Mg reacts with 16 g O₂. Calculate the maximum mass of MgO.</p>
+        <p class="mass-data">Ar: Mg = 24, O = 16</p>
+        ${fillableMassRatioTable([
+          {name:"Mg", mass:12, mr:24, moles:0.5, ratio:2, divide:0.25, status:["limiting","limiting reactant"]},
+          {name:"O₂", mass:16, mr:32, moles:0.5, ratio:1, divide:0.5, status:["excess","in excess"]}
+        ], [{name:"MgO", moles:0.5, mr:40, mass:20}])}
+      `, `
+        <p>Magnesium is limiting.</p>
+        <p>2 mol Mg produces 2 mol MgO, so the ratio is 1:1.</p>
+        <p>0.5 mol Mg produces <strong>0.5 mol MgO</strong>.</p>
+        <p>Mᵣ MgO = 24 + 16 = <strong>40</strong>.</p>
+        <p>Mass MgO = 0.5 × 40 = <strong>20 g</strong>.</p>
+      `)}
+
+      ${practiceCard("Practice 1: Maximum Mass of Ammonia", "N₂ + 3H₂ → 2NH₃", `
+        <p>You have <strong>28 g N₂</strong> and <strong>3 g H₂</strong>. Calculate the maximum mass of ammonia produced.</p>
+        <p class="mass-data">Ar: N = 14, H = 1</p>
+        ${fillableMassRatioTable([
+          {name:"N₂", mass:28, mr:28, moles:1, ratio:1, divide:1, status:["excess","in excess"]},
+          {name:"H₂", mass:3, mr:2, moles:1.5, ratio:3, divide:0.5, status:["limiting","limiting reactant"]}
+        ], [{name:"NH₃", moles:1, mr:17, mass:17}])}
+      `, `
+        <p>N₂: 28 ÷ 28 = <strong>1 mol</strong>.</p>
+        <p>H₂: 3 ÷ 2 = <strong>1.5 mol</strong>.</p>
+        <p>Hydrogen is limiting because 1.5 ÷ 3 = 0.5.</p>
+        <p>3 mol H₂ produces 2 mol NH₃, so 1.5 mol H₂ produces <strong>1 mol NH₃</strong>.</p>
+        <p>Mᵣ NH₃ = 17. Mass = 1 × 17 = <strong>17 g</strong>.</p>
+      `)}
+
+      ${practiceCard("Practice 2: Maximum Mass of Iron", "2Al + Fe₂O₃ → 2Fe + Al₂O₃", `
+        <p>You have <strong>108 g Al</strong> and <strong>320 g Fe₂O₃</strong>. Calculate the maximum mass of iron produced.</p>
+        <p class="mass-data">Ar: Al = 27, Fe = 56, O = 16</p>
+        ${fillableMassRatioTable([
+          {name:"Al", mass:108, mr:27, moles:4, ratio:2, divide:2, status:["neither","exact ratio","both used up"]},
+          {name:"Fe₂O₃", mass:320, mr:160, moles:2, ratio:1, divide:2, status:["neither","exact ratio","both used up"]}
+        ], [{name:"Fe", moles:4, mr:56, mass:224}])}
+      `, `
+        <p>Al: 108 ÷ 27 = <strong>4 mol</strong>.</p>
+        <p>Fe₂O₃: 320 ÷ 160 = <strong>2 mol</strong>.</p>
+        <p>Both moles ÷ ratio values are 2, so the reactants are in the exact ratio.</p>
+        <p>2 mol Al produces 2 mol Fe, so 4 mol Al produces <strong>4 mol Fe</strong>.</p>
+        <p>Mass Fe = 4 × 56 = <strong>224 g</strong>.</p>
+      `)}
+
+      ${practiceCard("Practice 3: Maximum Mass of Copper", "2Al + 3CuCl₂ → 3Cu + 2AlCl₃", `
+        <p>You have <strong>54 g Al</strong> and <strong>269 g CuCl₂</strong>. Calculate the maximum mass of copper produced.</p>
+        <p class="mass-data">Ar: Al = 27, Cu = 63.5<br />Mr: CuCl₂ = 134.5, AlCl₃ = 133.5</p>
+        ${fillableMassRatioTable([
+          {name:"Al", mass:54, mr:27, moles:2, ratio:2, divide:1, status:["excess","in excess"]},
+          {name:"CuCl₂", mass:269, mr:134.5, moles:2, ratio:3, divide:0.67, status:["limiting","limiting reactant"]}
+        ], [{name:"Cu", moles:2, mr:63.5, mass:127}])}
+      `, `
+        <p>Al: 54 ÷ 27 = <strong>2 mol</strong>.</p>
+        <p>CuCl₂: 269 ÷ 134.5 = <strong>2 mol</strong>.</p>
+        <p>Al: 2 ÷ 2 = 1. CuCl₂: 2 ÷ 3 = 0.67.</p>
+        <p>CuCl₂ is limiting.</p>
+        <p>3 mol CuCl₂ produces 3 mol Cu, so 2 mol CuCl₂ produces <strong>2 mol Cu</strong>.</p>
+        <p>Mass Cu = 2 × 63.5 = <strong>127 g</strong>.</p>
+      `)}
+    `
+  },
+  {
+    short: "Exam style",
+    title: "5. GCSE Exam-Style Questions",
+    html: `
+      ${practiceCard("Exam Question 1", "2Al + Fe₂O₃ → 2Fe + Al₂O₃", `
+        <p>A mixture contains <strong>1.00 kg aluminium</strong> and <strong>3.00 kg iron oxide</strong>. Show that aluminium is the limiting reactant.</p>
+        <p class="mass-data">Ar: O = 16, Al = 27, Fe = 56</p>
+        ${fillableMassRatioTable([
+          {name:"Al", mass:1000, mr:27, moles:37.04, ratio:2, divide:18.52, status:["limiting","limiting reactant"]},
+          {name:"Fe₂O₃", mass:3000, mr:160, moles:18.75, ratio:1, divide:18.75, status:["excess","in excess"]}
+        ])}
+      `, `
+        <p>1.00 kg Al = <strong>1000 g</strong>.</p>
+        <p>Al: 1000 ÷ 27 = <strong>37.04 mol</strong>.</p>
+        <p>Mᵣ Fe₂O₃ = (2 × 56) + (3 × 16) = <strong>160</strong>.</p>
+        <p>3.00 kg Fe₂O₃ = <strong>3000 g</strong>.</p>
+        <p>Fe₂O₃: 3000 ÷ 160 = <strong>18.75 mol</strong>.</p>
+        <p>Al: 37.04 ÷ 2 = <strong>18.52</strong>.</p>
+        <p>Fe₂O₃: 18.75 ÷ 1 = <strong>18.75</strong>.</p>
+        <p>Aluminium is limiting because 18.52 is smaller than 18.75.</p>
+      `)}
+
+      ${practiceCard("Exam Question 2", "2Al + 3CuCl₂ → 3Cu + 2AlCl₃", `
+        <p><strong>108 g aluminium</strong> reacts with <strong>1.21 kg copper chloride</strong>. Calculate the maximum mass of copper produced.</p>
+        <p class="mass-data">Ar: Al = 27, Cu = 63.5<br />Mr: CuCl₂ = 134.5, AlCl₃ = 133.5</p>
+        ${fillableMassRatioTable([
+          {name:"Al", mass:108, mr:27, moles:4, ratio:2, divide:2, status:["limiting","limiting reactant"]},
+          {name:"CuCl₂", mass:1210, mr:134.5, moles:9, ratio:3, divide:3, status:["excess","in excess"]}
+        ], [{name:"Cu", moles:6, mr:63.5, mass:381}])}
+      `, `
+        <p>1.21 kg CuCl₂ = <strong>1210 g</strong>.</p>
+        <p>Al: 108 ÷ 27 = <strong>4.00 mol</strong>.</p>
+        <p>CuCl₂: 1210 ÷ 134.5 = <strong>9.00 mol</strong>.</p>
+        <p>Al: 4 ÷ 2 = <strong>2</strong>.</p>
+        <p>CuCl₂: 9 ÷ 3 = <strong>3</strong>.</p>
+        <p>Aluminium is limiting.</p>
+        <p>2 mol Al produces 3 mol Cu, so 4 mol Al produces <strong>6 mol Cu</strong>.</p>
+        <p>Mass Cu = 6 × 63.5 = <strong>381 g</strong>.</p>
+      `)}
+    `
+  }
+];
+
+let currentSlide = 0;
+
+function uid() {
+  return "id_" + Math.random().toString(36).slice(2, 10);
+}
+
+function escAttr(value) {
+  return String(value).replace(/"/g, "&quot;");
+}
+
+function checkInput(label, answer, suffix = "", hint = "", tolerance = 0.02, compact = false) {
+  const id = uid();
+  return `
+    <div class="input-card ${compact ? "compact" : ""}" data-type="number" data-answer="${answer}" data-tolerance="${tolerance}">
+      <label class="input-label" for="${id}">${label}</label>
+      <div class="input-row">
+        <input id="${id}" type="text" autocomplete="off" />
+        ${suffix ? `<span>${suffix}</span>` : ""}
+        <button class="check-btn" type="button">Check</button>
+      </div>
+      <p class="feedback"></p>
+      ${hint && !compact ? `<p class="hint">Hint: ${hint}</p>` : ""}
+    </div>
+  `;
+}
+
+function textInput(accepted, placeholder = "limit/excess") {
+  const id = uid();
+  return `
+    <div class="input-card compact text" data-type="text" data-accepted="${escAttr(accepted.join("|"))}">
+      <div class="input-row">
+        <input id="${id}" type="text" placeholder="${placeholder}" autocomplete="off" />
+        <button class="check-btn" type="button">Check</button>
+      </div>
+      <p class="feedback"></p>
+    </div>
+  `;
+}
+
+function reveal(title, content) {
+  return `
+    <div class="reveal">
+      <button class="reveal-btn" type="button"><span>${title}</span><span>+</span></button>
+      <div class="reveal-content">${content}</div>
+    </div>
+  `;
+}
+
+function practiceCard(title, equation, body, working) {
+  return `
+    <section class="amber-card">
+      <h3>${title}</h3>
+      ${equation ? `<p class="equation">${equation}</p>` : ""}
+      ${body}
+      ${reveal("Reveal model answer / working", working)}
+    </section>
+  `;
+}
+
+function ratioTable(title, equation, rows, conclusion) {
+  const bodyRows = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><strong>${r[4]}</strong></td></tr>`).join("");
+  return `
+    <div class="table-wrap">
+      <h3>${title}</h3>
+      ${equation ? `<p class="equation">${equation}</p>` : ""}
+      <table>
+        <thead><tr><th>Substance</th><th>Ratio</th><th>Moles</th><th>Moles ÷ ratio</th><th>Result</th></tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+      ${conclusion ? `<p class="table-note"><strong>Conclusion:</strong> ${conclusion}</p>` : ""}
+    </div>
+  `;
+}
+
+function fillableRatioTable(rows) {
+  const bodyRows = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${checkInput("", r.ratio, "", "", 0.02, true)}</td>
+      <td>${checkInput("", r.moles, "", "", r.molesTolerance || 0.02, true)}</td>
+      <td>${checkInput("", r.divide, "", "", r.divideTolerance || 0.05, true)}</td>
+      <td>${textInput(r.status, "limit/excess")}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Substance</th><th>Ratio</th><th>Moles</th><th>Moles ÷ ratio</th><th>Result</th></tr></thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+      <p class="table-note">Smallest moles ÷ ratio value = limiting reactant.</p>
+    </div>
+  `;
+}
+
+function fillableMassRatioTable(rows, productRows = []) {
+  const reactantRows = rows.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td>${checkInput("", r.mass, "", "", r.massTolerance || 0.05, true)}</td>
+      <td>${checkInput("", r.mr, "", "", r.mrTolerance || 0.05, true)}</td>
+      <td>${checkInput("", r.moles, "", "", r.molesTolerance || 0.05, true)}</td>
+      <td>${checkInput("", r.ratio, "", "", 0.02, true)}</td>
+      <td>${checkInput("", r.divide, "", "", r.divideTolerance || 0.05, true)}</td>
+      <td>${textInput(r.status, "limit/excess")}</td>
+    </tr>
+  `).join("");
+
+  const productTable = productRows.length ? `
+    <h4>Product calculation</h4>
+    <table>
+      <thead><tr><th>Product</th><th>Moles</th><th>Mr</th><th>Mass / g</th></tr></thead>
+      <tbody>${productRows.map(r => `
+        <tr>
+          <td>${r.name}</td>
+          <td>${checkInput("", r.moles, "", "", r.molesTolerance || 0.05, true)}</td>
+          <td>${checkInput("", r.mr, "", "", r.mrTolerance || 0.05, true)}</td>
+          <td>${checkInput("", r.mass, "", "", r.massTolerance || 0.05, true)}</td>
+        </tr>
+      `).join("")}</tbody>
+    </table>
+  ` : "";
+
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Substance</th><th>Mass / g</th><th>Mr</th><th>Moles</th><th>Ratio</th><th>Moles ÷ ratio</th><th>Result</th></tr></thead>
+        <tbody>${reactantRows}</tbody>
+      </table>
+      ${productTable}
+      <p class="table-note">Calculate moles first using mass ÷ Mr, then compare using moles ÷ ratio.</p>
+    </div>
+  `;
+}
+
+function cleanText(value) {
+  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function attachHandlers() {
+  document.querySelectorAll(".input-card .check-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".input-card");
+      const input = card.querySelector("input");
+      const feedback = card.querySelector(".feedback");
+      const value = input.value;
+      if (!value.trim()) {
+        feedback.textContent = "Enter an answer first.";
+        feedback.className = "feedback wrong";
+        return;
+      }
+
+      if (card.dataset.type === "number") {
+        const answer = parseFloat(card.dataset.answer);
+        const tolerance = parseFloat(card.dataset.tolerance || "0.02");
+        const parsed = parseFloat(value.replace(",", "."));
+        const ok = Number.isFinite(parsed) && Math.abs(parsed - answer) <= tolerance;
+        feedback.textContent = ok ? "Correct ✓" : "Not quite.";
+        feedback.className = ok ? "feedback correct" : "feedback wrong";
+      } else {
+        const accepted = (card.dataset.accepted || "").split("|").map(cleanText);
+        const ok = accepted.includes(cleanText(value));
+        feedback.textContent = ok ? "Correct ✓" : "Check this cell.";
+        feedback.className = ok ? "feedback correct" : "feedback wrong";
+      }
+    });
+  });
+
+  document.querySelectorAll(".reveal-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const box = btn.closest(".reveal");
+      box.classList.toggle("open");
+      btn.querySelector("span:last-child").textContent = box.classList.contains("open") ? "−" : "+";
+    });
+  });
+}
+
+function render() {
+  const nav = document.getElementById("slideNav");
+  const slides = document.getElementById("slides");
+
+  nav.innerHTML = sections.map((s, i) => `<button type="button" class="${i === currentSlide ? "active" : ""}" data-slide="${i}">${i + 1}. ${s.short}</button>`).join("");
+  slides.innerHTML = sections.map((s, i) => `
+    <section class="slide ${i === currentSlide ? "active" : ""}">
+      <h2>${s.title}</h2>
+      ${s.html}
+    </section>
+  `).join("");
+
+  document.querySelectorAll("#slideNav button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentSlide = Number(btn.dataset.slide);
+      render();
+    });
+  });
+
+  document.getElementById("prevBtn").disabled = currentSlide === 0;
+  document.getElementById("nextBtn").disabled = currentSlide === sections.length - 1;
+
+  attachHandlers();
+}
+
+document.getElementById("prevBtn").addEventListener("click", () => {
+  currentSlide = Math.max(0, currentSlide - 1);
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  currentSlide = Math.min(sections.length - 1, currentSlide + 1);
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+render();
+</script>
+</body>
+</html>
