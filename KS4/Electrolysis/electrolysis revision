@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GCSE Chemistry Revision: Electrolysis</title>
+  <style>
+    :root{
+      --bg1:#f8fafc; --bg2:#eef2ff; --bg3:#eff6ff;
+      --indigo:#4f46e5; --indigo-dark:#3730a3;
+      --slate:#0f172a; --muted:#64748b; --border:#e2e8f0;
+      --card:rgba(255,255,255,.92);
+      --shadow:0 16px 40px rgba(15,23,42,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--slate);
+      background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      min-height:100vh;
+      overflow:hidden;
+    }
+    button{font:inherit}
+    .app{height:100vh;display:flex;flex-direction:column}
+    header{
+      height:81px;
+      display:flex;align-items:center;
+      padding:16px 28px;
+      background:rgba(255,255,255,.82);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.75);
+      z-index:20;
+      flex-shrink:0;
+    }
+    .header-inner{display:flex;align-items:center;gap:16px;width:100%}
+    .icon-box{width:44px;height:44px;border-radius:16px;background:var(--indigo);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .header-title{min-width:0}
+    .section-label{margin:0;color:var(--indigo);font-weight:800;font-size:14px}
+    .header-title h1{margin:0;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .progress-wrap{margin-left:auto;width:300px}
+    .progress{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+    .progress-bar{height:100%;background:var(--indigo);width:0%;transition:.25s}
+    .slide-count{text-align:right;color:var(--muted);font-size:13px;margin-top:4px}
+    .layout{flex:1;display:flex;min-height:0}
+    aside{
+      width:288px;
+      flex:0 0 288px;
+      padding:16px;
+      background:rgba(255,255,255,.55);
+      border-right:1px solid rgba(255,255,255,.75);
+      overflow-y:auto;
+      height:calc(100vh - 81px);
+    }
+    aside h2{font-size:18px;margin:0 0 12px;font-weight:900}
+    .nav-section{margin-bottom:18px}
+    .nav-section-title{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;font-weight:900;margin:0 0 7px}
+    .nav-btn{
+      width:100%;border:0;background:transparent;color:#334155;
+      text-align:left;border-radius:13px;padding:9px 10px;margin:2px 0;
+      cursor:pointer;font-size:13px;line-height:1.25;
+    }
+    .nav-btn:hover{background:white}
+    .nav-btn.active{background:var(--indigo);color:white;font-weight:800}
+    main{
+      flex:1;
+      overflow-y:auto;
+      padding:24px 24px 40px;
+      min-width:0;
+    }
+    .slide-wrap{
+      max-width:1280px;
+      min-height:calc(100vh - 160px);
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      animation:fade .18s ease-out;
+    }
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .slide-heading{margin-bottom:24px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.85);
+      border:1px solid white;color:var(--indigo-dark);font-weight:900;
+      box-shadow:0 4px 12px rgba(15,23,42,.05);
+      margin-bottom:14px;
+    }
+    .slide-heading h2{font-size:clamp(34px,4vw,54px);line-height:1.02;margin:0;font-weight:950;letter-spacing:-.04em}
+    .subtitle{font-size:20px;color:#64748b;margin:12px 0 0}
+    .slide-body{flex:1}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .grid-title{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:center}
+    .grid-concept{display:grid;grid-template-columns:.9fr 1.1fr;gap:24px}
+    .grid-worked{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+    .card{
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 6px 18px rgba(15,23,42,.06);
+      overflow:hidden;
+    }
+    .card-content{padding:24px}
+    .card.dark{background:#020617;color:white;border:0}
+    .card.indigo{background:var(--indigo);color:white;border:0;box-shadow:var(--shadow)}
+    .card.amber{background:#fffbeb;border-color:#fde68a;color:#451a03}
+    .card.sky{background:#f0f9ff;border-color:#bae6fd}
+    .card.rose{background:#fff1f2;border-color:#fecdd3}
+    .card.emerald{background:#ecfdf5;border-color:#a7f3d0}
+    .card h3,.card h2{margin-top:0}
+    .big-title{font-size:clamp(42px,5vw,64px);line-height:.98;font-weight:950;letter-spacing:-.05em;margin:0}
+    .lead{font-size:20px;color:#64748b;line-height:1.55}
+    .concept-key{font-size:25px;font-weight:850;line-height:1.2}
+    .text-xl{font-size:20px;line-height:1.6}
+    .keywords{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+    .keyword{background:#eef2ff;border:1px solid #e0e7ff;color:#3730a3;padding:6px 11px;border-radius:999px;font-size:14px;font-weight:700}
+    .outcome{display:flex;gap:12px;align-items:flex-start;margin:14px 0;font-size:18px;color:#334155}
+    .step{display:flex;gap:16px}
+    .step-num{width:40px;height:40px;border-radius:999px;background:var(--indigo);color:white;display:flex;align-items:center;justify-content:center;font-weight:950;flex-shrink:0}
+    .equation{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;background:rgba(255,255,255,.1);padding:14px;border-radius:14px;margin:10px 0;font-size:18px}
+    .question-card{margin-bottom:14px}
+    .q-row{display:flex;gap:16px;align-items:flex-start}
+    .q-num{width:36px;height:36px;border-radius:999px;background:#e0e7ff;color:#3730a3;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+    .q-text{font-size:18px;font-weight:750;margin:0}
+    .answer{display:none;margin-top:14px;background:#ecfdf5;border:1px solid #a7f3d0;color:#064e3b;padding:14px;border-radius:14px;line-height:1.5}
+    .answer.show{display:block}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border:0;border-radius:14px;padding:10px 15px;font-weight:900;
+      cursor:pointer;background:var(--indigo);color:white;
+    }
+    .btn:hover{background:#4338ca}
+    .btn.outline{background:white;color:#1e293b;border:1px solid var(--border)}
+    .btn.outline:hover{background:#f8fafc}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
+    .small{font-size:13px;padding:8px 11px}
+    .bottom-nav{
+      margin-top:32px;
+      display:flex;
+      justify-content:flex-end;
+      padding-bottom:4px;
+    }
+    .bottom-nav-inner{
+      display:flex;gap:10px;background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);border:1px solid var(--border);
+      border-radius:18px;box-shadow:var(--shadow);padding:10px;
+    }
+
+    /* Simulations */
+    .sim-card .card-content{padding:18px}
+    .sim-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+    .sim-head h3{font-size:24px;font-weight:950;margin:0 0 4px}
+    .sim-head p{margin:0;color:#64748b;font-weight:650}
+    .sim-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .tank{position:relative;height:360px;border:2px solid #e2e8f0;border-radius:24px;background:linear-gradient(#eef2ff,#eff6ff,#fff);overflow:hidden}
+    .tank.aqueous{height:390px;background:linear-gradient(#ecfeff,#eff6ff,#fff)}
+    .electrode{position:absolute;top:0;bottom:0;width:14%;background:#1e293b;color:white;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:20px 6px;z-index:10;text-align:center}
+    .electrode.left{left:0}.electrode.right{right:0}
+    .charge{font-size:48px;font-weight:950}
+    .electrode-title{font-weight:950;font-size:17px}
+    .electrode-sub{font-size:12px;opacity:.78}
+    .tag-dark{font-size:12px;font-weight:850;background:rgba(255,255,255,.1);border-radius:10px;padding:5px 7px}
+    .liquid{position:absolute;left:14%;right:14%;bottom:0;height:82%;background:rgba(125,211,252,.35);border-top:4px solid #7dd3fc}
+    .liquid.aq{height:84%;background:rgba(103,232,249,.32);border-top-color:#67e8f9}
+    .liquid-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.86);border:1px solid #bae6fd;border-radius:999px;padding:5px 14px;font-weight:950;color:#075985;font-size:13px;white-space:nowrap;z-index:2}
+    .ion-layer{position:absolute;inset:0}
+    .ion{position:absolute;width:56px;height:56px;border-radius:999px;border:4px solid;display:flex;align-items:center;justify-content:center;color:white;font-weight:950;box-shadow:0 10px 18px rgba(15,23,42,.18);z-index:20}
+    .blue{background:#0ea5e9;border-color:#0369a1}.rose-ion{background:#f43f5e;border-color:#be123c}.amber-ion{background:#f59e0b;border-color:#b45309}.purple{background:#a855f7;border-color:#7e22ce}.lime{background:#84cc16;border-color:#4d7c0f}.sulfate{background:#3b82f6;border-color:#1d4ed8}
+    .inactive{filter:grayscale(.8);opacity:.62}
+    @keyframes driftToCathode{0%{left:50%;transform:translate(-50%,-50%) scale(1);opacity:.95}72%{left:18%;transform:translate(-50%,-50%) scale(1);opacity:1}86%{left:14.5%;transform:translate(-50%,-50%) scale(.92);opacity:.9}100%{left:14.5%;transform:translate(-50%,-50%) scale(.25);opacity:0}}
+    @keyframes driftToAnode{0%{left:50%;transform:translate(-50%,-50%) scale(1);opacity:.95}72%{left:82%;transform:translate(-50%,-50%) scale(1);opacity:1}86%{left:85.5%;transform:translate(-50%,-50%) scale(.92);opacity:.9}100%{left:85.5%;transform:translate(-50%,-50%) scale(.25);opacity:0}}
+    @keyframes productDeposit{0%,20%{opacity:.35;height:18%}55%{opacity:.95;height:44%}100%{opacity:.55;height:30%}}
+    @keyframes gasRise{0%{transform:translateY(0) scale(.75);opacity:0}18%{opacity:.9}75%{opacity:.85}100%{transform:translateY(-95px) scale(1.15);opacity:0}}
+    @keyframes electronPulse{0%,100%{opacity:.2;transform:translateX(0) scale(.85)}50%{opacity:1;transform:translateX(12px) scale(1)}}
+    @keyframes flash{0%,100%{opacity:.18;transform:scale(.9)}50%{opacity:.85;transform:scale(1.08)}}
+    .run .to-cathode{animation:driftToCathode linear infinite}
+    .run .to-anode{animation:driftToAnode linear infinite}
+    .paused .ion,.paused .gas,.paused .deposit,.paused .electron,.paused .flash{animation-play-state:paused!important}
+    .deposit{position:absolute;left:12.3%;bottom:12%;width:28px;border-radius:8px 8px 0 0;background:rgba(203,213,225,.9);border:1px solid #64748b;z-index:30;animation:productDeposit 4.4s ease-in-out infinite}
+    .deposit.copper{background:rgba(251,146,60,.92);border-color:#c2410c}
+    .product-label{position:absolute;bottom:9%;z-index:31;background:rgba(255,255,255,.9);border:1px solid #e2e8f0;border-radius:12px;padding:7px 9px;font-size:12px;font-weight:950;color:#1e293b;box-shadow:0 4px 14px rgba(15,23,42,.08)}
+    .product-label.left{left:15%}.product-label.right{right:15%}
+    .gas{position:absolute;bottom:18%;z-index:30;border-radius:999px;background:rgba(255,255,255,.86);border:2px solid #f59e0b;padding:4px 8px;font-size:12px;font-weight:950;color:#92400e;animation:gasRise 3s ease-out infinite}
+    .gas.left{left:14.5%;border-color:#0ea5e9;color:#075985}.gas.right{right:14.5%}
+    .electron{position:absolute;top:42%;z-index:40;border-radius:999px;padding:4px 8px;font-weight:950;font-size:13px;box-shadow:0 4px 14px rgba(15,23,42,.08);animation:electronPulse 1.5s ease-in-out infinite}
+    .electron.in{left:6.5%;background:#cffafe;border:1px solid #67e8f9;color:#164e63}.electron.out{right:6.5%;background:#fef3c7;border:1px solid #fbbf24;color:#78350f}
+    .flash{position:absolute;top:47%;width:80px;height:80px;border-radius:999px;z-index:29;animation:flash 1.6s ease-in-out infinite}
+    .flash.left{left:14%;background:rgba(103,232,249,.45);border:4px solid rgba(207,250,254,.8)}
+    .flash.right{right:14%;background:rgba(252,211,77,.45);border:4px solid rgba(254,243,199,.8)}
+    @keyframes spectatorPositive{0%,100%{left:38%;transform:translate(-50%,-50%) translateY(0);opacity:.55}50%{left:42%;transform:translate(-50%,-50%) translateY(-12px);opacity:.75}}
+    @keyframes spectatorNegative{0%,100%{left:62%;transform:translate(-50%,-50%) translateY(0);opacity:.55}50%{left:58%;transform:translate(-50%,-50%) translateY(12px);opacity:.75}}
+    .run .spectator-positive{animation:spectatorPositive ease-in-out infinite}
+    .run .spectator-negative{animation:spectatorNegative ease-in-out infinite}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    .info-box{border-radius:18px;padding:14px;border:1px solid}
+    .info-box.sky{background:#f0f9ff;border-color:#bae6fd;color:#082f49}
+    .info-box.rose{background:#fff1f2;border-color:#fecdd3;color:#4c0519}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:rgba(255,255,255,.8);padding:8px 10px;border-radius:12px;display:inline-block;margin-top:8px;font-size:13px}
+    .mobile-menu-btn{display:none}
+
+    @media(max-width:900px){
+      body{overflow:auto}
+      .app{height:auto;min-height:100vh}
+      header{position:sticky;top:0}
+      aside{display:none}
+      .layout{display:block}
+      main{overflow:visible;padding:16px 16px 40px}
+      .progress-wrap{display:none}
+      .grid-2,.grid-3,.grid-title,.grid-concept,.grid-worked{grid-template-columns:1fr}
+      .mobile-menu-btn{display:inline-flex}
+      .slide-heading h2{font-size:34px}
+      .sim-head{display:block}
+      .sim-controls{justify-content:flex-start;margin-top:10px}
+      .tank,.tank.aqueous{height:340px}
+      .ion{width:48px;height:48px;font-size:13px}
+      .mobile-drawer{display:block}
+      .info-grid{grid-template-columns:1fr}
+    }
+    .mobile-drawer{position:fixed;inset:0;z-index:100;display:none}
+    .drawer-bg{position:absolute;inset:0;background:rgba(15,23,42,.45)}
+    .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:320px;max-width:85vw;background:white;padding:16px;overflow-y:auto;box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-inner">
+      <button class="btn outline small mobile-menu-btn" onclick="openDrawer()">☰</button>
+      <div class="icon-box" id="headerIcon">⚡</div>
+      <div class="header-title">
+        <p class="section-label" id="headerSection">Overview</p>
+        <h1 id="headerTitle">GCSE Chemistry Revision: Electrolysis</h1>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="slide-count" id="slideCount"></div>
+      </div>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <h2>Lesson sections</h2>
+      <div id="sideNav"></div>
+    </aside>
+    <main id="main">
+      <div class="slide-wrap" id="slideWrap"></div>
+    </main>
+  </div>
+</div>
+<div id="drawer" class="mobile-drawer"></div>
+
+<script>
+const icons = {zap:"⚡",beaker:"🧪",battery:"🔋",factory:"🏭",droplets:"💧",check:"✅",help:"❔",flask:"⚗️",graduate:"🎓"};
+
+const slides = [
+{id:"title",section:"Overview",title:"GCSE Chemistry Revision: Electrolysis",subtitle:"AQA 4.4.3 — from the basics to product prediction and half equations",icon:"zap",type:"title",content:{outcomes:["Explain why molten and aqueous ionic compounds conduct electricity.","Describe how ions move during electrolysis.","Predict products from molten ionic compounds and aqueous solutions.","Explain aluminium extraction using electrolysis.","Higher Tier: write and balance half equations for electrode reactions."]}},
+{id:"big-picture",section:"Overview",title:"The big idea",subtitle:"Electrolysis uses electricity to break down ionic substances.",icon:"battery",type:"concept",content:{keyPoint:"Electrolysis only works when ions are free to move.",explanation:"Ionic compounds contain charged particles called ions. In a solid ionic compound, the ions are locked in fixed positions, so they cannot move and cannot carry charge. When the compound is molten or dissolved in water, the ions can move through the liquid or solution. This allows electricity to pass through.",callout:"A liquid or solution that conducts electricity because it contains mobile ions is called an electrolyte.",keywords:["ion","electrolyte","molten","aqueous","mobile ions"]}},
+{id:"electrode-movement",section:"4.4.3.1",title:"Where do the ions go?",subtitle:"Opposite charges attract.",icon:"zap",type:"diagram",content:{leftTitle:"Cathode",leftSub:"Negative electrode",leftItems:["Attracts positive ions","Cations move here","Reduction happens here"],rightTitle:"Anode",rightSub:"Positive electrode",rightItems:["Attracts negative ions","Anions move here","Oxidation happens here"]}},
+{id:"basics-check",section:"4.4.3.1",title:"Checkpoint: electrolysis basics",subtitle:"Test the foundations before moving on.",icon:"help",type:"questions",content:{questions:[["Why can solid ionic compounds not be electrolysed?","The ions are held in fixed positions and are not free to move, so they cannot carry charge through the solid."],["What is an electrolyte?","A liquid or solution that conducts electricity because it contains mobile ions."],["Which electrode do positive ions move to, and why?","They move to the cathode, which is negative, because opposite charges attract."],["What does it mean for an ion to be discharged?","It gains or loses electrons at an electrode and becomes a neutral atom or molecule."]]}},
+{id:"molten-rules",section:"4.4.3.2",title:"Electrolysis of molten ionic compounds",subtitle:"Molten compounds are the simplest examples because water is not involved.",icon:"beaker",type:"concept",content:{keyPoint:"For a molten binary ionic compound: metal forms at the cathode; non-metal forms at the anode.",explanation:"A binary ionic compound contains two elements. When it is molten, the positive metal ions and negative non-metal ions can move. The positive metal ions move to the negative cathode and gain electrons. The negative non-metal ions move to the positive anode and lose electrons.",callout:"Molten = only the ions from the compound are present. Do not include hydrogen or hydroxide ions from water.",keywords:["binary compound","molten","cathode","anode","inert electrodes"]}},
+{id:"lead-bromide",section:"4.4.3.2",title:"Worked example: molten lead bromide",subtitle:"A classic example of molten electrolysis.",icon:"beaker",type:"worked",content:{steps:[["1. Identify the ions","Lead bromide contains Pb²⁺ ions and Br⁻ ions."],["2. Predict the cathode product","Pb²⁺ ions move to the negative cathode and gain electrons to form lead metal."],["3. Predict the anode product","Br⁻ ions move to the positive anode and lose electrons to form bromine molecules, Br₂."]],equations:["Cathode: Pb²⁺ + 2e⁻ → Pb","Anode: 2Br⁻ → Br₂ + 2e⁻"],examTip:"In molten electrolysis, the formula tells you the products: the metal and the non-metal."}},
+{id:"molten-check",section:"4.4.3.2",title:"Checkpoint: molten compounds",subtitle:"Predict products using the simple molten rule.",icon:"help",type:"questions",content:{questions:[["Predict the products when molten zinc chloride is electrolysed.","Cathode: zinc. Anode: chlorine."],["Predict the products when molten magnesium oxide is electrolysed.","Cathode: magnesium. Anode: oxygen."],["Why are inert electrodes used in many electrolysis experiments?","They conduct electricity but do not react with the electrolyte or products."]]}},
+{id:"metal-extraction",section:"4.4.3.3",title:"Using electrolysis to extract metals",subtitle:"Some metals are too reactive to extract using carbon.",icon:"factory",type:"concept",content:{keyPoint:"Electrolysis is used to extract metals that are more reactive than carbon, or metals that react with carbon.",explanation:"Carbon can remove oxygen from compounds of some less reactive metals, but it cannot be used to extract very reactive metals such as aluminium. These metals must be extracted from molten compounds using electrolysis. This uses large amounts of energy because the compound must be melted and an electric current must be supplied.",callout:"High energy use makes electrolysis expensive, so it is mainly used when carbon reduction will not work.",keywords:["reactivity series","extraction","reduction","carbon","energy"]}},
+{id:"aluminium",section:"4.4.3.3",title:"Aluminium extraction",subtitle:"Aluminium oxide is electrolysed in molten cryolite.",icon:"factory",type:"worked",content:{steps:[["1. Aluminium oxide has a very high melting point","Melting pure aluminium oxide would require a huge amount of energy."],["2. Cryolite is added","Aluminium oxide is dissolved in molten cryolite. This lowers the operating temperature and reduces energy costs."],["3. Aluminium forms at the cathode","Al³⁺ ions gain electrons to form aluminium atoms."],["4. Oxygen forms at the carbon anode","Oxygen reacts with the carbon anode to form carbon dioxide, so the anode wears away and must be replaced."]],equations:["Cathode: Al³⁺ + 3e⁻ → Al","Anode issue: carbon + oxygen → carbon dioxide"],examTip:"When asked why cryolite is used, mention lowering the temperature and reducing energy costs."}},
+{id:"extraction-check",section:"4.4.3.3",title:"Checkpoint: metal extraction",subtitle:"These questions commonly appear in exams.",icon:"help",type:"questions",content:{questions:[["Why can aluminium not be extracted by reduction with carbon?","Aluminium is more reactive than carbon, so carbon cannot remove oxygen from aluminium oxide."],["Why is cryolite used in aluminium extraction?","It lowers the melting point/operating temperature, so less energy is needed and the process is cheaper."],["Why must the positive electrode be replaced regularly?","Oxygen produced at the anode reacts with the carbon electrode to form carbon dioxide, so the electrode wears away."]]}},
+{id:"aqueous-intro",section:"4.4.3.4",title:"Electrolysis of aqueous solutions",subtitle:"Aqueous electrolysis has extra ions from water.",icon:"droplets",type:"concept",content:{keyPoint:"In aqueous solutions, water produces H⁺ and OH⁻ ions, so there is more than one possible product at each electrode.",explanation:"When an ionic compound dissolves in water, the solution contains ions from the compound and ions linked to water. This means product prediction depends on the relative reactivity of the elements involved. The rules for the cathode and anode must be applied carefully.",callout:"Aqueous = dissolved in water. Always remember H⁺ and OH⁻ are also involved.",keywords:["aqueous","hydrogen ions","hydroxide ions","reactivity","halide"]}},
+{id:"aqueous-rules",section:"4.4.3.4",title:"Aqueous product prediction rules",subtitle:"Use one rule for the cathode and one rule for the anode.",icon:"droplets",type:"rules",content:{rules:[["At the cathode","Hydrogen is produced if the metal is more reactive than hydrogen. If the metal is less reactive than hydrogen, the metal is produced."],["At the anode","Oxygen is produced unless the solution contains halide ions. If chloride, bromide or iodide ions are present, the halogen is produced."]],examples:["Sodium chloride solution → cathode: hydrogen; anode: chlorine","Copper sulfate solution → cathode: copper; anode: oxygen","Potassium nitrate solution → cathode: hydrogen; anode: oxygen"],warning:"Do not simply pick the metal and non-metal from the compound. That only works for molten compounds."}},
+{id:"aqueous-check",section:"4.4.3.4",title:"Checkpoint: aqueous solutions",subtitle:"Apply the cathode and anode rules carefully.",icon:"help",type:"questions",content:{questions:[["Why is hydrogen produced instead of sodium when sodium chloride solution is electrolysed?","Sodium is more reactive than hydrogen, so hydrogen ions are discharged instead."],["Predict the products of potassium nitrate solution using inert electrodes.","Cathode: hydrogen. Anode: oxygen."],["Predict the products of copper chloride solution using inert electrodes.","Cathode: copper. Anode: chlorine."],["What is a halide ion? Give two examples.","A negative ion from group 7. Examples include chloride, Cl⁻, bromide, Br⁻, and iodide, I⁻."]]}},
+{id:"required-practical",section:"Required practical 3",title:"Required practical: aqueous electrolysis",subtitle:"Investigate what happens when aqueous solutions are electrolysed using inert electrodes.",icon:"flask",type:"practical",content:{hypothesis:"The products formed at the electrodes depend on the ions present in solution and the relative reactivity of the elements involved.",method:["Set up a simple electrolysis circuit with inert electrodes.","Add the aqueous electrolyte to a suitable container.","Pass a current through the solution.","Observe changes at each electrode, such as gas bubbles, colour changes or metal deposits.","Test gases safely where appropriate."],skills:["Recognising hazards","Observing carefully","Using gas tests","Developing a hypothesis","Explaining results using ions"],questions:[["What gas test confirms hydrogen?","A lit splint gives a squeaky pop."],["What gas test confirms oxygen?","A glowing splint relights."],["Why might practical results not perfectly match predictions?","Possible reasons include low concentrations, contamination, gases dissolving, side reactions, or observations being difficult to see."]]}},
+{id:"half-equations-intro",section:"4.4.3.5 HT",title:"Higher Tier: half equations",subtitle:"Show what happens to electrons at each electrode.",icon:"graduate",type:"concept",content:{keyPoint:"Cathode reactions are reductions because positive ions gain electrons. Anode reactions are oxidations because negative ions lose electrons.",explanation:"Half equations show the particles involved and the electrons gained or lost. To balance a half equation, balance the atoms first, then balance the charge using electrons.",callout:"OIL RIG: Oxidation Is Loss, Reduction Is Gain of electrons.",keywords:["half equation","oxidation","reduction","electrons","charge"]}},
+{id:"half-equations-examples",section:"4.4.3.5 HT",title:"Higher Tier: common half equations",subtitle:"Learn the patterns rather than memorising random equations.",icon:"graduate",type:"worked",content:{steps:[["Hydrogen at the cathode","Hydrogen ions gain electrons: 2H⁺ + 2e⁻ → H₂"],["Metal at the cathode","Metal ions gain electrons. Example: Cu²⁺ + 2e⁻ → Cu"],["Halogen at the anode","Halide ions lose electrons. Example: 2Cl⁻ → Cl₂ + 2e⁻"],["Oxygen at the anode","Hydroxide ions lose electrons: 4OH⁻ → O₂ + 2H₂O + 4e⁻"]],equations:["2H⁺ + 2e⁻ → H₂","Cu²⁺ + 2e⁻ → Cu","2Cl⁻ → Cl₂ + 2e⁻","4OH⁻ → O₂ + 2H₂O + 4e⁻"],examTip:"Electrons go on the left for reduction and on the right for oxidation."}},
+{id:"half-equations-check",section:"4.4.3.5 HT",title:"Checkpoint: half equations",subtitle:"Balance atoms, then balance charge.",icon:"help",type:"questions",content:{questions:[["Is oxidation gain or loss of electrons?","Loss of electrons."],["Write the half equation for Cu²⁺ forming copper.","Cu²⁺ + 2e⁻ → Cu"],["Balance this half equation: Cl⁻ → Cl₂","2Cl⁻ → Cl₂ + 2e⁻"],["Why is 2H⁺ + 2e⁻ → H₂ balanced?","There are two hydrogen atoms on each side and the total charge is zero on both sides."]]}},
+{id:"exam-challenge",section:"Review",title:"Final exam-style challenge",subtitle:"Bring the whole topic together.",icon:"check",type:"exam",content:{scenario:"A student electrolyses aqueous magnesium chloride using inert electrodes.",questions:[["a) Predict the product at the cathode and explain why it forms. [2 marks]","Hydrogen forms at the cathode. Magnesium is more reactive than hydrogen, so hydrogen ions are discharged instead of magnesium ions."],["b) Predict the product at the anode and explain why it forms. [2 marks]","Chlorine forms at the anode. The solution contains chloride ions, which are halide ions, so the halogen is produced instead of oxygen."],["c) Higher Tier: write the half equation for the cathode reaction. [1 mark]","2H⁺ + 2e⁻ → H₂"],["d) Higher Tier: write the half equation for the anode reaction. [1 mark]","2Cl⁻ → Cl₂ + 2e⁻"]]}},
+{id:"summary",section:"Summary",title:"Electrolysis: what to remember",subtitle:"Use these rules to answer most GCSE electrolysis questions.",icon:"check",type:"summary",content:{points:["Electrolysis needs mobile ions, so the ionic compound must be molten or dissolved in water.","Positive ions move to the negative cathode.","Negative ions move to the positive anode.","Molten ionic compounds produce the metal at the cathode and the non-metal at the anode.","Aqueous solutions involve H⁺ and OH⁻ ions from water, so product rules are needed.","At the cathode in aqueous solutions: hydrogen forms if the metal is more reactive than hydrogen.","At the anode in aqueous solutions: halogens form from halide ions; otherwise oxygen forms.","Higher Tier: cathode = reduction, anode = oxidation."]}}
+];
+
+let index = 0;
+let moltenRunning = true, moltenLabels = true, moltenElectrons = true;
+let aqRunning = true, aqLabels = true, aqMode = "sodiumChloride";
+
+function esc(s){return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+
+function buildNav(){
+  const sections=[...new Set(slides.map(s=>s.section))];
+  document.getElementById("sideNav").innerHTML = sections.map(sec=>`
+    <div class="nav-section">
+      <p class="nav-section-title">${esc(sec)}</p>
+      ${slides.map((s,i)=>s.section===sec?`<button class="nav-btn ${i===index?'active':''}" onclick="go(${i})">${esc(s.title)}</button>`:"").join("")}
+    </div>`).join("");
+}
+
+function openDrawer(){
+  const d=document.getElementById("drawer");
+  d.style.display="block";
+  d.innerHTML = `<div class="drawer-bg" onclick="closeDrawer()"></div><div class="drawer-panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 style="margin:0">Slides</h2><button class="btn outline small" onclick="closeDrawer()">×</button></div>${slides.map((s,i)=>`<button class="nav-btn ${i===index?'active':''}" onclick="go(${i});closeDrawer()"><span style="display:block;font-size:11px;opacity:.75">${esc(s.section)}</span>${esc(s.title)}</button>`).join("")}</div>`;
+}
+function closeDrawer(){document.getElementById("drawer").style.display="none"}
+
+function render(){
+  const s=slides[index];
+  document.getElementById("headerIcon").textContent=icons[s.icon]||"•";
+  document.getElementById("headerSection").textContent=s.section;
+  document.getElementById("headerTitle").textContent=s.title;
+  document.getElementById("progressBar").style.width=((index+1)/slides.length*100)+"%";
+  document.getElementById("slideCount").textContent=`Slide ${index+1} of ${slides.length}`;
+  buildNav();
+  const wrap=document.getElementById("slideWrap");
+  wrap.innerHTML = `
+    <div class="slide-heading">
+      <div class="pill">${icons[s.icon]||"•"} ${esc(s.section)}</div>
+      ${s.type==="title"?"":`<h2>${esc(s.title)}</h2><p class="subtitle">${esc(s.subtitle)}</p>`}
+    </div>
+    <div class="slide-body">${slideBody(s)}</div>
+    <div class="bottom-nav"><div class="bottom-nav-inner">
+      <button class="btn outline" onclick="prev()" ${index===0?"disabled":""}>‹ Previous</button>
+      <button class="btn" onclick="next()" ${index===slides.length-1?"disabled":""}>Next ›</button>
+    </div></div>`;
+  document.getElementById("main").scrollTop=0;
+}
+
+function slideBody(s){
+  if(s.type==="title")return titleSlide(s);
+  if(s.type==="concept")return conceptSlide(s);
+  if(s.type==="diagram")return diagramSlide(s);
+  if(s.type==="questions")return questionsSlide(s.content.questions);
+  if(s.type==="worked")return workedSlide(s);
+  if(s.type==="rules")return rulesSlide(s);
+  if(s.type==="practical")return practicalSlide(s);
+  if(s.type==="exam")return examSlide(s);
+  if(s.type==="summary")return summarySlide(s);
+  return "";
+}
+function titleSlide(s){return `<div class="grid-title"><div><div class="pill">⚡ AQA GCSE Chemistry</div><h1 class="big-title">${esc(s.title)}</h1><p class="lead">${esc(s.subtitle)}</p></div><div class="card"><div class="card-content"><h2>By the end, you should be able to...</h2>${s.content.outcomes.map(o=>`<div class="outcome">✅ <span>${esc(o)}</span></div>`).join("")}</div></div></div>`}
+function conceptSlide(s){return `<div class="grid-concept"><div class="card indigo"><div class="card-content"><div style="font-size:52px;margin-bottom:18px">${icons[s.icon]}</div><h2>Key idea</h2><p class="concept-key">${esc(s.content.keyPoint)}</p></div></div><div><div class="card"><div class="card-content"><p class="text-xl">${esc(s.content.explanation)}</p></div></div><div class="card amber" style="margin-top:18px"><div class="card-content"><strong>Remember: </strong>${esc(s.content.callout)}</div></div><div class="keywords">${s.content.keywords.map(k=>`<span class="keyword">${esc(k)}</span>`).join("")}</div></div></div>`}
+function diagramSlide(s){return `<div style="display:grid;gap:20px">${moltenSim(false)}<div class="grid-2"><div class="card sky"><div class="card-content"><div style="font-size:50px">−</div><h2>${esc(s.content.leftTitle)}</h2><p><strong>${esc(s.content.leftSub)}</strong></p><ul>${s.content.leftItems.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div></div><div class="card rose"><div class="card-content"><div style="font-size:50px">+</div><h2>${esc(s.content.rightTitle)}</h2><p><strong>${esc(s.content.rightSub)}</strong></p><ul>${s.content.rightItems.map(i=>`<li>${esc(i)}</li>`).join("")}</ul></div></div></div><div class="card dark"><div class="card-content" style="text-align:center;font-size:18px;font-weight:800">Positive ions are called cations. Negative ions are called anions. Ions are discharged when they gain or lose electrons at an electrode.</div></div></div>`}
+function questionsSlide(qs){return qs.map((qa,i)=>`<div class="card question-card"><div class="card-content"><div class="q-row"><div class="q-num">${i+1}</div><div style="flex:1"><p class="q-text">${esc(qa[0])}</p><button class="btn outline small" onclick="toggleAnswer(this)" style="margin-top:14px">👁️ Reveal answer</button><div class="answer"><strong>Answer: </strong>${esc(qa[1])}</div></div></div></div></div>`).join("")}
+function workedSlide(s){return `<div style="display:grid;gap:20px">${s.id==="lead-bromide"?moltenSim(true):""}<div class="grid-worked"><div>${s.content.steps.map((st,i)=>`<div class="card" style="margin-bottom:14px"><div class="card-content step"><div class="step-num">${i+1}</div><div><h3>${esc(st[0])}</h3><p>${esc(st[1])}</p></div></div></div>`).join("")}</div><div><div class="card dark"><div class="card-content"><h3>Useful equations</h3>${s.content.equations.map(e=>`<div class="equation">${esc(e)}</div>`).join("")}</div></div><div class="card amber" style="margin-top:16px"><div class="card-content"><strong>Exam tip: </strong>${esc(s.content.examTip)}</div></div></div></div></div>`}
+function rulesSlide(s){return `<div style="display:grid;gap:20px">${s.id==="aqueous-rules"?aqueousSim():""}<div class="grid-2">${s.content.rules.map(r=>`<div class="card"><div class="card-content"><h2 style="color:var(--indigo)">${esc(r[0])}</h2><p class="text-xl">${esc(r[1])}</p></div></div>`).join("")}</div><div class="card emerald"><div class="card-content"><h3>Examples</h3><div class="grid-3">${s.content.examples.map(e=>`<div class="card"><div class="card-content" style="padding:14px;font-weight:800">${esc(e)}</div></div>`).join("")}</div></div></div><div class="card rose"><div class="card-content"><strong>Common mistake: </strong>${esc(s.content.warning)}</div></div></div>`}
+function practicalSlide(s){return `<div class="grid-2"><div><div class="card indigo"><div class="card-content"><h3>Possible hypothesis</h3><p class="text-xl">${esc(s.content.hypothesis)}</p></div></div><div class="card" style="margin-top:18px"><div class="card-content"><h3>Method outline</h3><ol>${s.content.method.map(m=>`<li>${esc(m)}</li>`).join("")}</ol></div></div></div><div><div class="card emerald"><div class="card-content"><h3>Skills developed</h3><div class="keywords">${s.content.skills.map(sk=>`<span class="keyword">${esc(sk)}</span>`).join("")}</div></div></div><div style="margin-top:18px">${questionsSlide(s.content.questions)}</div></div></div>`}
+function examSlide(s){return `<div><div class="card dark"><div class="card-content"><h3>Scenario</h3><p style="font-size:24px">${esc(s.content.scenario)}</p></div></div><div class="grid-2" style="margin-top:18px">${s.content.questions.map((q,i)=>`<div>${questionsSlide([q])}</div>`).join("")}</div></div>`}
+function summarySlide(s){return `<div class="grid-2">${s.content.points.map((p,i)=>`<div class="card"><div class="card-content step"><div class="q-num" style="background:#d1fae5;color:#047857">${i+1}</div><p style="font-size:18px;font-weight:700;margin:0">${esc(p)}</p></div></div>`).join("")}</div>`}
+
+function moltenSim(lead=false){
+ const c=lead?{title:"Molten lead bromide: PbBr₂(l)",subtitle:"Pb²⁺ ions move to the cathode and become lead metal. Br⁻ ions move to the anode and form bromine molecules.",pos:"Pb²⁺",neg:"Br⁻",negClass:"amber-ion",left:"Pb metal deposit",right:"Br₂ molecules",gas:"Br₂",eq1:"Pb²⁺ + 2e⁻ → Pb",eq2:"2Br⁻ → Br₂ + 2e⁻",cp:"Reduction: Pb²⁺ ions gain electrons and become Pb atoms, which collect as lead metal.",ap:"Oxidation: Br⁻ ions lose electrons. Bromine atoms join in pairs to form Br₂ molecules."}:{title:"Molten electrolyte: mobile ions",subtitle:"Ions move to the electrode with the opposite charge, then are discharged.",pos:"+ ion",neg:"− ion",negClass:"rose-ion",left:"neutral atoms form",right:"neutral atoms/molecules form",gas:"X₂",eq1:"+ ion + e⁻ → atom",eq2:"− ion → atom + e⁻",cp:"Reduction: positive ions gain electrons at the cathode and become neutral atoms.",ap:"Oxidation: negative ions lose electrons at the anode and become neutral atoms or molecules."};
+ const pos=[18,36,56,74,48], neg=[25,45,64,82,34];
+ return `<div class="card sim-card"><div class="card-content"><div class="sim-head"><div><h3>${c.title}</h3><p>${c.subtitle}</p></div><div class="sim-controls"><button class="btn outline small" onclick="moltenRunning=!moltenRunning;render()">${moltenRunning?'Pause':'Run'}</button><button class="btn outline small" onclick="moltenLabels=!moltenLabels;render()">${moltenLabels?'Hide labels':'Show labels'}</button><button class="btn outline small" onclick="moltenElectrons=!moltenElectrons;render()">${moltenElectrons?'Hide e⁻ clues':'Show e⁻ clues'}</button></div></div><div class="tank"><div class="electrode left"><div class="charge">−</div><div><div class="electrode-title">Cathode</div><div class="electrode-sub">negative electrode</div></div><div class="tag-dark">gain e⁻</div></div><div class="electrode right"><div class="charge">+</div><div><div class="electrode-title">Anode</div><div class="electrode-sub">positive electrode</div></div><div class="tag-dark">lose e⁻</div></div><div class="liquid"><div class="liquid-label">molten electrolyte</div></div><div class="ion-layer ${moltenRunning?'run':'run paused'}">${pos.map((t,i)=>`<div class="ion blue to-cathode" style="top:${t}%;animation-delay:${[-0,-1.1,-2.2,-.7,-3.2][i]}s;animation-duration:${[4.4,4.8,4.2,5,4.6][i]}s">${moltenLabels?c.pos:'+'}</div>`).join("")}${neg.map((t,i)=>`<div class="ion ${c.negClass} to-anode" style="top:${t}%;animation-delay:${[-.4,-1.8,-2.7,-1,-3.3][i]}s;animation-duration:${[4.7,4.3,4.9,4.5,4.6][i]}s">${moltenLabels?c.neg:'−'}</div>`).join("")}<div class="flash left"></div><div class="flash right"></div>${moltenElectrons?`<div class="electron in">e⁻ in</div><div class="electron in" style="top:52%;animation-delay:.35s">e⁻ in</div><div class="electron out">e⁻ out</div><div class="electron out" style="top:52%;animation-delay:.35s">e⁻ out</div>`:""}<div class="deposit"></div><div class="product-label left">${c.left}</div>${[0,1,2,3].map(b=>`<div class="gas right" style="margin-right:${b*7}px;animation-delay:${b*.55}s">${c.gas}</div>`).join("")}<div class="product-label right">${c.right}</div></div></div><div class="info-grid"><div class="info-box sky"><strong>At the cathode: reduction</strong><p>${c.cp}</p><span class="mono">${c.eq1}</span></div><div class="info-box rose"><strong>At the anode: oxidation</strong><p>${c.ap}</p><span class="mono">${c.eq2}</span></div></div></div></div>`;
+}
+
+function aqueousSim(){
+ const sodium = aqMode==="sodiumChloride";
+ const c=sodium?{title:"Aqueous sodium chloride: NaCl(aq)",subtitle:"Na⁺ and Cl⁻ are present, but water also provides H⁺ and OH⁻ ions.",metal:"Na⁺",non:"Cl⁻",halide:true,metalMore:true,cp:"Hydrogen gas forms at the cathode because sodium is more reactive than hydrogen.",ap:"Chlorine gas forms at the anode because chloride is a halide ion.",eq1:"2H⁺ + 2e⁻ → H₂",eq2:"2Cl⁻ → Cl₂ + 2e⁻",cg:"H₂",ag:"Cl₂",agClass:"lime"}:{title:"Aqueous copper sulfate: CuSO₄(aq)",subtitle:"Cu²⁺ and SO₄²⁻ are present, but water also provides H⁺ and OH⁻ ions.",metal:"Cu²⁺",non:"SO₄²⁻",halide:false,metalMore:false,cp:"Copper forms at the cathode because copper is less reactive than hydrogen.",ap:"Oxygen gas forms at the anode because sulfate is not a halide ion, so hydroxide ions are discharged.",eq1:"Cu²⁺ + 2e⁻ → Cu",eq2:"4OH⁻ → O₂ + 2H₂O + 4e⁻",cg:"Cu",ag:"O₂",agClass:"sulfate"};
+ const ions=[
+  [c.metal,"+", "purple",18,"0s","5.4s", !c.metalMore?"to-cathode":"spectator-positive", c.metalMore],
+  [c.metal,"+", "purple",56,"-2.4s","5.1s", !c.metalMore?"to-cathode":"spectator-positive", c.metalMore],
+  ["H⁺","+", "blue",34,"-1s","4.7s", c.metalMore?"to-cathode":"spectator-positive", !c.metalMore],
+  ["H⁺","+", "blue",76,"-3s","4.9s", c.metalMore?"to-cathode":"spectator-positive", !c.metalMore],
+  [c.non,"−", c.halide?"lime":"sulfate",25,"-.4s","5s", c.halide?"to-anode":"spectator-negative", !c.halide],
+  [c.non,"−", c.halide?"lime":"sulfate",68,"-2.2s","5.2s", c.halide?"to-anode":"spectator-negative", !c.halide],
+  ["OH⁻","−","amber-ion",44,"-1.5s","4.6s", c.halide?"spectator-negative":"to-anode", c.halide],
+  ["OH⁻","−","amber-ion",82,"-3.1s","4.8s", c.halide?"spectator-negative":"to-anode", c.halide]
+ ];
+ return `<div class="card sim-card"><div class="card-content"><div class="sim-head"><div><h3>${c.title}</h3><p>${c.subtitle}</p></div><div class="sim-controls"><button class="btn outline small" onclick="aqMode=aqMode==='sodiumChloride'?'copperSulfate':'sodiumChloride';render()">Switch example</button><button class="btn outline small" onclick="aqRunning=!aqRunning;render()">${aqRunning?'Pause':'Run'}</button><button class="btn outline small" onclick="aqLabels=!aqLabels;render()">${aqLabels?'Hide labels':'Show labels'}</button></div></div><div class="tank aqueous"><div class="electrode left"><div class="charge">−</div><div><div class="electrode-title">Cathode</div><div class="electrode-sub">negative</div></div><div class="tag-dark">gain e⁻</div></div><div class="electrode right"><div class="charge">+</div><div><div class="electrode-title">Anode</div><div class="electrode-sub">positive</div></div><div class="tag-dark">lose e⁻</div></div><div class="liquid aq"><div class="liquid-label">aqueous solution: compound ions + H⁺ + OH⁻ from water</div></div><div class="ion-layer ${aqRunning?'run':'run paused'}">${ions.map((it,i)=>`<div class="ion ${it[2]} ${it[6]} ${it[7]?'inactive':''}" style="top:${it[3]}%;animation-delay:${it[4]};animation-duration:${it[5]}">${aqLabels?it[0]:it[1]}</div>`).join("")}<div class="electron in">e⁻ in</div><div class="electron out">e⁻ out</div>${sodium?`<div class="gas left">H₂</div><div class="gas left" style="margin-left:8px;animation-delay:.55s">H₂</div><div class="gas left" style="margin-left:16px;animation-delay:1.1s">H₂</div><div class="product-label left">H₂ gas</div>`:`<div class="deposit copper"></div><div class="product-label left">Cu deposit</div>`}${[0,1,2].map(b=>`<div class="gas right" style="margin-right:${b*8}px;animation-delay:${b*.55}s">${c.ag}</div>`).join("")}<div class="product-label right">${c.ag} gas</div></div></div><div class="info-grid"><div class="info-box sky"><strong>Cathode rule</strong><p>${c.cp}</p><span class="mono">${c.eq1}</span></div><div class="info-box rose"><strong>Anode rule</strong><p>${c.ap}</p><span class="mono">${c.eq2}</span></div></div></div></div>`;
+}
+
+function toggleAnswer(btn){
+ const ans=btn.nextElementSibling;
+ ans.classList.toggle("show");
+ btn.textContent=ans.classList.contains("show")?"🙈 Hide answer":"👁️ Reveal answer";
+}
+function go(i){index=i;render()}
+function next(){if(index<slides.length-1){index++;render()}}
+function prev(){if(index>0){index--;render()}}
+document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")next(); if(e.key==="ArrowLeft")prev();});
+render();
+</script>
+</body>
+</html>
