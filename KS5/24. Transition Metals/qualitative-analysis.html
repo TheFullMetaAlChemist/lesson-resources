@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-Level Qualitative Analysis Simulator</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.fade-in{
+  animation:fadeIn .4s ease-in;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.bubble{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:9999px;
+  background:rgba(255,255,255,.75);
+  bottom:15px;
+  animation:rise 1.5s infinite ease-in;
+}
+
+@keyframes rise{
+  0%{transform:translateY(0) scale(.5);opacity:0;}
+  20%{opacity:1;}
+  100%{transform:translateY(-110px) scale(1.1);opacity:0;}
+}
+
+.cloudy{
+  background:
+  radial-gradient(circle at 30% 40%,
+  rgba(255,255,255,.9),
+  rgba(255,255,255,.2) 35%,
+  transparent 65%);
+}
+</style>
+</head>
+
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800">
+
+<header class="bg-slate-900 text-white p-6 shadow-lg text-center">
+  <h1 class="text-3xl font-bold mb-2">A-Level Qualitative Analysis Simulator</h1>
+  <p class="text-slate-300 max-w-4xl mx-auto">
+    Identify unknown ionic compounds using qualitative analysis, observations and ionic equations.
+  </p>
+</header>
+
+<main class="max-w-7xl mx-auto p-6">
+
+<div class="grid lg:grid-cols-[420px_1fr] gap-6">
+
+<!-- LEFT -->
+<div class="bg-slate-800 rounded-2xl p-6 shadow-xl text-white relative min-h-[720px]">
+
+  <div class="absolute top-4 left-4 text-slate-400 uppercase text-xs font-bold tracking-wider">
+    Laboratory View
+  </div>
+
+  <div id="visual-container" class="h-[360px] flex items-center justify-center"></div>
+
+  <div id="visual-label"
+       class="opacity-0 transition-opacity duration-500 mt-4 bg-black/40 px-4 py-2 rounded-full text-center">
+    Ready
+  </div>
+
+  <div class="mt-6 bg-slate-900 rounded-xl p-4">
+
+    <h3 class="font-bold text-lg mb-3">Identified Ions</h3>
+
+    <div class="grid grid-cols-2 gap-3">
+
+      <div class="bg-slate-700 rounded-lg p-3">
+        <div class="text-xs uppercase text-slate-300 font-bold mb-1">Cation</div>
+        <div id="cation-display" class="font-bold text-lg">Unknown</div>
+      </div>
+
+      <div class="bg-slate-700 rounded-lg p-3">
+        <div class="text-xs uppercase text-slate-300 font-bold mb-1">Anion</div>
+        <div id="anion-display" class="font-bold text-lg">Unknown</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="space-y-6">
+
+  <div class="bg-white rounded-2xl shadow-lg p-6">
+
+    <div class="flex items-center justify-between gap-4 mb-4">
+
+      <div>
+
+        <div id="status-badge"
+             class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-indigo-100 text-indigo-800 mb-2">
+          Setup
+        </div>
+
+        <h2 id="action-title" class="text-2xl font-bold">
+          Analyse the Unknown Compound
+        </h2>
+
+      </div>
+
+      <button onclick="startGame()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-bold shadow">
+        New Sample
+      </button>
+
+    </div>
+
+    <div id="action-area"></div>
+
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-lg p-6">
+
+    <h3 class="text-xl font-bold mb-4">Observations & Ionic Equations</h3>
+
+    <div id="observations-list"
+         class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+    </div>
+
+  </div>
+
+</div>
+</div>
+</main>
+
+<script>
+
+/* ---------------- DATA ---------------- */
+
+const anions = [
+
+{
+  id:'CO3',
+  name:'Carbonate',
+  formula:'CO₃²⁻',
+  charge:2,
+  test:'acid',
+  equation:'CO₃²⁻(aq) + 2H⁺(aq) → CO₂(g) + H₂O(l)'
+},
+
+{
+  id:'SO4',
+  name:'Sulfate',
+  formula:'SO₄²⁻',
+  charge:2,
+  test:'barium',
+  equation:'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)'
+},
+
+{
+  id:'Cl',
+  name:'Chloride',
+  formula:'Cl⁻',
+  charge:1,
+  test:'silver',
+  colour:'white',
+  equation:'Ag⁺(aq) + Cl⁻(aq) → AgCl(s)'
+},
+
+{
+  id:'Br',
+  name:'Bromide',
+  formula:'Br⁻',
+  charge:1,
+  test:'silver',
+  colour:'cream',
+  equation:'Ag⁺(aq) + Br⁻(aq) → AgBr(s)'
+},
+
+{
+  id:'I',
+  name:'Iodide',
+  formula:'I⁻',
+  charge:1,
+  test:'silver',
+  colour:'yellow',
+  equation:'Ag⁺(aq) + I⁻(aq) → AgI(s)'
+}
+
+];
+
+const cations = [
+
+{
+  id:'NH4',
+  name:'Ammonium',
+  formula:'NH₄⁺',
+  charge:1,
+  equation:'NH₄⁺(aq) + OH⁻(aq) → NH₃(g) + H₂O(l)'
+},
+
+{
+  id:'Cu',
+  name:'Copper(II)',
+  formula:'Cu²⁺',
+  charge:2,
+  colour:'bg-blue-500',
+  naoh:'light blue precipitate',
+  nh3:'deep blue solution in excess ammonia',
+  equationNaOH:'Cu²⁺(aq) + 2OH⁻(aq) → Cu(OH)₂(s)',
+  equationNH3:'[Cu(H₂O)₆]²⁺ + 4NH₃ → [Cu(NH₃)₄(H₂O)₂]²⁺ + 4H₂O'
+},
+
+{
+  id:'Fe2',
+  name:'Iron(II)',
+  formula:'Fe²⁺',
+  charge:2,
+  colour:'bg-green-700',
+  naoh:'green precipitate',
+  nh3:'green precipitate',
+  equationNaOH:'Fe²⁺(aq) + 2OH⁻(aq) → Fe(OH)₂(s)'
+},
+
+{
+  id:'Fe3',
+  name:'Iron(III)',
+  formula:'Fe³⁺',
+  charge:3,
+  colour:'bg-orange-800',
+  naoh:'brown precipitate',
+  nh3:'brown precipitate',
+  equationNaOH:'Fe³⁺(aq) + 3OH⁻(aq) → Fe(OH)₃(s)'
+},
+
+{
+  id:'Mn',
+  name:'Manganese(II)',
+  formula:'Mn²⁺',
+  charge:2,
+  colour:'bg-gray-200',
+  naoh:'off-white precipitate',
+  nh3:'off-white precipitate',
+  equationNaOH:'Mn²⁺(aq) + 2OH⁻(aq) → Mn(OH)₂(s)'
+},
+
+{
+  id:'Cr',
+  name:'Chromium(III)',
+  formula:'Cr³⁺',
+  charge:3,
+  colour:'bg-emerald-700',
+  naoh:'green precipitate dissolves in excess NaOH',
+  nh3:'green precipitate dissolves in excess NH₃',
+  equationNaOH:'Cr³⁺(aq) + 3OH⁻(aq) → Cr(OH)₃(s)',
+  equationExcessNaOH:'Cr(OH)₃ + 3OH⁻ → [Cr(OH)₆]³⁻',
+  equationExcessNH3:'[Cr(H₂O)₆]³⁺ + 6NH₃ → [Cr(NH₃)₆]³⁺ + 6H₂O'
+}
+
+];
+
+/* ---------- COMPOUND BANK ---------- */
+
+const compounds = [];
+
+cations.forEach(c=>{
+  anions.forEach(a=>{
+    compounds.push({
+      cation:c,
+      anion:a
+    });
+  });
+});
+
+/* extra repeated practice */
+
+[
+['Cu','SO4'],
+['Cu','Cl'],
+['Cu','Br'],
+['Fe2','SO4'],
+['Fe3','Cl'],
+['Fe3','SO4'],
+['Mn','SO4'],
+['Cr','Cl'],
+['NH4','Cl'],
+['NH4','SO4']
+].forEach(pair=>{
+
+  compounds.push({
+    cation:cations.find(x=>x.id===pair[0]),
+    anion:anions.find(x=>x.id===pair[1])
+  });
+
+});
+
+/* ---------------- STATE ---------------- */
+
+let current=null;
+let identifiedCation=null;
+let identifiedAnion=null;
+
+/* ---------------- DOM ---------------- */
+
+const visualContainer=document.getElementById('visual-container');
+const visualLabel=document.getElementById('visual-label');
+const observationsList=document.getElementById('observations-list');
+const actionArea=document.getElementById('action-area');
+const actionTitle=document.getElementById('action-title');
+const statusBadge=document.getElementById('status-badge');
+const cationDisplay=document.getElementById('cation-display');
+const anionDisplay=document.getElementById('anion-display');
+
+/* ---------------- HELPERS ---------------- */
+
+function setLabel(text){
+  visualLabel.innerText=text;
+  visualLabel.classList.remove('opacity-0');
+}
+
+function addObservation(text,equation=''){
+
+  const div=document.createElement('div');
+
+  div.className='bg-slate-50 border border-slate-200 rounded-xl p-4 fade-in';
+
+  div.innerHTML=`
+    <p class="font-medium text-slate-800 mb-2">${text}</p>
+
+    ${equation ? `
+      <div class="bg-black text-green-300 font-mono text-sm p-3 rounded-lg overflow-x-auto">
+        ${equation}
+      </div>
+    ` : ''}
+  `;
+
+  observationsList.prepend(div);
+}
+
+function updateDisplays(){
+
+  cationDisplay.innerText=
+    identifiedCation
+    ? `${identifiedCation.name} (${identifiedCation.formula})`
+    : 'Unknown';
+
+  anionDisplay.innerText=
+    identifiedAnion
+    ? `${identifiedAnion.name} (${identifiedAnion.formula})`
+    : 'Unknown';
+}
+
+function getTube({
+  ppt='h-0',
+  colour='bg-transparent',
+  bubbles=false,
+  cloudy=false
+}={}){
+
+  const bubbleHTML=bubbles?`
+    <div class="bubble left-[25%]"></div>
+    <div class="bubble left-[45%]" style="animation-delay:.3s"></div>
+    <div class="bubble left-[65%]" style="animation-delay:.6s"></div>
+  `:'';
+
+  return `
+  <div class="relative w-24 h-64 border-4 border-t-0 border-white/40 rounded-b-full overflow-hidden bg-black/30 shadow-xl fade-in">
+
+    <div class="absolute left-3 top-3 bottom-8 w-2 bg-white/20 rounded-full"></div>
+
+    <div class="absolute bottom-0 w-full h-28 bg-blue-300/30 ${cloudy?'cloudy':''}"></div>
+
+    <div class="absolute bottom-0 w-full ${ppt} ${colour} opacity-95"></div>
+
+    ${bubbleHTML}
+
+  </div>
+  `;
+}
+
+/* ---------- FORMULA LOGIC ---------- */
+
+function subscript(num){
+
+  return String(num)
+    .replace(/0/g,'₀')
+    .replace(/1/g,'₁')
+    .replace(/2/g,'₂')
+    .replace(/3/g,'₃')
+    .replace(/4/g,'₄')
+    .replace(/5/g,'₅')
+    .replace(/6/g,'₆');
+}
+
+function gcd(a,b){
+  return b===0?a:gcd(b,a%b);
+}
+
+function getCompoundFormula(cation,anion){
+
+  const symbolMap={
+    NH4:'NH₄',
+    Cu:'Cu',
+    Fe2:'Fe',
+    Fe3:'Fe',
+    Mn:'Mn',
+    Cr:'Cr',
+
+    CO3:'CO₃',
+    SO4:'SO₄',
+    Cl:'Cl',
+    Br:'Br',
+    I:'I'
+  };
+
+  const cCharge=cation.charge;
+  const aCharge=anion.charge;
+
+  const common=gcd(cCharge,aCharge);
+
+  const cCount=aCharge/common;
+  const aCount=cCharge/common;
+
+  let cationPart=symbolMap[cation.id];
+  let anionPart=symbolMap[anion.id];
+
+  /* brackets */
+
+  if(cation.id==='NH4' && cCount>1){
+    cationPart=`(${cationPart})`;
+  }
+
+  if((anion.id==='CO3'||anion.id==='SO4') && aCount>1){
+    anionPart=`(${anionPart})`;
+  }
+
+  const cSub=cCount>1?subscript(cCount):'';
+  const aSub=aCount>1?subscript(aCount):'';
+
+  return `${cationPart}${cSub}${anionPart}${aSub}`;
+}
+
+/* ---------------- GAME ---------------- */
+
+function startGame(){
+
+  current=compounds[Math.floor(Math.random()*compounds.length)];
+
+  identifiedCation=null;
+  identifiedAnion=null;
+
+  updateDisplays();
+
+  observationsList.innerHTML='';
+
+  visualContainer.innerHTML=getTube();
+
+  setLabel('Unknown sample');
+
+  statusBadge.innerText='Testing';
+  actionTitle.innerText='Carry Out Qualitative Tests';
+
+  showMenu();
+}
+
+function showMenu(){
+
+  const ready=identifiedCation&&identifiedAnion;
+
+  actionArea.innerHTML=`
+
+    <div class="grid md:grid-cols-2 gap-3">
+
+      <button onclick="carbonateTest()"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white p-4 rounded-xl font-bold">
+        Carbonate Test
+      </button>
+
+      <button onclick="sulfateTest()"
+        class="bg-slate-700 hover:bg-slate-800 text-white p-4 rounded-xl font-bold">
+        Sulfate Test
+      </button>
+
+      <button onclick="halideTest()"
+        class="bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-xl font-bold">
+        Halide Test
+      </button>
+
+      <button onclick="ammoniumTest()"
+        class="bg-pink-600 hover:bg-pink-700 text-white p-4 rounded-xl font-bold">
+        Ammonium Test
+      </button>
+
+      <button onclick="naohTest()"
+        class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-bold">
+        NaOH Test
+      </button>
+
+      <button onclick="nh3Test()"
+        class="bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-xl font-bold">
+        NH₃ Test
+      </button>
+
+      <button
+        ${ready?'':'disabled'}
+        onclick="formulaQuiz()"
+        class="col-span-2 p-4 rounded-xl font-bold
+        ${ready
+          ? 'bg-green-600 hover:bg-green-700 text-white'
+          : 'bg-gray-300 text-gray-500 cursor-not-allowed'}">
+
+        Identify Compound Formula
+
+      </button>
+
+    </div>
+  `;
+}
+
+/* ---------- TESTS ---------- */
+
+function carbonateTest(){
+
+  if(current.anion.id==='CO3'){
+
+    visualContainer.innerHTML=`
+      <div class="flex items-center gap-8">
+        ${getTube({bubbles:true})}
+        <div class="text-white text-5xl">→</div>
+        ${getTube({cloudy:true})}
+      </div>
+    `;
+
+    setLabel('Limewater turns cloudy');
+
+    addObservation(
+      'Effervescence observed. Carbon dioxide produced. Limewater turns cloudy.',
+      current.anion.equation
+    );
+
+    ionQuiz('anion',current.anion);
+
+  }else{
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No effervescence');
+
+    addObservation(
+      'No effervescence observed with dilute acid.'
+    );
+
+    showMenu();
+  }
+}
+
+function sulfateTest(){
+
+  if(current.anion.id==='SO4'){
+
+    visualContainer.innerHTML=getTube({
+      ppt:'h-12',
+      colour:'bg-white'
+    });
+
+    setLabel('White precipitate');
+
+    addObservation(
+      'White precipitate formed with Ba²⁺.',
+      current.anion.equation
+    );
+
+    ionQuiz('anion',current.anion);
+
+  }else{
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No precipitate');
+
+    addObservation(
+      'No precipitate formed with Ba²⁺.'
+    );
+
+    showMenu();
+  }
+}
+
+function halideTest(){
+
+  if(current.anion.test==='silver'){
+
+    const colours={
+      white:'bg-white',
+      cream:'bg-amber-100',
+      yellow:'bg-yellow-300'
+    };
+
+    visualContainer.innerHTML=getTube({
+      ppt:'h-12',
+      colour:colours[current.anion.colour]
+    });
+
+    setLabel(`${current.anion.colour} precipitate`);
+
+    addObservation(
+      `${current.anion.colour} precipitate formed with AgNO₃.`,
+      current.anion.equation
+    );
+
+    ionQuiz('anion',current.anion);
+
+  }else{
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No precipitate');
+
+    addObservation(
+      'No precipitate formed with AgNO₃.'
+    );
+
+    showMenu();
+  }
+}
+
+function ammoniumTest(){
+
+  if(current.cation.id==='NH4'){
+
+    visualContainer.innerHTML=getTube({bubbles:true});
+
+    setLabel('Ammonia evolved');
+
+    addObservation(
+      'Ammonia gas evolved. Damp red litmus paper turns blue.',
+      current.cation.equation
+    );
+
+    ionQuiz('cation',current.cation);
+
+  }else{
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No ammonia');
+
+    addObservation(
+      'No ammonia evolved on warming with NaOH.'
+    );
+
+    showMenu();
+  }
+}
+
+function naohTest(){
+
+  if(!current.cation.naoh){
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No precipitate');
+
+    addObservation(
+      'No precipitate formed with NaOH.'
+    );
+
+    showMenu();
+
+    return;
+  }
+
+  visualContainer.innerHTML=getTube({
+    ppt:'h-12',
+    colour:current.cation.colour
+  });
+
+  setLabel(current.cation.naoh);
+
+  addObservation(
+    `With NaOH: ${current.cation.naoh}.`,
+    current.cation.equationNaOH
+  );
+
+  if(current.cation.id==='Cr'){
+    addObservation(
+      'Green precipitate dissolves in excess NaOH.',
+      current.cation.equationExcessNaOH
+    );
+  }
+
+  ionQuiz('cation',current.cation);
+}
+
+function nh3Test(){
+
+  if(!current.cation.nh3){
+
+    visualContainer.innerHTML=getTube();
+
+    setLabel('No precipitate');
+
+    addObservation(
+      'No precipitate formed with NH₃.'
+    );
+
+    showMenu();
+
+    return;
+  }
+
+  visualContainer.innerHTML=getTube({
+    ppt:'h-12',
+    colour:current.cation.colour
+  });
+
+  setLabel(current.cation.nh3);
+
+  addObservation(
+    `With NH₃: ${current.cation.nh3}.`,
+    current.cation.equationNaOH
+  );
+
+  if(current.cation.id==='Cu'){
+    addObservation(
+      'Deep blue solution formed in excess NH₃.',
+      current.cation.equationNH3
+    );
+  }
+
+  if(current.cation.id==='Cr'){
+    addObservation(
+      'Green precipitate dissolves in excess NH₃.',
+      current.cation.equationExcessNH3
+    );
+  }
+
+  ionQuiz('cation',current.cation);
+}
+
+/* ---------- QUIZZES ---------- */
+
+function ionQuiz(type,correct){
+
+  const bank=type==='cation'?cations:anions;
+
+  const options=[...bank].sort(()=>Math.random()-0.5).slice(0,4);
+
+  if(!options.find(x=>x.id===correct.id)){
+    options[0]=correct;
+  }
+
+  options.sort(()=>Math.random()-0.5);
+
+  actionArea.innerHTML=`
+
+    <p class="mb-4 text-slate-600">
+      Based on the observations, identify the ion.
+    </p>
+
+    <div class="grid gap-3">
+
+      ${options.map(opt=>`
+
+        <button
+          onclick="checkIon('${type}','${opt.id}','${correct.id}')"
+          class="bg-white border-2 border-slate-300 hover:border-indigo-500 hover:bg-indigo-50 p-4 rounded-xl font-bold text-lg transition">
+
+          ${opt.name} (${opt.formula})
+
+        </button>
+
+      `).join('')}
+
+    </div>
+  `;
+}
+
+function checkIon(type,selected,correct){
+
+  const bank=type==='cation'?cations:anions;
+
+  const correctIon=bank.find(x=>x.id===correct);
+
+  if(selected===correct){
+
+    if(type==='cation'){
+      identifiedCation=correctIon;
+    }else{
+      identifiedAnion=correctIon;
+    }
+
+    updateDisplays();
+
+    actionArea.innerHTML=`
+      <div class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-5 mb-5">
+
+        <p class="font-bold text-lg">
+          Correct — ${correctIon.name} identified.
+        </p>
+
+      </div>
+
+      <button onclick="showMenu()"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-xl font-bold">
+
+        Continue Analysis
+
+      </button>
+    `;
+
+  }else{
+
+    actionArea.innerHTML=`
+      <div class="bg-red-50 border border-red-200 text-red-800 rounded-xl p-5 mb-5">
+
+        <p class="font-bold text-lg">
+          Incorrect.
+        </p>
+
+        <p class="mt-2">
+          The correct ion was
+          ${correctIon.name} (${correctIon.formula}).
+        </p>
+
+      </div>
+
+      <button onclick="showMenu()"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-xl font-bold">
+
+        Continue Analysis
+
+      </button>
+    `;
+  }
+}
+
+/* ---------- FORMULA QUIZ ---------- */
+
+function formulaQuiz(){
+
+  const correctFormula=
+    getCompoundFormula(
+      identifiedCation,
+      identifiedAnion
+    );
+
+  let options=new Set();
+
+  options.add(correctFormula);
+
+  while(options.size<5){
+
+    const random=
+      compounds[Math.floor(Math.random()*compounds.length)];
+
+    options.add(
+      getCompoundFormula(
+        random.cation,
+        random.anion
+      )
+    );
+  }
+
+  options=[...options].sort(()=>Math.random()-0.5);
+
+  actionArea.innerHTML=`
+
+    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 mb-5">
+
+      <p><strong>Cation:</strong>
+      ${identifiedCation.name}
+      (${identifiedCation.formula})</p>
+
+      <p><strong>Anion:</strong>
+      ${identifiedAnion.name}
+      (${identifiedAnion.formula})</p>
+
+    </div>
+
+    <p class="mb-4 text-slate-600">
+      Which formula is correct?
+    </p>
+
+    <div class="grid gap-3">
+
+      ${options.map(opt=>`
+
+        <button
+          onclick="checkFormula('${opt}','${correctFormula}')"
+          class="bg-white border-2 border-slate-300 hover:border-green-500 hover:bg-green-50 p-4 rounded-xl font-bold text-2xl transition">
+
+          ${opt}
+
+        </button>
+
+      `).join('')}
+
+    </div>
+  `;
+}
+
+function checkFormula(selected,correct){
+
+  if(selected===correct){
+
+    visualContainer.innerHTML=`
+      <div class="text-center text-green-400 fade-in">
+
+        <div class="text-8xl mb-4">✅</div>
+
+        <div class="text-3xl font-bold text-white">
+          Correct
+        </div>
+
+      </div>
+    `;
+
+    setLabel(correct);
+
+    actionArea.innerHTML=`
+      <div class="bg-green-50 border border-green-200 text-green-800 rounded-xl p-6">
+
+        <p class="text-xl font-bold mb-2">
+          Correct Formula
+        </p>
+
+        <p class="text-4xl font-bold">
+          ${correct}
+        </p>
+
+      </div>
+    `;
+
+  }else{
+
+    actionArea.innerHTML=`
+      <div class="bg-red-50 border border-red-200 text-red-800 rounded-xl p-6">
+
+        <p class="font-bold text-xl mb-2">
+          Incorrect
+        </p>
+
+        <p class="mb-2">
+          Correct formula:
+        </p>
+
+        <p class="text-4xl font-bold">
+          ${correct}
+        </p>
+
+      </div>
+    `;
+  }
+}
+
+/* ---------- START ---------- */
+
+startGame();
+
+</script>
+</body>
+</html>
