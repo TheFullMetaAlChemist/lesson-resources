@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exothermic and Endothermic Reactions</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --orange: #f97316;
+      --orange-soft: #ffedd5;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --red: #dc2626;
+      --red-soft: #fee2e2;
+      --purple: #7c3aed;
+      --purple-soft: #ede9fe;
+      --yellow-soft: #fef9c3;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.09);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, #e0f2fe 0, transparent 32%), var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 34px 18px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -1px;
+    }
+
+    header p {
+      max-width: 850px;
+      margin: 12px auto 0;
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 10px 0 24px;
+      position: sticky;
+      top: 0;
+      background: rgba(246, 247, 251, 0.94);
+      backdrop-filter: blur(8px);
+      padding: 12px;
+      z-index: 5;
+    }
+
+    .tab-btn, button, select {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: var(--ink);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      font-size: 0.98rem;
+    }
+
+    .tab-btn:hover, button:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12); }
+    .tab-btn.active { background: var(--blue); color: white; }
+
+    .section { display: none; }
+    .section.active { display: block; animation: fadeIn 0.25s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .card h2, .card h3 { margin-top: 0; }
+    .big { font-size: 1.25rem; }
+    .muted { color: var(--muted); }
+    .pill { display: inline-block; padding: 5px 10px; border-radius: 999px; font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; }
+    .exo { background: var(--orange-soft); color: #9a3412; }
+    .endo { background: var(--blue-soft); color: #1d4ed8; }
+    .key { background: var(--purple-soft); color: #5b21b6; }
+
+    .energy-box {
+      min-height: 150px;
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.5rem;
+    }
+
+    .warm { background: linear-gradient(135deg, #ffedd5, #fed7aa); }
+    .cold { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+
+    .mini-note {
+      background: #f8fafc;
+      border-left: 6px solid var(--blue);
+      padding: 14px 16px;
+      border-radius: 12px;
+      margin-top: 14px;
+    }
+
+    .task-card, .quiz-item, .sort-card {
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 16px;
+      margin: 12px 0;
+      border: 1px solid #e5e7eb;
+    }
+
+    .worksheet-tag {
+      display: inline-block;
+      background: var(--yellow-soft);
+      color: #854d0e;
+      border: 1px solid #fde68a;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .choice-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .choice {
+      background: white;
+      border: 2px solid #e5e7eb;
+    }
+
+    .choice.correct, select.correct { background: var(--green-soft); border: 2px solid var(--green); }
+    .choice.wrong, select.wrong { background: var(--red-soft); border: 2px solid var(--red); }
+
+    .feedback {
+      font-weight: 700;
+      margin-top: 8px;
+      min-height: 24px;
+    }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) minmax(260px, 2fr);
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 16px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      margin: 10px 0;
+    }
+
+    .match-term {
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .profile-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    svg {
+      width: 100%;
+      background: white;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: 700;
+      fill: #1f2937;
+    }
+
+    .axis { stroke: #111827; stroke-width: 2; }
+    .curve { fill: none; stroke: #7c3aed; stroke-width: 5; stroke-linecap: round; }
+    .arrow { stroke: #dc2626; stroke-width: 3; marker-end: url(#arrow); }
+    .energy-line { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6; }
+
+    .drag-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .drag-token {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: white;
+      border: 2px solid #d1d5db;
+      font-weight: 700;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .drop-zone {
+      min-height: 82px;
+      border: 3px dashed #cbd5e1;
+      border-radius: 18px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .drop-zone.good { border-color: var(--green); background: var(--green-soft); }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border-radius: 16px;
+      border: 2px solid #d1d5db;
+      padding: 14px;
+      font-size: 1rem;
+      resize: vertical;
+      background: white;
+    }
+
+    textarea { min-height: 110px; }
+
+    .hidden { display: none; }
+    .reveal {
+      background: #111827;
+      color: white;
+      margin-top: 10px;
+    }
+
+    .score-box {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: var(--green-soft);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .uses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 680px) {
+      .match-row { grid-template-columns: 1fr; }
+      .tabs { position: static; }
+    }
+
+    .footer-space { height: 40px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Exothermic & Endothermic Reactions</h1>
+    <p>A low-stakes digital version of your worksheet. Have a go here first, get instant feedback, then complete your paper copy with more confidence.</p>
+  </header>
+
+  <main class="container">
+    <nav class="tabs" aria-label="Lesson sections">
+      <button class="tab-btn active" onclick="showSection('learn', this)">Learn</button>
+      <button class="tab-btn" onclick="showSection('match', this)">1. Key Terms</button>
+      <button class="tab-btn" onclick="showSection('truefalse', this)">2. True/False</button>
+      <button class="tab-btn" onclick="showSection('sort', this)">3. Reaction Type</button>
+      <button class="tab-btn" onclick="showSection('profiles', this)">4. Profiles</button>
+      <button class="tab-btn" onclick="showSection('uses', this)">5. Uses</button>
+      <button class="tab-btn" onclick="showSection('pitch', this)">6. Pitch</button>
+    </nav>
+
+    <section id="learn" class="section active">
+      <div class="grid">
+        <article class="card">
+          <span class="pill exo">Exothermic</span>
+          <h2>Energy is released</h2>
+          <div class="energy-box warm">Surroundings get warmer 🔥</div>
+          <p class="big">An <strong>exothermic reaction</strong> transfers energy to the surroundings. This usually makes the temperature increase.</p>
+          <p><strong>Examples:</strong> combustion, neutralisation, hand warmers, self-heating cans.</p>
+        </article>
+
+        <article class="card">
+          <span class="pill endo">Endothermic</span>
+          <h2>Energy is taken in</h2>
+          <div class="energy-box cold">Surroundings get colder ❄️</div>
+          <p class="big">An <strong>endothermic reaction</strong> takes energy in from the surroundings. This usually makes the temperature decrease.</p>
+          <p><strong>Examples:</strong> thermal decomposition, sports injury cold packs, citric acid and sodium bicarbonate.</p>
+        </article>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <span class="pill key">Key idea</span>
+        <h2>Energy cannot be created or destroyed</h2>
+        <p>In chemical reactions, energy is transferred. It either moves <strong>from the reaction to the surroundings</strong> or <strong>from the surroundings into the reaction</strong>.</p>
+        <div class="mini-note"><strong>Memory trick:</strong> <em>Exo</em> sounds like <em>exit</em>. In an exothermic reaction, energy exits the reaction and goes into the surroundings.</div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <h2>Activation energy</h2>
+        <p>The <strong>activation energy</strong> is the minimum energy particles need before they can react. Think of it like the first push needed to get a reaction started.</p>
+        <button class="reveal" onclick="toggleReveal('activationReveal')">Show an analogy</button>
+        <p id="activationReveal" class="hidden mini-note">Imagine pushing a bike up a small hill before it can roll down the other side. The energy needed to get up the hill is like activation energy.</p>
+      </div>
+    </section>
+
+    <section id="match" class="section">
+      <div class="card">
+        <span class="worksheet-tag">Worksheet Task 1</span>
+        <h2>Key Terms Match-Up</h2>
+        <p>Choose the correct definition for each key term. Use the feedback before writing your answers on the paper worksheet.</p>
+        <div id="matchArea"></div>
+        <button onclick="checkMatches()">Check match-up</button>
+        <button onclick="resetMatches()">Reset</button>
+        <p id="matchFeedback" class="feedback"></p>
+      </div>
+    </section>
+
+    <section id="truefalse" class="section">
+      <div class="card">
+        <span class="worksheet-tag">Worksheet Task 2</span>
+        <h2>True or False?</h2>
+        <p>Pick true or false for each statement. The feedback tells you why.</p>
+        <div id="tfArea"></div>
+        <div id="tfScoreBox" class="score-box hidden"></div>
+        <button onclick="resetTrueFalse()">Reset true/false</button>
+      </div>
+    </section>
+
+    <section id="sort" class="section">
+      <div class="card">
+        <span class="worksheet-tag">Worksheet Task 3</span>
+        <h2>Spot the Reaction Type</h2>
+        <p>Drag each example into the correct box, or click an example and then click a box.</p>
+        <div id="tokenBank" class="drag-bank"></div>
+        <div class="grid">
+          <div class="card">
+            <h3>Exothermic reactions</h3>
+            <div id="exoDrop" class="drop-zone" ondragover="allowDrop(event)" ondrop="dropToken(event, 'exothermic')" onclick="clickDrop('exothermic')"></div>
+          </div>
+          <div class="card">
+            <h3>Endothermic reactions</h3>
+            <div id="endoDrop" class="drop-zone" ondragover="allowDrop(event)" ondrop="dropToken(event, 'endothermic')" onclick="clickDrop('endothermic')"></div>
+          </div>
+        </div>
+        <button onclick="checkSort()">Check my sorting</button>
+        <button onclick="resetSort()">Reset sorting</button>
+        <p id="sortFeedback" class="feedback"></p>
+      </div>
+    </section>
+
+    <section id="profiles" class="section">
+      <div class="card" style="margin-bottom:18px;">
+        <span class="worksheet-tag">Worksheet Task 4</span>
+        <h2>Draw It Yourself: Reaction Profiles</h2>
+        <p>Use these models to help you draw your own profiles on the worksheet. Remember to label reactants, products, activation energy and energy released or absorbed.</p>
+      </div>
+      <div class="profile-wrap">
+        <article class="card">
+          <h2>Exothermic reaction profile</h2>
+          <p>In an exothermic profile, the <strong>reactants are higher</strong> than the products because energy is released.</p>
+          <svg viewBox="0 0 420 310" role="img" aria-label="Exothermic reaction profile">
+            <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#dc2626" /></marker></defs>
+            <line class="axis" x1="45" y1="260" x2="390" y2="260" />
+            <line class="axis" x1="45" y1="260" x2="45" y2="35" />
+            <text class="label" x="175" y="296">Reaction progress</text>
+            <text class="label" x="4" y="42" transform="rotate(-90 15,50)">Energy</text>
+            <line class="energy-line" x1="75" y1="150" x2="145" y2="150" />
+            <line class="energy-line" x1="285" y1="215" x2="360" y2="215" />
+            <path class="curve" d="M75 150 C130 150, 135 62, 205 62 C275 62, 270 215, 355 215" />
+            <text class="label" x="72" y="138">Reactants</text>
+            <text class="label" x="288" y="204">Products</text>
+            <line class="arrow" x1="225" y1="150" x2="225" y2="72" />
+            <text class="label" x="235" y="110">Activation energy</text>
+            <line class="arrow" x1="365" y1="150" x2="365" y2="215" />
+            <text class="label" x="260" y="185">Energy released</text>
+          </svg>
+          <button class="reveal" onclick="toggleReveal('exoSteps')">Drawing steps</button>
+          <ol id="exoSteps" class="hidden">
+            <li>Draw the reactants higher than the products.</li>
+            <li>Draw a curved hump between them.</li>
+            <li>Label the hump as activation energy.</li>
+            <li>Add an arrow downwards for energy released.</li>
+          </ol>
+        </article>
+
+        <article class="card">
+          <h2>Endothermic reaction profile</h2>
+          <p>In an endothermic profile, the <strong>products are higher</strong> than the reactants because energy is absorbed.</p>
+          <svg viewBox="0 0 420 310" role="img" aria-label="Endothermic reaction profile">
+            <defs><marker id="arrow2" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#dc2626" /></marker></defs>
+            <line class="axis" x1="45" y1="260" x2="390" y2="260" />
+            <line class="axis" x1="45" y1="260" x2="45" y2="35" />
+            <text class="label" x="175" y="296">Reaction progress</text>
+            <text class="label" x="4" y="42" transform="rotate(-90 15,50)">Energy</text>
+            <line class="energy-line" x1="75" y1="215" x2="145" y2="215" />
+            <line class="energy-line" x1="285" y1="150" x2="360" y2="150" />
+            <path class="curve" d="M75 215 C120 215, 145 68, 210 68 C275 68, 275 150, 355 150" />
+            <text class="label" x="72" y="204">Reactants</text>
+            <text class="label" x="288" y="138">Products</text>
+            <line class="arrow" x1="225" y1="215" x2="225" y2="78" />
+            <text class="label" x="235" y="128">Activation energy</text>
+            <line class="arrow" x1="365" y1="215" x2="365" y2="150" />
+            <text class="label" x="255" y="185">Energy absorbed</text>
+          </svg>
+          <button class="reveal" onclick="toggleReveal('endoSteps')">Drawing steps</button>
+          <ol id="endoSteps" class="hidden">
+            <li>Draw the reactants lower than the products.</li>
+            <li>Draw a curved hump between them.</li>
+            <li>Label the hump as activation energy.</li>
+            <li>Add an arrow upwards for energy absorbed.</li>
+          </ol>
+        </article>
+      </div>
+    </section>
+
+    <section id="uses" class="section">
+      <div class="card">
+        <span class="worksheet-tag">Worksheet Task 5</span>
+        <h2>Everyday Chemistry</h2>
+        <p>Practise listing everyday uses before filling in the worksheet. Type your ideas, then reveal some examples.</p>
+        <div class="uses-grid">
+          <div class="task-card">
+            <h3>Exothermic reactions</h3>
+            <p>List two everyday uses:</p>
+            <input type="text" placeholder="Use 1..." />
+            <br><br>
+            <input type="text" placeholder="Use 2..." />
+            <button class="reveal" onclick="toggleReveal('exoUses')">Show example answers</button>
+            <div id="exoUses" class="hidden mini-note">Hand warmers, self-heating cans, burning fuels for heating, camping stoves.</div>
+          </div>
+          <div class="task-card">
+            <h3>Endothermic reactions</h3>
+            <p>List two everyday uses:</p>
+            <input type="text" placeholder="Use 1..." />
+            <br><br>
+            <input type="text" placeholder="Use 2..." />
+            <button class="reveal" onclick="toggleReveal('endoUses')">Show example answers</button>
+            <div id="endoUses" class="hidden mini-note">Sports injury cold packs, instant ice packs, some cooling packs used for transport or first aid.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pitch" class="section">
+      <div class="card">
+        <span class="worksheet-tag">Worksheet Task 6</span>
+        <h2>Challenge: Product Pitch</h2>
+        <p>Create a product that uses either an exothermic or endothermic reaction. Use this planner before writing your final answer or drawing your logo.</p>
+        <div class="grid">
+          <div>
+            <h3>1. Choose your product type</h3>
+            <button onclick="setPitchType('exothermic')">Exothermic product 🔥</button>
+            <button onclick="setPitchType('endothermic')">Endothermic product ❄️</button>
+            <p id="pitchType" class="mini-note">No product type selected yet.</p>
+          </div>
+          <div>
+            <h3>2. Useful sentence starters</h3>
+            <button class="reveal" onclick="toggleReveal('sentenceStarters')">Show sentence starters</button>
+            <ul id="sentenceStarters" class="hidden">
+              <li>Our product works because...</li>
+              <li>The reaction is exothermic/endothermic because...</li>
+              <li>This means the surroundings get...</li>
+              <li>This product would be useful for...</li>
+              <li>The science behind it is...</li>
+            </ul>
+          </div>
+        </div>
+        <h3>3. Plan your product</h3>
+        <input type="text" placeholder="Product name..." />
+        <br><br>
+        <input type="text" placeholder="Slogan..." />
+        <br><br>
+        <textarea placeholder="2-minute pitch notes: explain what your product does, whether it is exothermic or endothermic, and how the energy transfer makes it useful..."></textarea>
+        <button class="reveal" onclick="toggleReveal('modelPitch')">Show a model idea</button>
+        <div id="modelPitch" class="hidden mini-note">
+          <strong>Product:</strong> FrostFix Sports Pack<br>
+          <strong>Slogan:</strong> Cool the injury, calm the pain.<br>
+          <strong>Science:</strong> The pack uses an endothermic reaction. When the chemicals mix, energy is taken in from the surroundings, so the pack becomes colder.
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-space"></div>
+  </main>
+
+  <script>
+    function showSection(id, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function toggleReveal(id) {
+      document.getElementById(id).classList.toggle('hidden');
+    }
+
+    const matchItems = [
+      { term: 'Exothermic reaction', answer: 'D' },
+      { term: 'Endothermic reaction', answer: 'B' },
+      { term: 'Activation energy', answer: 'A' },
+      { term: 'Reaction profile', answer: 'C' }
+    ];
+
+    const definitions = [
+      { letter: 'A', text: 'The minimum energy required for a reaction to start' },
+      { letter: 'B', text: 'Reactions that take in energy from the surroundings' },
+      { letter: 'C', text: 'A diagram that shows energy changes during a chemical reaction' },
+      { letter: 'D', text: 'Reactions that release energy to the surroundings' }
+    ];
+
+    function buildMatches() {
+      const area = document.getElementById('matchArea');
+      area.innerHTML = '';
+      const options = '<option value="">Choose a definition...</option>' + definitions.map(d => `<option value="${d.letter}">${d.letter}. ${d.text}</option>`).join('');
+      matchItems.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'match-row';
+        row.innerHTML = `<div class="match-term">${item.term}</div><select id="match-${index}">${options}</select>`;
+        area.appendChild(row);
+      });
+    }
+
+    function checkMatches() {
+      let score = 0;
+      matchItems.forEach((item, index) => {
+        const select = document.getElementById(`match-${index}`);
+        select.classList.remove('correct', 'wrong');
+        if (select.value === item.answer) {
+          select.classList.add('correct');
+          score++;
+        } else {
+          select.classList.add('wrong');
+        }
+      });
+      const feedback = document.getElementById('matchFeedback');
+      if (score === matchItems.length) {
+        feedback.textContent = 'Excellent — all key terms matched correctly.';
+      } else {
+        feedback.textContent = `You got ${score}/${matchItems.length}. Green answers are correct. Check any red ones and try again.`;
+      }
+    }
+
+    function resetMatches() {
+      buildMatches();
+      document.getElementById('matchFeedback').textContent = '';
+    }
+
+    const tfQuestions = [
+      {
+        statement: 'Energy can be destroyed in chemical reactions.',
+        answer: false,
+        explain: 'Energy cannot be created or destroyed. It is transferred.'
+      },
+      {
+        statement: 'Combustion is an example of an exothermic reaction.',
+        answer: true,
+        explain: 'Combustion releases energy to the surroundings.'
+      },
+      {
+        statement: 'Endothermic reactions cause the surroundings to feel warmer.',
+        answer: false,
+        explain: 'Endothermic reactions take in energy, so the surroundings usually feel colder.'
+      },
+      {
+        statement: 'Activation energy is the energy needed to make particles move.',
+        answer: false,
+        explain: 'Activation energy is the minimum energy needed for a reaction to start.'
+      },
+      {
+        statement: 'Rusting is a fast exothermic reaction.',
+        answer: false,
+        explain: 'Rusting is exothermic, but it is usually very slow.'
+      }
+    ];
+
+    let tfAnswered = {};
+
+    function buildTrueFalse() {
+      const area = document.getElementById('tfArea');
+      area.innerHTML = '';
+      tfAnswered = {};
+      document.getElementById('tfScoreBox').classList.add('hidden');
+      tfQuestions.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'quiz-item';
+        div.innerHTML = `<h3>Statement ${index + 1}</h3><p>${item.statement}</p>`;
+        const row = document.createElement('div');
+        row.className = 'choice-row';
+        const trueBtn = document.createElement('button');
+        trueBtn.className = 'choice';
+        trueBtn.textContent = 'True';
+        trueBtn.onclick = () => answerTF(index, true, trueBtn);
+        const falseBtn = document.createElement('button');
+        falseBtn.className = 'choice';
+        falseBtn.textContent = 'False';
+        falseBtn.onclick = () => answerTF(index, false, falseBtn);
+        row.appendChild(trueBtn);
+        row.appendChild(falseBtn);
+        const feedback = document.createElement('p');
+        feedback.className = 'feedback';
+        feedback.id = `tf-feedback-${index}`;
+        div.appendChild(row);
+        div.appendChild(feedback);
+        area.appendChild(div);
+      });
+    }
+
+    function answerTF(index, chosen, button) {
+      const correct = tfQuestions[index].answer;
+      const parent = button.parentElement;
+      parent.querySelectorAll('button').forEach(b => b.disabled = true);
+      if (chosen === correct) {
+        button.classList.add('correct');
+        tfAnswered[index] = true;
+        document.getElementById(`tf-feedback-${index}`).textContent = 'Correct! ' + tfQuestions[index].explain;
+      } else {
+        button.classList.add('wrong');
+        parent.querySelectorAll('button').forEach(b => {
+          if ((b.textContent === 'True') === correct) b.classList.add('correct');
+        });
+        tfAnswered[index] = false;
+        document.getElementById(`tf-feedback-${index}`).textContent = 'Not quite. ' + tfQuestions[index].explain;
+      }
+      updateTFScore();
+    }
+
+    function updateTFScore() {
+      const totalAnswered = Object.keys(tfAnswered).length;
+      const correct = Object.values(tfAnswered).filter(Boolean).length;
+      if (totalAnswered === tfQuestions.length) {
+        const box = document.getElementById('tfScoreBox');
+        box.classList.remove('hidden');
+        box.textContent = `You scored ${correct}/${tfQuestions.length}. Now transfer the correct T/F answers to your worksheet.`;
+      }
+    }
+
+    function resetTrueFalse() {
+      buildTrueFalse();
+    }
+
+    const sortItems = [
+      { text: 'Mixing citric acid and sodium bicarbonate', type: 'endothermic' },
+      { text: 'Using a hand warmer on a cold day', type: 'exothermic' },
+      { text: 'Ice pack activated during a sports injury', type: 'endothermic' },
+      { text: 'Burning a candle', type: 'exothermic' },
+      { text: 'Heating calcium carbonate until it breaks down into calcium oxide + CO₂', type: 'endothermic' }
+    ];
+
+    let selectedToken = null;
+
+    function buildSort() {
+      const bank = document.getElementById('tokenBank');
+      bank.innerHTML = '';
+      document.getElementById('exoDrop').innerHTML = '';
+      document.getElementById('endoDrop').innerHTML = '';
+      document.getElementById('exoDrop').classList.remove('good');
+      document.getElementById('endoDrop').classList.remove('good');
+      document.getElementById('sortFeedback').textContent = '';
+      selectedToken = null;
+
+      sortItems.forEach((item, index) => {
+        const token = document.createElement('div');
+        token.className = 'drag-token';
+        token.textContent = item.text;
+        token.draggable = true;
+        token.dataset.type = item.type;
+        token.dataset.id = index;
+        token.onclick = () => {
+          document.querySelectorAll('.drag-token').forEach(t => t.style.outline = 'none');
+          token.style.outline = '4px solid #facc15';
+          selectedToken = token;
+        };
+        token.ondragstart = event => event.dataTransfer.setData('text/plain', index);
+        bank.appendChild(token);
+      });
+    }
+
+    function allowDrop(event) { event.preventDefault(); }
+
+    function dropToken(event, type) {
+      event.preventDefault();
+      const id = event.dataTransfer.getData('text/plain');
+      const token = document.querySelector(`[data-id='${id}']`);
+      placeToken(token, type);
+    }
+
+    function clickDrop(type) {
+      if (selectedToken) placeToken(selectedToken, type);
+    }
+
+    function placeToken(token, type) {
+      const zone = type === 'exothermic' ? document.getElementById('exoDrop') : document.getElementById('endoDrop');
+      token.style.outline = 'none';
+      zone.appendChild(token);
+      selectedToken = null;
+    }
+
+    function checkSort() {
+      let correct = 0;
+      const zones = [
+        { id: 'exoDrop', type: 'exothermic' },
+        { id: 'endoDrop', type: 'endothermic' }
+      ];
+      zones.forEach(zone => {
+        const element = document.getElementById(zone.id);
+        const tokens = [...element.querySelectorAll('.drag-token')];
+        const allCorrect = tokens.length > 0 && tokens.every(t => t.dataset.type === zone.type);
+        if (allCorrect) element.classList.add('good');
+        else element.classList.remove('good');
+        correct += tokens.filter(t => t.dataset.type === zone.type).length;
+      });
+      const message = correct === sortItems.length
+        ? 'Perfect — all reaction types are correct.'
+        : `You placed ${correct}/${sortItems.length} correctly. Move any examples you are unsure about and check again.`;
+      document.getElementById('sortFeedback').textContent = message;
+    }
+
+    function resetSort() { buildSort(); }
+
+    function setPitchType(type) {
+      const box = document.getElementById('pitchType');
+      if (type === 'exothermic') {
+        box.innerHTML = '<strong>Exothermic product selected:</strong> Your product should release energy and make the surroundings warmer.';
+      } else {
+        box.innerHTML = '<strong>Endothermic product selected:</strong> Your product should take in energy and make the surroundings colder.';
+      }
+    }
+
+    buildMatches();
+    buildTrueFalse();
+    buildSort();
+  </script>
+</body>
+</html>
