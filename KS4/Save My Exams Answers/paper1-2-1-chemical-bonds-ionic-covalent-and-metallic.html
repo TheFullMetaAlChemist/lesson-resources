@@ -1,0 +1,997 @@
+import React, { useMemo, useState } from 'react';
+
+const easyQuestions = [
+  {
+    id: 'Q1',
+    title: 'Lithium and chlorine',
+    marks: 8,
+    parts: [
+      {
+        part: '1(a)',
+        marks: 1,
+        question: 'Which group of the periodic table is chlorine in?',
+        answer: 'Group 7',
+        markBreakdown: ['1 mark for Group 7.'],
+        explanation: 'Chlorine is a halogen. In the GCSE AQA convention, the halogens are found in Group 7 of the periodic table.',
+        commonMistakes: ['Writing Group 17. This is technically used in some periodic table numbering systems, but AQA GCSE usually expects Group 7.'],
+        examTip: 'For GCSE AQA Chemistry, use Group 7 for the halogens and Group 0 for the noble gases.'
+      },
+      {
+        part: '1(b)',
+        marks: 4,
+        question: 'Use the words in the boxes to complete the sentences about lithium chloride.',
+        answer: (
+          <div className="space-y-2">
+            <p>A lithium atom becomes an ion by <strong>losing</strong> one electron.</p>
+            <p>A lithium ion has a <strong>positive</strong> charge.</p>
+            <p>The lithium ion now has the electronic structure of a <strong>Group 0</strong> element.</p>
+            <p>The ions in lithium chloride are held together by strong <strong>electrostatic</strong> forces.</p>
+          </div>
+        ),
+        markBreakdown: [
+          '1 mark for losing.',
+          '1 mark for positive.',
+          '1 mark for Group 0.',
+          '1 mark for electrostatic.'
+        ],
+        explanation: 'Lithium is a Group 1 metal, so it loses its single outer-shell electron. This forms a positive lithium ion with a stable full outer shell. The positive lithium ions and negative chloride ions are held together by strong electrostatic forces of attraction.',
+        commonMistakes: [
+          'Saying lithium gains an electron.',
+          'Saying the lithium ion is negative.',
+          'Describing the bonding as covalent instead of ionic.'
+        ],
+        examTip: 'Metals lose electrons to form positive ions. Non-metals gain electrons to form negative ions.'
+      },
+      {
+        part: '1(c)',
+        marks: 2,
+        question: 'Why do lithium and chlorine react in this way?',
+        answer: 'They react so that both atoms achieve a full outer shell and become more stable, like Group 0 elements.',
+        markBreakdown: [
+          '1 mark for the idea of achieving a full outer shell.',
+          '1 mark for becoming more stable / gaining a noble gas electronic structure.'
+        ],
+        explanation: 'Lithium becomes stable by losing one electron. Chlorine becomes stable by gaining one electron. The electron transfer gives both particles full outer shells.',
+        commonMistakes: ['Saying they react because atoms “want” to be neutral. The key idea is stable electronic structure.'],
+        examTip: 'The phrase “full outer shell” is often the safest wording for bonding questions.'
+      },
+      {
+        part: '1(d)',
+        marks: 1,
+        question: 'A chlorine atom has 17 electrons. What is the electronic configuration of the chloride ion formed?',
+        answer: '2,8,8',
+        markBreakdown: ['1 mark for 2,8,8.'],
+        explanation: 'A chlorine atom has the electronic configuration 2,8,7. It gains one electron to form a chloride ion, so the chloride ion has 18 electrons arranged as 2,8,8.',
+        commonMistakes: ['Writing 2,8,7 because you have given the atom rather than the ion.'],
+        examTip: 'Always check whether the question asks for the atom or the ion.'
+      }
+    ]
+  },
+  {
+    id: 'Q2',
+    title: 'Methane',
+    marks: 6,
+    parts: [
+      {
+        part: '2(a)',
+        marks: 1,
+        question: 'Give the formula of the methane molecule shown.',
+        answer: <span>CH<sub>4</sub></span>,
+        markBreakdown: ['1 mark for CH₄.'],
+        explanation: 'Methane contains one carbon atom bonded to four hydrogen atoms.',
+        commonMistakes: ['Writing H₄C. Molecular formulae are usually written with carbon first in organic molecules.'],
+        examTip: 'Methane is the first alkane, so its formula is CH₄.'
+      },
+      {
+        part: '2(b)',
+        marks: 1,
+        question: 'What type of bonding is found in methane?',
+        answer: 'Covalent',
+        markBreakdown: ['1 mark for covalent.'],
+        explanation: 'Methane is made from non-metal atoms. Non-metal atoms bond by sharing electrons, which is covalent bonding.',
+        commonMistakes: ['Choosing ionic because there are bonds. Ionic bonding involves electron transfer between metals and non-metals.'],
+        examTip: 'Non-metal + non-metal usually means covalent bonding.'
+      },
+      {
+        part: '2(c)',
+        marks: 2,
+        question: 'Complete the dot and cross diagram for methane.',
+        answer: 'Show one shared pair of electrons between the carbon atom and each hydrogen atom. There should be four covalent bonds in total.',
+        markBreakdown: [
+          '1 mark for showing shared pairs of electrons between carbon and hydrogen.',
+          '1 mark for showing all four C–H bonds correctly.'
+        ],
+        explanation: 'Carbon has four outer-shell electrons and needs four more for a full outer shell. Each hydrogen has one electron and needs one more. Carbon shares one pair of electrons with each hydrogen atom.',
+        commonMistakes: [
+          'Putting extra electrons around hydrogen.',
+          'Only showing two or three bonds to carbon.',
+          'Giving carbon more than eight electrons in its outer shell.'
+        ],
+        examTip: 'Carbon forms four covalent bonds. Hydrogen forms one covalent bond.'
+      },
+      {
+        part: '2(d)',
+        marks: 2,
+        question: 'Give two limitations of using a dot and cross diagram to represent covalent compounds.',
+        answer: (
+          <ul className="list-disc space-y-1 pl-5">
+            <li>They do not show the relative sizes of the atoms.</li>
+            <li>They are 2D.</li>
+          </ul>
+        ),
+        markBreakdown: ['1 mark for each correct limitation.'],
+        explanation: 'Dot and cross diagrams are useful for showing electron sharing, but they do not show the true three-dimensional shape or the relative sizes of atoms.',
+        commonMistakes: ['Choosing “They show the electrons between atoms”. That is an advantage, not a limitation.'],
+        examTip: 'For model limitation questions, think about what the diagram fails to show: size, scale, shape or 3D arrangement.'
+      }
+    ]
+  },
+  {
+    id: 'Q3',
+    title: 'Bonding and structure in different substances',
+    marks: 10,
+    parts: [
+      {
+        part: '3(a)',
+        marks: 4,
+        question: 'Draw one line from each substance to the type of bonding it has.',
+        answer: (
+          <div className="overflow-hidden rounded-xl border border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-100 text-slate-700">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Substance</th>
+                  <th className="px-4 py-3 font-semibold">Type of bonding</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 bg-white">
+                <tr><td className="px-4 py-3">Poly(ethene)</td><td className="px-4 py-3">Covalent</td></tr>
+                <tr><td className="px-4 py-3">Copper</td><td className="px-4 py-3">Metallic</td></tr>
+                <tr><td className="px-4 py-3">Water</td><td className="px-4 py-3">Covalent</td></tr>
+                <tr><td className="px-4 py-3">Magnesium oxide</td><td className="px-4 py-3">Ionic</td></tr>
+              </tbody>
+            </table>
+          </div>
+        ),
+        markBreakdown: ['1 mark for each correct match.'],
+        explanation: 'Copper is a metal, so it has metallic bonding. Magnesium oxide is made from a metal and non-metal, so it is ionic. Water and poly(ethene) are made from non-metals, so they contain covalent bonds.',
+        commonMistakes: ['Calling water ionic because its formula contains different elements. Water is made from non-metals, so the bonding is covalent.'],
+        examTip: 'Metal + non-metal usually means ionic. Non-metal + non-metal usually means covalent. Metal element means metallic.'
+      },
+      {
+        part: '3(b)',
+        marks: 1,
+        question: 'The structure of copper is shown. Which particle is represented by X?',
+        answer: 'Delocalised electron',
+        markBreakdown: ['1 mark for delocalised electron.'],
+        explanation: 'In a metal, the positive metal ions are surrounded by delocalised electrons. These electrons are free to move through the structure.',
+        commonMistakes: ['Writing “ion”. The larger particles in the metal lattice are the positive ions; the small moving particles are delocalised electrons.'],
+        examTip: 'In metallic bonding diagrams, the small particles between ions are usually delocalised electrons.'
+      },
+      {
+        part: '3(c)',
+        marks: 2,
+        question: 'When magnesium reacts with chlorine to form magnesium chloride, magnesium forms the ion Mg²⁺. Explain how.',
+        answer: 'Magnesium loses two electrons from its outer shell to form a Mg²⁺ ion.',
+        markBreakdown: [
+          '1 mark for magnesium losing electrons.',
+          '1 mark for losing two electrons / forming Mg²⁺.'
+        ],
+        explanation: 'Magnesium is in Group 2, so it has two electrons in its outer shell. It loses these two electrons to achieve a stable full outer shell.',
+        commonMistakes: ['Saying magnesium gains two electrons. Metals form positive ions by losing electrons.'],
+        examTip: 'For metals, the group number often tells you the charge on the ion: Group 1 forms 1+, Group 2 forms 2+.'
+      },
+      {
+        part: '3(d)',
+        marks: 2,
+        question: 'Which two substances from part (a) have intermolecular forces between particles?',
+        answer: (
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Poly(ethene)</li>
+            <li>Water</li>
+          </ul>
+        ),
+        markBreakdown: ['1 mark for poly(ethene).', '1 mark for water.'],
+        explanation: 'Water is a simple molecular substance, so there are intermolecular forces between water molecules. Poly(ethene) has covalent bonds within polymer chains and forces between the chains.',
+        commonMistakes: ['Choosing copper or magnesium oxide. These are giant structures, not simple molecular substances.'],
+        examTip: 'Intermolecular forces act between molecules or polymer chains, not between ions in an ionic lattice.'
+      },
+      {
+        part: '3(e)',
+        marks: 1,
+        question: 'Complete the dot and cross diagram to show how electrons are shared in water.',
+        answer: 'Show one shared pair of electrons between oxygen and each hydrogen atom. There should be two O–H covalent bonds.',
+        markBreakdown: ['1 mark for showing the two correct shared pairs.'],
+        explanation: 'Oxygen needs two more electrons to complete its outer shell. Each hydrogen needs one more electron. Oxygen shares one pair of electrons with each hydrogen atom.',
+        commonMistakes: ['Only showing one shared pair, or giving hydrogen more than two electrons in its outer shell.'],
+        examTip: 'Water has two covalent bonds and two lone pairs on the oxygen atom.'
+      }
+    ]
+  },
+  {
+    id: 'Q4',
+    title: 'Potassium bromide',
+    marks: 10,
+    parts: [
+      {
+        part: '4(a)',
+        marks: 4,
+        question: 'Using the diagram, describe what happens when potassium and bromine react to form potassium bromide.',
+        answer: (
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Potassium transfers one electron to bromine.</li>
+            <li>Potassium loses one electron to form K⁺.</li>
+            <li>Bromine gains one electron to form Br⁻.</li>
+            <li>The oppositely charged ions are held together by strong electrostatic forces of attraction.</li>
+          </ul>
+        ),
+        markBreakdown: [
+          '1 mark for electron transfer from potassium to bromine.',
+          '1 mark for potassium losing one electron / forming K⁺.',
+          '1 mark for bromine gaining one electron / forming Br⁻.',
+          '1 mark for electrostatic attraction between oppositely charged ions.'
+        ],
+        explanation: 'Potassium is a Group 1 metal, so it loses one electron. Bromine is a Group 7 non-metal, so it gains one electron. The electron transfer produces ions with opposite charges.',
+        commonMistakes: ['Saying the atoms share electrons. Potassium bromide is ionic, so electrons are transferred.'],
+        examTip: 'For ionic bonding descriptions, always include electron transfer, ion charges and electrostatic attraction.'
+      },
+      {
+        part: '4(b)',
+        marks: 1,
+        question: 'What is the empirical formula of potassium bromide?',
+        answer: 'KBr',
+        markBreakdown: ['1 mark for KBr.'],
+        explanation: 'Potassium forms K⁺ and bromine forms Br⁻. One positive ion balances one negative ion, so the simplest whole-number ratio is 1:1.',
+        commonMistakes: ['Writing K₂Br or KBr₂ because you have not balanced the ion charges.'],
+        examTip: 'Use the ion charges to work out the simplest ratio.'
+      },
+      {
+        part: '4(c)',
+        marks: 3,
+        question: 'Potassium is represented as ³⁹₁₉K. Give the number of protons, neutrons and electrons in this atom.',
+        answer: (
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Protons = 19</li>
+            <li>Neutrons = 20</li>
+            <li>Electrons = 19</li>
+          </ul>
+        ),
+        markBreakdown: [
+          '1 mark for 19 protons.',
+          '1 mark for 20 neutrons.',
+          '1 mark for 19 electrons.'
+        ],
+        explanation: 'The atomic number is 19, so there are 19 protons. A neutral atom has the same number of electrons as protons, so there are 19 electrons. Neutrons = mass number − atomic number = 39 − 19 = 20.',
+        commonMistakes: ['Using the mass number as the number of electrons.', 'Not noticing that the question asks for an atom, not an ion.'],
+        examTip: 'Mass number = protons + neutrons. Atomic number = protons.'
+      },
+      {
+        part: '4(d)',
+        marks: 2,
+        question: 'Potassium is a metal located in Group 1. Which two statements are correct about potassium?',
+        answer: (
+          <ul className="list-disc space-y-1 pl-5">
+            <li>It has a giant structure.</li>
+            <li>It has delocalised electrons.</li>
+          </ul>
+        ),
+        markBreakdown: ['1 mark for “It has a giant structure”.', '1 mark for “It has delocalised electrons”.'],
+        explanation: 'Potassium is a metal, so it has a giant metallic structure containing positive metal ions and delocalised electrons.',
+        commonMistakes: ['Choosing “free moving ions”. In solid metals, the ions are fixed in position and the electrons move.'],
+        examTip: 'In metals, electrons move; ions do not move through the solid structure.'
+      }
+    ]
+  },
+  {
+    id: 'Q5',
+    title: 'Covalent diagrams and non-bonding electrons',
+    marks: 1,
+    parts: [
+      {
+        part: '5',
+        marks: 1,
+        question: 'Which of the following shows the number of non-bonding electrons present in a molecule?',
+        answer: 'A. Dot and cross diagrams',
+        markBreakdown: ['1 mark for A.'],
+        explanation: 'Dot and cross diagrams show outer-shell electrons, including bonding pairs and non-bonding electrons / lone pairs.',
+        commonMistakes: ['Choosing ball-and-stick diagrams. These show atom arrangement and bonds, but not individual electrons.'],
+        examTip: 'Dot and cross diagrams are the best model when the question is about electrons.'
+      }
+    ]
+  }
+];
+
+function Badge({ children, tone = 'slate' }) {
+  const styles = {
+    slate: 'bg-slate-100 text-slate-700 border-slate-200',
+    blue: 'bg-blue-50 text-blue-700 border-blue-200',
+    green: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    amber: 'bg-amber-50 text-amber-700 border-amber-200'
+  };
+  return <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${styles[tone]}`}>{children}</span>;
+}
+
+function InfoBox({ title, children, tone = 'slate' }) {
+  const styles = {
+    slate: 'border-slate-200 bg-white',
+    green: 'border-emerald-200 bg-emerald-50/70',
+    red: 'border-rose-200 bg-rose-50/70',
+    amber: 'border-amber-200 bg-amber-50/80',
+    blue: 'border-blue-200 bg-blue-50/70'
+  };
+  const titleStyles = {
+    slate: 'text-slate-800',
+    green: 'text-emerald-800',
+    red: 'text-rose-800',
+    amber: 'text-amber-800',
+    blue: 'text-blue-800'
+  };
+  return (
+    <section className={`rounded-2xl border p-4 ${styles[tone]}`}>
+      <h4 className={`mb-2 text-sm font-bold uppercase tracking-wide ${titleStyles[tone]}`}>{title}</h4>
+      <div className="text-slate-700 leading-relaxed">{children}</div>
+    </section>
+  );
+}
+
+function ListBox({ title, items, tone }) {
+  return (
+    <InfoBox title={title} tone={tone}>
+      <ul className="list-disc space-y-1 pl-5">
+        {items.map((item, index) => <li key={index}>{item}</li>)}
+      </ul>
+    </InfoBox>
+  );
+}
+
+function PartCard({ part }) {
+  return (
+    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+      <div className="mb-5 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-2xl font-black text-slate-900">{part.part}</h3>
+          <p className="mt-1 text-slate-600">{part.question}</p>
+        </div>
+        <Badge tone="blue">{part.marks} {part.marks === 1 ? 'mark' : 'marks'}</Badge>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <InfoBox title="Model answer" tone="green">
+          <div className="font-medium text-slate-900">{part.answer}</div>
+        </InfoBox>
+
+        <ListBox title="Mark breakdown" items={part.markBreakdown} tone="blue" />
+
+        <InfoBox title="Explanation" tone="slate">
+          <p>{part.explanation}</p>
+        </InfoBox>
+
+        <ListBox title="Common mistakes" items={part.commonMistakes} tone="red" />
+      </div>
+
+      <div className="mt-4">
+        <InfoBox title="Exam tip" tone="amber">
+          <p>{part.examTip}</p>
+        </InfoBox>
+      </div>
+    </article>
+  );
+}
+
+function QuestionView({ question, levelLabel }) {
+  return (
+    <div className="space-y-5">
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-700">{levelLabel} Questions</p>
+            <h2 className="mt-1 text-3xl font-black text-slate-900">{question.id}: {question.title}</h2>
+          </div>
+          <Badge tone="green">{question.marks} marks total</Badge>
+        </div>
+      </div>
+
+      {question.parts.map((part) => <PartCard key={part.part} part={part} />)}
+    </div>
+  );
+}
+
+const mediumQuestions = [
+  {
+    id: 'M1',
+    title: 'Electron structures and sodium chloride',
+    marks: 6,
+    parts: [
+      {
+        part: '1(a)',
+        marks: 1,
+        question: 'Write the electronic structure for an atom of potassium.',
+        answer: '2,8,8,1',
+        markBreakdown: ['1 mark for 2,8,8,1.'],
+        explanation: 'Potassium has 19 electrons arranged as 2,8,8,1.',
+        commonMistakes: ['Writing 2,8,1 because the fourth shell has been missed.'],
+        examTip: 'Potassium is in Period 4, so it has four occupied electron shells.'
+      },
+      {
+        part: '1(b)',
+        marks: 2,
+        question: 'Repeat the drawing for a chlorine atom to show its electronic structure.',
+        answer: 'A correct shell diagram showing 2 electrons in the first shell, 8 in the second shell and 7 in the outer shell.',
+        markBreakdown: ['1 mark for the correct shells.', '1 mark for the correct electron arrangement.'],
+        explanation: 'Chlorine has 17 electrons, giving the electronic structure 2,8,7.',
+        commonMistakes: ['Drawing the chloride ion, 2,8,8, instead of the chlorine atom.'],
+        examTip: 'Check whether the question asks for an atom or an ion before drawing the shells.'
+      },
+      {
+        part: '1(c)',
+        marks: 3,
+        question: 'Draw a similar diagram to show the electronic structure of the particles in sodium chloride, indicating how the compound was formed.',
+        answer: 'Show sodium transferring one electron to chlorine. The final ions should be Na⁺ with electronic structure 2,8 and Cl⁻ with electronic structure 2,8,8, with brackets and charges.',
+        markBreakdown: ['1 mark for electron transfer from sodium to chlorine.', '1 mark for the correct final electron arrangements.', '1 mark for brackets and correct charges.'],
+        explanation: 'Sodium loses one electron and chlorine gains one electron. This produces oppositely charged ions which attract each other.',
+        commonMistakes: ['Forgetting the charges.', 'Showing shared electrons instead of transferred electrons.'],
+        examTip: 'Ionic diagrams should show brackets, charges and full outer shells.'
+      }
+    ]
+  },
+  {
+    id: 'M2',
+    title: 'Ionic lattice structures',
+    marks: 10,
+    parts: [
+      {
+        part: '2(a)',
+        marks: 2,
+        question: 'Complete the table for the ions in sodium chloride.',
+        answer: (
+          <div className="overflow-hidden rounded-xl border border-slate-200">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-100"><tr><th className="px-4 py-3 font-semibold">Name of ion</th><th className="px-4 py-3 font-semibold">Charge</th></tr></thead>
+              <tbody className="divide-y divide-slate-200 bg-white"><tr><td className="px-4 py-3">Sodium ion</td><td className="px-4 py-3">+1</td></tr><tr><td className="px-4 py-3">Chloride ion</td><td className="px-4 py-3">−1</td></tr></tbody>
+            </table>
+          </div>
+        ),
+        markBreakdown: ['1 mark for sodium ion, +1.', '1 mark for chloride ion, −1.'],
+        explanation: 'Sodium loses one electron to form Na⁺. Chlorine gains one electron to form Cl⁻.',
+        commonMistakes: ['Writing sodium atom or chlorine atom rather than the ion names.'],
+        examTip: 'Group 1 metals form +1 ions. Group 7 non-metals form −1 ions.'
+      },
+      {
+        part: '2(b)',
+        marks: 3,
+        question: 'Describe the nature of the chemical bonding in ionic structures.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Ionic structures contain positive and negative ions.</li><li>The ions are arranged in a giant lattice.</li><li>There are strong electrostatic forces of attraction between oppositely charged ions.</li></ul>),
+        markBreakdown: ['1 mark for positive and negative ions.', '1 mark for giant lattice.', '1 mark for strong electrostatic attraction.'],
+        explanation: 'The attractions act in all directions throughout the lattice, giving ionic compounds high melting points.',
+        commonMistakes: ['Saying ionic compounds contain molecules.'],
+        examTip: 'Use the phrase “strong electrostatic forces of attraction between oppositely charged ions”.'
+      },
+      {
+        part: '2(c)',
+        marks: 2,
+        question: 'Suggest two assumptions that the diagram in part (a) makes.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>The ions are shown as the same size.</li><li>The ions are shown in a perfectly regular arrangement.</li></ul>),
+        markBreakdown: ['1 mark for each valid assumption.'],
+        explanation: 'Models simplify real structures. They may not show true relative sizes, full 3D structure or defects in a real crystal.',
+        commonMistakes: ['Giving properties of sodium chloride rather than assumptions made by the model.'],
+        examTip: 'For model questions, ask: what has been simplified, exaggerated or left out?'
+      },
+      {
+        part: '2(d)',
+        marks: 1,
+        question: 'Balance the equation for calcium reacting with oxygen.',
+        answer: <span>2Ca(s) + O<sub>2</sub>(g) → 2CaO(s)</span>,
+        markBreakdown: ['1 mark for the correctly balanced equation.'],
+        explanation: 'Oxygen is diatomic, so two calcium oxide units are needed to balance the two oxygen atoms in O₂.',
+        commonMistakes: ['Changing CaO to CaO₂ instead of balancing with coefficients.'],
+        examTip: 'Balance equations by changing the numbers in front, not the formulae.'
+      },
+      {
+        part: '2(e)',
+        marks: 2,
+        question: 'Describe what happens when a calcium atom becomes ionised.',
+        answer: 'Calcium loses two electrons to form a Ca²⁺ ion.',
+        markBreakdown: ['1 mark for losing electrons.', '1 mark for losing two electrons / forming Ca²⁺.'],
+        explanation: 'Calcium is in Group 2, so it loses its two outer-shell electrons when it forms an ion.',
+        commonMistakes: ['Saying calcium gains electrons. Metals form positive ions by losing electrons.'],
+        examTip: 'Group 2 metals form 2+ ions.'
+      }
+    ]
+  },
+  {
+    id: 'M3',
+    title: 'Magnesium iodide and ammonia',
+    marks: 7,
+    parts: [
+      {
+        part: '3(a)',
+        marks: 1,
+        question: 'Magnesium iodide contains Mg²⁺ ions and I⁻ ions. State the chemical formula of magnesium iodide.',
+        answer: <span>MgI<sub>2</sub></span>,
+        markBreakdown: ['1 mark for MgI₂.'],
+        explanation: 'One Mg²⁺ ion needs two I⁻ ions to balance the charge.',
+        commonMistakes: ['Writing MgI because the charges have not been balanced.'],
+        examTip: 'Use the charges to find the ratio, then write the formula.'
+      },
+      {
+        part: '3(b)',
+        marks: 5,
+        question: 'Describe, in terms of electrons and bonding, the reaction between magnesium and iodine.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Magnesium loses two electrons.</li><li>Each iodine atom gains one electron.</li><li>Magnesium forms Mg²⁺ ions.</li><li>Iodine forms I⁻ ions.</li><li>Strong electrostatic attraction forms between the oppositely charged ions.</li></ul>),
+        markBreakdown: ['1 mark for magnesium losing two electrons.', '1 mark for iodine atoms gaining electrons.', '1 mark for Mg²⁺.', '1 mark for I⁻.', '1 mark for electrostatic attraction.'],
+        explanation: 'This is ionic bonding because electrons are transferred from a metal atom to non-metal atoms.',
+        commonMistakes: ['Saying magnesium and iodine share electrons.'],
+        examTip: 'A full ionic bonding answer usually needs electron transfer, ion charges and electrostatic attraction.'
+      },
+      {
+        part: '4',
+        marks: 1,
+        question: 'How many non-bonding, outer-shell electrons are present in one molecule of ammonia?',
+        answer: 'B. 2',
+        markBreakdown: ['1 mark for B.'],
+        explanation: 'Nitrogen has one lone pair in ammonia. One lone pair contains two non-bonding electrons.',
+        commonMistakes: ['Counting all outer-shell electrons instead of only the non-bonding electrons.'],
+        examTip: 'Non-bonding electrons are lone-pair electrons.'
+      }
+    ]
+  },
+  {
+    id: 'M4',
+    title: 'Iodine and zinc',
+    marks: 13,
+    parts: [
+      {
+        part: '5(a)',
+        marks: 2,
+        question: 'Suggest two reasons why iodine and bromine bond in similar ways.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>They are both halogens / both in Group 7.</li><li>They both have seven electrons in their outer shell.</li></ul>),
+        markBreakdown: ['1 mark for same group / both halogens.', '1 mark for same number of outer-shell electrons.'],
+        explanation: 'Elements in the same group have similar chemical properties because they have the same number of outer-shell electrons.',
+        commonMistakes: ['Only saying they are both non-metals without linking this to electron structure.'],
+        examTip: 'Similar bonding is usually explained using outer-shell electrons.'
+      },
+      {
+        part: '5(b)',
+        marks: 2,
+        question: 'Complete the diagram to show the bonding arrangement in a molecule of iodine. Show the outer shell electrons only.',
+        answer: 'Show one shared pair of electrons between the two iodine atoms, with three lone pairs on each iodine atom.',
+        markBreakdown: ['1 mark for the shared pair between iodine atoms.', '1 mark for the correct lone pairs on both iodine atoms.'],
+        explanation: 'Each iodine atom has seven outer electrons, so each needs one more electron. They share one pair of electrons to form I₂.',
+        commonMistakes: ['Forgetting to show the non-bonding electrons.'],
+        examTip: 'Halogen molecules form one covalent bond and each atom has three lone pairs.'
+      },
+      {
+        part: '5(c)',
+        marks: 2,
+        question: 'Explain why liquid iodine is unable to conduct electricity.',
+        answer: 'Liquid iodine has no free electrons or ions that can move and carry charge.',
+        markBreakdown: ['1 mark for no free electrons or ions.', '1 mark for no mobile charged particles to carry charge.'],
+        explanation: 'Iodine is a simple covalent substance. Its molecules are neutral and do not contain mobile charged particles.',
+        commonMistakes: ['Saying it cannot conduct because the covalent bonds are weak.'],
+        examTip: 'Conductivity needs mobile charged particles.'
+      },
+      {
+        part: '6(a)',
+        marks: 4,
+        question: 'Zinc is a typical metal. Describe the structure and bonding in zinc.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Zinc has a giant metallic lattice structure.</li><li>It contains positive metal ions.</li><li>There are delocalised electrons.</li><li>Strong electrostatic attraction acts between the positive ions and delocalised electrons.</li></ul>),
+        markBreakdown: ['1 mark for giant metallic lattice.', '1 mark for positive ions.', '1 mark for delocalised electrons.', '1 mark for strong electrostatic attraction.'],
+        explanation: 'Metallic bonding is the attraction between positive metal ions and delocalised electrons.',
+        commonMistakes: ['Referring to molecules or ionic bonding.'],
+        examTip: 'For metallic bonding, include positive ions, delocalised electrons and electrostatic attraction.'
+      },
+      {
+        part: '6(b)',
+        marks: 1,
+        question: 'Explain how zinc is able to conduct electricity.',
+        answer: 'Delocalised electrons can move through the structure and carry charge.',
+        markBreakdown: ['1 mark for mobile delocalised electrons.'],
+        explanation: 'The electrons are not fixed to individual atoms, so they can flow when a potential difference is applied.',
+        commonMistakes: ['Saying the positive ions move through the metal.'],
+        examTip: 'In solid metals, electrons move; metal ions vibrate in fixed positions.'
+      },
+      {
+        part: '6(c)',
+        marks: 2,
+        question: 'Suggest why conductivity is reduced when metals corrode.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Corrosion forms a layer of metal compound on the surface.</li><li>This layer has fewer mobile electrons / blocks electron movement, so conductivity falls.</li></ul>),
+        markBreakdown: ['1 mark for formation of a corrosion layer.', '1 mark for reduced movement of electrons / charge.'],
+        explanation: 'Corrosion products are not usually as good at conducting electricity as the original metal.',
+        commonMistakes: ['Saying corrosion makes the metal disappear, without linking to electron movement.'],
+        examTip: 'Link conductivity answers to mobile charged particles.'
+      },
+      {
+        part: '6(d)',
+        marks: 2,
+        question: 'Explain why metals can be bent and shaped.',
+        answer: 'Layers of metal ions can slide over each other while the attraction to delocalised electrons is maintained.',
+        markBreakdown: ['1 mark for layers of ions sliding.', '1 mark for metallic bonding remaining intact.'],
+        explanation: 'Metallic bonding is non-directional, so the layers can move without the structure breaking apart.',
+        commonMistakes: ['Saying all the bonds break when a metal is bent.'],
+        examTip: 'Malleability is explained by layers sliding.'
+      }
+    ]
+  },
+  {
+    id: 'M5',
+    title: 'Electrostatic forces and ammonia',
+    marks: 10,
+    parts: [
+      {
+        part: '7',
+        marks: 1,
+        question: 'Which example does not involve strong electrostatic forces of attraction?',
+        answer: 'C. Bonding between carbon and hydrogen atoms',
+        markBreakdown: ['1 mark for C.'],
+        explanation: 'At GCSE level, strong electrostatic forces are usually emphasised in ionic and metallic bonding. A C–H bond is covalent, involving a shared pair of electrons.',
+        commonMistakes: ['Choosing calcium, which has metallic bonding.'],
+        examTip: 'Identify the bonding type before choosing the answer.'
+      },
+      {
+        part: '8(a)',
+        marks: 4,
+        question: 'Write down four differences between ionic compounds and simple covalent compounds.',
+        answer: (<div className="overflow-hidden rounded-xl border border-slate-200"><table className="w-full text-left text-sm"><thead className="bg-slate-100"><tr><th className="px-4 py-3 font-semibold">Ionic compounds</th><th className="px-4 py-3 font-semibold">Simple covalent compounds</th></tr></thead><tbody className="divide-y divide-slate-200 bg-white"><tr><td className="px-4 py-3">Giant ionic lattice</td><td className="px-4 py-3">Simple molecular structure</td></tr><tr><td className="px-4 py-3">High melting points</td><td className="px-4 py-3">Low melting points</td></tr><tr><td className="px-4 py-3">Conduct when molten or dissolved</td><td className="px-4 py-3">Usually do not conduct electricity</td></tr><tr><td className="px-4 py-3">Usually metal + non-metal</td><td className="px-4 py-3">Non-metals only</td></tr></tbody></table></div>),
+        markBreakdown: ['1 mark for each valid difference.'],
+        explanation: 'Ionic compounds have strong attractions throughout a giant lattice. Simple covalent substances have weak intermolecular forces between molecules.',
+        commonMistakes: ['Comparing ionic compounds with giant covalent structures rather than simple covalent compounds.'],
+        examTip: 'Make comparisons in pairs to make the differences clear.'
+      },
+      {
+        part: '8(b)',
+        marks: 5,
+        question: 'Describe the bonding in a molecule of ammonia, NH₃.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Ammonia contains covalent bonds.</li><li>Nitrogen shares electrons with three hydrogen atoms.</li><li>Each covalent bond is a shared pair of electrons.</li><li>Nitrogen forms three covalent bonds.</li><li>Nitrogen has one lone pair of electrons.</li></ul>),
+        markBreakdown: ['1 mark for covalent bonding.', '1 mark for sharing electrons with hydrogen.', '1 mark for shared pairs.', '1 mark for three bonds.', '1 mark for one lone pair.'],
+        explanation: 'Nitrogen has five outer-shell electrons. It shares three electrons with hydrogen atoms to complete its outer shell, leaving one lone pair.',
+        commonMistakes: ['Forgetting the lone pair on nitrogen.'],
+        examTip: 'NH₃ has three bonding pairs and one lone pair.'
+      }
+    ]
+  }
+];
+
+const hardQuestions = [
+  {
+    id: 'H1',
+    title: 'Sodium oxide and ionic models',
+    marks: 12,
+    parts: [
+      {
+        part: '1(a)',
+        marks: 4,
+        question: 'Describe the structure and bonding in sodium oxide.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Sodium oxide has a giant ionic lattice structure.</li><li>It contains positive sodium ions and negative oxide ions.</li><li>The ions are arranged in a regular repeating pattern.</li><li>Strong electrostatic forces of attraction act between oppositely charged ions.</li></ul>),
+        markBreakdown: ['1 mark for giant ionic lattice.', '1 mark for Na⁺ and O²⁻ ions.', '1 mark for regular arrangement.', '1 mark for strong electrostatic forces.'],
+        explanation: 'Sodium oxide is ionic because sodium transfers electrons to oxygen, forming oppositely charged ions.',
+        commonMistakes: ['Saying sodium oxide contains molecules. Ionic compounds form giant lattices.'],
+        examTip: 'Structure and bonding answers should include both arrangement and the force holding particles together.'
+      },
+      {
+        part: '1(b)',
+        marks: 1,
+        question: 'Sodium is in Group 1 and oxygen is in Group 6. What is the formula of sodium oxide?',
+        answer: <span>Na<sub>2</sub>O</span>,
+        markBreakdown: ['1 mark for Na₂O.'],
+        explanation: 'Sodium forms Na⁺ and oxygen forms O²⁻. Two Na⁺ ions are needed to balance one O²⁻ ion.',
+        commonMistakes: ['Writing NaO because there is one of each element name.'],
+        examTip: 'Balance ion charges, not element names.'
+      },
+      {
+        part: '1(c)',
+        marks: 3,
+        question: 'Draw dot and cross diagrams to represent the three ions formed by sodium oxide.',
+        answer: 'Show two Na⁺ ions and one O²⁻ ion. Oxygen should have a full outer shell of eight electrons, including one transferred electron from each sodium atom. Include brackets and charges.',
+        markBreakdown: ['1 mark for two Na⁺ ions and one O²⁻ ion.', '1 mark for correct full outer shell on oxygen.', '1 mark for brackets and charges.'],
+        explanation: 'Each sodium atom loses one electron. The oxygen atom gains two electrons in total, forming an oxide ion.',
+        commonMistakes: ['Only drawing one sodium ion.', 'Forgetting the 2− charge on oxygen.'],
+        examTip: 'Na₂O contains three ions in the formula unit: two Na⁺ and one O²⁻.'
+      },
+      {
+        part: '1(d)',
+        marks: 4,
+        question: 'Compare the advantages and limitations of the two ionic compound models.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>A 3D lattice model shows the regular arrangement of ions in the giant structure.</li><li>However, it may not clearly show charges or electron transfer.</li><li>A charged particle model clearly shows positive and negative ions.</li><li>However, it oversimplifies the 3D lattice and may not show accurate relative sizes or the full structure.</li></ul>),
+        markBreakdown: ['Up to 2 marks for advantages.', 'Up to 2 marks for limitations.', 'Credit comparison of both models.'],
+        explanation: 'Different models are useful for different purposes. Some show arrangement better; others show charges more clearly.',
+        commonMistakes: ['Only discussing one model.', 'Only giving advantages and no limitations.'],
+        examTip: 'For compare questions, write about both models and use words like “whereas” or “however”.'
+      }
+    ]
+  },
+  {
+    id: 'H2',
+    title: 'Aluminium chloride and chlorine',
+    marks: 11,
+    parts: [
+      {
+        part: '2(a)',
+        marks: 3,
+        question: 'Aluminium and chlorine react to form aluminium chloride. Write the balanced symbol equation, including state symbols.',
+        answer: <span>2Al(s) + 3Cl<sub>2</sub>(g) → 2AlCl<sub>3</sub>(s)</span>,
+        markBreakdown: ['1 mark for correct formulae.', '1 mark for correct balancing.', '1 mark for correct state symbols.'],
+        explanation: 'Chlorine exists as Cl₂ molecules. Aluminium chloride has the formula AlCl₃, so the balanced equation is 2Al + 3Cl₂ → 2AlCl₃.',
+        commonMistakes: ['Writing Cl instead of Cl₂.', 'Forgetting state symbols.'],
+        examTip: 'Remember the diatomic elements, including chlorine, Cl₂.'
+      },
+      {
+        part: '2(b)',
+        marks: 3,
+        question: 'Describe, in terms of electron arrangement, the type of bonding in a molecule of chlorine.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Chlorine has covalent bonding.</li><li>Each chlorine atom shares one electron.</li><li>One shared pair of electrons forms a covalent bond, giving each atom a full outer shell.</li></ul>),
+        markBreakdown: ['1 mark for covalent bonding.', '1 mark for each chlorine sharing one electron.', '1 mark for a shared pair / full outer shell.'],
+        explanation: 'Both chlorine atoms have seven outer electrons, so they share one pair to complete their outer shells.',
+        commonMistakes: ['Saying electrons are transferred. That would be ionic bonding.'],
+        examTip: 'Covalent bonding means a shared pair of electrons.'
+      },
+      {
+        part: '2(c)',
+        marks: 5,
+        question: 'Describe, in terms of electron arrangement, the type of bonding in aluminium chloride.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Aluminium loses three electrons.</li><li>Each chlorine atom gains one electron.</li><li>Aluminium forms Al³⁺ ions.</li><li>Chlorine forms Cl⁻ ions.</li><li>Strong electrostatic attraction acts between the oppositely charged ions.</li></ul>),
+        markBreakdown: ['1 mark for aluminium losing three electrons.', '1 mark for chlorine gaining electrons.', '1 mark for Al³⁺.', '1 mark for Cl⁻.', '1 mark for electrostatic attraction.'],
+        explanation: 'At GCSE level this question treats aluminium chloride as ionic, formed by electron transfer from aluminium to chlorine.',
+        commonMistakes: ['Only saying aluminium chloride is ionic without explaining electron arrangement.'],
+        examTip: 'For 5-mark bonding questions, build the answer step by step: electron movement → ions → attraction.'
+      }
+    ]
+  },
+  {
+    id: 'H3',
+    title: 'Covalent bonding in propane',
+    marks: 6,
+    parts: [
+      {
+        part: '3(a)',
+        marks: 1,
+        question: 'What is a covalent bond?',
+        answer: 'A shared pair of electrons between atoms.',
+        markBreakdown: ['1 mark for shared pair of electrons.'],
+        explanation: 'Covalent bonds form when non-metal atoms share electrons to complete their outer shells.',
+        commonMistakes: ['Saying a covalent bond is the transfer of electrons.'],
+        examTip: 'Learn this definition exactly: a shared pair of electrons.'
+      },
+      {
+        part: '3(b)',
+        marks: 1,
+        question: 'Complete the dot and cross diagram to show the bonding in propane.',
+        answer: <span>Show the bonding for C<sub>3</sub>H<sub>8</sub>: three carbon atoms in a chain with single covalent bonds, and enough hydrogen atoms so each carbon has four bonds.</span>,
+        markBreakdown: ['1 mark for the correct bonding arrangement.'],
+        explanation: 'Propane has the formula C₃H₈. Each carbon forms four covalent bonds and each hydrogen forms one.',
+        commonMistakes: ['Giving carbon five bonds or missing hydrogen atoms.'],
+        examTip: 'Carbon forms four bonds; hydrogen forms one bond.'
+      },
+      {
+        part: '3(c)',
+        marks: 2,
+        question: 'Explain why propane cannot conduct electricity.',
+        answer: 'Propane has no free electrons or ions that can move and carry charge.',
+        markBreakdown: ['1 mark for no mobile ions/free electrons.', '1 mark for no charged particles to carry charge.'],
+        explanation: 'Propane is a simple covalent molecule. Its particles are neutral molecules, so there are no mobile charged particles.',
+        commonMistakes: ['Saying propane cannot conduct because it is a gas. The reason is lack of mobile charged particles.'],
+        examTip: 'Conduction requires mobile charged particles.'
+      },
+      {
+        part: '3(d)',
+        marks: 2,
+        question: 'Give two limitations of the dot and cross diagram in part (b).',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>It does not show the relative sizes of the atoms.</li><li>It is only 2D and does not show the true 3D shape.</li></ul>),
+        markBreakdown: ['1 mark for each valid limitation.'],
+        explanation: 'Dot and cross diagrams focus on outer-shell electrons, not realistic scale or shape.',
+        commonMistakes: ['Saying it shows electron sharing, which is an advantage.'],
+        examTip: 'Limitations of models often involve scale, size and 3D shape.'
+      }
+    ]
+  },
+  {
+    id: 'H4',
+    title: 'Formula from ion charges',
+    marks: 1,
+    parts: [
+      {
+        part: '4',
+        marks: 1,
+        question: 'Magnesium reacts with element Z to form a compound with the formula MgZ. Which element could be Z?',
+        answer: 'C. Oxygen',
+        markBreakdown: ['1 mark for C.'],
+        explanation: 'Magnesium forms Mg²⁺. Oxygen forms O²⁻. These charges balance in a 1:1 ratio, giving MgO, so Z could be oxygen.',
+        commonMistakes: ['Choosing fluorine or chlorine. They form 1− ions, which would give MgF₂ or MgCl₂.'],
+        examTip: 'Use ion charges to work out formula ratios.'
+      }
+    ]
+  },
+  {
+    id: 'H5',
+    title: 'Oxygen and magnesium oxide',
+    marks: 9,
+    parts: [
+      {
+        part: '5(a)',
+        marks: 2,
+        question: 'Complete the dot and cross diagram to show the covalent bonding in an oxygen molecule, O₂.',
+        answer: 'Show two shared pairs of electrons between the oxygen atoms, with two lone pairs on each oxygen atom.',
+        markBreakdown: ['1 mark for the double covalent bond / two shared pairs.', '1 mark for the correct lone pairs.'],
+        explanation: 'Each oxygen atom has six outer electrons and needs two more. The atoms share two pairs of electrons to form a double bond.',
+        commonMistakes: ['Drawing only one shared pair.'],
+        examTip: 'O₂ has a double covalent bond.'
+      },
+      {
+        part: '5(b)',
+        marks: 4,
+        question: 'Describe the differences in the bonding and structure of magnesium oxide and oxygen.',
+        answer: (<div className="space-y-2"><p><strong>Magnesium oxide:</strong> ionic bonding, giant ionic lattice, contains Mg²⁺ and O²⁻ ions.</p><p><strong>Oxygen:</strong> covalent bonding, simple molecular structure, contains O₂ molecules with shared electrons.</p></div>),
+        markBreakdown: ['1 mark for MgO being ionic.', '1 mark for MgO having a giant lattice / ions.', '1 mark for oxygen being covalent.', '1 mark for oxygen being simple molecular / O₂ molecules.'],
+        explanation: 'Magnesium oxide forms by electron transfer between a metal and a non-metal. Oxygen molecules form by electron sharing between two non-metal atoms.',
+        commonMistakes: ['Describing oxygen as ionic because it can form oxide ions in compounds. In O₂, oxygen is covalent.'],
+        examTip: 'Compare both bonding and structure when the question asks for both.'
+      },
+      {
+        part: '5(c)',
+        marks: 3,
+        question: 'Explain why magnesium oxide has a higher melting point than sodium chloride.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Magnesium oxide contains Mg²⁺ and O²⁻ ions.</li><li>These ions have larger charges than Na⁺ and Cl⁻ ions.</li><li>There are stronger electrostatic attractions, so more energy is needed to overcome them.</li></ul>),
+        markBreakdown: ['1 mark for identifying higher charges in MgO.', '1 mark for stronger electrostatic attractions.', '1 mark for more energy needed to overcome the attractions.'],
+        explanation: 'The greater the ion charges, the stronger the electrostatic force of attraction in the ionic lattice.',
+        commonMistakes: ['Saying magnesium oxide has covalent bonds.'],
+        examTip: 'Higher ion charge usually means stronger attraction and a higher melting point.'
+      }
+    ]
+  },
+  {
+    id: 'H6',
+    title: 'Electronic structures of ions',
+    marks: 1,
+    parts: [
+      {
+        part: '6',
+        marks: 1,
+        question: 'Which does not have the same electronic structure as the others?',
+        answer: 'D. Cl⁻ ion',
+        markBreakdown: ['1 mark for D.'],
+        explanation: 'Na⁺, O²⁻ and Ne each have 10 electrons, arranged 2,8. Cl⁻ has 18 electrons, arranged 2,8,8.',
+        commonMistakes: ['Choosing O²⁻ because oxygen normally has 8 electrons as an atom. As O²⁻ it has gained 2 electrons, so it has 10.'],
+        examTip: 'Count electrons after the ion has formed, not before.'
+      }
+    ]
+  },
+  {
+    id: 'H7',
+    title: 'Copper and Period 3 conductivity',
+    marks: 9,
+    parts: [
+      {
+        part: '7(a)',
+        marks: 5,
+        question: 'Explain how the particles in copper are held together and why the metal is malleable.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Copper contains positive metal ions arranged in layers.</li><li>Delocalised electrons move between the ions.</li><li>There is strong electrostatic attraction between positive ions and delocalised electrons.</li><li>The layers of ions can slide over each other.</li><li>The metallic bonding remains intact, so copper is malleable.</li></ul>),
+        markBreakdown: ['1 mark for positive metal ions.', '1 mark for delocalised electrons.', '1 mark for electrostatic attraction.', '1 mark for layers sliding.', '1 mark for linking this to malleability.'],
+        explanation: 'Metallic bonding is non-directional. When layers slide, the delocalised electrons still hold the metal ions together.',
+        commonMistakes: ['Saying copper has covalent bonds.', 'Saying malleability is because the atoms are soft.'],
+        examTip: 'Malleability = layers slide while metallic bonding is maintained.'
+      },
+      {
+        part: '7(b)',
+        marks: 4,
+        question: 'Electrical conductivity increases across Period 3, from sodium to aluminium. Explain why.',
+        answer: (<ul className="list-disc space-y-1 pl-5"><li>Electrical conductivity depends on delocalised electrons.</li><li>Sodium provides one delocalised electron per atom.</li><li>Magnesium provides two delocalised electrons per atom.</li><li>Aluminium provides three delocalised electrons per atom, so there are more charge carriers.</li></ul>),
+        markBreakdown: ['1 mark for conductivity depending on delocalised electrons.', '1 mark for sodium providing one electron.', '1 mark for magnesium providing two electrons.', '1 mark for aluminium providing three / more charge carriers.'],
+        explanation: 'More delocalised electrons means more moving charged particles available to carry electrical charge.',
+        commonMistakes: ['Saying the ions move more easily across the period.'],
+        examTip: 'For metals, higher conductivity usually means more mobile electrons.'
+      }
+    ]
+  }
+];
+
+const questionGroups = {
+  easy: {
+    label: 'Easy',
+    questions: easyQuestions
+  },
+  medium: {
+    label: 'Medium',
+    questions: mediumQuestions
+  },
+  hard: {
+    label: 'Hard',
+    questions: hardQuestions
+  }
+};
+
+const allQuestions = [...easyQuestions, ...mediumQuestions, ...hardQuestions];
+
+export default function App() {
+  const [activeLevel, setActiveLevel] = useState('easy');
+  const [activeId, setActiveId] = useState(easyQuestions[0].id);
+
+  const activeGroup = questionGroups[activeLevel];
+  const activeQuestion = useMemo(
+    () => activeGroup.questions.find(q => q.id === activeId) || activeGroup.questions[0],
+    [activeGroup, activeId]
+  );
+
+  const totalMarks = allQuestions.reduce((sum, q) => sum + q.marks, 0);
+  const levelMarks = activeGroup.questions.reduce((sum, q) => sum + q.marks, 0);
+
+  function handleLevelChange(levelKey) {
+    setActiveLevel(levelKey);
+    setActiveId(questionGroups[levelKey].questions[0].id);
+  }
+
+  return (
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="mb-3 flex flex-wrap gap-2">
+                <Badge tone="blue">GCSE AQA Chemistry</Badge>
+                <Badge tone="slate">Save My Exams style</Badge>
+                <Badge tone="green">Easy + Medium + Hard content loaded</Badge>
+              </div>
+              <h1 className="text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">2.1 Chemical Bonds</h1>
+              <p className="mt-3 max-w-3xl text-lg text-slate-600">Model answers, mark breakdowns, explanations, common mistakes and exam tips for the Chemical Bonds structured question set.</p>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-4 text-right shadow-sm">
+              <p className="text-sm font-semibold text-slate-500">Current section</p>
+              <p className="text-2xl font-black text-slate-900">{activeGroup.label}</p>
+              <p className="text-sm text-slate-500">{activeGroup.questions.length} questions · {levelMarks} marks</p>
+            </div>
+          </div>
+
+          <div className="mt-7 rounded-3xl border border-slate-200 bg-slate-50 p-2 shadow-sm">
+            <div className="grid gap-2 sm:grid-cols-3">
+              {Object.entries(questionGroups).map(([levelKey, group]) => {
+                const isActive = activeLevel === levelKey;
+                const groupMarks = group.questions.reduce((sum, q) => sum + q.marks, 0);
+                return (
+                  <button
+                    key={levelKey}
+                    onClick={() => handleLevelChange(levelKey)}
+                    className={`rounded-2xl px-5 py-4 text-left transition ${isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-700 hover:bg-slate-100'}`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-lg font-black">{group.label}</span>
+                      <span className={`text-xs font-bold ${isActive ? 'text-blue-100' : 'text-slate-500'}`}>{groupMarks} marks</span>
+                    </div>
+                    <p className={`mt-1 text-sm ${isActive ? 'text-blue-50' : 'text-slate-500'}`}>{group.questions.length} questions</p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
+        <aside className="lg:sticky lg:top-6 lg:self-start">
+          <nav className="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm">
+            <p className="px-3 py-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{activeGroup.label} questions</p>
+            <div className="space-y-2">
+              {activeGroup.questions.map((question) => {
+                const isActive = question.id === activeQuestion.id;
+                return (
+                  <button
+                    key={question.id}
+                    onClick={() => setActiveId(question.id)}
+                    className={`w-full rounded-2xl px-4 py-3 text-left transition ${isActive ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="font-black">{question.id}</span>
+                      <span className={`text-xs font-bold ${isActive ? 'text-blue-100' : 'text-slate-500'}`}>{question.marks} marks</span>
+                    </div>
+                    <p className={`mt-1 text-sm ${isActive ? 'text-blue-50' : 'text-slate-500'}`}>{question.title}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        </aside>
+
+        <section>
+          <QuestionView question={activeQuestion} levelLabel={activeGroup.label} />
+        </section>
+      </div>
+    </main>
+  );
+}
