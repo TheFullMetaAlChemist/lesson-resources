@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Periodic Table: Model Answers</title>
+  <style>
+    :root {
+      --slate-950:#020617; --slate-900:#0f172a; --slate-800:#1e293b; --slate-700:#334155;
+      --slate-600:#475569; --slate-500:#64748b; --slate-300:#cbd5e1; --slate-200:#e2e8f0;
+      --slate-100:#f1f5f9; --slate-50:#f8fafc; --sky-700:#0369a1; --sky-200:#bae6fd;
+      --emerald-50:#ecfdf5; --emerald-100:#d1fae5; --emerald-700:#047857;
+      --amber-50:#fffbeb; --amber-200:#fde68a; --amber-900:#78350f;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--slate-900); background:linear-gradient(135deg,var(--slate-50),#fff,#f0f9ff); line-height:1.5;
+    }
+    header { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--slate-200); background:rgba(255,255,255,.92); backdrop-filter:blur(10px); }
+    .header-inner { max-width:1152px; margin:0 auto; padding:16px 24px; display:flex; flex-direction:column; gap:16px; }
+    .topline { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; }
+    .eyebrow { margin:0; font-size:12px; font-weight:800; letter-spacing:.2em; text-transform:uppercase; color:var(--sky-700); }
+    h1 { margin:2px 0 0; font-size:30px; line-height:1.1; color:var(--slate-950); letter-spacing:-.03em; }
+    .subtitle { margin:6px 0 0; color:var(--slate-600); font-size:14px; }
+    .total { background:var(--slate-900); color:#fff; border-radius:18px; padding:12px 16px; text-align:right; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+    .total span { display:block; color:var(--slate-300); text-transform:uppercase; letter-spacing:.08em; font-size:12px; }
+    .total strong { display:block; font-size:20px; }
+    nav { display:flex; flex-wrap:wrap; gap:8px; }
+    button.tab {
+      border:0; border-radius:999px; padding:10px 16px; font-weight:800; font-size:14px; cursor:pointer;
+      background:#fff; color:var(--slate-700); box-shadow:inset 0 0 0 1px var(--slate-200);
+    }
+    button.tab.active { background:var(--sky-700); color:white; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+    main { max-width:1152px; margin:0 auto; padding:32px 24px; display:grid; grid-template-columns:260px 1fr; gap:24px; }
+    aside { position:sticky; top:144px; height:max-content; background:#fff; border:1px solid var(--slate-200); border-radius:28px; padding:20px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+    aside h3 { margin:0; font-size:14px; letter-spacing:.05em; text-transform:uppercase; color:var(--slate-700); }
+    aside p { margin:4px 0 16px; color:var(--slate-500); font-size:14px; }
+    aside a { display:block; color:var(--slate-700); text-decoration:none; border-radius:12px; padding:8px 12px; font-size:14px; font-weight:700; }
+    aside a:hover { background:var(--slate-100); }
+    .content { display:grid; gap:24px; }
+    .intro { border-radius:28px; background:var(--slate-950); color:white; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,.1); }
+    .intro p:first-child { margin:0; color:var(--sky-200); text-transform:uppercase; letter-spacing:.05em; font-weight:800; font-size:14px; }
+    .intro h2 { margin:4px 0 12px; font-size:30px; line-height:1.15; }
+    .intro .help { margin:0; color:var(--slate-300); font-size:14px; max-width:720px; }
+    section.question { scroll-margin-top:150px; border:1px solid var(--slate-200); background:rgba(255,255,255,.72); border-radius:28px; padding:24px; box-shadow:0 1px 3px rgba(15,23,42,.06); }
+    .qhead { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:20px; }
+    .qhead h2 { margin:0; color:var(--slate-950); font-size:24px; letter-spacing:-.02em; }
+    .qhead p { margin:4px 0 0; color:var(--slate-600); font-size:14px; font-weight:600; }
+    .pill { display:inline-flex; align-items:center; border-radius:999px; background:var(--slate-100); color:var(--slate-700); padding:4px 12px; font-size:12px; font-weight:800; box-shadow:inset 0 0 0 1px var(--slate-200); }
+    .parts { display:grid; gap:16px; }
+    .part-card { border:1px solid var(--slate-200); background:#fff; border-radius:20px; padding:20px; box-shadow:0 1px 3px rgba(15,23,42,.05); }
+    .part-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+    .answer-box { background:var(--emerald-50); border-radius:14px; padding:16px; box-shadow:inset 0 0 0 1px var(--emerald-100); margin-bottom:16px; }
+    .box-label { font-size:12px; font-weight:900; text-transform:uppercase; letter-spacing:.06em; color:var(--emerald-700); margin-bottom:4px; }
+    .answer-box p { margin:0; color:var(--slate-950); font-size:16px; }
+    details { border-radius:14px; padding:14px 16px; }
+    details summary { cursor:pointer; font-size:14px; font-weight:900; }
+    details p { margin:8px 0 0; font-size:14px; color:var(--slate-700); }
+    details.explanation { border:1px solid var(--slate-200); background:var(--slate-50); }
+    details.tip { margin-top:12px; border:1px solid var(--amber-200); background:var(--amber-50); color:var(--amber-900); }
+    details.tip p, details.tip summary { color:var(--amber-900); }
+    @media (max-width: 900px) {
+      main { grid-template-columns:1fr; }
+      aside { position:static; }
+      h1 { font-size:24px; }
+    }
+    @media print {
+      header, aside { position:static; }
+      button, nav, aside { display:none; }
+      main { display:block; padding:0; }
+      body { background:#fff; }
+      section.question, .part-card, .intro { break-inside:avoid; box-shadow:none; }
+      details.tip { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="topline">
+        <div>
+          <p class="eyebrow">GCSE AQA Chemistry</p>
+          <h1>The Periodic Table: Model Answers</h1>
+          <p class="subtitle">Save My Exams-style walkthrough with answers, explanations and exam tips.</p>
+        </div>
+        <div class="total"><span>Total</span><strong>130 marks</strong></div>
+      </div>
+      <nav id="tabs"></nav>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <h3 id="aside-title"></h3>
+      <p id="aside-subtitle"></p>
+      <div id="question-links"></div>
+    </aside>
+    <div class="content" id="content"></div>
+  </main>
+
+  <script>
+    const sections = [{"id": "easy", "title": "Easy Questions", "subtitle": "6 questions / 37 marks", "questions": [{"number": "Easy 1", "topic": "Periodic table positions", "marks": 5, "parts": [{"part": "a", "answer": "B", "marks": "1", "explanation": "A relative atomic mass of 9 corresponds to beryllium, which is in Group 2, Period 2. In the diagram, this position is labelled B.", "tip": "Use the periodic table position first, then match it to the relative atomic mass."}, {"part": "b", "answer": "E", "marks": "1", "explanation": "Element E is in Group 0, so it has a complete outer shell of electrons.", "tip": "Group 0 elements are the noble gases and have full outer shells."}, {"part": "c", "answer": "C", "marks": "1", "explanation": "Element C is in the central block of the periodic table, which contains the transition metals.", "tip": "The transition metals are found in the block between Groups 2 and 3."}, {"part": "d", "answer": "A", "marks": "1", "explanation": "Element A is in Group 1, so it has one electron in its outer shell.", "tip": "For main group elements, the group number often tells you the number of outer-shell electrons."}, {"part": "e", "answer": "D", "marks": "1", "explanation": "Element D is in Group 7. Group 7 non-metals gain one electron to form 1− ions.", "tip": "Halogens form 1− ions because they need one more electron to complete their outer shell."}]}, {"number": "Easy 2", "topic": "Mendeleev and the modern periodic table", "marks": 7, "parts": [{"part": "a", "answer": "periods; atomic weight; undiscovered; similar properties", "marks": "4", "explanation": "Rows in the periodic table are called periods. Mendeleev arranged most elements by atomic weight and left gaps for undiscovered elements. He noticed that similar properties repeated at regular intervals.", "tip": "Mendeleev's key achievement was using patterns in properties to predict missing elements."}, {"part": "b", "answer": "Hydrogen does not have the typical properties of Group 1 metals.", "marks": "1", "explanation": "Lithium and sodium are reactive metals, but hydrogen is a non-metal gas, so it does not fit well in the same column.", "tip": "Use properties, not just electron arrangement, when explaining unusual placements."}, {"part": "c", "answer": "Groups", "marks": "1", "explanation": "The vertical columns in the periodic table are called groups.", "tip": "Rows are periods; columns are groups."}, {"part": "d", "answer": "In order of atomic number", "marks": "1", "explanation": "The modern periodic table is arranged by increasing atomic number, which is the number of protons in the nucleus.", "tip": "Atomic number is the organising principle of the modern table."}]}, {"number": "Easy 3", "topic": "Group 1 reactions", "marks": 7, "parts": [{"part": "a", "answer": "potassium + water → potassium hydroxide + hydrogen", "marks": "2", "explanation": "Group 1 metals react with water to produce a metal hydroxide and hydrogen gas.", "tip": "Metal + water → metal hydroxide + hydrogen."}, {"part": "b", "answer": "Potassium would disappear; bubbles would be produced", "marks": "2", "explanation": "Potassium reacts on the surface of the water, gradually disappearing as it forms potassium hydroxide. Bubbles are produced because hydrogen gas is released.", "tip": "Bubbles in this reaction are hydrogen, not oxygen."}, {"part": "c", "answer": "13", "marks": "1", "explanation": "Purple universal indicator shows a strongly alkaline solution, so the pH is about 13.", "tip": "Purple universal indicator = strong alkali."}, {"part": "d", "answer": "Caesium would react more violently than potassium.", "marks": "1", "explanation": "Reactivity increases down Group 1, so caesium is more reactive than potassium.", "tip": "Group 1 metals become more reactive down the group."}, {"part": "e", "answer": "2K + Cl₂ → 2KCl", "marks": "1", "explanation": "Chlorine is diatomic, so it is written as Cl₂. Two potassium atoms are needed to balance the two chlorine atoms.", "tip": "Remember the halogens exist as diatomic molecules: F₂, Cl₂, Br₂, I₂."}]}, {"number": "Easy 4", "topic": "Group 0 noble gases", "marks": 6, "parts": [{"part": "a", "answer": "The noble gases", "marks": "1", "explanation": "Group 0 elements are known as the noble gases.", "tip": "Group 0 = noble gases."}, {"part": "b", "answer": "They do not form positive ions", "marks": "1", "explanation": "Non-metals do not usually form positive ions. Group 0 elements are especially unreactive because they have full outer shells.", "tip": "Metals form positive ions; non-metals do not usually do this."}, {"part": "c", "answer": "Argon has a full outer shell, so it is very unreactive and does not form bonds with tungsten.", "marks": "2", "explanation": "Argon already has a stable electron arrangement. It does not need to gain, lose or share electrons, so it does not react with the tungsten filament.", "tip": "For noble gases, always link unreactivity to a full outer shell."}, {"part": "d", "answer": "Their boiling points increase going down the group; their properties can be predicted from trends down the group", "marks": "2", "explanation": "Group 0 boiling points increase down the group. Patterns in the group allow scientists to predict properties of other Group 0 elements.", "tip": "Helium is an exception to the 'eight electrons' statement because it has a full outer shell with two electrons."}]}, {"number": "Easy 5", "topic": "Group 7 halogens", "marks": 11, "parts": [{"part": "a", "answer": "Liquid", "marks": "1", "explanation": "Bromine melts at −7 °C and boils at 59 °C. At 50 °C it is above its melting point but below its boiling point, so it is a liquid.", "tip": "Between melting point and boiling point = liquid."}, {"part": "b", "answer": "Chlorine", "marks": "1", "explanation": "Room temperature is about 20–25 °C. Chlorine's boiling point is −25 °C, so at room temperature it is a gas.", "tip": "If the temperature is above the boiling point, the substance is a gas."}, {"part": "c", "answer": "They have seven electrons in their outer shell; they are non-metals that exist as molecules of two atoms", "marks": "2", "explanation": "Group 7 elements are halogens. They are non-metals, have seven outer-shell electrons and exist as diatomic molecules such as Cl₂ and Br₂.", "tip": "Halogens are diatomic: they travel in pairs."}, {"part": "d", "answer": "Fluorine has the electron arrangement 2,7.", "marks": "2", "explanation": "A fluorine atom has 9 electrons. Two fill the first shell and the remaining seven go in the second shell.", "tip": "For atomic number 9, draw 2 electrons in the first shell and 7 in the second."}, {"part": "e", "answer": "Fluorine, chlorine and bromine are all in Group 7, so they all have seven electrons in their outer shell.", "marks": "2", "explanation": "Elements in the same group have the same number of outer-shell electrons, so they react in similar ways.", "tip": "Similar reactions are explained by the same number of outer electrons."}, {"part": "f", "answer": "bromine + potassium iodide → potassium bromide + iodine", "marks": "2", "explanation": "Bromine is more reactive than iodine, so it displaces iodine from potassium iodide.", "tip": "A more reactive halogen displaces a less reactive halogen from its salt."}, {"part": "g", "answer": "Bromine is less reactive than chlorine, so it cannot displace chlorine from potassium chloride.", "marks": "1", "explanation": "Halogen reactivity decreases down Group 7. Bromine is below chlorine, so it is less reactive.", "tip": "Only a more reactive halogen can displace a less reactive halide."}]}, {"number": "Easy 6", "topic": "Atomic weight", "marks": 1, "parts": [{"part": "", "answer": "D. Relative atomic mass", "marks": "1", "explanation": "Atomic weight is the older term for relative atomic mass.", "tip": "In GCSE chemistry, use the term relative atomic mass rather than atomic weight."}]}]}, {"id": "medium", "title": "Medium Questions", "subtitle": "10 questions / 46 marks", "questions": [{"number": "Medium 1", "topic": "Newlands and Mendeleev", "marks": 6, "parts": [{"part": "a", "answer": "Any three sensible comparisons, for example: Newlands placed hydrogen, fluorine and chlorine together, but they are not all in the same modern group; Newlands placed lithium, sodium and potassium together, which matches modern Group 1; Newlands placed beryllium, magnesium and calcium together, which matches modern Group 2; Newlands placed oxygen and sulfur together, but oxygen and sulfur are Group 6 rather than Group 7; Newlands’ table only had seven groups in this section, unlike the modern periodic table.", "marks": "3", "explanation": "Newlands arranged elements by increasing atomic weight and noticed repeating patterns, but his grouping was imperfect because fewer elements were known and atomic structure had not yet been discovered.", "tip": "For comparison questions, make each point clearly compare Newlands with the modern table."}, {"part": "b", "answer": "Not all elements had been discovered at the time.", "marks": "1", "explanation": "Missing elements meant Newlands had to fit the known elements into an incomplete pattern.", "tip": "Early periodic tables were limited by the evidence available at the time."}, {"part": "c", "answer": "Tellurium has a higher relative atomic mass than iodine, so if arranged strictly by mass they appear to be in the wrong order.", "marks": "1", "explanation": "Mendeleev placed them according to their properties, even though this broke the order of relative atomic mass.", "tip": "This is a classic example of Mendeleev prioritising properties over mass order."}, {"part": "d", "answer": "The modern table is arranged by atomic number, not relative atomic mass.", "marks": "1", "explanation": "Iodine has a lower atomic number than tellurium, so their modern positions are correct when arranged by proton number.", "tip": "Atomic number solved several ordering problems in earlier tables."}]}, {"number": "Medium 2", "topic": "Electronic structures and reactivity", "marks": 7, "parts": [{"part": "a", "answer": "W = sodium; Y = argon; Z = potassium", "marks": "3", "explanation": "2,8,1 gives 11 electrons, so W is sodium. 2,8,8 gives 18 electrons, so Y is argon. 2,8,8,1 gives 19 electrons, so Z is potassium.", "tip": "Add up the electrons, then match to the atomic number."}, {"part": "b", "answer": "Potassium has an extra electron shell, so its outer electron is further from the nucleus and more easily lost than sodium's outer electron.", "marks": "2", "explanation": "Group 1 metals react by losing one electron. The further the outer electron is from the positive nucleus, the easier it is to lose, so potassium is more reactive.", "tip": "For Group 1: more shells = easier electron loss = more reactive."}, {"part": "c", "answer": "Argon has a full outer shell, so it does not need to gain, lose or share electrons.", "marks": "2", "explanation": "A full outer shell gives argon a stable electronic structure, making it very unreactive.", "tip": "Unreactive noble gases have full outer shells."}]}, {"number": "Medium 3", "topic": "Iodine", "marks": 1, "parts": [{"part": "", "answer": "D. I₂, solid", "marks": "1", "explanation": "Iodine is a Group 7 halogen, so it exists as diatomic molecules, I₂. At room temperature iodine is a solid.", "tip": "Halogens are diatomic molecules: I₂, not I."}]}, {"number": "Medium 4", "topic": "Similar chemical properties", "marks": 1, "parts": [{"part": "", "answer": "B. A and C", "marks": "1", "explanation": "Atoms A and C have the same number of electrons in their outer shell, so they have similar chemical properties.", "tip": "Chemical properties are mainly controlled by outer-shell electrons."}]}, {"number": "Medium 5", "topic": "Alkali metals", "marks": 7, "parts": [{"part": "a", "answer": "They both have one electron in their outer shell.", "marks": "1", "explanation": "Group 1 elements all have one outer-shell electron.", "tip": "The group number tells you the number of outer electrons for Group 1."}, {"part": "b", "answer": "E", "marks": "1", "explanation": "A sodium atom has 11 electrons, arranged 2,8,1.", "tip": "Neutral sodium has 11 electrons."}, {"part": "c", "answer": "C", "marks": "1", "explanation": "A potassium ion, K⁺, has lost one electron, so it has the electron arrangement 2,8,8.", "tip": "Potassium atom = 2,8,8,1; potassium ion = 2,8,8."}, {"part": "d", "answer": "2Li + 2H₂O → 2LiOH + H₂", "marks": "2", "explanation": "Lithium reacts with water to form lithium hydroxide and hydrogen. The balanced equation needs two lithium atoms and two water molecules.", "tip": "Group 1 metal + water → metal hydroxide + hydrogen."}, {"part": "e", "answer": "Potassium is more reactive than sodium.", "marks": "1", "explanation": "Potassium is lower than sodium in Group 1, so it reacts more vigorously with water.", "tip": "Group 1 reactivity increases down the group."}, {"part": "f", "answer": "Potassium has one more electron shell than sodium.", "marks": "1", "explanation": "Its outer electron is further from the nucleus and is more easily lost.", "tip": "More shells means weaker attraction to the outer electron."}]}, {"number": "Medium 6", "topic": "Group trends", "marks": 7, "parts": [{"part": "a", "answer": "React each metal with water. Lithium, sodium and potassium all produce a metal hydroxide and hydrogen gas.", "marks": "2", "explanation": "This shows similar chemical properties because they undergo the same type of reaction and form similar products.", "tip": "Always name both the reactant and the products when the question asks for them."}, {"part": "b", "answer": "Iodine would need light and a higher temperature than bromine, and the reaction would be slower or less vigorous.", "marks": "2", "explanation": "Reactivity decreases down Group 7. Iodine is below bromine, so it reacts less readily with hydrogen.", "tip": "Use the trend: fluorine most reactive, iodine less reactive."}, {"part": "c", "answer": "Group 7 elements become less reactive down the group because atoms get larger and have more electron shells. The outer shell is further from the nucleus, so it is harder for the atom to attract and gain an extra electron.", "marks": "3", "explanation": "Halogens react by gaining one electron. Increased distance and shielding reduce the attraction between the nucleus and the incoming electron.", "tip": "For Group 7: more shells = harder to gain electron = less reactive."}]}, {"number": "Medium 7", "topic": "Halogens and melting points", "marks": 7, "parts": [{"part": "a", "answer": "Any sensible value above 114 °C, for example about 300 °C.", "marks": "1", "explanation": "Melting point increases down Group 7, so astatine should have a higher melting point than iodine.", "tip": "For prediction questions, follow the trend rather than trying to memorise the exact value."}, {"part": "b", "answer": "Iodine and astatine", "marks": "1", "explanation": "At 40 °C, iodine and astatine are below their melting points, so they are solids.", "tip": "Below melting point = solid."}, {"part": "c", "answer": "2,7", "marks": "1", "explanation": "Fluorine has atomic number 9, so it has 9 electrons arranged as 2 in the first shell and 7 in the second.", "tip": "Fluorine is Group 7, so it has seven outer electrons."}, {"part": "d", "answer": "They all have seven electrons in their outer shell.", "marks": "1", "explanation": "Elements in the same group have the same number of outer-shell electrons, giving them similar chemical properties.", "tip": "Same group = same number of outer electrons."}, {"part": "e", "answer": "Xenon has a full outer shell, so it has a stable electronic structure and does not need to gain, lose or share electrons.", "marks": "2", "explanation": "This makes xenon very unreactive, like the other noble gases.", "tip": "For Group 0, explain unreactivity using full outer shells."}]}, {"number": "Medium 8", "topic": "Alkaline solutions", "marks": 1, "parts": [{"part": "", "answer": "B. It contains hydroxide ions", "marks": "1", "explanation": "Sodium reacts with water to form sodium hydroxide. Hydroxide ions make the solution alkaline.", "tip": "Alkaline solutions contain OH⁻ ions."}]}, {"number": "Medium 9", "topic": "Fluorine and chlorine", "marks": 6, "parts": [{"part": "a", "answer": "Group 7", "marks": "1", "explanation": "Fluorine and chlorine are halogens, found in Group 7.", "tip": "Group 7 = halogens."}, {"part": "b", "answer": "2,8,7", "marks": "2", "explanation": "Chlorine has atomic number 17, so it has 17 electrons: 2 in the first shell, 8 in the second, and 7 in the third.", "tip": "Chlorine has seven outer electrons because it is in Group 7."}, {"part": "c", "answer": "Fluorine atoms are smaller and have fewer electron shells than chlorine atoms. The outer shell is closer to the nucleus, so fluorine attracts an incoming electron more strongly and gains it more easily.", "marks": "3", "explanation": "Group 7 elements react by gaining an electron. Fluorine is more reactive because it gains an electron more easily than chlorine.", "tip": "For halogens, stronger attraction for an extra electron means higher reactivity."}]}, {"number": "Medium 10", "topic": "Argon in light bulbs", "marks": 4, "parts": [{"part": "a", "answer": "The hot tungsten would react with oxygen in the air.", "marks": "1", "explanation": "The filament could oxidise or burn out if oxygen was present.", "tip": "Air contains oxygen, which can react with hot metals."}, {"part": "b", "answer": "Argon has a full outer shell of electrons, so it has a stable electronic structure. It does not need to gain, lose or share electrons, so it is unreactive and prevents the tungsten filament reacting.", "marks": "3", "explanation": "Argon provides an inert atmosphere inside the bulb, protecting the hot tungsten filament.", "tip": "Link argon's use to its electronic structure and lack of reactivity."}]}]}, {"id": "hard", "title": "Hard Questions", "subtitle": "6 questions / 47 marks", "questions": [{"number": "Hard 1", "topic": "Hydrogen and the periodic table", "marks": 10, "parts": [{"part": "a", "answer": "Hydrogen is a non-metal, whereas Group 1 elements are metals; hydrogen is a gas at room temperature, whereas Group 1 metals are solids.", "marks": "2", "explanation": "Hydrogen does not share the typical physical properties of Group 1 metals.", "tip": "Use clear contrasts: hydrogen compared with Group 1 metals."}, {"part": "b", "answer": "Hydrogen has one electron in its outer shell; hydrogen can form a 1+ ion by losing one electron.", "marks": "2", "explanation": "These features give hydrogen some similarity with Group 1 elements.", "tip": "Hydrogen is unusual because it has similarities with more than one group."}, {"part": "c", "answer": "Hydrogen is a non-metal; hydrogen can gain one electron to form a 1− ion or share one electron in covalent bonding.", "marks": "2", "explanation": "These features make it partly similar to the halogens, which are non-metals that can gain one electron.", "tip": "Hydrogen can behave like a non-metal, even though it has one electron."}, {"part": "d", "answer": "The discovery of protons and electrons allowed scientists to understand atomic number and electronic structure. Atomic number showed the correct order of elements, while electron arrangements explained periods and groups. Elements could then be placed in the correct period based on the number of electron shells and in the correct group based on the number of outer-shell electrons.", "marks": "4", "explanation": "The modern table is based on proton number and electron arrangement, not just relative atomic mass.", "tip": "For this question, link discoveries to how they changed the table: proton number gives order; electrons give groups and periods."}]}, {"number": "Hard 2", "topic": "Halogens: states, boiling points and reactivity", "marks": 10, "parts": [{"part": "a", "answer": "At −100 °C: liquid. At 0 °C: gas.", "marks": "2", "explanation": "Chlorine melts at −101 °C and boils at −25 °C. −100 °C is between the melting point and boiling point, so chlorine is liquid. 0 °C is above the boiling point, so chlorine is gas.", "tip": "Compare the temperature with both the melting point and boiling point."}, {"part": "b", "answer": "Boiling point increases down Group 7 because the molecules get larger and contain more electrons. The intermolecular forces between molecules become stronger, so more energy is needed to overcome them.", "marks": "3", "explanation": "The halogens are simple molecular substances. The covalent bonds within molecules are not broken when they boil; only the intermolecular forces between molecules are overcome.", "tip": "For boiling point trends, talk about intermolecular forces, not covalent bonds breaking."}, {"part": "c", "answer": "They are all in Group 7 and have seven electrons in their outer shell. They all need to gain one electron to complete their outer shell, so they react in similar ways.", "marks": "2", "explanation": "Same outer-shell electron arrangement leads to similar chemical reactions.", "tip": "Similar properties = same number of outer electrons."}, {"part": "d", "answer": "Hydrogen reacts faster with chlorine than with iodine. Chlorine is more reactive because it is higher in Group 7, has fewer electron shells and attracts an incoming electron more strongly than iodine.", "marks": "3", "explanation": "Iodine is lower down Group 7, so it is less reactive and reacts more slowly.", "tip": "Group 7 reactivity decreases down the group."}]}, {"number": "Hard 3", "topic": "Group 1 metals with water", "marks": 9, "parts": [{"part": "a", "answer": "2Li + 2H₂O → 2LiOH + H₂", "marks": "2", "explanation": "Lithium reacts with water to form lithium hydroxide and hydrogen gas.", "tip": "Balance hydrogen carefully: hydrogen appears in both water and H₂."}, {"part": "b", "answer": "Potassium is more reactive than lithium. Both have one electron in their outer shell, but potassium has more electron shells. Its outer electron is further from the nucleus and more shielded, so it is lost more easily. This makes potassium react more vigorously with water.", "marks": "4", "explanation": "Group 1 metals react by losing their outer electron. The easier this electron is lost, the more reactive the metal is.", "tip": "Use the sequence: more shells → more shielding → weaker attraction → electron lost more easily."}, {"part": "c", "answer": "The universal indicator turns purple because potassium reacts with water to form potassium hydroxide, which is a strong alkaline solution containing hydroxide ions.", "marks": "3", "explanation": "Universal indicator is purple in a strongly alkaline solution. The product potassium hydroxide provides hydroxide ions, OH⁻.", "tip": "Purple = strong alkali; link the colour to hydroxide ions."}]}, {"number": "Hard 4", "topic": "Identifying an element from properties", "marks": 9, "parts": [{"part": "a", "answer": "CaI₂", "marks": "4", "explanation": "Element Z must be iodine. The clues show that Z is a Group 7 non-metal because it forms simple molecules with non-metals and forms 1− ions with metals. It is also a solid at room temperature, which fits iodine rather than chlorine, which is a gas, or bromine, which is a liquid. Calcium forms Ca²⁺ ions and iodide forms I⁻ ions, so two iodide ions are needed for each calcium ion, giving CaI₂.", "tip": "Use all of the clues: state at room temperature identifies iodine, then charges give Ca²⁺ + 2I⁻ → CaI₂."}, {"part": "b", "answer": "Magnesium and calcium are both Group 2 metals, so they both have two electrons in their outer shell and react by losing two electrons to form 2+ ions. Calcium is more reactive than magnesium because calcium atoms have more electron shells. The outer electrons in calcium are further from the nucleus and more shielded, so they are lost more easily than magnesium's outer electrons.", "marks": "5", "explanation": "Group 2 metals show similar chemical reactions because they have the same number of outer electrons, but reactivity increases down the group as the outer electrons become easier to remove.", "tip": "For Group 2, the explanation is similar to Group 1 but the atoms lose two outer electrons instead of one."}]}, {"number": "Hard 5", "topic": "Using electronic structures", "marks": 8, "parts": [{"part": "a", "answer": "K and L; Group 1", "marks": "2", "explanation": "K is 2,8,1 and L is 2,8,8,1. Both have one electron in their outer shell, so they are in Group 1.", "tip": "Same number of outer electrons means same group."}, {"part": "b", "answer": "N; silicon dioxide", "marks": "2", "explanation": "N has the electron structure 2,8,4, so it is silicon. Silicon reacts with oxygen to form silicon dioxide, which has a giant covalent structure.", "tip": "Carbon and silicon are Group 4 elements; silicon dioxide is a common giant covalent structure."}, {"part": "c", "answer": "J. It has a full outer shell of electrons, so it is a noble gas and exists as single atoms.", "marks": "3", "explanation": "J has electron arrangement 2,8,8, which is argon. Noble gases are monatomic because they are stable as individual atoms.", "tip": "Monatomic means single atoms, not molecules."}, {"part": "d", "answer": "J and M", "marks": "1", "explanation": "J is argon, a gas at room temperature. M is fluorine, also a gas at room temperature.", "tip": "Use both the electron structure and the periodic table to identify the elements."}]}, {"number": "Hard 6", "topic": "Halogen displacement", "marks": 1, "parts": [{"part": "", "answer": "A. Potassium iodide + bromine", "marks": "1", "explanation": "Bromine displaces iodine from potassium iodide, forming iodine, which gives a brown solution.", "tip": "A more reactive halogen displaces a less reactive halide from solution."}]}]}];
+    let active = "easy";
+
+    const slug = text => text.toLowerCase().replaceAll(" ", "-");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function pill(text) {
+      return `<span class="pill">${escapeHtml(text)}</span>`;
+    }
+
+    function renderTabs() {
+      document.getElementById("tabs").innerHTML = sections.map(section => `
+        <button class="tab ${section.id === active ? "active" : ""}" data-id="${section.id}">${escapeHtml(section.title)}</button>
+      `).join("");
+      document.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", () => {
+          active = button.dataset.id;
+          render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      });
+    }
+
+    function renderPart(part) {
+      const label = part.part ? `Part ${part.part}` : "Answer";
+      const markLabel = `${part.marks} mark${String(part.marks) === "1" ? "" : "s"}`;
+      return `
+        <div class="part-card">
+          <div class="part-meta">${pill(label)} ${pill(markLabel)}</div>
+          <div class="answer-box">
+            <div class="box-label">Model answer</div>
+            <p>${escapeHtml(part.answer)}</p>
+          </div>
+          <details class="explanation" open>
+            <summary>Explanation</summary>
+            <p>${escapeHtml(part.explanation)}</p>
+          </details>
+          <details class="tip">
+            <summary>Exam tip / common mistake</summary>
+            <p>${escapeHtml(part.tip)}</p>
+          </details>
+        </div>
+      `;
+    }
+
+    function renderQuestion(question) {
+      return `
+        <section class="question" id="${slug(question.number)}">
+          <div class="qhead">
+            <div>
+              <h2>${escapeHtml(question.number)}</h2>
+              <p>${escapeHtml(question.topic)}</p>
+            </div>
+            ${pill(`${question.marks} marks`)}
+          </div>
+          <div class="parts">
+            ${question.parts.map(renderPart).join("")}
+          </div>
+        </section>
+      `;
+    }
+
+    function render() {
+      const current = sections.find(section => section.id === active);
+      renderTabs();
+      document.getElementById("aside-title").textContent = current.title;
+      document.getElementById("aside-subtitle").textContent = current.subtitle;
+      document.getElementById("question-links").innerHTML = current.questions.map(q => `
+        <a href="#${slug(q.number)}">${escapeHtml(q.number)}</a>
+      `).join("");
+
+      document.getElementById("content").innerHTML = `
+        <section class="intro">
+          <p>${escapeHtml(current.title)}</p>
+          <h2>${escapeHtml(current.subtitle)}</h2>
+          <p class="help">Use each model answer to correct your work. Open the explanations and exam tips to check the reasoning behind each mark, especially where the question asks you to explain trends using electronic structure.</p>
+        </section>
+        ${current.questions.map(renderQuestion).join("")}
+      `;
+    }
+
+    render();
+  </script>
+</body>
+</html>
