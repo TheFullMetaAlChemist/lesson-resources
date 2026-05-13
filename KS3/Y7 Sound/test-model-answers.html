@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Year 7 Sound Test Review</title>
+  <style>
+    :root{
+      --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0; --slate-300:#cbd5e1;
+      --slate-500:#64748b; --slate-600:#475569; --slate-700:#334155; --slate-800:#1e293b; --slate-900:#0f172a;
+      --green-50:#f0fdf4; --green-200:#bbf7d0; --green-950:#052e16;
+      --blue-50:#eff6ff; --blue-100:#dbeafe; --blue-200:#bfdbfe; --blue-950:#172554;
+      --amber-50:#fffbeb; --amber-100:#fef3c7; --amber-200:#fde68a; --amber-950:#451a03;
+      --red-50:#fef2f2; --red-100:#fee2e2; --red-200:#fecaca; --red-950:#450a0a;
+      --purple-50:#faf5ff; --fuchsia-100:#fae8ff; --purple-200:#e9d5ff;
+      --emerald-50:#ecfdf5; --green-100:#dcfce7; --emerald-200:#a7f3d0;
+      --orange-100:#ffedd5; --rose-50:#fff1f2; --rose-100:#ffe4e6; --rose-200:#fecdd3;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--slate-100);color:var(--slate-900)}
+    header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--slate-200)}
+    .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 0}
+    h1{font-size:clamp(1.25rem,2vw,1.7rem);margin:0;font-weight:900}
+    .subtitle{font-size:.88rem;color:var(--slate-500);margin:.15rem 0 0}
+    nav{display:flex;flex-wrap:wrap;gap:8px}
+    button{font:inherit;cursor:pointer}
+    .nav-btn{border:1px solid var(--slate-200);background:white;color:var(--slate-900);border-radius:12px;padding:9px 12px;font-size:.88rem;font-weight:800}
+    .nav-btn:hover{background:var(--slate-50)}
+    .nav-btn.active{background:var(--slate-900);color:white;border-color:var(--slate-900)}
+    main{padding:24px 0}
+    .page{display:none;animation:fade .22s ease}
+    .page.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    .intro-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px}
+    .hero{background:linear-gradient(135deg,var(--slate-900),var(--slate-700));color:white;border-radius:28px;padding:32px;box-shadow:0 12px 30px rgba(15,23,42,.18)}
+    .pill{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 14px;font-weight:800;font-size:.9rem;margin-bottom:24px}
+    .hero h2{font-size:clamp(2.1rem,5vw,4rem);line-height:1.02;margin:0 0 16px;font-weight:950;letter-spacing:-.04em}
+    .hero p{font-size:1.1rem;line-height:1.6;color:#e2e8f0;margin:0 0 24px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat{background:rgba(255,255,255,.1);border-radius:18px;padding:16px}
+    .stat strong{font-size:2rem;display:block}
+    .panel{background:white;border:1px solid var(--slate-200);border-radius:28px;padding:24px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+    .panel h3,.panel h2{margin:0 0 16px;font-size:1.6rem;font-weight:900}
+    .steps{list-style:none;padding:0;margin:0;display:grid;gap:16px;color:var(--slate-700)}
+    .steps li{display:flex;gap:12px;align-items:flex-start}
+    .num{background:var(--slate-900);color:white;border-radius:50%;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+    .primary{width:100%;margin-top:24px;background:var(--slate-900);color:white;border:0;border-radius:16px;padding:14px;font-weight:900}
+    .primary:hover{background:var(--slate-800)}
+    .section-hero{border:1px solid var(--slate-200);border-radius:28px;padding:24px;margin-bottom:24px}
+    .section-hero .row{display:flex;align-items:center;gap:16px}
+    .iconbox{background:white;border-radius:18px;padding:12px;box-shadow:0 2px 8px rgba(15,23,42,.06);font-size:2rem}
+    .section-hero h2{font-size:2rem;margin:0 0 6px;font-weight:950}
+    .section-hero p{margin:0;color:var(--slate-600)}
+    .q1-bg{background:linear-gradient(135deg,var(--blue-50),var(--blue-100));border-color:var(--blue-200)}
+    .q2-bg{background:linear-gradient(135deg,var(--purple-50),var(--fuchsia-100));border-color:var(--purple-200)}
+    .q3-bg{background:linear-gradient(135deg,var(--emerald-50),var(--green-100));border-color:var(--emerald-200)}
+    .q4-bg{background:linear-gradient(135deg,var(--amber-50),var(--orange-100));border-color:var(--amber-200)}
+    .q5-bg{background:linear-gradient(135deg,var(--rose-50),var(--red-100));border-color:var(--rose-200)}
+    .cards{display:grid;gap:16px}
+    .card{background:white;border:1px solid var(--slate-200);border-radius:26px;box-shadow:0 2px 10px rgba(15,23,42,.04);overflow:hidden}
+    .card-toggle{width:100%;background:white;border:0;text-align:left;padding:20px;display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .card-toggle:hover{background:var(--slate-50)}
+    .marks{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-500);font-weight:900;margin-bottom:8px}
+    .card-title{font-size:1.18rem;font-weight:900;margin:0}
+    .arrow{border:1px solid var(--slate-200);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;transition:.2s;flex-shrink:0}
+    .card.open .arrow{transform:rotate(90deg);background:var(--slate-900);color:white;border-color:var(--slate-900)}
+    .card-body{display:none;padding:0 20px 20px;gap:14px}
+    .card.open .card-body{display:grid}
+    .infobox{border:1px solid var(--slate-200);border-radius:18px;padding:16px}
+    .infobox h4{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:1rem}
+    .infobox ul{margin:0;padding-left:22px;line-height:1.55}
+    .infobox p{margin:0;line-height:1.55}
+    .green{background:var(--green-50);border-color:var(--green-200);color:var(--green-950)}
+    .blue{background:var(--blue-50);border-color:var(--blue-200);color:var(--blue-950)}
+    .slate{background:var(--slate-50);border-color:var(--slate-200);color:var(--slate-900)}
+    .red{background:var(--red-50);border-color:var(--red-200);color:var(--red-950)}
+    .amber{background:var(--amber-50);border-color:var(--amber-200);color:var(--amber-950)}
+    .topic-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0}
+    .topic-btn{border:1px solid var(--slate-200);background:var(--slate-50);border-radius:16px;padding:12px;font-size:.9rem;font-weight:900;color:var(--slate-700)}
+    .topic-btn.active{background:var(--slate-900);color:white;border-color:var(--slate-900)}
+    .selected{background:var(--slate-50);border:1px solid var(--slate-200);border-radius:16px;padding:14px;margin-bottom:16px;color:var(--slate-700)}
+    .reflection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .blank{border:1px dashed var(--slate-300);border-radius:16px;min-height:90px;padding:16px;color:#94a3b8}
+    @media (max-width:900px){.intro-grid{grid-template-columns:1fr}.topic-grid{grid-template-columns:repeat(2,1fr)}.reflection-grid,.stats{grid-template-columns:1fr}}
+    @media print{
+      header{position:static}
+      .nav-btn,.primary{display:none}
+      .page{display:block;break-after:page}
+      .card-body{display:grid!important}
+      .card{break-inside:avoid}
+      body{background:white}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div>
+        <h1>Year 7 Sound Test Review</h1>
+        <p class="subtitle">Model answers, explanations, common mistakes and quick fixes</p>
+      </div>
+      <nav id="nav"></nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="app"></main>
+
+  <script>
+    const sections = [
+      {
+        id: 'q1', title: 'Q1 Waves and frequency', icon: '〰️', bg: 'q1-bg',
+        cards: [
+          {
+            q: '1a–c: Label amplitude, wavelength and trough', marks: 3,
+            model: ['Amplitude: the height of the wave from the middle/rest position to the crest.', 'Wavelength: the distance from one crest to the next crest, or one trough to the next trough.', 'Trough: the lowest point of the wave.'],
+            marksInfo: ['Put each label in the correct place on the wave diagram.'],
+            explanation: 'Amplitude tells us how large the vibration is. Wavelength tells us how long one complete wave is. A trough is the lowest part of a transverse wave.',
+            mistakes: ['Labelling amplitude from the bottom of the wave to the top.', 'Labelling wavelength as only half a wave.', 'Labelling a crest instead of a trough.'],
+            quickFix: 'Describe the difference between amplitude and wavelength in one sentence.'
+          },
+          {
+            q: '1d(i): Five waves pass every second', marks: 1,
+            model: ['The frequency of the wave is 5 Hz.'],
+            marksInfo: ['Frequency means the number of waves passing a point each second.'],
+            explanation: 'Hertz, Hz, means “per second”. If five waves pass every second, the frequency is 5 Hz.',
+            mistakes: ['Writing speed instead of frequency.'],
+            quickFix: 'Complete this sentence: Frequency means the number of __________ per __________.'
+          },
+          {
+            q: '1d(ii): Water wave hits a wall', marks: 1,
+            model: ['The wave will reflect.'],
+            marksInfo: ['Use the word reflect or clearly say that the wave bounces back.'],
+            explanation: 'When a wave hits a barrier, it can bounce back. This is called reflection.',
+            mistakes: ['Saying the wave stops or disappears.'],
+            quickFix: 'What word means “a wave bouncing off a barrier”?'
+          }
+        ]
+      },
+      {
+        id: 'q2', title: 'Q2 Pitch, volume and hearing tests', icon: '🔊', bg: 'q2-bg',
+        cards: [
+          {
+            q: '2a(i): Which two waves have the same pitch?', marks: 1,
+            model: ['B and C'], marksInfo: ['Choose the two waves with the same frequency.'],
+            explanation: 'Pitch depends on frequency. Waves B and C have the same number of waves in the same amount of space, so they have the same pitch.',
+            mistakes: ['Choosing waves with the same height instead of the same frequency.'],
+            quickFix: 'Pitch is linked to __________.'
+          },
+          {
+            q: '2a(ii): Which two waves have the same volume?', marks: 1,
+            model: ['A and C'], marksInfo: ['Choose the two waves with the same amplitude.'],
+            explanation: 'Volume depends on amplitude. A louder sound has a larger amplitude. A quieter sound has a smaller amplitude.',
+            mistakes: ['Thinking volume depends on how close together the waves are.'],
+            quickFix: 'Volume is linked to __________.'
+          },
+          {
+            q: '2b(i): Fair test variable', marks: 1,
+            model: ['The students should sit the same distance from the speaker.', 'Other acceptable answers: the room should be equally quiet; the volume should be kept the same; nobody should cover their ears.'],
+            marksInfo: ['Name one sensible control variable.'],
+            explanation: 'A fair test only changes one thing. If some students sit closer to the speaker, the test is unfair because the sound may seem louder.',
+            mistakes: ['Saying “change the pitch” — this is what is being tested, not what should be kept the same.'],
+            quickFix: 'Name one thing that could make a hearing test unfair.'
+          },
+          {
+            q: '2b(ii): Safety precaution', marks: 1,
+            model: ['The teacher should keep the volume at a safe level.'], marksInfo: ['Mention not making the sound too loud.'],
+            explanation: 'Very loud sounds can damage hearing, especially if played close to people.',
+            mistakes: ['Writing a general classroom rule instead of a sound-specific safety point.'],
+            quickFix: 'Why should the teacher avoid using very loud sounds?'
+          },
+          {
+            q: '2b(iii): Problem with hands-up method', marks: 1,
+            model: ['Students might keep their hands up because they feel pressure from classmates.', 'Other acceptable answers: they might lie about still hearing it; their arms might get tired.'],
+            marksInfo: ['Give a sensible problem with the method.'],
+            explanation: 'This method relies on students being honest and comfortable. It may not accurately show who can really hear the sound.',
+            mistakes: ['Saying “the sound might be too quiet” without linking it to the method.'],
+            quickFix: 'Why might students not put their hands down at the correct time?'
+          }
+        ]
+      },
+      {
+        id: 'q3', title: 'Q3 Echoes and calculations', icon: '🧮', bg: 'q3-bg',
+        cards: [
+          { q:'3a(i): Suggest a sound', marks:1, model:['A clap.','Other acceptable answers: hitting a drum, a short shout, or another short loud sound.'], marksInfo:['Suggest a short, loud sound.'], explanation:'A short sound makes it easier to hear the echo separately.', mistakes:['Choosing music or a continuous sound.'], quickFix:'Why is a clap better than a song for an echo experiment?' },
+          { q:'3a(ii): Why suitable?', marks:1, model:['A clap is suitable because it is short, so it finishes before the echo returns.'], marksInfo:['Explain that the sound needs to be short so the echo can be heard separately.'], explanation:'If the original sound lasts too long, it may overlap with the echo and make timing difficult.', mistakes:['Only saying “because it is loud” — loud helps, but the key idea is that it is short.'], quickFix:'Complete this: The sound should be short so that...' },
+          { q:'3b(i): Mean time', marks:1, model:['Mean time = 1.12 s','Working: 1.04 + 1.12 + 1.22 + 1.06 + 1.16 = 5.60. Then 5.60 ÷ 5 = 1.12 s.'], marksInfo:['Add the five times and divide by five.'], explanation:'The mean gives a more reliable estimate than using just one result.', mistakes:['Forgetting to divide by 5.','Dividing by 4 instead of 5.','Rounding too early.'], quickFix:'Why do we divide by 5 in this question?' },
+          { q:'3b(ii): Length of the school field', marks:4, model:['Length of field = 190 m','Working: Speed = distance ÷ time, so distance = speed × time.','Distance travelled by sound = 340 × 1.12 = 380.8 m.','The sound travels to the wall and back, so 380.8 ÷ 2 = 190.4 m. Length of field ≈ 190 m.'], marksInfo:['Use or rearrange the equation: speed = distance ÷ time.','Substitute correctly: distance = 340 × 1.12.','Calculate total distance = 380.8 m or 381 m.','Divide by 2 to get the field length.'], explanation:'The measured time is for the sound to travel from the students to the wall and then back again as an echo. That is twice the length of the field, so you must divide by 2.', mistakes:['Forgetting to divide by 2.','Giving 380.8 m as the field length.','Using the wrong unit.','Dividing 340 by 1.12 instead of multiplying.'], quickFix:'Why is the total sound distance twice the length of the field?' },
+          { q:'3b(iii): Why repeat five times?', marks:1, model:['Repeating gives a more accurate mean time.'], marksInfo:['Say that repeats help improve accuracy or reduce the effect of variation.'], explanation:'One result might be too high or too low because of reaction time or timing errors. Repeats help reduce the impact of these errors.', mistakes:['Saying “to make it fair” without explaining why repeats help.'], quickFix:'What type of error might affect someone using a stopwatch?' }
+        ]
+      },
+      {
+        id:'q4', title:'Q4 Detecting sound: ear and microphone', icon:'👂', bg:'q4-bg',
+        cards:[
+          { q:'4a: How ears allow us to hear', marks:4, model:['Sound waves are directed into the ear by the pinna. The sound waves travel along the ear canal and make the eardrum vibrate. The vibrations are passed on by the ossicles, which amplify them. The vibrations then pass into the liquid in the cochlea. Tiny hairs in the cochlea move and generate electrical impulses. These impulses travel along the auditory nerve to the brain.'], marksInfo:['Any four correct points: pinna directs sound into the ear.','Sound waves make the eardrum vibrate.','Ossicles pass on the vibrations.','Ossicles amplify the vibrations.','Vibrations pass into the liquid in the cochlea.','Tiny hairs move and generate electrical impulses.','Electrical impulses travel along the auditory nerve to the brain.'], explanation:'The ear changes sound waves into electrical signals. The brain then interprets these signals as sound.', mistakes:['Missing the order of the parts.','Saying the auditory nerve carries sound waves.','Forgetting that the cochlea changes vibrations into electrical impulses.','Writing only names of parts without describing what they do.'], quickFix:'Put these in order: cochlea → pinna → auditory nerve → eardrum → ossicles' },
+          { q:'4b(i): How a microphone detects sound', marks:2, model:['Sound waves make the diaphragm vibrate. The vibrating diaphragm moves the coil near the magnet, which generates an electrical signal.'], marksInfo:['Sound makes the diaphragm vibrate.','Movement of the coil in a magnetic field produces an electrical signal.'], explanation:'A microphone changes sound vibrations into electrical signals, a bit like the ear changes sound vibrations into nerve signals.', mistakes:['Saying the microphone records sound without explaining how.','Forgetting the electrical signal.','Not mentioning vibrations.'], quickFix:'What part of the microphone vibrates when sound reaches it?' },
+          { q:'4b(ii): Ear part with same job as diaphragm', marks:1, model:['The eardrum.'], marksInfo:['Identify the eardrum.'], explanation:'The diaphragm vibrates when sound reaches it. The eardrum does the same job in the ear.', mistakes:['Writing cochlea instead of eardrum.'], quickFix:'Which ear part vibrates first when sound reaches it?' },
+          { q:'4b(iii): Ear part with same job as magnet and coil', marks:1, model:['The cochlea.'], marksInfo:['Identify the cochlea.'], explanation:'The magnet and coil help change vibrations into an electrical signal. The cochlea changes vibrations into electrical impulses in the ear.', mistakes:['Writing auditory nerve. The auditory nerve carries the signal; it does not create it.'], quickFix:'Which part of the ear changes vibrations into electrical impulses?' },
+          { q:'4b(iv): Microphone part with same job as auditory nerve', marks:1, model:['The wires.'], marksInfo:['Identify the wires.'], explanation:'The auditory nerve carries electrical impulses to the brain. The wires carry electrical signals away from the microphone.', mistakes:['Writing coil. The coil helps generate the signal, but the wires carry it.'], quickFix:'What carries the electrical signal away from a microphone?' }
+        ]
+      },
+      {
+        id:'q5', title:'Q5 Mechanical waves and particles', icon:'📡', bg:'q5-bg',
+        cards:[
+          { q:'5a(i): Why sound cannot travel through a vacuum', marks:1, model:['Sound cannot travel through a vacuum because there are no particles to pass on the vibrations.'], marksInfo:['Mention particles and vibrations.'], explanation:'Sound is a mechanical wave. It needs particles to vibrate and pass the vibration from one particle to the next. A vacuum has no particles.', mistakes:['Saying “because there is no oxygen”.','Saying “because there is no air” without mentioning particles or vibrations.','Thinking sound can travel like light.'], quickFix:'Why can light travel through space but sound cannot?' },
+          { q:'5a(ii): Fastest sound through material', marks:2, model:['Sound would travel fastest through lead because lead has the highest density, so its particles are closest together.'], marksInfo:['Identify lead.','Explain that it has the highest density or particles closest together.'], explanation:'Sound travels by particles passing vibrations on. If particles are closer together, vibrations can be passed on more quickly.', mistakes:['Choosing aluminium because it has the lowest density.','Saying “heavier things are faster” without using particle spacing.','Forgetting to explain the answer.'], quickFix:'Use the particle model to explain why sound travels faster in solids than gases.' }
+        ]
+      }
+    ];
+
+    function escapeHtml(text){
+      return String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+    }
+
+    function list(items){
+      return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+    }
+
+    function infoBox(icon, title, cls, content){
+      return `<section class="infobox ${cls}"><h4><span>${icon}</span>${title}</h4>${content}</section>`;
+    }
+
+    function cardHtml(card, index){
+      return `<article class="card ${index === 0 ? 'open' : ''}">
+        <button class="card-toggle" type="button" aria-expanded="${index === 0 ? 'true' : 'false'}">
+          <div>
+            <div class="marks">${card.marks} ${card.marks === 1 ? 'mark' : 'marks'}</div>
+            <h3 class="card-title">${escapeHtml(card.q)}</h3>
+          </div>
+          <span class="arrow">›</span>
+        </button>
+        <div class="card-body">
+          ${infoBox('✓','Model answer','green',list(card.model))}
+          ${infoBox('📘','How to get the marks','blue',list(card.marksInfo))}
+          ${infoBox('💡','Explanation','slate',`<p>${escapeHtml(card.explanation)}</p>`)}
+          ${infoBox('⚠️','Common mistakes','red',list(card.mistakes))}
+          ${infoBox('↻','Quick fix task','amber',`<p><strong>${escapeHtml(card.quickFix)}</strong></p>`)}
+        </div>
+      </article>`;
+    }
+
+    function sectionHtml(section){
+      return `<section class="page" id="${section.id}">
+        <div class="section-hero ${section.bg}">
+          <div class="row">
+            <div class="iconbox">${section.icon}</div>
+            <div>
+              <h2>${escapeHtml(section.title)}</h2>
+              <p>Open each card to check the model answer, mark breakdown and quick fix task.</p>
+            </div>
+          </div>
+        </div>
+        <div class="cards">${section.cards.map(cardHtml).join('')}</div>
+      </section>`;
+    }
+
+    function introHtml(){
+      return `<section class="page active" id="intro">
+        <div class="intro-grid">
+          <div class="hero">
+            <div class="pill">📘 Test feedback tool</div>
+            <h2>Understand your marks. Fix your mistakes. Improve your answers.</h2>
+            <p>Use each question section to compare your answer with a model answer. Check the mark breakdown, read the explanation, spot common mistakes, then complete the quick fix task.</p>
+            <div class="stats">
+              <div class="stat"><strong>30</strong><span>total marks</span></div>
+              <div class="stat"><strong>5</strong><span>question sections</span></div>
+              <div class="stat"><strong>KS3</strong><span>Year 7 Sound</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>How to use this</h3>
+            <ol class="steps">
+              <li><span class="num">1</span><span>Open the question you got wrong or found difficult.</span></li>
+              <li><span class="num">2</span><span>Compare your answer with the model answer and mark breakdown.</span></li>
+              <li><span class="num">3</span><span>Write the quick fix task in your book to prove you understand the correction.</span></li>
+            </ol>
+            <button class="primary" data-target="q1">Start with Question 1</button>
+          </div>
+        </div>
+      </section>`;
+    }
+
+    function reflectHtml(){
+      return `<section class="page" id="reflect">
+        <div class="panel">
+          <h2>Final reflection</h2>
+          <p class="subtitle">Choose the area you most need to revise, then write three specific actions in your exercise book.</p>
+          <div class="topic-grid">
+            ${['Waves','Pitch and volume','Echo calculations','Ear and microphone','Particle model'].map(t => `<button type="button" class="topic-btn">${t}</button>`).join('')}
+          </div>
+          <div id="selectedTopic" class="selected" style="display:none"></div>
+          <div class="reflection-grid">
+            <div class="blank">Revision action 1</div>
+            <div class="blank">Revision action 2</div>
+            <div class="blank">Revision action 3</div>
+          </div>
+        </div>
+      </section>`;
+    }
+
+    function navHtml(){
+      const buttons = [`<button class="nav-btn active" data-target="intro">Intro</button>`]
+        .concat(sections.map(s => `<button class="nav-btn" data-target="${s.id}">${s.id.toUpperCase()}</button>`))
+        .concat([`<button class="nav-btn" data-target="reflect">Reflect</button>`]);
+      return buttons.join('');
+    }
+
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === id));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.target === id));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function runContentTests(){
+      const total = sections.flatMap(s => s.cards).reduce((sum, c) => sum + c.marks, 0);
+      console.assert(total === 30, `Expected 30 total marks, received ${total}`);
+      console.assert(sections.length === 5, 'Expected five question sections');
+      console.assert(new Set(sections.map(s => s.id)).size === sections.length, 'Section ids must be unique');
+      console.assert(sections.every(s => s.cards.length > 0), 'Each section needs cards');
+      console.assert(sections.flatMap(s => s.cards).every(c => c.model.length && c.marksInfo.length && c.quickFix), 'Every card needs model answers, mark info and quick fix');
+    }
+
+    document.getElementById('nav').innerHTML = navHtml();
+    document.getElementById('app').innerHTML = introHtml() + sections.map(sectionHtml).join('') + reflectHtml();
+
+    document.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('[data-target]');
+      if(navBtn){ showPage(navBtn.dataset.target); }
+
+      const toggle = e.target.closest('.card-toggle');
+      if(toggle){
+        const card = toggle.closest('.card');
+        card.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', card.classList.contains('open') ? 'true' : 'false');
+      }
+
+      const topicBtn = e.target.closest('.topic-btn');
+      if(topicBtn){
+        document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+        topicBtn.classList.add('active');
+        const selected = document.getElementById('selectedTopic');
+        selected.style.display = 'block';
+        selected.innerHTML = `Revision focus selected: <strong>${escapeHtml(topicBtn.textContent)}</strong>`;
+      }
+    });
+
+    runContentTests();
+  </script>
+</body>
+</html>
