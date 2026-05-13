@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C4 Chemical Calculations Higher – Model Answers</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #d9e1ec;
+      --brand: #2563eb;
+      --brand-dark: #1d4ed8;
+      --soft-blue: #eaf1ff;
+      --soft-green: #eaf8ef;
+      --soft-amber: #fff6df;
+      --soft-red: #fff0f0;
+      --green: #16803c;
+      --amber: #a16207;
+      --red: #b42318;
+      --shadow: 0 12px 35px rgba(25, 42, 70, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 32rem),
+        linear-gradient(180deg, #fbfcff 0%, var(--bg) 45%, #eef3fa 100%);
+      line-height: 1.6;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+    }
+
+    main {
+      padding: 30px clamp(18px, 4vw, 54px) 70px;
+      max-width: 1180px;
+      width: 100%;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+    }
+
+    .brand h1 {
+      font-size: 0.98rem;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .nav-section-title {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 22px 8px 8px;
+      font-weight: 800;
+    }
+
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
+
+    .nav button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink);
+      padding: 10px 12px;
+      text-align: left;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .nav button:hover,
+    .nav button.active {
+      background: var(--soft-blue);
+      border-color: #c7d7fe;
+      color: var(--brand-dark);
+    }
+
+    .mark-pill {
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+
+    .side-actions {
+      display: grid;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 750;
+      cursor: pointer;
+      color: white;
+      background: var(--brand);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    .btn:hover { background: var(--brand-dark); }
+
+    .btn.secondary {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .hero {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: clamp(22px, 4vw, 38px);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 270px;
+      height: 270px;
+      right: -120px;
+      top: -140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(124,58,237,0.10));
+    }
+
+    .eyebrow {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brand-dark);
+      font-weight: 850;
+      margin: 0 0 6px;
+    }
+
+    .hero h2 {
+      font-size: clamp(1.9rem, 4vw, 3.1rem);
+      line-height: 1.06;
+      margin: 0 0 12px;
+      letter-spacing: -0.045em;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topic-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .topic-card strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .topic-card span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .question {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .question-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    }
+
+    .question-title {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .qnum {
+      display: inline-grid;
+      place-items: center;
+      min-width: 54px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: var(--brand-dark);
+      font-weight: 850;
+      border: 1px solid #c7d7fe;
+    }
+
+    .question h3 {
+      margin: 2px 0 3px;
+      font-size: 1.25rem;
+      line-height: 1.25;
+    }
+
+    .question-subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .question-body {
+      padding: 20px 22px 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .prompt {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 15px;
+      background: #fbfdff;
+    }
+
+    .prompt h4,
+    .box h4 {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .box {
+      border-radius: 16px;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .answer { background: var(--soft-green); border-color: #bfebcc; }
+    .method { background: var(--soft-blue); border-color: #cad8ff; }
+    .mistake { background: var(--soft-red); border-color: #ffd0d0; }
+    .tip { background: var(--soft-amber); border-color: #f6df9a; }
+
+    .answer h4 { color: var(--green); }
+    .method h4 { color: var(--brand-dark); }
+    .mistake h4 { color: var(--red); }
+    .tip h4 { color: var(--amber); }
+
+    .final-answer {
+      display: inline-block;
+      background: #fff;
+      border: 1px solid rgba(22, 128, 60, 0.35);
+      color: var(--green);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-weight: 850;
+      margin-top: 4px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 820;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: "+";
+      font-weight: 900;
+      color: var(--brand);
+      font-size: 1.2rem;
+    }
+
+    details[open] summary::after { content: "−"; }
+
+    .details-content {
+      padding: 0 16px 16px;
+      color: var(--ink);
+    }
+
+    .mark-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mark-list li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .mark-num {
+      display: inline-grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .calc {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin: 10px 0;
+    }
+
+    .equation {
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 850;
+      letter-spacing: 0.01em;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin: 10px 0;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5fb;
+      font-weight: 850;
+    }
+
+    .reaction-table th,
+    .reaction-table td {
+      text-align: center;
+    }
+
+    .reaction-table th:first-child,
+    .reaction-table td:first-child {
+      text-align: left;
+      background: #f8fafc;
+      font-weight: 850;
+      width: 140px;
+    }
+
+    .mobile-topbar {
+      display: none;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.94);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      gap: 8px;
+    }
+
+    .mobile-topbar select {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: white;
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .check-card {
+      border: 1px dashed #b6c3d5;
+      border-radius: 15px;
+      padding: 13px 15px;
+      background: #fbfdff;
+    }
+
+    .check-card label {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    .check-card input {
+      margin-top: 5px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .app { display: block; }
+      aside { display: none; }
+      .mobile-topbar { display: flex; }
+      main { padding: 18px 14px 50px; }
+      .topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .question-header { flex-direction: column; }
+      .question-title { flex-direction: column; }
+    }
+
+    @media (max-width: 560px) {
+      .topic-grid { grid-template-columns: 1fr; }
+      .hero h2 { font-size: 2rem; }
+      .question-body, .question-header { padding-left: 15px; padding-right: 15px; }
+      th, td { padding: 8px; font-size: 0.9rem; }
+    }
+
+    @media print {
+      body { background: white; }
+      .app { display: block; }
+      aside, .mobile-topbar, .side-actions, .btn { display: none !important; }
+      main { max-width: none; padding: 0; }
+      .hero, .question {
+        box-shadow: none;
+        border: 1px solid #bbb;
+        break-inside: avoid;
+      }
+      details { break-inside: avoid; }
+      details:not([open]) .details-content { display: block; }
+      details summary::after { display: none; }
+      .question { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mobile-topbar">
+    <select id="mobileJump" aria-label="Jump to question">
+      <option value="#top">Overview</option>
+      <option value="#q01-1">Q01.1</option>
+      <option value="#q01-2">Q01.2</option>
+      <option value="#q01-3">Q01.3</option>
+      <option value="#q02">Q02</option>
+      <option value="#q03-1">Q03.1</option>
+      <option value="#q03-2">Q03.2</option>
+      <option value="#q04">Q04</option>
+      <option value="#q05-1">Q05.1</option>
+      <option value="#q05-2">Q05.2</option>
+      <option value="#q05-3">Q05.3</option>
+      <option value="#q05-4">Q05.4</option>
+      <option value="#q05-5">Q05.5</option>
+      <option value="#q06">Q06</option>
+      <option value="#q07">Q07</option>
+    </select>
+    <button class="btn secondary" onclick="window.print()">Print</button>
+  </div>
+
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="brand-mark">C4</div>
+        <div>
+          <h1>Chemical Calculations</h1>
+          <p>Higher tier model answers</p>
+        </div>
+      </div>
+
+      <div class="nav-section-title">Questions</div>
+      <nav class="nav" id="nav">
+        <button data-target="top" class="active">Overview <span class="mark-pill">—</span></button>
+        <button data-target="q01-1">Q01.1 Oxygen mass <span class="mark-pill">1</span></button>
+        <button data-target="q01-2">Q01.2 Mean <span class="mark-pill">3</span></button>
+        <button data-target="q01-3">Q01.3 Low yield <span class="mark-pill">2</span></button>
+        <button data-target="q02">Q02 Concentration <span class="mark-pill">3</span></button>
+        <button data-target="q03-1">Q03.1 Avogadro <span class="mark-pill">1</span></button>
+        <button data-target="q03-2">Q03.2 Mole link <span class="mark-pill">1</span></button>
+        <button data-target="q04">Q04 Formula mass <span class="mark-pill">4</span></button>
+        <button data-target="q05-1">Q05.1 Moles <span class="mark-pill">1</span></button>
+        <button data-target="q05-2">Q05.2 Concentration <span class="mark-pill">1</span></button>
+        <button data-target="q05-3">Q05.3 Solute mass <span class="mark-pill">1</span></button>
+        <button data-target="q05-4">Q05.4 Solvent volume <span class="mark-pill">1</span></button>
+        <button data-target="q05-5">Q05.5 Limiting reactant <span class="mark-pill">3</span></button>
+        <button data-target="q06">Q06 Reacting masses <span class="mark-pill">4</span></button>
+        <button data-target="q07">Q07 Standard form moles <span class="mark-pill">4</span></button>
+      </nav>
+
+      <div class="side-actions">
+        <button class="btn" onclick="openAll()">Reveal all</button>
+        <button class="btn secondary" onclick="closeAll()">Hide details</button>
+        <button class="btn secondary" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </aside>
+
+    <main>
+      <section class="hero" id="top">
+        <p class="eyebrow">Oxford Smart AQA GCSE Sciences • Trilogy Chemistry Higher</p>
+        <h2>C4 Chemical Calculations — Model Answers</h2>
+        <p>
+          Use this resource to correct your test carefully. For each question, compare your answer to the model answer,
+          check the mark breakdown, then read the explanation and common mistakes before improving your work.
+        </p>
+
+        <div class="topic-grid">
+          <div class="topic-card"><strong>Mass calculations</strong><span>Conservation of mass and reacting masses</span></div>
+          <div class="topic-card"><strong>Solutions</strong><span>Concentration in g/dm³</span></div>
+          <div class="topic-card"><strong>Moles</strong><span>Mass, Mr, Avogadro constant</span></div>
+          <div class="topic-card"><strong>Exam technique</strong><span>Ratios, anomalies and units</span></div>
+        </div>
+      </section>
+
+      <section class="question" id="q01-1">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">01.1</span>
+            <div>
+              <h3>Calculate the mass of oxygen required</h3>
+              <p class="question-subtitle">Magnesium reacts with oxygen to form magnesium oxide.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Question focus</h4>
+            <p>4.8 g of magnesium makes 8.0 g of magnesium oxide. Calculate the mass of oxygen required.</p>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>Mass of oxygen = 8.0 − 4.8 = <span class="final-answer">3.2 g</span></p>
+          </div>
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>Correctly subtracts the mass of magnesium from the mass of magnesium oxide to give 3.2 g.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box tip">
+            <h4>Exam tip</h4>
+            <p>Use conservation of mass: total mass of reactants = total mass of products.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q01-2">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">01.2</span>
+            <div>
+              <h3>Calculate the mean, excluding the anomaly</h3>
+              <p class="question-subtitle">Mean calculation with experimental results.</p>
+            </div>
+          </div>
+          <span class="mark-pill">3 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Data</h4>
+            <table>
+              <tr><th>Trial</th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+              <tr><td>Mass of MgO / g</td><td>7.36</td><td>7.06</td><td>7.38</td><td>7.38</td></tr>
+            </table>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>The anomalous result is <strong>7.06 g</strong>.</p>
+            <div class="calc">
+              Mean = (7.36 + 7.38 + 7.38) ÷ 3<br>
+              Mean = 22.12 ÷ 3<br>
+              Mean = 7.373... g<br>
+              Mean = <span class="final-answer">7.37 g</span>
+            </div>
+          </div>
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>Identifies or excludes the anomalous result, 7.06 g.</span></li>
+                <li><span class="mark-num">2</span><span>Calculates the mean from the three remaining results.</span></li>
+                <li><span class="mark-num">3</span><span>Rounds correctly to two decimal places: 7.37 g.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box mistake">
+            <h4>Common mistake</h4>
+            <p>Including all four results gives 7.30 g. This loses credit because the question says to leave out the anomalous result.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q01-3">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">01.3</span>
+            <div>
+              <h3>Suggest why less magnesium oxide was produced than expected</h3>
+              <p class="question-subtitle">Evaluating an experiment.</p>
+            </div>
+          </div>
+          <span class="mark-pill">2 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>Any two suitable reasons, for example:</p>
+            <ul>
+              <li>Not all the magnesium reacted.</li>
+              <li>Some magnesium oxide escaped from the crucible.</li>
+              <li>There may have been weighing errors.</li>
+            </ul>
+          </div>
+          <details>
+            <summary>Show explanation</summary>
+            <div class="details-content">
+              <p>If not all the magnesium reacts, less product forms. If powder escapes when the lid is lifted, the measured mass of product will be lower than it should be.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="question" id="q02">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">02</span>
+            <div>
+              <h3>Is the mixed solution more concentrated?</h3>
+              <p class="question-subtitle">Comparing concentration using mass and volume.</p>
+            </div>
+          </div>
+          <span class="mark-pill">3 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Question focus</h4>
+            <p>Solution A contains 5 g in 50 cm³. Solution B contains 10 g in 100 cm³. Solution B is added to solution A.</p>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p><span class="final-answer">No, the student is not correct.</span></p>
+            <p>Both original solutions have the same concentration, so the new solution has the same concentration after mixing.</p>
+          </div>
+          <div class="box method">
+            <h4>Working</h4>
+            <table>
+              <tr><th>Solution</th><th>Mass of copper sulfate</th><th>Volume</th><th>Concentration</th></tr>
+              <tr><td>A</td><td>5 g</td><td>50 cm³ = 0.050 dm³</td><td>5 ÷ 0.050 = 100 g/dm³</td></tr>
+              <tr><td>B</td><td>10 g</td><td>100 cm³ = 0.100 dm³</td><td>10 ÷ 0.100 = 100 g/dm³</td></tr>
+              <tr><td>Mixed</td><td>15 g</td><td>150 cm³ = 0.150 dm³</td><td>15 ÷ 0.150 = 100 g/dm³</td></tr>
+            </table>
+          </div>
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>States that the student is not correct / concentration does not increase.</span></li>
+                <li><span class="mark-num">2</span><span>Recognises that solutions A and B have the same concentration.</span></li>
+                <li><span class="mark-num">3</span><span>Explains that the ratio of copper sulfate to water stays the same.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box mistake">
+            <h4>Common mistake</h4>
+            <p>Do not just look at the total mass of solute. Concentration depends on both the mass of solute and the volume of solution.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q03-1">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">03.1</span>
+            <div>
+              <h3>State the Avogadro constant</h3>
+              <p class="question-subtitle">Recall of a key value.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p><span class="final-answer">6.02 × 10²³</span></p>
+          </div>
+          <div class="box tip">
+            <h4>Exam tip</h4>
+            <p>You may also see this written as 6.02 x 10^23, but use proper standard form notation where possible.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q03-2">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">03.2</span>
+            <div>
+              <h3>Link the Avogadro constant to a mole</h3>
+              <p class="question-subtitle">Particles and amount of substance.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>The Avogadro constant is the number of atoms, molecules, ions or particles in <strong>one mole</strong>.</p>
+          </div>
+          <div class="box mistake">
+            <h4>Common mistake</h4>
+            <p>A mole is not a mass. It is an amount of substance containing a fixed number of particles.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q04">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">04</span>
+            <div>
+              <h3>Describe how to calculate relative formula mass</h3>
+              <p class="question-subtitle">Using relative atomic masses and chemical formulae.</p>
+            </div>
+          </div>
+          <span class="mark-pill">4 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>To calculate the relative formula mass of a compound, add together the relative atomic masses of all the atoms of each element in the formula.</p>
+          </div>
+          <details open>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>Use the relative atomic masses.</span></li>
+                <li><span class="mark-num">2</span><span>Include all atoms in the formula.</span></li>
+                <li><span class="mark-num">3</span><span>Multiply by any small numbers in the formula.</span></li>
+                <li><span class="mark-num">4</span><span>Add the values together.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box method">
+            <h4>Example</h4>
+            <p>For CO₂: C = 12 and O = 16.</p>
+            <div class="calc">Mr of CO₂ = 12 + (16 × 2) = 44</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q05-1">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">05.1</span>
+            <div>
+              <h3>Calculate moles of sodium hydroxide</h3>
+              <p class="question-subtitle">Using mass and relative formula mass.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Given</h4>
+            <p>Mass of sodium hydroxide = 0.05 g. Relative formula mass = 40.</p>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <div class="calc">
+              Moles = mass ÷ Mr<br>
+              Moles = 0.05 ÷ 40<br>
+              Moles = <span class="final-answer">0.00125 mol</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q05-2">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">05.2</span>
+            <div>
+              <h3>Calculate concentration in g/dm³</h3>
+              <p class="question-subtitle">Converting cm³ to dm³ first.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Given</h4>
+            <p>0.05 g of sodium hydroxide in 25 cm³ of water.</p>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <div class="calc">
+              25 cm³ = 0.025 dm³<br>
+              Concentration = mass ÷ volume<br>
+              Concentration = 0.05 ÷ 0.025<br>
+              Concentration = <span class="final-answer">2 g/dm³</span>
+            </div>
+          </div>
+          <div class="box mistake">
+            <h4>Common mistake</h4>
+            <p>Do not use 25 directly if the answer is required in g/dm³. Convert cm³ to dm³ first by dividing by 1000.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q05-3">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">05.3</span>
+            <div>
+              <h3>Effect of changing solute mass</h3>
+              <p class="question-subtitle">How solute affects concentration.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>As the mass of solute increases, the concentration increases.</p>
+          </div>
+          <div class="box tip">
+            <h4>Exam tip</h4>
+            <p>For a fixed volume, concentration is directly proportional to the mass of solute.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q05-4">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">05.4</span>
+            <div>
+              <h3>Effect of changing solvent volume</h3>
+              <p class="question-subtitle">How dilution affects concentration.</p>
+            </div>
+          </div>
+          <span class="mark-pill">1 mark</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>As the volume of solvent increases, the concentration decreases.</p>
+          </div>
+          <div class="box tip">
+            <h4>Exam tip</h4>
+            <p>Adding more solvent spreads the same amount of solute through a larger volume, so the solution becomes more dilute.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q05-5">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">05.5</span>
+            <div>
+              <h3>Explain what is meant by a limiting reactant</h3>
+              <p class="question-subtitle">Sodium hydroxide reacts with sulfuric acid.</p>
+            </div>
+          </div>
+          <span class="mark-pill">3 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p>The sulfuric acid is the limiting reactant because it is used up first. Sodium hydroxide is in excess. Once all the sulfuric acid has reacted, the reaction stops.</p>
+          </div>
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>States that sodium hydroxide is in excess.</span></li>
+                <li><span class="mark-num">2</span><span>States that all the sulfuric acid reacts / is used up.</span></li>
+                <li><span class="mark-num">3</span><span>Explains that the reaction stops when the limiting reactant has been used up.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box mistake">
+            <h4>Common mistake</h4>
+            <p>Do not just write “there is less sulfuric acid”. The limiting reactant is the reactant that runs out first and limits the amount of product made.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q06">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">06</span>
+            <div>
+              <h3>Calculate the mass of carbon dioxide produced</h3>
+              <p class="question-subtitle">Thermal decomposition of calcium carbonate.</p>
+            </div>
+          </div>
+          <span class="mark-pill">4 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Question focus</h4>
+            <p>Calcium carbonate decomposes when heated.</p>
+            <div class="equation">CaCO₃ → CaO + CO₂</div>
+            <p>A student heats 25 g of calcium carbonate. Calculate the mass of carbon dioxide produced.</p>
+          </div>
+
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <p><span class="final-answer">11 g of CO₂</span></p>
+          </div>
+
+          <div class="box method">
+            <h4>Tabular reacting-mass method</h4>
+            <table class="reaction-table">
+              <tr>
+                <th></th>
+                <th>CaCO₃</th>
+                <th>→</th>
+                <th>CaO</th>
+                <th>+</th>
+                <th>CO₂</th>
+              </tr>
+              <tr>
+                <td>Mass (g)</td>
+                <td>25</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>?</td>
+              </tr>
+              <tr>
+                <td>Mr</td>
+                <td>100</td>
+                <td></td>
+                <td>56</td>
+                <td></td>
+                <td>44</td>
+              </tr>
+              <tr>
+                <td>Moles</td>
+                <td>25 ÷ 100 = 0.25</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>0.25</td>
+              </tr>
+              <tr>
+                <td>Ratio</td>
+                <td>1</td>
+                <td></td>
+                <td>1</td>
+                <td></td>
+                <td>1</td>
+              </tr>
+            </table>
+            <div class="calc">
+              Mass of CO₂ = moles × Mr<br>
+              Mass of CO₂ = 0.25 × 44<br>
+              Mass of CO₂ = <strong>11 g</strong>
+            </div>
+          </div>
+
+          <details open>
+            <summary>Show step-by-step explanation</summary>
+            <div class="details-content">
+              <ol>
+                <li>Calculate Mr of CaCO₃: 40 + 12 + (16 × 3) = 100.</li>
+                <li>Convert the known mass of CaCO₃ into moles: 25 ÷ 100 = 0.25 mol.</li>
+                <li>Use the balanced equation ratio. CaCO₃ and CO₂ are in a 1:1 ratio.</li>
+                <li>So 0.25 mol of CaCO₃ makes 0.25 mol of CO₂.</li>
+                <li>Calculate mass of CO₂: 0.25 × 44 = 11 g.</li>
+              </ol>
+            </div>
+          </details>
+
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>Calculates Mr of CaCO₃ as 100.</span></li>
+                <li><span class="mark-num">2</span><span>Calculates moles of CaCO₃ as 0.25 mol.</span></li>
+                <li><span class="mark-num">3</span><span>Uses the 1:1 ratio to identify moles of CO₂ as 0.25 mol.</span></li>
+                <li><span class="mark-num">4</span><span>Calculates mass of CO₂ as 11 g.</span></li>
+              </ul>
+            </div>
+          </details>
+
+          <div class="box mistake">
+            <h4>Common mistakes</h4>
+            <ul>
+              <li>Using mass ratios instead of mole ratios.</li>
+              <li>Forgetting to multiply oxygen by 3 in CaCO₃ or by 2 in CO₂.</li>
+              <li>Stopping at moles and forgetting to convert back to mass.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="question" id="q07">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">07</span>
+            <div>
+              <h3>Calculate moles of sulfur dioxide</h3>
+              <p class="question-subtitle">Large masses, unit conversion and standard form.</p>
+            </div>
+          </div>
+          <span class="mark-pill">4 marks</span>
+        </div>
+        <div class="question-body">
+          <div class="prompt">
+            <h4>Question focus</h4>
+            <p>In 2010, 1.9 × 10⁷ kg of sulfur dioxide was emitted by vehicles. Calculate the number of moles of sulfur dioxide. Give the answer to two significant figures in standard form.</p>
+          </div>
+          <div class="box answer">
+            <h4>Model answer</h4>
+            <div class="calc">
+              Mr of SO₂ = 32 + (16 × 2) = 64<br><br>
+              1.9 × 10⁷ kg = 1.9 × 10¹⁰ g<br><br>
+              Moles = mass ÷ Mr<br>
+              Moles = 1.9 × 10¹⁰ ÷ 64<br>
+              Moles = 2.96875 × 10⁸<br>
+              Moles = <span class="final-answer">3.0 × 10⁸ mol</span>
+            </div>
+          </div>
+          <details>
+            <summary>Show mark breakdown</summary>
+            <div class="details-content">
+              <ul class="mark-list">
+                <li><span class="mark-num">1</span><span>Calculates Mr of SO₂ as 64.</span></li>
+                <li><span class="mark-num">2</span><span>Converts kg to g correctly.</span></li>
+                <li><span class="mark-num">3</span><span>Uses moles = mass ÷ Mr.</span></li>
+                <li><span class="mark-num">4</span><span>Gives the answer to two significant figures in standard form: 3.0 × 10⁸ mol.</span></li>
+              </ul>
+            </div>
+          </details>
+          <div class="box mistake">
+            <h4>Common mistakes</h4>
+            <ul>
+              <li>Forgetting to convert kg into g before using Mr.</li>
+              <li>Using 48 for SO₂ instead of 64.</li>
+              <li>Writing 3 × 10⁸ instead of 3.0 × 10⁸ when the question asks for two significant figures.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="question">
+        <div class="question-header">
+          <div class="question-title">
+            <span class="qnum">Review</span>
+            <div>
+              <h3>Final correction checklist</h3>
+              <p class="question-subtitle">Use this before handing in corrections.</p>
+            </div>
+          </div>
+        </div>
+        <div class="question-body">
+          <div class="check-card">
+            <label><input type="checkbox"> I have corrected any arithmetic errors.</label>
+            <label><input type="checkbox"> I have included units where needed.</label>
+            <label><input type="checkbox"> I have shown working for calculation questions.</label>
+            <label><input type="checkbox"> I have checked whether I needed to convert cm³ to dm³ or kg to g.</label>
+            <label><input type="checkbox"> I have read the common mistakes for any question I got wrong.</label>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">C4 Chemical Calculations Higher — interactive model answers and explanations.</p>
+    </main>
+  </div>
+
+  <script>
+    const navButtons = [...document.querySelectorAll('#nav button')];
+    const sections = ['top', 'q01-1', 'q01-2', 'q01-3', 'q02', 'q03-1', 'q03-2', 'q04', 'q05-1', 'q05-2', 'q05-3', 'q05-4', 'q05-5', 'q06', 'q07'];
+
+    navButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const id = button.dataset.target;
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.target === entry.target.id));
+        }
+      });
+    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
+
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    function openAll() {
+      document.querySelectorAll('details').forEach(d => d.open = true);
+    }
+
+    function closeAll() {
+      document.querySelectorAll('details').forEach(d => d.open = false);
+    }
+
+    document.getElementById('mobileJump').addEventListener('change', function() {
+      const target = this.value;
+      if (target) document.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  </script>
+</body>
+</html>
