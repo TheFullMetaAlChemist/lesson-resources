@@ -1,108 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Topic 5: Quantitative Chemistry</title>
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #5f6b7a;
+      --line: #d9e1ec;
+      --brand: #2563eb;
+      --brand-dark: #1d4ed8;
+      --soft-blue: #eaf1ff;
+      --soft-green: #eaf8ef;
+      --soft-amber: #fff6df;
+      --soft-purple: #f2ecff;
+      --shadow: 0 14px 40px rgba(25, 42, 70, 0.09);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #f0f8ff;
-      color: #333;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34rem),
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 30rem),
+        linear-gradient(180deg, #fbfcff 0%, var(--bg) 46%, #eef3fa 100%);
+      line-height: 1.6;
     }
-    header {
-      background-color: #004466;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
+
+    a {
+      color: inherit;
     }
-    nav {
-      margin: 10px 0;
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px clamp(16px, 4vw, 42px) 42px;
     }
-    nav a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .container {
-      max-width: 800px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    .container h2 {
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
       margin-bottom: 20px;
     }
-    .btn {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 10px;
-      background-color: #004466;
-      color: #fff;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       text-decoration: none;
-      border-radius: 5px;
-      font-size: 16px;
     }
-    .btn:hover {
-      background-color: #00334d;
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 10px 26px rgba(37, 99, 235, 0.24);
     }
+
+    .brand-text strong {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.15;
+    }
+
+    .brand-text span {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .home-link {
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 750;
+      color: var(--brand-dark);
+    }
+
+    .home-link:hover {
+      background: var(--soft-blue);
+      border-color: #c7d7fe;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      top: -120px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37,99,235,0.13), rgba(124,58,237,0.11));
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--brand-dark);
+      font-weight: 850;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 1.08rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0 24px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(25, 42, 70, 0.045);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 2px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .section {
+      margin: 28px 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 13px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-header p {
+      margin: 2px 0 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 172px;
+      text-decoration: none;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(25, 42, 70, 0.06);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -42px;
+      top: -42px;
+      width: 110px;
+      height: 110px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      opacity: 0.85;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 42px rgba(25, 42, 70, 0.11);
+      border-color: #b8c7e4;
+    }
+
+    .card-top,
+    .card-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .lesson-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--soft-blue);
+      color: var(--brand-dark);
+      border: 1px solid #c7d7fe;
+      font-weight: 850;
+      font-size: 0.82rem;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      color: var(--brand-dark);
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 750;
+      font-size: 0.76rem;
+    }
+
+    .card.foundation::after { background: var(--soft-green); }
+    .card.higher::after { background: var(--soft-purple); }
+    .card.support::after { background: var(--soft-amber); }
+
+    .feature-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-box {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      padding: 18px;
+    }
+
+    .feature-box h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+
+    .feature-box p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      padding: 10px 13px;
+      border-radius: 12px;
+      background: var(--brand);
+      color: white;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    .button-link:hover {
+      background: var(--brand-dark);
+    }
+
     footer {
+      color: var(--muted);
       text-align: center;
-      padding: 15px;
-      background-color: #004466;
-      color: #fff;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+      padding: 26px 0 10px;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .feature-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding-top: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .home-link {
+        width: 100%;
+        text-align: center;
+      }
+
+      .grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        border-radius: 22px;
+      }
+
+      .section-header {
+        display: block;
+      }
     }
   </style>
 </head>
+
 <body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="#">
+        <span class="brand-mark">T5</span>
+        <span class="brand-text">
+          <strong>KS4 Science</strong>
+          <span>AQA GCSE Chemistry</span>
+        </span>
+      </a>
 
-  <header>
-    <h1>Topic 5: Quantitative Chemistry</h1>
-    <nav>
-      <a href="#">Home</a>
-      <!-- If needed, link back to your main KS4 page:
-           <a href="../ks4-landing-page.html">Back to KS4 Landing</a> -->
-    </nav>
-  </header>
+      <a class="home-link" href="#">Home</a>
+    </header>
 
-  <div class="container">
-    <h2>Explore Calculations and Key Concepts</h2>
-    <p>Choose a lesson below to deepen your understanding of the different chemical calculations required at GCSe.</p>
+    <section class="hero">
+      <p class="eyebrow">Topic 5 • Quantitative Chemistry</p>
+      <h1>Calculations and Key Concepts</h1>
+      <p>
+        Choose a lesson, support activity or model-answer resource below. This topic builds from balancing equations and
+        formula mass through to moles, concentration, reacting masses and higher-tier calculation skills.
+      </p>
 
-    <!-- Lesson buttons -->
-    <a class="btn" href="1-balancing-equations.html">1. Chemical Equations</a>
-    <a class="btn" href="2-relative-formula-mass.html">2. Relative Formula Mass</a>
-    <a class="btn" href="3-percentage-by-mass.html">3. Percentage by Mass</a>
-    <a class="btn" href="4-combustion-of-magnesium.html">4. Combustion of Magnesium</a>
-    <a class="btn" href="5-moles.html">5. Moles</a>
-    <a class="btn" href="6-concentration.html">6. Concentration</a>
-    <a class="btn" href="7-reacting-masses.html">7. Reacting Masses</a>
-    <a class="btn" href="7-moles-balancing-equations.html">7. Using moles to balance equations</a>
-    <a class="btn" href="7-moles-balancing-equations-booklet.html">7. Using moles to balance equations - Booklet</a>
-    <a class="btn" href="8-limiting-and-excess-reactants.html">8. Limiting &amp; Excess Reactants</a>
-    <a class="btn" href="8-limiting-reactants-worksheet.html">8. Limiting Reactants Worksheet Support</a>
-    <a class="btn" href="8-limiting-reactants-lesson.html">8. Limiting Reactants Lesson</a>
-    <a class="btn" href="8-limiting-reactants-lesson-booklet.html">8. Limiting Reactants Lesson Booklet</a>
-    <a class="btn" href="9-triple-titration.html">9. TRIPLE Titration</a>
-    <a class="btn" href="10-percentage-yield.html">10. Percentage Yield</a>
-    <a class="btn" href="11-atom-economy.html">11. Atom Economy</a>
-    <a class="btn" href="12-gas-volumes.html">12. Gas Volumes</a>
-    <a class="btn" href="concentration-simulation.html">Concentration Simulation</a>
-    <a class="btn" href="foundation-test.html">Foundation Test Model Answers</a>
-    <a class="btn" href="higher-test.html">Higher Test Model Answers</a>
+      <div class="hero-actions">
+        <span class="pill">⚖️ Equation skills</span>
+        <span class="pill">🧪 Moles and masses</span>
+        <span class="pill">📈 Higher-tier calculations</span>
+        <span class="pill">✅ Model answers</span>
+      </div>
+    </section>
 
+    <section class="stats-grid" aria-label="Topic summary">
+      <div class="stat">
+        <strong>12</strong>
+        <span>Main lesson resources</span>
+      </div>
+      <div class="stat">
+        <strong>4</strong>
+        <span>Support worksheets/booklets</span>
+      </div>
+      <div class="stat">
+        <strong>2</strong>
+        <span>Model-answer test reviews</span>
+      </div>
+      <div class="stat">
+        <strong>1</strong>
+        <span>Interactive simulation</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Core lesson sequence</h2>
+          <p>Work through these in order to build the calculation skills step by step.</p>
+        </div>
+      </div>
+
+      <div class="grid">
+        <a class="card" href="1-balancing-equations.html">
+          <div class="card-top">
+            <span class="lesson-num">1</span>
+            <h3>Chemical Equations</h3>
+            <p>Balancing equations and understanding what chemical equations show.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Core</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="2-relative-formula-mass.html">
+          <div class="card-top">
+            <span class="lesson-num">2</span>
+            <h3>Relative Formula Mass</h3>
+            <p>Using relative atomic masses to calculate Mr from chemical formulae.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Core</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="3-percentage-by-mass.html">
+          <div class="card-top">
+            <span class="lesson-num">3</span>
+            <h3>Percentage by Mass</h3>
+            <p>Calculate the percentage composition of elements in compounds.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Core</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="4-combustion-of-magnesium.html">
+          <div class="card-top">
+            <span class="lesson-num">4</span>
+            <h3>Combustion of Magnesium</h3>
+            <p>Link practical results to mass changes and conservation of mass.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Practical</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="5-moles.html">
+          <div class="card-top">
+            <span class="lesson-num">5</span>
+            <h3>Moles</h3>
+            <p>Use mass, Mr and moles to solve calculation problems.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Core</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="6-concentration.html">
+          <div class="card-top">
+            <span class="lesson-num">6</span>
+            <h3>Concentration</h3>
+            <p>Calculate concentration using mass and volume in g/dm³.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Core</span><span>Open →</span></div>
+        </a>
+
+        <a class="card" href="7-reacting-masses.html">
+          <div class="card-top">
+            <span class="lesson-num">7</span>
+            <h3>Reacting Masses</h3>
+            <p>Use balanced equations and mole ratios to calculate masses.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="7-moles-balancing-equations.html">
+          <div class="card-top">
+            <span class="lesson-num">7</span>
+            <h3>Using Moles to Balance Equations</h3>
+            <p>Work backwards from mass data to balance equations using mole ratios.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+
+        <a class="card support" href="7-moles-balancing-equations-booklet.html">
+          <div class="card-top">
+            <span class="lesson-num">7</span>
+            <h3>Using Moles to Balance Equations — Booklet</h3>
+            <p>Booklet-style support for practising mole ratio equation problems.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Booklet</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="8-limiting-and-excess-reactants.html">
+          <div class="card-top">
+            <span class="lesson-num">8</span>
+            <h3>Limiting &amp; Excess Reactants</h3>
+            <p>Identify the reactant that runs out first and limits product formation.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+
+        <a class="card support" href="8-limiting-reactants-worksheet.html">
+          <div class="card-top">
+            <span class="lesson-num">8</span>
+            <h3>Limiting Reactants Worksheet Support</h3>
+            <p>Guided worksheet support for practising limiting reactant questions.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Support</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="8-limiting-reactants-lesson.html">
+          <div class="card-top">
+            <span class="lesson-num">8</span>
+            <h3>Limiting Reactants Lesson</h3>
+            <p>Interactive lesson version for teaching limiting and excess reactants.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Lesson</span><span>Open →</span></div>
+        </a>
+
+        <a class="card support" href="8-limiting-reactants-lesson-booklet.html">
+          <div class="card-top">
+            <span class="lesson-num">8</span>
+            <h3>Limiting Reactants Lesson Booklet</h3>
+            <p>Printable or booklet-style companion to the limiting reactants lesson.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Booklet</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="9-triple-titration.html">
+          <div class="card-top">
+            <span class="lesson-num">9</span>
+            <h3>TRIPLE Titration</h3>
+            <p>Triple-only titration calculations and required practical links.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Triple</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="10-percentage-yield.html">
+          <div class="card-top">
+            <span class="lesson-num">10</span>
+            <h3>Percentage Yield</h3>
+            <p>Compare actual yield with theoretical yield using percentage yield.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="11-atom-economy.html">
+          <div class="card-top">
+            <span class="lesson-num">11</span>
+            <h3>Atom Economy</h3>
+            <p>Calculate atom economy and link calculations to sustainability.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+
+        <a class="card higher" href="12-gas-volumes.html">
+          <div class="card-top">
+            <span class="lesson-num">12</span>
+            <h3>Gas Volumes</h3>
+            <p>Use gas volume relationships in chemical calculation questions.</p>
+          </div>
+          <div class="card-bottom"><span class="tag">Higher</span><span>Open →</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Interactive practice and test review</h2>
+          <p>Use these to consolidate learning, revise or correct assessment work.</p>
+        </div>
+      </div>
+
+      <div class="feature-panel">
+        <div class="feature-box">
+          <h3>Concentration Simulation</h3>
+          <p>Explore how changing mass of solute and volume of solvent affects concentration.</p>
+          <a class="button-link" href="concentration-simulation.html">Open simulation →</a>
+        </div>
+
+        <div class="feature-box">
+          <h3>Test model answers</h3>
+          <p>Review worked answers, mark breakdowns, explanations and common mistakes.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <a class="button-link" href="foundation-test.html">Foundation test →</a>
+            <a class="button-link" href="higher-test.html">Higher test →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 KS4 Science. All rights reserved.</p>
+    </footer>
   </div>
-
-  <footer>
-    <p>&copy; 2025 KS4 Science. All rights reserved.</p>
-  </footer>
-
 </body>
 </html>
