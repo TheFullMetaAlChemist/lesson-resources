@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Year 7 Summer Exam Hub</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --assessment-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      --biology-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --chemistry-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --physics-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-bg: #0f0f23;
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --text-primary: #1a1a2e;
+      --text-secondary: #5f6675;
+      --shadow-heavy: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark-bg);
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.2) 0%, transparent 50%);
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-weight: 600;
+      background: rgba(255,255,255,0.1);
+      padding: 0.75rem 1.25rem;
+      border-radius: 999px;
+      transition: 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    .logo {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 800;
+      background: var(--assessment-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.78);
+      max-width: 750px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+
+    .intro-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .intro-card h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .intro-card p {
+      color: rgba(255,255,255,0.78);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 2rem;
+    }
+
+    .resource-card {
+      background: var(--card-bg);
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 24px;
+      padding: 2.25rem;
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-heavy);
+      transition: all 0.35s ease;
+    }
+
+    .resource-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      background: white;
+    }
+
+    .resource-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: var(--assessment-gradient);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+    }
+
+    .resource-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .resource-card.biology::before { background: var(--biology-gradient); }
+    .resource-card.chemistry::before { background: var(--chemistry-gradient); }
+    .resource-card.physics::before { background: var(--physics-gradient); }
+
+    .badge {
+      align-self: center;
+      background: rgba(102,126,234,0.12);
+      color: #667eea;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+    }
+
+    .icon {
+      width: 78px;
+      height: 78px;
+      border-radius: 20px;
+      background: var(--assessment-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      transition: all 0.35s ease;
+    }
+
+    .resource-card:hover .icon {
+      transform: rotate(8deg) scale(1.08);
+    }
+
+    .resource-card.biology .icon { background: var(--biology-gradient); }
+    .resource-card.chemistry .icon { background: var(--chemistry-gradient); }
+    .resource-card.physics .icon { background: var(--physics-gradient); }
+
+    .resource-card h3 {
+      font-size: 1.45rem;
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .resource-card p {
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.6;
+      flex-grow: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .button {
+      display: block;
+      text-align: center;
+      padding: 0.9rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      color: #1a1a2e;
+      background: var(--assessment-gradient);
+      margin-top: auto;
+    }
+
+    .biology .button { background: var(--biology-gradient); }
+    .chemistry .button { background: var(--chemistry-gradient); color: white; }
+    .physics .button { background: var(--physics-gradient); color: white; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255,255,255,0.65);
+      background: rgba(0,0,0,0.25);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 700px) {
+      main {
+        margin: 2.5rem auto;
+        padding: 0 1rem;
+      }
+
+      .intro-card {
+        padding: 2rem;
+      }
+
+      .resource-card {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="../../index.html" class="back-link">← Back to KS3 Science Hub</a>
+    <h1 class="logo">Year 7 Summer Exam</h1>
+    <p class="subtitle">
+      Revision resources, model answers, explanations and exam support for the Year 7 Science Summer Exam.
+    </p>
+  </header>
+
+  <main>
+    <section class="intro-card">
+      <h2>Exam Revision Hub</h2>
+      <p>
+        Use this page to access the resources that will help you prepare for the Year 7 Summer Exam.
+        Start with the model answers to understand what strong answers look like, then use the other
+        resources to check your understanding and practise key skills.
+      </p>
+    </section>
+
+    <section class="resources-grid">
+
+      <a href="model-answers.html" class="resource-card">
+        <div class="badge">Main Resource</div>
+        <div class="icon">✅</div>
+        <h3>Model Answers, Explanations & Exam Tips</h3>
+        <p>
+          Worked answers for the exam questions, with clear explanations, mark breakdowns,
+          common mistakes and exam tips to help you improve.
+        </p>
+        <div class="button">Open Model Answers</div>
+      </a>
+
+      <a href="revision-checklist.html" class="resource-card biology">
+        <div class="badge">Revision</div>
+        <div class="icon">📋</div>
+        <h3>Revision Checklist</h3>
+        <p>
+          Check the key Biology, Chemistry and Physics content you need to know before the exam.
+        </p>
+        <div class="button">Open Checklist</div>
+      </a>
+
+      <a href="diagnostic-quiz.html" class="resource-card chemistry">
+        <div class="badge">Quiz</div>
+        <div class="icon">🧠</div>
+        <h3>Diagnostic Quiz</h3>
+        <p>
+          Test your knowledge and identify the topics you need to revise most carefully.
+        </p>
+        <div class="button">Start Quiz</div>
+      </a>
+
+      <a href="exam-skills.html" class="resource-card physics">
+        <div class="badge">Skills</div>
+        <div class="icon">✍️</div>
+        <h3>Exam Skills</h3>
+        <p>
+          Practise using key words, interpreting graphs, reading questions carefully and writing better science answers.
+        </p>
+        <div class="button">Practise Skills</div>
+      </a>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 KS3 Science. Year 7 Summer Exam revision resources.</p>
+  </footer>
+</body>
+</html>
