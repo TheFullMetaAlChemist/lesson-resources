@@ -5,144 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calcium Oxide Method Resource</title>
   <style>
-    :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --muted: #f8fafc;
-      --text: #0f172a;
-      --sub: #475569;
-      --border: #e2e8f0;
-      --dark: #0f172a;
-      --green: #dcfce7;
-      --amber: #fef3c7;
+    :root{
+      --bg:#f1f5f9;--card:#ffffff;--soft:#f8fafc;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--green:#dcfce7;--amber:#fef3c7;--dark:#0f172a;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px; }
-    .top { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 16px; }
-    .kicker { font-size: 14px; color: #64748b; font-weight: 700; }
-    h1 { margin: 4px 0 4px; font-size: clamp(28px, 4vw, 44px); line-height: 1.1; }
-    .subtitle { margin: 0; color: var(--sub); font-size: 17px; }
-    .progressBox { background: white; border-radius: 18px; padding: 14px 18px; box-shadow: 0 1px 4px #0001; text-align: center; min-width: 100px; }
-    .progressNum { font-size: 28px; font-weight: 800; }
-    .progressLabel { color: #64748b; font-size: 12px; }
-    .bar { height: 12px; background: white; border-radius: 999px; overflow: hidden; margin: 14px 0 20px; }
-    .barInner { height: 100%; background: var(--dark); width: 0%; transition: width .25s ease; }
-    .card { background: white; border-radius: 28px; box-shadow: 0 1px 6px #0001; padding: clamp(20px, 3vw, 34px); min-height: 500px; }
-    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
-    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .panel { background: var(--muted); border-radius: 20px; padding: 20px; }
-    .borderPanel { border: 1px solid var(--border); border-radius: 20px; padding: 20px; background: white; }
-    .step { background: var(--muted); border-radius: 18px; padding: 16px 18px; margin: 12px 0; font-size: 19px; }
-    .bigText { font-size: 19px; line-height: 1.65; }
-    .modelList { font-size: 18px; line-height: 1.55; }
-    .modelList li { margin-bottom: 12px; padding-left: 6px; }
-    .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
-    button, .btn {
-      border: 1px solid var(--border);
-      background: white;
-      color: var(--text);
-      border-radius: 12px;
-      padding: 10px 15px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    button.primary { background: var(--dark); color: white; border-color: var(--dark); }
-    button:disabled { opacity: 0.35; cursor: not-allowed; }
-    .marks { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
-    .markBtn { width: 46px; height: 46px; padding: 0; }
-    .markBtn.selected { background: var(--dark); color: white; border-color: var(--dark); }
-    .feedback { margin-top: 12px; padding: 12px; border-radius: 14px; font-size: 14px; }
-    .good { background: var(--green); }
-    .warn { background: var(--amber); }
-    .rubricGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .tickBtn, .checkBtn {
-      width: 100%;
-      text-align: left;
-      background: white;
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-    .tickBtn.active, .checkBtn.active { background: var(--green); }
-    .tickGrid { display: grid; gap: 8px; margin-top: 12px; }
-    .revealContent { display: none; margin-top: 14px; }
-    .revealContent.open { display: block; }
-    textarea {
-      width: 100%;
-      min-height: 90px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      font: inherit;
-      resize: vertical;
-      background: white;
-    }
-    .finalBox { min-height: 280px; }
-    input.blank {
-      display: inline-block;
-      width: 130px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 8px;
-      text-align: center;
-      font: inherit;
-      margin: 0 4px;
-    }
-    .gapText { font-size: 19px; line-height: 2.4; }
-    .pill { display: inline-block; background: white; border-radius: 12px; padding: 10px 12px; margin: 4px; box-shadow: 0 1px 3px #0001; }
-    .expected.yes { color: #15803d; font-weight: 800; }
-    .expected.no { color: #64748b; }
-    svg { max-width: 100%; }
-    .equipmentTitle { font-weight: 800; font-size: 19px; margin-bottom: 12px; }
-    .muted { color: var(--sub); }
-    .taskCheck { display: flex; gap: 10px; align-items: center; background: var(--muted); border-radius: 12px; padding: 12px; font-weight: 700; }
-    .taskCheck input { transform: scale(1.2); }
-    .footerCount { color: #64748b; font-size: 14px; }
-    @media (max-width: 800px) {
-      .wrap { padding: 16px; }
-      .grid2, .grid3, .rubricGrid { grid-template-columns: 1fr; }
-      .progressBox { display: none; }
-      .card { min-height: auto; }
-    }
-    @media print {
-      body { background: white; }
-      .nav, .bar, .progressBox { display: none; }
-      .wrap { max-width: none; padding: 0; }
-      .card { box-shadow: none; border: none; min-height: auto; }
-      button { display: none; }
-      .revealContent { display: block !important; }
-      textarea { min-height: 120px; }
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:1150px;margin:0 auto;padding:28px 18px 36px;}
+    .top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:16px;}
+    .tag{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+    h1{font-size:38px;line-height:1.1;margin:0 0 8px;}
+    .subtitle{color:var(--muted);font-size:17px;margin:0;}
+    .progress-card{background:white;border-radius:20px;padding:13px 18px;box-shadow:0 1px 4px rgba(15,23,42,.08);text-align:center;min-width:100px;}
+    .progress-card .num{font-size:28px;font-weight:800}.progress-card .small{font-size:12px;color:var(--muted)}
+    .bar{height:12px;background:white;border-radius:99px;overflow:hidden;margin-bottom:20px;}.bar-inner{height:100%;background:var(--dark);width:10%;transition:.25s}
+    .main-card{background:var(--card);border-radius:28px;padding:28px;box-shadow:0 1px 6px rgba(15,23,42,.1);min-height:520px;}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .box{background:var(--soft);border-radius:20px;padding:20px}.outline{border:1px solid var(--border);border-radius:20px;padding:20px;background:#fff}.shadow{box-shadow:0 1px 4px rgba(15,23,42,.06)}
+    .lead{font-size:19px;line-height:1.55}.bold{font-weight:800}.section-title{font-size:21px;font-weight:800;margin-bottom:14px;display:flex;gap:8px;align-items:center}.muted{color:var(--muted)}
+    ul{line-height:1.8}.steps{display:flex;flex-direction:column;gap:14px}.step{background:var(--soft);border-radius:18px;padding:16px;font-size:19px;line-height:1.45}
+    ol.model{font-size:19px;line-height:1.55;margin:0;padding-left:28px}.model li{margin-bottom:12px;padding-left:8px}.check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.check-item{background:white;border-radius:13px;padding:12px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
+    button{font:inherit}.btn{border:0;background:var(--dark);color:#fff;padding:11px 16px;border-radius:13px;cursor:pointer;font-weight:700}.btn:disabled{opacity:.4;cursor:not-allowed}.btn.outline-btn{background:white;color:var(--text);border:1px solid var(--border)}.btn.small{padding:9px 12px;font-size:14px}.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px}.slide-count{font-size:14px;color:var(--muted)}
+    .reveal{margin-top:16px;border:1px solid var(--border);border-radius:18px;padding:15px}.hidden{display:none}.rubric{margin:20px 0;border:1px solid var(--border);border-radius:20px;padding:20px;background:white}.rubric-inner{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.evidence button,.final-check button{width:100%;text-align:left;border:1px solid var(--border);background:white;border-radius:12px;padding:10px;cursor:pointer}.evidence button.active,.final-check button.active{background:var(--green);font-weight:700}.score-msg{margin-top:12px;border-radius:12px;padding:12px;font-size:14px;font-weight:700}.good{background:var(--green)}.warn{background:var(--amber)}
+    .marks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.mark-btn{width:46px;height:46px;border-radius:13px;border:1px solid var(--border);background:white;cursor:pointer;font-weight:800}.mark-btn.active{background:var(--dark);color:white}.answer-box{background:var(--soft);border-radius:18px;padding:20px;font-size:19px;line-height:1.5;margin-bottom:16px}.gap-text{font-size:19px;line-height:2.4}.gap-text input{width:130px;border:1px solid var(--border);border-radius:10px;padding:7px;text-align:center;font-size:16px}.textarea{width:100%;min-height:300px;border:1px solid var(--border);border-radius:18px;padding:16px;font-size:16px;resize:vertical}.final-check{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.svg-wrap{display:flex;justify-content:center}.icon{opacity:.65;font-size:20px;margin-left:5px}.expected .yes{color:#15803d;font-weight:800}.expected .no{color:#64748b}
+    @media(max-width:800px){.grid-2,.grid-3,.rubric-inner,.check-grid,.final-check{grid-template-columns:1fr}.top{display:block}.progress-card{display:none}h1{font-size:28px}.main-card{padding:18px}.wrap{padding:18px 12px}}
+    @media print{.nav,.bar,.progress-card,.btn{display:none!important}body{background:white}.wrap{max-width:none;padding:0}.main-card{box-shadow:none;border:0}.slide{display:block!important;page-break-after:always}.hidden{display:block}.reveal{border:1px solid #ccc}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
       <div>
-        <div class="kicker">GCSE Chemistry Practical Planning</div>
+        <div class="tag">GCSE Chemistry Practical Planning</div>
         <h1 id="title"></h1>
-        <p class="subtitle" id="subtitle"></p>
+        <p id="subtitle" class="subtitle"></p>
       </div>
-      <div class="progressBox">
-        <div class="progressNum" id="progressNum">0%</div>
-        <div class="progressLabel">complete</div>
-      </div>
+      <div class="progress-card"><div id="percent" class="num">10%</div><div class="small">complete</div></div>
     </div>
-    <div class="bar"><div class="barInner" id="barInner"></div></div>
-    <main class="card" id="content"></main>
+    <div class="bar"><div id="bar" class="bar-inner"></div></div>
+    <div class="main-card" id="content"></div>
     <div class="nav">
-      <button id="backBtn" onclick="go(-1)">← Back</button>
-      <div class="footerCount" id="count"></div>
-      <button id="nextBtn" class="primary" onclick="go(1)">Next →</button>
+      <button class="btn outline-btn" id="back">‹ Back</button>
+      <div class="slide-count" id="count"></div>
+      <button class="btn" id="next">Next ›</button>
     </div>
   </div>
 
@@ -169,92 +73,56 @@ const examinerReasons = [
   ["Step 10", "States control variables so the investigation is a fair test."]
 ];
 const slides = [
-  {title:"Mastering 6-Mark Practical Methods", subtitle:"Calcium oxide + water: planning a method", type:"intro"},
-  {title:"Step 1: Identify the variables", subtitle:"Before writing the method, work out what changes, what is measured, and what must stay the same.", type:"variables"},
-  {title:"Step 2: Choose the equipment", subtitle:"A strong method names the apparatus and explains why key equipment is used.", type:"equipment"},
-  {title:"Step 3: Build the method", subtitle:"Copy each step carefully. Every sentence should earn marks.", type:"build1"},
-  {title:"Step 4: Finish the method", subtitle:"Add repeats, means and control variables to move towards full marks.", type:"build2"},
-  {title:"Full-mark model answer", subtitle:"Use this as your copied reference version.", type:"model"},
-  {title:"Mark Student Answer A", subtitle:"Award a mark, then reveal the examiner comments.", type:"markA"},
-  {title:"Recover the Lost Marks", subtitle:"Identify exactly what is missing from the answer.", type:"recoverA"},
-  {title:"Mark Student Answer B", subtitle:"This answer is better, but still not full marks.", type:"markB"},
-  {title:"Method Surgery", subtitle:"Fill in the missing parts from memory.", type:"surgery"},
-  {title:"Final Challenge", subtitle:"Now write the method yourself without using the copied full version.", type:"final"}
+ {title:"Mastering 6-Mark Practical Methods", subtitle:"Calcium oxide + water: planning a method", type:"intro"},
+ {title:"Step 1: Identify the variables", subtitle:"Before writing the method, work out what changes, what is measured, and what must stay the same.", type:"variables"},
+ {title:"Step 2: Choose the equipment", subtitle:"A strong method names the apparatus and explains why key equipment is used.", type:"equipment"},
+ {title:"Step 3: Build the method", subtitle:"Copy each step carefully. Every sentence should earn marks.", type:"build1"},
+ {title:"Step 4: Finish the method", subtitle:"Add repeats, means and control variables to move towards full marks.", type:"build2"},
+ {title:"Full-mark model answer", subtitle:"Use this as your copied reference version.", type:"model"},
+ {title:"Mark Student Answer A", subtitle:"Award a mark, then reveal the examiner comments.", type:"markA"},
+ {title:"Mark Student Answer B", subtitle:"This answer is better, but still not full marks.", type:"markB"},
+ {title:"Method Surgery", subtitle:"Fill in the missing parts from memory.", type:"surgery"},
+ {title:"Final Challenge", subtitle:"Now write the method yourself without using the copied full version.", type:"final"}
 ];
 let index = 0;
-const state = { marks:{}, ticks:{}, gaps:Array(9).fill(""), finalChecks:[] };
-
-function iconFor(i){ return i===0?' ⚗️':i===1?' 🌡️':i===2?' ⚖️':i===5?' 🧮':i===7?' 🔁':''; }
-function reveal(label, html){ const id='r'+Math.random().toString(36).slice(2); return `<div class="borderPanel" style="margin-top:16px"><button onclick="toggleReveal('${id}', this)">${label}</button><div id="${id}" class="revealContent">${html}</div></div>`; }
-function toggleReveal(id, btn){ const el=document.getElementById(id); el.classList.toggle('open'); btn.textContent = el.classList.contains('open') ? 'Hide' : btn.getAttribute('data-label') || btn.textContent; }
-function setMark(slideType, mark, low, high){ state.marks[slideType]=mark; render(); setTimeout(()=>{ const m=document.getElementById('markFeedback'); if(m) m.scrollIntoView({block:'nearest'}); }, 0); }
-function toggleTick(group, item){ state.ticks[group] = state.ticks[group] || []; const arr=state.ticks[group]; const i=arr.indexOf(item); if(i>=0) arr.splice(i,1); else arr.push(item); render(); }
-function suggestedBand(count){ if(count<=3) return '1–2 marks'; if(count<=6) return '3–4 marks'; if(count<=8) return '5 marks'; return '6 marks'; }
-function markingRubric(group, expectedTicks){
-  const features=["Volume of water stated","Mass of calcium oxide stated","Initial temperature recorded","Highest temperature recorded","Temperature change calculated","Different masses tested","Control variables included","Repeats included","Mean calculated"];
-  const checked=state.ticks[group]||[];
-  return `<div class="borderPanel" style="margin:20px 0">
-    <h3>☑ Student marking rubric</h3>
-    <div class="rubricGrid">
-      <div class="panel"><b>Mark band guide</b>
-        <p><b>1–2 marks:</b> Basic idea only. Mentions water, calcium oxide or temperature, but lacks detail.</p>
-        <p><b>3–4 marks:</b> Some scientific detail. Includes measurements or different masses, but misses key reliability or fair test details.</p>
-        <p><b>5 marks:</b> Nearly complete. Clear method, but one important feature is missing.</p>
-        <p><b>6 marks:</b> Complete, clear, repeatable method with controls, repeats and mean.</p>
-      </div>
-      <div class="panel"><b>Tick the evidence you can find</b>
-        <div class="tickGrid">${features.map(f=>`<button class="tickBtn ${checked.includes(f)?'active':''}" onclick="toggleTick('${group}','${f}')">${checked.includes(f)?'✓':'○'} ${f}</button>`).join('')}</div>
-        <div class="pill" style="margin-top:12px"><b>Evidence ticked:</b> ${checked.length}/9 → suggested band: ${suggestedBand(checked.length)}</div>
-        ${reveal('Show expected evidence', features.map(f=>`<div class="expected ${expectedTicks.includes(f)?'yes':'no'}">${expectedTicks.includes(f)?'✓':'✗'} ${f}</div>`).join(''))}
-      </div>
-    </div>
-  </div>`;
+const state = {};
+function icon(name){ const icons={flask:"⚗️",trophy:"🏆",pen:"✍️",beaker:"🧪",thermo:"🌡️",scale:"⚖️",calc:"🧮",repeat:"🔁",list:"☑️"}; return icons[name]||""; }
+function reveal(label, html){ const id='rev_'+Math.random().toString(36).slice(2); return `<div class="reveal"><button class="btn outline-btn small" onclick="toggleReveal('${id}',this)">👁 ${label}</button><div id="${id}" class="hidden">${html}</div></div>`; }
+function toggleReveal(id, btn){ const el=document.getElementById(id); el.classList.toggle('hidden'); btn.textContent = el.classList.contains('hidden') ? '👁 '+btn.textContent.replace('🙈 Hide','').replace('👁 ','') : '🙈 Hide'; }
+function equipmentDiagram(){return `<div class="grid-2"><div class="outline shadow"><div class="section-title">Calorimetry setup</div><div class="svg-wrap"><svg viewBox="0 0 360 260" style="height:260px;width:100%;max-width:430px"><line x1="180" y1="20" x2="180" y2="138" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><rect x="171" y="18" width="18" height="130" rx="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="180" cy="155" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M90 110 L270 110 L245 230 L115 230 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M115 165 C150 150 210 180 245 162" fill="none" stroke="currentColor" stroke-width="3"/><line x1="235" y1="72" x2="205" y2="122" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><text x="206" y="58" font-size="18" font-weight="700">stir</text><text x="35" y="44" font-size="18" font-weight="700">thermometer</text><line x1="140" y1="42" x2="170" y2="42" stroke="currentColor" stroke-width="2"/><text x="82" y="252" font-size="18" font-weight="700">polystyrene cup</text></svg></div></div><div class="outline shadow"><div class="section-title">Why this equipment?</div><p><b>Measuring cylinder:</b> measures the volume of water.</p><p><b>Balance:</b> measures the mass of calcium oxide.</p><p><b>Thermometer:</b> measures initial and highest temperature.</p><p><b>Polystyrene cup:</b> reduces heat loss to the surroundings.</p></div></div>`}
+function markingRubric(id, expected){
+ const features=["Volume of water stated","Mass of calcium oxide stated","Initial temperature recorded","Highest temperature recorded","Temperature change calculated","Different masses tested","Control variables included","Repeats included","Mean calculated"];
+ state[id]=state[id]||{ticks:[],mark:null};
+ return `<div class="rubric"><div class="section-title">${icon('list')} Student marking rubric</div><div class="rubric-inner"><div class="box"><b>Mark band guide</b><p><b>1–2 marks:</b> Basic idea only. Mentions water, calcium oxide or temperature, but lacks detail.</p><p><b>3–4 marks:</b> Some scientific detail. Includes measurements or different masses, but misses key reliability or fair test details.</p><p><b>5 marks:</b> Nearly complete. Clear method, but one important feature is missing.</p><p><b>6 marks:</b> Complete, clear, repeatable method with controls, repeats and mean.</p></div><div class="box evidence"><b>Tick the evidence you can find</b><div style="margin-top:10px;display:grid;gap:8px">${features.map(f=>`<button onclick="toggleEvidence('${id}','${f.replace(/'/g,"\\'")}')" class="${state[id].ticks.includes(f)?'active':''}">✓ ${f}</button>`).join('')}</div><div class="score-msg good" id="${id}_band">Evidence ticked: ${state[id].ticks.length}/9 → suggested band: ${suggestedBand(state[id].ticks.length)}</div>${reveal('Show expected evidence', `<div class="expected">${features.map(f=>`<div class="${expected.includes(f)?'yes':'no'}">${expected.includes(f)?'✓':'✗'} ${f}</div>`).join('')}</div>`)}</div></div></div>`;
 }
-function markSelector(group, low, high){
-  const mark = state.marks[group];
-  const ok = mark>=low && mark<=high;
-  return `<div><b>Your final mark:</b><div class="marks">${[1,2,3,4,5,6].map(m=>`<button class="markBtn ${mark===m?'selected':''}" onclick="setMark('${group}',${m},${low},${high})">${m}</button>`).join('')}</div>${mark?`<div id="markFeedback" class="feedback ${ok?'good':'warn'}">${ok?'Good judgement — that mark is in the expected range.':'Think carefully: has the answer included quantities, repeats, means and controls? Use the rubric above to check.'}</div>`:''}</div>`;
-}
-function equipment(){ return `<div class="grid2"><div class="borderPanel"><div class="equipmentTitle">Calorimetry setup</div><svg viewBox="0 0 360 260"><line x1="180" y1="20" x2="180" y2="138" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><rect x="171" y="18" width="18" height="130" rx="8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="180" cy="155" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M90 110 L270 110 L245 230 L115 230 Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M115 165 C150 150 210 180 245 162" fill="none" stroke="currentColor" stroke-width="3"/><line x1="235" y1="72" x2="205" y2="122" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><text x="206" y="58" font-size="18" font-weight="700">stir</text><text x="35" y="44" font-size="18" font-weight="700">thermometer</text><line x1="140" y1="42" x2="170" y2="42" stroke="currentColor" stroke-width="2"/><text x="82" y="252" font-size="18" font-weight="700">polystyrene cup</text></svg></div><div class="borderPanel"><div class="equipmentTitle">Why this equipment?</div><p><b>Measuring cylinder:</b> measures the volume of water.</p><p><b>Balance:</b> measures the mass of calcium oxide.</p><p><b>Thermometer:</b> measures initial and highest temperature.</p><p><b>Polystyrene cup:</b> reduces heat loss to the surroundings.</p></div></div>`; }
-function gapFill(){
-  const answers=["50","polystyrene","initial","1.0","highest","temperature","masses","three","mean"];
-  const score=state.gaps.reduce((t,v,i)=>t+(v.trim().toLowerCase()===answers[i]?1:0),0);
-  const blank=i=>`<input class="blank" value="${state.gaps[i]||''}" oninput="state.gaps[${i}]=this.value">`;
-  return `<div class="panel gapText">Measure ${blank(0)} cm³ of water into a ${blank(1)} cup. Record the ${blank(2)} temperature. Add ${blank(3)} g of calcium oxide. Record the ${blank(4)} temperature reached. Calculate the ${blank(5)} change. Repeat using different ${blank(6)} of calcium oxide. Repeat each experiment ${blank(7)} times and calculate a ${blank(8)}.</div><p><button class="primary" onclick="alert('Score: ${score}/9')">Check score</button> <button onclick="state.gaps=Array(9).fill(''); render();">Reset</button></p>${reveal('Reveal answers','<p>50, polystyrene, initial, 1.0, highest, temperature, masses, three, mean</p>')}`;
-}
-function checklist(){
-  const items=["Independent variable","Dependent variable","Measured volume of water","Measured mass of calcium oxide","Initial temperature","Highest temperature","Temperature change calculation","Different masses","Repeats","Mean","Control variables"];
-  return `<div class="grid2">${items.map(item=>`<button class="checkBtn ${state.finalChecks.includes(item)?'active':''}" onclick="toggleFinal('${item}')">${state.finalChecks.includes(item)?'✓':'○'} ${item}</button>`).join('')}</div>`;
-}
-function toggleFinal(item){ const a=state.finalChecks; const i=a.indexOf(item); if(i>=0) a.splice(i,1); else a.push(item); render(); }
-function contentFor(slide){
-  switch(slide.type){
-    case 'intro': return `<div class="grid2"><div><div class="panel"><h3>⚗️ Exam question</h3><p class="bigText">When solid calcium oxide is added to water, the temperature of the reaction mixture changes.</p><p class="bigText"><b>Plan a method to investigate how changing the mass of calcium oxide affects the temperature change of the reaction mixture. [6 marks]</b></p></div><div class="panel" style="margin-top:16px"><b>Lesson goal</b><p>Build a full-mark method, mark weaker examples, recover missing marks, then write your own from memory.</p></div></div><div class="borderPanel"><h3>🏆 What examiners reward</h3><ul><li>Clear measurements and quantities</li><li>A fair test with control variables</li><li>Initial and highest temperature readings</li><li>Temperature change calculation</li><li>Different masses of calcium oxide</li><li>Repeats and a mean</li></ul></div></div>`;
-    case 'variables': return `<div class="grid3">${[["Independent variable","Mass of calcium oxide","The thing we change."],["Dependent variable","Temperature change","The thing we measure."],["Control variables","Volume of water, starting temperature, same cup, same thermometer, same stirring time","The things we keep the same."]].map(v=>`<div class="panel"><h3>${v[0]}</h3><p class="bigText"><b>${v[1]}</b></p><p class="muted">${v[2]}</p></div>`).join('')}</div>`;
-    case 'equipment': return equipment();
-    case 'build1': return ['Measure 50 cm³ of water into a polystyrene cup.','Measure and record the initial temperature of the water.','Measure 1.0 g of calcium oxide using a balance.','Add the calcium oxide to the water and stir the mixture.','Record the highest temperature reached.'].map((s,i)=>`<div class="step"><b>Step ${i+1}:</b> ${s}</div>`).join('');
-    case 'build2': return ['Calculate the temperature change by subtracting the initial temperature from the highest temperature.','Repeat using different masses, such as 2 g, 3 g, 4 g and 5 g.','Repeat each mass three times.','Calculate a mean temperature change.','Keep the volume of water, starting temperature and apparatus used the same throughout.'].map((s,i)=>`<div class="step"><b>Step ${i+6}:</b> ${s}</div>`).join('');
-    case 'model': return `<div class="panel"><h3>✍️ Copy this as numbered steps</h3><ol class="modelList">${perfectMethodSteps.map((s,i)=>`<li><b>${s}</b>${iconFor(i)}</li>`).join('')}</ol></div><div class="borderPanel" style="margin-top:18px"><h3>☑ Examiner checklist</h3>${["Quantity of water","Polystyrene cup","Initial temperature","Mass of calcium oxide","Highest temperature","Temperature change calculation","Different masses","Repeats","Mean","Control variables"].map(i=>`<span class="pill">☐ ${i}</span>`).join('')}</div>${reveal('Why this earns marks', examinerReasons.map(r=>`<div class="panel" style="margin:8px 0"><b>${r[0]}:</b> ${r[1]}</div>`).join(''))}`;
-    case 'markA': return `<div class="panel bigText">Put water into a cup. Add calcium oxide. Measure the temperature. Repeat with different amounts.</div>${markingRubric('markA',["Different masses tested"])}${markSelector('markA',1,2)}${reveal('Reveal examiner comments','<p><b>Likely mark: 1–2.</b></p><p>It mentions the basic idea, but it is missing quantities, initial temperature, highest temperature, temperature change calculation, control variables, repeats and a mean.</p>')}`;
-    case 'recoverA': return `<div class="panel bigText">Put water into a cup.<br><br>Add calcium oxide.<br><br>Measure the temperature.<br><br>Repeat with different amounts.</div><div class="borderPanel" style="margin-top:18px"><h3>Task 1: Tick the missing features</h3><div class="grid2">${["Volume of water","Mass of calcium oxide","Initial temperature","Highest temperature","Temperature change calculation","Control variables","Repeats","Mean"].map(i=>`<label class="taskCheck"><input type="checkbox"> ${i}</label>`).join('')}</div></div><div class="borderPanel" style="margin-top:18px"><h3>Task 2: Recover some marks</h3><p>Write one sentence that would add each missing feature.</p><textarea placeholder="Add a sentence giving the volume of water..."></textarea><textarea placeholder="Add a sentence explaining repeats..."></textarea><textarea placeholder="Add a sentence explaining how to calculate a mean..."></textarea></div>${reveal('Show examiner answer','<ul><li>Measure 50 cm³ of water into a polystyrene cup.</li><li>Measure 1.0 g of calcium oxide using a balance.</li><li>Record the initial temperature.</li><li>Record the highest temperature reached.</li><li>Calculate the temperature change.</li><li>Repeat each mass three times.</li><li>Calculate a mean.</li><li>Keep control variables the same.</li></ul>')}`;
-    case 'markB': return `<div class="panel bigText">Measure 50 cm³ of water into a cup. Measure the temperature. Add different masses of calcium oxide. Record the highest temperature.</div>${markingRubric('markB',["Volume of water stated","Highest temperature recorded","Different masses tested"])}${markSelector('markB',3,4)}${reveal('Reveal examiner comments','<p><b>Likely mark: 3–4.</b></p><p>It includes a volume of water, temperature measurement, different masses and highest temperature. It loses marks because it does not clearly calculate temperature change, include repeats, calculate a mean, or state control variables.</p>')}`;
-    case 'surgery': return gapFill();
-    case 'final': return `<div class="panel bigText"><b>Plan a method to investigate how changing the mass of calcium oxide affects the temperature change of the reaction mixture. [6 marks]</b></div><textarea class="finalBox" placeholder="Write your full method here without using the copied model answer..."></textarea><h3>Self-assessment checklist</h3>${checklist()}`;
-  }
-}
+function suggestedBand(count){ if(count<=3)return '1–2 marks'; if(count<=6)return '3–4 marks'; if(count<=8)return '5 marks'; return '6 marks';}
+function toggleEvidence(id, feature){ const arr=state[id].ticks; const i=arr.indexOf(feature); if(i>-1)arr.splice(i,1); else arr.push(feature); render(); }
+function markSelector(id, low, high){ state[id]=state[id]||{ticks:[],mark:null}; return `<div><b>Your final mark:</b><div class="marks">${[1,2,3,4,5,6].map(m=>`<button class="mark-btn ${state[id].mark===m?'active':''}" onclick="setMark('${id}',${m},${low},${high})">${m}</button>`).join('')}</div><div id="${id}_msg">${state[id].mark?markMsg(state[id].mark,low,high):''}</div></div>`; }
+function setMark(id,m,low,high){ state[id].mark=m; render(); }
+function markMsg(m,low,high){ const ok=m>=low&&m<=high; return `<div class="score-msg ${ok?'good':'warn'}">${ok?'Good judgement — that mark is in the expected range.':'Think carefully: has the answer included quantities, repeats, means and controls? Use the rubric above to check.'}</div>`; }
+function gapFill(){ const answers=["50","polystyrene","initial","1.0","highest","temperature","masses","three","mean"]; return `<div class="box gap-text">Measure ${blank(0)} cm³ of water into a ${blank(1)} cup. Record the ${blank(2)} temperature. Add ${blank(3)} g of calcium oxide. Record the ${blank(4)} temperature reached. Calculate the ${blank(5)} change. Repeat using different ${blank(6)} of calcium oxide. Repeat each experiment ${blank(7)} times and calculate a ${blank(8)}.</div><div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" onclick="checkGap()">Check score</button><button class="btn outline-btn" onclick="resetGap()">↻ Reset</button></div>${reveal('Reveal answers','<p>50, polystyrene, initial, 1.0, highest, temperature, masses, three, mean</p>')}`; }
+function blank(i){ return `<input id="gap${i}" autocomplete="off">`; }
+function checkGap(){ const answers=["50","polystyrene","initial","1.0","highest","temperature","masses","three","mean"]; let score=0; answers.forEach((a,i)=>{ const el=document.getElementById('gap'+i); if(el.value.trim().toLowerCase()===a)score++; }); alert('Score: '+score+'/9'); }
+function resetGap(){ for(let i=0;i<9;i++)document.getElementById('gap'+i).value=''; }
+function finalChecklist(){ const items=["Independent variable","Dependent variable","Measured volume of water","Measured mass of calcium oxide","Initial temperature","Highest temperature","Temperature change calculation","Different masses","Repeats","Mean","Control variables"]; state.finalChecks=state.finalChecks||[]; return `<div class="final-check">${items.map(item=>`<button class="${state.finalChecks.includes(item)?'active':''}" onclick="toggleFinal('${item.replace(/'/g,"\\'")}')">✓ ${item}</button>`).join('')}</div>`; }
+function toggleFinal(item){ const arr=state.finalChecks; const i=arr.indexOf(item); if(i>-1)arr.splice(i,1); else arr.push(item); render(); }
 function render(){
-  const slide=slides[index];
-  document.getElementById('title').textContent=slide.title;
-  document.getElementById('subtitle').textContent=slide.subtitle;
-  const progress=Math.round(((index+1)/slides.length)*100);
-  document.getElementById('progressNum').textContent=progress+'%';
-  document.getElementById('barInner').style.width=progress+'%';
-  document.getElementById('content').innerHTML=contentFor(slide);
-  document.getElementById('count').textContent=(index+1)+' / '+slides.length;
-  document.getElementById('backBtn').disabled=index===0;
-  document.getElementById('nextBtn').disabled=index===slides.length-1;
+ const s=slides[index]; document.getElementById('title').textContent=s.title; document.getElementById('subtitle').textContent=s.subtitle; const pct=Math.round(((index+1)/slides.length)*100); document.getElementById('percent').textContent=pct+'%'; document.getElementById('bar').style.width=pct+'%'; document.getElementById('count').textContent=(index+1)+' / '+slides.length; document.getElementById('back').disabled=index===0; document.getElementById('next').disabled=index===slides.length-1;
+ let html='';
+ if(s.type==='intro') html=`<div class="grid-2"><div><div class="box"><div class="section-title">${icon('flask')} Exam question</div><p class="lead">When solid calcium oxide is added to water, the temperature of the reaction mixture changes.</p><p class="lead bold">Plan a method to investigate how changing the mass of calcium oxide affects the temperature change of the reaction mixture. [6 marks]</p></div><div class="box" style="margin-top:18px"><b>Lesson goal</b><p>Build a full-mark method, mark weaker examples, then write your own from memory.</p></div></div><div class="outline"><div class="section-title">${icon('trophy')} What examiners reward</div><ul><li>Clear measurements and quantities</li><li>A fair test with control variables</li><li>Initial and highest temperature readings</li><li>Temperature change calculation</li><li>Different masses of calcium oxide</li><li>Repeats and a mean</li></ul></div></div>`;
+ if(s.type==='variables') html=`<div class="grid-3">${[["Independent variable","Mass of calcium oxide","The thing we change."],["Dependent variable","Temperature change","The thing we measure."],["Control variables","Volume of water, starting temperature, same cup, same thermometer, same stirring time","The things we keep the same."]].map(x=>`<div class="box"><h2>${x[0]}</h2><p class="lead bold">${x[1]}</p><p class="muted">${x[2]}</p></div>`).join('')}</div>`;
+ if(s.type==='equipment') html=equipmentDiagram();
+ if(s.type==='build1') html=`<div class="steps">${['Measure 50 cm³ of water into a polystyrene cup.','Measure and record the initial temperature of the water.','Measure 1.0 g of calcium oxide using a balance.','Add the calcium oxide to the water and stir the mixture.','Record the highest temperature reached.'].map((x,i)=>`<div class="step"><b>Step ${i+1}:</b> ${x}</div>`).join('')}</div>`;
+ if(s.type==='build2') html=`<div class="steps">${['Calculate the temperature change by subtracting the initial temperature from the highest temperature.','Repeat using different masses, such as 2 g, 3 g, 4 g and 5 g.','Repeat each mass three times.','Calculate a mean temperature change.','Keep the volume of water, starting temperature and apparatus used the same throughout.'].map((x,i)=>`<div class="step"><b>Step ${i+6}:</b> ${x}</div>`).join('')}</div>`;
+ if(s.type==='model') html=`<div class="box"><div class="section-title">${icon('pen')} Copy this as numbered steps</div><ol class="model">${perfectMethodSteps.map((x,i)=>`<li><b>${x}</b> ${i===0?icon('beaker'):i===1?icon('thermo'):i===2?icon('scale'):i===5?icon('calc'):i===7?icon('repeat'):''}</li>`).join('')}</ol></div><div class="outline" style="margin-top:18px"><div class="section-title">${icon('list')} Examiner checklist</div><div class="check-grid">${["Quantity of water","Polystyrene cup","Initial temperature","Mass of calcium oxide","Highest temperature","Temperature change calculation","Different masses","Repeats","Mean","Control variables"].map(x=>`<div class="check-item">☐ ${x}</div>`).join('')}</div></div>${reveal('Why this earns marks',examinerReasons.map(x=>`<div class="box" style="margin-bottom:8px"><b>${x[0]}:</b> ${x[1]}</div>`).join(''))}`;
+ if(s.type==='markA') html=`<div class="answer-box">Put water into a cup. Add calcium oxide. Measure the temperature. Repeat with different amounts.</div>${markingRubric('markA',["Different masses tested"])}${markSelector('markA',1,2)}${reveal('Reveal examiner comments','<p><b>Likely mark: 1–2.</b></p><p>It mentions the basic idea, but it is missing quantities, initial temperature, highest temperature, temperature change calculation, control variables, repeats and a mean.</p>')}`;
+ if(s.type==='markB') html=`<div class="answer-box">Measure 50 cm³ of water into a cup. Measure the temperature. Add different masses of calcium oxide. Record the highest temperature.</div>${markingRubric('markB',["Volume of water stated","Highest temperature recorded","Different masses tested"])}${markSelector('markB',3,4)}${reveal('Reveal examiner comments','<p><b>Likely mark: 3–4.</b></p><p>It includes a volume of water, temperature measurement, different masses and highest temperature. It loses marks because it does not clearly calculate temperature change, include repeats, calculate a mean, or state control variables.</p>')}`;
+ if(s.type==='surgery') html=gapFill();
+ if(s.type==='final') html=`<div class="box lead bold">Plan a method to investigate how changing the mass of calcium oxide affects the temperature change of the reaction mixture. [6 marks]</div><textarea class="textarea" placeholder="Write your full method here without using the copied model answer..."></textarea><div style="margin-top:18px">${finalChecklist()}</div>`;
+ document.getElementById('content').innerHTML=html;
 }
-function go(delta){ index=Math.max(0, Math.min(slides.length-1, index+delta)); render(); window.scrollTo({top:0, behavior:'smooth'}); }
+document.getElementById('back').onclick=()=>{ if(index>0){index--;render();} };
+document.getElementById('next').onclick=()=>{ if(index<slides.length-1){index++;render();} };
 render();
 </script>
 </body>
