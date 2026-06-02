@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Year 12 Chemistry — Reaction Rates & Equilibrium Model Answers</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --ink:#172033;
+      --muted:#5d6b82;
+      --brand:#2563eb;
+      --brand-dark:#1d4ed8;
+      --soft:#eaf1ff;
+      --line:#dbe3ef;
+      --success:#15803d;
+      --warn:#b45309;
+      --error:#b91c1c;
+      --purple:#6d28d9;
+      --shadow:0 12px 30px rgba(15,23,42,.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:linear-gradient(135deg,#eff6ff 0%,#f8fafc 45%,#fefce8 100%);
+      color:var(--ink);
+      line-height:1.55;
+    }
+
+    header{
+      padding:34px 28px 26px;
+      background:linear-gradient(135deg,#1e3a8a,#2563eb 60%,#7c3aed);
+      color:#fff;
+      box-shadow:var(--shadow);
+    }
+    .hero{
+      max-width:1180px;
+      margin:0 auto;
+    }
+    .eyebrow{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:800;
+      background:rgba(255,255,255,.16);
+      padding:7px 11px;
+      border-radius:999px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.4rem);
+      line-height:1.05;
+      letter-spacing:-.04em;
+    }
+    .subtitle{
+      max-width:880px;
+      margin:14px 0 0;
+      color:#eaf2ff;
+      font-size:1.05rem;
+    }
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:20px;
+    }
+    button,.button{
+      border:0;
+      border-radius:999px;
+      padding:10px 15px;
+      font-weight:800;
+      cursor:pointer;
+      background:#fff;
+      color:#1d4ed8;
+      box-shadow:0 8px 20px rgba(15,23,42,.16);
+      transition:.18s transform,.18s box-shadow,.18s background;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    button:hover,.button:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,23,42,.20)}
+    .ghost{
+      background:rgba(255,255,255,.14);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.28);
+    }
+
+    .layout{
+      max-width:1180px;
+      margin:26px auto 50px;
+      padding:0 18px;
+      display:grid;
+      grid-template-columns:280px minmax(0,1fr);
+      gap:22px;
+    }
+
+    nav{
+      position:sticky;
+      top:18px;
+      align-self:start;
+      background:rgba(255,255,255,.84);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(219,227,239,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .nav-title{
+      padding:16px 16px 10px;
+      font-weight:900;
+      color:#0f172a;
+    }
+    .nav-sub{
+      color:var(--muted);
+      font-size:.88rem;
+      padding:0 16px 12px;
+    }
+    .tabs{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:10px;
+    }
+    .tab-btn{
+      width:100%;
+      justify-content:flex-start;
+      box-shadow:none;
+      border-radius:14px;
+      color:#23324d;
+      background:transparent;
+      padding:11px 12px;
+      font-weight:850;
+      text-align:left;
+    }
+    .tab-btn:hover{background:#eef4ff; transform:none; box-shadow:none;}
+    .tab-btn.active{background:var(--brand); color:#fff;}
+    .score-card{
+      margin:10px;
+      padding:13px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    main{min-width:0}
+    .question-panel{
+      display:none;
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(219,227,239,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .question-panel.active{display:block; animation:fade .18s ease-out;}
+    @keyframes fade{from{opacity:.2; transform:translateY(4px)}to{opacity:1; transform:none}}
+
+    .panel-head{
+      padding:24px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(135deg,#fff,#eef4ff);
+    }
+    .panel-head h2{margin:0; font-size:1.65rem; letter-spacing:-.02em;}
+    .panel-head p{margin:8px 0 0; color:var(--muted)}
+    .question-stem{
+      margin-top:14px;
+      padding:14px 16px;
+      border-left:5px solid var(--brand);
+      background:#fff;
+      border-radius:14px;
+      color:#24334d;
+    }
+
+    .content{padding:22px;}
+    .subq{
+      margin:0 0 18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .subq-title{
+      padding:16px 18px;
+      background:#f8fafc;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      align-items:flex-start;
+    }
+    .subq-title h3{margin:0; font-size:1.18rem;}
+    .marks{
+      white-space:nowrap;
+      background:#dbeafe;
+      color:#1d4ed8;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:.82rem;
+      font-weight:900;
+    }
+    .subq-body{padding:18px;}
+
+    details{
+      margin:12px 0;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fbfdff;
+      overflow:hidden;
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:13px 15px;
+      font-weight:900;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"+"; font-size:1.3rem; color:var(--brand);}
+    details[open] summary::after{content:"−";}
+    .detail-content{padding:0 15px 15px; color:#26364f;}
+
+    .answer-box{
+      background:#ecfdf5;
+      border:1px solid #bbf7d0;
+      border-left:6px solid var(--success);
+      padding:14px 15px;
+      border-radius:14px;
+      margin:0 0 13px;
+    }
+    .mark-box{
+      background:#eff6ff;
+      border-left:6px solid var(--brand);
+      padding:14px 15px;
+      border-radius:14px;
+      margin:12px 0;
+    }
+    .mistake-box{
+      background:#fef2f2;
+      border-left:6px solid var(--error);
+      padding:14px 15px;
+      border-radius:14px;
+      margin:12px 0;
+    }
+    .tip-box{
+      background:#fffbeb;
+      border-left:6px solid var(--warn);
+      padding:14px 15px;
+      border-radius:14px;
+      margin:12px 0;
+    }
+    .explain-box{
+      background:#faf5ff;
+      border-left:6px solid var(--purple);
+      padding:14px 15px;
+      border-radius:14px;
+      margin:12px 0;
+    }
+
+    .label{
+      display:block;
+      font-weight:950;
+      margin-bottom:5px;
+      color:#0f172a;
+    }
+    ul,ol{padding-left:1.25rem}
+    li{margin:.25rem 0}
+    code,kbd{
+      background:#eef2ff;
+      padding:2px 5px;
+      border-radius:6px;
+      font-family:"SFMono-Regular", Consolas, monospace;
+    }
+    .equation{
+      display:block;
+      overflow-x:auto;
+      background:#0f172a;
+      color:#f8fafc;
+      border-radius:14px;
+      padding:13px 15px;
+      font-family:"Cambria Math","Times New Roman",serif;
+      font-size:1.08rem;
+      margin:12px 0;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin:12px 0;
+      overflow:hidden;
+      border-radius:14px;
+    }
+    th,td{border:1px solid var(--line); padding:10px; text-align:left; vertical-align:top;}
+    th{background:#eef4ff;}
+    .takeaways{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .takeaway{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px;
+    }
+
+    .footer-nav{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:0 22px 22px;
+    }
+    .footer-nav button{
+      background:#1d4ed8;
+      color:#fff;
+    }
+
+    @media(max-width:850px){
+      .layout{grid-template-columns:1fr;}
+      nav{position:static;}
+      .tabs{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}
+      .takeaways{grid-template-columns:1fr;}
+    }
+    @media print{
+      body{background:#fff;}
+      header,.hero-actions,nav,.footer-nav{display:none!important;}
+      .layout{display:block; margin:0; padding:0; max-width:none;}
+      .question-panel{display:block!important; box-shadow:none; border:0; page-break-after:always;}
+      .panel-head{background:#fff;}
+      details{break-inside:avoid;}
+      details:not([open]) .detail-content{display:block;}
+      details summary::after{display:none;}
+      .subq{break-inside:avoid;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div class="eyebrow">OCR Chemistry A • Year 12</div>
+      <h1>Reaction Rates & Equilibrium<br/>Model Answers</h1>
+      <p class="subtitle">Student-friendly model answers with mark breakdowns, explanations, common mistakes and exam tips. Use the tabs to move between questions.</p>
+      <div class="hero-actions">
+        <button onclick="window.print()">🖨️ Print / Save as PDF</button>
+        <button class="ghost" onclick="openAllDetails()">Expand all</button>
+        <button class="ghost" onclick="closeAllDetails()">Collapse all</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Question navigation">
+      <div class="nav-title">Question Navigation</div>
+      <div class="nav-sub">Click a question to view model answers.</div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="q1">Question 1<br><small>Catalysts & enthalpy</small></button>
+        <button class="tab-btn" data-tab="q2">Question 2<br><small>Rates graphs</small></button>
+        <button class="tab-btn" data-tab="q3">Question 3<br><small>Thiosulfate & Boltzmann</small></button>
+        <button class="tab-btn" data-tab="q4">Question 4<br><small>Haber equilibrium</small></button>
+        <button class="tab-btn" data-tab="q5">Question 5<br><small>Kc & pressure</small></button>
+        <button class="tab-btn" data-tab="summary">Summary<br><small>Key takeaways</small></button>
+      </div>
+      <div class="score-card"><strong>Study method:</strong> Try the question first, reveal the model answer, then use the common mistakes section to improve your response.</div>
+    </nav>
+
+    <main>
+      <section id="q1" class="question-panel active">
+        <div class="panel-head">
+          <h2>Question 1 — Catalytic Converters and Enthalpy Profiles</h2>
+          <p>Focus: exothermic enthalpy profiles, catalysts, heterogeneous catalysis and activation energy.</p>
+          <div class="question-stem">The catalytic converter speeds up the reaction between carbon monoxide and nitrogen monoxide: 2NO(g) + 2CO(g) → 2CO₂(g) + N₂(g), ΔH = −746 kJ mol⁻¹.</div>
+        </div>
+        <div class="content">
+          <article class="subq">
+            <div class="subq-title"><h3>1a(i) Draw an enthalpy profile and label ΔH</h3><span class="marks">2 marks</span></div>
+            <div class="subq-body">
+              <div class="answer-box"><span class="label">Model answer</span>The diagram should show reactants at a higher energy level than products. The curve should rise to a peak and then fall to the products. A downward arrow from reactants to products should be labelled ΔH.</div>
+              <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> products shown below reactants because the reaction is exothermic.</li><li><strong>1 mark:</strong> ΔH shown as a downward arrow from reactants to products.</li></ul></div></details>
+              <div class="explain-box"><span class="label">Key explanation</span>ΔH is negative, so energy is released to the surroundings. The products have less enthalpy than the reactants.</div>
+              <div class="mistake-box"><span class="label">Common mistakes</span>Drawing products above reactants, drawing ΔH upwards, or missing the activation energy peak.</div>
+              <div class="tip-box"><span class="label">Exam tip</span>Check the sign of ΔH before drawing. Negative ΔH means products lower than reactants.</div>
+            </div>
+          </article>
+
+          <article class="subq">
+            <div class="subq-title"><h3>1a(ii) Add a profile for no catalyst</h3><span class="marks">1 mark</span></div>
+            <div class="subq-body">
+              <div class="answer-box"><span class="label">Model answer</span>Draw a second curve with a higher activation energy peak. It should start at the same reactant level and end at the same product level. Label it “no catalyst”.</div>
+              <details open><summary>Why this gets the mark</summary><div class="detail-content">The uncatalysed pathway has a higher activation energy, but ΔH is unchanged.</div></details>
+              <div class="explain-box"><span class="label">Key explanation</span>A catalyst provides an alternative pathway with lower activation energy. It does not change the overall energy difference between reactants and products.</div>
+              <div class="mistake-box"><span class="label">Common mistakes</span>Changing the product energy level or changing the size/direction of ΔH.</div>
+              <div class="tip-box"><span class="label">Exam tip</span>Catalysts change the pathway, not the overall enthalpy change.</div>
+            </div>
+          </article>
+
+          <article class="subq">
+            <div class="subq-title"><h3>1a(iii) Homogeneous or heterogeneous catalysis?</h3><span class="marks">2 marks</span></div>
+            <div class="subq-body">
+              <div class="answer-box"><span class="label">Model answer</span>This is heterogeneous catalysis because the catalyst is in a different phase from the reactants. The catalyst is a solid metal, while the reactants are gases.</div>
+              <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> identifies heterogeneous catalysis.</li><li><strong>1 mark:</strong> explains that catalyst and reactants are in different phases/states.</li></ul></div></details>
+              <div class="explain-box"><span class="label">Key explanation</span>Homogeneous catalysis means catalyst and reactants are in the same phase. Heterogeneous catalysis means they are in different phases.</div>
+              <div class="mistake-box"><span class="label">Common mistakes</span>Saying homogeneous because the gases pass over or mix with the catalyst.</div>
+              <div class="tip-box"><span class="label">Exam tip</span>Use state symbols or physical states: solid catalyst + gaseous reactants = heterogeneous.</div>
+            </div>
+          </article>
+
+          <article class="subq">
+            <div class="subq-title"><h3>1b Why are catalytic converters less effective on short journeys?</h3><span class="marks">2 marks</span></div>
+            <div class="subq-body">
+              <div class="answer-box"><span class="label">Model answer</span>At the start of the journey, the catalytic converter is too cold. Only a small proportion of reactant molecules have energy greater than or equal to the activation energy, so there are fewer successful collisions.</div>
+              <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> temperature is too low at the start.</li><li><strong>1 mark:</strong> small proportion of molecules have enough energy to overcome activation energy.</li></ul></div></details>
+              <div class="explain-box"><span class="label">Key explanation</span>Catalytic converters work best once they have heated up. Low temperature reduces the proportion of successful collisions.</div>
+              <div class="mistake-box"><span class="label">Common mistakes</span>Saying the catalyst “has not started working”. The catalyst is present, but the reaction rate is low because the temperature is low.</div>
+              <div class="tip-box"><span class="label">Exam tip</span>For temperature and rate, link to activation energy and successful collisions.</div>
+            </div>
+          </article>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('summary')">← Summary</button><button onclick="showTab('q2')">Next: Question 2 →</button></div>
+      </section>
+
+      <section id="q2" class="question-panel">
+        <div class="panel-head">
+          <h2>Question 2 — Calcium Carbonate and Hydrochloric Acid Rate Graphs</h2>
+          <p>Focus: interpreting final gas volume, initial rate, concentration, temperature and limiting reactants.</p>
+          <div class="question-stem">Excess calcium carbonate reacts with hydrochloric acid. The volume of gas produced is measured until the reaction stops.</div>
+        </div>
+        <div class="content">
+          <article class="subq"><div class="subq-title"><h3>2a(i) 50 cm³ of 0.2 mol dm⁻³ HCl at 25°C</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><strong>B</strong>. This reaction produces the same final volume of gas as curve C, but at a faster rate.</div>
+            <details open><summary>Why this gets the mark</summary><div class="detail-content">Curve C uses 100 cm³ of 0.1 mol dm⁻³ HCl. The new reaction uses 50 cm³ of 0.2 mol dm⁻³ HCl. Both contain the same amount of acid overall, so the same volume of carbon dioxide forms. The higher concentration gives a faster initial rate.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Final gas volume depends on moles of acid. Initial gradient depends on rate. Higher concentration gives more frequent collisions.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Choosing a curve with a higher final gas volume just because the concentration is higher.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>For gas-volume graphs: final volume = amount of limiting reactant; initial gradient = rate.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>2a(ii) 100 cm³ of 0.1 mol dm⁻³ HCl at 10°C</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><strong>D</strong>. It produces the same final gas volume as curve C but more slowly.</div>
+            <details open><summary>Why this gets the mark</summary><div class="detail-content">The volume and concentration of acid are the same as curve C, so the same total amount of gas is made. The lower temperature reduces the initial rate.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>At lower temperature, particles have less kinetic energy. Fewer particles have energy greater than or equal to activation energy, so there are fewer successful collisions per second.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Thinking a lower temperature means less gas is produced. It changes rate, not the amount of acid available.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Temperature changes the speed of this reaction, not the final gas volume.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>2a(iii) 100 cm³ of 0.2 mol dm⁻³ HCl at 25°C</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><strong>A</strong>. It produces more gas than curve C and reacts faster.</div>
+            <details open><summary>Why this gets the mark</summary><div class="detail-content">The volume of acid is the same as curve C, but the concentration is doubled. There are twice as many moles of HCl, so more carbon dioxide is produced. The higher concentration also increases the rate.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>More concentrated acid contains more acid particles per unit volume, giving more frequent collisions with calcium carbonate.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying it produces the same amount because the volume is the same. Concentration also matters.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Compare both volume and concentration to decide the number of moles.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>2b Which two curves have the same initial rate?</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><strong>A and B</strong>.</div>
+            <details open><summary>Why this gets the mark</summary><div class="detail-content">The initial rate is shown by the initial gradient. A and B have the same initial steepness.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>A steeper initial gradient means a faster initial rate. Curves with the same initial gradient have the same initial rate.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Choosing curves with the same final gas volume. Same final volume does not necessarily mean same initial rate.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Initial rate = gradient at the start of the curve.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>2c Name the gas produced</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>The gas is <strong>carbon dioxide</strong>, CO₂.</div>
+            <div class="equation">CaCO₃ + 2HCl → CaCl₂ + H₂O + CO₂</div>
+            <div class="explain-box"><span class="label">Key explanation</span>Acids react with carbonates to produce a salt, water and carbon dioxide.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying hydrogen. Hydrogen is produced when acids react with many metals, not carbonates.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Acid + carbonate → salt + water + carbon dioxide.</div>
+          </div></article>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('q1')">← Previous: Question 1</button><button onclick="showTab('q3')">Next: Question 3 →</button></div>
+      </section>
+
+      <section id="q3" class="question-panel">
+        <div class="panel-head">
+          <h2>Question 3 — Sodium Thiosulfate, Collision Theory and Boltzmann Distributions</h2>
+          <p>Focus: measuring reaction rate, concentration effects, cloudiness and temperature distributions.</p>
+          <div class="question-stem">Sodium thiosulfate reacts with hydrochloric acid to form sulfur, sulfur dioxide, sodium chloride and water. The time taken for a cross to become obscured is measured.</div>
+        </div>
+        <div class="content">
+          <article class="subq"><div class="subq-title"><h3>3a Why does the solution become cloudy?</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>The solution becomes cloudy because solid sulfur is produced. The sulfur forms a precipitate in the solution.</div>
+            <div class="equation">Na₂S₂O₃(aq) + 2HCl(aq) → S(s) + SO₂(g) + 2NaCl(aq) + H₂O(l)</div>
+            <div class="explain-box"><span class="label">Key explanation</span>The state symbol (s) shows sulfur is a solid. Small solid sulfur particles scatter light, making the solution cloudy.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying sulfur dioxide causes the cloudiness. Sulfur dioxide is a gas.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Use state symbols in the equation. They often reveal the answer.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>3b Suggest one other technique to measure rate</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Use colorimetry to measure how the cloudiness changes over time.</div>
+            <details open><summary>Other accepted methods</summary><div class="detail-content"><ul><li>Measure the volume of gas produced over time.</li><li>Measure mass loss over time.</li><li>Use a pH meter.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>A colorimeter measures light passing through the solution. As more sulfur forms, the solution becomes cloudier and less light passes through.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Suggesting a thermometer. Temperature affects rate, but measuring temperature does not directly measure reaction progress here.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Choose a variable that changes as the reaction progresses.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>3c Predict the trend and explain using collision theory</h3><span class="marks">3 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>As the concentration of sodium thiosulfate increases, the time taken for the cross to become obscured decreases. This is because there are more sodium thiosulfate particles per unit volume. The particles collide more frequently, so there are more successful collisions per second and the rate of reaction increases.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> time decreases as concentration increases.</li><li><strong>1 mark:</strong> more particles per unit volume.</li><li><strong>1 mark:</strong> increased collision frequency / more collisions per second.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>The total volume of sodium thiosulfate plus water is kept constant at 50 cm³. Using more sodium thiosulfate solution and less water increases concentration, so the same visible endpoint is reached more quickly.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying “the rate decreases” instead of “the time decreases”. Also, “more collisions” alone is not precise enough; say more collisions per second.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Use: “more particles per unit volume, so more frequent successful collisions.”</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>3d(i) Label the Boltzmann distribution axes</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Horizontal axis: kinetic energy. Vertical axis: number of molecules, fraction of molecules or percentage of molecules.</div>
+            <div class="explain-box"><span class="label">Key explanation</span>A Boltzmann distribution shows the spread of kinetic energies in a sample of particles.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Labelling the x-axis as enthalpy or the y-axis as rate of reaction.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Boltzmann graph: x-axis = energy; y-axis = number/fraction of molecules.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>3d(ii) Draw the 40°C Boltzmann curve</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>The 40°C curve should start at the origin, peak higher than the 70°C curve, and peak further to the left. It should have a smaller high-energy tail and should not touch the horizontal axis.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> curve starts at origin and the peak is to the left of the 70°C peak.</li><li><strong>1 mark:</strong> peak is higher than the 70°C peak and the curve does not touch the x-axis.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>At lower temperature, particles have a lower average kinetic energy. More molecules are grouped at lower energies, so the curve is taller and shifted left.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Drawing the lower-temperature curve lower and flatter. That represents a higher temperature.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Lower temperature = higher peak, further left, less spread out.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>3d(iii) Explain temperature effect using Boltzmann distribution</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>At higher temperature, a greater proportion of molecules have energy greater than or equal to the activation energy. This means there are more successful collisions per second, so the rate of reaction increases.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> more molecules have energy ≥ activation energy.</li><li><strong>1 mark:</strong> more successful/effective collisions and faster rate.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Particles also move faster at higher temperature, but the key A-level marking point is the larger proportion exceeding activation energy.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying activation energy decreases. Temperature does not lower activation energy; a catalyst does.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Always include: “greater proportion of particles have energy ≥ activation energy.”</div>
+          </div></article>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('q2')">← Previous: Question 2</button><button onclick="showTab('q4')">Next: Question 4 →</button></div>
+      </section>
+
+      <section id="q4" class="question-panel">
+        <div class="panel-head">
+          <h2>Question 4 — Haber Process and Dynamic Equilibrium</h2>
+          <p>Focus: dynamic equilibrium, Le Châtelier’s principle, temperature, pressure and catalysts.</p>
+          <div class="question-stem">N₂(g) + 3H₂(g) ⇌ 2NH₃(g), ΔH = −92 kJ mol⁻¹.</div>
+        </div>
+        <div class="content">
+          <article class="subq"><div class="subq-title"><h3>4a Define dynamic equilibrium</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Dynamic equilibrium is reached in a closed system when the rate of the forward reaction is equal to the rate of the reverse reaction. The concentrations of reactants and products remain constant.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content">Any two key ideas are needed: closed system, equal forward and reverse rates, and constant concentrations.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Dynamic equilibrium does not mean the reaction has stopped. Both reactions continue, but there is no overall change in concentration.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying the amounts of reactants and products are equal. They are constant, not necessarily equal.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Use the phrase: “closed system, equal rates, constant concentrations.”</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>4b(i) Effect of increasing temperature</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>The forward reaction is exothermic, so increasing temperature favours the reverse reaction. The equilibrium shifts left, towards nitrogen and hydrogen.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> forward reaction is exothermic.</li><li><strong>1 mark:</strong> equilibrium shifts left / towards reactants.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Increasing temperature favours the endothermic direction to oppose the change. Since the forward reaction is exothermic, the reverse reaction is endothermic.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying higher temperature makes more ammonia because rate increases. The question asks about equilibrium position, not rate.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Increasing temperature favours the endothermic direction.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>4b(ii) Effect of increasing pressure</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Increasing pressure shifts the equilibrium to the right, towards ammonia. There are 4 moles of gas on the left and 2 moles of gas on the right, so equilibrium shifts to the side with fewer gas molecules.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> identifies fewer gas molecules on the product side.</li><li><strong>1 mark:</strong> states the equilibrium shifts right / towards products.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Higher pressure is opposed by shifting to the side with fewer gas particles: 1 N₂ + 3 H₂ = 4 moles; 2 NH₃ = 2 moles.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying pressure always favours products. It only favours the side with fewer gas molecules.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Count gas moles only. Ignore solids and liquids for pressure shifts.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>4b(iii) Effect of adding a catalyst</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>A catalyst has no effect on the position of equilibrium. It increases the rate of the forward and reverse reactions by the same amount, so equilibrium is reached faster but the equilibrium mixture is unchanged.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> forward and reverse rates increase equally.</li><li><strong>1 mark:</strong> no effect on equilibrium position.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>A catalyst lowers activation energy for both directions of the reaction. It does not change the relative stability of reactants or products.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying the catalyst shifts equilibrium to the right or increases yield.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Catalyst = faster equilibrium, same equilibrium position.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>4c Why does using a catalyst reduce CO₂ emissions?</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>A catalyst lowers the activation energy of the reaction. This means the Haber process can be carried out at a lower temperature or with less energy input. Less fossil fuel needs to be burned for heating, so less carbon dioxide is released.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> catalyst lowers activation energy / energy requirement.</li><li><strong>1 mark:</strong> less fuel is combusted, reducing CO₂ emissions.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>The environmental benefit is indirect: the catalyst reduces the energy demand of the process, reducing combustion of fossil fuels.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying the catalyst absorbs carbon dioxide or changes the equilibrium yield.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Use the chain: lower activation energy → lower temperature/less heating → less fuel burned → less CO₂.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>4d Environmental disadvantage of catalysts</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Some catalysts are toxic, so disposal of used catalysts can cause environmental problems.</div>
+            <div class="explain-box"><span class="label">Key explanation</span>Industrial catalysts may contain transition metals or other substances that must be disposed of carefully.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Giving an economic disadvantage, such as “catalysts are expensive”. The question asks for an environmental disadvantage.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Environmental answers should link to toxicity, pollution, waste, habitat damage or resource use.</div>
+          </div></article>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('q3')">← Previous: Question 3</button><button onclick="showTab('q5')">Next: Question 5 →</button></div>
+      </section>
+
+      <section id="q5" class="question-panel">
+        <div class="panel-head">
+          <h2>Question 5 — N₂O₄/NO₂ Equilibrium, Kc and Pressure</h2>
+          <p>Focus: dynamic equilibrium on graphs, Kc expressions, temperature effects and pressure colour changes.</p>
+          <div class="question-stem">N₂O₄(g) ⇌ 2NO₂(g). N₂O₄ is colourless and NO₂ is brown.</div>
+        </div>
+        <div class="content">
+          <article class="subq"><div class="subq-title"><h3>5a Mark the first time dynamic equilibrium is reached</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Mark the first point where both concentration curves become horizontal.</div>
+            <div class="explain-box"><span class="label">Key explanation</span>Horizontal lines mean the concentrations are no longer changing. The forward and reverse reactions are still happening, but at equal rates.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Marking the point where the curves cross. Equal concentrations do not mean equilibrium.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>On concentration-time graphs, equilibrium starts when the curves become flat, not when they cross.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>5b(i) Write the Kc expression</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><span class="equation">Kc = [NO₂]² / [N₂O₄]</span></div>
+            <div class="explain-box"><span class="label">Key explanation</span>Products go on the top, reactants on the bottom. The coefficient 2 in front of NO₂ becomes a power of 2.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Forgetting to square [NO₂], putting the expression upside down, or missing square brackets.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Products over reactants; powers from the balanced equation.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>5b(ii) Calculate Kc at 298 K</h3><span class="marks">1 mark</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span><span class="equation">Kc = (0.0162)² / 0.0410 = 6.40 × 10⁻³</span></div>
+            <details open><summary>Why this gets the mark</summary><div class="detail-content">The correct equilibrium concentrations are substituted into the correct Kc expression and calculated accurately.</div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>[NO₂] is squared because NO₂ has a coefficient of 2 in the balanced equation.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Forgetting to square 0.0162, rounding too early, or using initial concentrations instead of equilibrium concentrations.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>Write the expression first, then substitute the numbers.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>5b(iii) Deduce whether the forward reaction is exothermic or endothermic</h3><span class="marks">2 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>At the higher temperature, Kc increases. This means the equilibrium mixture contains a greater proportion of products, so equilibrium has shifted to the right. Since increasing temperature favours the forward reaction, the forward reaction must be endothermic.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> Kc increases, so more products are present at equilibrium.</li><li><strong>1 mark:</strong> if higher temperature shifts equilibrium right, the forward reaction is endothermic.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>A larger Kc means the numerator is larger relative to the denominator. For this expression, that means more NO₂ relative to N₂O₄.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying Kc increases because the rate increases. Kc is about equilibrium position, not rate.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>If temperature increases and Kc increases, the forward reaction is endothermic. If temperature increases and Kc decreases, the forward reaction is exothermic.</div>
+          </div></article>
+
+          <article class="subq"><div class="subq-title"><h3>5c Effect of increasing total pressure on colour</h3><span class="marks">3 marks</span></div><div class="subq-body">
+            <div class="answer-box"><span class="label">Model answer</span>Increasing total pressure shifts the equilibrium to the left. This is because there are fewer moles of gas on the left-hand side: 1 mole of N₂O₄ compared with 2 moles of NO₂ on the right. More colourless N₂O₄ and less brown NO₂ are present, so the mixture becomes paler brown.</div>
+            <details open><summary>Why this gets the marks</summary><div class="detail-content"><ul><li><strong>1 mark:</strong> equilibrium shifts left.</li><li><strong>1 mark:</strong> fewer gas molecules on the left-hand side.</li><li><strong>1 mark:</strong> mixture becomes paler brown or more colourless.</li></ul></div></details>
+            <div class="explain-box"><span class="label">Key explanation</span>Le Châtelier’s principle says the equilibrium shifts to oppose a change. Higher pressure is opposed by shifting to the side with fewer gas molecules.</div>
+            <div class="mistake-box"><span class="label">Common mistakes</span>Saying the mixture becomes darker brown. That would mean more NO₂ has formed.</div>
+            <div class="tip-box"><span class="label">Exam tip</span>For pressure and colour equilibria: count gas moles, decide the shift, then link to the colour of each species.</div>
+          </div></article>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('q4')">← Previous: Question 4</button><button onclick="showTab('summary')">Summary →</button></div>
+      </section>
+
+      <section id="summary" class="question-panel">
+        <div class="panel-head">
+          <h2>Summary — High-Value OCR Takeaways</h2>
+          <p>Use these as final revision reminders after completing the model answers.</p>
+        </div>
+        <div class="content">
+          <div class="takeaways">
+            <div class="takeaway"><strong>1. Catalysts</strong><br>Catalysts lower activation energy but do not change ΔH or equilibrium position.</div>
+            <div class="takeaway"><strong>2. Temperature and rate</strong><br>Higher temperature increases the proportion of particles with energy ≥ activation energy.</div>
+            <div class="takeaway"><strong>3. Concentration and rate</strong><br>Higher concentration means more particles per unit volume and more frequent collisions.</div>
+            <div class="takeaway"><strong>4. Dynamic equilibrium</strong><br>Closed system, equal forward and reverse rates, constant concentrations.</div>
+            <div class="takeaway"><strong>5. Pressure equilibria</strong><br>Increasing pressure favours the side with fewer gas molecules.</div>
+            <div class="takeaway"><strong>6. Temperature equilibria</strong><br>Increasing temperature favours the endothermic direction.</div>
+            <div class="takeaway"><strong>7. Kc</strong><br>Products over reactants; powers come from the balanced equation.</div>
+            <div class="takeaway"><strong>8. Kc and temperature</strong><br>Only temperature changes Kc. Catalysts and pressure do not change Kc.</div>
+            <div class="takeaway"><strong>9. Graphs</strong><br>Initial rate is the initial gradient. Equilibrium starts when concentration curves become flat.</div>
+            <div class="takeaway"><strong>10. Exam wording</strong><br>Use “successful collisions” and “greater proportion above activation energy” for full-rate explanations.</div>
+          </div>
+        </div>
+        <div class="footer-nav"><button onclick="showTab('q5')">← Previous: Question 5</button><button onclick="showTab('q1')">Back to Question 1 →</button></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.question-panel');
+
+    function showTab(id){
+      buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === id));
+      panels.forEach(panel => panel.classList.toggle('active', panel.id === id));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    buttons.forEach(btn => btn.addEventListener('click', () => showTab(btn.dataset.tab)));
+
+    function openAllDetails(){ document.querySelectorAll('details').forEach(d => d.open = true); }
+    function closeAllDetails(){ document.querySelectorAll('details').forEach(d => d.open = false); }
+  </script>
+</body>
+</html>
