@@ -1,259 +1,1550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Year 7 Science: Light</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reflection and Refraction of Light</title>
   <style>
     :root {
-      --primary-color: #6a1b9a;
-      --secondary-color: #ab47bc;
-      --accent-color: #e1bee7;
-      --text-color: #263238;
-      --light-text: #ffffff;
-      --background-color: #f8f5fb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #ea580c;
+      --ray: #dc2626;
+      --wave: #059669;
+      --bg: #eef4fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --line: #cbd5e1;
+      --text: #172033;
+      --muted: #5b6b82;
+      --good: #15803d;
+      --warn: #b45309;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.12);
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.6;
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #f6f9fd 0%, var(--bg) 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     header {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-      color: var(--light-text);
-      padding: 2rem 0;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .light-bg {
-      position: absolute;
-      inset: 0;
-      opacity: 0.16;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='120' viewBox='0 0 180 120'%3E%3Cpath d='M0 60 L180 20' stroke='white' stroke-width='4'/%3E%3Cpath d='M0 80 L180 80' stroke='white' stroke-width='3'/%3E%3Cpath d='M0 100 L180 40' stroke='white' stroke-width='2'/%3E%3Ccircle cx='35' cy='35' r='12' fill='white'/%3E%3C/svg%3E");
-      background-size: 220px;
-    }
-
-    .header-content {
-      max-width: 1200px;
+      max-width: 1420px;
       margin: 0 auto;
-      padding: 0 2rem;
-      position: relative;
-      z-index: 2;
+      padding: 22px 22px 10px;
+      text-align: center;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
+      margin: 0 0 6px;
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      letter-spacing: -0.03em;
     }
 
-    .subtitle {
-      font-size: 1.2rem;
-      opacity: 0.95;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-
-    .intro {
-      text-align: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--accent-color);
-    }
-
-    h2 {
-      color: var(--primary-color);
-      margin-bottom: 1rem;
-      font-size: 1.8rem;
-    }
-
-    .intro-text {
-      max-width: 700px;
-      margin: 0 auto;
-      font-size: 1.1rem;
-    }
-
-    .section-label {
-      margin: 1.5rem 0 0.8rem;
-      color: var(--primary-color);
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-
-    .lesson-grid {
-      list-style: none;
+    header p {
       margin: 0;
-      padding: 0;
-    }
-
-    .lesson-card {
-      background-color: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
-      border: 1px solid rgba(0,0,0,0.05);
-      margin-bottom: 15px;
-    }
-
-    .lesson-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-
-    .lesson-link {
-      display: block;
-      padding: 1.5rem;
-      background-color: var(--secondary-color);
-      color: var(--light-text);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.2rem;
-      text-align: left;
-      transition: background-color 0.3s ease;
-    }
-
-    .lesson-link:hover {
-      background-color: var(--primary-color);
-    }
-
-    .lesson-card span.number {
-      display: inline-block;
-      background-color: var(--primary-color);
-      color: white;
-      min-width: 42px;
-      height: 32px;
-      line-height: 32px;
-      text-align: center;
-      border-radius: 18px;
-      margin-right: 10px;
-      font-weight: bold;
+      color: var(--muted);
       font-size: 1rem;
     }
 
-    .simulation-link {
-      background-color: #fff3e0;
-      color: #e65100;
+    .app-shell {
+      width: min(1420px, calc(100% - 26px));
+      margin: 10px auto 24px;
+      display: grid;
+      grid-template-columns: minmax(320px, 370px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
     }
 
-    .simulation-link:hover {
-      background-color: #ffe0b2;
-      color: #bf360c;
+    .controls,
+    .canvas-panel {
+      background: var(--panel);
+      border: 1px solid #dbe4f0;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
     }
 
-    .simulation-link .number {
-      background-color: #e65100;
+    .controls {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: calc(100vh - 98px);
+      overflow-y: auto;
     }
 
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      color: var(--text-color);
+    .control-card {
+      background: var(--panel-soft);
+      border: 1px solid #e2e8f0;
+      border-radius: 13px;
+      padding: 12px;
+    }
+
+    .control-card h2,
+    .control-card h3 {
+      margin: 0 0 9px;
+      font-size: 0.98rem;
+      color: #334155;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .button-row.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .button-row.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    button,
+    select {
+      font: inherit;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 9px 8px;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.86rem;
+      font-weight: 750;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+    }
+
+    button:hover { transform: translateY(-1px); border-color: #94a3b8; }
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.26); outline-offset: 2px; }
+    button.active { background: var(--primary); border-color: var(--primary); color: white; }
+    button.secondary.active { background: #0f766e; border-color: #0f766e; }
+    button.warning.active { background: #b45309; border-color: #b45309; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    select {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 9px 10px;
+      background: #ffffff;
+      color: #334155;
       font-size: 0.9rem;
-      opacity: 0.8;
+      font-weight: 700;
     }
 
-    @media (max-width: 768px) {
-      h1 { font-size: 2rem; }
+    .slider-wrap { display: grid; gap: 7px; }
+    .slider-line { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+    .slider-line strong { font-size: 0.92rem; }
+    .value { color: var(--primary-dark); font-weight: 850; }
 
-      .container {
-        padding: 1.5rem;
-        margin: 1rem;
-      }
+    input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
 
-      .lesson-link {
-        padding: 1.2rem;
-        font-size: 1.1rem;
-      }
+    .small-note {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      font-size: 0.87rem;
+      color: #334155;
+      margin-top: 8px;
+    }
+
+    .check-row input { width: 17px; height: 17px; accent-color: var(--primary); }
+
+    .data-grid {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+      line-height: 1.34;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 5px;
+      border-bottom: 1px dashed #d8e0eb;
+    }
+
+    .data-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .data-row span:last-child { font-weight: 850; color: var(--primary-dark); text-align: right; }
+
+    .learning-card {
+      border-left: 5px solid var(--primary);
+      background: #eff6ff;
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 0.86rem;
+      line-height: 1.42;
+      color: #334155;
+    }
+
+    .learning-card strong { color: #1e3a8a; }
+    .learning-card p { margin: 0; }
+    .learning-card p + p { margin-top: 7px; }
+
+    .challenge-card {
+      background: #fff7ed;
+      border-color: #fed7aa;
+    }
+
+    .challenge-card h3 { color: #9a3412; }
+    .challenge-card p { margin: 0 0 8px; color: #7c2d12; font-size: 0.84rem; line-height: 1.38; }
+    .challenge-options { display: grid; gap: 7px; margin-top: 8px; }
+    .challenge-options button { text-align: left; background: #fff; }
+    .challenge-feedback { margin-top: 9px !important; font-weight: 750; }
+    .challenge-feedback.good { color: var(--good); }
+    .challenge-feedback.try-again { color: #b91c1c; }
+
+    .canvas-panel { padding: 13px; }
+
+    .canvas-toolbar {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .toolbar-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .canvas-toolbar button { padding: 8px 10px; font-size: 0.8rem; }
+
+    .canvas-wrap {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 14px;
+      border: 2px solid #dbe4f0;
+      background: white;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1000 / 660;
+      background: #ffffff;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .legend {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      padding: 10px 3px 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .legend-item { display: inline-flex; gap: 6px; align-items: center; }
+    .legend-swatch { width: 22px; height: 4px; border-radius: 99px; display: inline-block; }
+    .legend-normal { border-top: 3px dashed #64748b; width: 22px; }
+    .legend-extension { border-top: 3px dashed #7c3aed; width: 22px; }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1050px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .controls { max-height: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .controls > .learning-card { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 680px) {
+      header { padding-top: 17px; }
+      .app-shell { width: min(100% - 16px, 760px); }
+      .controls { display: flex; }
+      button { font-size: 0.81rem; }
+      .canvas-panel { padding: 8px; }
+      .legend { gap: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition: none !important; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="light-bg"></div>
-    <div class="header-content">
-      <h1>Year 7 Light</h1>
-      <p class="subtitle">Explore how light travels, reflects, refracts, forms images and creates colour</p>
-    </div>
+    <h1>Reflection and Refraction of Light</h1>
+    <p>Explore rays, wavefronts, smooth and rough surfaces, and the images formed by plane mirrors.</p>
   </header>
 
-  <div class="container">
-    <div class="intro">
-      <h2>Topic Overview</h2>
-      <p class="intro-text">
-        In this topic you will learn how light travels, how mirrors reflect light, how refraction changes the
-        direction of light, how the eye and camera form images, and how colour is produced by light, filters and objects.
-      </p>
-    </div>
+  <main class="app-shell">
+    <section class="controls" aria-label="Simulation controls">
+      <div class="control-card">
+        <h2>1. Choose a topic</h2>
+        <div class="button-row four">
+          <button id="btn-reflection" class="active" type="button" aria-pressed="true">Reflection</button>
+          <button id="btn-surfaces" type="button" aria-pressed="false">Smooth vs rough</button>
+          <button id="btn-refraction" type="button" aria-pressed="false">Refraction</button>
+          <button id="btn-image" type="button" aria-pressed="false">Mirror image</button>
+        </div>
+      </div>
 
-    <h3 class="section-label">Lessons</h3>
+      <div id="view-card" class="control-card">
+        <h3>2. Choose a view</h3>
+        <div class="button-row">
+          <button id="btn-ray" class="active" type="button" aria-pressed="true">Light ray</button>
+          <button id="btn-wave" type="button" aria-pressed="false">Explain why</button>
+        </div>
+        <p class="small-note" style="margin-top:7px;">The wavefront view helps explain why direction changes.</p>
+      </div>
 
-    <ul class="lesson-grid">
-      <li class="lesson-card">
-        <a href="3.1%20Light/index.html" class="lesson-link">
-          <span class="number">3.1</span> Light
-        </a>
-      </li>
+      <div id="angle-card" class="control-card slider-wrap">
+        <div class="slider-line">
+          <strong>3. Angle of incidence</strong>
+          <span id="angle-value" class="value">30°</span>
+        </div>
+        <input id="angle-slider" type="range" min="0" max="75" value="30" aria-label="Angle of incidence" />
+        <p class="small-note">Drag the slider, or drag the incoming ray directly on the diagram.</p>
+      </div>
 
-      <li class="lesson-card">
-        <a href="3.2%20Reflection/index.html" class="lesson-link">
-          <span class="number">3.2</span> Reflection
-        </a>
-      </li>
+      <div id="surface-card" class="control-card slider-wrap hidden">
+        <div class="slider-line">
+          <strong>Surface roughness</strong>
+          <span id="roughness-value" class="value">55%</span>
+        </div>
+        <input id="roughness-slider" type="range" min="0" max="100" value="55" aria-label="Surface roughness" />
+        <p class="small-note">Compare the polished mirror on the left with the adjustable surface on the right.</p>
+      </div>
 
-      <li class="lesson-card">
-        <a href="3.3%20Refraction/index.html" class="lesson-link">
-          <span class="number">3.3</span> Refraction
-        </a>
-      </li>
+      <div id="refraction-card" class="control-card hidden">
+        <h3>Transparent material</h3>
+        <select id="material-select" aria-label="Transparent material">
+          <option value="water">Water</option>
+          <option value="perspex" selected>Perspex</option>
+          <option value="glass">Glass</option>
+        </select>
+        <h3 style="margin-top:11px;">Refraction setup</h3>
+        <div class="button-row">
+          <button id="btn-boundary" type="button" aria-pressed="false">One boundary</button>
+          <button id="btn-block" class="active" type="button" aria-pressed="true">Rectangular block</button>
+        </div>
+      </div>
 
-      <li class="lesson-card">
-        <a href="3.4%20The%20eye%20and%20the%20camera/index.html" class="lesson-link">
-          <span class="number">3.4</span> The Eye and the Camera
-        </a>
-      </li>
+      <div id="image-card" class="control-card slider-wrap hidden">
+        <div class="slider-line">
+          <strong>Object distance</strong>
+          <span id="object-distance-value" class="value">180 px</span>
+        </div>
+        <input id="object-distance-slider" type="range" min="110" max="260" value="180" aria-label="Distance of object from mirror" />
+        <label class="check-row"><input id="toggle-construction" type="checkbox" checked /> Show dashed construction lines</label>
+      </div>
 
-      <li class="lesson-card">
-        <a href="3.5%20Colour/index.html" class="lesson-link">
-          <span class="number">3.5</span> Colour
-        </a>
-      </li>
-    </ul>
+      <div class="control-card">
+        <h3>Explanation layers</h3>
+        <div class="button-row">
+          <button id="btn-core" class="active secondary" type="button" aria-pressed="true">Core ideas</button>
+          <button id="btn-ks4" class="secondary" type="button" aria-pressed="false">KS4 detail</button>
+        </div>
+        <label class="check-row"><input id="toggle-labels" type="checkbox" checked /> Show labels on diagram</label>
+        <label id="normal-row" class="check-row"><input id="toggle-normal" type="checkbox" checked /> Show normal line</label>
+        <label id="local-normal-row" class="check-row hidden"><input id="toggle-local-normals" type="checkbox" /> Show local normals on rough surface</label>
+      </div>
 
-    <h3 class="section-label">Simulations</h3>
+      <div id="animation-card" class="control-card hidden">
+        <h3>Animation controls</h3>
+        <div class="button-row three">
+          <button id="btn-play" class="active" type="button">Pause</button>
+          <button id="btn-step" type="button">Step</button>
+          <button id="btn-reset-animation" type="button">Reset</button>
+        </div>
+        <div class="slider-wrap" style="margin-top:10px;">
+          <div class="slider-line"><strong>Animation speed</strong><span id="speed-value" class="value">1.0×</span></div>
+          <input id="speed-slider" type="range" min="0.2" max="2" step="0.1" value="1" aria-label="Animation speed" />
+        </div>
+      </div>
 
-    <ul class="lesson-grid">
-      <li class="lesson-card">
-        <a href="reflection-refraction-simulation.html" class="lesson-link simulation-link">
-          <span class="number">SIM</span> Reflection and Refraction Simulation
-        </a>
-      </li>
+      <div id="challenge-card" class="control-card challenge-card">
+        <h3>Prediction challenge</h3>
+        <div id="challenge-content"></div>
+      </div>
 
-      <li class="lesson-card">
-        <a href="colour-simulation.html" class="lesson-link simulation-link">
-          <span class="number">SIM</span> Colour Simulation
-        </a>
-      </li>
-    </ul>
-  </div>
+      <div class="control-card">
+        <h3>Live physics data</h3>
+        <div id="data-display" class="data-grid"></div>
+      </div>
 
-  <footer>
-    <p>© 2026 Year 7 Science | Light Topic Resources</p>
-  </footer>
+      <div id="learning-card" class="learning-card" aria-live="polite"></div>
+    </section>
+
+    <section class="canvas-panel" aria-label="Optics diagram">
+      <div class="canvas-toolbar">
+        <div class="toolbar-group">
+          <button id="btn-fullscreen" type="button">Full screen diagram</button>
+          <button id="btn-toggle-path" type="button">Hide outgoing path</button>
+        </div>
+        <div class="toolbar-group">
+          <button id="btn-reset-simulation" type="button">Reset simulation</button>
+        </div>
+      </div>
+      <div id="canvas-wrap" class="canvas-wrap">
+        <canvas id="optics-canvas" aria-label="Interactive diagram showing reflection and refraction of light"></canvas>
+      </div>
+      <div class="legend" aria-label="Diagram legend">
+        <span class="legend-item"><span class="legend-swatch" style="background:#dc2626"></span> Light ray</span>
+        <span class="legend-item"><span class="legend-swatch" style="background:#059669"></span> Wavefront</span>
+        <span class="legend-item"><span class="legend-normal"></span> Normal line</span>
+        <span class="legend-item"><span class="legend-extension"></span> Virtual extension</span>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+
+    const LOGICAL_WIDTH = 1000;
+    const LOGICAL_HEIGHT = 660;
+    const canvas = document.getElementById('optics-canvas');
+    const ctx = canvas.getContext('2d');
+
+    const MATERIALS = {
+      water: { label: 'Water', n: 1.33, fill: 'rgba(186, 230, 253, 0.46)', stroke: '#0284c7' },
+      perspex: { label: 'Perspex', n: 1.50, fill: 'rgba(165, 243, 252, 0.43)', stroke: '#0891b2' },
+      glass: { label: 'Glass', n: 1.52, fill: 'rgba(196, 181, 253, 0.37)', stroke: '#7c3aed' }
+    };
+
+    const state = {
+      topic: 'reflection',
+      view: 'ray',
+      detail: 'core',
+      angleDeg: 30,
+      roughness: 55,
+      objectDistance: 180,
+      materialKey: 'perspex',
+      refractSetup: 'block',
+      showLabels: true,
+      showNormal: true,
+      showLocalNormals: false,
+      showConstruction: true,
+      revealPath: true,
+      playing: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      speed: 1,
+      time: 0,
+      dragging: false,
+      challengeActive: false,
+      challengeAnswered: false,
+      challengeChoice: ''
+    };
+
+    const COLORS = {
+      primary: '#2563eb',
+      accent: '#ea580c',
+      ray: '#dc2626',
+      wave: '#059669',
+      normal: '#64748b',
+      text: '#334155',
+      muted: '#64748b',
+      beam: 'rgba(250, 204, 21, 0.13)',
+      virtual: '#7c3aed'
+    };
+
+    const layout = {
+      centerX: 500,
+      mirrorY: 440,
+      blockLeft: 100,
+      blockRight: 900,
+      blockTop: 220,
+      blockBottom: 470,
+      beamHalfWidth: 43,
+      wavelengthAir: 39
+    };
+
+    function configureCanvas() {
+      const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+      canvas.width = Math.round(LOGICAL_WIDTH * dpr);
+      canvas.height = Math.round(LOGICAL_HEIGHT * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+    }
+
+    function degToRad(deg) { return deg * Math.PI / 180; }
+    function radToDeg(rad) { return rad * 180 / Math.PI; }
+    function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+
+    function setPressed(id, pressed) {
+      const button = document.getElementById(id);
+      if (!button) return;
+      button.classList.toggle('active', pressed);
+      button.setAttribute('aria-pressed', String(pressed));
+    }
+
+    function setTopic(topic) {
+      state.topic = topic;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      state.revealPath = true;
+      ['reflection', 'surfaces', 'refraction', 'image'].forEach((name) => setPressed(`btn-${name}`, name === topic));
+      refreshUI();
+    }
+
+    function setView(view) {
+      state.view = view;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      state.revealPath = true;
+      setPressed('btn-ray', view === 'ray');
+      setPressed('btn-wave', view === 'wave');
+      refreshUI();
+    }
+
+    function setDetail(detail) {
+      state.detail = detail;
+      setPressed('btn-core', detail === 'core');
+      setPressed('btn-ks4', detail === 'ks4');
+      refreshUI();
+    }
+
+    function setAngle(value) {
+      state.angleDeg = clamp(Math.round(Number(value)), 0, 75);
+      document.getElementById('angle-slider').value = state.angleDeg;
+      document.getElementById('angle-value').textContent = `${state.angleDeg}°`;
+      if (state.challengeActive && !state.challengeAnswered) {
+        state.challengeActive = false;
+        state.revealPath = true;
+      }
+      refreshUI();
+    }
+
+    function setRoughness(value) {
+      state.roughness = clamp(Math.round(Number(value)), 0, 100);
+      document.getElementById('roughness-slider').value = state.roughness;
+      document.getElementById('roughness-value').textContent = `${state.roughness}%`;
+      refreshUI();
+    }
+
+    function setObjectDistance(value) {
+      state.objectDistance = clamp(Math.round(Number(value)), 110, 260);
+      document.getElementById('object-distance-slider').value = state.objectDistance;
+      document.getElementById('object-distance-value').textContent = `${state.objectDistance} px`;
+      refreshUI();
+    }
+
+    function setMaterial(key) {
+      state.materialKey = key;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      state.revealPath = true;
+      refreshUI();
+    }
+
+    function setRefractionSetup(setup) {
+      state.refractSetup = setup;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      state.revealPath = true;
+      setPressed('btn-boundary', setup === 'boundary');
+      setPressed('btn-block', setup === 'block');
+      refreshUI();
+    }
+
+    function setPlaying(playing) {
+      state.playing = playing;
+      const button = document.getElementById('btn-play');
+      button.textContent = playing ? 'Pause' : 'Play';
+      button.classList.toggle('active', playing);
+    }
+
+    function showElement(id, show) {
+      document.getElementById(id).classList.toggle('hidden', !show);
+    }
+
+    function updateConditionalControls() {
+      const rayTopic = state.topic === 'reflection' || state.topic === 'refraction';
+      showElement('view-card', rayTopic);
+      showElement('angle-card', state.topic === 'reflection' || state.topic === 'refraction' || state.topic === 'surfaces');
+      showElement('surface-card', state.topic === 'surfaces');
+      showElement('refraction-card', state.topic === 'refraction');
+      showElement('image-card', state.topic === 'image');
+      showElement('normal-row', rayTopic);
+      showElement('local-normal-row', state.topic === 'surfaces');
+      showElement('animation-card', rayTopic && state.view === 'wave');
+      showElement('challenge-card', rayTopic && state.view === 'ray');
+      showElement('btn-toggle-path', rayTopic && state.view === 'ray');
+      document.getElementById('btn-toggle-path').textContent = state.revealPath ? 'Hide outgoing path' : 'Reveal outgoing path';
+    }
+
+    function getMaterial() { return MATERIALS[state.materialKey]; }
+
+    function getRefractedAngleRad() {
+      return Math.asin(Math.sin(degToRad(state.angleDeg)) / getMaterial().n);
+    }
+
+    function roughnessDescription() {
+      if (state.roughness < 12) return 'almost smooth';
+      if (state.roughness < 42) return 'slightly uneven';
+      if (state.roughness < 75) return 'rough';
+      return 'very rough';
+    }
+
+    function imageClarityDescription() {
+      if (state.roughness < 12) return 'clear image';
+      if (state.roughness < 48) return 'blurred image';
+      return 'no clear image';
+    }
+
+    function updateDataPanel() {
+      const display = document.getElementById('data-display');
+      if (state.topic === 'reflection') {
+        display.innerHTML = `
+          <div class="data-row"><span>Angle of incidence</span><span>${state.angleDeg}°</span></div>
+          <div class="data-row"><span>Angle of reflection</span><span>${state.angleDeg}°</span></div>
+          <div class="data-row"><span>Rule</span><span>i = r</span></div>
+        `;
+        return;
+      }
+
+      if (state.topic === 'refraction') {
+        const material = getMaterial();
+        const refractedDeg = Math.round(radToDeg(getRefractedAngleRad()));
+        const extra = state.detail === 'ks4'
+          ? `<div class="data-row"><span>Refractive index</span><span>${material.n.toFixed(2)}</span></div>`
+          : '';
+        display.innerHTML = `
+          <div class="data-row"><span>Angle of incidence</span><span>${state.angleDeg}°</span></div>
+          <div class="data-row"><span>Angle in ${material.label.toLowerCase()}</span><span>${refractedDeg}°</span></div>
+          <div class="data-row"><span>Entering material</span><span>Towards normal</span></div>
+          ${extra}
+        `;
+        return;
+      }
+
+      if (state.topic === 'surfaces') {
+        display.innerHTML = `
+          <div class="data-row"><span>Adjustable surface</span><span>${roughnessDescription()}</span></div>
+          <div class="data-row"><span>Reflected rays</span><span>${state.roughness < 12 ? 'Mostly parallel' : 'Scattered'}</span></div>
+          <div class="data-row"><span>Image</span><span>${imageClarityDescription()}</span></div>
+        `;
+        return;
+      }
+
+      display.innerHTML = `
+        <div class="data-row"><span>Object distance</span><span>${state.objectDistance} px</span></div>
+        <div class="data-row"><span>Image distance</span><span>${state.objectDistance} px</span></div>
+        <div class="data-row"><span>Image type</span><span>Virtual</span></div>
+        <div class="data-row"><span>Image appearance</span><span>Upright and same size</span></div>
+      `;
+    }
+
+    function updateLearningCard() {
+      const card = document.getElementById('learning-card');
+      if (state.topic === 'reflection') {
+        card.innerHTML = `
+          <p><strong>Key idea:</strong> The angle of incidence is equal to the angle of reflection.</p>
+          <p><strong>Notice:</strong> Both angles are measured from the normal line, not from the mirror surface.</p>
+          <p><strong>Try this:</strong> Hide the outgoing path, set an angle and ask a partner to predict the reflected ray.</p>
+        `;
+        return;
+      }
+
+      if (state.topic === 'refraction' && state.view === 'wave') {
+        card.innerHTML = `
+          <p><strong>Key idea:</strong> Light changes direction because it changes speed at the boundary.</p>
+          <p><strong>Notice:</strong> One side of a wavefront enters the material first and slows down first. This turns the wavefront towards the normal.</p>
+          <p><strong>Try this:</strong> Pause the animation and use Step to examine the boundary.</p>
+        `;
+        return;
+      }
+
+      if (state.topic === 'refraction') {
+        card.innerHTML = `
+          <p><strong>Key idea:</strong> Light bends towards the normal when it enters a slower transparent material.</p>
+          <p><strong>Notice:</strong> In the block view, the ray bends away from the normal as it leaves and emerges parallel to the incident ray.</p>
+          <p><strong>Try this:</strong> Compare water, perspex and glass. Which material bends the ray most?</p>
+        `;
+        return;
+      }
+
+      if (state.topic === 'surfaces') {
+        card.innerHTML = `
+          <p><strong>Key idea:</strong> Both smooth and rough surfaces reflect light.</p>
+          <p><strong>Notice:</strong> Parallel rays remain organised after reflection from a smooth surface. A rough surface scatters them because each small section faces a different direction.</p>
+          <p><strong>Try this:</strong> Increase the roughness slowly. Watch what happens to the reflected image.</p>
+        `;
+        return;
+      }
+
+      card.innerHTML = `
+        <p><strong>Key idea:</strong> A plane mirror forms a virtual image behind the mirror.</p>
+        <p><strong>Notice:</strong> The rays do not actually travel behind the mirror. Your brain traces the reflected rays backwards.</p>
+        <p><strong>Try this:</strong> Change the object distance. How does the image distance change?</p>
+      `;
+    }
+
+    function startPrediction() {
+      if (!(state.topic === 'reflection' || state.topic === 'refraction')) return;
+      state.view = 'ray';
+      setPressed('btn-ray', true);
+      setPressed('btn-wave', false);
+      state.challengeActive = true;
+      state.challengeAnswered = false;
+      state.challengeChoice = '';
+      state.revealPath = false;
+      refreshUI();
+    }
+
+    function choosePrediction(choice) {
+      state.challengeChoice = choice;
+      state.challengeAnswered = true;
+      state.revealPath = true;
+      refreshUI();
+    }
+
+    function reflectionOptions() {
+      const correct = state.angleDeg;
+      const guesses = [correct, clamp(90 - correct, 0, 90), clamp(correct + 15, 0, 90), clamp(correct - 15, 0, 90)];
+      const unique = [];
+      guesses.forEach((value) => {
+        if (!unique.includes(value)) unique.push(value);
+      });
+      while (unique.length < 3) unique.push(clamp(correct + unique.length * 10, 0, 90));
+      return unique.slice(0, 3).sort((a, b) => a - b).map((value) => `${value}°`);
+    }
+
+    function updateChallengeCard() {
+      const content = document.getElementById('challenge-content');
+      if (!(state.topic === 'reflection' || state.topic === 'refraction') || state.view !== 'ray') return;
+
+      if (!state.challengeActive) {
+        content.innerHTML = `
+          <p>Hide the answer and ask students to predict the outgoing path before it is revealed.</p>
+          <button id="btn-start-prediction" type="button">Start a prediction</button>
+        `;
+        document.getElementById('btn-start-prediction').addEventListener('click', startPrediction);
+        return;
+      }
+
+      if (state.topic === 'reflection') {
+        const correct = `${state.angleDeg}°`;
+        const options = reflectionOptions();
+        const feedback = state.challengeAnswered
+          ? `<p class="challenge-feedback ${state.challengeChoice === correct ? 'good' : 'try-again'}">${state.challengeChoice === correct ? 'Correct.' : 'Not quite.'} The angle of reflection is ${correct}. Angles are measured from the normal.</p>`
+          : '';
+        content.innerHTML = `
+          <p><strong>The angle of incidence is ${state.angleDeg}°.</strong> What is the angle of reflection?</p>
+          <div class="challenge-options">
+            ${options.map((option) => `<button type="button" data-answer="${option}">${option}</button>`).join('')}
+          </div>
+          ${feedback}
+          ${state.challengeAnswered ? '<button id="btn-new-prediction" type="button">Try another angle</button>' : ''}
+        `;
+      } else {
+        const material = getMaterial();
+        const correct = 'Towards the normal';
+        const options = ['Towards the normal', 'Straight through', 'Away from the normal'];
+        const feedback = state.challengeAnswered
+          ? `<p class="challenge-feedback ${state.challengeChoice === correct ? 'good' : 'try-again'}">${state.challengeChoice === correct ? 'Correct.' : 'Not quite.'} The ray bends towards the normal when it enters ${material.label.toLowerCase()} from air.</p>`
+          : '';
+        content.innerHTML = `
+          <p><strong>The ray is entering ${material.label.toLowerCase()} from air.</strong> Which path will it take?</p>
+          <div class="challenge-options">
+            ${options.map((option) => `<button type="button" data-answer="${option}">${option}</button>`).join('')}
+          </div>
+          ${feedback}
+          ${state.challengeAnswered ? '<button id="btn-new-prediction" type="button">Try another prediction</button>' : ''}
+        `;
+      }
+
+      content.querySelectorAll('[data-answer]').forEach((button) => {
+        button.addEventListener('click', () => choosePrediction(button.dataset.answer));
+      });
+      const newButton = document.getElementById('btn-new-prediction');
+      if (newButton) newButton.addEventListener('click', startPrediction);
+    }
+
+    function refreshUI() {
+      updateConditionalControls();
+      updateDataPanel();
+      updateLearningCard();
+      updateChallengeCard();
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    }
+
+    function roundRect(x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+    }
+
+    function drawText(text, x, y, options = {}) {
+      const {
+        color = COLORS.text,
+        font = '700 16px Inter, sans-serif',
+        align = 'left',
+        baseline = 'alphabetic',
+        background = null,
+        padding = 6
+      } = options;
+      ctx.save();
+      ctx.font = font;
+      ctx.textAlign = align;
+      ctx.textBaseline = baseline;
+      if (background) {
+        const metrics = ctx.measureText(text);
+        const width = metrics.width + padding * 2;
+        const height = 24;
+        let left = x - padding;
+        if (align === 'center') left = x - width / 2;
+        if (align === 'right') left = x - width + padding;
+        ctx.fillStyle = background;
+        roundRect(left, y - 17, width, height, 7);
+        ctx.fill();
+      }
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function drawArrowOnLine(x1, y1, x2, y2, color = COLORS.ray, position = 0.52, size = 14) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const length = Math.hypot(dx, dy);
+      if (length < 20) return;
+      const ux = dx / length;
+      const uy = dy / length;
+      const mx = x1 + dx * position;
+      const my = y1 + dy * position;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx - ux * size + uy * (size / 2), my - uy * size - ux * (size / 2));
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx - ux * size - uy * (size / 2), my - uy * size + ux * (size / 2));
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawRay(x1, y1, x2, y2, label = '', labelOffsetX = 0, labelOffsetY = 0, options = {}) {
+      const { dashed = false, color = COLORS.ray, width = 4, arrow = true, labelColor = '#991b1b' } = options;
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      if (dashed) ctx.setLineDash([9, 8]);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+      if (arrow && !dashed) drawArrowOnLine(x1, y1, x2, y2, color);
+      if (state.showLabels && label) {
+        drawText(label, (x1 + x2) / 2 + labelOffsetX, (y1 + y2) / 2 + labelOffsetY, {
+          color: labelColor,
+          font: '750 15px Inter, sans-serif',
+          background: 'rgba(255,255,255,0.88)'
+        });
+      }
+    }
+
+    function drawNormal(x, y1, y2, labelY = y1 + 18) {
+      if (!state.showNormal) return;
+      ctx.save();
+      ctx.strokeStyle = COLORS.normal;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y2);
+      ctx.stroke();
+      ctx.restore();
+      if (state.showLabels) {
+        drawText('normal', x + 10, labelY, { color: COLORS.normal, font: '750 14px Inter, sans-serif', background: 'rgba(255,255,255,0.85)' });
+      }
+    }
+
+    function drawAngleArc(cx, cy, startAngle, endAngle, label, color, radius = 54) {
+      if (state.angleDeg < 4) return;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, startAngle, endAngle);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      const mid = (startAngle + endAngle) / 2;
+      drawText(label, cx + Math.cos(mid) * (radius + 23), cy + Math.sin(mid) * (radius + 23), {
+        color,
+        font: '850 17px Inter, sans-serif',
+        align: 'center',
+        baseline: 'middle',
+        background: 'rgba(255,255,255,0.9)'
+      });
+      ctx.restore();
+    }
+
+    function drawMirrorHorizontal(x1, x2, y, label = 'plane mirror') {
+      ctx.save();
+      ctx.fillStyle = '#d8dee8';
+      ctx.fillRect(x1, y, x2 - x1, 15);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x1, y, x2 - x1, 15);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      for (let x = x1 + 10; x < x2; x += 18) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + 15);
+        ctx.lineTo(x - 10, y + 30);
+        ctx.stroke();
+      }
+      ctx.restore();
+      if (state.showLabels && label) drawText(label, x1 + 18, y + 54, { color: '#475569', font: '750 15px Inter, sans-serif' });
+    }
+
+    function drawMirrorVertical(x, y1, y2) {
+      ctx.save();
+      ctx.fillStyle = '#d8dee8';
+      ctx.fillRect(x, y1, 16, y2 - y1);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x, y1, 16, y2 - y1);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      for (let y = y1 + 8; y < y2; y += 18) {
+        ctx.beginPath();
+        ctx.moveTo(x + 16, y);
+        ctx.lineTo(x + 31, y - 10);
+        ctx.stroke();
+      }
+      ctx.restore();
+      if (state.showLabels) drawText('plane mirror', x - 36, y1 - 18, { color: '#475569', font: '750 15px Inter, sans-serif' });
+    }
+
+    function drawBlock() {
+      const material = getMaterial();
+      const thickness = layout.blockBottom - layout.blockTop;
+      ctx.save();
+      ctx.fillStyle = material.fill;
+      ctx.fillRect(layout.blockLeft, layout.blockTop, layout.blockRight - layout.blockLeft, thickness);
+      ctx.strokeStyle = material.stroke;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(layout.blockLeft, layout.blockTop, layout.blockRight - layout.blockLeft, thickness);
+      ctx.restore();
+      if (state.showLabels) {
+        drawText('AIR', 126, 76, { color: '#475569', font: '850 16px Inter, sans-serif' });
+        const materialLabel = state.detail === 'ks4' ? `${material.label.toUpperCase()}  n = ${material.n.toFixed(2)}` : material.label.toUpperCase();
+        drawText(materialLabel, 126, layout.blockTop + 34, { color: material.stroke, font: '850 16px Inter, sans-serif' });
+        drawText('AIR', 126, 604, { color: '#475569', font: '850 16px Inter, sans-serif' });
+      }
+    }
+
+    function drawHalfSpace() {
+      const material = getMaterial();
+      ctx.save();
+      ctx.fillStyle = material.fill;
+      ctx.fillRect(0, layout.blockTop, LOGICAL_WIDTH, LOGICAL_HEIGHT - layout.blockTop);
+      ctx.strokeStyle = material.stroke;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, layout.blockTop);
+      ctx.lineTo(LOGICAL_WIDTH, layout.blockTop);
+      ctx.stroke();
+      ctx.restore();
+      if (state.showLabels) {
+        drawText('AIR', 126, 76, { color: '#475569', font: '850 16px Inter, sans-serif' });
+        const materialLabel = state.detail === 'ks4' ? `${material.label.toUpperCase()}  n = ${material.n.toFixed(2)}` : material.label.toUpperCase();
+        drawText(materialLabel, 126, layout.blockTop + 42, { color: material.stroke, font: '850 16px Inter, sans-serif' });
+      }
+    }
+
+    function drawDashedGuide(x1, y1, x2, y2, label = '') {
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 8]);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+      if (state.showLabels && label) drawText(label, x2 - 10, y2 - 12, { align: 'right', color: '#64748b', font: '750 13px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+    }
+
+    function drawPredictionPrompt(text, x, y) {
+      drawText(text, x, y, { color: '#9a3412', font: '850 18px Inter, sans-serif', align: 'center', background: 'rgba(255,247,237,0.95)', padding: 10 });
+    }
+
+    function drawReflectionRayView() {
+      const a = degToRad(state.angleDeg);
+      const length = 350;
+      const x0 = layout.centerX;
+      const y0 = layout.mirrorY;
+      const incX = x0 - length * Math.sin(a);
+      const incY = y0 - length * Math.cos(a);
+      const refX = x0 + length * Math.sin(a);
+      const refY = y0 - length * Math.cos(a);
+
+      drawNormal(x0, 76, y0 + 4, 106);
+      drawMirrorHorizontal(72, 928, y0);
+      drawRay(incX, incY, x0, y0, 'incident ray', -58, -14);
+      drawAngleArc(x0, y0, -Math.PI / 2 - a, -Math.PI / 2, 'i', COLORS.primary);
+
+      if (state.revealPath) {
+        drawRay(x0, y0, refX, refY, 'reflected ray', 20, -14);
+        drawAngleArc(x0, y0, -Math.PI / 2, -Math.PI / 2 + a, 'r', COLORS.accent);
+      } else {
+        drawPredictionPrompt('Predict the reflected ray', 705, 168);
+      }
+    }
+
+    function drawReflectionWaveView() {
+      const a = degToRad(state.angleDeg);
+      const cosI = Math.cos(a);
+      const sinI = Math.sin(a);
+      const y0 = layout.mirrorY;
+      const spread = layout.beamHalfWidth / Math.max(0.2, cosI);
+      const left = layout.centerX - spread;
+      const right = layout.centerX + spread;
+      const lambda = layout.wavelengthAir;
+      const mStart = Math.floor(state.time / lambda) - 29;
+      const mEnd = Math.floor(state.time / lambda) + 29;
+
+      drawNormal(layout.centerX, 76, y0 + 4, 106);
+      drawMirrorHorizontal(72, 928, y0);
+
+      drawWaveRegion(
+        [[left, y0], [right, y0], [right - 600 * sinI, y0 - 600 * cosI], [left - 600 * sinI, y0 - 600 * cosI]],
+        () => {
+          for (let m = mStart; m <= mEnd; m++) {
+            const s = state.time - m * lambda;
+            const xc = layout.centerX + s * sinI;
+            const yc = y0 + s * cosI;
+            drawWaveLine(xc - 410 * cosI, yc + 410 * sinI, xc + 410 * cosI, yc - 410 * sinI);
+          }
+        }
+      );
+
+      drawWaveRegion(
+        [[left, y0], [right, y0], [right + 600 * sinI, y0 - 600 * cosI], [left + 600 * sinI, y0 - 600 * cosI]],
+        () => {
+          for (let m = mStart; m <= mEnd; m++) {
+            const s = state.time - m * lambda;
+            const xc = layout.centerX + s * sinI;
+            const yc = y0 - s * cosI;
+            drawWaveLine(xc - 410 * cosI, yc - 410 * sinI, xc + 410 * cosI, yc + 410 * sinI);
+          }
+        }
+      );
+
+      drawAngleArc(layout.centerX, y0, -Math.PI / 2 - a, -Math.PI / 2, 'i', COLORS.primary);
+      drawAngleArc(layout.centerX, y0, -Math.PI / 2, -Math.PI / 2 + a, 'r', COLORS.accent);
+      if (state.showLabels) {
+        drawText('incoming wavefronts', 146, 104, { color: '#047857', font: '850 15px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+        drawText('reflected wavefronts', 690, 104, { color: '#047857', font: '850 15px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+      }
+    }
+
+    function drawRefractionRayView() {
+      const material = getMaterial();
+      const a1 = degToRad(state.angleDeg);
+      const a2 = getRefractedAngleRad();
+      const incomingLength = 178;
+      const incX = layout.centerX - incomingLength * Math.sin(a1);
+      const incY = layout.blockTop - incomingLength * Math.cos(a1);
+
+      if (state.refractSetup === 'boundary') {
+        drawHalfSpace();
+        drawNormal(layout.centerX, 70, 585, 101);
+        const pathLength = 330;
+        const outX = layout.centerX + pathLength * Math.sin(a2);
+        const outY = layout.blockTop + pathLength * Math.cos(a2);
+        const guideX = layout.centerX + (outY - layout.blockTop) * Math.tan(a1);
+        drawDashedGuide(layout.centerX, layout.blockTop, guideX, outY, 'original direction');
+        drawRay(incX, incY, layout.centerX, layout.blockTop, 'incident ray', -58, -12);
+        drawAngleArc(layout.centerX, layout.blockTop, -Math.PI / 2 - a1, -Math.PI / 2, 'i', COLORS.primary, 50);
+        if (state.revealPath) {
+          drawRay(layout.centerX, layout.blockTop, outX, outY, 'refracted ray', 18, -4);
+          drawAngleArc(layout.centerX, layout.blockTop, Math.PI / 2 - a2, Math.PI / 2, 'r', COLORS.accent, 49);
+          if (state.showLabels) drawText('bends towards the normal', layout.centerX + 106, layout.blockTop + 101, { color: '#9a3412', font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+        } else {
+          drawPredictionPrompt(`Predict the path in ${material.label.toLowerCase()}`, 710, 166);
+        }
+        return;
+      }
+
+      const thickness = layout.blockBottom - layout.blockTop;
+      const exitX = layout.centerX + thickness * Math.tan(a2);
+      const outgoingLength = 158;
+      const outX = exitX + outgoingLength * Math.sin(a1);
+      const outY = layout.blockBottom + outgoingLength * Math.cos(a1);
+      const guideX = layout.centerX + (outY - layout.blockTop) * Math.tan(a1);
+
+      drawBlock();
+      drawNormal(layout.centerX, 70, layout.blockTop + 58, 101);
+      drawNormal(exitX, layout.blockBottom - 58, 618, layout.blockBottom + 97);
+      drawDashedGuide(layout.centerX, layout.blockTop, guideX, outY, 'original direction');
+      drawRay(incX, incY, layout.centerX, layout.blockTop, 'incident ray', -58, -12);
+      drawAngleArc(layout.centerX, layout.blockTop, -Math.PI / 2 - a1, -Math.PI / 2, 'i', COLORS.primary, 50);
+
+      if (state.revealPath) {
+        drawRay(layout.centerX, layout.blockTop, exitX, layout.blockBottom, 'refracted ray', 20, -5);
+        drawRay(exitX, layout.blockBottom, outX, outY, 'emergent ray', 20, 18);
+        drawAngleArc(layout.centerX, layout.blockTop, Math.PI / 2 - a2, Math.PI / 2, 'r', COLORS.accent, 49);
+        if (state.showLabels) {
+          drawText('bends towards the normal', layout.centerX + 102, layout.blockTop + 101, { color: '#9a3412', font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+          drawText('bends away from the normal', exitX + 42, layout.blockBottom + 100, { color: '#9a3412', font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.86)' });
+        }
+      } else {
+        drawPredictionPrompt(`Predict the path through ${material.label.toLowerCase()}`, 736, 166);
+      }
+    }
+
+    function drawRefractionWaveView() {
+      const material = getMaterial();
+      const a1 = degToRad(state.angleDeg);
+      const sin1 = Math.sin(a1);
+      const cos1 = Math.cos(a1);
+      const a2 = getRefractedAngleRad();
+      const sin2 = Math.sin(a2);
+      const cos2 = Math.cos(a2);
+      const spread = layout.beamHalfWidth / Math.max(0.2, cos1);
+      const lambda = layout.wavelengthAir;
+      const mStart = Math.floor(state.time / lambda) - 31;
+      const mEnd = Math.floor(state.time / lambda) + 31;
+      const topLeft = layout.centerX - spread;
+      const topRight = layout.centerX + spread;
+
+      if (state.refractSetup === 'boundary') {
+        drawHalfSpace();
+        drawNormal(layout.centerX, 70, 585, 101);
+        drawWaveRegion(
+          [[topLeft, layout.blockTop], [topRight, layout.blockTop], [topRight - 560 * sin1, layout.blockTop - 560 * cos1], [topLeft - 560 * sin1, layout.blockTop - 560 * cos1]],
+          () => {
+            for (let m = mStart; m <= mEnd; m++) {
+              const s = state.time - m * lambda;
+              const xc = layout.centerX + s * sin1;
+              const yc = layout.blockTop + s * cos1;
+              drawWaveLine(xc - 410 * cos1, yc + 410 * sin1, xc + 410 * cos1, yc - 410 * sin1);
+            }
+          }
+        );
+        drawWaveRegion(
+          [[topLeft, layout.blockTop], [topRight, layout.blockTop], [topRight + 620 * sin2, layout.blockTop + 620 * cos2], [topLeft + 620 * sin2, layout.blockTop + 620 * cos2]],
+          () => {
+            for (let m = mStart; m <= mEnd; m++) {
+              const s = (state.time - m * lambda) / material.n;
+              const xc = layout.centerX + s * sin2;
+              const yc = layout.blockTop + s * cos2;
+              drawWaveLine(xc - 410 * cos2, yc + 410 * sin2, xc + 410 * cos2, yc - 410 * sin2);
+            }
+          },
+          'rgba(250, 204, 21, 0.16)'
+        );
+      } else {
+        const thickness = layout.blockBottom - layout.blockTop;
+        const pathLengthInBlock = thickness / cos2;
+        const exitX = layout.centerX + thickness * Math.tan(a2);
+        const bottomLeft = topLeft + thickness * Math.tan(a2);
+        const bottomRight = topRight + thickness * Math.tan(a2);
+        drawBlock();
+        drawNormal(layout.centerX, 70, layout.blockTop + 58, 101);
+        drawNormal(exitX, layout.blockBottom - 58, 618, layout.blockBottom + 97);
+        drawWaveRegion(
+          [[topLeft, layout.blockTop], [topRight, layout.blockTop], [topRight - 560 * sin1, layout.blockTop - 560 * cos1], [topLeft - 560 * sin1, layout.blockTop - 560 * cos1]],
+          () => {
+            for (let m = mStart; m <= mEnd; m++) {
+              const s = state.time - m * lambda;
+              const xc = layout.centerX + s * sin1;
+              const yc = layout.blockTop + s * cos1;
+              drawWaveLine(xc - 410 * cos1, yc + 410 * sin1, xc + 410 * cos1, yc - 410 * sin1);
+            }
+          }
+        );
+        drawWaveRegion(
+          [[topLeft, layout.blockTop], [topRight, layout.blockTop], [bottomRight, layout.blockBottom], [bottomLeft, layout.blockBottom]],
+          () => {
+            for (let m = mStart; m <= mEnd; m++) {
+              const s = (state.time - m * lambda) / material.n;
+              const xc = layout.centerX + s * sin2;
+              const yc = layout.blockTop + s * cos2;
+              drawWaveLine(xc - 410 * cos2, yc + 410 * sin2, xc + 410 * cos2, yc - 410 * sin2);
+            }
+          },
+          'rgba(250, 204, 21, 0.16)'
+        );
+        drawWaveRegion(
+          [[bottomLeft, layout.blockBottom], [bottomRight, layout.blockBottom], [bottomRight + 560 * sin1, layout.blockBottom + 560 * cos1], [bottomLeft + 560 * sin1, layout.blockBottom + 560 * cos1]],
+          () => {
+            for (let m = mStart; m <= mEnd; m++) {
+              const s = (state.time - m * lambda) - pathLengthInBlock * material.n;
+              const xc = exitX + s * sin1;
+              const yc = layout.blockBottom + s * cos1;
+              drawWaveLine(xc - 410 * cos1, yc + 410 * sin1, xc + 410 * cos1, yc - 410 * sin1);
+            }
+          }
+        );
+      }
+
+      if (state.showLabels) {
+        drawText('wavefronts closer together', layout.centerX + 118, layout.blockTop + 132, { color: '#047857', font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.88)' });
+        drawText(`slower in ${material.label.toLowerCase()}`, layout.centerX + 130, layout.blockTop + 163, { color: material.stroke, font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.88)' });
+        if (state.detail === 'ks4') drawText('shorter wavelength', layout.centerX + 142, layout.blockTop + 194, { color: '#047857', font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.88)' });
+      }
+    }
+
+    function drawWaveRegion(points, drawLines, fill = COLORS.beam) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], points[0][1]);
+      for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+      ctx.closePath();
+      ctx.clip();
+      ctx.fillStyle = fill;
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+      drawLines();
+      ctx.restore();
+    }
+
+    function drawWaveLine(x1, y1, x2, y2) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(5, 150, 105, 0.92)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawPanel(x, y, width, height, title) {
+      ctx.save();
+      ctx.fillStyle = '#f8fafc';
+      roundRect(x, y, width, height, 18);
+      ctx.fill();
+      ctx.strokeStyle = '#dbe4f0';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+      drawText(title, x + width / 2, y + 35, { align: 'center', color: '#1e3a8a', font: '850 19px Inter, sans-serif' });
+    }
+
+    function drawObjectArrow(x, baseY, height, options = {}) {
+      const { color = '#2563eb', alpha = 1, dashed = false, downward = false, blur = 0, label = '' } = options;
+      const tipY = downward ? baseY + height : baseY - height;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (blur > 0) ctx.filter = `blur(${blur}px)`;
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 6;
+      if (dashed) ctx.setLineDash([9, 7]);
+      ctx.beginPath();
+      ctx.moveTo(x, baseY);
+      ctx.lineTo(x, tipY);
+      ctx.stroke();
+      const direction = downward ? 1 : -1;
+      ctx.beginPath();
+      ctx.moveTo(x, tipY);
+      ctx.lineTo(x - 14, tipY - direction * 22);
+      ctx.lineTo(x + 14, tipY - direction * 22);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      if (state.showLabels && label) drawText(label, x + 18, downward ? tipY + 4 : tipY + 4, { color, font: '850 14px Inter, sans-serif', background: 'rgba(255,255,255,0.82)' });
+    }
+
+    function roughSurfaceY(x, left, baseY, roughness = state.roughness) {
+      const u = x - left;
+      const amp = roughness * 0.22;
+      return baseY + amp * (0.50 * Math.sin(u / 20) + 0.32 * Math.sin(u / 8 + 0.8) + 0.18 * Math.sin(u / 4.8 + 1.4));
+    }
+
+    function roughSurfaceSlope(x, left, roughness = state.roughness) {
+      const u = x - left;
+      const amp = roughness * 0.22;
+      return amp * (0.50 * Math.cos(u / 20) / 20 + 0.32 * Math.cos(u / 8 + 0.8) / 8 + 0.18 * Math.cos(u / 4.8 + 1.4) / 4.8);
+    }
+
+    function drawRoughSurface(left, right, baseY) {
+      ctx.save();
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      for (let x = left; x <= right; x += 3) {
+        const y = roughSurfaceY(x, left, baseY);
+        if (x === left) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      for (let x = left + 12; x < right; x += 18) {
+        const y = roughSurfaceY(x, left, baseY);
+        ctx.beginPath();
+        ctx.moveTo(x, y + 4);
+        ctx.lineTo(x - 10, y + 22);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawBundle(left, right, baseY, rough = false) {
+      const a = degToRad(state.angleDeg);
+      const dx = Math.sin(a);
+      const dy = Math.cos(a);
+      const rayColor = rough ? '#e11d48' : COLORS.ray;
+      const hits = [];
+      for (let i = 0; i < 6; i++) hits.push(left + 50 + i * ((right - left - 100) / 5));
+
+      hits.forEach((hitX, index) => {
+        const hitY = rough ? roughSurfaceY(hitX, left, baseY) : baseY;
+        const slope = rough ? roughSurfaceSlope(hitX, left) : 0;
+        const normalLength = Math.hypot(-slope, 1);
+        const nx = -slope / normalLength;
+        const ny = 1 / normalLength;
+        const dot = dx * nx + dy * ny;
+        const rx = dx - 2 * dot * nx;
+        const ry = dy - 2 * dot * ny;
+        const startX = hitX - dx * 165;
+        const startY = hitY - dy * 165;
+        const endX = hitX + rx * 170;
+        const endY = hitY + ry * 170;
+        drawRay(startX, startY, hitX, hitY, '', 0, 0, { color: rayColor, width: 2.7, arrow: true });
+        drawRay(hitX, hitY, endX, endY, '', 0, 0, { color: rayColor, width: 2.7, arrow: true });
+
+        if (rough && state.showLocalNormals && (index === 1 || index === 3 || index === 5)) {
+          ctx.save();
+          ctx.strokeStyle = COLORS.normal;
+          ctx.lineWidth = 1.7;
+          ctx.setLineDash([6, 6]);
+          ctx.beginPath();
+          ctx.moveTo(hitX - nx * 48, hitY - ny * 48);
+          ctx.lineTo(hitX + nx * 48, hitY + ny * 48);
+          ctx.stroke();
+          ctx.restore();
+        }
+      });
+    }
+
+    function drawSurfaceComparison() {
+      const panelY = 54;
+      const panelW = 430;
+      const panelH = 545;
+      const leftPanel = 48;
+      const rightPanel = 522;
+      const surfaceY = 390;
+
+      drawPanel(leftPanel, panelY, panelW, panelH, 'Smooth surface');
+      drawPanel(rightPanel, panelY, panelW, panelH, 'Adjustable rough surface');
+      drawText('SPECULAR REFLECTION', leftPanel + panelW / 2, panelY + 66, { align: 'center', color: '#166534', font: '850 15px Inter, sans-serif' });
+      drawText(state.roughness < 12 ? 'SPECULAR REFLECTION' : 'DIFFUSE REFLECTION', rightPanel + panelW / 2, panelY + 66, { align: 'center', color: state.roughness < 12 ? '#166534' : '#9f1239', font: '850 15px Inter, sans-serif' });
+
+      drawObjectArrow(leftPanel + 112, surfaceY - 20, 93, { color: '#2563eb', label: 'object' });
+      drawObjectArrow(rightPanel + 112, surfaceY - 20, 93, { color: '#2563eb', label: 'object' });
+
+      drawMirrorHorizontal(leftPanel + 25, leftPanel + panelW - 25, surfaceY, 'polished mirror');
+      drawRoughSurface(rightPanel + 25, rightPanel + panelW - 25, surfaceY);
+      if (state.showLabels) drawText(roughnessDescription(), rightPanel + 42, surfaceY + 66, { color: '#475569', font: '850 15px Inter, sans-serif' });
+
+      drawBundle(leftPanel + 25, leftPanel + panelW - 25, surfaceY, false);
+      drawBundle(rightPanel + 25, rightPanel + panelW - 25, surfaceY, true);
+
+      drawObjectArrow(leftPanel + 112, surfaceY + 35, 90, { color: '#7c3aed', downward: true, alpha: 0.68, dashed: true, label: 'clear image' });
+      const blur = state.roughness < 12 ? 0 : clamp(state.roughness / 13, 0.8, 7.5);
+      const alpha = clamp(0.78 - state.roughness / 120, 0.08, 0.78);
+      if (state.roughness < 74) {
+        drawObjectArrow(rightPanel + 112, surfaceY + 35, 90, { color: '#7c3aed', downward: true, alpha, dashed: true, blur, label: state.roughness < 12 ? 'clear image' : 'blurred image' });
+      } else if (state.showLabels) {
+        drawText('no clear image', rightPanel + 112, surfaceY + 118, { color: '#7c3aed', font: '850 16px Inter, sans-serif', background: 'rgba(255,255,255,0.88)' });
+      }
+
+      if (state.showLabels) {
+        drawText('reflected rays stay parallel', leftPanel + panelW / 2, panelY + 520, { align: 'center', color: '#166534', font: '850 15px Inter, sans-serif' });
+        drawText(state.roughness < 12 ? 'reflected rays mostly stay parallel' : 'reflected rays scatter', rightPanel + panelW / 2, panelY + 520, { align: 'center', color: '#9f1239', font: '850 15px Inter, sans-serif' });
+      }
+    }
+
+    function drawVirtualImageActivity() {
+      const mirrorX = 500;
+      const mirrorTop = 92;
+      const mirrorBottom = 594;
+      const baseY = 500;
+      const arrowHeight = 170;
+      const objectX = mirrorX - state.objectDistance;
+      const imageX = mirrorX + state.objectDistance;
+      const objectTopY = baseY - arrowHeight;
+
+      drawMirrorVertical(mirrorX, mirrorTop, mirrorBottom);
+      drawObjectArrow(objectX, baseY, arrowHeight, { color: '#2563eb', label: 'object' });
+      drawObjectArrow(imageX, baseY, arrowHeight, { color: COLORS.virtual, alpha: 0.65, dashed: true, label: 'virtual image' });
+
+      const mirrorPoints = [235, 375];
+      mirrorPoints.forEach((mirrorY, index) => {
+        const vx = mirrorX - objectX;
+        const vy = mirrorY - objectTopY;
+        const reflectedX = mirrorX - vx * 0.82;
+        const reflectedY = mirrorY + vy * 0.82;
+        drawRay(objectX, objectTopY, mirrorX, mirrorY, index === 0 ? 'light from object' : '', -35, -12, { width: 3.2 });
+        drawRay(mirrorX, mirrorY, reflectedX, reflectedY, index === 0 ? 'reflected ray' : '', -22, -14, { width: 3.2 });
+        if (state.showConstruction) {
+          drawRay(mirrorX, mirrorY, imageX, objectTopY, index === 0 ? 'dashed extension' : '', 20, -12, { dashed: true, color: COLORS.virtual, width: 2.6, arrow: false, labelColor: COLORS.virtual });
+        }
+      });
+
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([7, 7]);
+      ctx.beginPath();
+      ctx.moveTo(objectX, 555);
+      ctx.lineTo(mirrorX, 555);
+      ctx.moveTo(mirrorX + 16, 555);
+      ctx.lineTo(imageX, 555);
+      ctx.stroke();
+      ctx.restore();
+      if (state.showLabels) {
+        drawText('same distance', (objectX + mirrorX) / 2, 582, { align: 'center', color: '#475569', font: '850 14px Inter, sans-serif' });
+        drawText('same distance', (mirrorX + imageX) / 2, 582, { align: 'center', color: '#475569', font: '850 14px Inter, sans-serif' });
+        drawText('rays do not actually travel behind the mirror', 738, 122, { align: 'center', color: COLORS.virtual, font: '850 15px Inter, sans-serif', background: 'rgba(255,255,255,0.9)' });
+      }
+    }
+
+    function draw() {
+      clearCanvas();
+      if (state.topic === 'reflection') {
+        state.view === 'ray' ? drawReflectionRayView() : drawReflectionWaveView();
+      } else if (state.topic === 'refraction') {
+        state.view === 'ray' ? drawRefractionRayView() : drawRefractionWaveView();
+      } else if (state.topic === 'surfaces') {
+        drawSurfaceComparison();
+      } else {
+        drawVirtualImageActivity();
+      }
+    }
+
+    function animationLoop() {
+      if ((state.topic === 'reflection' || state.topic === 'refraction') && state.view === 'wave' && state.playing) {
+        state.time += 0.92 * state.speed;
+      }
+      draw();
+      requestAnimationFrame(animationLoop);
+    }
+
+    function pointerToCanvas(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: (event.clientX - rect.left) * LOGICAL_WIDTH / rect.width,
+        y: (event.clientY - rect.top) * LOGICAL_HEIGHT / rect.height
+      };
+    }
+
+    function updateAngleFromPointer(event) {
+      if (!state.dragging || state.topic === 'image') return;
+      const point = pointerToCanvas(event);
+      const targetY = state.topic === 'reflection' ? layout.mirrorY : (state.topic === 'surfaces' ? 390 : layout.blockTop);
+      const dx = layout.centerX - point.x;
+      const dy = targetY - point.y;
+      if (dx >= 0 && dy > 0) setAngle(radToDeg(Math.atan2(dx, dy)));
+    }
+
+    function resetSimulation() {
+      state.angleDeg = 30;
+      state.roughness = 55;
+      state.objectDistance = 180;
+      state.materialKey = 'perspex';
+      state.refractSetup = 'block';
+      state.time = 0;
+      state.revealPath = true;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      state.challengeChoice = '';
+      document.getElementById('angle-slider').value = '30';
+      document.getElementById('angle-value').textContent = '30°';
+      document.getElementById('roughness-slider').value = '55';
+      document.getElementById('roughness-value').textContent = '55%';
+      document.getElementById('object-distance-slider').value = '180';
+      document.getElementById('object-distance-value').textContent = '180 px';
+      document.getElementById('material-select').value = 'perspex';
+      setPressed('btn-boundary', false);
+      setPressed('btn-block', true);
+      refreshUI();
+    }
+
+    canvas.addEventListener('pointerdown', (event) => {
+      state.dragging = true;
+      canvas.setPointerCapture(event.pointerId);
+      updateAngleFromPointer(event);
+    });
+    canvas.addEventListener('pointermove', updateAngleFromPointer);
+    canvas.addEventListener('pointerup', () => { state.dragging = false; });
+    canvas.addEventListener('pointercancel', () => { state.dragging = false; });
+
+    document.getElementById('btn-reflection').addEventListener('click', () => setTopic('reflection'));
+    document.getElementById('btn-surfaces').addEventListener('click', () => setTopic('surfaces'));
+    document.getElementById('btn-refraction').addEventListener('click', () => setTopic('refraction'));
+    document.getElementById('btn-image').addEventListener('click', () => setTopic('image'));
+    document.getElementById('btn-ray').addEventListener('click', () => setView('ray'));
+    document.getElementById('btn-wave').addEventListener('click', () => setView('wave'));
+    document.getElementById('btn-core').addEventListener('click', () => setDetail('core'));
+    document.getElementById('btn-ks4').addEventListener('click', () => setDetail('ks4'));
+    document.getElementById('angle-slider').addEventListener('input', (event) => setAngle(event.target.value));
+    document.getElementById('roughness-slider').addEventListener('input', (event) => setRoughness(event.target.value));
+    document.getElementById('object-distance-slider').addEventListener('input', (event) => setObjectDistance(event.target.value));
+    document.getElementById('material-select').addEventListener('change', (event) => setMaterial(event.target.value));
+    document.getElementById('btn-boundary').addEventListener('click', () => setRefractionSetup('boundary'));
+    document.getElementById('btn-block').addEventListener('click', () => setRefractionSetup('block'));
+    document.getElementById('toggle-labels').addEventListener('change', (event) => { state.showLabels = event.target.checked; });
+    document.getElementById('toggle-normal').addEventListener('change', (event) => { state.showNormal = event.target.checked; });
+    document.getElementById('toggle-local-normals').addEventListener('change', (event) => { state.showLocalNormals = event.target.checked; });
+    document.getElementById('toggle-construction').addEventListener('change', (event) => { state.showConstruction = event.target.checked; });
+    document.getElementById('btn-play').addEventListener('click', () => setPlaying(!state.playing));
+    document.getElementById('btn-step').addEventListener('click', () => { state.time += 7; draw(); });
+    document.getElementById('btn-reset-animation').addEventListener('click', () => { state.time = 0; draw(); });
+    document.getElementById('speed-slider').addEventListener('input', (event) => {
+      state.speed = Number(event.target.value);
+      document.getElementById('speed-value').textContent = `${state.speed.toFixed(1)}×`;
+    });
+    document.getElementById('btn-toggle-path').addEventListener('click', () => {
+      state.revealPath = !state.revealPath;
+      state.challengeActive = false;
+      state.challengeAnswered = false;
+      refreshUI();
+    });
+    document.getElementById('btn-reset-simulation').addEventListener('click', resetSimulation);
+    document.getElementById('btn-fullscreen').addEventListener('click', async () => {
+      const wrap = document.getElementById('canvas-wrap');
+      try {
+        if (!document.fullscreenElement) await wrap.requestFullscreen();
+        else await document.exitFullscreen();
+      } catch (error) {
+        console.warn('Full-screen mode is not available in this browser.', error);
+      }
+    });
+
+    window.addEventListener('resize', configureCanvas);
+    document.addEventListener('fullscreenchange', () => {
+      document.getElementById('btn-fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen diagram';
+    });
+
+    configureCanvas();
+    setPlaying(state.playing);
+    refreshUI();
+    requestAnimationFrame(animationLoop);
+  </script>
 </body>
 </html>
