@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Colour of Light Lab — Batch 2</title>
+<title>The Colour of Light Lab — Batch 2.1 Polish</title>
 <style>
   :root{
     --navy:#071d3d;--navy2:#0d3263;--blue:#0ea5e9;--sky:#e9f7ff;--panel:#fff;
@@ -71,7 +71,7 @@
   .teacher-tip{margin-top:8px;padding:9px;border-radius:9px;background:#f1f5f9;color:#475569;font-size:12px;line-height:1.4}
   .teacher-tip b{color:#0f315d}
   .svg-label{fill:#d8efff;font-weight:850;font-size:18px}.svg-small{fill:#d8efff;font-weight:750;font-size:14px}.svg-dark{fill:#08254a;font-weight:950;font-size:16px}
-  .fade{transition:opacity .35s}.hidden{opacity:0!important}.ray{stroke-linecap:round}.spectrum-ray{opacity:0;transition:opacity .45s}.spectrum-ray.show{opacity:1}
+  .fade{transition:opacity .35s}.hidden{opacity:0!important}.ray{stroke-linecap:round}.spectrum-ray{opacity:0;transition:opacity .45s}.spectrum-ray.show{opacity:1} #incomingBeam,#insideBeam,#filterIncoming,#filterMid,#filterOutgoing,#objIncomingBeam,#objReflectedBeam,#screenGlow{transition:fill .25s,opacity .25s,points .25s}
   .flow{stroke-dasharray:12 15;animation:flow 1.25s linear infinite}.pulse{animation:pulse 1.65s ease-in-out infinite}.float{animation:float 2.2s ease-in-out infinite}
   body.paused *{animation-play-state:paused!important}
   @keyframes flow{to{stroke-dashoffset:-54}}@keyframes pulse{50%{opacity:.55}}@keyframes float{50%{transform:translateY(-5px)}}
@@ -105,7 +105,7 @@
 <div class="app-shell">
 <header>
   <div class="logo">🌈</div>
-  <div class="header-copy"><h1>The Colour of Light Lab</h1><p>KS3 Physics · interactive classroom demonstration</p></div>
+  <div class="header-copy"><h1>The Colour of Light Lab</h1><p>KS3 Physics · interactive classroom demonstration · polished update</p></div>
   <div class="top-actions">
     <span class="mode-pill" id="modePill">🎓 Guided teaching mode</span>
     <button class="small-btn" onclick="toggleMode()">Switch mode</button>
@@ -174,8 +174,10 @@
           </defs>
           <g><rect x="28" y="204" width="110" height="112" rx="18" fill="#092b59" stroke="#2d78bd" stroke-width="3"/><circle class="pulse" cx="84" cy="260" r="35" fill="#fff"/><path d="M137 238 L164 238 L164 282 L137 282 Z" fill="#fff"/><text x="84" y="340" text-anchor="middle" class="svg-label">lamp</text></g>
           <polygon points="395,118 510,348 282,348" fill="url(#glass)" stroke="#a8e4ff" stroke-width="4"/><text x="396" y="390" text-anchor="middle" class="svg-label">glass prism</text>
-          <line id="incomingBeam" x1="164" y1="260" x2="340" y2="260" stroke="url(#whiteBeam)" stroke-width="24" class="ray flow"/>
-          <line id="insideBeam" x1="340" y1="260" x2="462" y2="260" stroke="#fff" stroke-opacity=".82" stroke-width="15" class="ray flow"/>
+          <polygon id="incomingBeam" points="164,242 340,245 340,275 164,278" fill="#ffffff" opacity=".93"/>
+          <line id="incomingBeamFlow" x1="176" y1="260" x2="330" y2="260" stroke="#dff7ff" stroke-width="3" opacity=".75" class="ray flow"/>
+          <polygon id="insideBeam" points="340,247 462,252 462,268 340,273" fill="#ffffff" opacity=".83"/>
+          <line id="insideBeamFlow" x1="350" y1="260" x2="454" y2="260" stroke="#dff7ff" stroke-width="2.5" opacity=".65" class="ray flow"/>
           <g id="spectrum">
             <line class="spectrum-ray ray flow" data-ray="red" x1="462" y1="260" x2="835" y2="292" stroke="#ff3b30" stroke-width="15"/>
             <line class="spectrum-ray ray flow" data-ray="orange" x1="462" y1="260" x2="835" y2="307" stroke="#ff9500" stroke-width="14"/>
@@ -230,12 +232,20 @@
   <div class="workspace">
     <div class="demo-card"><div class="demo-title"><span>Filter demonstration</span><span>Filters subtract colours from the available light</span></div>
       <div class="stage"><svg id="filterSvg" viewBox="0 0 900 520" role="img" aria-label="Light passing through coloured filters">
-        <defs><linearGradient id="rainbowBeam" x1="0" x2="1"><stop stop-color="#f33"/><stop offset=".18" stop-color="#ff9800"/><stop offset=".35" stop-color="#ffe331"/><stop offset=".53" stop-color="#37d35c"/><stop offset=".7" stop-color="#28cde0"/><stop offset=".84" stop-color="#427cff"/><stop offset="1" stop-color="#bb45ff"/></linearGradient></defs>
+        <defs>
+          <linearGradient id="rainbowBeam" x1="0" x2="1"><stop stop-color="#f33"/><stop offset=".18" stop-color="#ff9800"/><stop offset=".35" stop-color="#ffe331"/><stop offset=".53" stop-color="#37d35c"/><stop offset=".7" stop-color="#28cde0"/><stop offset=".84" stop-color="#427cff"/><stop offset="1" stop-color="#bb45ff"/></linearGradient>
+        </defs>
         <g><rect x="38" y="190" width="120" height="140" rx="18" fill="#0b315f" stroke="#2f82ce" stroke-width="3"/><circle class="pulse" cx="96" cy="260" r="38" fill="#fff"/><text x="96" y="360" text-anchor="middle" class="svg-label">lamp</text></g>
-        <rect id="filterIncoming" x="158" y="230" width="250" height="60" fill="url(#rainbowBeam)" opacity=".95"/><rect id="filterPane1" x="408" y="135" width="45" height="250" rx="8" fill="#e33" opacity=".84" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
-        <rect id="filterMid" x="453" y="230" width="135" height="60" fill="#f00" opacity="0"/><rect id="filterPane2" x="588" y="135" width="45" height="250" rx="8" fill="#3678ff" opacity="0" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>
-        <rect id="filterOutgoing" x="633" y="230" width="150" height="60" fill="#f00" opacity="0"/><line x1="804" y1="175" x2="804" y2="350" stroke="#e5f4ff" stroke-width="6"/><text x="804" y="382" text-anchor="middle" class="svg-label">screen</text>
-        <text x="279" y="215" text-anchor="middle" class="svg-small">incoming light</text><text x="430" y="115" text-anchor="middle" class="svg-small">filter 1</text><text id="filter2Label" x="610" y="115" text-anchor="middle" class="svg-small" opacity="0">filter 2</text><text x="706" y="215" text-anchor="middle" class="svg-small">final transmitted light</text>
+        <polygon id="filterIncoming" points="158,225 408,235 408,285 158,295" fill="url(#rainbowBeam)" opacity=".95"/>
+        <line x1="175" y1="260" x2="395" y2="260" stroke="#ffffff" stroke-width="2.5" opacity=".55" class="ray flow"/>
+        <rect id="filterPane1" x="408" y="135" width="45" height="250" rx="8" fill="#e33" opacity=".84" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+        <polygon id="filterMid" points="453,236 588,241 588,279 453,284" fill="#f00" opacity="0"/>
+        <rect id="filterPane2" x="588" y="135" width="45" height="250" rx="8" fill="#3678ff" opacity="0" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>
+        <polygon id="filterOutgoing" points="453,235 784,218 784,302 453,285" fill="#f00" opacity="0"/>
+        <rect id="screenGlow" x="786" y="188" width="34" height="144" rx="14" fill="#f00" opacity="0"/>
+        <g id="noLightMarker" opacity="0"><line x1="470" y1="260" x2="782" y2="260" stroke="#d8e4ef" stroke-width="3" stroke-dasharray="8 10" opacity=".45"/><text x="630" y="318" text-anchor="middle" class="svg-small">no visible light transmitted</text></g>
+        <line x1="824" y1="175" x2="824" y2="350" stroke="#e5f4ff" stroke-width="6"/><text x="824" y="382" text-anchor="middle" class="svg-label">screen</text>
+        <text x="279" y="210" text-anchor="middle" class="svg-small">incoming light</text><text x="430" y="115" text-anchor="middle" class="svg-small">filter 1</text><text id="filter2Label" x="610" y="115" text-anchor="middle" class="svg-small" opacity="0">filter 2</text><text x="695" y="205" text-anchor="middle" class="svg-small">transmitted light travels to the screen</text>
       </svg></div>
     </div>
     <aside class="sidebar">
@@ -261,12 +271,16 @@
     <div class="demo-card"><div class="demo-title"><span>Object colour demonstration</span><span>Light source → optional filter → object → eye</span></div>
       <div class="stage"><svg id="objectSvg" viewBox="0 0 900 520" role="img" aria-label="Light shining on an object and reflecting to an eye">
         <g><rect x="34" y="188" width="116" height="132" rx="18" fill="#0b315f" stroke="#2f82ce" stroke-width="3"/><circle class="pulse" cx="90" cy="254" r="36" fill="#fff"/><text x="90" y="352" text-anchor="middle" class="svg-label">lamp</text></g>
-        <polygon id="objIncomingBeam" points="150,225 418,245 418,295 150,285" fill="#fff" opacity=".84"/>
+        <polygon id="objIncomingBeam" points="150,224 424,242 424,298 150,286" fill="#fff" opacity=".84"/>
+        <line x1="170" y1="256" x2="405" y2="270" stroke="#ffffff" stroke-width="2.5" opacity=".45" class="ray flow"/>
         <rect id="objFilterPane" x="310" y="170" width="28" height="180" rx="6" fill="#e33" opacity="0" stroke="#fff" stroke-width="2"/><text id="objFilterLabel" x="324" y="150" text-anchor="middle" class="svg-small" opacity="0">filter</text>
-        <g id="objShape" transform="translate(490 270)"><circle id="objBody" cx="0" cy="0" r="88" fill="#e53935" stroke="#f8fbff" stroke-width="4"/><path id="objLeaf" d="M-10,-86 C8,-130 44,-122 55,-100" fill="none" stroke="#55bb63" stroke-width="14" stroke-linecap="round"/><ellipse cx="-28" cy="-34" rx="19" ry="12" fill="#fff" opacity=".25"/><text id="objLabel" x="0" y="130" text-anchor="middle" class="svg-label">red apple</text></g>
+        <ellipse id="objShadow" cx="490" cy="374" rx="104" ry="18" fill="#000814" opacity=".24"/>
+        <g id="objShape" transform="translate(490 270)"><text id="objLabel" x="0" y="-112" text-anchor="middle" class="svg-label">red apple</text><circle id="objBody" cx="0" cy="0" r="88" fill="#e53935" stroke="#f8fbff" stroke-width="4"/><path id="objLeaf" d="M-10,-86 C8,-130 44,-122 55,-100" fill="none" stroke="#55bb63" stroke-width="14" stroke-linecap="round"/><ellipse cx="-28" cy="-34" rx="19" ry="12" fill="#fff" opacity=".25"/></g>
         <polygon id="objReflectedBeam" points="550,234 737,145 758,190 577,272" fill="#f00" opacity=".88"/>
+        <line x1="585" y1="244" x2="732" y2="176" stroke="#ffffff" stroke-width="2.4" opacity=".42" class="ray flow"/>
         <g transform="translate(790 160)"><ellipse cx="0" cy="0" rx="58" ry="34" fill="#eef8ff" stroke="#aee6ff" stroke-width="3"/><circle cx="0" cy="0" r="16" fill="#0f274d"/><circle cx="4" cy="-4" r="5" fill="#fff"/><text x="0" y="74" text-anchor="middle" class="svg-label">eye</text></g>
-        <text x="238" y="205" text-anchor="middle" class="svg-small">incoming light</text><text x="668" y="116" text-anchor="middle" class="svg-small">reflected light</text><g id="absorbCloud"><circle cx="456" cy="338" r="15" fill="#0f172a" opacity=".75"/><circle cx="490" cy="360" r="20" fill="#0f172a" opacity=".75"/><circle cx="528" cy="339" r="14" fill="#0f172a" opacity=".75"/><text x="492" y="404" text-anchor="middle" class="svg-small">some light is absorbed</text></g>
+        <text x="238" y="205" text-anchor="middle" class="svg-small">incoming light</text><text x="668" y="116" text-anchor="middle" class="svg-small">reflected light</text>
+        <g id="absorbCloud" opacity=".72"><path d="M438 340 Q455 316 472 305" fill="none" stroke="#a7b4c2" stroke-width="5" stroke-linecap="round" opacity=".65"/><path d="M493 390 Q492 345 492 316" fill="none" stroke="#a7b4c2" stroke-width="5" stroke-linecap="round" opacity=".5"/><path d="M542 340 Q525 318 510 306" fill="none" stroke="#a7b4c2" stroke-width="5" stroke-linecap="round" opacity=".65"/><text x="490" y="442" text-anchor="middle" class="svg-small">absorbed by the object</text></g>
       </svg></div>
     </div>
     <aside class="sidebar">
@@ -316,7 +330,17 @@ function resetEverything(){resetPrism();resetMix();resetFilter();resetObjects();
 
 /* Prism */
 let prismMode='white';const rayColours={red:'#ff3b30',green:'#3fd45a',blue:'#3680ff',violet:'#b33bff'};
-function setBeamColour(c){document.getElementById('incomingBeam').setAttribute('stroke',c==='white'?'url(#whiteBeam)':rayColours[c]);document.getElementById('insideBeam').setAttribute('stroke',c==='white'?'#fff':rayColours[c])}
+function setBeamColour(c){
+  const col=c==='white'?'#ffffff':rayColours[c];
+  document.getElementById('incomingBeam').setAttribute('fill',col);
+  document.getElementById('insideBeam').setAttribute('fill',col);
+  document.getElementById('incomingBeam').setAttribute('opacity',c==='white'?'.93':'.9');
+  document.getElementById('insideBeam').setAttribute('opacity',c==='white'?'.83':'.82');
+  const flowCol=c==='white'?'#dff7ff':col;
+  const f1=document.getElementById('incomingBeamFlow'),f2=document.getElementById('insideBeamFlow');
+  if(f1){f1.setAttribute('stroke',flowCol);f1.setAttribute('opacity',c==='white'?'.75':'.88')}
+  if(f2){f2.setAttribute('stroke',flowCol);f2.setAttribute('opacity',c==='white'?'.65':'.8')}
+}
 function setPrismMode(v){prismMode=v;resetPrism(false)}
 function runPrism(){setBeamColour(prismMode);document.querySelectorAll('.spectrum-ray').forEach(r=>r.classList.toggle('show',prismMode==='white'||r.dataset.ray===prismMode))}
 function comparePrism(){prismMode='white';document.getElementById('prismMode').value='white';setBeamColour('white');document.querySelectorAll('.spectrum-ray').forEach(r=>r.classList.toggle('show',['red','violet'].includes(r.dataset.ray)))}
@@ -336,10 +360,32 @@ function resetMix(){presetMix(255,255,255)}
 function vectorName(v){const[r,g,b]=v;if(r<10&&g<10&&b<10)return'no light';if(r>200&&g>200&&b>200)return'white light';if(r>200&&g>200)return'yellow light';if(g>200&&b>200)return'cyan light';if(r>200&&b>200)return'magenta light';if(r>200)return'red light';if(g>200)return'green light';if(b>200)return'blue light';return'dim light'}
 function toggleSecondFilter(){document.getElementById('filterExtra').classList.toggle('show',document.getElementById('useSecondFilter').checked);prepareFilter()}
 function prepareFilter(){const incoming=document.getElementById('incomingLight').value,f1=document.getElementById('filterChoice1').value,second=document.getElementById('useSecondFilter').checked,f2=document.getElementById('filterChoice2').value,inV=lights[incoming];
-  document.getElementById('filterIncoming').setAttribute('fill',incoming==='white'?'url(#rainbowBeam)':cssRgb(inV));document.getElementById('filterPane1').setAttribute('fill',colourHex[f1]);document.getElementById('filterPane2').setAttribute('fill',colourHex[f2]);document.getElementById('filterPane2').setAttribute('opacity',second?'.84':'0');document.getElementById('filter2Label').setAttribute('opacity',second?'1':'0');document.getElementById('filterMid').setAttribute('opacity','0');document.getElementById('filterOutgoing').setAttribute('opacity','0');document.getElementById('filterOutcome').innerHTML='<small>Final transmitted light</small>Press reveal';['R','G','B'].forEach((c,i)=>document.getElementById('comp'+c).classList.toggle('off',inV[i]===0));document.getElementById('absorbedText').textContent='Predict the outgoing light before pressing reveal.'}
+  document.getElementById('filterIncoming').setAttribute('fill',incoming==='white'?'url(#rainbowBeam)':cssRgb(inV));
+  document.getElementById('filterPane1').setAttribute('fill',colourHex[f1]);
+  document.getElementById('filterPane2').setAttribute('fill',colourHex[f2]);
+  document.getElementById('filterPane2').setAttribute('opacity',second?'.84':'0');
+  document.getElementById('filter2Label').setAttribute('opacity',second?'1':'0');
+  document.getElementById('filterMid').setAttribute('opacity','0');
+  document.getElementById('filterOutgoing').setAttribute('points',second?'633,235 784,218 784,302 633,285':'453,235 784,218 784,302 453,285');
+  document.getElementById('filterOutgoing').setAttribute('opacity','0');
+  document.getElementById('screenGlow').setAttribute('opacity','0');
+  document.getElementById('noLightMarker').setAttribute('opacity','0');
+  document.getElementById('filterOutcome').innerHTML='<small>Final transmitted light</small>Press reveal';
+  ['R','G','B'].forEach((c,i)=>document.getElementById('comp'+c).classList.toggle('off',inV[i]===0));
+  document.getElementById('absorbedText').textContent='Predict the outgoing light before pressing reveal.'}
 function runFilter(){const incoming=document.getElementById('incomingLight').value,f1=document.getElementById('filterChoice1').value,second=document.getElementById('useSecondFilter').checked,f2=document.getElementById('filterChoice2').value,inV=lights[incoming],mid=applyMask(inV,filterMasks[f1]),out=second?applyMask(mid,filterMasks[f2]):mid;
-  document.getElementById('filterMid').setAttribute('fill',cssRgb(mid));document.getElementById('filterMid').setAttribute('opacity',second&&mid.some(x=>x>0)?'.9':'0');document.getElementById('filterOutgoing').setAttribute('fill',cssRgb(out));document.getElementById('filterOutgoing').setAttribute('opacity',out.some(x=>x>0)?'.92':'0');document.getElementById('filterOutcome').innerHTML='<small>Final transmitted light</small>'+vectorName(out);
-  const absorbed=['red','green','blue'].filter((_,i)=>inV[i]>0&&out[i]===0);document.getElementById('absorbedText').textContent=absorbed.length?'Absorbed during the journey: '+absorbed.join(', ')+'.':(out.some(x=>x>0)?'All available colour components are transmitted.':'No visible light reaches the screen.')}
+  const hasMid=mid.some(x=>x>0),hasOut=out.some(x=>x>0);
+  document.getElementById('filterMid').setAttribute('fill',cssRgb(mid));
+  document.getElementById('filterMid').setAttribute('opacity',second&&hasMid?'.9':'0');
+  document.getElementById('filterOutgoing').setAttribute('points',second?'633,235 784,218 784,302 633,285':'453,235 784,218 784,302 453,285');
+  document.getElementById('filterOutgoing').setAttribute('fill',cssRgb(out));
+  document.getElementById('filterOutgoing').setAttribute('opacity',hasOut?'.92':'0');
+  document.getElementById('screenGlow').setAttribute('fill',cssRgb(out));
+  document.getElementById('screenGlow').setAttribute('opacity',hasOut?'.55':'0');
+  document.getElementById('noLightMarker').setAttribute('opacity',hasOut?'0':'.75');
+  document.getElementById('filterOutcome').innerHTML='<small>Final transmitted light</small>'+vectorName(out);
+  const absorbed=['red','green','blue'].filter((_,i)=>inV[i]>0&&out[i]===0);
+  document.getElementById('absorbedText').textContent=absorbed.length?'Absorbed during the journey: '+absorbed.join(', ')+'.':(hasOut?'All available colour components are transmitted.':'No visible light reaches the screen.')}
 function resetFilter(){document.getElementById('incomingLight').value='white';document.getElementById('filterChoice1').value='red';document.getElementById('useSecondFilter').checked=false;document.getElementById('filterChoice2').value='blue';toggleSecondFilter()}
 
 /* Objects */
@@ -347,7 +393,7 @@ const objects={apple:{name:'red apple',reflect:[1,.04,.02]},shirt:{name:'green s
 function selectObject(k){currentObject=k;document.querySelectorAll('.object-choice button').forEach(b=>b.classList.toggle('active',b.dataset.object===k));updateObject()}
 function perceivedName(v){const[r,g,b]=v,max=Math.max(...v);if(max<20)return'black';if(r>190&&g>190&&b>190)return'white';if(r>150&&g>150&&b<80)return'yellow';if(g>150&&b>150&&r<80)return'cyan';if(r>150&&b>150&&g<90)return'magenta';if(r>=g*1.7&&r>=b*1.7)return'red';if(g>=r*1.7&&g>=b*1.5)return'green';if(b>=r*1.5&&b>=g*1.4)return'blue';if(max<80)return'very dark';return'mixed colour'}
 function updateObject(){const obj=objects[currentObject],lightKey=document.getElementById('objectLight').value,useF=document.getElementById('useObjectFilter').checked,f=document.getElementById('objectFilter').value,incoming=lights[lightKey],available=useF?applyMask(incoming,filterMasks[f]):incoming,reflected=available.map((x,i)=>Math.round(x*obj.reflect[i])),result=perceivedName(reflected);
-  document.getElementById('objectFilterWrap').classList.toggle('show',useF);document.getElementById('objFilterPane').setAttribute('opacity',useF?'.84':'0');document.getElementById('objFilterLabel').setAttribute('opacity',useF?'1':'0');document.getElementById('objFilterPane').setAttribute('fill',colourHex[f]);document.getElementById('objIncomingBeam').setAttribute('fill',cssRgb(available));document.getElementById('objReflectedBeam').setAttribute('fill',cssRgb(reflected));document.getElementById('objReflectedBeam').setAttribute('opacity',Math.max(...reflected)<10?'.12':'.88');document.getElementById('objBody').setAttribute('fill',cssRgb(reflected.map(x=>Math.max(x,8))));document.getElementById('objLabel').textContent=obj.name;document.getElementById('objLeaf').setAttribute('opacity',currentObject==='apple'?'1':'0');
+  document.getElementById('objectFilterWrap').classList.toggle('show',useF);document.getElementById('objFilterPane').setAttribute('opacity',useF?'.84':'0');document.getElementById('objFilterLabel').setAttribute('opacity',useF?'1':'0');document.getElementById('objFilterPane').setAttribute('fill',colourHex[f]);document.getElementById('objIncomingBeam').setAttribute('fill',cssRgb(available));document.getElementById('objReflectedBeam').setAttribute('fill',cssRgb(reflected));document.getElementById('objReflectedBeam').setAttribute('opacity',Math.max(...reflected)<10?'.12':'.88');document.getElementById('objBody').setAttribute('fill',cssRgb(reflected.map(x=>Math.max(x,8))));document.getElementById('objLabel').textContent=obj.name;document.getElementById('objLeaf').setAttribute('opacity',currentObject==='apple'?'1':'0');const absorbedAmount=available.reduce((sum,x,i)=>sum+Math.max(0,x-reflected[i]),0);document.getElementById('absorbCloud').setAttribute('opacity',absorbedAmount>30?'.72':'.18');
   document.getElementById('objectResult').textContent=obj.name[0].toUpperCase()+obj.name.slice(1)+' appears '+result;const availNames=['red','green','blue'].filter((_,i)=>available[i]>0),refNames=['red','green','blue'].filter((_,i)=>reflected[i]>30);let reason='';
   if(refNames.length===0)reason='Very little of the available light is reflected into the eye, so the object appears black or very dark.';else if(currentObject==='mouse')reason='A white object reflects the colours of light that are available. Here it reflects '+refNames.join(' and ')+' light into the eye.';else if(currentObject==='cat')reason='A black object reflects very little visible light and absorbs most of the light that reaches it.';else reason='The '+obj.name+' reflects '+refNames.join(' and ')+' light into the eye. Other available colours are mostly absorbed.';
   document.getElementById('objectReason').textContent=reason;document.getElementById('objectPrompt').textContent='Available after the lamp'+(useF?' and filter':'')+': '+(availNames.join(', ')||'no visible light')+'. Which colour will the '+obj.name+' reflect?'}
