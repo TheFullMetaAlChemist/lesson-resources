@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Iodine Clock PAG Data Processor</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --panel:#ffffff;
+  --ink:#172033;
+  --muted:#5e6a7d;
+  --line:#d9e1ec;
+  --accent:#2563eb;
+  --accent2:#0f766e;
+  --warn:#b45309;
+  --bad:#b91c1c;
+  --good:#047857;
+  --soft:#eef4ff;
+  --shadow:0 12px 30px rgba(15,23,42,.08);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#eef4ff 0%,#f8fafc 340px,#f4f7fb 100%);
+  color:var(--ink);
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  line-height:1.45;
+}
+header{
+  padding:28px 24px 18px;
+  max-width:1240px;
+  margin:0 auto;
+}
+h1{margin:0 0 6px;font-size:clamp(1.7rem,3vw,2.6rem);letter-spacing:-.04em}
+.subtitle{color:var(--muted);max-width:900px;font-size:1.02rem}
+main{max-width:1240px;margin:0 auto;padding:0 24px 46px}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:20px;
+  margin:18px 0;
+}
+.card h2{margin:0 0 12px;font-size:1.35rem;letter-spacing:-.02em}
+.card h3{margin:18px 0 8px;font-size:1.05rem}
+.grid{display:grid;gap:16px}
+.grid.two{grid-template-columns:1.05fr .95fr}
+.grid.three{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.grid.two,.grid.three{grid-template-columns:1fr}}
+.controls{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px
+}
+button, .fileLabel{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink);
+  border-radius:12px;
+  padding:10px 13px;
+  font-weight:650;
+  cursor:pointer;
+  transition:.15s ease;
+}
+button:hover,.fileLabel:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(15,23,42,.08)}
+button.primary{background:var(--accent);border-color:var(--accent);color:white}
+button.green{background:var(--accent2);border-color:var(--accent2);color:white}
+button.danger{color:var(--bad)}
+input, select, textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:9px 10px;
+  font:inherit;
+  background:white;
+}
+input[type=number]{text-align:right}
+label{font-size:.88rem;font-weight:700;color:#334155;display:block;margin-bottom:5px}
+.small{font-size:.86rem;color:var(--muted)}
+.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:980px;background:white}
+th,td{border-bottom:1px solid var(--line);padding:8px 7px;text-align:right;vertical-align:middle}
+th{
+  background:#f8fafc;
+  color:#334155;
+  font-size:.82rem;
+  position:sticky;top:0;
+  z-index:1;
+}
+td:first-child,th:first-child{text-align:center}
+td.readonly{
+  background:#f8fafc;color:#334155;font-variant-numeric:tabular-nums;
+}
+td .miniBtn{padding:6px 8px;border-radius:8px;font-size:.8rem}
+.status{
+  border-radius:14px;
+  padding:12px 14px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+  margin-top:10px;
+}
+.status.good{border-color:#a7f3d0;background:#ecfdf5;color:#065f46}
+.status.warn{border-color:#fed7aa;background:#fff7ed;color:#9a3412}
+.status.bad{border-color:#fecaca;background:#fef2f2;color:#991b1b}
+canvas{
+  width:100%;
+  height:430px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+}
+.kpiGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:900px){.kpiGrid{grid-template-columns:repeat(2,1fr)}}
+.kpi{
+  border:1px solid var(--line);
+  background:#f8fafc;
+  border-radius:14px;
+  padding:12px;
+}
+.kpi .label{font-size:.78rem;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.04em}
+.kpi .value{font-size:1.2rem;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{border-radius:999px;padding:9px 13px;background:#fff}
+.tab.active{background:var(--ink);color:white;border-color:var(--ink)}
+.analysisBox{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+}
+@media(max-width:900px){.analysisBox{grid-template-columns:1fr}}
+textarea{min-height:110px;resize:vertical}
+.help{
+  border-left:4px solid var(--accent);
+  background:var(--soft);
+  padding:12px 14px;
+  border-radius:12px;
+  color:#1e3a8a;
+}
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#e0f2fe;
+  color:#075985;
+  font-size:.78rem;
+  font-weight:800;
+}
+details{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 14px;
+  background:#fff;
+}
+summary{font-weight:800;cursor:pointer}
+.printOnly{display:none}
+@media print{
+  body{background:white}
+  header,.noPrint button,.noPrint .fileLabel,.tabs,#importJson{display:none!important}
+  main{max-width:none;padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+  .printOnly{display:block}
+  textarea{border:1px solid #999;min-height:90px}
+}
+
+#a4Sheet{display:none}
+@media print{
+  body.a4-print-mode header,
+  body.a4-print-mode main > section:not(#a4Sheet){
+    display:none!important;
+  }
+  body.a4-print-mode{
+    background:white!important;
+  }
+  body.a4-print-mode main{
+    max-width:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+  body.a4-print-mode #a4Sheet{
+    display:block!important;
+    box-shadow:none!important;
+    border:none!important;
+    padding:0!important;
+    margin:0!important;
+    break-inside:avoid;
+  }
+  @page{
+    size:A4 landscape;
+    margin:8mm;
+  }
+  .a4Header{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+    border-bottom:2px solid #111827;
+    padding-bottom:5px;
+    margin-bottom:6px;
+    font-size:10pt;
+  }
+  .a4Header h1{
+    font-size:16pt;
+    margin:0 0 2px 0;
+    letter-spacing:-.02em;
+  }
+  .a4Meta{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:6px;
+    min-width:430px;
+  }
+  .a4Box{
+    border:1px solid #111827;
+    height:23px;
+    padding:3px 5px;
+    font-size:9pt;
+  }
+  .a4Box span{
+    color:#374151;
+    font-weight:700;
+  }
+  .a4Sub{
+    font-size:9pt;
+    color:#374151;
+    margin:0;
+  }
+  #a4ResultsTable{
+    width:100%;
+    min-width:0!important;
+    border-collapse:collapse;
+    table-layout:fixed;
+    font-size:8.5pt;
+    margin-bottom:6px;
+  }
+  #a4ResultsTable th,
+  #a4ResultsTable td{
+    border:1px solid #111827!important;
+    padding:3px 3px!important;
+    text-align:center;
+    line-height:1.15;
+    background:white!important;
+    color:#111827!important;
+  }
+  #a4ResultsTable th{
+    font-weight:800;
+  }
+  .a4GraphWrap{
+    border:1px solid #111827;
+    padding:4px;
+    height:130mm;
+    display:flex;
+    flex-direction:column;
+  }
+  .a4GraphTitle{
+    font-weight:800;
+    font-size:10pt;
+    margin:0 0 2px 0;
+  }
+  #a4GraphImage{
+    width:100%;
+    flex:1;
+    object-fit:contain;
+  }
+  .a4Footer{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:8.5pt;
+    margin-top:4px;
+    color:#374151;
+  }
+  .a4Kpis{
+    display:flex;
+    gap:12px;
+    font-weight:700;
+  }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Iodine Clock PAG Data Processor</h1>
+  <p class="subtitle">Enter your volumes and times, calculate <strong>rate = 2.00 × 10⁻³ ÷ t</strong>, plot rate against iodide concentration, and produce a short analysis for your practical records.</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>1. Experiment settings</h2>
+    <div class="grid three">
+      <div>
+        <label>KI concentration / mol dm⁻³</label>
+        <input id="stockKI" type="number" step="0.001" value="1.000">
+      </div>
+      <div>
+        <label>K₂S₂O₈ concentration / mol dm⁻³</label>
+        <input id="stockPersulfate" type="number" step="0.0001" value="0.0400">
+      </div>
+      <div>
+        <label>Na₂S₂O₃ concentration / mol dm⁻³</label>
+        <input id="stockThio" type="number" step="0.0001" value="0.0100">
+      </div>
+    </div>
+    <div class="controls noPrint">
+      <button class="primary" onclick="loadTrialData()">Load OCR-style trial data</button>
+      <button onclick="addRow()">Add run</button>
+      <button onclick="clearTimesOnly()">Clear times only</button>
+      <button class="danger" onclick="clearAll()">Clear all</button>
+    </div>
+    <p class="small">The main student graph uses <strong>rate = 2.00 × 10⁻³ ÷ t</strong>, giving units of mol dm⁻³ s⁻¹.</p>
+  </section>
+
+  <section class="card">
+    <h2>2. Raw and processed data</h2>
+    <div class="tableWrap">
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Run</th>
+            <th>KI / cm³</th>
+            <th>Water / cm³</th>
+            <th>Na₂S₂O₃ / cm³</th>
+            <th>Starch / cm³</th>
+            <th>K₂S₂O₈ / cm³</th>
+            <th>Total / cm³</th>
+            <th>Time, t / s</th>
+            <th>Rate, 2.00×10⁻³/t / mol dm⁻³ s⁻¹</th>
+            <th>[I⁻] / mol dm⁻³</th>
+            <th>[S₂O₈²⁻] / mol dm⁻³</th>
+            <th class="noPrint">Remove</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="validation" class="status"></div>
+    <div class="controls noPrint">
+      <button onclick="downloadCSV()">Download CSV</button>
+      <button onclick="downloadJSON()">Save data file</button>
+      <label class="fileLabel">Load data file <input id="importJson" type="file" accept=".json" hidden onchange="loadJSON(event)"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Graph</h2>
+    <div class="tabs noPrint">
+      <button id="tabRelative" class="tab active" onclick="setGraphMode('calculated')">Plot calculated rate</button>
+    </div>
+    <div class="grid two">
+      <div>
+        <canvas id="graphCanvas" width="1000" height="620"></canvas>
+        <p class="small">Tip: this graph uses <strong>rate = 2.00 × 10⁻³/t</strong>, so the y-axis has units of mol dm⁻³ s⁻¹. The axes autoscale from the current data so different groups’ results fill the graph area.</p>
+      </div>
+      <div>
+        <div class="kpiGrid">
+          <div class="kpi"><div class="label">Plotted points</div><div id="kPoints" class="value">—</div></div>
+          <div class="kpi"><div class="label">Gradient</div><div id="kGradient" class="value">—</div></div>
+          <div class="kpi"><div class="label">R²</div><div id="kR2" class="value">—</div></div>
+          <div class="kpi"><div class="label">Suggested order</div><div id="kOrder" class="value">—</div></div>
+        </div>
+        <div class="status" style="margin-top:14px">
+          <label><input id="forceOrigin" type="checkbox" checked onchange="recalculate()"> Force best-fit line through origin</label>
+          <p class="small">A straight line through the origin for rate against concentration suggests first order with respect to that reactant.</p>
+        </div>
+        <div class="status">
+          <label>Graph conclusion</label>
+          <textarea id="graphConclusion" placeholder="Example: The graph of rate against [I⁻] is approximately a straight line through the origin. This suggests the reaction is first order with respect to iodide ions."></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4. Analysis and rate constant</h2>
+    <div class="help">
+      <strong>For the main student graph:</strong> rate is calculated as <strong>2.00 × 10⁻³ ÷ t</strong>, giving units of mol dm⁻³ s⁻¹. The gradient can therefore be used directly in the OCR-style calculation of k.
+    </div>
+    <div class="kpiGrid" style="margin-top:14px">
+      <div class="kpi"><div class="label">Mean [S₂O₈²⁻]</div><div id="kPersulfate" class="value">—</div></div>
+      <div class="kpi"><div class="label">Clock concentration change</div><div id="kDeltaI" class="value">—</div></div>
+      <div class="kpi"><div class="label">Estimated k</div><div id="kRateConstant" class="value">—</div></div>
+      <div class="kpi"><div class="label">Units of k</div><div class="value" style="font-size:1rem">dm³ mol⁻¹ s⁻¹</div></div>
+    </div>
+
+    <div class="analysisBox" style="margin-top:16px">
+      <div>
+        <label>Order explanation</label>
+        <textarea id="orderText" placeholder="Explain how the shape of your graph tells you the order with respect to iodide ions."></textarea>
+      </div>
+      <div>
+        <label>Reliability / improvements</label>
+        <textarea id="reliabilityText" placeholder="Comment on anomalous points, timing uncertainty, judging the colour change, temperature control, repeats, and apparatus choice."></textarea>
+      </div>
+      <div>
+        <label>Calculation of k</label>
+        <textarea id="kText" placeholder="Show how the gradient and [S₂O₈²⁻] are used to calculate k."></textarea>
+      </div>
+      <div>
+        <label>Final conclusion</label>
+        <textarea id="finalText" placeholder="Summarise the order with respect to iodide ions and your value for k, including units."></textarea>
+      </div>
+    </div>
+
+    <details style="margin-top:16px">
+      <summary>Show calculation notes</summary>
+      <p><strong>[I⁻]</strong> = concentration of KI × volume of KI ÷ total volume.</p>
+      <p><strong>Rate</strong> = 2.00 × 10⁻³ ÷ time.</p>
+      <p><strong>Clock point:</strong> 2 mol S₂O₃²⁻ reacts with 1 mol I₂, and formation of 1 mol I₂ corresponds to disappearance of 2 mol I⁻. Therefore the amount of I⁻ used up at the clock point is numerically equal to the amount of thiosulfate originally present.</p>
+      <p><strong>Initial rate</strong> = concentration change of I⁻ ÷ time = 2.00 × 10⁻³ ÷ t.</p>
+      <p><strong>For a first-order iodide graph:</strong> gradient of full rate graph = k[S₂O₈²⁻], so k = gradient ÷ [S₂O₈²⁻].</p>
+    </details>
+  </section>
+
+
+  <section id="a4Sheet" class="card">
+    <div class="a4Header">
+      <div>
+        <h1>Iodine Clock PAG — Results and Graph</h1>
+        <p class="a4Sub">Rate calculated as 2.00 × 10⁻³ ÷ t. Graph shows rate against [I⁻].</p>
+      </div>
+      <div class="a4Meta">
+        <div class="a4Box"><span>Name:</span></div>
+        <div class="a4Box"><span>Class:</span></div>
+        <div class="a4Box"><span>Date:</span></div>
+      </div>
+    </div>
+    <table id="a4ResultsTable">
+      <thead>
+        <tr>
+          <th>Run</th>
+          <th>KI / cm³</th>
+          <th>H₂O / cm³</th>
+          <th>S₂O₃²⁻ / cm³</th>
+          <th>Starch / cm³</th>
+          <th>S₂O₈²⁻ / cm³</th>
+          <th>Total / cm³</th>
+          <th>Time / s</th>
+          <th>Rate / mol dm⁻³ s⁻¹</th>
+          <th>[I⁻] / mol dm⁻³</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="a4GraphWrap">
+      <p class="a4GraphTitle">Graph: rate against iodide ion concentration</p>
+      <img id="a4GraphImage" alt="Iodine clock graph">
+    </div>
+    <div class="a4Footer">
+      <div class="a4Kpis">
+        <span id="a4Gradient">Gradient: —</span>
+        <span id="a4R2">R²: —</span>
+        <span id="a4Order">Order: —</span>
+      </div>
+      <div>Attach this sheet in your practical record with your written analysis and conclusions.</div>
+    </div>
+  </section>
+
+
+  <section class="card noPrint">
+    <h2>5. Export</h2>
+    <div class="controls">
+      <button class="green" onclick="printA4Results()">Print A4 results sheet</button>
+      <button onclick="window.print()">Print full report</button>
+      <button onclick="fillSuggestedAnalysis()">Fill suggested analysis starters</button>
+      <button onclick="copyReport()">Copy report text</button>
+    </div>
+    <p class="small">Students should check and edit any suggested wording so the final analysis matches their own data and practical observations.</p>
+  </section>
+</main>
+
+<script>
+let rows = [];
+let graphMode = "calculated";
+
+function sf(x, sig=3){
+  if(!isFinite(x)) return "—";
+  if(x === 0) return "0";
+  const abs = Math.abs(x);
+  if(abs >= 1000 || abs < 0.01) return x.toExponential(sig-1).replace("e"," × 10^");
+  return Number(x.toPrecision(sig)).toString();
+}
+function fixedMaybe(x, dp=2){
+  if(!isFinite(x)) return "";
+  return Number(x).toFixed(dp);
+}
+function val(id){ return parseFloat(document.getElementById(id).value); }
+
+function defaultRows(){
+  return [
+    {ki:5.00, water:0.00, thio:2.00, starch:1.00, persulfate:2.00, time:27},
+    {ki:4.00, water:1.00, thio:2.00, starch:1.00, persulfate:2.00, time:29},
+    {ki:3.00, water:2.00, thio:2.00, starch:1.00, persulfate:2.00, time:46},
+    {ki:2.00, water:3.00, thio:2.00, starch:1.00, persulfate:2.00, time:90},
+    {ki:1.00, water:4.00, thio:2.00, starch:1.00, persulfate:2.00, time:240}
+  ];
+}
+function loadTrialData(){ rows = defaultRows(); renderTable(); recalculate(); }
+function addRow(){
+  rows.push({ki:0, water:0, thio:2.00, starch:1.00, persulfate:2.00, time:""});
+  renderTable(); recalculate();
+}
+function clearTimesOnly(){ rows.forEach(r=>r.time=""); renderTable(); recalculate(); }
+function clearAll(){ rows=[]; for(let i=0;i<5;i++) addRow(); }
+function removeRow(i){ rows.splice(i,1); renderTable(); recalculate(); }
+
+function total(r){ return (+r.ki||0)+(+r.water||0)+(+r.thio||0)+(+r.starch||0)+(+r.persulfate||0); }
+function calcRow(r){
+  const T = total(r);
+  const stockKI = val("stockKI");
+  const stockP = val("stockPersulfate");
+  const stockThio = val("stockThio");
+  const t = +r.time;
+  const iConc = T>0 ? stockKI*(+r.ki||0)/T : NaN;
+  const pConc = T>0 ? stockP*(+r.persulfate||0)/T : NaN;
+  const clockChange = 2.00e-3;
+  const relRate = t>0 ? clockChange/t : NaN;
+  const thioMoles = stockThio*(+r.thio||0)/1000;
+  const deltaI = clockChange;
+  const actualRate = relRate;
+  return {T,iConc,pConc,relRate,thioMoles,deltaI,actualRate};
+}
+
+function renderTable(){
+  const tbody = document.querySelector("#dataTable tbody");
+  tbody.innerHTML = "";
+  rows.forEach((r,i)=>{
+    const c = calcRow(r);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td><input type="number" step="0.01" value="${r.ki}" onchange="updateCell(${i},'ki',this.value)"></td>
+      <td><input type="number" step="0.01" value="${r.water}" onchange="updateCell(${i},'water',this.value)"></td>
+      <td><input type="number" step="0.01" value="${r.thio}" onchange="updateCell(${i},'thio',this.value)"></td>
+      <td><input type="number" step="0.01" value="${r.starch}" onchange="updateCell(${i},'starch',this.value)"></td>
+      <td><input type="number" step="0.01" value="${r.persulfate}" onchange="updateCell(${i},'persulfate',this.value)"></td>
+      <td class="readonly">${fixedMaybe(c.T,2)}</td>
+      <td><input type="number" step="0.1" value="${r.time}" onchange="updateCell(${i},'time',this.value)"></td>
+      <td class="readonly">${isFinite(c.relRate)?c.relRate.toPrecision(3):"—"}</td>
+      <td class="readonly">${isFinite(c.iConc)?c.iConc.toPrecision(3):"—"}</td>
+      <td class="readonly">${isFinite(c.pConc)?c.pConc.toPrecision(3):"—"}</td>
+      <td class="noPrint"><button class="miniBtn danger" onclick="removeRow(${i})">×</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function updateCell(i,key,value){ rows[i][key]=value===""?"":parseFloat(value); recalculate(); }
+
+["stockKI","stockPersulfate","stockThio"].forEach(id=>{
+  document.addEventListener("DOMContentLoaded",()=>document.getElementById(id).addEventListener("input",()=>{renderTable();recalculate();}));
+});
+
+function getPoints(){
+  return rows.map((r,idx)=>({idx:idx+1, ...calcRow(r)}))
+    .filter(p=>isFinite(p.iConc) && p.iConc>0 && (graphMode==="relative" ? isFinite(p.relRate) : isFinite(p.actualRate)))
+    .map(p=>({x:p.iConc, y:graphMode==="relative"?p.relRate:p.actualRate, idx:p.idx, pConc:p.pConc, deltaI:p.deltaI}));
+}
+
+function regression(points, origin){
+  if(points.length<2) return {m:NaN,b:NaN,r2:NaN};
+  let m,b;
+  if(origin){
+    const sxy = points.reduce((a,p)=>a+p.x*p.y,0);
+    const sxx = points.reduce((a,p)=>a+p.x*p.x,0);
+    m = sxy/sxx; b=0;
+  } else {
+    const n=points.length;
+    const sx=points.reduce((a,p)=>a+p.x,0), sy=points.reduce((a,p)=>a+p.y,0);
+    const sxy=points.reduce((a,p)=>a+p.x*p.y,0), sxx=points.reduce((a,p)=>a+p.x*p.x,0);
+    m = (n*sxy-sx*sy)/(n*sxx-sx*sx);
+    b = (sy-m*sx)/n;
+  }
+  const yMean = points.reduce((a,p)=>a+p.y,0)/points.length;
+  const ssTot = points.reduce((a,p)=>a+(p.y-yMean)**2,0);
+  const ssRes = points.reduce((a,p)=>a+(p.y-(m*p.x+b))**2,0);
+  const r2 = ssTot===0 ? NaN : 1-ssRes/ssTot;
+  return {m,b,r2};
+}
+
+function setGraphMode(mode){
+  graphMode=mode;
+  document.getElementById("tabRelative").classList.toggle("active",mode==="calculated");
+  recalculate();
+}
+
+function validate(){
+  const div=document.getElementById("validation");
+  const messages=[];
+  const totals=rows.map(total).filter(x=>x>0);
+  if(totals.length){
+    const min=Math.min(...totals), max=Math.max(...totals);
+    if(max-min>0.02) messages.push("Total volume is not constant across all runs. This will change more than just the concentration of KI.");
+  }
+  rows.forEach((r,i)=>{
+    const c=calcRow(r);
+    if((+r.time)<=0) messages.push(`Run ${i+1}: enter a positive time in seconds.`);
+    if(c.T<=0) messages.push(`Run ${i+1}: total volume must be greater than zero.`);
+    if(+r.water<0) messages.push(`Run ${i+1}: water volume cannot be negative.`);
+  });
+  if(messages.length===0){
+    div.className="status good";
+    div.textContent="Checks passed: total volumes and times look usable.";
+  } else {
+    div.className=messages.some(m=>m.includes("Total volume"))?"status warn":"status bad";
+    div.innerHTML="<strong>Check your data:</strong><br>"+messages.slice(0,6).join("<br>")+(messages.length>6?"<br>…":"");
+  }
+}
+
+function recalculate(){
+  renderTable();
+  validate();
+  const pts=getPoints();
+  const origin=document.getElementById("forceOrigin").checked;
+  const reg=regression(pts,origin);
+  document.getElementById("kPoints").textContent=pts.length;
+  document.getElementById("kGradient").textContent=isFinite(reg.m)?sf(reg.m,3):"—";
+  document.getElementById("kR2").textContent=isFinite(reg.r2)?reg.r2.toFixed(3):"—";
+  let order="—";
+  if(pts.length>=3 && isFinite(reg.r2)){
+    order = reg.r2>0.90 ? "First" : "Check";
+  }
+  document.getElementById("kOrder").textContent=order;
+
+  const pVals=pts.map(p=>p.pConc).filter(isFinite);
+  const dVals=pts.map(p=>p.deltaI).filter(isFinite);
+  const meanP=pVals.length?pVals.reduce((a,b)=>a+b,0)/pVals.length:NaN;
+  const meanDelta=dVals.length?dVals.reduce((a,b)=>a+b,0)/dVals.length:NaN;
+  document.getElementById("kPersulfate").textContent=sf(meanP,3);
+  document.getElementById("kDeltaI").textContent=sf(meanDelta,3);
+
+  let k=NaN;
+  if(isFinite(reg.m) && isFinite(meanP) && meanP>0){
+    k=reg.m/meanP;
+  }
+  document.getElementById("kRateConstant").textContent=sf(k,3);
+
+  drawGraph(pts,reg);
+}
+
+function niceCeil(value){
+  if(!isFinite(value) || value<=0) return 1;
+  const exponent = Math.floor(Math.log10(value));
+  const fraction = value / Math.pow(10, exponent);
+  let niceFraction;
+  if(fraction <= 1) niceFraction = 1;
+  else if(fraction <= 2) niceFraction = 2;
+  else if(fraction <= 5) niceFraction = 5;
+  else niceFraction = 10;
+  return niceFraction * Math.pow(10, exponent);
+}
+function niceStep(maxValue, tickCount=10){
+  return niceCeil(maxValue / tickCount);
+}
+function formatAxis(value){
+  if(!isFinite(value)) return "";
+  if(value === 0) return "0";
+  const abs = Math.abs(value);
+  if(abs >= 1000 || abs < 0.001) return value.toExponential(1);
+  if(abs < 0.01) return value.toFixed(4);
+  if(abs < 0.1) return value.toFixed(3);
+  if(abs < 1) return value.toFixed(2);
+  return value.toFixed(1);
+}
+
+function drawRoundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+function drawGraph(pts,reg){
+  const canvas=document.getElementById("graphCanvas");
+  const ctx=canvas.getContext("2d");
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Clean modern chart background
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,W,H);
+
+  const margin={l:120,r:38,t:74,b:92};
+  const plotW=W-margin.l-margin.r, plotH=H-margin.t-margin.b;
+  const x0=margin.l,y0=H-margin.b;
+
+  const dataMaxX = pts.length ? Math.max(...pts.map(p=>p.x)) : 1;
+  const dataMaxY = pts.length ? Math.max(...pts.map(p=>p.y)) : 1;
+
+  // Autoscale from the actual student data, with a small padding.
+  // Axes start at zero because the expected relationship is rate proportional to concentration.
+  let rawMaxX = dataMaxX * 1.08;
+  let maxX = niceCeil(rawMaxX);
+  if(maxX / dataMaxX > 1.9 && dataMaxX > 0) maxX = dataMaxX * 1.12;
+
+  let lineMaxY = dataMaxY;
+  if(pts.length>=2 && isFinite(reg.m)) lineMaxY = Math.max(lineMaxY, reg.m*maxX + (reg.b||0));
+  let rawMaxY = Math.max(dataMaxY,lineMaxY) * 1.12;
+  let maxY = niceCeil(rawMaxY);
+  if(maxY / Math.max(dataMaxY,lineMaxY) > 1.9 && Math.max(dataMaxY,lineMaxY) > 0){
+    maxY = Math.max(dataMaxY,lineMaxY) * 1.18;
+  }
+
+  const xStep = niceStep(maxX,8);
+  const yStep = niceStep(maxY,8);
+  maxX = Math.ceil(maxX/xStep)*xStep;
+  maxY = Math.ceil(maxY/yStep)*yStep;
+
+  const sx=x=>x0+(x/maxX)*plotW;
+  const sy=y=>y0-(y/maxY)*plotH;
+
+  // Plot area panel
+  ctx.save();
+  ctx.shadowColor="rgba(15,23,42,0.08)";
+  ctx.shadowBlur=18;
+  ctx.shadowOffsetY=6;
+  ctx.fillStyle="#ffffff";
+  drawRoundRect(ctx,x0,margin.t,plotW,plotH,14);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle="#dbe3ee";
+  ctx.lineWidth=1.2;
+  drawRoundRect(ctx,x0,margin.t,plotW,plotH,14);
+  ctx.stroke();
+
+  // Header
+  ctx.fillStyle="#0f172a";
+  ctx.font="700 22px Inter, Segoe UI, Arial";
+  ctx.textAlign="left";
+  ctx.textBaseline="alphabetic";
+  ctx.fillText("Rate against iodide ion concentration", margin.l, 32);
+  ctx.fillStyle="#64748b";
+  ctx.font="500 13px Inter, Segoe UI, Arial";
+  ctx.fillText("Rate calculated as 2.00 × 10⁻³ ÷ t", margin.l, 53);
+
+  // Grid and ticks
+  ctx.font="500 12px Inter, Segoe UI, Arial";
+  ctx.textBaseline="middle";
+  ctx.lineWidth=1;
+
+  ctx.textAlign="center";
+  for(let xVal=0; xVal<=maxX + xStep*0.001; xVal+=xStep){
+    const x=sx(xVal);
+    ctx.strokeStyle=xVal===0 ? "#94a3b8" : "#edf2f7";
+    ctx.beginPath();ctx.moveTo(x,margin.t);ctx.lineTo(x,y0);ctx.stroke();
+
+    ctx.fillStyle="#64748b";
+    ctx.textBaseline="top";
+    ctx.fillText(formatAxis(xVal),x,y0+14);
+  }
+
+  ctx.textAlign="right";
+  ctx.textBaseline="middle";
+  for(let yVal=0; yVal<=maxY + yStep*0.001; yVal+=yStep){
+    const y=sy(yVal);
+    ctx.strokeStyle=yVal===0 ? "#94a3b8" : "#edf2f7";
+    ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x0+plotW,y);ctx.stroke();
+
+    ctx.fillStyle="#64748b";
+    ctx.fillText(formatAxis(yVal),x0-12,y);
+  }
+
+  // Axes
+  ctx.strokeStyle="#334155";
+  ctx.lineWidth=1.8;
+  ctx.beginPath();
+  ctx.moveTo(x0,margin.t);
+  ctx.lineTo(x0,y0);
+  ctx.lineTo(x0+plotW,y0);
+  ctx.stroke();
+
+  // Best-fit line
+  if(pts.length>=2 && isFinite(reg.m)){
+    const yStart=Math.max(0,reg.b||0);
+    const yEnd=reg.m*maxX+(reg.b||0);
+
+    ctx.save();
+    ctx.beginPath();
+    drawRoundRect(ctx,x0,margin.t,plotW,plotH,14);
+    ctx.clip();
+
+    ctx.shadowColor="rgba(37,99,235,0.24)";
+    ctx.shadowBlur=9;
+    ctx.shadowOffsetY=2;
+    ctx.strokeStyle="#2563eb";
+    ctx.lineWidth=3.5;
+    ctx.lineCap="round";
+    ctx.beginPath();
+    ctx.moveTo(sx(0),sy(yStart));
+    ctx.lineTo(sx(maxX),sy(yEnd));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Points
+  pts.forEach(p=>{
+    const px=sx(p.x), py=sy(p.y);
+    ctx.save();
+    ctx.shadowColor="rgba(15,118,110,0.28)";
+    ctx.shadowBlur=7;
+    ctx.shadowOffsetY=2;
+    ctx.fillStyle="#0f766e";
+    ctx.beginPath();ctx.arc(px,py,7.5,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+
+    ctx.strokeStyle="#ffffff";
+    ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.arc(px,py,7.5,0,Math.PI*2);ctx.stroke();
+
+    ctx.fillStyle="#0f172a";
+    ctx.font="700 11px Inter, Segoe UI, Arial";
+    ctx.textAlign="left";
+    ctx.textBaseline="alphabetic";
+    ctx.fillText(p.idx,px+10,py-10);
+  });
+
+  // Axis labels
+  ctx.fillStyle="#0f172a";
+  ctx.font="700 14px Inter, Segoe UI, Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="alphabetic";
+  ctx.fillText("[I⁻] / mol dm⁻³", x0+plotW/2, H-28);
+
+  ctx.save();
+  ctx.translate(29, margin.t+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText("Rate / mol dm⁻³ s⁻¹", 0, 0);
+  ctx.restore();
+
+  // Small chart footer
+  ctx.fillStyle="#64748b";
+  ctx.font="500 11px Inter, Segoe UI, Arial";
+  ctx.textAlign="left";
+  ctx.fillText(`Auto-scaled axes • x max ${formatAxis(maxX)} • y max ${formatAxis(maxY)}`, margin.l, H-8);
+
+  // Regression badge
+  if(pts.length>=2 && isFinite(reg.m)){
+    const badgeText = `gradient ${sf(reg.m,3)}   R² ${isFinite(reg.r2)?reg.r2.toFixed(3):"—"}`;
+    ctx.font="700 12px Inter, Segoe UI, Arial";
+    const bw = ctx.measureText(badgeText).width + 24;
+    const bx = W - margin.r - bw - 8;
+    const by = 22;
+    ctx.fillStyle="#eef4ff";
+    drawRoundRect(ctx,bx,by,bw,30,15);
+    ctx.fill();
+    ctx.fillStyle="#1d4ed8";
+    ctx.textAlign="left";
+    ctx.textBaseline="middle";
+    ctx.fillText(badgeText,bx+12,by+15);
+  }
+}
+
+function buildA4ResultsSheet(){
+  recalculate();
+  const tbody = document.querySelector("#a4ResultsTable tbody");
+  tbody.innerHTML = "";
+  rows.forEach((r,i)=>{
+    const c = calcRow(r);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td>${isFinite(+r.ki)?(+r.ki).toFixed(2):""}</td>
+      <td>${isFinite(+r.water)?(+r.water).toFixed(2):""}</td>
+      <td>${isFinite(+r.thio)?(+r.thio).toFixed(2):""}</td>
+      <td>${isFinite(+r.starch)?(+r.starch).toFixed(2):""}</td>
+      <td>${isFinite(+r.persulfate)?(+r.persulfate).toFixed(2):""}</td>
+      <td>${isFinite(c.T)?c.T.toFixed(2):""}</td>
+      <td>${isFinite(+r.time)?(+r.time).toFixed(1):""}</td>
+      <td>${isFinite(c.relRate)?c.relRate.toExponential(2):""}</td>
+      <td>${isFinite(c.iConc)?c.iConc.toPrecision(3):""}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const pts=getPoints();
+  const reg=regression(pts,document.getElementById("forceOrigin").checked);
+  document.getElementById("a4Gradient").textContent = "Gradient: " + (isFinite(reg.m)?sf(reg.m,3):"—");
+  document.getElementById("a4R2").textContent = "R²: " + (isFinite(reg.r2)?reg.r2.toFixed(3):"—");
+  document.getElementById("a4Order").textContent = "Order: " + (document.getElementById("kOrder").textContent || "—");
+
+  const canvas = document.getElementById("graphCanvas");
+  document.getElementById("a4GraphImage").src = canvas.toDataURL("image/png");
+}
+function printA4Results(){
+  buildA4ResultsSheet();
+  document.body.classList.add("a4-print-mode");
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>document.body.classList.remove("a4-print-mode"), 500);
+  }, 100);
+}
+
+function copyReport(){
+  const text=[
+    "Iodine Clock PAG Analysis",
+    "",
+    "Graph conclusion:",
+    document.getElementById("graphConclusion").value,
+    "",
+    "Order explanation:",
+    document.getElementById("orderText").value,
+    "",
+    "Reliability / improvements:",
+    document.getElementById("reliabilityText").value,
+    "",
+    "Calculation of k:",
+    document.getElementById("kText").value,
+    "",
+    "Final conclusion:",
+    document.getElementById("finalText").value
+  ].join("\n");
+  navigator.clipboard.writeText(text).then(()=>alert("Report text copied."));
+}
+window.addEventListener("load",()=>{ rows=defaultRows(); renderTable(); recalculate(); });
+</script>
+</body>
+</html>
