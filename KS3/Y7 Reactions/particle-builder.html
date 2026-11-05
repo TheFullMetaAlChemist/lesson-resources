@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Particle Builder — Elements, Compounds and Mixtures</title>
+<style>
+  :root {
+    --ink: #172033;
+    --muted: #5d6678;
+    --panel: #ffffff;
+    --page: #eef2f7;
+    --line: #cfd6e2;
+    --accent: #3056d3;
+    --accent-dark: #233f9e;
+    --success: #177245;
+    --warning: #8a5a00;
+    --shadow: 0 10px 30px rgba(23, 32, 51, 0.10);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--ink);
+  }
+
+  button, input { font: inherit; }
+
+  .app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  header {
+    background: #18243a;
+    color: #fff;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: clamp(1.15rem, 2vw, 1.65rem);
+  }
+
+  header p {
+    margin: 4px 0 0;
+    color: #cdd6e7;
+    font-size: 0.92rem;
+  }
+
+  .scope-note {
+    max-width: 420px;
+    font-size: 0.78rem;
+    color: #d9e0ef;
+    text-align: right;
+  }
+
+  main {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: minmax(210px, 270px) minmax(0, 1fr) minmax(260px, 340px);
+    gap: 16px;
+    min-height: 0;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .sidebar,
+  .answer-panel {
+    padding: 16px;
+    overflow: auto;
+  }
+
+  .sidebar h2,
+  .answer-panel h2 {
+    font-size: 1rem;
+    margin: 0 0 12px;
+  }
+
+  .atom-palette {
+    display: grid;
+    gap: 12px;
+  }
+
+  .palette-item {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #f9fbfe;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .palette-item:active { cursor: grabbing; }
+
+  .palette-label strong { display: block; }
+  .palette-label span { color: var(--muted); font-size: 0.82rem; }
+
+  .palette-atom,
+  .atom {
+    border-radius: 50%;
+    border: 3px solid #172033;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    color: #111827;
+    flex: 0 0 auto;
+  }
+
+  .palette-atom.type-a, .atom.type-a { background: #f6c945; }
+  .palette-atom.type-b, .atom.type-b { background: #65b9ff; }
+  .palette-atom.type-c, .atom.type-c { background: #f07b78; }
+
+  .palette-atom.type-a { width: 42px; height: 42px; }
+  .palette-atom.type-b { width: 54px; height: 54px; }
+  .palette-atom.type-c { width: 66px; height: 66px; }
+
+  .sidebar-note {
+    margin-top: 14px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: #eef4ff;
+    color: #2f4775;
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+
+  .workspace {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto minmax(500px, 1fr) auto;
+    gap: 10px;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .btn {
+    border: 1px solid #b8c1d1;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn:hover { background: #f4f7fb; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { background: var(--accent-dark); }
+
+  .btn.danger { color: #9b1c1c; }
+
+  .status {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  #container {
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    border: 4px solid #26364f;
+    border-radius: 22px;
+    background:
+      linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)),
+      radial-gradient(circle at 1px 1px, #d8dee8 1px, transparent 1px);
+    background-size: auto, 22px 22px;
+    box-shadow: inset 0 0 0 6px #edf1f6;
+    touch-action: none;
+  }
+
+  #container::before {
+    content: "PARTICLE CONTAINER";
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    color: #7a8496;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    pointer-events: none;
+  }
+
+  #bondLayer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .bond {
+    stroke: #26364f;
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+
+  .bond-contact {
+    fill: #26364f;
+    stroke: #ffffff;
+    stroke-width: 2;
+  }
+
+  .atom {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    box-shadow: 0 4px 10px rgba(23, 32, 51, .18);
+    z-index: 2;
+  }
+
+  .atom:active { cursor: grabbing; }
+  .atom.selected { outline: 5px solid rgba(48, 86, 211, .32); outline-offset: 3px; }
+  .atom.snap-source,
+  .atom.snap-target,
+  .atom.palette-snap-target,
+  .palette-atom.snap-ready {
+    outline: 5px dashed rgba(23, 114, 69, .82);
+    outline-offset: 5px;
+  }
+
+  .drop-hint {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #8a94a7;
+    font-weight: 700;
+    pointer-events: none;
+    text-align: center;
+    padding: 50px;
+  }
+
+  .instructions {
+    padding: 10px 14px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .answer-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .answer-placeholder {
+    border: 2px dashed #c7cfdb;
+    border-radius: 12px;
+    min-height: 180px;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    background: #fafbfd;
+  }
+
+  .answer-card {
+    border-radius: 13px;
+    border: 1px solid #bfd9ca;
+    background: #f1fbf5;
+    padding: 14px;
+  }
+
+  .answer-card.hidden { display: none; }
+
+  .classification {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #d9f2e4;
+    color: var(--success);
+    font-weight: 800;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  .best-description {
+    font-size: 1.08rem;
+    font-weight: 800;
+    line-height: 1.35;
+    margin: 10px 0;
+  }
+
+  .inventory {
+    margin: 8px 0 0;
+    padding-left: 20px;
+    line-height: 1.5;
+  }
+
+  .reason {
+    font-size: 0.86rem;
+    color: #365847;
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+
+  .teacher-prompts {
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .teacher-prompts h3 {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+  }
+
+  .teacher-prompts ul {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  .ghost {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: .88;
+  }
+
+  @media (max-width: 1050px) {
+    main { grid-template-columns: 220px minmax(0, 1fr); }
+    .answer-panel { grid-column: 1 / -1; }
+    .scope-note { display: none; }
+  }
+
+  @media (max-width: 720px) {
+    main { grid-template-columns: 1fr; padding: 10px; }
+    .atom-palette { grid-template-columns: repeat(3, 1fr); }
+    .palette-item { flex-direction: column; text-align: center; padding: 8px; }
+    .palette-label span { display: none; }
+    #container { min-height: 430px; }
+    .status { width: 100%; margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Particle Builder</h1>
+      <p>Use atoms and molecules accurately to describe elements, compounds and mixtures.</p>
+    </div>
+    <div class="scope-note">This model represents simple atoms and molecules. It does not model ions, lattices or giant structures.</div>
+  </header>
+
+  <main>
+    <aside class="card sidebar">
+      <h2>Drag atoms into the container</h2>
+      <div class="atom-palette">
+        <div class="palette-item" data-type="A" tabindex="0" role="button" aria-label="Drag atom A into the container">
+          <div class="palette-atom type-a">A</div>
+          <div class="palette-label"><strong>Atom A</strong><span>small, yellow</span></div>
+        </div>
+        <div class="palette-item" data-type="B" tabindex="0" role="button" aria-label="Drag atom B into the container">
+          <div class="palette-atom type-b">B</div>
+          <div class="palette-label"><strong>Atom B</strong><span>medium, blue</span></div>
+        </div>
+        <div class="palette-item" data-type="C" tabindex="0" role="button" aria-label="Drag atom C into the container">
+          <div class="palette-atom type-c">C</div>
+          <div class="palette-label"><strong>Atom C</strong><span>large, red</span></div>
+        </div>
+      </div>
+      <div class="sidebar-note">
+        Move atoms close together — or let them overlap slightly. A green dashed outline appears on both atoms whenever releasing will create a bond.
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div class="card toolbar">
+        <button class="btn" id="exampleBtn">Generate example</button>
+        <button class="btn" id="breakBtn" disabled>Break selected bonds</button>
+        <button class="btn danger" id="deleteBtn" disabled>Delete selected atom</button>
+        <button class="btn danger" id="clearBtn">Clear</button>
+        <button class="btn primary" id="revealBtn">Reveal answer</button>
+        <div class="status" id="statusText">0 atoms · 0 particles</div>
+      </div>
+
+      <div id="container" class="card" aria-label="Particle container">
+        <svg id="bondLayer" aria-hidden="true"></svg>
+        <div class="drop-hint" id="dropHint">Drag atoms here<br>Then move them together to make molecules</div>
+      </div>
+
+      <div class="card instructions">
+        <strong>Controls:</strong> drag a bonded atom to move its whole molecule. A dark contact marker confirms that a bond has formed. Select an atom to delete it or break its bonds. The checker treats every separate atom or bonded group as one particle.
+      </div>
+    </section>
+
+    <aside class="card answer-panel">
+      <h2>Automatic analysis</h2>
+      <div class="answer-placeholder" id="answerPlaceholder">Build a particle diagram, then select <strong>Reveal answer</strong>.</div>
+      <div class="answer-card hidden" id="answerCard">
+        <span class="classification" id="classification"></span>
+        <div class="best-description" id="bestDescription"></div>
+        <strong>Particle inventory</strong>
+        <ul class="inventory" id="inventory"></ul>
+        <div class="reason" id="reason"></div>
+      </div>
+      <div class="teacher-prompts">
+        <h3>Useful questions</h3>
+        <ul>
+          <li>How many different types of atom are present?</li>
+          <li>Which particles are atoms and which are molecules?</li>
+          <li>Are all the particles identical?</li>
+          <li>Is each molecule an element or a compound?</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script>
+(() => {
+  const TYPES = {
+    A: { radius: 21, className: 'type-a', name: 'A' },
+    B: { radius: 27, className: 'type-b', name: 'B' },
+    C: { radius: 33, className: 'type-c', name: 'C' }
+  };
+
+  // Atoms bond only when their edges are genuinely close. A small amount
+  // of overlap is accepted to make imprecise touchscreen drops forgiving.
+  const SNAP_GAP = 18;
+  const MAX_SNAP_OVERLAP = 14;
+
+  const container = document.getElementById('container');
+  const bondLayer = document.getElementById('bondLayer');
+  const dropHint = document.getElementById('dropHint');
+  const statusText = document.getElementById('statusText');
+  const breakBtn = document.getElementById('breakBtn');
+  const deleteBtn = document.getElementById('deleteBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const revealBtn = document.getElementById('revealBtn');
+  const exampleBtn = document.getElementById('exampleBtn');
+  const answerPlaceholder = document.getElementById('answerPlaceholder');
+  const answerCard = document.getElementById('answerCard');
+  const classificationEl = document.getElementById('classification');
+  const bestDescriptionEl = document.getElementById('bestDescription');
+  const inventoryEl = document.getElementById('inventory');
+  const reasonEl = document.getElementById('reason');
+
+  const atoms = new Map();
+  const bonds = new Set();
+  let nextId = 1;
+  let selectedId = null;
+  let dragState = null;
+  let snapPreview = null;
+  let answerVisible = false;
+
+  function bondKey(a, b) {
+    return [Math.min(a, b), Math.max(a, b)].join('-');
+  }
+
+  function hasBond(a, b) {
+    return bonds.has(bondKey(a, b));
+  }
+
+  function addBond(a, b) {
+    if (a === b) return;
+    bonds.add(bondKey(a, b));
+  }
+
+  function removeBond(a, b) {
+    bonds.delete(bondKey(a, b));
+  }
+
+  function neighbours(id) {
+    const result = [];
+    for (const key of bonds) {
+      const [a, b] = key.split('-').map(Number);
+      if (a === id) result.push(b);
+      if (b === id) result.push(a);
+    }
+    return result;
+  }
+
+  function componentFrom(startId) {
+    const seen = new Set([startId]);
+    const queue = [startId];
+    while (queue.length) {
+      const current = queue.shift();
+      for (const n of neighbours(current)) {
+        if (!seen.has(n)) {
+          seen.add(n);
+          queue.push(n);
+        }
+      }
+    }
+    return [...seen];
+  }
+
+  function allComponents() {
+    const unvisited = new Set(atoms.keys());
+    const components = [];
+    while (unvisited.size) {
+      const start = unvisited.values().next().value;
+      const comp = componentFrom(start);
+      comp.forEach(id => unvisited.delete(id));
+      components.push(comp);
+    }
+    return components;
+  }
+
+  function clampAtom(atom) {
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    atom.x = Math.max(atom.r + 8, Math.min(w - atom.r - 8, atom.x));
+    atom.y = Math.max(atom.r + 8, Math.min(h - atom.r - 8, atom.y));
+  }
+
+  function addAtom(type, x, y, snapOnAdd = false) {
+    const spec = TYPES[type];
+    const id = nextId++;
+    const atom = { id, type, x, y, r: spec.radius };
+    clampAtom(atom);
+    atoms.set(id, atom);
+    selectAtom(id);
+    hideAnswer();
+    if (snapOnAdd) attemptSnap([id]);
+    render();
+    return id;
+  }
+
+  function selectAtom(id) {
+    selectedId = atoms.has(id) ? id : null;
+    breakBtn.disabled = !selectedId || neighbours(selectedId).length === 0;
+    deleteBtn.disabled = !selectedId;
+  }
+
+  function deleteSelected() {
+    if (!selectedId || !atoms.has(selectedId)) return;
+    atoms.delete(selectedId);
+    for (const key of [...bonds]) {
+      const [a, b] = key.split('-').map(Number);
+      if (a === selectedId || b === selectedId) bonds.delete(key);
+    }
+    selectedId = null;
+    hideAnswer();
+    render();
+  }
+
+  function breakSelectedBonds() {
+    if (!selectedId) return;
+    for (const n of neighbours(selectedId)) removeBond(selectedId, n);
+    hideAnswer();
+    render();
+  }
+
+  function clearAll() {
+    atoms.clear();
+    bonds.clear();
+    selectedId = null;
+    snapPreview = null;
+    nextId = 1;
+    hideAnswer();
+    render();
+  }
+
+  function createAtomElement(atom) {
+    const el = document.createElement('div');
+    const previewClass = snapPreview
+      ? (atom.id === snapPreview.a.id ? ' snap-source' : atom.id === snapPreview.b.id ? ' snap-target' : '')
+      : '';
+    el.className = `atom ${TYPES[atom.type].className}${atom.id === selectedId ? ' selected' : ''}${previewClass}`;
+    el.dataset.id = atom.id;
+    el.textContent = atom.type;
+    el.style.width = `${atom.r * 2}px`;
+    el.style.height = `${atom.r * 2}px`;
+    el.style.left = `${atom.x}px`;
+    el.style.top = `${atom.y}px`;
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', `Atom ${atom.type}`);
+    el.addEventListener('pointerdown', startAtomDrag);
+    return el;
+  }
+
+  function render() {
+    [...container.querySelectorAll('.atom')].forEach(el => el.remove());
+    bondLayer.innerHTML = '';
+
+    for (const key of bonds) {
+      const [aId, bId] = key.split('-').map(Number);
+      const a = atoms.get(aId);
+      const b = atoms.get(bId);
+      if (!a || !b) continue;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', a.x);
+      line.setAttribute('y1', a.y);
+      line.setAttribute('x2', b.x);
+      line.setAttribute('y2', b.y);
+      line.setAttribute('class', 'bond');
+      bondLayer.appendChild(line);
+
+      // The contact marker makes a real bond visually distinct from two
+      // unbonded atoms that happen to overlap or touch.
+      const distance = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      const contactX = a.x + ((b.x - a.x) / distance) * a.r;
+      const contactY = a.y + ((b.y - a.y) / distance) * a.r;
+      const contact = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      contact.setAttribute('cx', contactX);
+      contact.setAttribute('cy', contactY);
+      contact.setAttribute('r', 7);
+      contact.setAttribute('class', 'bond-contact');
+      bondLayer.appendChild(contact);
+    }
+
+    for (const atom of atoms.values()) container.appendChild(createAtomElement(atom));
+
+    const components = allComponents();
+    dropHint.style.display = atoms.size ? 'none' : 'grid';
+    statusText.textContent = `${atoms.size} atom${atoms.size === 1 ? '' : 's'} · ${components.length} particle${components.length === 1 ? '' : 's'}`;
+    breakBtn.disabled = !selectedId || neighbours(selectedId).length === 0;
+    deleteBtn.disabled = !selectedId;
+  }
+
+  function startAtomDrag(event) {
+    event.preventDefault();
+    const id = Number(event.currentTarget.dataset.id);
+    if (!atoms.has(id)) return;
+    selectAtom(id);
+    hideAnswer();
+
+    const component = componentFrom(id);
+    const startPositions = new Map(component.map(atomId => {
+      const a = atoms.get(atomId);
+      return [atomId, { x: a.x, y: a.y }];
+    }));
+
+    dragState = {
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      component,
+      startPositions,
+      moved: false
+    };
+
+    window.addEventListener('pointermove', moveAtomDrag);
+    window.addEventListener('pointerup', endAtomDrag);
+    window.addEventListener('pointercancel', endAtomDrag);
+    render();
+  }
+
+  function moveAtomDrag(event) {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    const dx = event.clientX - dragState.startClientX;
+    const dy = event.clientY - dragState.startClientY;
+    if (Math.hypot(dx, dy) > 3) dragState.moved = true;
+
+    let minDx = -Infinity, maxDx = Infinity, minDy = -Infinity, maxDy = Infinity;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    for (const id of dragState.component) {
+      const atom = atoms.get(id);
+      const start = dragState.startPositions.get(id);
+      minDx = Math.max(minDx, atom.r + 8 - start.x);
+      maxDx = Math.min(maxDx, w - atom.r - 8 - start.x);
+      minDy = Math.max(minDy, atom.r + 8 - start.y);
+      maxDy = Math.min(maxDy, h - atom.r - 8 - start.y);
+    }
+
+    const safeDx = Math.max(minDx, Math.min(maxDx, dx));
+    const safeDy = Math.max(minDy, Math.min(maxDy, dy));
+    for (const id of dragState.component) {
+      const atom = atoms.get(id);
+      const start = dragState.startPositions.get(id);
+      atom.x = start.x + safeDx;
+      atom.y = start.y + safeDy;
+    }
+    snapPreview = findSnapCandidate(dragState.component);
+    render();
+  }
+
+  function endAtomDrag(event) {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    window.removeEventListener('pointermove', moveAtomDrag);
+    window.removeEventListener('pointerup', endAtomDrag);
+    window.removeEventListener('pointercancel', endAtomDrag);
+
+    if (dragState.moved) attemptSnap(dragState.component);
+    dragState = null;
+    snapPreview = null;
+    render();
+  }
+
+  function snapMetrics(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
+    const distance = Math.hypot(dx, dy);
+    const desired = a.r + b.r;
+    const signedEdgeGap = distance - desired;
+    const eligible = signedEdgeGap >= -MAX_SNAP_OVERLAP && signedEdgeGap <= SNAP_GAP;
+    return {
+      a,
+      b,
+      distance,
+      desired,
+      signedEdgeGap,
+      eligible,
+      score: Math.abs(signedEdgeGap)
+    };
+  }
+
+  function findSnapCandidate(component) {
+    const compSet = new Set(component);
+    let best = null;
+
+    for (const aId of component) {
+      const a = atoms.get(aId);
+      if (!a) continue;
+      for (const b of atoms.values()) {
+        if (compSet.has(b.id) || hasBond(aId, b.id)) continue;
+        const candidate = snapMetrics(a, b);
+        if (candidate.eligible && (!best || candidate.score < best.score)) {
+          best = candidate;
+        }
+      }
+    }
+    return best;
+  }
+
+  function findPaletteSnapCandidate(type, x, y) {
+    const virtualAtom = { id: -1, type, x, y, r: TYPES[type].radius };
+    let best = null;
+    for (const b of atoms.values()) {
+      const candidate = snapMetrics(virtualAtom, b);
+      if (candidate.eligible && (!best || candidate.score < best.score)) {
+        best = candidate;
+      }
+    }
+    return best;
+  }
+
+  function attemptSnap(component) {
+    const best = findSnapCandidate(component);
+    if (!best) return false;
+    let ux, uy;
+    if (best.distance < 0.001) {
+      ux = 1; uy = 0;
+    } else {
+      ux = (best.a.x - best.b.x) / best.distance;
+      uy = (best.a.y - best.b.y) / best.distance;
+    }
+
+    const targetAX = best.b.x + ux * best.desired;
+    const targetAY = best.b.y + uy * best.desired;
+    const shiftX = targetAX - best.a.x;
+    const shiftY = targetAY - best.a.y;
+
+    for (const id of component) {
+      const atom = atoms.get(id);
+      atom.x += shiftX;
+      atom.y += shiftY;
+      clampAtom(atom);
+    }
+    addBond(best.a.id, best.b.id);
+    return true;
+  }
+
+  function clearPaletteSnapPreview(ghost) {
+    ghost.classList.remove('snap-ready');
+    container.querySelectorAll('.atom.palette-snap-target').forEach(el => {
+      el.classList.remove('palette-snap-target');
+    });
+  }
+
+  function updatePaletteSnapPreview(type, clientX, clientY, ghost) {
+    clearPaletteSnapPreview(ghost);
+    const rect = container.getBoundingClientRect();
+    if (clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return;
+
+    const r = TYPES[type].radius;
+    const x = Math.max(r + 8, Math.min(rect.width - r - 8, clientX - rect.left));
+    const y = Math.max(r + 8, Math.min(rect.height - r - 8, clientY - rect.top));
+    const candidate = findPaletteSnapCandidate(type, x, y);
+    if (!candidate) return;
+
+    ghost.classList.add('snap-ready');
+    const target = container.querySelector(`.atom[data-id="${candidate.b.id}"]`);
+    if (target) target.classList.add('palette-snap-target');
+  }
+
+  function startPaletteDrag(event) {
+    event.preventDefault();
+    const item = event.currentTarget;
+    const type = item.dataset.type;
+    const spec = TYPES[type];
+    const ghost = document.createElement('div');
+    ghost.className = `palette-atom ${spec.className} ghost`;
+    ghost.style.width = `${spec.radius * 2}px`;
+    ghost.style.height = `${spec.radius * 2}px`;
+    ghost.textContent = type;
+    document.body.appendChild(ghost);
+
+    const moveGhost = (e) => {
+      ghost.style.left = `${e.clientX}px`;
+      ghost.style.top = `${e.clientY}px`;
+      updatePaletteSnapPreview(type, e.clientX, e.clientY, ghost);
+    };
+    moveGhost(event);
+
+    item.setPointerCapture(event.pointerId);
+    const move = (e) => moveGhost(e);
+    const end = (e) => {
+      item.removeEventListener('pointermove', move);
+      try { item.releasePointerCapture(e.pointerId); } catch (_) {}
+      clearPaletteSnapPreview(ghost);
+      ghost.remove();
+      const rect = container.getBoundingClientRect();
+      if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        addAtom(type, e.clientX - rect.left, e.clientY - rect.top, true);
+      }
+    };
+
+    item.addEventListener('pointermove', move);
+    item.addEventListener('pointerup', end, { once: true });
+    item.addEventListener('pointercancel', end, { once: true });
+  }
+
+  document.querySelectorAll('.palette-item').forEach(item => {
+    item.addEventListener('pointerdown', startPaletteDrag);
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const type = item.dataset.type;
+        const offset = atoms.size * 18;
+        addAtom(type, container.clientWidth / 2 + (offset % 120) - 60, container.clientHeight / 2 + (offset % 80) - 40, true);
+      }
+    });
+  });
+
+  function hideAnswer() {
+    answerVisible = false;
+    answerCard.classList.add('hidden');
+    answerPlaceholder.style.display = 'grid';
+    revealBtn.textContent = 'Reveal answer';
+  }
+
+  function toSubscript(n) {
+    if (n <= 1) return '';
+    const map = {0:'₀',1:'₁',2:'₂',3:'₃',4:'₄',5:'₅',6:'₆',7:'₇',8:'₈',9:'₉'};
+    return String(n).split('').map(d => map[d]).join('');
+  }
+
+  function componentInfo(ids) {
+    const counts = { A: 0, B: 0, C: 0 };
+    ids.forEach(id => counts[atoms.get(id).type]++);
+    const typesPresent = Object.keys(counts).filter(t => counts[t] > 0);
+    const formula = ['A','B','C'].filter(t => counts[t]).map(t => t + toSubscript(counts[t])).join('');
+    let kind;
+    if (ids.length === 1) kind = 'atom';
+    else if (typesPresent.length === 1) kind = 'elementMolecule';
+    else kind = 'compoundMolecule';
+    const signature = `${counts.A}|${counts.B}|${counts.C}`;
+    return { ids, counts, typesPresent, formula, kind, signature };
+  }
+
+  function plural(count, singular, pluralForm = singular + 's') {
+    return count === 1 ? singular : pluralForm;
+  }
+
+  function analyse() {
+    const infos = allComponents().map(componentInfo);
+    if (!infos.length) {
+      return {
+        classification: 'Empty container',
+        description: 'There are no atoms or molecules in the container.',
+        inventory: ['No particles present.'],
+        reason: 'Add at least one atom before classifying the contents.'
+      };
+    }
+
+    const grouped = new Map();
+    for (const info of infos) {
+      if (!grouped.has(info.signature)) grouped.set(info.signature, { ...info, quantity: 0 });
+      grouped.get(info.signature).quantity++;
+    }
+    const particleTypes = [...grouped.values()];
+
+    let classification;
+    let description;
+
+    if (particleTypes.length === 1) {
+      const only = particleTypes[0];
+      if (only.kind === 'atom') {
+        classification = 'Pure element';
+        description = `Atoms of a single element (${only.formula}).`;
+      } else if (only.kind === 'elementMolecule') {
+        classification = 'Pure element';
+        description = `Molecules of a single element (${only.formula}).`;
+      } else {
+        classification = 'Pure compound';
+        description = `Molecules of a single compound (${only.formula}).`;
+      }
+    } else {
+      classification = 'Mixture';
+      const atomsOnly = particleTypes.every(p => p.kind === 'atom');
+      const elementMoleculesOnly = particleTypes.every(p => p.kind === 'elementMolecule');
+      const compoundsOnly = particleTypes.every(p => p.kind === 'compoundMolecule');
+      const hasAtoms = particleTypes.some(p => p.kind === 'atom');
+      const hasElementMolecules = particleTypes.some(p => p.kind === 'elementMolecule');
+      const hasCompounds = particleTypes.some(p => p.kind === 'compoundMolecule');
+
+      if (atomsOnly) {
+        description = 'A mixture of atoms of different elements.';
+      } else if (elementMoleculesOnly) {
+        const elementTypes = new Set(particleTypes.map(p => p.typesPresent[0]));
+        description = elementTypes.size === 1
+          ? 'A mixture of different molecules of the same element.'
+          : 'A mixture of molecules of different elements.';
+      } else if (compoundsOnly) {
+        description = 'A mixture of molecules of different compounds.';
+      } else if (hasAtoms && hasElementMolecules && !hasCompounds) {
+        const elementalTypes = new Set();
+        particleTypes.forEach(p => p.typesPresent.forEach(t => elementalTypes.add(t)));
+        description = elementalTypes.size === 1
+          ? 'A mixture of atoms and molecules of the same element.'
+          : 'A mixture of atoms and molecules of different elements.';
+      } else if (hasCompounds && !hasElementMolecules && hasAtoms) {
+        description = 'A mixture of atoms of one or more elements and molecules of one or more compounds.';
+      } else if (hasCompounds && hasElementMolecules && !hasAtoms) {
+        description = 'A mixture of molecules of one or more elements and molecules of one or more compounds.';
+      } else {
+        description = 'A mixture containing atoms, molecules of elements and molecules of compounds.';
+      }
+    }
+
+    const inventory = particleTypes
+      .sort((p, q) => p.formula.localeCompare(q.formula))
+      .map(p => {
+        if (p.kind === 'atom') {
+          return `${p.quantity} × ${p.formula} ${plural(p.quantity, 'atom')} — element ${p.formula}`;
+        }
+        if (p.kind === 'elementMolecule') {
+          return `${p.quantity} × ${p.formula} ${plural(p.quantity, 'molecule')} — molecule of element ${p.typesPresent[0]}`;
+        }
+        return `${p.quantity} × ${p.formula} ${plural(p.quantity, 'molecule')} — molecule of a compound`;
+      });
+
+    const reason = particleTypes.length === 1
+      ? 'Every separate particle has the same composition, so the container holds a pure substance.'
+      : `There are ${particleTypes.length} different types of particle, so the container holds a mixture.`;
+
+    return { classification, description, inventory, reason };
+  }
+
+  function showAnswer() {
+    if (answerVisible) {
+      hideAnswer();
+      return;
+    }
+    const result = analyse();
+    classificationEl.textContent = result.classification;
+    bestDescriptionEl.textContent = result.description;
+    inventoryEl.innerHTML = '';
+    result.inventory.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      inventoryEl.appendChild(li);
+    });
+    reasonEl.textContent = result.reason;
+    answerPlaceholder.style.display = 'none';
+    answerCard.classList.remove('hidden');
+    answerVisible = true;
+    revealBtn.textContent = 'Hide answer';
+  }
+
+  const EXAMPLES = [
+    {
+      name: 'atoms of one element',
+      particles: [ ['A'], ['A'], ['A'], ['A'] ]
+    },
+    {
+      name: 'molecules of one element',
+      particles: [ ['A','A'], ['A','A'], ['A','A'] ]
+    },
+    {
+      name: 'molecules of one compound',
+      particles: [ ['A','B'], ['A','B'], ['A','B'] ]
+    },
+    {
+      name: 'atoms of different elements',
+      particles: [ ['A'], ['A'], ['B'], ['B'], ['C'] ]
+    },
+    {
+      name: 'molecules of different elements',
+      particles: [ ['A','A'], ['A','A'], ['B','B'], ['B','B'] ]
+    },
+    {
+      name: 'an element and a compound',
+      particles: [ ['A'], ['A'], ['A','B'], ['A','B'] ]
+    },
+    {
+      name: 'different compounds',
+      particles: [ ['A','B'], ['A','B'], ['A','B','B'], ['A','B','B'] ]
+    },
+    {
+      name: 'atoms and molecules of one element',
+      particles: [ ['C'], ['C'], ['C','C'], ['C','C'] ]
+    }
+  ];
+
+  function generateExample() {
+    clearAll();
+    const example = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
+    const cols = Math.ceil(Math.sqrt(example.particles.length));
+    const rows = Math.ceil(example.particles.length / cols);
+    const cellW = container.clientWidth / cols;
+    const cellH = container.clientHeight / rows;
+
+    example.particles.forEach((particle, index) => {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const centreX = cellW * (col + 0.5);
+      const centreY = cellH * (row + 0.5);
+      const ids = [];
+      let totalWidth = 0;
+      particle.forEach((type, i) => {
+        if (i > 0) totalWidth += 5;
+        totalWidth += TYPES[type].radius * 2;
+      });
+      let cursor = centreX - totalWidth / 2;
+      particle.forEach(type => {
+        const r = TYPES[type].radius;
+        const id = addAtom(type, cursor + r, centreY);
+        ids.push(id);
+        cursor += r * 2 + 5;
+      });
+      for (let i = 0; i < ids.length - 1; i++) {
+        const a = atoms.get(ids[i]);
+        const b = atoms.get(ids[i + 1]);
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const d = Math.hypot(dx, dy) || 1;
+        b.x = a.x + (dx / d) * (a.r + b.r);
+        b.y = a.y + (dy / d) * (a.r + b.r);
+        addBond(ids[i], ids[i + 1]);
+      }
+    });
+    selectedId = null;
+    hideAnswer();
+    render();
+  }
+
+  revealBtn.addEventListener('click', showAnswer);
+  deleteBtn.addEventListener('click', deleteSelected);
+  breakBtn.addEventListener('click', breakSelectedBonds);
+  clearBtn.addEventListener('click', clearAll);
+  exampleBtn.addEventListener('click', generateExample);
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedId && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+      e.preventDefault();
+      deleteSelected();
+    }
+    if (e.key.toLowerCase() === 'r') showAnswer();
+  });
+
+  container.addEventListener('pointerdown', (e) => {
+    if (e.target === container || e.target === bondLayer) {
+      selectAtom(null);
+      render();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    for (const atom of atoms.values()) clampAtom(atom);
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
