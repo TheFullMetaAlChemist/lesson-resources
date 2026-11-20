@@ -48,6 +48,36 @@ select.mcq-wide{width:auto;max-width:100%}
 .score-row select.mcq-wide{width:9.5em}.score-row .sr-ctl{flex-wrap:wrap;justify-content:flex-end;max-width:11em}.score-row .mcq-res{min-width:0;text-align:right;flex-basis:100%}
 .score-row .sr-q{flex-basis:6.6em}
 .eqn{font-size:1.05rem;margin:10px 0}
+.print-report{display:none}
+@media print{
+@page{size:A4;margin:14mm 15mm}
+#view.results-view>*:not(#printReport){display:none!important}
+.skip,noscript,dialog{display:none!important}
+#view.results-view{max-width:none;padding:0}
+.print-report{display:block;font-size:10.5pt;color:#182d39}
+.pr-page{break-inside:avoid}
+.pr-page2{break-before:page;page-break-before:always}
+.pr-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid #176676;padding-bottom:8px;margin-bottom:14px}
+.pr-head h1{font-size:18pt;margin:2px 0 0;line-height:1.15}
+.pr-eyebrow{font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:#536773;font-weight:700}
+.pr-meta{font-size:9pt;color:#536773;text-align:right;line-height:1.8}
+.pr-line{display:inline-block;width:150px;border-bottom:1px solid #536773;vertical-align:bottom}
+.print-report section{break-inside:avoid;margin:0 0 14px}
+.print-report h2{font-size:11.5pt;margin:0 0 6px;color:#176676}
+.pr-total{display:flex;align-items:center;gap:18px;border:1px solid #d5e0e5;border-radius:10px;padding:10px 16px}
+.pr-big{font-size:28pt;font-weight:750;line-height:1}.pr-big span{font-size:13pt;color:#536773;font-weight:600;margin-left:4px}
+.pr-note{font-size:8.5pt;color:#536773;margin:4px 0 0}
+.pr-calls{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+.pr-call{border:1px solid #d5e0e5;border-radius:10px;padding:9px 12px;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.pr-call.best{background:#eaf4f5;border-color:#b9d8dd}.pr-call.focus{background:#f8f2e6;border-color:#eadbbd}
+.pr-k{font-size:8pt;color:#536773;font-weight:650}.pr-n{font-weight:700;font-size:10.5pt}.pr-s{font-size:9pt;color:#536773}.pr-call p{font-size:9pt;margin:5px 0 0;line-height:1.4}
+.print-report .bars li{padding:5px 0;font-size:9.5pt;break-inside:avoid}.print-report .bars .track{height:7px}
+.pr-table{width:100%;border-collapse:collapse;font-size:9pt;margin:6px 0 0}
+.pr-table th,.pr-table td{border-bottom:1px solid #d5e0e5;padding:5px 6px;text-align:left;vertical-align:top}
+.pr-table th{font-size:8pt;color:#536773}
+.pr-table td:last-child,.pr-table th:last-child{text-align:right;white-space:nowrap}
+.pr-credit{font-size:8pt;color:#536773;margin-top:16px;border-top:1px solid #d5e0e5;padding-top:6px}
+}
 </style>
 </head>
 <body>
@@ -1718,10 +1748,10 @@ function updateProgress(){document.getElementById('progressText').textContent=`$
 function renderNav(){const nav=document.getElementById('questionNav');nav.innerHTML=groups.map(g=>`<details data-group="${g.id}" ${current>=0&&data[current].group===g.id?'open':''}><summary><span class="group-n">${g.num||g.id}</span>${g.name}</summary>${data.map((q,i)=>q.group===g.id?`<button class="navitem" data-index="${i}" ${current===i?'aria-current="page"':''}><span class="qnum">${q.label}</span><span class="navlabel">${fmt(q.title)}</span><span class="status" aria-label="${saved.reviewed.includes(q.id)?'Reviewed':'Not reviewed'}">${saved.reviewed.includes(q.id)?'✓':''}</span></button>`:'').join('')}</details>`).join('');nav.querySelectorAll('[data-index]').forEach(b=>b.onclick=()=>go(Number(b.dataset.index)));
  const ov=document.getElementById('overviewBtn'),rb=document.getElementById('resultsBtn');current===-1?ov.setAttribute('aria-current','page'):ov.removeAttribute('aria-current');current===-2?rb.setAttribute('aria-current','page'):rb.removeAttribute('aria-current');updateProgress()}
 function closeNav(){document.body.classList.remove('nav-open');document.getElementById('menu').setAttribute('aria-expanded','false')}
-function go(i,focus=true){current=i;tab='model';revealed=false;links=false;closeNav();renderNav();renderQuestion();try{history.replaceState(null,'',`#q-${data[i].id}`)}catch(e){};document.getElementById('main').scrollTop=0;if(focus)view.querySelector('.q-heading').focus()}
+function go(i,focus=true){current=i;view.classList.remove('results-view');tab='model';revealed=false;links=false;closeNav();renderNav();renderQuestion();try{history.replaceState(null,'',`#q-${data[i].id}`)}catch(e){};document.getElementById('main').scrollTop=0;if(focus)view.querySelector('.q-heading').focus()}
 
 function groupCard(g){const qs=data.filter(q=>q.group===g.id);return `<button class="section-card" data-start="${data.indexOf(qs[0])}"><span class="num">${g.num||g.id}</span><span><span class="section-title">${g.name}</span><span class="section-desc">${fmt(g.desc)}</span><small>${qs.reduce((a,q)=>a+q.marks,0)} marks · ${qs.length} parts</small></span></button>`}
-function overview(){current=-1;closeNav();renderNav();try{history.replaceState(null,'','#overview')}catch(e){}
+function overview(){current=-1;view.classList.remove('results-view');closeNav();renderNav();try{history.replaceState(null,'','#overview')}catch(e){}
  view.innerHTML=`<div class="eyebrow">Year 11 mock exam · ${TOTAL} marks · ${PARTS} question parts</div><h1 class="q-heading" tabindex="-1">Mock exam walkthrough<br>and results analysis</h1><p class="intro">Go through each question with model answers, marking points and explanations, then record your marks to see your strongest and weakest topics and question types.</p><div class="hero-actions"><button class="primary" id="start">Start with Question 01</button><button id="goResults">Enter my marks</button></div>${Object.keys(sections).map(s=>`<h2 class="sec-h">${sections[s]} <span>${data.filter(q=>groupOf(q).section===s).reduce((a,q)=>a+q.marks,0)} marks</span></h2><div class="section-grid">${groups.filter(g=>g.section===s).map(groupCard).join('')}</div>`).join('')}<button class="section-card results-card" id="resultsCard"><span class="num" aria-hidden="true">%</span><span><span class="section-title">My results</span><span class="section-desc">Enter your mark for each part to get a breakdown by topic, question type and section, with the questions to revisit first.</span><small>${entries.filter(e=>score(e)!==null).length} of ${entries.length} parts entered</small></span></button><p class="help-line">Attempt the paper first. The paper has two questions numbered 04, labelled 04 (Group 7) and 04 (Atmosphere) here. There are no questions 05 or 07.</p>`;
  document.getElementById('start').onclick=()=>go(0);document.getElementById('goResults').onclick=showResults;document.getElementById('resultsCard').onclick=showResults;view.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>go(+b.dataset.start));document.getElementById('main').scrollTop=0}
 
@@ -1748,8 +1778,8 @@ function renderPanel(){const q=data[current],p=document.getElementById('panel-'+
  else{p.innerHTML=`<div class="practice-label">Same skill, fresh context</div><h2 style="margin-top:10px">Try it on paper</h2><p class="practice-q">${fmt(q.practice)}</p><details class="hint"><summary>Need a starting point?</summary><p>${fmt(q.hint)}</p></details><button id="showPractice" class="primary" aria-expanded="false" aria-controls="practiceSolution">Reveal the answer</button><div id="practiceSolution" class="solution" hidden><h3>Check your response</h3><p>${fmt(q.solution)}</p></div>`;document.getElementById('showPractice').onclick=()=>{const ans=document.getElementById('practiceSolution'),b=document.getElementById('showPractice');ans.hidden=!ans.hidden;b.setAttribute('aria-expanded',!ans.hidden);b.textContent=ans.hidden?'Reveal the answer':'Hide the answer'}}}
 
 /* ---------- Results ---------- */
-function showResults(){current=-2;closeNav();renderNav();try{history.replaceState(null,'','#results')}catch(e){}
- view.innerHTML=`<div class="eyebrow">Question level analysis</div><h1 class="q-heading" tabindex="-1">My results</h1><p class="intro">Enter the mark you scored on each part. Your analysis updates as you go and is saved in this browser.</p><div class="results-grid"><div class="entry-col">${Object.keys(sections).map(s=>{const es=entries.filter(e=>groupOf(e.q).section===s);return `<fieldset class="score-set"><legend>${sections[s]} <span>${es.reduce((a,e)=>a+e.max,0)} marks</span></legend>${es.map(e=>`<div class="score-row"><label for="r-${e.key}"><span class="sr-q">${qlab(e.q)}</span><span class="sr-t">${fmt(e.q.title)}${e.label?`: ${e.label.toLowerCase()}`:''}</span></label><span class="sr-ctl">${control(e,'r')}</span>${e.mcq?'':`<span class="err" id="r-err-${e.key}" aria-live="polite"></span>`}</div>`).join('')}</fieldset>`}).join('')}<div class="results-actions"><button id="printResults">Print my results</button><button class="quiet" id="clearMarks">Clear all my marks</button></div><p class="help-line" id="clearMsg" role="status"></p></div><div class="analysis-col"><div id="analysis"></div></div></div>`;
+function showResults(){current=-2;view.classList.add('results-view');closeNav();renderNav();try{history.replaceState(null,'','#results')}catch(e){}
+ view.innerHTML=`<div class="eyebrow">Question level analysis</div><h1 class="q-heading" tabindex="-1">My results</h1><p class="intro">Enter the mark you scored on each part. Your analysis updates as you go and is saved in this browser.</p><div class="results-grid"><div class="entry-col">${Object.keys(sections).map(s=>{const es=entries.filter(e=>groupOf(e.q).section===s);return `<fieldset class="score-set"><legend>${sections[s]} <span>${es.reduce((a,e)=>a+e.max,0)} marks</span></legend>${es.map(e=>`<div class="score-row"><label for="r-${e.key}"><span class="sr-q">${qlab(e.q)}</span><span class="sr-t">${fmt(e.q.title)}${e.label?`: ${e.label.toLowerCase()}`:''}</span></label><span class="sr-ctl">${control(e,'r')}</span>${e.mcq?'':`<span class="err" id="r-err-${e.key}" aria-live="polite"></span>`}</div>`).join('')}</fieldset>`}).join('')}<div class="results-actions"><button id="printResults">Print my results</button><button class="quiet" id="clearMarks">Clear all my marks</button></div><p class="help-line" id="clearMsg" role="status"></p></div><div class="analysis-col"><div id="analysis"></div></div></div><div id="printReport" class="print-report"></div>`;
  wireControls(view.querySelector('.entry-col'),'r',renderAnalysis);renderAnalysis();
  document.getElementById('printResults').onclick=()=>window.print();let armed=false;const cb=document.getElementById('clearMarks');cb.onclick=()=>{if(!armed){armed=true;cb.textContent='Confirm: clear all marks';document.getElementById('clearMsg').textContent='Select Confirm to remove every mark you have entered.';return}saved.scores={};saved.mcq={};persist();showResults();document.getElementById('clearMsg').textContent='All marks cleared.'};
  document.getElementById('main').scrollTop=0;view.querySelector('.q-heading').focus()}
@@ -1764,7 +1794,7 @@ function callouts(m,dict,kind){const el=Object.keys(m).filter(k=>m[k].max>=3);if
  if(pctOf(m[best])===pctOf(m[worst]))return `<p class="help-line">Your ${kind==='topic'?'topics':'question types'} are all level at ${pctOf(m[best])}% so far.</p>`;
  const w=m[worst];return `<div class="callouts"><div class="callout best"><h3>Strongest ${kind}</h3><div class="name">${dict[best].name}</div><div class="score">${m[best].got}/${m[best].max} marks (${pctOf(m[best])}%)</div></div><div class="callout focus"><h3>${cap} to focus on</h3><div class="name">${dict[worst].name}</div><div class="score">${w.got}/${w.max} marks (${pctOf(w)}%)</div><p>${fmt(dict[worst].advice)}</p>${w.parts.length?`<div class="revisit" aria-label="Parts to revisit">${w.parts.map(partBtn).join('')}</div>`:''}</div></div>`}
 function renderAnalysis(){const a=document.getElementById('analysis');if(!a)return;const done=entries.filter(e=>score(e)!==null);
- if(!done.length){a.innerHTML=`<div class="an-card empty"><h2>Your analysis</h2><p>Enter your first mark to see your breakdown by topic, question type and section.</p><p class="help-line">Tip: you can also record marks as you go through the walkthrough, using the box under each question.</p></div>`;return}
+ if(!done.length){a.innerHTML=`<div class="an-card empty"><h2>Your analysis</h2><p>Enter your first mark to see your breakdown by topic, question type and section.</p><p class="help-line">Tip: you can also record marks as you go through the walkthrough, using the box under each question.</p></div>`;renderPrint(null);return}
  const got=done.reduce((s,e)=>s+score(e),0),max=done.reduce((s,e)=>s+e.max,0),p=Math.round(100*got/max),complete=done.length===entries.length;
  const T=stats(e=>e.topic),Y=stats(e=>e.type),S=stats(e=>groupOf(e.q).section);
  const tn=Object.fromEntries(Object.entries(topics).map(([k,v])=>[k,v.name])),yn=Object.fromEntries(Object.entries(types).map(([k,v])=>[k,v.name]));
@@ -1774,7 +1804,8 @@ function renderAnalysis(){const a=document.getElementById('analysis');if(!a)retu
  <div class="an-card"><h2>By question type</h2>${barList(Y,yn)}</div>
  <div class="an-card"><h2>By section</h2>${barList(S,sections)}</div>
  ${lost.length?`<div class="an-card"><h2>Where you dropped most marks</h2><p class="help-line">Open these first: each one has the model answer, an explanation and a fresh question to practise.</p><div class="revisit">${lost.map(partBtn).join('')}</div></div>`:''}`;
- a.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go))}
+ a.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));renderPrint({got,max,p,complete,done,T,Y,S,tn,yn})}
+
 
 /* ---------- Diagrams ---------- */
 const svg=(title,body,vb='0 0 660 260')=>`<svg class="chem" viewBox="${vb}" role="img" aria-label="${title}"><title>${title}</title>${body}</svg>`;
@@ -1850,5 +1881,26 @@ dialog.addEventListener('close',()=>{resetArmed=false;document.getElementById('r
 document.getElementById('closeDiagram').onclick=()=>document.getElementById('diagramDialog').close();
 applySize();const h=location.hash;const m=h.match(/^#q-([\w-]+)$/);const initial=m?data.findIndex(q=>q.id===m[1]):-1;if(initial>=0)go(initial,false);else if(h==='#results')showResults();else overview();
 
+
+/* ---------- Printable summary ---------- */
+function renderPrint(r){const el=document.getElementById('printReport');if(!el)return;
+ const date=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+ const head=(cont)=>`<div class="pr-head"><div><div class="pr-eyebrow">AQA GCSE Chemistry · Year 11 mock exam</div><h1>${cont?'My results summary (continued)':'My results summary'}</h1></div><div class="pr-meta">${cont?'Page 2 of 2':`Name: <span class="pr-line"></span><br>Printed ${date}`}</div></div>`;
+ if(!r){el.innerHTML=`<div class="pr-page">${head(false)}<p>No marks have been entered yet. Enter your mark for each part on the My results page, then print again.</p></div>`;return}
+ const pick=(m,dict)=>{const el=Object.keys(m).filter(k=>m[k].max>=3);if(el.length<2)return null;el.sort((a,b)=>pctOf(m[b])-pctOf(m[a])||m[b].max-m[a].max);const b=el[0],w=el[el.length-1];return pctOf(m[b])===pctOf(m[w])?null:{b,w}};
+ const box=(cls,label,dict,k,m,advice)=>`<div class="pr-call ${cls}"><div class="pr-k">${label}</div><div class="pr-n">${dict[k].name}</div><div class="pr-s">${m[k].got}/${m[k].max} marks (${pctOf(m[k])}%)</div>${advice?`<p>${fmt(dict[k].advice)}</p>`:''}</div>`;
+ const pair=(m,dict,kind)=>{const x=pick(m,dict);if(!x)return `<p class="pr-note">Not enough marks entered yet to compare ${kind==='topic'?'topics':'question types'}.</p>`;return `<div class="pr-calls">${box('best','Strongest '+kind,dict,x.b,m,false)}${box('focus',(kind==='topic'?'Topic':'Question type')+' to focus on',dict,x.w,m,true)}</div>`};
+ const lost=r.done.filter(e=>score(e)<e.max).sort((x,y)=>(y.max-score(y))-(x.max-score(x))||x.qi-y.qi).slice(0,10);
+ const p1=`<div class="pr-page">${head(false)}
+  <section class="pr-total"><div class="pr-big">${r.got}<span>/ ${r.max}</span></div><div><strong>${r.p}%</strong> ${r.complete?'of the whole paper':'of the marks entered so far'}<div class="pr-note">${r.done.length} of ${entries.length} parts entered${r.complete?'':`, out of ${TOTAL} marks on the paper`}</div></div></section>
+  <section><h2>Topics</h2>${pair(r.T,topics,'topic')}</section>
+  <section><h2>Question types</h2>${pair(r.Y,types,'question type')}</section>
+  <section><h2>By topic</h2>${barList(r.T,r.tn)}<p class="pr-note">AQA specification references: ${Object.values(topics).map(t=>`${t.name} ${t.spec}`).join('; ')}.</p></section></div>`;
+ const p2=`<div class="pr-page pr-page2">${head(true)}
+  <section><h2>By question type</h2>${barList(r.Y,r.yn)}</section>
+  <section><h2>By paper</h2>${barList(r.S,sections)}</section>
+  ${lost.length?`<section><h2>Parts to revisit first</h2><p class="pr-note">The parts where you dropped the most marks. Each one has a model answer, an explanation and a practice question in the walkthrough.</p><table class="pr-table"><tr><th scope="col">Part</th><th scope="col">What it tests</th><th scope="col">Topic</th><th scope="col">Marks dropped</th></tr>${lost.map(e=>`<tr><td><strong>${qlab(e.q)}</strong></td><td>${fmt(e.q.title)}${e.label?` (${e.label.toLowerCase()})`:''}</td><td>${topics[e.topic].name}</td><td>${e.max-score(e)} of ${e.max}</td></tr>`).join('')}</table></section>`:''}
+  <p class="pr-credit">Questions from past AQA GCSE Chemistry papers, with acknowledgement to AQA. Analysis produced by the Year 11 mock walkthrough.</p></div>`;
+ el.innerHTML=p1+p2}
 </script>
 </body></html>
